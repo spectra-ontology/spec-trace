@@ -7,8 +7,8 @@
 
 **License**: CC-BY 4.0
 **Version**: v1.0.0 (see `ontology/spectra.ttl` header for authoritative version)
-**Persistent identifier**: `https://w3id.org/spectra` (registration via [perma-id/w3id.org](https://github.com/perma-id/w3id.org); see `w3id/PR_DESCRIPTION.md`)
-**DOI**: minted by Zenodo upon GitHub release (see `PUBLISHING.md`)
+**Persistent identifier**: `https://w3id.org/spectra` (registration **pending**; PR template at `w3id/PR_DESCRIPTION.md`, target `perma-id/w3id.org`)
+**DOI**: to be minted by Zenodo upon a tagged GitHub release (see `PUBLISHING.md`; release `v1.0.0` not yet created)
 **Repository**: https://github.com/spectra-ontology/spec-trace
 
 ## What this package releases
