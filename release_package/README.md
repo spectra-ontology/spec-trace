@@ -28,7 +28,7 @@ release_package/
 │   └── schema_overview.md             # high-level schema summary
 ├── cqs/
 │   ├── cq_index.md                    # anonymized index of all 137 CQs
-│   │                                  # (id, phase, category, persona, schema area)
+│   │                                  # (id, phase, category, schema area)
 │   └── representative_cqs.md          # representative CQs with full text + Cypher/SPARQL
 ├── queries/
 │   ├── cypher/                        # executable Cypher translations
