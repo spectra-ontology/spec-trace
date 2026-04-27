@@ -13,7 +13,7 @@
 
 ## What this package releases
 
-This is the **publicly released** component of the SPECTRA ontology resource described in the ISWC Resources Track paper *"SPECTRA: A Traceability Ontology for 3GPP Standardization."*
+This is the **publicly released** component of the SPECTRA ontology resource described in a paper submitted to the ISWC Resources Track *"SPECTRA: A Traceability Ontology for 3GPP Standardization"* (under review).
 
 ```
 release_package/
@@ -88,7 +88,7 @@ See `queries/sparql/`. Translations exercise the same CQs against a triple-store
 
 ## Citation
 
-If you reuse SPECTRA, please cite the accompanying ISWC 2026 paper (BibTeX will be added once the venue assigns a citation key) and this software/data record via the metadata in `CITATION.cff` (machine-readable) or `codemeta.json`.
+If you reuse SPECTRA, please cite the accompanying paper (currently under review at ISWC 2026 Resources Track; BibTeX will be added once the venue assigns a citation key) and this software/data record via the metadata in `CITATION.cff` (machine-readable) or `codemeta.json`.
 
 ## Contact
 

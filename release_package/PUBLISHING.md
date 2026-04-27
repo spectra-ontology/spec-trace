@@ -41,7 +41,7 @@ git push origin main
 
 # Create a versioned release (uses GitHub CLI; install if needed)
 gh release create v6.1.1 \
-  --title "SPECTRA v6.1.1 — ISWC 2026 release" \
+  --title "SPECTRA v6.1.1 — companion to ISWC 2026 submission (under review)" \
   --notes-file release_package/README.md \
   release_package/ontology/spectra.ttl \
   release_package/CITATION.cff \
