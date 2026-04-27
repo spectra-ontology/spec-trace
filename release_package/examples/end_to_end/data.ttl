@@ -1,0 +1,73 @@
+@prefix tdoc: <https://w3id.org/spectra#> .
+@prefix dc:   <http://purl.org/dc/elements/1.1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:   <http://example.org/spectra/synthetic/e2e/> .
+
+# Synthetic E2E scenario:
+# Company AcmeTelecom submits R1-2599998 at RAN1#120 (PTRS proposal).
+# RAN1#120 records a WorkingAssumption agreeing the proposal in principle.
+# RAN1#121 promotes the WorkingAssumption to an Agreement.
+# CR R1-2599999 implements the Agreement and modifies TS 38.214 §5.1.3.
+
+ex:RAN1_120 a tdoc:Meeting ;
+    tdoc:meetingNumber "RAN1#120" ;
+    tdoc:meetingNumberInt 120 ;
+    dc:date "2024-11-18"^^xsd:date .
+
+ex:RAN1_121 a tdoc:Meeting ;
+    tdoc:meetingNumber "RAN1#121" ;
+    tdoc:meetingNumberInt 121 ;
+    dc:date "2024-12-09"^^xsd:date .
+
+ex:Company_AcmeTelecom a tdoc:Company , foaf:Organization ;
+    dc:title "Acme Telecom" .
+
+# Originating TDoc (the contribution we want to recover via the spine query)
+ex:Tdoc_R1-2599998 a tdoc:Tdoc ;
+    tdoc:tdocNumber "R1-2599998" ;
+    dc:title "Discussion on PTRS density for low-MCS configurations" ;
+    tdoc:type "discussion" ;
+    tdoc:status "noted" ;
+    tdoc:presentedAt ex:RAN1_120 ;
+    tdoc:submittedBy ex:Company_AcmeTelecom .
+
+# WorkingAssumption at #120
+ex:WA_120_PTRS a tdoc:WorkingAssumption ;
+    tdoc:resolutionId "WA1-RAN1#120" ;
+    tdoc:madeAt ex:RAN1_120 ;
+    dc:description "PTRS density follows simplified formula for low-MCS." ;
+    tdoc:references ex:Tdoc_R1-2599998 .
+
+# Agreement at #121 (promoted from WA)
+ex:Agreement_121_PTRS a tdoc:Agreement ;
+    tdoc:resolutionId "A1-RAN1#121" ;
+    tdoc:madeAt ex:RAN1_121 ;
+    dc:description "Adopt simplified PTRS density for low-MCS." .
+
+ex:WA_120_PTRS tdoc:promotedTo ex:Agreement_121_PTRS .
+
+# Spec / Section
+ex:Spec_38_214 a tdoc:Spec ;
+    tdoc:specNumber "38.214" ;
+    dc:title "Physical layer procedures for data" .
+
+ex:Section_5_1_3 a tdoc:Section ;
+    tdoc:sectionNumber "5.1.3" ;
+    tdoc:sectionId "38.214-5.1.3" ;
+    tdoc:belongsToSpec ex:Spec_38_214 .
+
+# CR at #121 implementing the Agreement
+ex:CRPack_121 a tdoc:CRPack ;
+    tdoc:crPackId "RP-RAN1-121" ;
+    tdoc:hasCR ex:CR_R1-2599999 .
+
+ex:CR_R1-2599999 a tdoc:CR ;
+    tdoc:tdocNumber "R1-2599999" ;
+    dc:title "CR on TS 38.214: PTRS density for low-MCS" ;
+    tdoc:reasonForChange "Implement RAN1#121 agreement on simplified PTRS density." ;
+    tdoc:modifies ex:Spec_38_214 ;
+    tdoc:modifiesSection ex:Section_5_1_3 ;
+    tdoc:submittedBy ex:Company_AcmeTelecom ;
+    tdoc:presentedAt ex:RAN1_121 ;
+    tdoc:belongsToCRPack ex:CRPack_121 .

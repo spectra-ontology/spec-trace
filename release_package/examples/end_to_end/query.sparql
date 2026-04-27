@@ -1,0 +1,27 @@
+PREFIX tdoc: <https://w3id.org/spectra#>
+PREFIX dc:   <http://purl.org/dc/elements/1.1/>
+
+# Multi-hop traceability: which TDocs motivated the current text of TS 38.214 §5.1.3?
+# Walks: Section <- modifiesSection <- CR <- (indirect, via meeting context) Resolution -> references -> Tdoc
+
+SELECT ?tdocNumber ?title ?meetingNumber
+WHERE {
+  ?sec a tdoc:Section ;
+       tdoc:sectionId "38.214-5.1.3" .
+  ?cr  a tdoc:CR ;
+       tdoc:modifiesSection ?sec ;
+       tdoc:presentedAt ?meeting .
+  # Resolution-CR is an indirect join through the same Meeting / agenda context;
+  # in this synthetic example we recover Resolutions presented at the same meeting
+  # (production usage joins through CRPack as well).
+  ?resolution a tdoc:Agreement ;
+              tdoc:madeAt ?meeting .
+  # Step back through the WA -> Agreement promotion if present:
+  OPTIONAL { ?wa tdoc:promotedTo ?resolution ; tdoc:references ?tdoc . }
+  # Or directly references on the Resolution itself:
+  OPTIONAL { ?resolution tdoc:references ?tdoc . }
+  ?tdoc a tdoc:Tdoc ;
+        tdoc:tdocNumber ?tdocNumber ;
+        dc:title ?title .
+  ?meeting tdoc:meetingNumber ?meetingNumber .
+}
