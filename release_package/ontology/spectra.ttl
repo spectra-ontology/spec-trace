@@ -1,0 +1,1202 @@
+@prefix : <https://w3id.org/spectra#> .
+@prefix tdoc: <https://w3id.org/spectra#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# =============================================================================
+# Ontology Declaration
+# =============================================================================
+
+<https://w3id.org/spectra> a owl:Ontology ;
+    dc:title "SPECTRA: A Traceability Ontology for 3GPP RAN Standardization"@en ;
+    dc:description "OWL 2 ontology modeling the 3GPP RAN standardization document lifecycle (Tdoc, Resolution, CR, LS, Section, Spec, TechnicalReport, TRImpact, Meeting, Company, WorkingGroup). Designed from RAN1 competency questions and validated by cross-WG instantiation against RAN2-RAN5 with no additional classes required."@en ;
+    dc:creator "Sihyeon Choi (Samsung System LSI)" ,
+               "Junho Lee (Samsung System LSI)" ,
+               "Joon-Hyoung Ahn (Samsung System LSI)" ;
+    dc:date "2026-04-27" ;
+    dc:rights "Creative Commons Attribution 4.0 International (CC-BY 4.0)" ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    owl:versionInfo "6.1.1" ;
+    owl:versionIRI <https://w3id.org/spectra/6.1.1> ;
+    rdfs:seeAlso <https://github.com/spectra-ontology/spec-trace> .
+
+# =============================================================================
+# Classes (26 classes)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Tdoc and Subclasses
+# -----------------------------------------------------------------------------
+
+tdoc:Tdoc a owl:Class ;
+    rdfs:label "TDoc"@en ;
+    rdfs:comment "3GPP Technical Document - base class for all meeting documents"@en .
+
+tdoc:CR a owl:Class ;
+    rdfs:subClassOf tdoc:Tdoc ;
+    rdfs:label "Change Request"@en ;
+    rdfs:comment "Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types."@en .
+
+tdoc:LS a owl:Class ;
+    rdfs:subClassOf tdoc:Tdoc ;
+    rdfs:label "Liaison Statement"@en ;
+    rdfs:comment "Liaison Statement for official communication between Working Groups or external organizations"@en .
+
+tdoc:Summary a owl:Class ;
+    rdfs:subClassOf tdoc:Tdoc ;
+    rdfs:label "Summary"@en ;
+    rdfs:comment "FL Summary or Moderator Summary document from Final Report"@en .
+
+tdoc:SessionNotes a owl:Class ;
+    rdfs:subClassOf tdoc:Tdoc ;
+    rdfs:label "Session Notes"@en ;
+    rdfs:comment "Session notes for ad-hoc discussions from Final Report"@en .
+
+# -----------------------------------------------------------------------------
+# Resolution Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md
+# -----------------------------------------------------------------------------
+
+tdoc:Resolution a owl:Class ;
+    rdfs:label "Resolution"@en ;
+    rdfs:comment "Abstract base class for meeting resolutions (Agreement, Conclusion, WorkingAssumption)"@en .
+
+tdoc:Agreement a owl:Class ;
+    rdfs:subClassOf tdoc:Resolution ;
+    rdfs:label "Agreement"@en ;
+    rdfs:comment "Technical agreement reached in the meeting"@en .
+
+tdoc:Conclusion a owl:Class ;
+    rdfs:subClassOf tdoc:Resolution ;
+    rdfs:label "Conclusion"@en ;
+    rdfs:comment "Discussion conclusion (may or may not have consensus)"@en .
+
+tdoc:WorkingAssumption a owl:Class ;
+    rdfs:subClassOf tdoc:Resolution ;
+    rdfs:label "Working Assumption"@en ;
+    rdfs:comment "Tentative assumption that may be promoted to Agreement"@en .
+
+# -----------------------------------------------------------------------------
+# Reference Classes
+# -----------------------------------------------------------------------------
+
+tdoc:Meeting a owl:Class ;
+    rdfs:label "Meeting"@en ;
+    rdfs:comment "3GPP Working Group meeting"@en .
+
+tdoc:Company a owl:Class ;
+    rdfs:subClassOf foaf:Organization ;
+    rdfs:label "Company"@en ;
+    rdfs:comment "Company or organization that submits TDocs"@en .
+
+tdoc:Contact a owl:Class ;
+    rdfs:subClassOf foaf:Person ;
+    rdfs:label "Contact"@en ;
+    rdfs:comment "Contact person responsible for a TDoc"@en .
+
+tdoc:WorkItem a owl:Class ;
+    rdfs:label "Work Item"@en ;
+    rdfs:comment "3GPP Work Item (WI) or Study Item (SI)"@en .
+
+tdoc:AgendaItem a owl:Class ;
+    rdfs:label "Agenda Item"@en ;
+    rdfs:comment "Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)"@en .
+
+tdoc:Release a owl:Class ;
+    rdfs:label "Release"@en ;
+    rdfs:comment "3GPP Release version (e.g., Rel-18, Rel-19)"@en .
+
+tdoc:Spec a owl:Class ;
+    rdfs:label "Specification"@en ;
+    rdfs:comment "3GPP Technical Specification (TS) or Technical Report (TR)"@en .
+
+tdoc:WorkingGroup a owl:Class ;
+    rdfs:label "Working Group"@en ;
+    rdfs:comment "3GPP Working Group (e.g., RAN1, RAN2, SA2)"@en .
+
+# -----------------------------------------------------------------------------
+# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md
+# -----------------------------------------------------------------------------
+
+tdoc:Figure a owl:Class ;
+    rdfs:label "Figure"@en ;
+    rdfs:comment "Technical figure embedded in Final Report (captioned or structural >50KB)"@en .
+
+tdoc:Table a owl:Class ;
+    rdfs:label "Table"@en ;
+    rdfs:comment "Technical table embedded in Final Report (captioned or structural heuristic)"@en .
+
+tdoc:Chart a owl:Class ;
+    rdfs:label "Chart"@en ;
+    rdfs:comment "Chart embedded in Final Report (<c:chart> XML, no <a:blip> image)"@en .
+
+# -----------------------------------------------------------------------------
+# TS Structure Classes (Phase-3) - Spec: tdoc_ontology_specs(TS).md
+# -----------------------------------------------------------------------------
+
+tdoc:Section a owl:Class ;
+    rdfs:label "Section"@en ;
+    rdfs:comment "A section within a 3GPP Technical Specification document, identified by heading style"@en .
+
+tdoc:TSTable a owl:Class ;
+    rdfs:label "TS Table"@en ;
+    rdfs:comment "A table within a 3GPP Technical Specification document, identified by TH-style caption"@en .
+
+tdoc:TSFigure a owl:Class ;
+    rdfs:label "TS Figure"@en ;
+    rdfs:comment "A figure within a 3GPP Technical Specification document, identified by figure caption"@en .
+
+# -----------------------------------------------------------------------------
+# CR Document Classes (Phase-4) - Spec: tdoc_ontology_specs(CR).md
+# -----------------------------------------------------------------------------
+
+tdoc:CRPack a owl:Class ;
+    rdfs:label "CR Pack"@en ;
+    rdfs:comment "TSG CR Pack - a bundle of CRs submitted to TSG plenary meeting (e.g., RP-250233). Identified by Cover Sheet."@en .
+
+# -----------------------------------------------------------------------------
+# TR Document Classes (Phase-5) - Spec: tdoc_ontology_specs(TR).md
+# -----------------------------------------------------------------------------
+
+tdoc:TechnicalReport a owl:Class ;
+    rdfs:label "Technical Report"@en ;
+    rdfs:comment "3GPP Technical Report (TR) - research/study documents that may lead to TS changes. Contains scope, conclusions, and TR-TS impact analysis."@en .
+
+tdoc:TRImpact a owl:Class ;
+    rdfs:label "TR Impact"@en ;
+    rdfs:comment "Reification node for TR→TS impact relationship with impactType attribute (NewTS, NewSection, ExtendSection, NoChange)."@en .
+
+# =============================================================================
+# Object Properties (53 properties)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Tdoc Object Properties (10)
+# -----------------------------------------------------------------------------
+
+tdoc:submittedBy a owl:ObjectProperty ;
+    rdfs:label "submitted by"@en ;
+    rdfs:comment "Company/organization that submitted the TDoc. Multiple companies can co-submit."@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:Company .
+
+tdoc:hasContact a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "has contact"@en ;
+    rdfs:comment "Contact person responsible for the TDoc"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:Contact .
+
+tdoc:relatedTo a owl:ObjectProperty ;
+    rdfs:label "related to"@en ;
+    rdfs:comment "Work Item(s) related to this TDoc"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:WorkItem .
+
+tdoc:belongsTo a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "belongs to"@en ;
+    rdfs:comment "Agenda Item under which this TDoc is discussed"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:AgendaItem .
+
+tdoc:targetRelease a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "target release"@en ;
+    rdfs:comment "Target 3GPP Release version for this TDoc or TechnicalReport"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (tdoc:Tdoc tdoc:TechnicalReport) ] ;
+    rdfs:range tdoc:Release .
+
+tdoc:presentedAt a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "presented at"@en ;
+    rdfs:comment "Meeting where this TDoc was presented/discussed"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:Meeting .
+
+tdoc:isRevisionOf a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "is revision of"@en ;
+    rdfs:comment "Previous version TDoc that this TDoc revises"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:Tdoc ;
+    owl:inverseOf tdoc:revisedTo .
+
+tdoc:revisedTo a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "revised to"@en ;
+    rdfs:comment "Newer version TDoc that revises this TDoc"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:Tdoc ;
+    owl:inverseOf tdoc:isRevisionOf .
+
+tdoc:replyTo a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "reply to"@en ;
+    rdfs:comment "TDoc that this TDoc replies to (typically for LS responses)"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:Tdoc ;
+    owl:inverseOf tdoc:replyIn .
+
+tdoc:replyIn a owl:ObjectProperty ;
+    rdfs:label "reply in"@en ;
+    rdfs:comment "TDoc that replies to this TDoc (복수 WG 답변 허용, Phase-1 Spec §10 P1-D09)"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range tdoc:Tdoc ;
+    owl:inverseOf tdoc:replyTo .
+
+# -----------------------------------------------------------------------------
+# CR-specific Object Property (1)
+# -----------------------------------------------------------------------------
+
+tdoc:modifies a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "modifies"@en ;
+    rdfs:comment "Specification that this CR modifies"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range tdoc:Spec .
+
+# -----------------------------------------------------------------------------
+# LS-specific Object Properties (4)
+# -----------------------------------------------------------------------------
+
+tdoc:sentTo a owl:ObjectProperty ;
+    rdfs:label "sent to"@en ;
+    rdfs:comment "Working Group(s) that receive this LS"@en ;
+    rdfs:domain tdoc:LS ;
+    rdfs:range tdoc:WorkingGroup .
+
+tdoc:ccTo a owl:ObjectProperty ;
+    rdfs:label "cc to"@en ;
+    rdfs:comment "Working Group(s) copied on this LS"@en ;
+    rdfs:domain tdoc:LS ;
+    rdfs:range tdoc:WorkingGroup .
+
+tdoc:originalLS a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "original LS"@en ;
+    rdfs:comment "Original LS document from another WG (for LS in)"@en ;
+    rdfs:domain tdoc:LS ;
+    rdfs:range tdoc:Tdoc .
+
+tdoc:originatedFrom a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "originated from"@en ;
+    rdfs:comment "Working Group that originated/sent this LS"@en ;
+    rdfs:domain tdoc:LS ;
+    rdfs:range tdoc:WorkingGroup .
+
+# -----------------------------------------------------------------------------
+# Summary-specific Object Property (1)
+# -----------------------------------------------------------------------------
+
+tdoc:moderatedBy a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "moderated by"@en ;
+    rdfs:comment "Company whose employee moderated this Summary discussion"@en ;
+    rdfs:domain tdoc:Summary ;
+    rdfs:range tdoc:Company .
+
+# -----------------------------------------------------------------------------
+# SessionNotes-specific Object Property (1)
+# -----------------------------------------------------------------------------
+
+tdoc:chairedBy a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "chaired by"@en ;
+    rdfs:comment "Company whose employee chaired this session"@en ;
+    rdfs:domain tdoc:SessionNotes ;
+    rdfs:range tdoc:Company .
+
+# -----------------------------------------------------------------------------
+# Resolution Object Properties (5) - Spec: Section 4.1
+# -----------------------------------------------------------------------------
+
+tdoc:references a owl:ObjectProperty ;
+    rdfs:label "references"@en ;
+    rdfs:comment "TDoc(s) referenced in this Resolution content"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range tdoc:Tdoc .
+
+tdoc:resolutionBelongsTo a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "resolution belongs to"@en ;
+    rdfs:comment "Agenda Item under which this Resolution was made"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range tdoc:AgendaItem ;
+    owl:inverseOf tdoc:hasResolutions .
+
+tdoc:madeAt a owl:ObjectProperty ;
+    rdfs:label "made at"@en ;
+    rdfs:comment "Meeting where this Resolution was made (1..*, COVID-19 이중 Meeting 허용, Phase-2 Spec §6 P2-D09)"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range tdoc:Meeting .
+
+tdoc:hasResolutions a owl:ObjectProperty ;
+    rdfs:label "has resolutions"@en ;
+    rdfs:comment "Resolutions made under this AgendaItem"@en ;
+    rdfs:domain tdoc:AgendaItem ;
+    rdfs:range tdoc:Resolution ;
+    owl:inverseOf tdoc:resolutionBelongsTo .
+
+tdoc:promotedTo a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "promoted to"@en ;
+    rdfs:comment "Agreement that this WorkingAssumption was promoted to"@en ;
+    rdfs:domain tdoc:WorkingAssumption ;
+    rdfs:range tdoc:Agreement .
+
+# -----------------------------------------------------------------------------
+# Embedded Content Object Properties (4) - Spec: Section 5, 6
+# -----------------------------------------------------------------------------
+
+tdoc:hasFigure a owl:ObjectProperty ;
+    rdfs:label "has figure"@en ;
+    rdfs:comment "Figure(s) referenced in this Resolution content"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range tdoc:Figure .
+
+tdoc:hasTable a owl:ObjectProperty ;
+    rdfs:label "has table"@en ;
+    rdfs:comment "Table(s) referenced in this Resolution content"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range tdoc:Table .
+
+tdoc:hasChart a owl:ObjectProperty ;
+    rdfs:label "has chart"@en ;
+    rdfs:comment "Chart(s) referenced in this Resolution content"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range tdoc:Chart .
+
+tdoc:containedIn a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "contained in"@en ;
+    rdfs:comment "Meeting that contains this Figure/Table/Chart"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( tdoc:Figure tdoc:Table tdoc:Chart ) ] ;
+    rdfs:range tdoc:Meeting .
+
+# -----------------------------------------------------------------------------
+# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5
+# -----------------------------------------------------------------------------
+
+tdoc:hasSection a owl:ObjectProperty ;
+    rdfs:label "has section"@en ;
+    rdfs:comment "Top-level Section(s) contained in this Spec"@en ;
+    rdfs:domain tdoc:Spec ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:belongsToSpec .
+
+tdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "belongs to spec"@en ;
+    rdfs:comment "Spec that this Section belongs to (exactly one)"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:Spec ;
+    owl:inverseOf tdoc:hasSection .
+
+tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
+    rdfs:label "has sub-section"@en ;
+    rdfs:comment "Direct child Section(s) of this Section"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:parentSection .
+
+tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;
+    rdfs:label "parent section"@en ;
+    rdfs:comment "Direct parent Section (exactly one, null for level-1)"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:hasSubSection .
+
+tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;
+    rdfs:label "references section"@en ;
+    rdfs:comment "Section(s) referenced by this Section's content (clause/subclause patterns)"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:referencedBySection .
+
+tdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;
+    rdfs:label "referenced by section"@en ;
+    rdfs:comment "Section(s) that reference this Section"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:referencesSection .
+
+tdoc:containsTable a owl:ObjectProperty ;
+    rdfs:label "contains table"@en ;
+    rdfs:comment "TSTable(s) contained in this Section"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:TSTable ;
+    owl:inverseOf tdoc:tableInSection .
+
+tdoc:containsFigure a owl:ObjectProperty ;
+    rdfs:label "contains figure"@en ;
+    rdfs:comment "TSFigure(s) contained in this Section"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:TSFigure ;
+    owl:inverseOf tdoc:figureInSection .
+
+tdoc:tableInSection a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "table in section"@en ;
+    rdfs:comment "Section that contains this TSTable (exactly one)"@en ;
+    rdfs:domain tdoc:TSTable ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:containsTable .
+
+tdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "figure in section"@en ;
+    rdfs:comment "Section that contains this TSFigure (exactly one)"@en ;
+    rdfs:domain tdoc:TSFigure ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:containsFigure .
+
+# -----------------------------------------------------------------------------
+# CR Document Object Properties (7) - Spec: tdoc_ontology_specs(CR).md Step 5
+# -----------------------------------------------------------------------------
+
+tdoc:hasCR a owl:ObjectProperty, owl:InverseFunctionalProperty ;
+    rdfs:label "has CR"@en ;
+    rdfs:comment "CR(s) included in this CRPack"@en ;
+    rdfs:domain tdoc:CRPack ;
+    rdfs:range tdoc:CR ;
+    owl:inverseOf tdoc:belongsToCRPack .
+
+tdoc:belongsToCRPack a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "belongs to CR pack"@en ;
+    rdfs:comment "CRPack that this CR belongs to (at most one)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range tdoc:CRPack ;
+    owl:inverseOf tdoc:hasCR .
+
+tdoc:affectsCoreSpec a owl:ObjectProperty ;
+    rdfs:label "affects core spec"@en ;
+    rdfs:comment "Core Specification(s) affected by this CR (from 'Other specs affected' section)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range tdoc:Spec .
+
+tdoc:affectsTestSpec a owl:ObjectProperty ;
+    rdfs:label "affects test spec"@en ;
+    rdfs:comment "Test Specification(s) affected by this CR (from 'Other specs affected' section)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range tdoc:Spec .
+
+tdoc:affectsOMSpec a owl:ObjectProperty ;
+    rdfs:label "affects OM spec"@en ;
+    rdfs:comment "O&M Specification(s) affected by this CR (from 'Other specs affected' section)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range tdoc:Spec .
+
+tdoc:modifiesSection a owl:ObjectProperty ;
+    rdfs:label "modifies section"@en ;
+    rdfs:comment "Section(s) modified by this CR (derived from clausesAffected field)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:modifiedByCR .
+
+tdoc:modifiedByCR a owl:ObjectProperty ;
+    rdfs:label "modified by CR"@en ;
+    rdfs:comment "CR(s) that modify this Section"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:CR ;
+    owl:inverseOf tdoc:modifiesSection .
+
+# -----------------------------------------------------------------------------
+# TR Document Object Properties (10) - Spec: tdoc_ontology_specs(TR).md
+# -----------------------------------------------------------------------------
+
+tdoc:hasTRImpact a owl:ObjectProperty, owl:InverseFunctionalProperty ;
+    rdfs:label "has TR impact"@en ;
+    rdfs:comment "TRImpact node(s) for this TR's influence on TS/Section"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range tdoc:TRImpact ;
+    owl:inverseOf tdoc:impactOfTR .
+
+tdoc:impactOfTR a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "impact of TR"@en ;
+    rdfs:comment "TR that this TRImpact belongs to"@en ;
+    rdfs:domain tdoc:TRImpact ;
+    rdfs:range tdoc:TechnicalReport ;
+    owl:inverseOf tdoc:hasTRImpact .
+
+tdoc:impactsSpec a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "impacts spec"@en ;
+    rdfs:comment "TS (Spec) affected by this TRImpact"@en ;
+    rdfs:domain tdoc:TRImpact ;
+    rdfs:range tdoc:Spec ;
+    owl:inverseOf tdoc:specImpactedBy .
+
+tdoc:specImpactedBy a owl:ObjectProperty ;
+    rdfs:label "spec impacted by"@en ;
+    rdfs:comment "TRImpact(s) that affect this Spec"@en ;
+    rdfs:domain tdoc:Spec ;
+    rdfs:range tdoc:TRImpact ;
+    owl:inverseOf tdoc:impactsSpec .
+
+tdoc:impactsSection a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "impacts section"@en ;
+    rdfs:comment "Section affected by this TRImpact (optional, for NewSection/ExtendSection)"@en ;
+    rdfs:domain tdoc:TRImpact ;
+    rdfs:range tdoc:Section ;
+    owl:inverseOf tdoc:sectionImpactedBy .
+
+tdoc:sectionImpactedBy a owl:ObjectProperty ;
+    rdfs:label "section impacted by"@en ;
+    rdfs:comment "TRImpact(s) that affect this Section"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range tdoc:TRImpact ;
+    owl:inverseOf tdoc:impactsSection .
+
+tdoc:referencesTR a owl:ObjectProperty, owl:IrreflexiveProperty ;
+    rdfs:label "references TR"@en ;
+    rdfs:comment "Other TR(s) referenced by this TR (from References section)"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range tdoc:TechnicalReport ;
+    owl:inverseOf tdoc:referencedByTR .
+
+tdoc:referencedByTR a owl:ObjectProperty, owl:IrreflexiveProperty ;
+    rdfs:label "referenced by TR"@en ;
+    rdfs:comment "TR(s) that reference this TR"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range tdoc:TechnicalReport ;
+    owl:inverseOf tdoc:referencesTR .
+
+tdoc:relatedToWorkItem a owl:ObjectProperty ;
+    rdfs:label "related to work item"@en ;
+    rdfs:comment "Work Item (SI/WI) related to this TR, identified by RP-xxxxxx in TR Scope"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range tdoc:WorkItem ;
+    owl:inverseOf tdoc:hasRelatedTR .
+
+tdoc:hasRelatedTR a owl:ObjectProperty ;
+    rdfs:label "has related TR"@en ;
+    rdfs:comment "TR(s) related to this Work Item (inverse of relatedToWorkItem)"@en ;
+    rdfs:domain tdoc:WorkItem ;
+    rdfs:range tdoc:TechnicalReport ;
+    owl:inverseOf tdoc:relatedToWorkItem .
+
+# =============================================================================
+# Data Properties (81 properties)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Tdoc Data Properties (9)
+# -----------------------------------------------------------------------------
+
+tdoc:tdocNumber a owl:DatatypeProperty ;
+    rdfs:label "TDoc number"@en ;
+    rdfs:comment "Unique identifier for the TDoc (e.g., R1-2500001). Format: R1-YYNNNNN"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:string .
+
+tdoc:title a owl:DatatypeProperty ;
+    rdfs:label "title"@en ;
+    rdfs:comment "Title of the TDoc"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:string .
+
+tdoc:abstract a owl:DatatypeProperty ;
+    rdfs:label "abstract"@en ;
+    rdfs:comment "Abstract/summary of the TDoc (often empty)"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:string .
+
+tdoc:type a owl:DatatypeProperty ;
+    rdfs:label "type"@en ;
+    rdfs:comment "Type of the TDoc. Values: discussion, CR, draftCR, pCR, LS out, LS in, other, report, agenda, Work Plan, draft TR, draft TS, response, WID new, SID new, WI summary"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:string .
+
+tdoc:status a owl:DatatypeProperty ;
+    rdfs:label "status"@en ;
+    rdfs:comment "Decision status. Values: approved, agreed, noted, revised, postponed, withdrawn, not treated, available, reserved, merged, not concluded, conditionally agreed, endorsed, not pursued, treated"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:string .
+
+tdoc:for a owl:DatatypeProperty ;
+    rdfs:label "for"@en ;
+    rdfs:comment "Purpose of the TDoc. Values: Decision, Discussion, Approval, Agreement, Endorsement, Information, Presentation, Action"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:string .
+
+tdoc:reservationDate a owl:DatatypeProperty ;
+    rdfs:label "reservation date"@en ;
+    rdfs:comment "Date/time when the TDoc number was reserved"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:dateTime .
+
+tdoc:uploadedDate a owl:DatatypeProperty ;
+    rdfs:label "uploaded date"@en ;
+    rdfs:comment "Date/time when the TDoc file was uploaded"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:dateTime .
+
+tdoc:secretaryRemarks a owl:DatatypeProperty ;
+    rdfs:label "secretary remarks"@en ;
+    rdfs:comment "Notes from the meeting secretary (e.g., 'Late contribution')"@en ;
+    rdfs:domain tdoc:Tdoc ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# CR-specific Data Properties (8)
+# -----------------------------------------------------------------------------
+
+tdoc:crNumber a owl:DatatypeProperty ;
+    rdfs:label "CR number"@en ;
+    rdfs:comment "Official CR number (e.g., 0693). DraftCR and pCR may not have this."@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:string .
+
+tdoc:crCategory a owl:DatatypeProperty ;
+    rdfs:label "CR category"@en ;
+    rdfs:comment "CR category. Values: F (Fix), A (Mirror), B (Addition), C (Functional modification), D (Editorial), E (Early implementation)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:string .
+
+tdoc:crRevision a owl:DatatypeProperty ;
+    rdfs:label "CR revision"@en ;
+    rdfs:comment "CR revision number (1-9). Indicates how many times this CR has been revised."@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:string .
+
+tdoc:clausesAffected a owl:DatatypeProperty ;
+    rdfs:label "clauses affected"@en ;
+    rdfs:comment "Specification clauses affected by this CR (e.g., '5.3.1, 5.3.2')"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:string .
+
+tdoc:tsgCRPack a owl:DatatypeProperty ;
+    rdfs:label "TSG CR pack"@en ;
+    rdfs:comment "TSG CR Pack number (e.g., RP-250233) for approved CRs"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:string .
+
+tdoc:affectsUICC a owl:DatatypeProperty ;
+    rdfs:label "affects UICC"@en ;
+    rdfs:comment "Whether this CR affects UICC (Universal Integrated Circuit Card)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:boolean .
+
+tdoc:affectsME a owl:DatatypeProperty ;
+    rdfs:label "affects ME"@en ;
+    rdfs:comment "Whether this CR affects ME (Mobile Equipment)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:boolean .
+
+tdoc:affectsRAN a owl:DatatypeProperty ;
+    rdfs:label "affects RAN"@en ;
+    rdfs:comment "Whether this CR affects RAN (Radio Access Network)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:boolean .
+
+tdoc:affectsCN a owl:DatatypeProperty ;
+    rdfs:label "affects CN"@en ;
+    rdfs:comment "Whether this CR affects CN (Core Network)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:boolean .
+
+# -----------------------------------------------------------------------------
+# LS-specific Data Property (1)
+# -----------------------------------------------------------------------------
+
+tdoc:direction a owl:DatatypeProperty ;
+    rdfs:label "direction"@en ;
+    rdfs:comment "LS direction. Values: in (received), out (sent)"@en ;
+    rdfs:domain tdoc:LS ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# Meeting Data Properties (4)
+# -----------------------------------------------------------------------------
+
+tdoc:meetingNumber a owl:DatatypeProperty ;
+    rdfs:label "meeting number"@en ;
+    rdfs:comment "Meeting identifier (e.g., RAN1#120)"@en ;
+    rdfs:domain tdoc:Meeting ;
+    rdfs:range xsd:string .
+
+tdoc:workingGroup a owl:DatatypeProperty ;
+    rdfs:label "working group"@en ;
+    rdfs:comment "Working Group hosting the meeting (e.g., RAN1)"@en ;
+    rdfs:domain tdoc:Meeting ;
+    rdfs:range xsd:string .
+
+tdoc:canonicalMeetingNumber a owl:DatatypeProperty ;
+    rdfs:label "canonical meeting number"@en ;
+    rdfs:comment "Normalized meeting number without -e suffix for COVID e-meeting matching (e.g., RAN1#101-e → RAN1#101). Used for Resolution linking."@en ;
+    rdfs:domain tdoc:Meeting ;
+    rdfs:range xsd:string .
+
+tdoc:meetingNumberInt a owl:DatatypeProperty ;
+    rdfs:label "meeting number integer"@en ;
+    rdfs:comment "Numeric part of meeting number for proper sorting (e.g., RAN1#122 → 122, RAN1#122b → 122). Extracted via regex #(\\d+)."@en ;
+    rdfs:domain tdoc:Meeting ;
+    rdfs:range xsd:integer .
+
+# -----------------------------------------------------------------------------
+# Company Data Properties (2)
+# -----------------------------------------------------------------------------
+
+tdoc:companyName a owl:DatatypeProperty ;
+    rdfs:label "company name"@en ;
+    rdfs:comment "Canonical name of the company/organization"@en ;
+    rdfs:domain tdoc:Company ;
+    rdfs:range xsd:string .
+
+tdoc:aliases a owl:DatatypeProperty ;
+    rdfs:label "aliases"@en ;
+    rdfs:comment "Alternative names/spellings for this company"@en ;
+    rdfs:domain tdoc:Company ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# Contact Data Properties (2)
+# -----------------------------------------------------------------------------
+
+tdoc:contactName a owl:DatatypeProperty ;
+    rdfs:label "contact name"@en ;
+    rdfs:comment "Name of the contact person"@en ;
+    rdfs:domain tdoc:Contact ;
+    rdfs:range xsd:string .
+
+tdoc:contactId a owl:DatatypeProperty ;
+    rdfs:label "contact ID"@en ;
+    rdfs:comment "3GPP system unique ID for the contact"@en ;
+    rdfs:domain tdoc:Contact ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# WorkItem Data Property (1)
+# -----------------------------------------------------------------------------
+
+tdoc:workItemCode a owl:DatatypeProperty ;
+    rdfs:label "work item code"@en ;
+    rdfs:comment "Work Item code name (e.g., NR_MIMO_Ph5-Core)"@en ;
+    rdfs:domain tdoc:WorkItem ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# AgendaItem Data Properties (2)
+# -----------------------------------------------------------------------------
+
+tdoc:agendaNumber a owl:DatatypeProperty ;
+    rdfs:label "agenda number"@en ;
+    rdfs:comment "Hierarchical agenda number (e.g., 9.1, 9.1.1)"@en ;
+    rdfs:domain tdoc:AgendaItem ;
+    rdfs:range xsd:string .
+
+tdoc:agendaDescription a owl:DatatypeProperty ;
+    rdfs:label "agenda description"@en ;
+    rdfs:comment "Description/title of the agenda item"@en ;
+    rdfs:domain tdoc:AgendaItem ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# Release Data Property (1)
+# -----------------------------------------------------------------------------
+
+tdoc:releaseName a owl:DatatypeProperty ;
+    rdfs:label "release name"@en ;
+    rdfs:comment "3GPP Release version name (e.g., Rel-18, Rel-19)"@en ;
+    rdfs:domain tdoc:Release ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# Spec Data Properties (3)
+# -----------------------------------------------------------------------------
+
+tdoc:specNumber a owl:DatatypeProperty ;
+    rdfs:label "spec number"@en ;
+    rdfs:comment "Specification number (e.g., 38.212)"@en ;
+    rdfs:domain tdoc:Spec ;
+    rdfs:range xsd:string .
+
+tdoc:specVersion a owl:DatatypeProperty ;
+    rdfs:label "spec version"@en ;
+    rdfs:comment "Version of the specification (e.g., 18.5.0)"@en ;
+    rdfs:domain tdoc:Spec ;
+    rdfs:range xsd:string .
+
+tdoc:specTitle a owl:DatatypeProperty ;
+    rdfs:label "spec title"@en ;
+    rdfs:comment "Title of the specification (e.g., 'Physical channels and modulation')"@en ;
+    rdfs:domain tdoc:Spec ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# WorkingGroup Data Property (1)
+# -----------------------------------------------------------------------------
+
+tdoc:wgName a owl:DatatypeProperty ;
+    rdfs:label "WG name"@en ;
+    rdfs:comment "Working Group name (e.g., RAN1, SA2)"@en ;
+    rdfs:domain tdoc:WorkingGroup ;
+    rdfs:range xsd:string .
+
+# =============================================================================
+# Phase-2: Resolution/Role Data Properties (9 properties)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Summary Data Properties (2)
+# -----------------------------------------------------------------------------
+
+tdoc:summaryType a owl:DatatypeProperty ;
+    rdfs:label "summary type"@en ;
+    rdfs:comment "Type of summary: FL (Feature Lead) or Moderator"@en ;
+    rdfs:domain tdoc:Summary ;
+    rdfs:range xsd:string .
+
+tdoc:roundNumber a owl:DatatypeProperty ;
+    rdfs:label "round number"@en ;
+    rdfs:comment "Round number for the summary (0, 1, 2, ...)"@en ;
+    rdfs:domain tdoc:Summary ;
+    rdfs:range xsd:integer .
+
+# -----------------------------------------------------------------------------
+# Resolution Data Properties (4) - Spec: Section 4.1
+# -----------------------------------------------------------------------------
+
+tdoc:resolutionId a owl:DatatypeProperty ;
+    rdfs:label "resolution ID"@en ;
+    rdfs:comment "Unique identifier for the resolution (e.g., AGR-112-8.1-001)"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range xsd:string .
+
+tdoc:content a owl:DatatypeProperty ;
+    rdfs:label "content"@en ;
+    rdfs:comment "Resolution text with equations replaced by [EQUATION] markers. For Text-to-Cypher search (Spec §8)."@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range xsd:string .
+
+tdoc:sessionContext a owl:DatatypeProperty ;
+    rdfs:label "session context"@en ;
+    rdfs:comment "Session information (e.g., 'Friday session', 'Online')"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range xsd:string .
+
+tdoc:note a owl:DatatypeProperty ;
+    rdfs:label "note"@en ;
+    rdfs:comment "Additional note attached to the resolution"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# Agreement Data Properties (2)
+# -----------------------------------------------------------------------------
+
+tdoc:hasFFS a owl:DatatypeProperty ;
+    rdfs:label "has FFS"@en ;
+    rdfs:comment "Whether the agreement contains 'For Further Study' marker"@en ;
+    rdfs:domain tdoc:Agreement ;
+    rdfs:range xsd:boolean .
+
+tdoc:hasTBD a owl:DatatypeProperty ;
+    rdfs:label "has TBD"@en ;
+    rdfs:comment "Whether the agreement contains 'To Be Determined' marker"@en ;
+    rdfs:domain tdoc:Agreement ;
+    rdfs:range xsd:boolean .
+
+# -----------------------------------------------------------------------------
+# Conclusion Data Property (1)
+# -----------------------------------------------------------------------------
+
+tdoc:hasConsensus a owl:DatatypeProperty ;
+    rdfs:label "has consensus"@en ;
+    rdfs:comment "Whether consensus was reached for this conclusion"@en ;
+    rdfs:domain tdoc:Conclusion ;
+    rdfs:range xsd:boolean .
+
+# -----------------------------------------------------------------------------
+# Reference Class Data Property Extensions
+# Note: Spec 미정의 9건 삭제 (location, startDate, endDate, isVirtual,
+#       companyId, email, wiTitle, specType, groupId) - 2026-02-13
+# Note: meetingId 제거됨 (meetingNumber와 중복, Spec에 없음) - 2026-02-05
+# Note: releaseId 제거됨 (releaseName과 중복, Spec에 없음) - 2026-02-14
+# -----------------------------------------------------------------------------
+
+# =============================================================================
+# Phase-2: Embedded Content Data Properties (13 properties)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Resolution Extension (2) - Spec: Section 5.1
+# -----------------------------------------------------------------------------
+
+tdoc:contentWithEquations a owl:DatatypeProperty ;
+    rdfs:label "content with equations"@en ;
+    rdfs:comment "Resolution content with OMML equations converted to inline LaTeX ($...$). For LLM answer generation and UI rendering (Spec §8)."@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range xsd:string .
+
+tdoc:sequence a owl:DatatypeProperty ;
+    rdfs:label "sequence"@en ;
+    rdfs:comment "Order within the same Agenda Item (1-based)"@en ;
+    rdfs:domain tdoc:Resolution ;
+    rdfs:range xsd:integer .
+
+# -----------------------------------------------------------------------------
+# Figure Data Properties (4) - Spec: Section 5.2
+# -----------------------------------------------------------------------------
+
+tdoc:figureId a owl:DatatypeProperty ;
+    rdfs:label "figure ID"@en ;
+    rdfs:comment "Figure unique identifier (e.g., FIG-112-001 for Report Figure, 38.214-F5-1 for TSFigure)"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( tdoc:Figure tdoc:TSFigure ) ] ;
+    rdfs:range xsd:string .
+
+tdoc:figureNumber a owl:DatatypeProperty ;
+    rdfs:label "figure number"@en ;
+    rdfs:comment "Original figure number from caption (e.g., Figure 1 for Report, 5-1 for TSFigure)"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( tdoc:Figure tdoc:TSFigure ) ] ;
+    rdfs:range xsd:string .
+
+# Figure also uses shared properties: caption, filePath (defined below)
+
+# -----------------------------------------------------------------------------
+# Table Data Properties (3) - Spec: Section 5.2
+# -----------------------------------------------------------------------------
+
+tdoc:tableId a owl:DatatypeProperty ;
+    rdfs:label "table ID"@en ;
+    rdfs:comment "Table unique identifier (e.g., TBL-112-001 for Report Table, 38.214-T5.1.3.2-1 for TSTable)"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( tdoc:Table tdoc:TSTable ) ] ;
+    rdfs:range xsd:string .
+
+tdoc:tableNumber a owl:DatatypeProperty ;
+    rdfs:label "table number"@en ;
+    rdfs:comment "Original table number from caption (e.g., Table 7.8-1 for Report, 5.1.3.2-1 for TSTable)"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( tdoc:Table tdoc:TSTable ) ] ;
+    rdfs:range xsd:string .
+
+tdoc:equations a owl:DatatypeProperty ;
+    rdfs:label "equations"@en ;
+    rdfs:comment "LaTeX equations found within the table cells (multi-valued)"@en ;
+    rdfs:domain tdoc:Table ;
+    rdfs:range xsd:string .
+
+# Table also uses shared properties: caption, filePath (defined below)
+
+# -----------------------------------------------------------------------------
+# Chart Data Properties (4) - Spec: Section 5.3
+# -----------------------------------------------------------------------------
+
+tdoc:chartId a owl:DatatypeProperty ;
+    rdfs:label "chart ID"@en ;
+    rdfs:comment "Chart unique identifier (e.g., CHT-114b-001)"@en ;
+    rdfs:domain tdoc:Chart ;
+    rdfs:range xsd:string .
+
+tdoc:chartPath a owl:DatatypeProperty ;
+    rdfs:label "chart path"@en ;
+    rdfs:comment "Path to the extracted chart XML file"@en ;
+    rdfs:domain tdoc:Chart ;
+    rdfs:range xsd:string .
+
+tdoc:chartType a owl:DatatypeProperty ;
+    rdfs:label "chart type"@en ;
+    rdfs:comment "Chart type extracted from XML (scatterChart, lineChart, barChart, pieChart, etc.)"@en ;
+    rdfs:domain tdoc:Chart ;
+    rdfs:range xsd:string .
+
+tdoc:chartNumber a owl:DatatypeProperty ;
+    rdfs:label "chart number"@en ;
+    rdfs:comment "Original number from caption (e.g., 6.3.2-1)"@en ;
+    rdfs:domain tdoc:Chart ;
+    rdfs:range xsd:string .
+
+# Chart also uses shared property: caption (defined below)
+
+# -----------------------------------------------------------------------------
+# Shared Data Properties (2) - Spec: Section 5.2, 5.3
+# -----------------------------------------------------------------------------
+
+tdoc:caption a owl:DatatypeProperty ;
+    rdfs:label "caption"@en ;
+    rdfs:comment "Caption text for Figure, Table, or Chart (optional for Figure/Table, required for Chart)"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( tdoc:Figure tdoc:Table tdoc:Chart ) ] ;
+    rdfs:range xsd:string .
+
+tdoc:filePath a owl:DatatypeProperty ;
+    rdfs:label "file path"@en ;
+    rdfs:comment "Path to the extracted file (image for Figure, HTML for Table)"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( tdoc:Figure tdoc:Table ) ] ;
+    rdfs:range xsd:string .
+
+# =============================================================================
+# Phase-3: TS Structure Data Properties (7 new properties)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Section Data Properties (5) - Spec: tdoc_ontology_specs(TS).md Step 5
+# -----------------------------------------------------------------------------
+
+tdoc:sectionId a owl:DatatypeProperty ;
+    rdfs:label "section ID"@en ;
+    rdfs:comment "Section unique identifier (pattern: {specNumber}-{sectionNumber}, e.g., 38.214-5.1.3.2)"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range xsd:string .
+
+tdoc:sectionNumber a owl:DatatypeProperty ;
+    rdfs:label "section number"@en ;
+    rdfs:comment "Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\.[0-9]+)*$"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range xsd:string .
+
+tdoc:sectionTitle a owl:DatatypeProperty ;
+    rdfs:label "section title"@en ;
+    rdfs:comment "Section title text from heading (excluding sectionNumber)"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range xsd:string .
+
+tdoc:level a owl:DatatypeProperty ;
+    rdfs:label "level"@en ;
+    rdfs:comment "Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range xsd:integer .
+
+tdoc:isVoid a owl:DatatypeProperty ;
+    rdfs:label "is void"@en ;
+    rdfs:comment "Whether this section contains only 'Void' text (true) or has real content (false)"@en ;
+    rdfs:domain tdoc:Section ;
+    rdfs:range xsd:boolean .
+
+# -----------------------------------------------------------------------------
+# TSTable Data Property (1) - Spec: tdoc_ontology_specs(TS).md Step 5
+# Note: tableId, tableNumber are shared with Table (domain expanded above)
+# -----------------------------------------------------------------------------
+
+tdoc:tableCaption a owl:DatatypeProperty ;
+    rdfs:label "table caption"@en ;
+    rdfs:comment "TS table caption text from TH-style paragraph (e.g., 'Supported CSI-RS resource configurations')"@en ;
+    rdfs:domain tdoc:TSTable ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# TSFigure Data Property (1) - Spec: tdoc_ontology_specs(TS).md Step 5
+# Note: figureId, figureNumber are shared with Figure (domain expanded above)
+# -----------------------------------------------------------------------------
+
+tdoc:figureCaption a owl:DatatypeProperty ;
+    rdfs:label "figure caption"@en ;
+    rdfs:comment "TS figure caption text (e.g., 'PDSCH resource allocation procedure')"@en ;
+    rdfs:domain tdoc:TSFigure ;
+    rdfs:range xsd:string .
+
+# =============================================================================
+# Phase-4: CR Document Data Properties (5 new properties)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# CRPack Data Properties (2) - Spec: tdoc_ontology_specs(CR).md Step 5
+# -----------------------------------------------------------------------------
+
+tdoc:crPackId a owl:DatatypeProperty ;
+    rdfs:label "CR pack ID"@en ;
+    rdfs:comment "CR Pack unique identifier from Cover Sheet directory name (e.g., RP-250233)"@en ;
+    rdfs:domain tdoc:CRPack ;
+    rdfs:range xsd:string .
+
+tdoc:tsgMeeting a owl:DatatypeProperty ;
+    rdfs:label "TSG meeting"@en ;
+    rdfs:comment "TSG plenary meeting where this CR Pack was submitted (e.g., RAN#103)"@en ;
+    rdfs:domain tdoc:CRPack ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# CR Extension Data Properties (3) - Spec: tdoc_ontology_specs(CR).md Step 5
+# -----------------------------------------------------------------------------
+
+tdoc:reasonForChange a owl:DatatypeProperty ;
+    rdfs:label "reason for change"@en ;
+    rdfs:comment "Reason why this CR change is needed (from CR document 'Reason for change' field)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:string .
+
+tdoc:summaryOfChange a owl:DatatypeProperty ;
+    rdfs:label "summary of change"@en ;
+    rdfs:comment "Summary of the changes made by this CR (from CR document 'Summary of change' field)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:string .
+
+tdoc:consequencesIfNotApproved a owl:DatatypeProperty ;
+    rdfs:label "consequences if not approved"@en ;
+    rdfs:comment "Consequences if this CR is not approved (from CR document 'Consequences if not approved' field)"@en ;
+    rdfs:domain tdoc:CR ;
+    rdfs:range xsd:string .
+
+# =============================================================================
+# Phase-5: TR Document Data Properties (12 new properties)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# TechnicalReport Data Properties (8) - Spec: tdoc_ontology_specs(TR).md
+# -----------------------------------------------------------------------------
+
+tdoc:trNumber a owl:DatatypeProperty ;
+    rdfs:label "TR number"@en ;
+    rdfs:comment "Technical Report number (e.g., 38.769, 38.901)"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range xsd:string .
+
+tdoc:trTitle a owl:DatatypeProperty ;
+    rdfs:label "TR title"@en ;
+    rdfs:comment "Full title of the Technical Report (e.g., 'Study on Ambient IoT')"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range xsd:string .
+
+tdoc:trVersion a owl:DatatypeProperty ;
+    rdfs:label "TR version"@en ;
+    rdfs:comment "Version of the TR (e.g., 2.0.0, 18.0.0)"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range xsd:string .
+
+tdoc:trStatus a owl:DatatypeProperty ;
+    rdfs:label "TR status"@en ;
+    rdfs:comment "Status of the TR. Values: Draft (v0.x.x), Completed (vX.0.0), Living (vX.Y.Z continuous updates)"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range xsd:string .
+
+tdoc:scope a owl:DatatypeProperty ;
+    rdfs:label "scope"@en ;
+    rdfs:comment "Scope/objectives of the TR research (from Scope section, 1-10 sentences)"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range xsd:string .
+
+tdoc:conclusions a owl:DatatypeProperty ;
+    rdfs:label "conclusions"@en ;
+    rdfs:comment "Research conclusions of the TR (from Conclusions section, 1-10 sentences)"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range xsd:string .
+
+tdoc:studyItemRpNumber a owl:DatatypeProperty ;
+    rdfs:label "study item RP number"@en ;
+    rdfs:comment "Study Item RP number from TR Scope (pattern: RP-xxxxxx, e.g., RP-213599)"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range xsd:string .
+
+tdoc:workItemRpNumber a owl:DatatypeProperty ;
+    rdfs:label "work item RP number"@en ;
+    rdfs:comment "Work Item RP number from TR Scope (pattern: RP-xxxxxx, e.g., RP-213599)"@en ;
+    rdfs:domain tdoc:TechnicalReport ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# TRImpact Data Properties (4) - Spec: tdoc_ontology_specs(TR).md
+# -----------------------------------------------------------------------------
+
+tdoc:trImpactId a owl:DatatypeProperty ;
+    rdfs:label "TR impact ID"@en ;
+    rdfs:comment "Unique identifier for TRImpact (e.g., 38.769-38.291, 38.885-38.211-S8)"@en ;
+    rdfs:domain tdoc:TRImpact ;
+    rdfs:range xsd:string .
+
+tdoc:impactType a owl:DatatypeProperty ;
+    rdfs:label "impact type"@en ;
+    rdfs:comment "Type of impact on TS. Values: NewTS (new spec created), NewSection (new section added), ExtendSection (existing section extended), NoChange (reference only)"@en ;
+    rdfs:domain tdoc:TRImpact ;
+    rdfs:range xsd:string .
+
+tdoc:affectedSection a owl:DatatypeProperty ;
+    rdfs:label "affected section"@en ;
+    rdfs:comment "Section number affected by this TR impact (e.g., 5.2, 8.1)"@en ;
+    rdfs:domain tdoc:TRImpact ;
+    rdfs:range xsd:string .
+
+tdoc:impactDescription a owl:DatatypeProperty ;
+    rdfs:label "impact description"@en ;
+    rdfs:comment "Description of how the TR impacts the TS/Section"@en ;
+    rdfs:domain tdoc:TRImpact ;
+    rdfs:range xsd:string .
+
+# =============================================================================
+# End of SPECTRA ontology v6.1.1
+# =============================================================================

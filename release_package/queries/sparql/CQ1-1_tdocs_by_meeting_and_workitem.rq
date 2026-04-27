@@ -1,0 +1,25 @@
+# SPARQL translation of CQ1-1 — Phase 1
+# "TDocs presented at a given meeting that are related to a specific Work Item"
+# This is a direct translation of the Cypher query in
+# ../cypher/CQ1-1.cypher, under the assumption that the TTL has been
+# instantiated with a SPECTRA-conformant graph.
+
+PREFIX tdoc: <https://w3id.org/spectra#>
+PREFIX dc:   <http://purl.org/dc/elements/1.1/>
+
+SELECT ?tdocNumber ?title ?type ?status
+WHERE {
+  ?meeting a tdoc:Meeting ;
+           tdoc:meetingNumber "RAN1#120" .
+  ?t a tdoc:Tdoc ;
+     tdoc:presentedAt ?meeting ;
+     tdoc:relatedTo ?wi ;
+     tdoc:tdocNumber ?tdocNumber ;
+     dc:title ?title ;
+     tdoc:type ?type ;
+     tdoc:status ?status .
+  ?wi a tdoc:WorkItem ;
+      tdoc:workItemCode "NR_eMIMO-Core" .
+}
+ORDER BY DESC(?tdocNumber)
+LIMIT 10

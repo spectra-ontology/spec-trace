@@ -1,0 +1,51 @@
+@prefix tdoc: <https://w3id.org/spectra#> .
+@prefix dc:   <http://purl.org/dc/elements/1.1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:   <http://example.org/spectra/synthetic/> .
+
+# Synthetic instantiation snippet illustrating how a realistic 4-hop chain
+#   Tdoc -> Resolution -> CR -> TS Section
+# is expressed using the SPECTRA ontology. All identifiers below are fictional
+# and meant only to demonstrate the schema shape; they are not drawn from
+# actual 3GPP data.
+
+ex:RAN1_120 a tdoc:Meeting ;
+    tdoc:meetingNumber "RAN1#120" ;
+    tdoc:meetingNumberInt 120 ;
+    dc:date "2024-11-18"^^xsd:date .
+
+ex:Company_AcmeTelecom a tdoc:Company ;
+    a foaf:Organization ;
+    dc:title "Acme Telecom" .
+
+ex:Tdoc_R1-2499999 a tdoc:Tdoc ;
+    tdoc:tdocNumber "R1-2499999" ;
+    dc:title "Discussion on PTRS enhancements for NR" ;
+    tdoc:type "discussion" ;
+    tdoc:status "noted" ;
+    tdoc:presentedAt ex:RAN1_120 ;
+    tdoc:submittedBy ex:Company_AcmeTelecom .
+
+ex:Agreement_A1 a tdoc:Agreement ;
+    tdoc:resolutionId "A1-RAN1#120" ;
+    tdoc:madeAt ex:RAN1_120 ;
+    dc:description "PTRS insertion density is configured per UE." ;
+    tdoc:references ex:Tdoc_R1-2499999 .
+
+ex:Spec_38_211 a tdoc:Spec ;
+    tdoc:specNumber "38.211" ;
+    dc:title "Physical channels and modulation" .
+
+ex:Section_5_1_3 a tdoc:Section ;
+    tdoc:sectionNumber "5.1.3" ;
+    tdoc:belongsToSpec ex:Spec_38_211 .
+
+ex:CR_R1-2500594 a tdoc:CR ;
+    tdoc:tdocNumber "R1-2500594" ;
+    dc:title "Draft CR on PTRS in TS 38.211" ;
+    tdoc:reasonForChange "Align PTRS density with RAN1#120 agreement" ;
+    tdoc:modifies ex:Spec_38_211 ;
+    tdoc:modifiesSection ex:Section_5_1_3 ;
+    tdoc:submittedBy ex:Company_AcmeTelecom ;
+    tdoc:presentedAt ex:RAN1_120 .

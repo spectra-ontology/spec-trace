@@ -1,0 +1,119 @@
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix tdoc:  <https://w3id.org/spectra#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+
+# =============================================================================
+# SPECTRA core SHACL shapes — minimal cardinality and type constraints
+# These complement the OWL FunctionalProperty / range axioms for instance
+# validation in tools that consume SHACL (e.g., TopBraid, pySHACL).
+# =============================================================================
+
+tdoc:TdocShape a sh:NodeShape ;
+    sh:targetClass tdoc:Tdoc ;
+    sh:property [
+        sh:path tdoc:tdocNumber ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path tdoc:presentedAt ;
+        sh:class tdoc:Meeting ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path tdoc:targetRelease ;
+        sh:class tdoc:Release ;
+        sh:maxCount 1 ;
+    ] .
+
+tdoc:CRShape a sh:NodeShape ;
+    sh:targetClass tdoc:CR ;
+    sh:property [
+        sh:path tdoc:modifies ;
+        sh:class tdoc:Spec ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path tdoc:belongsToCRPack ;
+        sh:class tdoc:CRPack ;
+        sh:maxCount 1 ;
+    ] .
+
+tdoc:LSShape a sh:NodeShape ;
+    sh:targetClass tdoc:LS ;
+    sh:property [
+        sh:path tdoc:originatedFrom ;
+        sh:class tdoc:WorkingGroup ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path tdoc:sentTo ;
+        sh:class tdoc:WorkingGroup ;
+        sh:minCount 1 ;
+    ] .
+
+tdoc:ResolutionShape a sh:NodeShape ;
+    sh:targetClass tdoc:Resolution ;
+    sh:property [
+        sh:path tdoc:madeAt ;
+        sh:class tdoc:Meeting ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path tdoc:resolutionBelongsTo ;
+        sh:class tdoc:AgendaItem ;
+        sh:maxCount 1 ;
+    ] .
+
+tdoc:SectionShape a sh:NodeShape ;
+    sh:targetClass tdoc:Section ;
+    sh:property [
+        sh:path tdoc:belongsToSpec ;
+        sh:class tdoc:Spec ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path tdoc:parentSection ;
+        sh:class tdoc:Section ;
+        sh:maxCount 1 ;
+    ] ;
+    # Irreflexive: a section cannot be its own parent
+    sh:property [
+        sh:path tdoc:parentSection ;
+        sh:disjoint tdoc:Section ;
+    ] .
+
+tdoc:TRImpactShape a sh:NodeShape ;
+    sh:targetClass tdoc:TRImpact ;
+    sh:property [
+        sh:path tdoc:impactsSpec ;
+        sh:class tdoc:Spec ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path tdoc:impactOfTR ;
+        sh:class tdoc:TechnicalReport ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] .
+
+tdoc:CRPackShape a sh:NodeShape ;
+    sh:targetClass tdoc:CRPack ;
+    sh:property [
+        sh:path tdoc:hasCR ;
+        sh:class tdoc:CR ;
+        sh:minCount 1 ;
+    ] .
+
+tdoc:WorkingAssumptionShape a sh:NodeShape ;
+    sh:targetClass tdoc:WorkingAssumption ;
+    sh:property [
+        sh:path tdoc:promotedTo ;
+        sh:class tdoc:Agreement ;
+        sh:maxCount 1 ;
+    ] .

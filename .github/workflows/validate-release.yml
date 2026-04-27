@@ -1,0 +1,78 @@
+name: validate-release
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'release_package/**'
+      - 'ontology/tdoc-ontology.ttl'
+      - 'scripts/paper/**'
+      - '.github/workflows/validate-release.yml'
+  pull_request:
+    paths:
+      - 'release_package/**'
+      - 'ontology/tdoc-ontology.ttl'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install validation dependencies
+        run: |
+          pip install --quiet "rdflib>=6.0,<8" "pyshacl>=0.20" "pylode<3"
+
+      - name: Parse ontology TTL (rdflib)
+        run: |
+          python3 -c "
+          import rdflib
+          g = rdflib.Graph()
+          g.parse('release_package/ontology/spectra.ttl', format='turtle')
+          print(f'release TTL triples: {len(g)}')
+          assert len(g) > 800, 'Suspiciously low triple count'
+          "
+
+      - name: Parse SHACL shapes
+        run: |
+          python3 -c "
+          import rdflib
+          g = rdflib.Graph()
+          g.parse('release_package/shapes/spectra-core.shacl.ttl', format='turtle')
+          print(f'SHACL triples: {len(g)}')
+          "
+
+      - name: Validate snippet against SHACL shapes
+        run: |
+          pyshacl -s release_package/shapes/spectra-core.shacl.ttl \
+                  release_package/examples/instantiation_snippet.ttl
+
+      - name: Validate SPARQL syntax
+        run: |
+          python3 -c "
+          from rdflib.plugins.sparql import prepareQuery
+          import glob, sys
+          fail = 0
+          for f in sorted(glob.glob('release_package/queries/sparql/*.rq')):
+              try:
+                  prepareQuery(open(f).read())
+                  print(f'OK   {f}')
+              except Exception as e:
+                  print(f'FAIL {f}: {e}')
+                  fail += 1
+          sys.exit(fail)
+          "
+
+      - name: Predicate consistency audit (if script available)
+        run: |
+          if [ -f scripts/paper/audit_predicate_consistency.py ]; then
+            python3 scripts/paper/audit_predicate_consistency.py | tail -10
+          else
+            echo "Audit script not in repo (kept private)."
+          fi

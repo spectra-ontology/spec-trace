@@ -1,0 +1,20 @@
+# SPARQL translation of CQ2-1 — Phase 2
+# "Agreements recorded at a given meeting under a given agenda item"
+
+PREFIX tdoc: <https://w3id.org/spectra#>
+PREFIX dc:   <http://purl.org/dc/elements/1.1/>
+
+SELECT ?resolutionId ?description
+WHERE {
+  ?m a tdoc:Meeting ;
+     tdoc:meetingNumber ?meetingNumber .
+  ?ai a tdoc:AgendaItem ;
+      tdoc:agendaNumber ?agendaNumber .
+  ?r a tdoc:Agreement ;
+     tdoc:madeAt ?m ;
+     tdoc:belongsTo ?ai ;
+     tdoc:resolutionId ?resolutionId ;
+     dc:description ?description .
+  FILTER (?meetingNumber = "RAN1#120" && ?agendaNumber = "9.1.1")
+}
+ORDER BY ?resolutionId
