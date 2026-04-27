@@ -1,0 +1,25 @@
+# Multi-hop traceability: which TDoc(s) motivated the current text of TS 38.214 §5.1.3?
+# Walks: Section <- modifiesSection <- CR -> presentedAt -> Meeting <- madeAt <- Agreement
+#        <- promotedTo <- WorkingAssumption -> references -> Tdoc.
+# Mirrors the Cypher version in queries/cypher/MULTI_HOP_traceability.cypher.
+
+PREFIX tdoc: <https://w3id.org/spectra#>
+PREFIX dc:   <http://purl.org/dc/elements/1.1/>
+
+SELECT DISTINCT ?tdocNumber ?title ?meetingNumber
+WHERE {
+  ?sec a tdoc:Section ;
+       tdoc:sectionId "38.214-5.1.3" .
+  ?cr  a tdoc:CR ;
+       tdoc:modifiesSection ?sec ;
+       tdoc:presentedAt ?meeting .
+  ?ag  a tdoc:Agreement ;
+       tdoc:madeAt ?meeting .
+  OPTIONAL { ?wa tdoc:promotedTo ?ag ; tdoc:references ?t . }
+  OPTIONAL { ?ag tdoc:references ?t . }
+  ?t   a tdoc:Tdoc ;
+       tdoc:tdocNumber ?tdocNumber ;
+       dc:title ?title .
+  ?meeting tdoc:meetingNumber ?meetingNumber .
+}
+ORDER BY ?meetingNumber ?tdocNumber

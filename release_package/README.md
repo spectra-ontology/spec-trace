@@ -32,8 +32,8 @@ release_package/
 │   │                                  # (id, phase, category, schema area)
 │   └── representative_cqs.md          # 14 representative CQs with full text + Cypher
 ├── queries/
-│   ├── cypher/                        # 14 executable Cypher translations
-│   └── sparql/                        # 5 SPARQL examples
+│   ├── cypher/                        # 15 Cypher translations (incl. MULTI_HOP_traceability)
+│   └── sparql/                        # 6 SPARQL examples (incl. MULTI_HOP_traceability)
 ├── examples/
 │   ├── instantiation_snippet.ttl      # small synthetic instantiation
 │   └── end_to_end/                    # full E2E example (data + queries + expected)
