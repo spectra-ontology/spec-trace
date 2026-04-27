@@ -1,13 +1,17 @@
-Expected SPARQL result on data.ttl:
+Expected SPARQL result on data.ttl (verified with rdflib 6.x on 2026-04-27):
 
 | tdocNumber  | title                                                            | meetingNumber |
 |-------------|------------------------------------------------------------------|---------------|
-| R1-2599998  | Discussion on PTRS density for low-MCS configurations            | RAN1#120      |
+| R1-2599998  | Discussion on PTRS density for low-MCS configurations            | RAN1#121      |
 
 Notes:
-- The query traces TS 38.214 §5.1.3 backward through CR R1-2599999 → RAN1#121 →
-  Agreement A1-RAN1#121 → (promotedTo inverse) → WorkingAssumption WA1-RAN1#120 →
-  references → originating TDoc R1-2599998.
-- Total triples after loading data.ttl on top of ontology/spectra.ttl: ~924
-  (884 ontology + ~40 instance triples).
+- The recovered TDoc is the originating TDoc (R1-2599998). The bound `?meeting`
+  is the meeting at which the CR was presented and the Agreement was made
+  (RAN1#121, where the WorkingAssumption was promoted to an Agreement); the
+  TDoc itself was originally submitted at RAN1#120.
+- Total triples after loading data.ttl on top of ontology/spectra.ttl: 931
+  (884 ontology + 47 instance triples).
 - pySHACL conformance with shapes/spectra-core.shacl.ttl: True.
+
+Equivalent Cypher (data.cypher + query.cypher) returns the same row when run
+against a Neo4j instance that loaded the synthetic data.

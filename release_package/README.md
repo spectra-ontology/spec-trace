@@ -19,28 +19,45 @@ This is the **publicly released** component of the SPECTRA ontology resource des
 release_package/
 ├── README.md                          # this file
 ├── ontology/
-│   └── spectra.ttl                    # SPECTRA OWL 2 ontology (Turtle)
+│   └── spectra.ttl                    # SPECTRA OWL 2 ontology (Turtle, 884 triples)
 ├── docs/
 │   └── spectra.html                   # PyLODE-generated HTML documentation
 ├── shapes/
-│   └── spectra-core.shacl.ttl         # SHACL shapes (core cardinality / range)
+│   └── spectra-core.shacl.ttl         # SHACL shapes (8 NodeShapes, core cardinality/range)
 ├── diagrams/
-│   └── schema_overview.md             # high-level schema summary
+│   ├── schema_overview.md             # high-level schema summary
+│   └── cq_distribution.png            # category-by-phase distribution of 137 CQs
 ├── cqs/
 │   ├── cq_index.md                    # anonymized index of all 137 CQs
 │   │                                  # (id, phase, category, schema area)
-│   └── representative_cqs.md          # representative CQs with full text + Cypher/SPARQL
+│   └── representative_cqs.md          # 14 representative CQs with full text + Cypher
 ├── queries/
-│   ├── cypher/                        # executable Cypher translations
-│   └── sparql/                        # SPARQL translations (representative)
+│   ├── cypher/                        # 14 executable Cypher translations
+│   └── sparql/                        # 5 SPARQL examples
 ├── examples/
-│   └── instantiation_snippet.ttl      # small synthetic instantiation
+│   ├── instantiation_snippet.ttl      # small synthetic instantiation
+│   └── end_to_end/                    # full E2E example (data + queries + expected)
+│       ├── README.md
+│       ├── data.ttl                   # synthetic 4-hop scenario (Turtle)
+│       ├── data.cypher                # same data as Neo4j Cypher CREATE
+│       ├── query.sparql               # multi-hop traceability query (SPARQL)
+│       ├── query.cypher               # same query in Cypher
+│       └── expected_output.txt        # expected result row(s)
+├── validation/                        # ★ JSON evidence for paper's quantitative claims
+│   ├── validation_manifest.md         # paper claim → JSON file mapping
+│   ├── structural_metrics.json        # class/property/axiom counts
+│   ├── oops_summary.json              # OOPS! pitfall scanner result
+│   ├── cq_coverage.json               # 137-CQ × ontology coverage matrix
+│   ├── cross_wg_schema_diff.json      # RAN1 vs RAN2-5 schema diff
+│   ├── cross_wg_use_evidence.json     # cross-WG query counts on deployed KGs
+│   ├── per_wg_class_coverage.json     # per-WG class instantiation coverage
+│   └── ran1_instance_counts.json      # RAN1 KG per-class counts + integrity stats
 ├── w3id/
 │   ├── htaccess                       # to be submitted to perma-id/w3id.org
 │   └── PR_DESCRIPTION.md              # PR text for w3id registration
 ├── CITATION.cff                       # citation metadata (machine-readable)
 ├── codemeta.json                      # software/data metadata
-├── PUBLISHING.md                      # release checklist
+├── PUBLISHING.md                      # release checklist (DRAFT until paper finalized)
 └── LICENSE                            # CC-BY 4.0
 ```
 
