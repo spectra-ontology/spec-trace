@@ -36,12 +36,12 @@ The repository already exists at https://github.com/spectra-ontology/spec-trace.
 ```bash
 # from repo root
 git add release_package/
-git commit -m "Add SPECTRA v6.1.1 public release package"
+git commit -m "Add SPECTRA v1.0.0 public release package"
 git push origin main
 
 # Create a versioned release (uses GitHub CLI; install if needed)
-gh release create v6.1.1 \
-  --title "SPECTRA v6.1.1 — companion to ISWC 2026 submission (under review)" \
+gh release create v1.0.0 \
+  --title "SPECTRA v1.0.0 — companion to ISWC 2026 submission (under review)" \
   --notes-file release_package/README.md \
   release_package/ontology/spectra.ttl \
   release_package/CITATION.cff \
@@ -49,7 +49,7 @@ gh release create v6.1.1 \
   release_package/LICENSE
 ```
 
-After this, https://github.com/spectra-ontology/spec-trace/releases/tag/v6.1.1 will
+After this, https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.0 will
 exist and can be linked from the paper.
 
 ## 2. Zenodo DOI (≈10 min, one-time + per release)
@@ -80,7 +80,7 @@ Once the DOI is assigned, edit two files:
   - Replace `(DOI to be assigned upon acceptance)` with the actual DOI.
 - `release_package/README.md`
   - Replace `[TODO: Zenodo DOI]` with the DOI.
-  - Replace `[TODO: GitHub URL]` with the release URL (e.g. `https://github.com/spectra-ontology/spec-trace/releases/tag/v6.1.1`).
+  - Replace `[TODO: GitHub URL]` with the release URL (e.g. `https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.0`).
 
 ## 4. w3id.org redirect (REQUIRED — ontology IRI uses https://w3id.org/spectra)
 
@@ -114,6 +114,6 @@ After publication, verify:
 
 - [ ] `https://doi.org/<your-doi>` resolves to the Zenodo record.
 - [ ] The Zenodo record lists `spectra.ttl` as a downloadable file.
-- [ ] The GitHub release v6.1.1 page is publicly viewable.
+- [ ] The GitHub release v1.0.0 page is publicly viewable.
 - [ ] `CITATION.cff` is detected by GitHub (the "Cite this repository" button appears).
 - [ ] The license badge shows CC-BY-4.0.

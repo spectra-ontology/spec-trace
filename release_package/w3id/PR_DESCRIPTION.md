@@ -21,7 +21,7 @@ The SPECTRA ontology declares its IRI as `https://w3id.org/spectra#` so that the
 
 - **Type**: OWL 2 ontology (Turtle), 26 classes, 53 object properties, 81 data properties
 - **License**: CC-BY 4.0
-- **First public release**: v6.1.1 (2026-04-27)
+- **First public release**: v1.0.0 (2026-04-27)
 - **Accompanying paper**: ISWC 2026 Resources Track (under review)
 
 ## .htaccess behavior

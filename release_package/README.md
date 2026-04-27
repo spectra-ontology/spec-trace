@@ -6,7 +6,7 @@
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX) -->
 
 **License**: CC-BY 4.0
-**Version**: v6.1.1 (see `ontology/spectra.ttl` header for authoritative version)
+**Version**: v1.0.0 (see `ontology/spectra.ttl` header for authoritative version)
 **Persistent identifier**: `https://w3id.org/spectra` (registration via [perma-id/w3id.org](https://github.com/perma-id/w3id.org); see `w3id/PR_DESCRIPTION.md`)
 **DOI**: minted by Zenodo upon GitHub release (see `PUBLISHING.md`)
 **Repository**: https://github.com/spectra-ontology/spec-trace
