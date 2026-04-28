@@ -122,22 +122,22 @@ MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.213'}) RETURN 
 
 - **Phase**: 4
 - **Category**: CR rationale
-- **Question**: Return the reason-for-change of CR R1-2504971.
+- **Question**: Return the reason-for-change of CR R1-2599971.
 - **Cypher** (see `../queries/cypher/P4_CQ1-1.cypher`):
 
 ```cypher
-MATCH (cr:CR {tdocNumber: 'R1-2504971'}) WHERE cr.reasonForChange IS NOT NULL RETURN cr.tdocNumber, cr.reasonForChange
+MATCH (cr:CR {tdocNumber: 'R1-2599971'}) WHERE cr.reasonForChange IS NOT NULL RETURN cr.tdocNumber, cr.reasonForChange
 ```
 
 ## P4_CQ1-2
 
 - **Phase**: 4
 - **Category**: CR rationale
-- **Question**: Return the summary-of-change of CR R1-2506685.
+- **Question**: Return the summary-of-change of CR R1-2599685.
 - **Cypher** (see `../queries/cypher/P4_CQ1-2.cypher`):
 
 ```cypher
-MATCH (cr:CR {tdocNumber: 'R1-2506685'}) WHERE cr.summaryOfChange IS NOT NULL RETURN cr.tdocNumber, cr.summaryOfChange
+MATCH (cr:CR {tdocNumber: 'R1-2599685'}) WHERE cr.summaryOfChange IS NOT NULL RETURN cr.tdocNumber, cr.summaryOfChange
 ```
 
 ## P5_CQ1-1
