@@ -35,7 +35,12 @@ Company     ⊑ foaf:Organization
 Contact     ⊑ foaf:Person
 
 TSFigure, TSTable  (figures/tables embedded in TS sections)
+Figure, Table, Chart  (embedded artefacts referenced by TDocs)
 ```
+
+Total: 26 classes (5 Tdoc + Resolution + 3 Resolution subclasses + Spec/Section/TSTable/TSFigure
++ TechnicalReport/TRImpact/CRPack + Meeting/WorkingGroup/WorkItem/AgendaItem/Release
++ Company/Contact + Figure/Table/Chart).
 
 ## Key relationships
 
@@ -60,8 +65,10 @@ TSFigure, TSTable  (figures/tables embedded in TS sections)
 
 ## Vocabulary reuse
 
-- Dublin Core (`dc:title`, `dc:description`, `dc:creator`, `dc:date`, `dc:rights`) and `dcterms:license` — ontology and instance metadata.
+- Dublin Core (`dc:title`, `dc:description`, `dc:creator`, `dc:date`, `dc:rights`) — ontology and instance metadata.
+- DCTERMS (`dcterms:license`) — ontology licensing.
 - FOAF (`foaf:Person`, `foaf:Organization`) — parent classes for `Contact` and `Company`.
+- PROV-O (optional alignment, declarative): Resolution⊑prov:Activity, Tdoc⊑prov:Entity, Company⊑prov:Agent (also prov:Organization), Contact⊑prov:Agent (also prov:Person).
 
 ## Axiom summary
 

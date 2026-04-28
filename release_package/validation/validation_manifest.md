@@ -71,4 +71,18 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 - `cross_wg_use_evidence.json` — Cypher counts measured on the deployed per-WG KGs for cross-WG use-evidence claims.
 - `per_wg_class_coverage.json` — per-WG class-coverage breakdown (which RAN1 classes each non-RAN1 WG instantiates).
 - `ran1_instance_counts.json` — full per-class counts of the RAN1 SPECTRA instantiation, plus referential-integrity statistics for `submittedBy`.
-- `cq_results.json` — 137 CQ × {phase, id, category, status, source_file} produced by re-executing each CQ's reference Cypher against the internal RAN1 Neo4j KG; the per-phase 100% pass rate reported in §6.1 Table~\ref{tab:cq-results} is reconstructable from this file's `summary.by_phase`.
+- `cq_results.json` — 137 CQ × {phase, id, category, status, source_file} produced by re-executing each CQ's reference Cypher against the internal RAN1 Neo4j KG; the per-phase 100% pass rate reported inline in §6.1 (P1=25/25, P2=34/34, P3=45/45, P4=15/15, P5=18/18) is reconstructable from this file's `summary.by_phase`. Also surfaced as a `verdict` field in `release_package/cqs/spectra_cq_v1.0/questions.json` for per-CQ inspection.
+
+## PROV-O alignment (paper §4.3)
+
+| Paper claim | Evidence |
+|---|---|
+| 5 `rdfs:subClassOf` axioms (Resolution⊑prov:Activity, Tdoc⊑prov:Entity, Company⊑prov:Agent+Organization, Contact⊑prov:Agent+Person) — 6 triples | `ontology/spectra.ttl` lines following "Optional PROV-O alignment" comment block; `structural_metrics.json::prov_o_alignment.subclass_axioms` (6 entries) |
+| Total triples 884 → 890 (after PROV-O addition) | `structural_metrics.json::triples_total=890`; reproducible by `tests/reproduce_structural_metrics.py` |
+
+## Parsing pipeline (paper §7)
+
+| Paper claim | Evidence |
+|---|---|
+| 5-stage pipeline (scrape → metadata parse → LLM-assisted CR/TR extraction → SHACL → bulk Neo4j load) | `scripts/paper/generate_metadata_kg_snapshot.py` (whitelist of 89 metadata fields, 20 excluded text fields documents the parser output schema) |
+| Throughput claim "~2,000 TDocs/min metadata, ~50 CRs/min LLM" | Internal benchmark; not part of the public release artifact (see "Reproducibility" caveat below) |

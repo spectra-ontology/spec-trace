@@ -30,7 +30,13 @@ release_package/
 ├── cqs/
 │   ├── cq_index.md                    # anonymized index of all 137 CQs
 │   │                                  # (id, phase, category, schema area)
-│   └── representative_cqs.md          # 14 representative CQs with full text + Cypher
+│   ├── representative_cqs.md          # 14 representative CQs with full text + Cypher
+│   └── spectra_cq_v1.0/               # ★ SpectraCQ v1.0 — 137-CQ companion dataset
+│       ├── README.md                  # dataset description + how to use
+│       ├── LICENSE                    # CC-BY 4.0
+│       ├── citation.bib               # BibTeX for citing SpectraCQ
+│       ├── questions.json             # 137 CQ × {id, phase, category, question_en, schema_area, verdict}
+│       └── cypher/                    # 137 executable Cypher files (one per CQ)
 ├── queries/
 │   ├── cypher/                        # 15 Cypher translations (incl. MULTI_HOP_traceability)
 │   └── sparql/                        # 6 SPARQL examples (incl. MULTI_HOP_traceability)
@@ -51,7 +57,12 @@ release_package/
 │   ├── cross_wg_schema_diff.json      # RAN1 vs RAN2-5 schema diff
 │   ├── cross_wg_use_evidence.json     # cross-WG query counts on deployed KGs
 │   ├── per_wg_class_coverage.json     # per-WG class instantiation coverage
-│   └── ran1_instance_counts.json      # RAN1 KG per-class counts + integrity stats
+│   ├── ran1_instance_counts.json      # RAN1 KG per-class counts + integrity stats
+│   └── cq_results.json                # 137 CQ × {id, phase, status} per-CQ pass/fail evidence
+├── tests/                              # ★ reproducibility scripts (rdflib + pyshacl)
+│   ├── README.md
+│   ├── reproduce_structural_metrics.py # recompute Table 4 numbers from spectra.ttl
+│   └── test_e2e_sparql.py              # run multi-hop traceability against synthetic data
 ├── w3id/
 │   ├── htaccess                       # to be submitted to perma-id/w3id.org
 │   └── PR_DESCRIPTION.md              # PR text for w3id registration
@@ -104,6 +115,16 @@ See `queries/cypher/` for examples executable against any Neo4j instance conform
 
 ### Run a representative SPARQL query
 See `queries/sparql/`. Translations exercise the same CQs against a triple-store loaded with the TTL and your own instantiation.
+
+### Reproducibility tests (rdflib + pyshacl)
+```bash
+pip install rdflib pyshacl
+python3 tests/reproduce_structural_metrics.py   # exit 0 on agreement with validation/structural_metrics.json
+python3 tests/test_e2e_sparql.py                # exit 0 on returning the expected R1-2599998 / RAN1#121 row
+```
+
+### SpectraCQ companion dataset
+The full 137-CQ corpus with English question text, executable Cypher, and per-CQ verdicts is at `cqs/spectra_cq_v1.0/`. It is independently citable via `cqs/spectra_cq_v1.0/citation.bib` and licensed CC-BY 4.0.
 
 ## Citation
 
