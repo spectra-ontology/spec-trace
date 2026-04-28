@@ -19,7 +19,7 @@ This is the **publicly released** component of the SPECTRA ontology resource des
 release_package/
 ├── README.md                          # this file
 ├── ontology/
-│   └── spectra.ttl                    # SPECTRA OWL 2 ontology (Turtle, 884 triples)
+│   └── spectra.ttl                    # SPECTRA OWL 2 ontology (Turtle, 890 triples incl. PROV-O alignment)
 ├── docs/
 │   └── spectra.html                   # PyLODE-generated HTML documentation
 ├── shapes/
