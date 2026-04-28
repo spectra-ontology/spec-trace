@@ -24,7 +24,7 @@ This manifest maps every quantitative claim in the accompanying paper to a JSON 
 
 | Paper claim | Evidence file | Field |
 |---|---|---|
-| 137 CQs (137/137) return non-empty results | `cq_coverage.json` | `metadata.total_cqs`; per-phase breakdown in `phase_coverage` |
+| 137 CQs (137/137) return non-empty results | `cq_coverage.json` + `cq_results.json` | `metadata.total_cqs`; `cq_results.json::summary.pass_rate_pct=100.0`; per-CQ status in `cq_results.json::results[]` |
 | 137 CQs span Phases 1-5 (25/34/45/15/18) | `cq_coverage.json` | `phase_coverage` |
 | 137 CQs exercise 20/26 classes (77%) | `cq_coverage.json` | `summary.classes_covered`, `summary.classes_total` |
 | 137 CQs exercise 31/53 OPs (58%) | `cq_coverage.json` | `summary.ops_covered`, `summary.ops_total` |
@@ -71,3 +71,4 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 - `cross_wg_use_evidence.json` — Cypher counts measured on the deployed per-WG KGs for cross-WG use-evidence claims.
 - `per_wg_class_coverage.json` — per-WG class-coverage breakdown (which RAN1 classes each non-RAN1 WG instantiates).
 - `ran1_instance_counts.json` — full per-class counts of the RAN1 SPECTRA instantiation, plus referential-integrity statistics for `submittedBy`.
+- `cq_results.json` — 137 CQ × {phase, id, category, status, source_file} produced by re-executing each CQ's reference Cypher against the internal RAN1 Neo4j KG; the per-phase 100% pass rate reported in §6.1 Table~\ref{tab:cq-results} is reconstructable from this file's `summary.by_phase`.
