@@ -73,7 +73,7 @@ The following artifacts are part of the paper's **internal validation evidence**
 
 - **26 classes** organized around: contributions (`Tdoc` and its subclasses `CR`, `LS`, `Summary`, `SessionNotes`), resolutions (`Resolution` → `Agreement`, `Conclusion`, `WorkingAssumption`), specifications (`Spec`, `Section`, `TSTable`, `TSFigure`, `TechnicalReport`, `TRImpact`), organizational entities (`Meeting`, `Company`, `Contact`, `WorkItem`, `AgendaItem`, `Release`, `WorkingGroup`), and artefacts (`Figure`, `Table`, `Chart`, `CRPack`).
 - **53 object properties** + **81 data properties** (134 total).
-- Reuses **Dublin Core** (`dc:title`, `dc:description`, `dc:creator`, `dc:date`) and **FOAF** (`foaf:Person`, `foaf:Organization`).
+- Reuses **Dublin Core** (`dc:title`, `dc:description`, `dc:creator`, `dc:date`, `dc:rights`), **DCTERMS** (`dcterms:license`), and **FOAF** (`foaf:Person`, `foaf:Organization`).
 - Axiomatization: 23 `owl:FunctionalProperty`, 2 `owl:InverseFunctionalProperty`, 15 inverse property pairs, 6 `owl:IrreflexiveProperty`, 2 `owl:AsymmetricProperty`.
 
 ## Quick start
