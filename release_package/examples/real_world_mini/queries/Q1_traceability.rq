@@ -1,0 +1,21 @@
+# Q1 — TDoc → Resolution → CR → Section → Spec traceability
+# "Which TDoc motivated the CR that modifies TS 38.214 §5.1.5?"
+
+PREFIX tdoc: <https://w3id.org/spectra#>
+PREFIX dc:   <http://purl.org/dc/elements/1.1/>
+
+SELECT DISTINCT ?tdocNumber ?title ?meetingNumber
+WHERE {
+  ?sec a tdoc:Section ;
+       tdoc:sectionId "38.214-5.1.5" .
+  ?cr  a tdoc:CR ;
+       tdoc:modifiesSection ?sec ;
+       tdoc:presentedAt ?meeting .
+  ?ag  a tdoc:Agreement ;
+       tdoc:madeAt ?meeting ;
+       tdoc:references ?t .
+  ?t   a tdoc:Tdoc ;
+       tdoc:tdocNumber ?tdocNumber ;
+       dc:title ?title .
+  ?meeting tdoc:meetingNumber ?meetingNumber .
+}

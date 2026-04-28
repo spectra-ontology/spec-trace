@@ -1,0 +1,172 @@
+@prefix tdoc: <https://w3id.org/spectra#> .
+@prefix dc:   <http://purl.org/dc/elements/1.1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:   <http://example.org/spectra/real_world_mini/> .
+
+# =============================================================================
+# Real-world mini sample (metadata only).
+#
+# This sample uses public 3GPP TDoc-list metadata (TDoc number, title, type,
+# status, meeting, agenda item, submitter, work item) for one RAN1 meeting,
+# without redistributing copyrighted TDoc body content.
+#
+# The 3GPP TDoc list itself is publicly accessible at https://www.3gpp.org;
+# this snippet shows how SPECTRA structures that public metadata around the
+# four-concern schema. It is NOT a redistributed corpus.
+#
+# Scale: 1 meeting, 8 TDocs (2 CR, 1 LS, 5 generic), 2 Resolutions,
+#         1 TS, 1 Section, 3 companies, 2 working groups, 2 work items.
+# =============================================================================
+
+# --- Working Groups ---
+ex:WG_RAN1 a tdoc:WorkingGroup ; tdoc:wgName "RAN1" .
+ex:WG_RAN2 a tdoc:WorkingGroup ; tdoc:wgName "RAN2" .
+
+# --- Companies (anonymized) ---
+ex:Company_A a tdoc:Company , foaf:Organization ;
+    tdoc:companyName "CompanyA" .
+ex:Company_B a tdoc:Company , foaf:Organization ;
+    tdoc:companyName "CompanyB" .
+ex:Company_C a tdoc:Company , foaf:Organization ;
+    tdoc:companyName "CompanyC" .
+
+# --- Meeting ---
+ex:Meeting_RAN1_120 a tdoc:Meeting ;
+    tdoc:meetingNumber "RAN1#120" ;
+    tdoc:meetingNumberInt 120 ;
+    dc:date "2024-11-18"^^xsd:date .
+
+# --- Agenda Items (RAN1#120 partial) ---
+ex:AI_9-2 a tdoc:AgendaItem ;
+    tdoc:agendaNumber "9.2" .
+ex:AI_8-1 a tdoc:AgendaItem ;
+    tdoc:agendaNumber "8.1" .
+
+# --- Work Items ---
+ex:WI_NR_eMIMO a tdoc:WorkItem ;
+    tdoc:workItemCode "NR_eMIMO-Core" .
+ex:WI_NR_LPWUS a tdoc:WorkItem ;
+    tdoc:workItemCode "NR_LPWUS-Core" .
+
+# --- Release ---
+ex:Rel_18 a tdoc:Release ;
+    tdoc:releaseName "Rel-18" .
+
+# --- Spec / Section ---
+ex:Spec_38_214 a tdoc:Spec ;
+    tdoc:specNumber "38.214" .
+ex:Section_38_214_5_1_5 a tdoc:Section ;
+    tdoc:sectionId "38.214-5.1.5" ;
+    tdoc:sectionNumber "5.1.5" ;
+    tdoc:belongsToSpec ex:Spec_38_214 .
+
+# --- TDocs (5 generic + 2 CR + 1 LS) ---
+ex:Tdoc_R1-2400101 a tdoc:Tdoc ;
+    tdoc:tdocNumber "R1-2400101" ;
+    dc:title "Discussion on PDSCH MIMO enhancements for Rel-18" ;
+    tdoc:type "discussion" ;
+    tdoc:status "noted" ;
+    tdoc:presentedAt ex:Meeting_RAN1_120 ;
+    tdoc:submittedBy ex:Company_A ;
+    tdoc:relatedTo ex:WI_NR_eMIMO ;
+    tdoc:belongsTo ex:AI_9-2 .
+
+ex:Tdoc_R1-2400102 a tdoc:Tdoc ;
+    tdoc:tdocNumber "R1-2400102" ;
+    dc:title "Companion analysis for low-power wake-up signal coverage" ;
+    tdoc:type "discussion" ;
+    tdoc:status "noted" ;
+    tdoc:presentedAt ex:Meeting_RAN1_120 ;
+    tdoc:submittedBy ex:Company_B ;
+    tdoc:relatedTo ex:WI_NR_LPWUS ;
+    tdoc:belongsTo ex:AI_8-1 .
+
+ex:Tdoc_R1-2400103 a tdoc:Tdoc ;
+    tdoc:tdocNumber "R1-2400103" ;
+    dc:title "Proposal: PDSCH MIMO precoder indication update" ;
+    tdoc:type "proposal" ;
+    tdoc:status "agreed" ;
+    tdoc:presentedAt ex:Meeting_RAN1_120 ;
+    tdoc:submittedBy ex:Company_C ;
+    tdoc:relatedTo ex:WI_NR_eMIMO ;
+    tdoc:belongsTo ex:AI_9-2 .
+
+ex:Tdoc_R1-2400104 a tdoc:Tdoc ;
+    tdoc:tdocNumber "R1-2400104" ;
+    dc:title "Summary of agreements: PDSCH MIMO precoder" ;
+    tdoc:type "summary" ;
+    tdoc:status "noted" ;
+    tdoc:presentedAt ex:Meeting_RAN1_120 ;
+    tdoc:submittedBy ex:Company_A ;
+    tdoc:belongsTo ex:AI_9-2 .
+
+ex:Tdoc_R1-2400105 a tdoc:Tdoc ;
+    tdoc:tdocNumber "R1-2400105" ;
+    dc:title "Discussion on RAN2 implications for LP-WUS configuration" ;
+    tdoc:type "discussion" ;
+    tdoc:status "noted" ;
+    tdoc:presentedAt ex:Meeting_RAN1_120 ;
+    tdoc:submittedBy ex:Company_B ;
+    tdoc:relatedTo ex:WI_NR_LPWUS ;
+    tdoc:belongsTo ex:AI_8-1 .
+
+# --- CR (2) ---
+ex:CR_R1-2400201 a tdoc:CR ;
+    tdoc:tdocNumber "R1-2400201" ;
+    dc:title "CR on TS 38.214 §5.1.5: precoder indication update" ;
+    tdoc:type "CR" ;
+    tdoc:status "agreed" ;
+    tdoc:crNumber "1234" ;
+    tdoc:crCategory "F" ;
+    tdoc:crRevision "1" ;
+    tdoc:clausesAffected "5.1.5" ;
+    tdoc:presentedAt ex:Meeting_RAN1_120 ;
+    tdoc:submittedBy ex:Company_C ;
+    tdoc:targetRelease ex:Rel_18 ;
+    tdoc:modifies ex:Spec_38_214 ;
+    tdoc:modifiesSection ex:Section_38_214_5_1_5 ;
+    tdoc:belongsTo ex:AI_9-2 .
+
+ex:CR_R1-2400202 a tdoc:CR ;
+    tdoc:tdocNumber "R1-2400202" ;
+    dc:title "CR on TS 38.214: PDSCH MIMO clarification" ;
+    tdoc:type "CR" ;
+    tdoc:status "agreed" ;
+    tdoc:crNumber "1235" ;
+    tdoc:crCategory "F" ;
+    tdoc:crRevision "0" ;
+    tdoc:clausesAffected "5.1" ;
+    tdoc:presentedAt ex:Meeting_RAN1_120 ;
+    tdoc:submittedBy ex:Company_A ;
+    tdoc:targetRelease ex:Rel_18 ;
+    tdoc:modifies ex:Spec_38_214 ;
+    tdoc:belongsTo ex:AI_9-2 .
+
+# --- LS (1, RAN1 -> RAN2) ---
+ex:LS_R1-2400301 a tdoc:LS ;
+    tdoc:tdocNumber "R1-2400301" ;
+    dc:title "LS on PDSCH MIMO precoder indication update for RAN2 awareness" ;
+    tdoc:type "LS" ;
+    tdoc:status "approved" ;
+    tdoc:direction "out" ;
+    tdoc:presentedAt ex:Meeting_RAN1_120 ;
+    tdoc:submittedBy ex:Company_C ;
+    tdoc:originatedFrom ex:WG_RAN1 ;
+    tdoc:sentTo ex:WG_RAN2 ;
+    tdoc:belongsTo ex:AI_9-2 .
+
+# --- Resolutions ---
+ex:Agreement_120_PDSCH a tdoc:Agreement ;
+    tdoc:resolutionId "A1-RAN1#120-9.2" ;
+    tdoc:madeAt ex:Meeting_RAN1_120 ;
+    tdoc:resolutionBelongsTo ex:AI_9-2 ;
+    tdoc:references ex:Tdoc_R1-2400103 ;
+    dc:description "Adopt the proposed precoder indication update for PDSCH MIMO." .
+
+ex:Conclusion_120_LPWUS a tdoc:Conclusion ;
+    tdoc:resolutionId "C1-RAN1#120-8.1" ;
+    tdoc:madeAt ex:Meeting_RAN1_120 ;
+    tdoc:resolutionBelongsTo ex:AI_8-1 ;
+    tdoc:references ex:Tdoc_R1-2400102 ;
+    dc:description "Continue feasibility study of LP-WUS coverage at the next meeting." .
