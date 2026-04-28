@@ -42,13 +42,18 @@ release_package/
 │   └── sparql/                        # 6 SPARQL examples (incl. MULTI_HOP_traceability)
 ├── examples/
 │   ├── instantiation_snippet.ttl      # small synthetic instantiation
-│   └── end_to_end/                    # full E2E example (data + queries + expected)
-│       ├── README.md
-│       ├── data.ttl                   # synthetic 4-hop scenario (Turtle)
-│       ├── data.cypher                # same data as Neo4j Cypher CREATE
-│       ├── query.sparql               # multi-hop traceability query (SPARQL)
-│       ├── query.cypher               # same query in Cypher
-│       └── expected_output.txt        # expected result row(s)
+│   ├── end_to_end/                    # full E2E synthetic example (data + queries + expected)
+│   │   ├── README.md
+│   │   ├── data.ttl                   # synthetic 4-hop scenario (Turtle)
+│   │   ├── data.cypher                # same data as Neo4j Cypher CREATE
+│   │   ├── query.sparql               # multi-hop traceability query (SPARQL)
+│   │   ├── query.cypher               # same query in Cypher
+│   │   └── expected_output.txt        # expected result row(s)
+│   └── real_world_mini/               # ★ metadata-only mini sample (1 RAN1 meeting structure)
+│       ├── README.md                  # explains: metadata only, no copyrighted body content
+│       ├── data.ttl                   # 8 TDocs + 2 Resolutions + 1 TS + 1 Section
+│       ├── queries/                   # Q1 traceability + Q2 cross-WG LS (SPARQL)
+│       └── expected_outputs/          # verified expected query rows
 ├── validation/                        # ★ JSON evidence for paper's quantitative claims
 │   ├── validation_manifest.md         # paper claim → JSON file mapping
 │   ├── structural_metrics.json        # class/property/axiom counts
@@ -76,7 +81,7 @@ release_package/
 
 The following artifacts are part of the paper's **internal validation evidence** and are *not* redistributed:
 
-- The complete 137-CQ validation suite and the full executable query set used for cumulative regression testing. Representative CQs and queries are included in `cqs/` and `queries/` so that the schema can be inspected and reused; the full suite is retained as internal validation material.
+- Internal cumulative-regression run logs and per-phase intermediate KG snapshots used during the five-phase development. The anonymized 137-CQ dataset (English text + Cypher specifications + per-CQ verdict) is publicly released at `cqs/spectra_cq_v1.0/`; only the regression run-history and the company-specific execution environment are retained internally.
 - The instantiated RAN1 knowledge graph (123,677 Technical Documents) and the equivalent instantiations of RAN2–RAN5. The graphs are not redistributable because the underlying 3GPP Technical Documents are subject to 3GPP copyright. The original TDocs remain publicly accessible via the 3GPP portal: https://www.3gpp.org
 - The operational parsing and knowledge-graph population pipeline (internal project code).
 
