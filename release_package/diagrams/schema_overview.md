@@ -34,7 +34,7 @@ Release
 Company     ⊑ foaf:Organization
 Contact     ⊑ foaf:Person
 
-Figure, Table, Chart  (generic artefacts used in Tdocs)
+TSFigure, TSTable  (figures/tables embedded in TS sections)
 ```
 
 ## Key relationships
