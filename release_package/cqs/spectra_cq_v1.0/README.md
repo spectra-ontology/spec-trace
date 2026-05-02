@@ -4,6 +4,18 @@ This dataset packages the 137 competency questions (CQs) used to design and
 validate the SPECTRA ontology, together with their executable Cypher
 translations against a SPECTRA-conformant Neo4j knowledge graph.
 
+## Why SpectraCQ matters as a standalone resource
+
+Even apart from the SPECTRA ontology, SpectraCQ v1.0 is the largest
+publicly released CQ corpus elicited from practicing 3GPP standardization
+engineers, with each CQ paired with an executable Cypher specification and
+a per-CQ pass/fail verdict on a real-scale instantiated KG. It is reusable
+as: (i) a benchmark for ontology coverage and CQ-to-query translation
+research; (ii) a reference set for natural-language-to-Cypher / NL2KG
+research targeting telecom standardization; and (iii) a teaching resource
+for telecom-domain knowledge engineering. SpectraCQ is independently
+citable via `citation.bib` and licensed under CC-BY 4.0.
+
 ## Distribution
 
 - `questions.json` — 137 CQ entries with English question text, phase
@@ -17,9 +29,12 @@ translations against a SPECTRA-conformant Neo4j knowledge graph.
 ## Anonymization
 
 Company names in the original (internal) dataset are mapped to anonymized
-handles (`CompanyA`, `CompanyB`, ..., `CompanyJ`) per ISWC double-blind
-requirements and to keep the dataset reusable across venues. The mapping
-is intentionally not published in v1.0.
+handles (`CompanyA`, `CompanyB`, ..., `CompanyJ`) so the dataset stays
+reusable as a CQ-to-query benchmark across organisations and venues. (The
+ISWC 2026 Resources Track is single-anonymous: authors are named, reviewers
+are anonymous; the placeholder mapping is therefore a portability choice,
+not a venue requirement.) The placeholder-to-real mapping is intentionally
+not published in v1.0.
 
 ## Phase distribution
 

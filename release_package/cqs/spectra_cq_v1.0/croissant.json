@@ -1,0 +1,202 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileProperty": "cr:fileProperty",
+    "fileObject": "cr:fileObject",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform"
+  },
+  "@type": "sc:Dataset",
+  "name": "SpectraCQ",
+  "description": "SpectraCQ v1.0 — a 137-question competency-benchmark dataset for the SPECTRA ontology covering the 3GPP RAN standardization process. Each competency question (CQ) is paired with executable Cypher and a per-CQ PASS/FAIL/UNKNOWN verdict from execution against the operational SPECTRA-conformant knowledge graph. CQs span five development phases (P1 TDoc metadata, P2 meeting resolutions, P3 TS section structure, P4 CR documents, P5 TR impact). Released as a standalone, separately citable sub-resource of SPECTRA.",
+  "conformsTo": "http://mlcommons.org/croissant/1.0",
+  "version": "1.0.0",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "url": "https://github.com/spectra-ontology/spec-trace/tree/main/release_package/cqs/spectra_cq_v1.0",
+  "citeAs": "@misc{spectra-cq-v1, title={SpectraCQ v1.0: Competency Questions for the SPECTRA 3GPP RAN Ontology}, author={Choi, Sihyeon and Lee, Junho and Ahn, Joon-Hyoung}, year={2026}, note={Companion sub-resource of SPECTRA, ISWC 2026 Resources Track submission.}}",
+  "creator": [
+    {
+      "@type": "sc:Person",
+      "name": "Sihyeon Choi",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "System LSI Business, Device Solutions Division, Samsung Electronics"
+      }
+    },
+    {
+      "@type": "sc:Person",
+      "name": "Junho Lee",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "System LSI Business, Device Solutions Division, Samsung Electronics"
+      }
+    },
+    {
+      "@type": "sc:Person",
+      "name": "Joon-Hyoung Ahn",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "System LSI Business, Device Solutions Division, Samsung Electronics"
+      }
+    }
+  ],
+  "keywords": [
+    "Competency questions",
+    "Ontology engineering",
+    "OWL",
+    "3GPP",
+    "Standardization process",
+    "Document traceability",
+    "Knowledge graph",
+    "Benchmark dataset"
+  ],
+  "datePublished": "2026-04-27",
+  "isLiveDataset": false,
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "questions.json",
+      "name": "questions.json",
+      "description": "All 137 competency questions with executable Cypher references and per-CQ verdicts.",
+      "contentUrl": "questions.json",
+      "encodingFormat": "application/json",
+      "sha256": "8733c58c8b67582dd741cbb9904b35e33542390c30ee5fb902e9218184e6e786"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "cypher-files",
+      "name": "cypher-files",
+      "description": "137 executable Cypher query files (one per CQ).",
+      "encodingFormat": "application/x-cypher-query",
+      "includes": "cypher/*.cypher"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "cqs",
+      "name": "cqs",
+      "description": "Each record is a competency question (CQ) with id, phase, category, English text, schema area exercised, executable Cypher reference, and PASS/FAIL/UNKNOWN verdict.",
+      "key": {
+        "@id": "cqs/id"
+      },
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "cqs/id",
+          "name": "id",
+          "description": "Unique CQ identifier (e.g., P1_CQ2-2).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {"@id": "questions.json"},
+            "extract": {"jsonPath": "$.cqs[*].id"}
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cqs/phase",
+          "name": "phase",
+          "description": "Development phase the CQ was elicited in (P1..P5).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {"@id": "questions.json"},
+            "extract": {"jsonPath": "$.cqs[*].phase"}
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cqs/category",
+          "name": "category",
+          "description": "Short category label (e.g., metadata, traceability).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {"@id": "questions.json"},
+            "extract": {"jsonPath": "$.cqs[*].category"}
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cqs/question_en",
+          "name": "question_en",
+          "description": "Natural-language competency question (English).",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {"@id": "questions.json"},
+            "extract": {"jsonPath": "$.cqs[*].question_en"}
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cqs/schema_area",
+          "name": "schema_area",
+          "description": "SPECTRA schema region the CQ exercises.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {"@id": "questions.json"},
+            "extract": {"jsonPath": "$.cqs[*].schema_area"}
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cqs/cypher_file",
+          "name": "cypher_file",
+          "description": "Path to the executable Cypher file under cypher/.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {"@id": "questions.json"},
+            "extract": {"jsonPath": "$.cqs[*].cypher_file"}
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "cqs/verdict",
+          "name": "verdict",
+          "description": "Per-CQ execution verdict: PASS, FAIL, or UNKNOWN. PASS means non-empty result manually judged plausible; see ../validation/cq_results.json for execution provenance.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {"@id": "questions.json"},
+            "extract": {"jsonPath": "$.cqs[*].verdict"}
+          }
+        }
+      ]
+    }
+  ]
+}

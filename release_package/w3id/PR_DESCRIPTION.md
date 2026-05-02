@@ -6,7 +6,7 @@ Register `https://w3id.org/spectra` as the persistent IRI for **SPECTRA: A Trace
 
 ## Affiliation and accountability
 
-- **Institution**: Samsung System LSI, South Korea
+- **Institution**: System LSI Business, Device Solutions Division, Samsung Electronics, South Korea
 - **Maintainers (with commitment to keep the redirect target alive)**:
   - Sihyeon Choi — shyun12.choi@samsung.com (corresponding maintainer)
   - Junho Lee — junho515.lee@samsung.com

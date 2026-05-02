@@ -12,7 +12,7 @@ This manifest maps every quantitative claim in the accompanying paper to a JSON 
 | 53 object properties | `structural_metrics.json` | `object_properties` |
 | 81 data properties | `structural_metrics.json` | `data_properties` |
 | 134 properties total | `structural_metrics.json` | `properties_total` |
-| 23 owl:FunctionalProperty | `structural_metrics.json` | `functional_properties` |
+| 20 owl:FunctionalProperty | `structural_metrics.json` | `functional_properties` |
 | 2 owl:InverseFunctionalProperty (`hasCR`, `hasTRImpact`) | `structural_metrics.json` | `inverse_functional_properties` |
 | 15 inverse property pairs | `structural_metrics.json` | `inverse_property_pairs` |
 | 6 owl:IrreflexiveProperty (sec hierarchy + intra-section + TR cross-ref) | `structural_metrics.json` | `irreflexive_properties` |
@@ -72,17 +72,35 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 - `per_wg_class_coverage.json` — per-WG class-coverage breakdown (which RAN1 classes each non-RAN1 WG instantiates).
 - `ran1_instance_counts.json` — full per-class counts of the RAN1 SPECTRA instantiation, plus referential-integrity statistics for `submittedBy`.
 - `cq_results.json` — 137 CQ × {phase, id, category, status, source_file} produced by re-executing each CQ's reference Cypher against the internal RAN1 Neo4j KG; the per-phase 100% pass rate reported inline in §6.1 (P1=25/25, P2=34/34, P3=45/45, P4=15/15, P5=18/18) is reconstructable from this file's `summary.by_phase`. Also surfaced as a `verdict` field in `release_package/cqs/spectra_cq_v1.0/questions.json` for per-CQ inspection.
+- `ran1_relation_integrity.json` — per-relation integrity metrics on the operational RAN1 KG: `submittedBy` referential integrity (99.36%), `presentedAt`/`madeAt` loader-enforced (100%), `references`/`modifiesSection` machine-resolvable linkage coverage (51.55%/34.66%). Each metric carries an explicit denominator and source.
+- `schema_growth_evidence.json` — per-phase counts (classes / OPs / DPs / cumulative CQs) for Figure on schema growth (§5.1), with refactoring notes for the Released v1.0.0 bar (net −6 DPs, +2 OPs, classes and 137 CQs unchanged).
+- `cypher_to_sparql_portability.json` — static-scan classification of the 137 SpectraCQ Cypher queries by SPARQL-translation portability (graph-pattern + standard-aggregate vs Neo4j-specific). Backs the 136/137 portability indicator quoted in §7.
+
+**Total: 11 JSON evidence files** under `validation/`. The deterministic verification (`tests/verify_release.py` §6) walks `validation_manifest.md` and resolves every `*.json` reference.
 
 ## PROV-O alignment (paper §4.3)
 
 | Paper claim | Evidence |
 |---|---|
-| 5 `rdfs:subClassOf` axioms (Resolution⊑prov:Activity, Tdoc⊑prov:Entity, Company⊑prov:Agent+Organization, Contact⊑prov:Agent+Person) — 6 triples | `ontology/spectra.ttl` lines following "Optional PROV-O alignment" comment block; `structural_metrics.json::prov_o_alignment.subclass_axioms` (6 entries) |
-| Total triples 884 → 890 (after PROV-O addition) | `structural_metrics.json::triples_total=890`; reproducible by `tests/reproduce_structural_metrics.py` |
+| 6 `rdfs:subClassOf` axioms (Resolution⊑prov:Activity, Tdoc⊑prov:Entity, Company⊑prov:Agent + Company⊑foaf:Organization, Contact⊑prov:Agent + Contact⊑foaf:Person) — 6 triples | `ontology/spectra.ttl` lines following "Optional PROV-O alignment" comment block; `structural_metrics.json::prov_o_alignment.subclass_axioms` (6 entries) |
+| Total triples 887 (after dropping 3 spurious owl:FunctionalProperty declarations on multi-valued links: presentedAt, modifies, originatedFrom) | `structural_metrics.json::triples_total=887`; reproducible by `tests/reproduce_structural_metrics.py` |
+
+## Schema growth (paper §5.1, Figure 4)
+
+| Paper claim | Evidence |
+|---|---|
+| Schema grew from 11 classes (P1+P2) to 26 classes (P5); v1.0.0 incorporates cross-phase refactoring (net -6 DPs and +2 OPs, classes and 137 CQs unchanged) | `schema_growth_evidence.json` (per-phase counts of classes / OPs / DPs / cumulative CQs + refactoring notes for the Released bar) |
+
+## Per-relation integrity (paper §6.3)
+
+| Paper claim | Evidence |
+|---|---|
+| `submittedBy` integrity 99.36% on RAN1 | `ran1_relation_integrity.json::relations.submittedBy.pct` |
+| `presentedAt` (Tdoc→Meeting) and `madeAt` (Resolution→Meeting) at 100% (loader-enforced); `references` (Resolution→Tdoc) 51.55% and `modifiesSection` (CR→Section) 34.66% reflect 3GPP citation granularity rather than schema gaps | `ran1_relation_integrity.json::relations.{presentedAt,madeAt,references,modifiesSection}` |
 
 ## Parsing pipeline (paper §7)
 
 | Paper claim | Evidence |
 |---|---|
-| 5-stage pipeline (scrape → metadata parse → LLM-assisted CR/TR extraction → SHACL → bulk Neo4j load) | `scripts/paper/generate_metadata_kg_snapshot.py` (whitelist of 89 metadata fields, 20 excluded text fields documents the parser output schema) |
-| Throughput claim "~2,000 TDocs/min metadata, ~50 CRs/min LLM" | Internal benchmark; not part of the public release artifact (see "Reproducibility" caveat below) |
+| 5-stage pipeline (scrape → deterministic Tdoc/Resolution metadata parse → deterministic CR/TR document parse via python-docx → SHACL → bulk Neo4j load); LLM (Gemini-2.5-flash) is used only for downstream validation (NL-CQ → Cypher, answer-quality scoring), not in the KG-population path | `scripts/paper/generate_metadata_kg_snapshot.py` (whitelist of 89 metadata fields, 20 excluded text fields documents the parser output schema); paper §7 |
+| Throughput claim "$O(10^3)$ TDocs/min on a single workstation" | Internal benchmark; not part of the public release artifact (see "Reproducibility" caveat below) |

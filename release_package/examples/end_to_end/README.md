@@ -22,6 +22,16 @@ implementing the agreed change is approved and modifies TS 38.214 §5.1.3.
 The end-to-end example records this lifecycle and provides the query that
 recovers the originating TDoc when starting from the affected TS section.
 
+## Scenario coverage (paper §6.5)
+
+This synthetic example exercises:
+
+- **S1 Multi-hop traceability** — full TDoc → Resolution → CR → Section → Spec spine.
+- **S4 Working Assumption promotion lineage** — `WA_120_PTRS promotedTo Agreement_121_PTRS`.
+- **S3 Release-scoped CR analytics** — partial (CR with `targetRelease` and `submittedBy`).
+
+The metadata-only `examples/real_world_mini/` example complements this with **S2 Cross-WG LS** (a Liaison Statement from RAN1 to RAN2). **S5 TR-to-TS impact** is exercised at the schema level (TRImpact class + `hasTRImpact`/`impactsSection` properties declared in `ontology/spectra.ttl`); a runnable TR-impact instantiation is illustrated by the Cypher pattern in `queries/cypher/MULTI_HOP_traceability.cypher`.
+
 ## How to run
 
 ### Python (rdflib + SHACL)

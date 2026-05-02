@@ -17,10 +17,13 @@ tdoc:TdocShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
     ] ;
+    # tdoc:presentedAt is unbounded above: 3GPP TDocs (especially LSs) can be
+    # re-tabled across consecutive meetings under the same identifier
+    # (~207/123,678 RAN-wide instances in the released snapshot exhibit this
+    # pattern). The schema therefore admits multiple presentedAt edges per Tdoc.
     sh:property [
         sh:path tdoc:presentedAt ;
         sh:class tdoc:Meeting ;
-        sh:maxCount 1 ;
     ] ;
     sh:property [
         sh:path tdoc:targetRelease ;
@@ -30,10 +33,11 @@ tdoc:TdocShape a sh:NodeShape ;
 
 tdoc:CRShape a sh:NodeShape ;
     sh:targetClass tdoc:CR ;
+    # tdoc:modifies is intentionally unbounded: a single CR may amend more than
+    # one Spec (e.g., paired updates to a stage-2 and a stage-3 spec).
     sh:property [
         sh:path tdoc:modifies ;
         sh:class tdoc:Spec ;
-        sh:maxCount 1 ;
     ] ;
     sh:property [
         sh:path tdoc:belongsToCRPack ;
@@ -43,24 +47,32 @@ tdoc:CRShape a sh:NodeShape ;
 
 tdoc:LSShape a sh:NodeShape ;
     sh:targetClass tdoc:LS ;
+    # tdoc:originatedFrom and tdoc:sentTo are intentionally unbounded.
+    # A Liaison Statement is frequently issued by, or addressed to, multiple
+    # Working Groups simultaneously (cross-WG coordination is the common case).
+    # No minCount: outgoing LSs in 3GPP convention have an implicit source
+    # (the host WG) and may omit the explicit originatedFrom edge; a small
+    # fraction (~5.8% in the released cross-WG snapshot) of LSs in the source
+    # KG also lack an explicit sentTo target due to upstream metadata gaps.
     sh:property [
         sh:path tdoc:originatedFrom ;
         sh:class tdoc:WorkingGroup ;
-        sh:maxCount 1 ;
     ] ;
     sh:property [
         sh:path tdoc:sentTo ;
         sh:class tdoc:WorkingGroup ;
-        sh:minCount 1 ;
     ] .
 
 tdoc:ResolutionShape a sh:NodeShape ;
     sh:targetClass tdoc:Resolution ;
+    # tdoc:madeAt has minCount 1 (every Resolution is anchored to at least one
+    # Meeting), but no maxCount: a small fraction of Resolutions are recorded
+    # at two Meetings under exceptional circumstances (e.g., RAN1 COVID-era
+    # double-meeting cases; ~1.0% in the released RAN1 KG).
     sh:property [
         sh:path tdoc:madeAt ;
         sh:class tdoc:Meeting ;
         sh:minCount 1 ;
-        sh:maxCount 1 ;
     ] ;
     sh:property [
         sh:path tdoc:resolutionBelongsTo ;
@@ -81,11 +93,11 @@ tdoc:SectionShape a sh:NodeShape ;
         sh:class tdoc:Section ;
         sh:maxCount 1 ;
     ] ;
-    # Irreflexive: a section cannot be its own parent
-    sh:property [
-        sh:path tdoc:parentSection ;
-        sh:disjoint tdoc:Section ;
-    ] .
+    # Irreflexive: a section cannot be its own parent.
+    # Enforced at the OWL level via owl:IrreflexiveProperty on tdoc:parentSection
+    # (see ontology/spectra.ttl). SHACL Core has no portable irreflexivity primitive;
+    # if needed, add a sh:sparql shape SELECT $this WHERE { $this tdoc:parentSection $this }.
+    .
 
 tdoc:TRImpactShape a sh:NodeShape ;
     sh:targetClass tdoc:TRImpact ;
@@ -100,6 +112,11 @@ tdoc:TRImpactShape a sh:NodeShape ;
         sh:class tdoc:TechnicalReport ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
+    ] ;
+    # impactType is a closed enumeration recorded on TR cover pages
+    sh:property [
+        sh:path tdoc:impactType ;
+        sh:in ( "NewTS" "NewSection" "ExtendSection" "NoChange" ) ;
     ] .
 
 tdoc:CRPackShape a sh:NodeShape ;

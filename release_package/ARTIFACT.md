@@ -11,13 +11,31 @@ pip install rdflib pyshacl
 # Optional: Protégé (open ontology/spectra.ttl), Neo4j (run cypher/)
 ```
 
+## Fast path: one-shot verification (recommended)
+
+```bash
+python3 tests/verify_release.py
+# Expected last line:
+#   === Summary: 25/25 checks passed ===
+```
+
+This single command runs all nine check sections (ontology triples, SHACL
+conformance on instantiation snippet, SHACL conformance on process-KG union,
+end-to-end SPARQL, SpectraCQ counts/verdict, structural metrics, manifest
+references, anonymization scope, release directory inventory) and returns
+exit 0 only if every check passes. If you only have time for one check,
+run this one.
+
+The remainder of this document explains the same checks individually for
+reviewers who want to inspect each step.
+
 ## Run order
 
 ### 1. Verify the ontology parses
 
 ```bash
 python3 -c "import rdflib; g=rdflib.Graph(); g.parse('ontology/spectra.ttl', format='turtle'); print(f'Triples: {len(g)}')"
-# Expected: Triples: 890
+# Expected: Triples: 887
 ```
 
 ### 2. Reproduce the structural metrics in the paper
@@ -25,9 +43,9 @@ python3 -c "import rdflib; g=rdflib.Graph(); g.parse('ontology/spectra.ttl', for
 ```bash
 python3 tests/reproduce_structural_metrics.py
 # Expected: every row prints ✓; exit code 0
-# Reproduces paper §6.2 / Table "Structural metrics":
-#   Classes 26 / OPs 53 / DPs 81 / Functional 23 / IFP 2 / Inverse pairs 15
-#   Irreflexive 6 / Asymmetric 2 / subclass 15 / triples 890
+# Reproduces paper Table 3 (Ontology structural metrics):
+#   Classes 26 / OPs 53 / DPs 81 / Functional 20 / IFP 2 / Inverse pairs 15
+#   Irreflexive 6 / Asymmetric 2 / subclass 15 / triples 887
 ```
 
 ### 3. Validate the SHACL shapes against the synthetic instantiation
@@ -76,7 +94,7 @@ ls queries/sparql/  # 6 files
 
 ```bash
 ls validation/
-# 8 JSON files + validation_manifest.md
+# 10 JSON files + validation_manifest.md
 # Every paper number is mapped to its evidence file in validation_manifest.md
 ```
 

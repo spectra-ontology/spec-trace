@@ -74,13 +74,14 @@ Both DOIs appear on the Zenodo project page within a few minutes.
 
 ## 3. Update the paper with the assigned DOI/URL
 
-Once the DOI is assigned, edit two files:
+Once the DOI is assigned, edit:
 
-- `docs/paper/iswc/latex/main.tex` (Resource Availability Statement, §8)
-  - Replace `(DOI to be assigned upon acceptance)` with the actual DOI.
-- `release_package/README.md`
-  - Replace `[TODO: Zenodo DOI]` with the DOI.
-  - Replace `[TODO: GitHub URL]` with the release URL (e.g. `https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.0`).
+- `docs/paper/iswc/latex/main.tex` Resource Availability Statement
+  — replace the placeholder phrase ("a Zenodo DOI minted from the tagged
+  release will replace this URL upon camera-ready publication") with the
+  actual DOI URL.
+- `release_package/README.md` line 6 (DOI badge, currently commented out)
+  and line 11 (DOI prose line) — update both with the assigned DOI.
 
 ## 4. w3id.org redirect (REQUIRED — ontology IRI uses https://w3id.org/spectra)
 
