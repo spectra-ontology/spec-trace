@@ -84,10 +84,6 @@ release_package/
 │   ├── README.md                      # what is here and why
 │   ├── PAPER_APPENDIX.tex             # original Appendix A-G (TTL/SHACL/SPARQL excerpts, etc.)
 │   └── LLM_EVAL_PILOT.tex             # single-evaluator LLM-baseline pilot (was §6.6 in body draft)
-├── usecase/                            # ★ Q&A evaluation data (4 questions × 3 systems)
-│   ├── answers/                       # tracer / gpt / claude answer texts
-│   ├── evaluations/                   # per-question + 3-way comparisons + summary v2
-│   └── README.md
 ├── validation/                         # ★ JSON evidence for paper's quantitative claims (11 JSONs)
 │   ├── validation_manifest.md         # paper claim → JSON file mapping
 │   ├── structural_metrics.json        # class/property/axiom counts
