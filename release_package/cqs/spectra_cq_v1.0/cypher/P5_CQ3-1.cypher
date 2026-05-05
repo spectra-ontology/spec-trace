@@ -1,4 +1,4 @@
-// SpectraCQ P5_CQ3-1 — CQ3_기술별영향범위
+// SpectraCQ P5_CQ3-1 — CQ3_per_feature_impact_scope
 // Question (English): Which TS sections did TR 38.875 (RedCap) impact (low-power-IoT team reference)?
 // Schema area: classes=['Section', 'TRImpact', 'TechnicalReport'], rels=['HAS_TR_IMPACT', 'IMPACTS_SECTION']
 

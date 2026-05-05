@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ5-6 — CQ5_기술트렌드
+// SpectraCQ P2_CQ5-6 — CQ5_technical_trends
 // Question (English): Return the Agreement count per meeting from RAN1#100 to RAN1#121 (standardization-activity trend).
 // Schema area: classes=['Agreement', 'Meeting'], rels=['MADE_AT']
 

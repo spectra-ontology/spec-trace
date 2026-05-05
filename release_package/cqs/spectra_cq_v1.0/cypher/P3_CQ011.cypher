@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ011 — TS_참조분석
+// SpectraCQ P3_CQ011 — TS_cross_reference_analysis
 // Question (English): Return the top-15 most-referenced sections across all 8 TSes.
 // Schema area: classes=['Section', 'Spec'], rels=['BELONGS_TO_SPEC', 'REFERENCES_SECTION']
 

@@ -1,4 +1,4 @@
-// SpectraCQ P5_CQ2-1 — CQ2_TS반영영향추적
+// SpectraCQ P5_CQ2-1 — CQ2_TS_impact_tracing
 // Question (English): Did TR 38.769 (Ambient IoT) generate a new TS? If so, which TS and impact type?
 // Schema area: classes=['Spec', 'TRImpact', 'TechnicalReport'], rels=['HAS_TR_IMPACT', 'IMPACTS_SPEC']
 

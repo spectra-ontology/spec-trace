@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ2-7 — CQ2_Tdoc관계추적
+// SpectraCQ P1_CQ2-7 — CQ2_Tdoc_relation_tracing
 // Question (English): List incoming LSes received at RAN1#120 with their associated agenda items (cross-WG-request review).
 // Schema area: classes=['AgendaItem', 'Meeting', 'Tdoc', 'WorkingGroup'], rels=['BELONGS_TO', 'ORIGINATED_FROM', 'PRESENTED_AT']
 

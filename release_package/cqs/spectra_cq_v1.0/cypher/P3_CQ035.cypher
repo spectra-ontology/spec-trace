@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ035 — 기술_키워드검색
+// SpectraCQ P3_CQ035 — technical_keyword_search
 // Question (English): Return sections containing measurement or reporting keywords (measurement-reporting scope).
 // Schema area: classes=['Section', 'Spec'], rels=['BELONGS_TO_SPEC']
 

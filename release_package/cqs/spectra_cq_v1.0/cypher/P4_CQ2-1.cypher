@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ2-1 — CQ2_CrossSpec영향
+// SpectraCQ P4_CQ2-1 — CQ2_CrossSpec_impact
 // Question (English): Return the 5 specs affected by CR R1-2504971 along with each impact-relation type (Core/Test/OM).
 // Schema area: classes=['CR', 'Spec'], rels=[]
 

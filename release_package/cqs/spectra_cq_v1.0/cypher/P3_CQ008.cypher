@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ008 — TS_구조탐색
+// SpectraCQ P3_CQ008 — TS_structure_exploration
 // Question (English): Compare the section/table/figure counts across the 8 TSes (TS-complexity comparison).
 // Schema area: classes=['Section', 'Spec', 'TSFigure', 'TSTable'], rels=['BELONGS_TO_SPEC', 'FIGURE_IN_SECTION', 'TABLE_IN_SECTION']
 

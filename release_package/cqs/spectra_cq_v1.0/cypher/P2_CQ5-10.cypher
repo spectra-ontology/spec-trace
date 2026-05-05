@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ5-10 — CQ5_기술트렌드
+// SpectraCQ P2_CQ5-10 — CQ5_technical_trends
 // Question (English): List Agreements about UCI multiplexing.
 // Schema area: classes=['Agreement', 'Meeting'], rels=['MADE_AT']
 

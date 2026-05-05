@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ033 — 기술_키워드검색
+// SpectraCQ P3_CQ033 — technical_keyword_search
 // Question (English): Return PUSCH-related sections and tables (uplink-data-channel implementation scope).
 // Schema area: classes=['Section', 'Spec', 'TSTable'], rels=['BELONGS_TO_SPEC', 'CONTAINS_TABLE']
 

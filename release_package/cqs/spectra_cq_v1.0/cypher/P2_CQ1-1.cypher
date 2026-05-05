@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ1-1 — CQ1_Resolution조회
+// SpectraCQ P2_CQ1-1 — CQ1_Resolution_lookup
 // Question (English): List the Agreements made at meeting RAN1#115 under agenda items beginning with 7.1 (NR MIMO outcome review).
 // Schema area: classes=['AgendaItem', 'Agreement', 'Meeting', 'RESOLUTION_BELONGS_TO'], rels=['MADE_AT', 'RESOLUTION_BELONGS_TO']
 

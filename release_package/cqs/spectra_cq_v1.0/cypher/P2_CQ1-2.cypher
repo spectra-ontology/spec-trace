@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ1-2 — CQ1_Resolution조회
+// SpectraCQ P2_CQ1-2 — CQ1_Resolution_lookup
 // Question (English): Return the Agreements at meeting RAN1#100 on agenda item 5.1 (UL Tx switching technical decisions).
 // Schema area: classes=['AgendaItem', 'Agreement', 'Meeting', 'RESOLUTION_BELONGS_TO'], rels=['MADE_AT', 'RESOLUTION_BELONGS_TO']
 

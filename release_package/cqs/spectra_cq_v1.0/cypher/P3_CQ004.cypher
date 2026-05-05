@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ004 — TS_구조탐색
+// SpectraCQ P3_CQ004 — TS_structure_exploration
 // Question (English): Return the per-level section count of TS 38.213 (structural-complexity profile).
 // Schema area: classes=['Section', 'Spec'], rels=['BELONGS_TO_SPEC']
 

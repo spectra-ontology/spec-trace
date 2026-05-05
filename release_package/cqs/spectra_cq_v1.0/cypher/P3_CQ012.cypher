@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ012 — TS_참조분석
+// SpectraCQ P3_CQ012 — TS_cross_reference_analysis
 // Question (English): Return mutually-referencing section pairs in TS 38.213 (closely-coupled procedures).
 // Schema area: classes=['Section'], rels=['REFERENCES_SECTION']
 

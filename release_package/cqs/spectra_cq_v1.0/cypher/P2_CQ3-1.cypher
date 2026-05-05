@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ3-1 — CQ3_회사기여도
+// SpectraCQ P2_CQ3-1 — CQ3_company_contribution
 // Question (English): List TDocs from Huawei that led to Agreements (company-level standard-contribution tracing).
 // Schema area: classes=['Agreement', 'Company', 'Meeting', 'Tdoc'], rels=['MADE_AT', 'REFERENCES', 'SUBMITTED_BY']
 

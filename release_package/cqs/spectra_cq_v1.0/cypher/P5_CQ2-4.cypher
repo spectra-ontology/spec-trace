@@ -1,4 +1,4 @@
-// SpectraCQ P5_CQ2-4 — CQ2_TS반영영향추적
+// SpectraCQ P5_CQ2-4 — CQ2_TS_impact_tracing
 // Question (English): Identify which TR study the TS 38.211 §16 (NR-U physical-layer procedures) section originated from.
 // Schema area: classes=['Section', 'TRImpact', 'TechnicalReport'], rels=['HAS_TR_IMPACT', 'IMPACTS_SECTION']
 

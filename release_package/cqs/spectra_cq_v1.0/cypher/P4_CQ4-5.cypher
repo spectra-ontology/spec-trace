@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ4-5 — CQ4_연계분석
+// SpectraCQ P4_CQ4-5 — CQ4_cross_link_analysis
 // Question (English): Return aggregated change summaries for CRs agreed at RAN1#121 (the most-recent meeting with 18 CRs carrying summaryOfChange).
 // Schema area: classes=['CR', 'Meeting', 'Resolution'], rels=['MADE_AT', 'REFERENCES']
 

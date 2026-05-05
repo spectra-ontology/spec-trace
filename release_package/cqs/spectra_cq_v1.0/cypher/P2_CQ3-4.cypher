@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ3-4 — CQ3_회사기여도
+// SpectraCQ P2_CQ3-4 — CQ3_company_contribution
 // Question (English): Return Qualcomm's 10 most recent Agreement-participating TDocs.
 // Schema area: classes=['Agreement', 'Company', 'Meeting', 'Tdoc'], rels=['MADE_AT', 'REFERENCES', 'SUBMITTED_BY']
 

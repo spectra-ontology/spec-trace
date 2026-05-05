@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ015 — TS_참조분석
+// SpectraCQ P3_CQ015 — TS_cross_reference_analysis
 // Question (English): Return the 2-hop dependencies of TS 38.214 §5.1 (transitive references).
 // Schema area: classes=['Section', 'Spec'], rels=['BELONGS_TO_SPEC', 'REFERENCES_SECTION']
 

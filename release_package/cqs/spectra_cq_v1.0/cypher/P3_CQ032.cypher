@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ032 — 기술_키워드검색
+// SpectraCQ P3_CQ032 — technical_keyword_search
 // Question (English): Return PDCCH-related sections and tables (control-channel implementation scope).
 // Schema area: classes=['Section', 'Spec', 'TSTable'], rels=['BELONGS_TO_SPEC', 'CONTAINS_TABLE']
 

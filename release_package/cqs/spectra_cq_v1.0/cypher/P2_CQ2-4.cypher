@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ2-4 — CQ2_Tdoc-Resolution추적
+// SpectraCQ P2_CQ2-4 — CQ2_Tdoc_Resolution_tracing
 // Question (English): Return the top-10 agenda items by Resolution count (hotspot-topic identification).
 // Schema area: classes=['AgendaItem', 'RESOLUTION_BELONGS_TO', 'Resolution'], rels=['RESOLUTION_BELONGS_TO']
 

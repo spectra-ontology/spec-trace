@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ028 — Resolution_TS_의사결정
+// SpectraCQ P3_CQ028 — Resolution_TS_decision_tracking
 // Question (English): Return Resolutions on TS 38.213 mentioning HARQ (HARQ-related decision tracing).
 // Schema area: classes=['CR', 'Meeting', 'Resolution', 'Spec'], rels=['MADE_AT', 'MODIFIES', 'REFERENCES']
 

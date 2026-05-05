@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ021 — CR_TS_변경추적
+// SpectraCQ P3_CQ021 — CR_TS_change_tracking
 // Question (English): Return CRs that modify 5+ sections in a single change (large-scope CRs).
 // Schema area: classes=['CR', 'Spec'], rels=['MODIFIES']
 

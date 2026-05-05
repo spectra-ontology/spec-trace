@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ4-2 — CQ4_회의히스토리
+// SpectraCQ P1_CQ4-2 — CQ4_meeting_history
 // Question (English): Summarize Ericsson's TDoc outcomes at meeting RAN1#120 by status.
 // Schema area: classes=['Company', 'Meeting', 'Tdoc'], rels=['PRESENTED_AT', 'SUBMITTED_BY']
 

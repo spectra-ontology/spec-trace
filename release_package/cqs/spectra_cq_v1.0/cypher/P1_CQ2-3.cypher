@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ2-3 — CQ2_Tdoc관계추적
+// SpectraCQ P1_CQ2-3 — CQ2_Tdoc_relation_tracing
 // Question (English): Identify which incoming LS the TDoc R1-2000004 is replying to (replyTo lookup).
 // Schema area: classes=['Tdoc'], rels=['REPLY_TO']
 

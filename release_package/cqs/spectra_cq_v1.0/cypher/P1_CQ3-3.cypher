@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ3-3 — CQ3_회사분석
+// SpectraCQ P1_CQ3-3 — CQ3_company_analysis
 // Question (English): Return the top-10 companies by contribution count to Work Item NR_unlic-Core (competitive landscape per technology area).
 // Schema area: classes=['Company', 'Tdoc', 'WorkItem'], rels=['RELATED_TO', 'SUBMITTED_BY']
 

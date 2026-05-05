@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ4-3 — CQ4_회의히스토리
+// SpectraCQ P1_CQ4-3 — CQ4_meeting_history
 // Question (English): List TDocs at meeting RAN1#120 on agenda item 9.3 (NR duplex evolution) that remain not treated (open-issue review).
 // Schema area: classes=['AgendaItem', 'Meeting', 'Tdoc'], rels=['BELONGS_TO', 'PRESENTED_AT']
 

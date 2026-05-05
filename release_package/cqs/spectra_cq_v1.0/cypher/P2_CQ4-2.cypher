@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ4-2 — CQ4_기술주도권분석
+// SpectraCQ P2_CQ4-2 — CQ4_technical_leadership_analysis
 // Question (English): List the agenda items in which Huawei authored an FL Summary.
 // Schema area: classes=['AgendaItem', 'Company', 'Tdoc'], rels=['BELONGS_TO', 'MODERATED_BY']
 

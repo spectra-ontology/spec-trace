@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ038 — 통합분석
+// SpectraCQ P3_CQ038 — integrated_analysis
 // Question (English): Return the top-10 most-referenced sections and their CR-modification count (stability assessment).
 // Schema area: classes=['CR', 'Section', 'Spec'], rels=['BELONGS_TO_SPEC', 'MODIFIES', 'REFERENCES_SECTION']
 

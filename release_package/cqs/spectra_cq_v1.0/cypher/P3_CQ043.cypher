@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ043 — 통합분석
+// SpectraCQ P3_CQ043 — integrated_analysis
 // Question (English): Return a Neo4j graph summary (node and relationship counts by type).
 // Schema area: classes=['CR', 'Company', 'Meeting', 'Resolution', 'Section', 'Spec', 'TSFigure', 'TSTable'], rels=[]
 

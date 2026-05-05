@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ003 — TS_구조탐색
+// SpectraCQ P3_CQ003 — TS_structure_exploration
 // Question (English): Return the breadcrumb (path-to-root) of TS 38.214 §5.1.3.2.
 // Schema area: classes=['Section'], rels=['PARENT_SECTION']
 

@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ2-1 — CQ2_Tdoc관계추적
+// SpectraCQ P1_CQ2-1 — CQ2_Tdoc_relation_tracing
 // Question (English): Return the revision history (predecessor/successor versions) of TDoc R1-2501234 (revision-lineage tracing).
 // Schema area: classes=['Tdoc'], rels=['IS_REVISION_OF', 'REVISED_TO']
 

@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ006 — TS_구조탐색
+// SpectraCQ P3_CQ006 — TS_structure_exploration
 // Question (English): List all tables defined in TS 38.214 (parameter-table reference for implementation).
 // Schema area: classes=['Section', 'Spec', 'TSTable'], rels=['BELONGS_TO_SPEC', 'TABLE_IN_SECTION']
 

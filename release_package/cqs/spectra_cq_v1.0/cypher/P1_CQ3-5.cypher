@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ3-5 — CQ3_회사분석
+// SpectraCQ P1_CQ3-5 — CQ3_company_analysis
 // Question (English): List TDocs from other companies that share the same agenda item with TDoc R1-2501234 (competing-contribution review).
 // Schema area: classes=['AgendaItem', 'Company', 'Tdoc'], rels=['BELONGS_TO', 'SUBMITTED_BY']
 

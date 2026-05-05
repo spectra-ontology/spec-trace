@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ1-4 — CQ1_Resolution조회
+// SpectraCQ P2_CQ1-4 — CQ1_Resolution_lookup
 // Question (English): List the Working Assumptions of meeting RAN1#115 (revisitable agenda items).
 // Schema area: classes=['Meeting', 'WorkingAssumption'], rels=['MADE_AT']
 

@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ1-1 — CQ1_CR변경근거
+// SpectraCQ P4_CQ1-1 — CQ1_CR_change_rationale
 // Question (English): Return the reason-for-change of CR R1-2504971 (which affects 5 specs for the LP-WUS/WUR adoption).
 // Schema area: classes=['CR'], rels=[]
 

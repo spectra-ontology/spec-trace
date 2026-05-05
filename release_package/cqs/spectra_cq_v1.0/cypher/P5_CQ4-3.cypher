@@ -1,4 +1,4 @@
-// SpectraCQ P5_CQ4-3 — CQ4_릴리스별연구영향
+// SpectraCQ P5_CQ4-3 — CQ4_per_release_research_impact
 // Question (English): Return the conclusions and TS-impact status of TR 38.808 (52.6 GHz--71 GHz) — mmWave product planning.
 // Schema area: classes=['Spec', 'TRImpact', 'TechnicalReport'], rels=['HAS_TR_IMPACT', 'IMPACTS_SPEC']
 

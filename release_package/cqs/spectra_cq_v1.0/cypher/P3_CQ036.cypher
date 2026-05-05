@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ036 — 통합분석
+// SpectraCQ P3_CQ036 — integrated_analysis
 // Question (English): Return the top-5 TSes by CR count and their section counts (complexity vs amendment frequency).
 // Schema area: classes=['CR', 'Section', 'Spec'], rels=['BELONGS_TO_SPEC', 'MODIFIES']
 

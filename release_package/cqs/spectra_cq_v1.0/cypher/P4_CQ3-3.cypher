@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ3-3 — CQ3_CRPack분석
+// SpectraCQ P4_CQ3-3 — CQ3_CRPack_analysis
 // Question (English): Return CR Packs submitted at RAN#109 with the CR count per pack.
 // Schema area: classes=['CR', 'CRPack'], rels=['HAS_CR']
 

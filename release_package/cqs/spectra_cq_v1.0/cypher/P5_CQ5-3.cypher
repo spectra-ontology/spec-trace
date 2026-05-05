@@ -1,4 +1,4 @@
-// SpectraCQ P5_CQ5-3 — CQ5_TR간참조관계
+// SpectraCQ P5_CQ5-3 — CQ5_inter_TR_reference
 // Question (English): Return the top-5 most-referenced TRs (core-foundation research identification).
 // Schema area: classes=['TechnicalReport'], rels=['REFERENCES_TR']
 

@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ4-1 — CQ4_회의히스토리
+// SpectraCQ P1_CQ4-1 — CQ4_meeting_history
 // Question (English): List Samsung's prior TDocs in Work Item NR_eMIMO-Core across past meetings (technology-history tracing).
 // Schema area: classes=['Company', 'Meeting', 'Tdoc', 'WorkItem'], rels=['PRESENTED_AT', 'RELATED_TO', 'SUBMITTED_BY']
 

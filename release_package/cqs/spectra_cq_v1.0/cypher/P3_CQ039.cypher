@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ039 — 통합분석
+// SpectraCQ P3_CQ039 — integrated_analysis
 // Question (English): Return the top-10 companies that submitted CRs against TS 38.214 (technical-leadership analysis).
 // Schema area: classes=['CR', 'Company', 'Spec'], rels=['MODIFIES', 'SUBMITTED_BY']
 

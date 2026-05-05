@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ040 — 통합분석
+// SpectraCQ P3_CQ040 — integrated_analysis
 // Question (English): Compare CR counts vs Agreement counts per TS (change-vs-consensus ratio).
 // Schema area: classes=['Agreement', 'CR', 'Spec'], rels=['MODIFIES', 'REFERENCES']
 

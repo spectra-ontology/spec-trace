@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ2-4 — CQ2_CrossSpec영향
+// SpectraCQ P4_CQ2-4 — CQ2_CrossSpec_impact
 // Question (English): Return the top-10 CRs by cross-spec impact span and the affected-spec list per CR.
 // Schema area: classes=['CR', 'Spec'], rels=['AFFECTS_CORE_SPEC']
 

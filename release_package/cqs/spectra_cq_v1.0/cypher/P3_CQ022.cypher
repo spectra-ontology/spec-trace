@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ022 — CR_TS_변경추적
+// SpectraCQ P3_CQ022 — CR_TS_change_tracking
 // Question (English): Return per-meeting CR-submission trend for TS 38.213 (standardization-activity dynamics).
 // Schema area: classes=['CR', 'Meeting', 'Spec'], rels=['MODIFIES', 'PRESENTED_AT']
 

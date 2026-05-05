@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ1-7 — CQ1_Resolution조회
+// SpectraCQ P2_CQ1-7 — CQ1_Resolution_lookup
 // Question (English): Return Agreements related to beam management (beam-management technical decisions).
 // Schema area: classes=['Agreement', 'Meeting'], rels=['MADE_AT']
 

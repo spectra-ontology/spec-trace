@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ3-2 — CQ3_회사기여도
+// SpectraCQ P2_CQ3-2 — CQ3_company_contribution
 // Question (English): Return Samsung's Agreement-contributing TDoc count and ratio (standard-contribution analysis).
 // Schema area: classes=['Agreement', 'Company', 'Tdoc'], rels=['REFERENCES', 'SUBMITTED_BY']
 

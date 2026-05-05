@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ044 — CR_TS_변경추적
+// SpectraCQ P3_CQ044 — CR_TS_change_tracking
 // Question (English): Return TSes affected by CRs from Work Item NR_newRAT-Core (work-item portfolio analysis).
 // Schema area: classes=['CR', 'Spec', 'WorkItem'], rels=['MODIFIES', 'RELATED_TO']
 

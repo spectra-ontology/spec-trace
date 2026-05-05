@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ1-6 — CQ1_Resolution조회
+// SpectraCQ P2_CQ1-6 — CQ1_Resolution_lookup
 // Question (English): Return Agreements related to PDCCH blind decoding (PDCCH technical-decision tracing).
 // Schema area: classes=['Agreement', 'Meeting'], rels=['MADE_AT']
 

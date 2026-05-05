@@ -1,4 +1,4 @@
-// SpectraCQ P5_CQ2-2 — CQ2_TS반영영향추적
+// SpectraCQ P5_CQ2-2 — CQ2_TS_impact_tracing
 // Question (English): Which new sections did TR 38.889 (NR-U) add to TS 38.211--38.214 (PHY-team reference)?
 // Schema area: classes=['Section', 'TRImpact', 'TechnicalReport'], rels=['HAS_TR_IMPACT', 'IMPACTS_SECTION']
 

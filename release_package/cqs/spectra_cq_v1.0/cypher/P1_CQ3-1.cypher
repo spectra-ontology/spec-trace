@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ3-1 — CQ3_회사분석
+// SpectraCQ P1_CQ3-1 — CQ3_company_analysis
 // Question (English): List the TDocs submitted by Samsung under Work Item NR_MIMO_evo_DL_UL-Core.
 // Schema area: classes=['Company', 'Tdoc', 'WorkItem'], rels=['RELATED_TO', 'SUBMITTED_BY']
 

@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ2-2 — CQ2_Tdoc관계추적
+// SpectraCQ P1_CQ2-2 — CQ2_Tdoc_relation_tracing
 // Question (English): For outgoing LS R1-2505678, return its origin (originatedFrom) and destination (sentTo) Working Groups (LS-path tracing).
 // Schema area: classes=['Tdoc', 'WorkingGroup'], rels=['CC_TO', 'ORIGINATED_FROM', 'SENT_TO']
 

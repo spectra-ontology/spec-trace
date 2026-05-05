@@ -1,4 +1,4 @@
-// SpectraCQ P5_CQ4-1 — CQ4_릴리스별연구영향
+// SpectraCQ P5_CQ4-1 — CQ4_per_release_research_impact
 // Question (English): List Rel-18-target TRs and each TR's impact types on TSes.
 // Schema area: classes=['Release', 'Spec', 'TRImpact', 'TechnicalReport'], rels=['HAS_TR_IMPACT', 'IMPACTS_SPEC', 'TARGET_RELEASE']
 

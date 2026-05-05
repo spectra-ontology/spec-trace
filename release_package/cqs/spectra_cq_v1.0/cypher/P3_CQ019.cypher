@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ019 — CR_TS_변경추적
+// SpectraCQ P3_CQ019 — CR_TS_change_tracking
 // Question (English): Compare CR counts across the 8 TSes (where standardization is most active).
 // Schema area: classes=['CR', 'Spec'], rels=['MODIFIES']
 

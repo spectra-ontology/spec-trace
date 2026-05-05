@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ1-9 — CQ1_Tdoc기본검색
+// SpectraCQ P1_CQ1-9 — CQ1_Tdoc_basic_lookup
 // Question (English): List the full agenda of meeting RAN1#120 with item descriptions (meeting preparation).
 // Schema area: classes=['AgendaItem', 'Meeting', 'Tdoc'], rels=['BELONGS_TO', 'PRESENTED_AT']
 

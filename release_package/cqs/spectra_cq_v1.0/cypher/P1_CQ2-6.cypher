@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ2-6 — CQ2_Tdoc관계추적
+// SpectraCQ P1_CQ2-6 — CQ2_Tdoc_relation_tracing
 // Question (English): List the TDocs at meeting RAN1#120 that were postponed to the next meeting (open-issue tracking).
 // Schema area: classes=['Meeting', 'Tdoc'], rels=['PRESENTED_AT']
 

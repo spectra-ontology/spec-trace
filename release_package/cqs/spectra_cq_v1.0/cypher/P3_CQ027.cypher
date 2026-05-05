@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ027 — Resolution_TS_의사결정
+// SpectraCQ P3_CQ027 — Resolution_TS_decision_tracking
 // Question (English): Return Agreements that simultaneously reference CRs across multiple TSes (cross-TS consensus).
 // Schema area: classes=['Agreement', 'CR', 'Meeting', 'Spec'], rels=['MADE_AT', 'MODIFIES', 'REFERENCES']
 

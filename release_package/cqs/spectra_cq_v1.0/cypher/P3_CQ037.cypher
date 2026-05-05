@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ037 — 통합분석
+// SpectraCQ P3_CQ037 — integrated_analysis
 // Question (English): Return per-company CR submission counts across all 8 TSes (top contributors).
 // Schema area: classes=['CR', 'Company', 'Spec'], rels=['MODIFIES', 'SUBMITTED_BY']
 

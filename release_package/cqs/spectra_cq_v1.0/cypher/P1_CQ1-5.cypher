@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ1-5 — CQ1_Tdoc기본검색
+// SpectraCQ P1_CQ1-5 — CQ1_Tdoc_basic_lookup
 // Question (English): List the TDocs at meeting RAN1#121 with status approved or agreed.
 // Schema area: classes=['Meeting', 'Tdoc'], rels=['PRESENTED_AT']
 

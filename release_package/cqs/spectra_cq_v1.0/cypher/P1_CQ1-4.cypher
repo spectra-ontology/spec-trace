@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ1-4 — CQ1_Tdoc기본검색
+// SpectraCQ P1_CQ1-4 — CQ1_Tdoc_basic_lookup
 // Question (English): List recently submitted TDocs targeting Release 18 (per-release contribution status).
 // Schema area: classes=['Meeting', 'Release', 'Tdoc'], rels=['PRESENTED_AT', 'TARGET_RELEASE']
 

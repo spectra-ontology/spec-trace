@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ2-2 — CQ2_Tdoc-Resolution추적
+// SpectraCQ P2_CQ2-2 — CQ2_Tdoc_Resolution_tracing
 // Question (English): Identify which Agreement TDoc R1-2001110 led to (TDoc-to-standard outcome tracing).
 // Schema area: classes=['Agreement', 'Meeting', 'Tdoc'], rels=['MADE_AT', 'REFERENCES']
 

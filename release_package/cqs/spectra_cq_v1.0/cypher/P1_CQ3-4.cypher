@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ3-4 — CQ3_회사분석
+// SpectraCQ P1_CQ3-4 — CQ3_company_analysis
 // Question (English): Return the count and ratio of TDocs submitted by Qualcomm that reached approved/agreed status (company-level outcome analysis).
 // Schema area: classes=['Company', 'Tdoc'], rels=['SUBMITTED_BY']
 

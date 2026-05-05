@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ017 — CR_TS_변경추적
+// SpectraCQ P3_CQ017 — CR_TS_change_tracking
 // Question (English): Return the 20 most recent CRs that modify TS 38.213.
 // Schema area: classes=['CR', 'Company', 'Meeting', 'Spec'], rels=['MODIFIES', 'PRESENTED_AT', 'SUBMITTED_BY']
 

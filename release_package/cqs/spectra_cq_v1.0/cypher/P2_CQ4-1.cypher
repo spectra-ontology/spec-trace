@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ4-1 — CQ4_기술주도권분석
+// SpectraCQ P2_CQ4-1 — CQ4_technical_leadership_analysis
 // Question (English): Return the top-5 companies by FL Summary authorship in agenda 7.1 (NR MIMO) — technology-leadership analysis.
 // Schema area: classes=['AgendaItem', 'Company', 'Tdoc'], rels=['BELONGS_TO', 'MODERATED_BY']
 

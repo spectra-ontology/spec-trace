@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ041 — 통합분석
+// SpectraCQ P3_CQ041 — integrated_analysis
 // Question (English): Return sections with 5+ embedded tables (parameter-dense implementation hotspots).
 // Schema area: classes=['Section', 'Spec', 'TSTable'], rels=['BELONGS_TO_SPEC', 'CONTAINS_TABLE']
 

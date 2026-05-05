@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ3-6 — CQ3_회사분석
+// SpectraCQ P1_CQ3-6 — CQ3_company_analysis
 // Question (English): Return Nokia's top-10 work items by contribution count (technology-leadership distribution).
 // Schema area: classes=['Company', 'Tdoc', 'WorkItem'], rels=['RELATED_TO', 'SUBMITTED_BY']
 

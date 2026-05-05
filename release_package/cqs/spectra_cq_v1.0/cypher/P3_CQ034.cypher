@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ034 — 기술_키워드검색
+// SpectraCQ P3_CQ034 — technical_keyword_search
 // Question (English): Return SRS-related sections and tables (Sounding Reference Signal scope).
 // Schema area: classes=['Section', 'Spec', 'TSTable'], rels=['BELONGS_TO_SPEC', 'CONTAINS_TABLE']
 

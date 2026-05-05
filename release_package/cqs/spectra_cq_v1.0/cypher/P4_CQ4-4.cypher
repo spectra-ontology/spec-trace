@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ4-4 — CQ4_연계분석
+// SpectraCQ P4_CQ4-4 — CQ4_cross_link_analysis
 // Question (English): Return the cross-spec impact distribution of recent Samsung-submitted CRs (most-cross-spec company, latest first).
 // Schema area: classes=['CR', 'Company', 'Spec'], rels=['AFFECTS_CORE_SPEC', 'SUBMITTED_BY']
 

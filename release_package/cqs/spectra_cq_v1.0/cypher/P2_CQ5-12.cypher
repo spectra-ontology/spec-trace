@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ5-12 — CQ5_기술트렌드
+// SpectraCQ P2_CQ5-12 — CQ5_technical_trends
 // Question (English): List Agreements about SSB burst set.
 // Schema area: classes=['Agreement', 'Meeting'], rels=['MADE_AT']
 

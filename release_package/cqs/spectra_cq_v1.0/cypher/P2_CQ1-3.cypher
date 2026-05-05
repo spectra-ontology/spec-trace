@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ1-3 — CQ1_Resolution조회
+// SpectraCQ P2_CQ1-3 — CQ1_Resolution_lookup
 // Question (English): List the Conclusions recorded at the most recent meeting (RAN1#121) for open-issue review.
 // Schema area: classes=['Conclusion', 'Meeting'], rels=['MADE_AT']
 

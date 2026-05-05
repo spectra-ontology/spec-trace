@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ1-2 — CQ1_CR변경근거
+// SpectraCQ P4_CQ1-2 — CQ1_CR_change_rationale
 // Question (English): Return the summary-of-change of CR R1-2506685 (Rel-19 UL Tx switching 3Tx UE scenario).
 // Schema area: classes=['CR'], rels=[]
 

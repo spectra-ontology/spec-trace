@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ3-3 — CQ3_회사기여도
+// SpectraCQ P2_CQ3-3 — CQ3_company_contribution
 // Question (English): Return the top-10 companies by Resolution contributions in agenda 7.1 (NR MIMO).
 // Schema area: classes=['AgendaItem', 'Agreement', 'Company', 'RESOLUTION_BELONGS_TO', 'Tdoc'], rels=['REFERENCES', 'RESOLUTION_BELONGS_TO', 'SUBMITTED_BY']
 

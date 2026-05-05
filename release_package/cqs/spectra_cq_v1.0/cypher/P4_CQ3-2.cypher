@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ3-2 — CQ3_CRPack분석
+// SpectraCQ P4_CQ3-2 — CQ3_CRPack_analysis
 // Question (English): Return the CR Packs that bundle CRs from Work Item NR_newRAT-Core toward TSG approval.
 // Schema area: classes=['CR', 'CRPack', 'WorkItem'], rels=['BELONGS_TO_CR_PACK', 'RELATED_TO']
 

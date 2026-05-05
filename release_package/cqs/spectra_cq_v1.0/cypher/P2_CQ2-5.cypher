@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ2-5 — CQ2_Tdoc-Resolution추적
+// SpectraCQ P2_CQ2-5 — CQ2_Tdoc_Resolution_tracing
 // Question (English): List Resolutions related to TS 38.211 amendments (38.211 revision history).
 // Schema area: classes=['Agreement', 'Meeting'], rels=['MADE_AT']
 

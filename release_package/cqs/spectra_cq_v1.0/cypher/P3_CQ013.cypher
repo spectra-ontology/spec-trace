@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ013 — TS_참조분석
+// SpectraCQ P3_CQ013 — TS_cross_reference_analysis
 // Question (English): Compare cross-reference density per TS (inter-section-reference tightness).
 // Schema area: classes=['Section', 'Spec'], rels=['BELONGS_TO_SPEC', 'REFERENCES_SECTION']
 

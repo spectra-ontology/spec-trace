@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ042 — 통합분석
+// SpectraCQ P3_CQ042 — integrated_analysis
 // Question (English): Return the top-10 sections with both many sub-sections and tables (high-complexity areas).
 // Schema area: classes=['Section', 'Spec', 'TSTable'], rels=['BELONGS_TO_SPEC', 'CONTAINS_TABLE', 'HAS_SUB_SECTION']
 

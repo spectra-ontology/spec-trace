@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ1-7 — CQ1_Tdoc기본검색
+// SpectraCQ P1_CQ1-7 — CQ1_Tdoc_basic_lookup
 // Question (English): Return the purpose (For field, e.g., Discussion/Approval/Agreement) of TDoc R1-2501234.
 // Schema area: classes=['Tdoc'], rels=[]
 

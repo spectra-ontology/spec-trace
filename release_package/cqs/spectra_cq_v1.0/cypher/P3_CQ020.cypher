@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ020 — CR_TS_변경추적
+// SpectraCQ P3_CQ020 — CR_TS_change_tracking
 // Question (English): List CRs submitted by Qualcomm against TS 38.214 (company-domain contribution).
 // Schema area: classes=['CR', 'Company', 'Meeting', 'Spec'], rels=['MODIFIES', 'PRESENTED_AT', 'SUBMITTED_BY']
 

@@ -1,4 +1,4 @@
-// SpectraCQ P4_CQ4-1 — CQ4_연계분석
+// SpectraCQ P4_CQ4-1 — CQ4_cross_link_analysis
 // Question (English): Return change-reason patterns for recent CRs modifying TS 38.214 §5.1.5 (PDSCH MIMO, most-modified).
 // Schema area: classes=['CR', 'Spec'], rels=['MODIFIES']
 

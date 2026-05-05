@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ014 — TS_참조분석
+// SpectraCQ P3_CQ014 — TS_cross_reference_analysis
 // Question (English): Return bidirectional reference pairs between sections (circular-dependency check).
 // Schema area: classes=['Section', 'Spec'], rels=['BELONGS_TO_SPEC', 'REFERENCES_SECTION']
 

@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ1-5 — CQ1_Resolution조회
+// SpectraCQ P2_CQ1-5 — CQ1_Resolution_lookup
 // Question (English): List recent Agreements that contain FFS (For Further Study) markers (items needing additional review).
 // Schema area: classes=['Agreement', 'Meeting'], rels=['MADE_AT']
 

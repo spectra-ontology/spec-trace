@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ3-2 — CQ3_회사분석
+// SpectraCQ P1_CQ3-2 — CQ3_company_analysis
 // Question (English): List TDocs from other companies on agenda item 8.1 (NR Coverage Enhancement) at meeting RAN1#120 (competitor contribution review).
 // Schema area: classes=['AgendaItem', 'Company', 'Meeting', 'Tdoc'], rels=['BELONGS_TO', 'PRESENTED_AT', 'SUBMITTED_BY']
 

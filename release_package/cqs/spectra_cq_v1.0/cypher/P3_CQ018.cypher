@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ018 — CR_TS_변경추적
+// SpectraCQ P3_CQ018 — CR_TS_change_tracking
 // Question (English): Return CRs whose clausesAffected includes TS 38.214 §5.1 (impact on a specific section).
 // Schema area: classes=['CR', 'Company', 'Meeting', 'Spec'], rels=['MODIFIES', 'PRESENTED_AT', 'SUBMITTED_BY']
 

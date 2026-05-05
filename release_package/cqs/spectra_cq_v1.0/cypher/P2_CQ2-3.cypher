@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ2-3 — CQ2_Tdoc-Resolution추적
+// SpectraCQ P2_CQ2-3 — CQ2_Tdoc_Resolution_tracing
 // Question (English): List Agreements at meeting RAN1#115 that approved CRs (spec-change decision tracing).
 // Schema area: classes=['Agreement', 'Meeting'], rels=['MADE_AT']
 

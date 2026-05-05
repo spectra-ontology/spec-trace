@@ -1,4 +1,4 @@
-// SpectraCQ P2_CQ3-6 — CQ3_회사기여도
+// SpectraCQ P2_CQ3-6 — CQ3_company_contribution
 // Question (English): List Apple's TDocs that reached approved status.
 // Schema area: classes=['Company', 'Tdoc'], rels=['SUBMITTED_BY']
 

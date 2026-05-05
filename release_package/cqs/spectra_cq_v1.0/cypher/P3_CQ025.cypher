@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ025 — Resolution_TS_의사결정
+// SpectraCQ P3_CQ025 — Resolution_TS_decision_tracking
 // Question (English): Summarize Agreement counts per TS (where consensus is most active).
 // Schema area: classes=['Agreement', 'CR', 'Spec'], rels=['MODIFIES', 'REFERENCES']
 

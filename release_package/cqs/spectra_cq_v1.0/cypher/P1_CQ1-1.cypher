@@ -1,4 +1,4 @@
-// SpectraCQ P1_CQ1-1 — CQ1_Tdoc기본검색
+// SpectraCQ P1_CQ1-1 — CQ1_Tdoc_basic_lookup
 // Question (English): List the TDocs presented at meeting RAN1#120 that are linked to Work Item NR_eMIMO-Core (MIMO meeting preparation).
 // Schema area: classes=['Meeting', 'Tdoc', 'WorkItem'], rels=['PRESENTED_AT', 'RELATED_TO']
 

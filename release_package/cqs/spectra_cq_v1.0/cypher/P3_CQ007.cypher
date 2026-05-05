@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ007 — TS_구조탐색
+// SpectraCQ P3_CQ007 — TS_structure_exploration
 // Question (English): List sections with 'PDSCH' in the title across all TSes.
 // Schema area: classes=['Section', 'Spec'], rels=['BELONGS_TO_SPEC']
 

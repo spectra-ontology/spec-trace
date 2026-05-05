@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ026 — Resolution_TS_의사결정
+// SpectraCQ P3_CQ026 — Resolution_TS_decision_tracking
 // Question (English): Return Agreements affecting TS 38.213 that contain TBD markers (unresolved technical issues).
 // Schema area: classes=['Agreement', 'CR', 'Meeting', 'Spec'], rels=['MADE_AT', 'MODIFIES', 'REFERENCES']
 

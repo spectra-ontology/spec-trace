@@ -1,4 +1,4 @@
-// SpectraCQ P3_CQ024 — Resolution_TS_의사결정
+// SpectraCQ P3_CQ024 — Resolution_TS_decision_tracking
 // Question (English): Return the 10 most recent Agreements affecting TS 38.213.
 // Schema area: classes=['Agreement', 'CR', 'Meeting', 'Spec'], rels=['MADE_AT', 'MODIFIES', 'REFERENCES']
 
