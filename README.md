@@ -3,7 +3,7 @@
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Ontology: OWL 2](https://img.shields.io/badge/Ontology-OWL_2-blue.svg)](https://www.w3.org/TR/owl2-overview/)
 [![Persistent IRI](https://img.shields.io/badge/IRI-w3id.org%2Fspectra-success.svg)](https://w3id.org/spectra)
-<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20034872.svg)](https://doi.org/10.5281/zenodo.20034872) -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20034872.svg)](https://doi.org/10.5281/zenodo.20034872)
 
 **License**: CC-BY 4.0 (SPECTRA-authored components); 3GPP-derived literal content carries explicit 3GPP attribution (see `LICENSE` Tier 2)
 **Version**: v1.0.0 (see `ontology/spectra.ttl` header for authoritative version)
