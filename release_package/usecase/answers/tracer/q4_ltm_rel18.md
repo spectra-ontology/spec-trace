@@ -352,4 +352,4 @@ v1에서 카탈로그(이름)만 노출 → v2에서 SEQUENCE 본문 직접 회�
 - **Rel-20**: discussion 단계만, spec 본문 미발견 (v1과 동일, 정당한 미답)
 - 38.306 capability 행 단위 직접 인용은 후속 P3 영역
 
-**참조**: `docs/usecase/evaluations/3way/p1_poc_results.md`, `final_application_report.md` §4 (P2 결과), `q4_ltm_rel18.v1.md` (P1 시점 백업)
+**참조**: `usecase/evaluations/3way/p1_poc_results.md`, `final_application_report.md` §4 (P2 결과), `q4_ltm_rel18.v1.md` (P1 시점 백업)

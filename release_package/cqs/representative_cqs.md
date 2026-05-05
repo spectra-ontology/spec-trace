@@ -2,7 +2,7 @@
 
 This file lists a curated subset of the 137 competency questions used to design and validate SPECTRA. Each entry shows the question, the schema area exercised, and the Cypher query used to answer it against a SPECTRA-conformant knowledge graph. SPARQL translations for a subset of these CQs are in `../queries/sparql/`.
 
-The **complete 137-CQ suite** and the full executable query set are retained as internal validation material; see the paper's Availability section.
+The **complete 137-CQ suite** and the full executable Cypher (one file per CQ) are shipped under `cqs/spectra_cq_v1.0/`; see `cqs/spectra_cq_v1.0/README.md` and the paper's Availability section.
 
 Each CQ identifier below is namespaced by the development phase in which the CQ was first introduced (P1 = Phase 1 TDoc metadata, P2 = Phase 2 Resolutions, P3 = Phase 3 TS structure, P4 = Phase 4 CR documents, P5 = Phase 5 TRs).
 
@@ -34,11 +34,11 @@ MATCH (m:Meeting {meetingNumber: 'RAN1#121'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONG
 
 - **Phase**: 1
 - **Category**: Tdoc metadata
-- **Question**: List the Tdocs presented at meeting RAN1#120 submitted by a given Company (replace 'CompanyX' with an actual vendor name from your knowledge graph).
-- **Cypher** (see `../queries/cypher/P1_CQ1-3.cypher`):
+- **Question**: List the TDocs submitted at meeting RAN1#120 by Huawei (competitor-contribution trend analysis).
+- **Cypher** (see `spectra_cq_v1.0/cypher/P1_CQ1-3.cypher`):
 
 ```cypher
-MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'CompanyX'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10
+MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10
 ```
 
 ## P2_CQ1-1
@@ -122,22 +122,22 @@ MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.213'}) RETURN 
 
 - **Phase**: 4
 - **Category**: CR rationale
-- **Question**: Return the reason-for-change of CR R1-2599971.
+- **Question**: Return the reason-for-change of CR R1-2504971.
 - **Cypher** (see `../queries/cypher/P4_CQ1-1.cypher`):
 
 ```cypher
-MATCH (cr:CR {tdocNumber: 'R1-2599971'}) WHERE cr.reasonForChange IS NOT NULL RETURN cr.tdocNumber, cr.reasonForChange
+MATCH (cr:CR {tdocNumber: 'R1-2504971'}) WHERE cr.reasonForChange IS NOT NULL RETURN cr.tdocNumber, cr.reasonForChange
 ```
 
 ## P4_CQ1-2
 
 - **Phase**: 4
 - **Category**: CR rationale
-- **Question**: Return the summary-of-change of CR R1-2599685.
+- **Question**: Return the summary-of-change of CR R1-2506685.
 - **Cypher** (see `../queries/cypher/P4_CQ1-2.cypher`):
 
 ```cypher
-MATCH (cr:CR {tdocNumber: 'R1-2599685'}) WHERE cr.summaryOfChange IS NOT NULL RETURN cr.tdocNumber, cr.summaryOfChange
+MATCH (cr:CR {tdocNumber: 'R1-2506685'}) WHERE cr.summaryOfChange IS NOT NULL RETURN cr.tdocNumber, cr.summaryOfChange
 ```
 
 ## P5_CQ1-1

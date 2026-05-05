@@ -1,0 +1,246 @@
+% ============================================================================
+\appendix
+\section*{Appendix}
+\addcontentsline{toc}{section}{Appendix}
+
+\section{Ontology TTL and SHACL Excerpts}\label{app:shacl}
+
+\noindent\textbf{Ontology TTL (illustrative excerpt).} Figure~\ref{lst:ttl} shows the \texttt{spectra:Tdoc} class declaration with one functional and one non-functional OP, adapted from \texttt{ontology/spectra.ttl} (English labels and the explanatory \texttt{\#} comments are paper-side annotations; the full TTL with all comments and the PROV-O block lives at the cited path).
+
+\begin{figure}[h]
+\centering
+\scriptsize
+\begin{minipage}{0.95\textwidth}
+\begin{verbatim}
+spectra:Tdoc a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Technical Document"@en .
+
+spectra:submittedBy a owl:ObjectProperty ;
+    rdfs:comment "Multiple companies can co-submit." ;
+    rdfs:domain spectra:Tdoc ; rdfs:range spectra:Company .
+
+spectra:hasContact a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:domain spectra:Tdoc ; rdfs:range spectra:Contact .
+
+spectra:presentedAt a owl:ObjectProperty ;
+    rdfs:domain spectra:Tdoc ; rdfs:range spectra:Meeting .
+    # Not declared owl:FunctionalProperty: re-tabling admits
+    # multiple Meeting values per Tdoc (data-quality appendix).
+\end{verbatim}
+\end{minipage}
+\caption{Excerpt from \texttt{ontology/spectra.ttl}. \texttt{hasContact} is functional (a Tdoc has at most one responsible Contact); \texttt{submittedBy} and \texttt{presentedAt} are intentionally non-functional to admit co-submitting companies and re-tabled TDocs respectively.}
+\label{lst:ttl}
+\end{figure}
+
+\noindent\textbf{SHACL shapes (illustrative excerpt).} The full \texttt{shapes/\bk spectra-core.\bk shacl.\bk ttl} declares 8 \texttt{sh:NodeShape}s covering the lifecycle classes. Figure~\ref{lst:shacl} shows the \texttt{Tdoc} and \texttt{CR} shapes excerpted from the released file (the file uses the local \texttt{tdoc:} prefix bound to \url{https://w3id.org/spectra\#}; we use \texttt{spectra:} below for readability).
+
+\begin{figure}[h]
+\centering
+\scriptsize
+\begin{minipage}{0.95\textwidth}
+\begin{verbatim}
+spectra:TdocShape a sh:NodeShape ;
+    sh:targetClass spectra:Tdoc ;
+    sh:property [ sh:path spectra:tdocNumber ; sh:datatype xsd:string ;
+                  sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path spectra:presentedAt ; sh:class spectra:Meeting ] ;
+    sh:property [ sh:path spectra:targetRelease ; sh:class spectra:Release ;
+                  sh:maxCount 1 ] .
+
+spectra:CRShape a sh:NodeShape ;
+    sh:targetClass spectra:CR ;
+    sh:property [ sh:path spectra:modifies ; sh:class spectra:Spec ] ;
+    sh:property [ sh:path spectra:belongsToCRPack ; sh:class spectra:CRPack ;
+                  sh:maxCount 1 ] .
+\end{verbatim}
+\end{minipage}
+\caption{Excerpt from \texttt{shapes/\bk spectra-core.\bk shacl.\bk ttl}. \texttt{tdocNumber} is required and unique per Tdoc; \texttt{targetRelease} is bounded above (a TDoc targets at most one Release). \texttt{presentedAt} carries no \texttt{sh:maxCount} because TDocs may be re-tabled at a subsequent meeting under the same identifier (Appendix~\ref{app:dq}); \texttt{modifies} is multi-valued for paired stage-2/stage-3 CRs.}
+\label{lst:shacl}
+\end{figure}
+
+\section{Sample SPARQL Queries}\label{app:sparql}
+
+Figures~\ref{lst:sparql-s1} and~\ref{lst:sparql-s5} render two of the seven use scenarios from §\ref{sec:eval} as portable SPARQL. The Cypher equivalents distributed with SpectraCQ~v1.0 follow the same join structure but use Neo4j syntax. Identifier prefixes are abbreviated for the figure.
+
+\begin{figure}[h]
+\centering
+\scriptsize
+\begin{minipage}{0.95\textwidth}
+\begin{verbatim}
+# S1: TDoc lineage behind current text of TS 38.214 §5.1.3
+SELECT ?tdoc ?meeting ?date WHERE {
+  ?section spectra:belongsToSpec spectra:TS_38.214 ;
+           spectra:sectionNumber "5.1.3" .
+  ?cr      spectra:modifiesSection ?section ;
+           spectra:presentedAt    ?meeting .
+  ?res     spectra:madeAt         ?meeting ;
+           spectra:references     ?tdoc .
+  ?meeting spectra:meetingNumberInt ?mn .
+} ORDER BY DESC(?mn)
+\end{verbatim}
+\end{minipage}
+\caption{S1 multi-hop traceability in SPARQL (simplified for the listing; the production Cypher additionally constrains \texttt{AgendaItem}/\texttt{CRPack} context per the spine-join rationale in §\ref{sec:ontology}, and folds the \texttt{Agreement}/\texttt{WorkingAssumption}-promotion \texttt{OPTIONAL} branches into the single \texttt{spectra:references} step shown here). The Resolution--CR join is implementation-level via shared \texttt{Meeting}.}
+\label{lst:sparql-s1}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\scriptsize
+\begin{minipage}{0.95\textwidth}
+\begin{verbatim}
+# S5: TS sections affected by TR 38.889 study, with impact type
+SELECT ?spec ?section ?impactType WHERE {
+  ?tr     a spectra:TechnicalReport ;
+          spectra:trNumber "38.889" ;
+          spectra:hasTRImpact ?ti .
+  ?ti     spectra:impactType   ?impactType ;
+          spectra:impactsSpec  ?spec ;
+          spectra:impactsSection ?section .
+}
+\end{verbatim}
+\end{minipage}
+\caption{S5 TR-to-TS impact propagation in SPARQL (TR-anchored direction; the released SpectraCQ S5 query file uses the inverse TS-anchored direction via \texttt{impactOfTR}, which the ontology supports symmetrically). Each \texttt{TRImpact} carries an \texttt{impactType} from the closed set \{NewTS, NewSection, ExtendSection, NoChange\}.}
+\label{lst:sparql-s5}
+\end{figure}
+
+\section{Per-WG Class Coverage}\label{app:coverage}
+
+Table~\ref{tab:perwg-coverage} expands the per-WG class-coverage summary cited in §\ref{sec:eval:cross-wg}; the full per-class breakdown lives in \texttt{validation/\bk per\_\bk wg\_\bk class\_\bk coverage.\bk json}. Absences reflect the released RAN-WG snapshot and loader scope rather than schema gaps: e.g., the released RAN5 snapshot does not instantiate \texttt{Agreement}, \texttt{Working\bk Assumption}, \texttt{Summary}, and \texttt{Session\bk Notes}.
+
+\begin{table}[h]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\caption{Per-WG class coverage of the released SPECTRA schema, showing classes absent in each non-RAN1 WG instantiation.}
+\label{tab:perwg-coverage}
+\begin{tabular}{@{}lcl@{}}
+\toprule
+\textbf{WG} & \textbf{Coverage} & \textbf{Classes absent (compared with RAN1's 26)} \\
+\midrule
+RAN1 & 26/26 (100\%)   & --- \\
+RAN2 & 22/26 (84.6\%)  & Chart, Figure, SessionNotes, Summary \\
+RAN3 & 23/26 (88.5\%)  & Chart, Figure, SessionNotes \\
+RAN4 & 24/26 (92.3\%)  & SessionNotes, Summary \\
+RAN5 & 20/26 (76.9\%)  & Agreement, Chart, Figure, SessionNotes, Summary, WorkingAssumption \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Cumulative CQ Regression Cases (Extended)}\label{app:cases}
+
+This appendix expands the three QA cases summarised in §\ref{sec:evolution}. Each entry indicates the phase transition, the schema or naming change introduced, the class of previously-passing CQs that would have silently regressed without the cumulative re-execution, and the resolution. Per-case CQ counts are not extracted from the development history; the cumulative pass record (\texttt{validation/cq\_results.json}) reports the post-fix steady state.
+
+\begin{itemize}
+\item \textbf{Case 1 (Phase-2$\to$3, naming inconsistency \texttt{MADEAT} vs \texttt{MADE\_AT}).} Three relationship labels and three property names were harmonized. Multiple Phase-1--2 CQs that filtered on the relationship name returned empty after the introduction of Phase-3 schema until the naming was unified across loaders and ontology.
+\item \textbf{Case 2 (Phase-3 audit, meeting-ID referential integrity).} A subset of Phase-1--2 CQs that joined \texttt{Tdoc}\,$\to$\,\texttt{Meeting}\,$\to$\,\texttt{Resolution} regressed when meeting identifiers used inconsistent capitalisations across CR/Resolution loaders. Three targeted patches resolved the gap without changing the schema.
+\item \textbf{Case 3 (Phase-3$\to$4, three schema refinements).} \texttt{releaseId} was removed as redundant once \texttt{targetRelease} was declared functional; \texttt{hasCR} was declared \texttt{owl:InverseFunctionalProperty} so that a CR could be unambiguously located from its CR-pack; and the base class \texttt{Decision} was renamed to \texttt{Resolution} for terminological alignment with 3GPP chairman-note vocabulary. A further set of Phase-1--2 CQs that referenced the renamed class would have silently regressed.
+\end{itemize}
+
+Cumulative CQ counts at the four transitions were 59, 104, 119, and 137. Per-CQ pass/fail is recorded in \texttt{validation/cq\_results.json}; the regressions surfaced by cumulative re-execution would not have been detected by single-phase validation before release.
+
+\section{Reproducibility Checklist (Mapping to Release Files)}\label{app:repro}
+
+Table~\ref{tab:repro-map} expands the Reproducibility paragraph in §\ref{sec:fair} into a per-claim mapping. Each row links a public claim made in the paper to the file(s) under \texttt{release\_package/} that support it and to the \texttt{verify\_release.py} check that re-derives it. All checks pass on the v1.0.0 release (\texttt{tests/verify\_release.py} exits 0).
+
+\begin{table}[h]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\caption{Public-claim $\to$ artifact $\to$ \texttt{verify\_release.py} mapping.}
+\label{tab:repro-map}
+\begin{tabular}{@{}p{0.30\textwidth}p{0.36\textwidth}p{0.27\textwidth}@{}}
+\toprule
+\textbf{Claim} & \textbf{Artifact} & \textbf{Check} \\
+\midrule
+Ontology has 886 triples & \texttt{ontology/spectra.ttl} & \texttt{verify\_release.py §1} \\
+Bundled instantiation snippet conforms to SHACL & \texttt{examples/\bk instantiation\_\bk snippet.\bk ttl}, \texttt{shapes/\bk spectra-\bk core.\bk shacl.\bk ttl} & \texttt{verify\_release.py §2} \\
+Process-KG union conforms to SHACL ($\sim$2.44M triples, Appendix~\ref{app:dq}) & \texttt{examples/\bk process\_\bk kg/}*.ttl, \texttt{shapes/\bk spectra-\bk core.\bk shacl.\bk ttl} & \texttt{verify\_release.py §2b} \\
+End-to-end SPARQL example returns the documented row & \texttt{examples/end\_to\_end/} & \texttt{verify\_release.py §3} \\
+SpectraCQ ships 137 CQ + 137 Cypher with 25/34/45/15/18 phase distribution and 137-PASS RAN1 verdict & \texttt{cqs/spectra\_cq\_v1.0/} & \texttt{verify\_release.py §4} \\
+Structural metrics (26/53/81/20/2/15/6/2 + 6 PROV-O axioms) & \texttt{validation/\bk structural\_\bk metrics.\bk json} & \texttt{verify\_release.py §5} \\
+All validation manifest references resolve & \texttt{validation/validation\_manifest.md} & \texttt{verify\_release.py §6} \\
+SpectraCQ text and Cypher contain no real company names & \texttt{cqs/spectra\_cq\_v1.0/} & \texttt{verify\_release.py §7} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The \texttt{examples/process\_kg/} directory (LS/CR routing across RAN1--RAN5 + RAN1 TDoc structural metadata, body content stripped) is verified via SHACL conformance against \texttt{shapes/\bk spectra-core.\bk shacl.\bk ttl}. Both \texttt{examples/process\_kg/} and \texttt{cqs/spectra\_\bk cq\_\bk v1.0/} retain verbatim company names matching the public 3GPP \texttt{TDOC\_\bk List.\bk xlsx}.
+
+\section{Artifact Treatment, Attribution, and Redistribution}\label{app:anon}
+
+The release bundles four artifact tiers governed by different rules (Table~\ref{tab:anon-policy}). The treatment reflects \emph{what the data is}: 3GPP-public metadata (including company names from \texttt{TDOC\_\bk List.\bk xlsx}) is redistributed verbatim, illustrative TTL uses synthetic identifiers, and 3GPP-derived body text is retained under explicit 3GPP attribution.
+
+\begin{table}[h]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\caption{Per-tier treatment, license/attribution, and rationale.}
+\label{tab:anon-policy}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.30\textwidth}@{}}
+\toprule
+\textbf{Artifact} & \textbf{Treatment} & \textbf{License / attribution} & \textbf{Rationale} \\
+\midrule
+\texttt{examples/\bk process\_\bk kg/}\,(routing edges + RAN1 TDoc metadata) & verbatim metadata & CC-BY 4.0 & Redistributes metadata already public on 3GPP's per-meeting \texttt{TDOC\_\bk List.xlsx} and TDoc cover pages; redacting would discard recoverable information. \\
+\texttt{cqs/\bk spectra\_\bk cq\_\bk v1.0/}\,(NL questions, Cypher) & verbatim company names & CC-BY 4.0 & Released as an executable CQ-to-query benchmark; company names match \texttt{TDOC\_\bk List.\bk xlsx} so queries return real results on any 3GPP-conformant KG. \\
+\texttt{examples/\bk real\_\bk world\_\bk mini/}, \texttt{examples/\bk end\_\bk to\_\bk end/} & synthetic identifiers & CC-BY 4.0 & Templates for instantiation; no real-world data is implied. \\
+Body content (CR/TR/TS text, \texttt{discussionText} \emph{values}) & verbatim & 3GPP-derived; explicit 3GPP source attribution & Sentence-level rendered text retained with explicit 3GPP attribution, following the academic redistribution practice established by~\cite{nikbakht2024tspec,gsma2026telecomkg}. Original PDFs remain freely accessible at \url{https://www.3gpp.org/ftp/}. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Company names.} Both process-KG metadata and SpectraCQ retain verbatim company names matching the public 3GPP per-meeting \texttt{TDOC\_List.xlsx} and TDoc cover pages. No anonymization is applied because the names are already public 3GPP metadata. The \texttt{Contact} class instances populated in our internal operational KG are excluded from the public release; the released TTLs contain no personal correspondence from document body text.
+
+\noindent\textbf{Two-tier licence boundary.} SPECTRA-authored components (the OWL ontology, SHACL shapes, PyLODE documentation, SpectraCQ v1.0, sample SPARQL/Cypher queries, synthetic instantiation examples, sanitized parsing-pipeline source, and \texttt{verify\_release.py}) are released under CC-BY 4.0. Body-text literals derived from 3GPP CR/TR/TS PDFs are redistributed with explicit 3GPP source attribution, following the academic redistribution practice established by~\cite{nikbakht2024tspec,gsma2026telecomkg}.
+
+\noindent\textbf{Verifiable boundary.} The \texttt{verify\_release.py} script (Section~7) verifies the \texttt{real\_world\_mini} synthetic instantiation contains only synthetic identifiers (no real company-name leak from the operational KG into the synthetic example set).
+
+\section{Process-KG Data Quality and SHACL Conformance}\label{app:dq}
+
+The cross-WG process KG (\texttt{examples/process\_kg/}) is shipped as three union-compatible Turtle files: \texttt{ls\_routing.ttl} (195K triples, 25,586 distinct LSs), \texttt{cr\_routing.ttl} (1.25M triples, 192,967 CRs), and \texttt{ran1\_tdoc\_metadata.ttl} (991K triples, 123,678 TDocs). Together they form a 2.44M-triple union graph that conforms to \texttt{shapes/\bk spectra-core.\bk shacl.\bk ttl} with zero violations under pyshacl. Note: the schema graph (\texttt{ontology/spectra.ttl}, 886 triples) and this 2.44M-triple process KG measure different things---the 886 number counts \emph{schema axioms} (class/property declarations), while 2.44M counts \emph{instance triples} populated against that schema.
+
+Three population-time conventions and one upstream-data observation, derived directly from inspection of the released TTLs and the source RAN1--RAN5 KGs, govern how the schema's lifecycle classes are instantiated; readers querying the release should be aware of them:
+
+\begin{itemize}
+\item \textbf{LS \texttt{originatedFrom} for outgoing LSs is implicit.} In 3GPP practice, an outgoing Liaison Statement (\texttt{direction = "out"}) has the host Working Group as its source by definition --- the originating WG is the one tabling the LS. The Phase-1 RAN loaders therefore record \texttt{originatedFrom} only for incoming LSs (\texttt{direction = "in"}; coverage 51.9--96.6\% across RAN1--RAN5, depending on the availability of an explicit \emph{Original LS} reference on the cover sheet). For outgoing LSs the host WG is recoverable from the LS's hosting KG.
+\item \textbf{LS \texttt{sentTo} reflects upstream coverage.} 1,556 of 25,586 distinct LSs (5.8\%) carry no \texttt{sentTo} edge in the released union, mirroring an empty \emph{To:} cell on the source TDoc cover sheet. SHACL therefore does not assert \texttt{sh:minCount} on \texttt{LSShape.\bk sentTo}; consumers requiring a complete recipient list should treat absence as upstream-metadata gap rather than schema violation.
+\item \textbf{Tdoc \texttt{presentedAt} can be multi-valued under re-tabling.} In the released RAN1 snapshot, 123,678 source metadata records resolve to 123,677 distinct TDoc identifiers because one TDoc was re-tabled at a subsequent meeting under the same identifier and so appears in the cover-sheet records of more than one Meeting. \texttt{TdocShape.\bk presentedAt} therefore omits \texttt{sh:maxCount}; queries treating \texttt{presentedAt} as functional should add an \texttt{ORDER BY} or aggregate clause.
+\item \textbf{Source companies are kept verbatim throughout.} Both the process-KG (\texttt{examples/\bk process\_\bk kg/}) and the SpectraCQ benchmark (\texttt{cqs/\bk spectra\_\bk cq\_v1.0/}) retain real company names matching the public 3GPP per-meeting \texttt{TDOC\_\bk List.\bk xlsx} and TDoc cover pages. No anonymization is applied because the names are already public.
+\end{itemize}
+
+\noindent The corresponding SHACL shape relaxations (\texttt{LSShape.originatedFrom}, \texttt{LSShape.sentTo}, \texttt{CRShape.modifies}, \texttt{TdocShape.presentedAt}: \texttt{sh:maxCount} removed) are all annotated inline in \texttt{shapes/\bk spectra-core.\bk shacl.\bk ttl} with the rationales above.
+
+\noindent\textbf{CR-pack TSG plenary linkage.} CR-pack approval at the TSG plenary is currently captured by the literal \texttt{tsgMeeting} attribute on \texttt{CRPack} (\texttt{xsd:string}, e.g., ``RAN\#103''); a structural \texttt{approvedAt} OP linking \texttt{CRPack} to a \texttt{TSGPlenary}\,$\sqsubseteq$\,\texttt{Meeting} subclass is staged for v1.1 to support \emph{approved}/\emph{postponed}/\emph{rejected} CR-pack analytics directly in the schema.
+
+\end{document}
+
+% LLM eval pilot (originally §E6 in body draft) - moved here per submission scope
+\subsection{E6 --- Illustrative utility pilot against general LLM baselines}\label{sec:eval:llm}
+
+To probe whether SPECTRA-grounded retrieval offers measurable value over generic LLM access to 3GPP knowledge, we compared (i) a SPECTRA-conformant Neo4j+Qdrant RAG (\emph{tracer v2}, after IE-level ASN.1 chunking), (ii) GPT, and (iii) Claude on four cross-WG practitioner questions (Rel-16 Type-II codebook, TCI-state Rel-15 to Rel-20, Beam Failure Detection/Recovery, Rel-18 Layer-1/Layer-2 Triggered Mobility). Each answer was scored against authority sources (3gpp.org, ETSI TS, IEEE Xplore, sharetechnote, Ofinno) on a five-axis 0--5 rubric and verified for hallucinations (Table~\ref{tab:llm-eval}).
+
+\begin{table}[h]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{6pt}
+\caption{Q\&A quality on four cross-WG questions (5-axis rubric, 0--5 scale, 4Q averages; \emph{tracer v2} reflects IE-level ASN.1 chunking applied 2026-05-02). Hallucination row reports detected unsupported quotes/codes/numbers across all four questions.}
+\label{tab:llm-eval}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Axis (4Q avg)} & \textbf{SPECTRA RAG} & \textbf{GPT} & \textbf{Claude} \\
+\midrule
+A1 Accuracy (vs authority) & \textbf{4.78} & 3.65 & 3.75 \\
+A2 Coverage (depth/breadth) & \textbf{4.68} & 3.78 & 4.58 \\
+A3 Citation Integrity      & \textbf{4.95} & 1.28 & 2.38 \\
+A4 Hallucination Control   & \textbf{4.93} & 3.63 & 3.08 \\
+A5 Cross-Doc Linkage       & \textbf{4.81} & 3.95 & 4.53 \\
+\midrule
+\textbf{Composite}         & \textbf{4.84} & 3.28 & 3.65 \\
+\midrule
+Hallucination instances    & \textbf{0}    & 1    & $\sim$11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+SPECTRA RAG leads all five axes after IE-level ASN.1 chunking lifted Coverage from 3.95 to 4.68 (4.68 vs Claude 4.58); composite gap is +1.19 over Claude and +1.56 over GPT, with Citation Integrity (+2.57) and Hallucination Control (+1.85) the dominant contributors. Detailed evaluation, retrieval logs, and rubric: \texttt{usecase/evaluations/3way/}. \textbf{Limitations:} this is a single-evaluator four-question pilot with an author-defined rubric; the evaluator overlaps with one of the compared LLMs (Claude), so the absolute Claude vs SPECTRA gap should be interpreted as illustrative rather than as an external benchmark. The Coverage rubric measures breadth of cited material and does not penalise the 11 unsupported quotes detected for Claude, so the verified-coverage advantage of SPECTRA is understated by Coverage alone.
+

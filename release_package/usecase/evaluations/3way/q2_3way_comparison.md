@@ -1,15 +1,15 @@
 # Q2 3-way 비교 — TCI-state Rel-15~Rel-20
 
 > 평가일: 2026-04-29 / 평가 대상: spec-trace 3gpp-tracer / GPT / Claude의 Q2 답변
-> 권위 출처: ETSI TS 138.214/321/331/306 (V15~V18.x), 3GPP RAN1/RAN2/RAN-Rel18~19 페이지, Ofinno Unified Beam Management whitepaper, sharetechnote QCL/TCI, Itecspec 38.321 §5.18 / 38.331 §6.3.2 (`docs/usecase/evaluations/tracer/q2_quality_eval.md` 인용 셋)
+> 권위 출처: ETSI TS 138.214/321/331/306 (V15~V18.x), 3GPP RAN1/RAN2/RAN-Rel18~19 페이지, Ofinno Unified Beam Management whitepaper, sharetechnote QCL/TCI, Itecspec 38.321 §5.18 / 38.331 §6.3.2 (`usecase/evaluations/tracer/q2_quality_eval.md` 인용 셋)
 
 ## 메타
 
 | 모델 | 파일 | 라인 | 인용 형식 | 외부 도구 |
 |---|---|---:|---|---|
-| 3gpp-tracer | `docs/usecase/answers/tracer/q2_tci_state_rel15_to_rel20.md` | 247 | `[spec §sec, chunkId=...]` / `[tdoc, mtg, type, ai=..., release]` / `[Neo4j RAN2, sectionNumber=...]` | 없음 (Qdrant `ran{1,2}_ts_sections`/`ran{1,2}_tdoc_chunks` + Neo4j RAN1/RAN2 only) |
-| GPT | `docs/usecase/answers/gpt/q2_tci_state_rel15_to_rel20.md` | 323 | spec 명 (`38.214`, `38.321`) + IE 명 + section/IE 명만 (URL/§번호/chunkId 없음) | LLM 사전지식 + 일반 통용 자료 (5G Americas, Qualcomm 등 끝 참고문헌만) |
-| Claude | `docs/usecase/answers/claude/q2_tci_state_rel15_to_rel20.md` | 497 | spec §번호 + ASN.1 코드블럭 + WID 번호 (`RP-170739` 등) — 단 chunkId/URL 없음, ASN.1 본문은 모델 생성 | LLM 사전지식 (38.133 RRM Test 언급, 38.300 인용) |
+| 3gpp-tracer | `usecase/answers/tracer/q2_tci_state_rel15_to_rel20.md` | 247 | `[spec §sec, chunkId=...]` / `[tdoc, mtg, type, ai=..., release]` / `[Neo4j RAN2, sectionNumber=...]` | 없음 (Qdrant `ran{1,2}_ts_sections`/`ran{1,2}_tdoc_chunks` + Neo4j RAN1/RAN2 only) |
+| GPT | `usecase/answers/gpt/q2_tci_state_rel15_to_rel20.md` | 323 | spec 명 (`38.214`, `38.321`) + IE 명 + section/IE 명만 (URL/§번호/chunkId 없음) | LLM 사전지식 + 일반 통용 자료 (5G Americas, Qualcomm 등 끝 참고문헌만) |
+| Claude | `usecase/answers/claude/q2_tci_state_rel15_to_rel20.md` | 497 | spec §번호 + ASN.1 코드블럭 + WID 번호 (`RP-170739` 등) — 단 chunkId/URL 없음, ASN.1 본문은 모델 생성 | LLM 사전지식 (38.133 RRM Test 언급, 38.300 인용) |
 
 ---
 
@@ -137,7 +137,7 @@
 
 ## 3gpp-tracer 개선 시사점
 
-`docs/usecase/evaluations/tracer/q2_quality_eval.md`의 D/O/R 분류와 연계:
+`usecase/evaluations/tracer/q2_quality_eval.md`의 D/O/R 분류와 연계:
 
 ### P1 (즉시 개선 — R+O 영역)
 

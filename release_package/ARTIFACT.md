@@ -16,13 +16,14 @@ pip install rdflib pyshacl
 ```bash
 python3 tests/verify_release.py
 # Expected last line:
-#   === Summary: 25/25 checks passed ===
+#   === Summary: 37/37 checks passed ===
 ```
 
-This single command runs all nine check sections (ontology triples, SHACL
+This single command runs all ten check sections (ontology triples, SHACL
 conformance on instantiation snippet, SHACL conformance on process-KG union,
 end-to-end SPARQL, SpectraCQ counts/verdict, structural metrics, manifest
-references, anonymization scope, release directory inventory) and returns
+references, synthetic-instantiation sanity, release directory inventory,
+per-WG body-text KGs on Zenodo) and returns
 exit 0 only if every check passes. If you only have time for one check,
 run this one.
 
@@ -35,7 +36,7 @@ reviewers who want to inspect each step.
 
 ```bash
 python3 -c "import rdflib; g=rdflib.Graph(); g.parse('ontology/spectra.ttl', format='turtle'); print(f'Triples: {len(g)}')"
-# Expected: Triples: 887
+# Expected: Triples: 886
 ```
 
 ### 2. Reproduce the structural metrics in the paper
@@ -45,7 +46,7 @@ python3 tests/reproduce_structural_metrics.py
 # Expected: every row prints ✓; exit code 0
 # Reproduces paper Table 3 (Ontology structural metrics):
 #   Classes 26 / OPs 53 / DPs 81 / Functional 20 / IFP 2 / Inverse pairs 15
-#   Irreflexive 6 / Asymmetric 2 / subclass 15 / triples 887
+#   Irreflexive 6 / Asymmetric 2 / subclass 15 / triples 886
 ```
 
 ### 3. Validate the SHACL shapes against the synthetic instantiation
@@ -60,7 +61,7 @@ pyshacl -s shapes/spectra-core.shacl.ttl examples/instantiation_snippet.ttl
 ```bash
 python3 tests/test_e2e_sparql.py
 # Expected:
-#   "Total: 937 triples"
+#   "Total: 933 triples"
 #   "Result: {'tdocNumber': 'R1-2599998', ..., 'meetingNumber': 'RAN1#121'}"
 #   "PASS"
 ```
@@ -94,7 +95,7 @@ ls queries/sparql/  # 6 files
 
 ```bash
 ls validation/
-# 10 JSON files + validation_manifest.md
+# 11 JSON files + validation_manifest.md
 # Every paper number is mapped to its evidence file in validation_manifest.md
 ```
 

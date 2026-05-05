@@ -1,14 +1,14 @@
 # Q4 품질 평가 — Rel-18 LTM (L1/L2 Triggered Mobility) + Rel-19/20
 
 > **메타 주의**: 사전 dispatch한 평가 에이전트가 두 차례 API 에러로 중단됨. 본 평가는 메인 컨텍스트에서 직접 작성됨.
-> 1차 답변(`docs/usecase/answers/tracer/q4_ltm_rel18.md`)은 수정하지 않았으며, GPT 비교용 원본으로 보존됨.
+> 1차 답변(`usecase/answers/tracer/q4_ltm_rel18.md`)은 수정하지 않았으며, GPT 비교용 원본으로 보존됨.
 
 ## 평가 메타
 
 | 항목 | 값 |
 |---|---|
 | 평가일 | 2026-04-29 |
-| 1차 답변 | `docs/usecase/answers/tracer/q4_ltm_rel18.md` (259 lines, 28,925 bytes) |
+| 1차 답변 | `usecase/answers/tracer/q4_ltm_rel18.md` (259 lines, 28,925 bytes) |
 | Retrieval log | `logs/cross-phase/usecase/q4_retrieval_log.json` (559 KB) |
 | 인용 chunkId 검증 방법 | `grep -c` over retrieval log (30건 표본) |
 | 사용한 웹 출처 (4건) | (1) IEEE Xplore "On L1/L2-Triggered Mobility in 3GPP Release 18 and Beyond" (2024) — `https://ieeexplore.ieee.org/document/10744020` <br> (2) ETSI TS 138 331 V18.6.0 (2025-07) — `https://www.etsi.org/deliver/etsi_ts/138300_138399/138331/18.06.00_60/ts_138331v180600p.pdf` <br> (3) 3GPP RP-241917 "Mobility Rel-19 work item" presentation — `https://www.slideshare.net/slideshow/rp-241917-mobility-rel-19-work-item-pptx/271829015` <br> (4) 3GPP Release 20 official page — `https://www.3gpp.org/specifications-technologies/releases/release-20` |

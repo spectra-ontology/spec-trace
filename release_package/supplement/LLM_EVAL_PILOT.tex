@@ -1,0 +1,29 @@
+\subsection{E6 --- Illustrative utility pilot against general LLM baselines}\label{sec:eval:llm}
+
+To probe whether SPECTRA-grounded retrieval offers measurable value over generic LLM access to 3GPP knowledge, we compared (i) a SPECTRA-conformant Neo4j+Qdrant RAG (\emph{tracer v2}, after IE-level ASN.1 chunking), (ii) GPT, and (iii) Claude on four cross-WG practitioner questions (Rel-16 Type-II codebook, TCI-state Rel-15 to Rel-20, Beam Failure Detection/Recovery, Rel-18 Layer-1/Layer-2 Triggered Mobility). Each answer was scored against authority sources (3gpp.org, ETSI TS, IEEE Xplore, sharetechnote, Ofinno) on a five-axis 0--5 rubric and verified for hallucinations (Table~\ref{tab:llm-eval}).
+
+\begin{table}[h]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{6pt}
+\caption{Q\&A quality on four cross-WG questions (5-axis rubric, 0--5 scale, 4Q averages; \emph{tracer v2} reflects IE-level ASN.1 chunking applied 2026-05-02). Hallucination row reports detected unsupported quotes/codes/numbers across all four questions.}
+\label{tab:llm-eval}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Axis (4Q avg)} & \textbf{SPECTRA RAG} & \textbf{GPT} & \textbf{Claude} \\
+\midrule
+A1 Accuracy (vs authority) & \textbf{4.78} & 3.65 & 3.75 \\
+A2 Coverage (depth/breadth) & \textbf{4.68} & 3.78 & 4.58 \\
+A3 Citation Integrity      & \textbf{4.95} & 1.28 & 2.38 \\
+A4 Hallucination Control   & \textbf{4.93} & 3.63 & 3.08 \\
+A5 Cross-Doc Linkage       & \textbf{4.81} & 3.95 & 4.53 \\
+\midrule
+\textbf{Composite}         & \textbf{4.84} & 3.28 & 3.65 \\
+\midrule
+Hallucination instances    & \textbf{0}    & 1    & $\sim$11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+SPECTRA RAG leads all five axes after IE-level ASN.1 chunking lifted Coverage from 3.95 to 4.68 (4.68 vs Claude 4.58); composite gap is +1.19 over Claude and +1.56 over GPT, with Citation Integrity (+2.57) and Hallucination Control (+1.85) the dominant contributors. Detailed evaluation, retrieval logs, and rubric: \texttt{usecase/evaluations/3way/}. \textbf{Limitations:} this is a single-evaluator four-question pilot with an author-defined rubric; the evaluator overlaps with one of the compared LLMs (Claude), so the absolute Claude vs SPECTRA gap should be interpreted as illustrative rather than as an external benchmark. The Coverage rubric measures breadth of cited material and does not penalise the 11 unsupported quotes detected for Claude, so the verified-coverage advantage of SPECTRA is understated by Coverage alone.
+

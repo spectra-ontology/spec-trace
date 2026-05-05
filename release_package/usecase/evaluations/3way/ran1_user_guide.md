@@ -24,7 +24,7 @@
 
 > **[P7-V11/V12 신설 배경 (2026-04-29)]**: 4Q usecase 평가에서 chunker 결함 검출 — paragraph 단위 split만 수행하여 거대 표 split 불가. RAN1은 영향 6건으로 적었으나 5 WG 통합 시 748건. 5 WG 공통 라이브러리 `scripts/cross-phase/common/chunker.py` 사용.
 > **검증**: `validate_chunk_quality.py --wg RAN1` PASS (P2 적용 후 max 6,473 토큰, violations=0).
-> **참조**: `docs/cross-phase/standards/chunking_standards.md`, `docs/usecase/evaluations/3way/root_cause_analysis.md`
+> **참조**: `docs/cross-phase/standards/chunking_standards.md`, `usecase/evaluations/3way/root_cause_analysis.md`
 ```
 
 ### ASN.1 V2 정책 (RAN1은 해당 없음)
@@ -49,3 +49,24 @@ python3 scripts/cross-phase/validation/validate_chunk_quality.py --wg RAN1
 - 5계층 개선 계획: [systemic_improvement_plan.md](systemic_improvement_plan.md)
 - chunking 표준: `docs/cross-phase/standards/chunking_standards.md`
 - 교훈: `docs/common/implementation_process.md` 교훈 53/54
+
+---
+
+## 추가 정착 항목 (2026-05-02 P3 적용)
+
+P3 작업으로 RAN2~5 phase-7 spec에 다음 신규 정책이 정착되었습니다. RAN1 spec에는 다음을 추가하시면 5 WG 완전 일관성을 확보할 수 있습니다(RAN1은 ASN.1/IE descriptions/Capability 표가 거의 없으므로 모두 "해당없음" 기록).
+
+```markdown
+| P7-V13 | ASN.1 IE 본문 V2 정책 | (해당없음) | 2026-05-02. RAN1은 PHY spec으로 ASN.1 IE 거의 없음 → 별도 컬렉션 미적용 |
+| P7-V14 | IE field descriptions V2 정책 | (해당없음) | 2026-05-02. RAN1은 IE field descriptions 패턴 부재 → 미적용 |
+| P7-V15 | Capability 행 단위 V2 정책 | (해당없음) | 2026-05-02. RAN1은 38.306 형식 capability 표 부재 → 미적용 |
+```
+
+### 새 표준 문서 (Claude 작성, 사용자 검토 권장)
+
+- `docs/cross-phase/standards/extraction_policy.md` — PRESERVE 화이트리스트, EXCLUDE 정책, 4-tier 검색 컬렉션, Phase 완료 게이트 (G1~G5)
+- `docs/cross-phase/standards/reembedding_policy.md` — Step 0 선별 가능 여부 최우선 검토 정책
+
+### Spec 정정 작업 시간 (RAN1)
+
+- P7-V13/V14/V15 (3행 추가): 약 2분

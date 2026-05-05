@@ -3,7 +3,7 @@
 > 평가일: 2026-05-01
 > 평가자: Claude (Opus 4.7, 1M context)
 > 권위 cross-check: WebSearch 4건 + WebFetch 2건 (sharetechnote 5G CSI-RS Codebook 페이지에서 CodebookConfig-r16 ASN.1 항목 verbatim 확보 — 본 평가의 v2 §7-1 1:1 대조 베이스)
-> v1 평가 (보존): `docs/usecase/evaluations/3way/q1_3way_comparison.md` (수정 금지)
+> v1 평가 (보존): `usecase/evaluations/3way/q1_3way_comparison.md` (수정 금지)
 > 본 v2 는 별도 파일
 
 ---

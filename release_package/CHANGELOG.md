@@ -11,7 +11,7 @@ First public release accompanying the ISWC 2026 Resources Track submission
 ### Included
 
 - **Ontology** (`ontology/spectra.ttl`): 26 classes, 53 object properties, 81
-  data properties, 887 triples; PROV-O alignment as 6 optional
+  data properties, 886 triples; PROV-O alignment as 6 optional
   `rdfs:subClassOf` axioms; reuses Dublin Core, DCTERMS, FOAF.
 - **SHACL shapes** (`shapes/spectra-core.shacl.ttl`): 8 `sh:NodeShape`s
   covering the lifecycle classes; cardinality and range constraints captured
@@ -22,7 +22,7 @@ First public release accompanying the ISWC 2026 Resources Track submission
   {phase, category, NL question, schema area, executable Cypher, verdict};
   separately citable under CC-BY 4.0 with its own CITATION.bib.
 - **Representative queries** (`queries/`): 15 Cypher + 6 SPARQL examples
-  (132/137 SpectraCQ Cypher queries are 1:1 portable to SPARQL via the same
+  (136/137 SpectraCQ Cypher queries are 1:1 portable to SPARQL via the same
   schema; the 6 SPARQL examples illustrate this for the most-cited
   scenarios).
 - **Synthetic and metadata-only examples**: end-to-end synthetic 4-hop
@@ -40,15 +40,15 @@ First public release accompanying the ISWC 2026 Resources Track submission
   (scrape → metadata parse → CR/TR document parse via `python-docx` →
   SHACL → bulk Neo4j load); company-internal monitoring/auth wrappers
   removed.
-- **Reproducibility tests** (`tests/verify_release.py`): 25/25
-  deterministic checks across 9 sections (TTL parse + 887 triples;
+- **Reproducibility tests** (`tests/verify_release.py`): deterministic
+  checks across all manifest-referenced claims; expected: all checks PASS on a clean release. Sections cover: TTL parse + 886 triples;
   instantiation snippet SHACL conformance; process-KG union SHACL
   conformance; end-to-end SPARQL; SpectraCQ counts/verdict; structural
-  metrics; manifest references; anonymization scope; release directory
+  metrics; manifest references; synthetic-instantiation sanity; release directory
   inventory). Depends only on `rdflib` and `pyshacl`; runs in any
   Python 3.10+ environment with no Samsung-internal infrastructure
   required.
-- **Validation evidence** (`validation/`): 10 JSON files +
+- **Validation evidence** (`validation/`): 11 JSON files +
   `validation_manifest.md` mapping every quantitative claim in the paper
   to its supporting evidence file.
 - **Croissant metadata** (`cqs/spectra_cq_v1.0/croissant.json`):

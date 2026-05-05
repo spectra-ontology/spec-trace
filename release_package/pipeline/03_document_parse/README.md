@@ -34,7 +34,7 @@ The deterministic logic preserved from the production parser:
 
 ## `parse_tr.py`
 
-Reads a TR DOCX (e.g., TR 38.913 for NR scenarios/requirements) and
+Reads a TR DOCX (e.g., TR 38.889 for NR scenarios/requirements) and
 extracts:
 
 * TR `Scope` clause (TR §1) → `spectra:trScope`
@@ -54,7 +54,7 @@ extracts:
 
 ```bash
 python parse_cr.py  --in /path/to/CR.docx --out cr_bodies.jsonld
-python parse_tr.py  --in /path/to/TR_38.913.docx --tr-number 38.913 --out tr_bodies.jsonld
+python parse_tr.py  --in /path/to/TR_38.889.docx --tr-number 38.889 --out tr_bodies.jsonld
 ```
 
 ## Dependencies

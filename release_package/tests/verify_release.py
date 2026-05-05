@@ -9,7 +9,7 @@ Runs deterministic checks against the released artifacts:
   4. SpectraCQ v1.0 metadata + counts
   5. Class/property counts vs validation/structural_metrics.json
   6. Validation manifest references resolve
-  7. Anonymization sanity (released CQs and examples have no real company names)
+  7. Synthetic-instantiation sanity (real_world_mini uses no operational-KG names; SpectraCQ retains verbatim public 3GPP company names)
 
 Designed for a vanilla Python env: pip install rdflib pyshacl
 Run from release_package/ root: python3 tests/verify_release.py
@@ -46,7 +46,7 @@ def main() -> int:
         g = rdflib.Graph()
         g.parse(ROOT / "ontology/spectra.ttl", format="turtle")
         n = len(g)
-        check("triples_total = 887", n == 887, f"actual {n}")
+        check("triples_total = 886", n == 886, f"actual {n}")
     except Exception as e:
         check("ontology parse", False, str(e))
 
@@ -117,7 +117,7 @@ def main() -> int:
         sm = json.loads((ROOT / "validation/structural_metrics.json").read_text())
         for key, expected in [
             ("classes_total", 26),
-            ("triples_total", 887),
+            ("triples_total", 886),
         ]:
             ok = sm.get(key) == expected
             check(f"{key} = {expected}", ok, f"actual {sm.get(key)}")
@@ -178,11 +178,50 @@ def main() -> int:
     section("8. Release directory inventory")
     for d, label in [
         ("kg/per_wg", "kg/per_wg/ exists"),
+        ("kg/per_wg_schema", "kg/per_wg_schema/ exists"),
+        ("supplement", "supplement/ exists"),
         ("pipeline", "pipeline/ exists"),
     ]:
         path = ROOT / d
         present = path.exists() and any(path.iterdir())
         check(label, present, "missing or empty (placeholder if README only)" if not present else "")
+
+    # 8b. Per-WG body-text TTLs are deposited on Zenodo (DOI in
+    # kg/per_wg/README.md), NOT in this Git repository, because four of
+    # the five files exceed GitHub's 100 MB-per-file limit (922 MB total
+    # for the five WGs). When run inside a Git checkout the body files
+    # are absent by design; when run inside a Zenodo download they are
+    # present. We accept either layout.
+    section("8b. Per-WG body-text KGs (Zenodo deposit, optional in Git checkout)")
+    body_dir = ROOT / "kg/per_wg"
+    body_present_count = 0
+    expected_body_files = {
+        f"RAN{n}-body.ttl": 10 * 1024 * 1024  # require >= 10 MB each when present
+        for n in range(1, 6)
+    }
+    for fname, min_bytes in expected_body_files.items():
+        p = body_dir / fname
+        if not p.exists():
+            print(f"  [SKIP] {fname}: not in this checkout (Zenodo deposit; see kg/per_wg/README.md)")
+            continue
+        body_present_count += 1
+        sz = p.stat().st_size
+        check(f"{fname} >= {min_bytes // (1024*1024)} MB (body-text KG)",
+              sz >= min_bytes,
+              f"actual {sz / (1024*1024):.1f} MB")
+    print(f"  body TTLs present in checkout: {body_present_count}/5 "
+          f"({'Zenodo download' if body_present_count == 5 else 'Git checkout'})")
+
+    # Per-WG schema TTLs must exist (much smaller; >= 5 KB)
+    expected_schema_files = {f"RAN{n}-schema.ttl": 5 * 1024 for n in range(1, 6)}
+    for fname, min_bytes in expected_schema_files.items():
+        p = ROOT / "kg/per_wg_schema" / fname
+        if not p.exists():
+            check(f"{fname} exists", False, "MISSING — paper RAS claims this file is shipped")
+            continue
+        sz = p.stat().st_size
+        check(f"{fname} >= {min_bytes // 1024} KB", sz >= min_bytes,
+              f"actual {sz / 1024:.1f} KB")
 
     # Summary
     print()

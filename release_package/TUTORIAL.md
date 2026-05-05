@@ -153,8 +153,9 @@ the paper:
 `cqs/spectra_cq_v1.0/questions.json` and `cqs/spectra_cq_v1.0/cypher/`
 together form a 137-CQ benchmark. Each entry has:
 
-- a natural-language question (organisation-agnostic; concrete companies
-  appear as "Company X", "Company Y", …);
+- a natural-language question (concrete contributing companies, where the
+  CQ targets a specific vendor, appear verbatim using their public 3GPP
+  identifiers from `TDOC_List.xlsx`, e.g., Huawei, Samsung, Qualcomm);
 - an executable Cypher specification (Neo4j 4.x syntax);
 - a phase tag (P1–P5);
 - a per-CQ verdict on the released RAN1 KG.
@@ -180,6 +181,6 @@ To author your own CQ:
 
 - **Schema reference:** `diagrams/schema_overview.md`, `docs/spectra.html` (PyLODE)
 - **Reviewer-friendly verification path:** `ARTIFACT.md`
-- **Anonymization policy:** `README.md` § "Anonymization policy (asymmetric by design)"
+- **Company-name policy (verbatim CQs vs synthetic examples):** `README.md` § "Anonymization policy (asymmetric by design)"
 - **Background on the cumulative CQ practice that produced SPECTRA:**
   Section 5 and Appendix D of the paper

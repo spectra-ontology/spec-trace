@@ -6,7 +6,7 @@ TRImpact summary table that lists impacted Specs/Sections with impactType.
 Sanitized for public release.
 
 Usage:
-    python parse_tr.py --in /path/to/TR_38.913.docx --tr-number 38.913 --out tr_bodies.jsonld
+    python parse_tr.py --in /path/to/TR_38.889.docx --tr-number 38.889 --out tr_bodies.jsonld
 """
 from __future__ import annotations
 import argparse
@@ -119,7 +119,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--in", dest="input", required=True, type=Path,
                     help="Path to TR DOCX")
-    ap.add_argument("--tr-number", required=True, help="TR number (e.g., 38.913)")
+    ap.add_argument("--tr-number", required=True, help="TR number (e.g., 38.889)")
     ap.add_argument("--out", required=True, type=Path, help="Output JSON-LD path")
     args = ap.parse_args()
 

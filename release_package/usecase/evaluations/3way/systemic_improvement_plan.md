@@ -127,7 +127,7 @@
 V1 정책의 한계:
   - 38.331/38.355 ASN.1 본문 0건 회수 → "What fields does LTM-Config IE contain?" 같은 쿼리 답변 불가
   - 외부 LLM(Claude) 대비 Coverage 약점 (Q1/Q2/Q3/Q4 usecase 평가에서 검출)
-  - 자세한 검증: docs/usecase/evaluations/3way/p1_poc_results.md
+  - 자세한 검증: usecase/evaluations/3way/p1_poc_results.md
 
 V2 적용 효과 (38.331 LTM 22 IE PoC):
   - 검색 score 평균 +8.0%
@@ -200,7 +200,7 @@ V2 적용 효과 (38.331 LTM 22 IE PoC):
 - 38.306 chunks 99 → 229 split, score +5.3%, eType-II capability 본문 직접 회수
 - 38.331 LTM IE 22개 별도 적재, score +8.0%, ASN.1 본문 직접 회수
 
-**참조**: docs/usecase/evaluations/3way/p1_poc_results.md
+**참조**: usecase/evaluations/3way/p1_poc_results.md
 ```
 
 #### 4.2 `docs/common/implementation_process.md` 교훈 추가 (ASN.1 정책)
@@ -224,7 +224,7 @@ V2 적용 효과 (38.331 LTM 22 IE PoC):
 - 38.331 LTM 22 IE 별도 컬렉션 적재 → score +8.0%
 - "LTM-CSI-ReportConfig measurement reporting configuration" 쿼리: BEFORE 0.5628 → AFTER 0.7144 (+0.152)
 
-**참조**: docs/usecase/evaluations/3way/p1_poc_results.md
+**참조**: usecase/evaluations/3way/p1_poc_results.md
 ```
 
 #### 4.3 신설: `docs/cross-phase/standards/chunking_standards.md`

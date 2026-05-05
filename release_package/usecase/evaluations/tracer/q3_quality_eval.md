@@ -3,7 +3,7 @@
 ## 평가 메타
 
 - 평가일: 2026-04-29
-- 1차 답변: `docs/usecase/answers/tracer/q3_beam_failure_recovery.md` (323 lines)
+- 1차 답변: `usecase/answers/tracer/q3_beam_failure_recovery.md` (323 lines)
 - Retrieval log: `logs/cross-phase/usecase/q3_retrieval_log.json` (TS 27쿼리·270 hit, TDoc 12쿼리·120 hit, Cypher 4건)
 - 평가 방식: 1차 답변의 모든 fact-claim을 (a) retrieval log 실재성 (b) 권위 출처와 일치성 (c) 1차가 명시한 "preview 컷오프 미회수"를 학습지식으로 채워넣었는지 — 3가지 차원으로 검증
 - 사용한 권위 웹 출처:

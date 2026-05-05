@@ -130,7 +130,7 @@ def split_giant_section(...):
 
 ### 4.3 Q1~Q4 답변 본격 재생성 (v2, 2026-04-29 오후)
 
-이전 1차 답변(`docs/usecase/answers/tracer/qN_*.md`)을 P2 적용 + ASN.1 컬렉션 활용한 v2 로 갱신. v1은 `.v1.md` 백업 보존.
+이전 1차 답변(`usecase/answers/tracer/qN_*.md`)을 P2 적용 + ASN.1 컬렉션 활용한 v2 로 갱신. v1은 `.v1.md` 백업 보존.
 
 | Q | v1 → v2 변화 | 핵심 IE/본문 신규 인용 |
 |---|---|---|
@@ -177,10 +177,69 @@ def split_giant_section(...):
 
 | Tier | 결정 | 이유 |
 |---|---|---|
-| **Tier B** (38.306 cap 행 chunking) | **Skip 권장** | P1.2 split으로 232 chunks (각 ~2K tok), 'Type II' 포함 33 chunks. PoC에서 csi-Type-II 검색 score 0.5814 → 0.6096 이미 작동. 추가 split (232 → ~800)은 chunks 폭증 + noise marginal. ROI 낮음. |
-| **Tier C** (RP-WID 컬렉션) | **진행 불가** | data 디렉토리 grep 결과 RP-WID 본문 docx **부재** (RP-221799 0건, RP-* 폴더는 CR parent ref 용도). 진행하려면 Phase-0 신규 수집 (별도 트랙). |
+| **Tier B** (38.306 cap 행 chunking) | **Skip 권장 → 정책 변경 후 진행** | (2026-05-02 사용자 정확성 우선 지시로 진행) |
+| **Tier C** (RP-WID 컬렉션) | **진행 불가** | data 디렉토리 grep 결과 RP-WID 본문 docx **부재**. 진행하려면 Phase-0 신규 수집 (별도 트랙). |
 
-→ 후속 세션에서 RP-WID 수집 단계 추가 시 다시 평가 권장.
+## 5. P3 — IE descriptions + Capability rows + 정규 프로세스 audit (2026-05-02)
+
+### 5.1 사용자 핵심 지적
+
+> "IE field description 표 별도 적재 안 됨" / "이게 모든 RAN에 걸쳐서 있는거야? 전수 조사해서 근본적으로 해결할 해결책을 찾아줘"
+
+5 WG × 12 phase × 6 패턴 전수 검수. 자동 검증 도구 신설.
+
+### 5.2 결함 매트릭스 (audit_extraction_completeness.py)
+
+| 패턴 | 5 WG docx | 컬렉션 적재 | 누락 |
+|---|---:|---:|---:|
+| ASN.1 IE field descriptions 표 | RAN2 755 | 2 | **99.7%** |
+| IE 정의 헤더 | RAN2 642 | 0 | **100%** |
+| Capability "UE supports" | RAN2 1,174 | 150 | **87%** |
+| 시험 케이스 본문 | RAN4/5 합 2,626 | 712 | **73%** |
+| RP-WID reference | 5 WG 합 12,587 | 2 | **99.98%** |
+
+### 5.3 Root Cause (4개 직교)
+
+1. RAN1 정책 5 WG 상속
+2. KG-VDB 책임 분리 가정 실패
+3. Chunker 정책 일관성 부재
+4. 데이터 수집 범위 불일치
+
+### 5.4 P3 적용 (2026-05-02)
+
+| 액션 | 결과 |
+|---|---|
+| **P1.1b**: ASN.1 IE description 표 추출 → `ran{N}_ts_ie_descriptions` | RAN2 700 (38.331 670 + 38.355 30), RAN5 3 |
+| **P1.1c**: 38.306 capability 행 단위 chunking → `ran{N}_ts_capabilities` | RAN2 1,716 (1 chunk 안 22행 → 1,716행 완전 분리) |
+| **P2.b**: phase-6/8/9 선별 재처리 (HARD_MAX 초과 5,041건만) | 진행 중 (RAN4 CR 3,500 가장 큰 영향) |
+| **CLAUDE.md** "재임베딩 Step 0 선별 가능 여부 최우선" 추가 | 정책 명문화 |
+| **standards 신설** | `extraction_policy.md`, `reembedding_policy.md` |
+| **교훈 56/57 추가** | `implementation_process.md` |
+
+### 5.5 4-tier 검색 시스템 완성
+
+| Tier | 컬렉션 | 역할 |
+|---|---|---|
+| 1 | `ran{N}_ts_sections` | 절차/본문 텍스트 |
+| 2 | `ran{N}_ts_asn1_chunks` (RAN2/3) | IE SEQUENCE 구조 |
+| 3 | **`ran{N}_ts_ie_descriptions` (NEW)** | IE field 의미 설명 |
+| 4 | **`ran{N}_ts_capabilities` (NEW, RAN2)** | Capability 행 단위 |
+
+### 5.6 검증 결과 (검색 score)
+
+- "TCI-State maxNumberConfiguredTCIstates" → `multipleTCI` **0.7539** (capability)
+- "ltm-CandidateToAddModList field meaning" → `LTM-Candidate field descriptions` **0.6514** (description)
+- "csi-Type-II UE capability" → `CodebookComboParametersCJT-r18` **0.6136** (capability)
+- "BeamFailureRecoveryConfig beamFailureInstanceMaxCount" → `BeamFailureRecoveryConfig field descriptions` **0.5559** + 본문 verbatim 회수
+
+### 5.7 핵심 도구 (재발 방지)
+
+- `scripts/cross-phase/validation/audit_extraction_completeness.py` — 5 WG × 5 컬렉션 추출 누락 자동 검출
+- `scripts/cross-phase/usecase/improvements/p1_1b_extract_ie_descriptions.py`
+- `scripts/cross-phase/usecase/improvements/p1_1c_extract_capability_rows.py`
+- `scripts/cross-phase/usecase/improvements/p2b_selective_reembed.py` (선별 재처리)
+- `docs/cross-phase/standards/extraction_policy.md` (PRESERVE/EXCLUDE 화이트리스트)
+- `docs/cross-phase/standards/reembedding_policy.md` (Step 0 선별 최우선)
 
 **핵심 검색 효과** (Q4 LTM 사례):
 - "LTM-Config IE candidate cell Rel-18" → main 0.611 + ASN.1 **0.652** (LTM-Config-r18 SEQUENCE 직접)
@@ -258,11 +317,11 @@ python3 scripts/cross-phase/validation/validate_chunk_quality.py --all
 - `scripts/cross-phase/usecase/improvements/p1_1_extract_asn1_ies.py` (PoC 검증용)
 - `scripts/cross-phase/usecase/improvements/p1_1_load_asn1_collection.py` (PoC 검증용)
 - `docs/cross-phase/standards/chunking_standards.md`
-- `docs/usecase/evaluations/3way/root_cause_analysis.md`
-- `docs/usecase/evaluations/3way/p1_poc_results.md`
-- `docs/usecase/evaluations/3way/systemic_improvement_plan.md`
-- `docs/usecase/evaluations/3way/ran1_user_guide.md`
-- `docs/usecase/evaluations/3way/final_application_report.md` (본 문서)
+- `usecase/evaluations/3way/root_cause_analysis.md`
+- `usecase/evaluations/3way/p1_poc_results.md`
+- `usecase/evaluations/3way/systemic_improvement_plan.md`
+- `usecase/evaluations/3way/ran1_user_guide.md`
+- `usecase/evaluations/3way/final_application_report.md` (본 문서)
 
 ### 수정 (Claude)
 - `scripts/phase-7/RAN1/ts-parser/01_parse_ts_sections.py` (chunker_v2 import + HARD_MAX)
@@ -318,3 +377,236 @@ python3 scripts/cross-phase/validation/validate_chunk_quality.py --all
 2. count_tokens tiktoken 기반 정확도 개선
 3. RAN1 spec 사용자 직접 정정
 4. Q1~Q4 본격 재평가 (점수 정량 측정)
+
+---
+
+## 9. P3 — 정규 프로세스 누락 패턴 6건 본격 해결 (2026-05-02)
+
+### 9.1 동기 (사용자 지적)
+
+> "지금 IE description이 적재가 안되어 있어? 모든 RAN에 걸쳐서 있는거야? 전수 조사해서 문제점 진단하고 루트 커즈를 찾은 다음에 근본적으로 해결할 해결책을 찾아줘."
+> "재 인덱싱 필요한것만 선택적으로 재 인덱싱 하면 되는거 아냐?"
+
+5 WG × 12 phase 전수 검수 (`usecase/evaluations/3way/extraction_completeness_audit.md`) 결과 **6 패턴 50~100% 누락** 확인.
+
+> **🔴 2026-05-04 정정**: 본 audit 초판은 RAN1 spec 본문(§2.2 Out of Scope, §2.3 Graph DB vs Vector DB 경계)을 확인하지 않고 phase-3 KG body 미저장 / phase-4 Track Changes 미수집 / phase-5 [:800] 발췌 등을 "결함"으로 분류. 사용자 지적("spec에 적힌대로 해야지")으로 spec 대조 후 모두 **의도된 설계**로 재분류. 실제 결함은 R3 (chunker HARD_MAX 백포팅 미흡 + stale tokenCount 버그)뿐이며 100% 해소.
+
+### 9.2 적용 결과 (옵션 D — Layer 1+2+3 일괄)
+
+#### Layer 1 (즉시 수정)
+
+| 조치 | 산출물 | 상태 |
+|---|---|---|
+| **P1.1b** IE field descriptions 별도 컬렉션 | `ran2_ts_ie_descriptions` 700 + `ran5_ts_ie_descriptions` 3 | ✅ 신설 |
+| **P1.1c** 38.306 capability 행 단위 컬렉션 | `ran2_ts_capabilities` 1,716 rows | ✅ 신설 |
+| **P2** chunker_v2 + tiktoken (HARD_MAX 6,500) | 5 WG ts_sections 위반 0건 | ✅ 백포팅 |
+| **P2.b v1** phase-6/8/9 선별 재처리 (Step 0 정책 첫 적용, 2026-05-02) | 5,041 violations → 46,070 new chunks. Residual 2,579. `logs/cross-phase/usecase/post_p2b_violations.json` | ✅ 1차 |
+| **chunker.py 버그 수정** (2026-05-04) | `split_existing_chunk`의 stale `tokenCount` 신뢰 버그. tiktoken 재측정 + `_force_split_by_chars` last-resort 추가 | ✅ Root cause 해결 |
+| **P2.b v2** 재실행 (2026-05-04) | 2,579 → 11,763 new chunks. Residual **0건 (0.0000%)**. 3.43M chunks 100% 준수. `logs/cross-phase/usecase/post_p2b_v2_violations.json` | ✅ 완전 해소 |
+
+P2.b 비용 효율: 전체 재인덱싱 ($30~50, 24h) 대비 **선별 재처리 ~$0.2, 30분** — 1/200 비용.
+
+#### Layer 2 (게이트)
+
+| 게이트 | 도구 | 상태 |
+|---|---|---|
+| **G1** chunk size HARD_MAX | `validate_chunk_quality.py --all` | ✅ 5 WG ts_sections 위반 0 |
+| **G3** IE field descriptions V2 적재 (RAN2) | spec P7-V14 + `audit_extraction_completeness.py` | ✅ 700 chunks |
+| **G4** Capability 행 단위 V2 적재 (RAN2) | spec P7-V15 | ✅ 1,716 rows |
+| **G5** extraction completeness audit | `audit_extraction_completeness.py --all --all-collections` | ✅ baseline 정본화 |
+
+#### Layer 3 (Spec/표준 정착)
+
+| 변경 | 위치 |
+|---|---|
+| **PRESERVE 화이트리스트 + EXCLUDE 정책 명문화** | `docs/cross-phase/standards/extraction_policy.md` (신설) |
+| **재임베딩 의사결정 Step 0 — 선별 가능성 최우선** | `docs/cross-phase/standards/reembedding_policy.md` (신설) + CLAUDE.md |
+| **RAN2 phase-7 spec V13/V14/V15 정착** | `docs/RAN2/phase-7/specs/tdoc_vectordb_specs(TS).md` |
+| **RAN3 phase-7 spec V13 정착, V14/V15 N/A 명시** | `docs/RAN3/phase-7/specs/tdoc_vectordb_specs(TS).md` |
+| **RAN4 phase-7 spec V09/V10/V11 N/A 명시** | `docs/RAN4/phase-7/specs/tdoc_vectordb_specs(TS).md` |
+| **RAN5 phase-7 spec V16 정착, V15/V17 N/A 명시** | `docs/RAN5/phase-7/specs/tdoc_vectordb_specs(TS).md` |
+| **교훈 56 (IE description 99.7% 누락) + 57 (재임베딩 Step 0)** | `docs/common/implementation_process.md` |
+
+### 9.3 P3 단계 누적 효과 (예상)
+
+| 영역 | P1 적용 후 | P3 적용 후 (예상) |
+|---|---|---|
+| ASN.1 본문 검색 (RAN2/3) | ✅ (5,360 IEs) | ✅ |
+| **IE field 의미 (RAN2)** | ❌ 0/755 (0%) | ✅ 700/755 (93%) |
+| **38.306 Capability 행 매칭** | ⚠️ 232 chunks (혼재) | ✅ 1,716 rows (단위 분해) |
+| phase-6/8/9 chunk size 위반 | 5,041건 (0.150%) | **0건 (0.0000%)** ✅ (P2.b v2 + chunker 버그 수정 후. 3.43M chunks 100% 준수) |
+
+### 9.4 종합 점수 재추정
+
+P1 후 4.80 → **P3 후 4.85+** (Coverage 4.65 → 4.75, A1 4.65 → 4.75).
+
+### 9.5 잔여 작업
+
+1. ~~2,579 residual~~ — **2026-05-04 해소** (chunker.py stale `tokenCount` 버그 수정 + P2.b v2). 3.43M chunks HARD_MAX 100% 준수.
+2. ~~RP-WID 본문 수집~~ — **미수집 결정 확정** (2026-05-04, ROI 평가 결과 + 사용자 결정). `docs/cross-phase/standards/data_collection_scope.md` §2.1 참조. 재검토 금지.
+3. **RAN1 spec 사용자 직접 정정** (P7-V11/V12 본문 정책 + 향후 신규 P7-V13~V17 본문) — `ran1_user_guide.md` 가이드. **단 Appendix는 2026-05-04부터 Claude 갱신 가능**.
+4. **Q1~Q4 재평가** — IE descriptions / Capability rows 컬렉션 활용 시 점수 정량 측정.
+
+### 9.6 정규 프로세스 hardening (2026-05-04 추가)
+
+**핵심**: P2.b는 일회성 patch script. 정규 파이프라인(Phase-6/8/9 parser, Phase-11 incremental)이 같은 chunker를 사용해 같은 위반을 다시 만들면 의미 없음. 본 hardening으로 **정규 프로세스가 자체적으로 HARD_MAX 강제 + 보조 컬렉션 갱신**.
+
+#### 9.6.1 chunker.py에 `enforce_hard_max` hook 추가
+
+5 WG × phase-6/8/9 parser가 chunk 생성 후 `enforce_hard_max(chunks)` 호출하면 HARD_MAX 6,500 토큰 절대 초과 안 함:
+
+```python
+from common.chunker import enforce_hard_max, HARD_MAX_DEFAULT
+chunks = enforce_hard_max(chunks, hard_max=HARD_MAX_DEFAULT)  # JSON 저장 직전
+```
+
+#### 9.6.2 phase-6/8/9 parser 5 WG 통합
+
+| Phase | 적용 위치 | 파일 수 |
+|---|---|---|
+| Phase-6 (TDoc) | `parse_tdoc_lib.py::save chunks 직전` | 5 (RAN1~5) |
+| Phase-8 (CR) | `01_parse_cr_chunks.py::save 직전` | 5 |
+| Phase-9 (TR) | `01_parse_tr_chunks.py / 01_parse_tr_sections.py::save 직전` | 5 |
+| **합계** | | **15 files** |
+
+#### 9.6.3 Phase-7 보조 파이프라인 정규화 (`run_phase7_auxiliary.py`)
+
+| 보조 단계 | 적용 WG | 컬렉션 |
+|---|---|---|
+| ASN.1 V2 (P7-V13) | RAN2, RAN3 | `ran2_ts_asn1_chunks` 2,365 / `ran3_ts_asn1_chunks` 2,995 |
+| IE descriptions V2 (P7-V14) | RAN2, RAN5 | `ran2_ts_ie_descriptions` 723 / `ran5_ts_ie_descriptions` 3 |
+| Capability V2 (P7-V15) | RAN2 | `ran2_ts_capabilities` 1,716 |
+
+Phase-7 메인 적재 후 wrapper로 자동 호출:
+```bash
+python3 scripts/cross-phase/usecase/improvements/run_phase7_auxiliary.py --wg {RAN2|RAN3|RAN5} --apply
+```
+
+#### 9.6.4 Phase-11 ts_vdb.py 5 WG 통합
+
+`scripts/phase-11/RAN{N}/tasks/ts_vdb.py` 의 `run_ts_vdb` 마지막에 보조 파이프라인 hook 추가:
+```python
+import subprocess as _sp
+_sp.run([sys.executable, str(PROJECT_ROOT/"scripts/cross-phase/usecase/improvements/run_phase7_auxiliary.py"),
+         "--wg", config.wg_name, "--apply"], cwd=PROJECT_ROOT)
+```
+
+→ Phase-11 incremental update에서 TS docx 변경 감지 시 보조 컬렉션 자동 갱신.
+
+#### 9.6.5 정규 프로세스 재실행 시나리오
+
+| 시나리오 | 자동 처리 |
+|---|---|
+| Phase-7 신규 적재 (메인) | ts_sections HARD_MAX 강제 (chunker_v2 split_giant_section_v2) |
+| Phase-6 신규 적재 (TDoc) | tdoc_chunks HARD_MAX 강제 (parse_tdoc_lib.py enforce_hard_max hook) |
+| Phase-8 신규 적재 (CR) | cr_chunks HARD_MAX 강제 (01_parse_cr_chunks.py hook) |
+| Phase-9 신규 적재 (TR) | tr_sections HARD_MAX 강제 (01_parse_tr_chunks.py hook) |
+| Phase-11 incremental TS | 메인 + 보조 컬렉션 동시 갱신 (run_phase7_auxiliary 호출) |
+| Phase-11 incremental CR/TR | 메인 갱신 (HARD_MAX 강제) — 보조 컬렉션 없음 |
+
+**재발 차단**: 정규 프로세스 어디서든 HARD_MAX 위반 chunk 생성 불가.
+
+### 9.7 산출물 위치
+
+**Standards 문서**:
+- `docs/cross-phase/standards/extraction_policy.md` (신설, §3.2 정규 파이프라인 정책 포함)
+- `docs/cross-phase/standards/reembedding_policy.md` (신설)
+- `docs/cross-phase/standards/data_collection_scope.md` (신설, RP-WID 미수집 결정)
+
+**보고서**:
+- `usecase/evaluations/3way/extraction_completeness_audit.md` §9 (실행 결과 + spec 대조 정정)
+- `logs/cross-phase/usecase/post_p2b_v2_violations.json` (정본 측정, 0건)
+- `logs/cross-phase/usecase/regular_process_audit.md` (spec 대조 후 재분류)
+
+**코드 (신규)**:
+- `scripts/cross-phase/usecase/improvements/p1_1b_extract_ie_descriptions.py` (permissive 패턴 + blacklist)
+- `scripts/cross-phase/usecase/improvements/p1_1c_extract_capability_rows.py`
+- `scripts/cross-phase/usecase/improvements/p2b_selective_reembed.py`
+- `scripts/cross-phase/usecase/improvements/run_phase7_auxiliary.py` (정규 파이프라인 wrapper)
+- `scripts/cross-phase/validation/audit_extraction_completeness.py`
+
+**코드 (수정 — 정규 프로세스 hardening, 2026-05-04)**:
+- `scripts/cross-phase/common/chunker.py` — stale tokenCount 버그 수정 + `_force_split_by_chars` last-resort + `enforce_hard_max` hook
+- `scripts/phase-6/RAN{1-5}/tdoc-parser/parse_tdoc_lib.py` — `enforce_hard_max` 통합 (5 files)
+- `scripts/phase-8/RAN{1-5}/cr-parser/01_parse_cr_chunks.py` — `enforce_hard_max` 통합 (5 files)
+- `scripts/phase-9/RAN{1-5}/tr-parser/01_parse_tr_*.py` — `enforce_hard_max` 통합 (5 files)
+- `scripts/phase-11/RAN{1-5}/tasks/ts_vdb.py` — Phase-7 보조 파이프라인 자동 호출 (5 files)
+
+**Spec 정착 (RAN2~5)**:
+- `docs/RAN2/phase-7/specs/tdoc_vectordb_specs(TS).md` — P7-V13/V14/V15 정착 + 100% 커버리지 갱신
+- `docs/RAN3/phase-7/specs/tdoc_vectordb_specs(TS).md` — P7-V13 정착, V14/V15 N/A
+- `docs/RAN4/phase-7/specs/tdoc_vectordb_specs(TS).md` — P7-V09/V10/V11 N/A
+- `docs/RAN5/phase-7/specs/tdoc_vectordb_specs(TS).md` — P7-V16 정착, V15/V17 N/A
+
+**RAN1 spec 정정 가이드 (사용자 권한)**:
+- `usecase/evaluations/3way/ran1_user_guide.md`
+- 단 Appendix는 2026-05-04부터 Claude 갱신 가능 (CLAUDE.md "🔴🔴🔴 RAN1 Spec 본문 수정 절대 금지" 완화)
+
+**교훈**:
+- `docs/common/implementation_process.md` 56 (IE 누락) / 57 (재임베딩 Step 0) / 58 (stale tokenCount) / 59 (audit는 spec Read 선행)
+
+---
+
+## 10. 최종 검증 (2026-05-04)
+
+### 10.1 회귀 검증 (4건 PASS)
+
+| 항목 | 결과 |
+|---|---|
+| 30개 수정 파일 syntax compile | ✅ 전체 통과 |
+| chunker.py 4 함수 functional regression | ✅ stale tokenCount 무시 + force-split 동작 |
+| 25 컬렉션 3,488,475 chunks 위반 | ✅ 0건 (0.0000%) — 측정 2회 일치 |
+| 도구 동작 (validate_chunk_quality, run_phase7_auxiliary) | ✅ 정상 |
+
+### 10.2 할루시네이션 체크 (3 카테고리, 13건 전부 일치)
+
+- 컬렉션 수치 6건 (38.331 unique IE 693, ts_ie_descriptions 723/3, ts_capabilities 1716, ts_asn1 2365/2995) → 실측 일치
+- phase-3/4/5 spec 인용 3건 → 본문 일치
+- Q1~Q4 v3 retrieval 점수 4건 → JSON 정본 일치
+
+### 10.3 End-to-end 검증 (Phase-9 RAN3 재실행)
+
+- 12 TR → 644 sections → 486 chunks 재생성
+- max token 5,553, **위반 0건**
+- `enforce_hard_max` hook 정규 프로세스 작동 확인
+
+### 10.4 정규 프로세스 정착 (5 WG × 4 phase 완료)
+
+| Spec | 추가된 P-V ID | 정책 |
+|---|---|---|
+| RAN2 phase-6 | P6-V16 / P6-V17 | HARD_MAX + EMBEDDING |
+| RAN2 phase-8 | P8-V04 / P8-V05 | HARD_MAX + EMBEDDING |
+| RAN2 phase-9 | P9-V08 / P9-V09 | HARD_MAX + EMBEDDING |
+| RAN3 phase-6 | P6-V17 / P6-V18 | HARD_MAX + EMBEDDING |
+| RAN3 phase-8 | P8-V04 / P8-V05 | HARD_MAX + EMBEDDING |
+| RAN3 phase-9 | P9-V08 / P9-V09 | HARD_MAX + EMBEDDING |
+| RAN4 phase-6 | P6-V11 / P6-V12 | HARD_MAX + EMBEDDING |
+| RAN4 phase-8 | P8-V12 / P8-V13 | HARD_MAX + EMBEDDING |
+| RAN4 phase-9 | P9-V08 / P9-V09 | HARD_MAX + EMBEDDING |
+| RAN5 phase-6 | P6-V18 / P6-V19 | HARD_MAX + EMBEDDING |
+| RAN5 phase-8 | P8-V19 / P8-V20 | HARD_MAX + EMBEDDING |
+| RAN5 phase-9 | P9-V13 / P9-V14 | HARD_MAX + EMBEDDING |
+| **RAN1 phase-7 (사용자 직접)** | **P7-V15~V19 (대기)** | HARD_MAX + EMBEDDING + V2 정책 N/A |
+
+### 10.5 Q1~Q4 LLM 답변 + 5-tier rubric 평가 (V2 vs V3)
+
+`google/gemini-2.5-flash` 로 답변 생성 + 동일 모델로 rubric 평가:
+
+| Q | 질문 | V2 (basic ASN.1+sections) | V3 (+ie_descriptions+capabilities) | Δ |
+|---|---|---|---|---|
+| Q1 | Rel-16 Type-II codebook | 15/25 | **21/25** | **+6** |
+| Q2 | TCI-State Rel-15~20 | 20/25 | 19/25 | -1 |
+| Q3 | BFD/BFR Rel-15~17 | 19/25 | 19/25 | 0 |
+| Q4 | Rel-18 LTM | 19/25 | 19/25 | 0 |
+| **합계** | | **73/100** | **78/100 (+6.8%)** | **+5** |
+
+**해석**:
+- Q1 (Type-II): IE descriptions가 CodebookConfig field 의미 직접 회수 → A5 Cross-Doc Linkage 0→4 점프
+- Q2 (TCI): V2가 이미 187 chunks 풍부 → V3 11 chunks의 추가 가치 미미. V2/V3 결합 시 추가 향상 기대
+- Q3/Q4: 동일 점수. 기존 V2 컬렉션이 충분히 커버
+
+**핵심 발견**: 신규 컬렉션은 **특정 질문 유형 (IE field 의미 + capability 매트릭스)에서 큰 가치**. 모든 질문에 균일 향상은 아님. 결합 검색 (V2 + V3) 전략이 최적.
+
+산출물:
+- `logs/cross-phase/usecase/q1_q4_v3_eval.json` (정본)
+- `scripts/cross-phase/usecase/q1_q4_v3_eval.py` (재현 가능)

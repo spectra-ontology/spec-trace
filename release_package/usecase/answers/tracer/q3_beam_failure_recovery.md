@@ -410,4 +410,4 @@ v2에서 `ran2_ts_asn1_chunks`로부터 IE 본문 직접 인용 가능 (v1에서
 | v1 미답 6항목 해소 여부 | 9건 해소 (Qout,LR/Qin,LR 정의, 4종 enumerated 범위, ms 절대값, sl 절대값, INTEGER 범위). 1건 미해소 (BLER 절대 % — 구조적). |
 | Cypher 쿼리가 실제 KG schema에 맞는가? | OK — `Section`-`[:BELONGS_TO_SPEC]`-`Spec` 구조, RAN1=2 / RAN2=7 / RAN4=100 / RAN5=100 행. |
 | 검색 스크립트 / 로그 산출물 경로 | `scripts/cross-phase/usecase/q3_search_bfd_bfr_v2.py`, `logs/cross-phase/usecase/q3_retrieval_log_v2.json`. |
-| v1 백업 위치 | `docs/usecase/answers/tracer/q3_beam_failure_recovery_v1.md`. |
+| v1 백업 위치 | `usecase/answers/tracer/q3_beam_failure_recovery_v1.md`. |

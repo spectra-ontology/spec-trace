@@ -2,7 +2,7 @@
 
 > 평가일: 2026-04-29
 > 평가자: Claude (Opus 4.7, 1M context)
-> 권위 검증 베이스: `docs/usecase/evaluations/tracer/q1_quality_eval.md` (web 외부 출처 18 fact-claim 1:1 대조 완료)
+> 권위 검증 베이스: `usecase/evaluations/tracer/q1_quality_eval.md` (web 외부 출처 18 fact-claim 1:1 대조 완료)
 > 추가 검증: GPT/Claude 답변의 학습지식 기반 claim에 대해 권위 출처(sharetechnote, ATIS V16.2.0, 3GPP 38.521-4 cover, IEEE/ResearchGate Rel-16 Type II 논문) 대조
 
 ---

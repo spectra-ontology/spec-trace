@@ -1,18 +1,18 @@
 # Q2 3-way v2 — TCI-state Rel-15~Rel-20 (P2+ASN.1)
 
 > 평가일: 2026-05-01 / 평가 대상: spec-trace 3gpp-tracer **v2 (P2 + ASN.1)** vs GPT vs Claude
-> v1 비교 baseline: `docs/usecase/evaluations/3way/q2_3way_comparison.md` (2026-04-29)
-> v2 산출물: `docs/usecase/answers/tracer/q2_tci_state_rel15_to_rel20.md` (293 lines, 2026-05-01)
-> v1 백업: `docs/usecase/answers/tracer/q2_tci_state_rel15_to_rel20.v1.md` (247 lines)
+> v1 비교 baseline: `usecase/evaluations/3way/q2_3way_comparison.md` (2026-04-29)
+> v2 산출물: `usecase/answers/tracer/q2_tci_state_rel15_to_rel20.md` (293 lines, 2026-05-01)
+> v1 백업: `usecase/answers/tracer/q2_tci_state_rel15_to_rel20.v1.md` (247 lines)
 > retrieval log: `logs/cross-phase/usecase/q2_retrieval_log_v2.json`
 
 ## 메타
 
 | 모델 | 파일 | v1 lines | v2 lines | 인용 형식 | 외부 도구 |
 |---|---|---:|---:|---|---|
-| 3gpp-tracer | `docs/usecase/answers/tracer/q2_tci_state_rel15_to_rel20.md` | 247 | **293** | `[spec §sec, chunkId=...]` / `[asn1 IE=..., chunkId=...]` ★신규 / `[tdoc, mtg, type, ai=..., release]` / `[Neo4j RAN2, sectionNumber=...]` | 없음 (Qdrant `ran{1,2}_ts_sections` + **`ran2_ts_asn1_chunks` ★신규 (2,365 IEs)** + `ran{1,2}_tdoc_chunks` + Neo4j RAN1/RAN2) |
-| GPT | `docs/usecase/answers/gpt/q2_tci_state_rel15_to_rel20.md` | 323 | 323 | spec 명 + IE 명만 (URL/§/chunkId 없음) | LLM 사전지식 |
-| Claude | `docs/usecase/answers/claude/q2_tci_state_rel15_to_rel20.md` | 497 | 497 | §번호 + ASN.1 코드블럭 + WID 번호 (chunkId/URL 없음) | LLM 사전지식 |
+| 3gpp-tracer | `usecase/answers/tracer/q2_tci_state_rel15_to_rel20.md` | 247 | **293** | `[spec §sec, chunkId=...]` / `[asn1 IE=..., chunkId=...]` ★신규 / `[tdoc, mtg, type, ai=..., release]` / `[Neo4j RAN2, sectionNumber=...]` | 없음 (Qdrant `ran{1,2}_ts_sections` + **`ran2_ts_asn1_chunks` ★신규 (2,365 IEs)** + `ran{1,2}_tdoc_chunks` + Neo4j RAN1/RAN2) |
+| GPT | `usecase/answers/gpt/q2_tci_state_rel15_to_rel20.md` | 323 | 323 | spec 명 + IE 명만 (URL/§/chunkId 없음) | LLM 사전지식 |
+| Claude | `usecase/answers/claude/q2_tci_state_rel15_to_rel20.md` | 497 | 497 | §번호 + ASN.1 코드블럭 + WID 번호 (chunkId/URL 없음) | LLM 사전지식 |
 
 P2 신규 회수 자원 (tracer v2 only):
 - ASN.1 vector 쿼리 8건 / 80 hits + ASN.1 ieName 정확매칭 11건 (11 IE 본문 직접) + 38.306 capability text-match probe 6건 (18 chunks, 96 TCI 행)

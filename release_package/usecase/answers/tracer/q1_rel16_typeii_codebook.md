@@ -404,7 +404,7 @@ retrieved 본문 인용으로 확인 가능한 spec 간 직접 참조만 표기.
 - Retrieval log:
   - v2: `logs/cross-phase/usecase/q1_retrieval_log_v2.json` (25 vector hits + 4 IE rows + 0 text-match rows)
   - v1: `logs/cross-phase/usecase/q1_retrieval_log.json` (전체 280 hits)
-- v1 답변 백업: `docs/usecase/answers/tracer/q1_rel16_typeii_codebook.v1.md`
+- v1 답변 백업: `usecase/answers/tracer/q1_rel16_typeii_codebook.v1.md`
 - 질문 원문에 대응하는 항목별 직접 청크 ID (v2 갱신):
   - 38.211 → `38.211-8.4.1.5.3-001`, `38.211-7.4.1.5.1-001` (v1)
   - 38.212 → `38.212-6.3.2.1.2-014`, `38.212-6.3.1.1.3-001`, `38.212-6.3.2.6-001` (v1) + `38.212-6.3.2.4.2.2-001` / `38.212-6.3.2.4.2.3-001` (v2 신규: CSI part 1 / part 2)

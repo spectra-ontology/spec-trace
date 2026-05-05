@@ -3,7 +3,7 @@
 ## 평가 메타
 
 - 평가일: 2026-04-29
-- 1차 답변: `docs/usecase/answers/tracer/q2_tci_state_rel15_to_rel20.md` (247 lines)
+- 1차 답변: `usecase/answers/tracer/q2_tci_state_rel15_to_rel20.md` (247 lines)
 - Retrieval log: `logs/cross-phase/usecase/q2_retrieval_log.json` (ts_queries=14, tdoc_queries=48, neo4j RAN1/RAN2)
 - 1차 답변 절대 수정 금지 (GPT 비교용 원본 보존). 본 평가는 외부 권위 출처와 대조만.
 - 사용한 웹 출처:

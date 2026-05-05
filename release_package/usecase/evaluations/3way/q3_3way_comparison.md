@@ -2,7 +2,7 @@
 
 > 평가일: 2026-04-29 · 평가자: spec-trace 평가팀
 > 본 보고서는 Q3 (BFD/BFR) 답변에 대해 3개 모델(spec-trace 3gpp-tracer / GPT / Claude)을 5축 점수 + 정량값 매트릭스로 비교한다.
-> 권위 출처는 `docs/usecase/evaluations/tracer/q3_quality_eval.md`(이미 검증 완료)를 1차 사용하고, 필요 시 그 안의 외부 권위 링크(TS 38.213 mirror, ShareTechnote, Award Solutions, TechSpec, Justia patent 등)를 인용한다.
+> 권위 출처는 `usecase/evaluations/tracer/q3_quality_eval.md`(이미 검증 완료)를 1차 사용하고, 필요 시 그 안의 외부 권위 링크(TS 38.213 mirror, ShareTechnote, Award Solutions, TechSpec, Justia patent 등)를 인용한다.
 
 ---
 
@@ -10,9 +10,9 @@
 
 | 모델 | 파일 | 라인 수 | 인용 형식 | 외부 도구 사용 |
 |---|---|---:|---|---|
-| 3gpp-tracer | `docs/usecase/answers/tracer/q3_beam_failure_recovery.md` | 323 | `[<TS> §<sec>, chunkId=...]` / `[TDoc <num>, chunkId=...]` (16건 모두 retrieval log 실재) | WebFetch/WebSearch 0회. Qdrant 39쿼리(TS 27 + TDoc 12) + Neo4j Cypher 4건 |
-| GPT | `docs/usecase/answers/gpt/q3_beam_failure_recovery.md` | 319 | spec/section 언급(예: "38.331", "Clause 5.17")만, chunkId/문장 인용 없음. 마지막에 5개 spec 일반 참조만 | 외부 도구 사용 명시 없음. 학습지식 기반 구성 추정 |
-| Claude | `docs/usecase/answers/claude/q3_beam_failure_recovery.md` | 568 | spec/section 언급("38.213 §6", "38.321 §5.17") + ASN.1 IE 직접 인용 + Release/WID 번호(RP-201305 등). chunkId/문장 출처 없음 | 외부 도구 사용 명시 없음. 학습지식 기반 추정 |
+| 3gpp-tracer | `usecase/answers/tracer/q3_beam_failure_recovery.md` | 323 | `[<TS> §<sec>, chunkId=...]` / `[TDoc <num>, chunkId=...]` (16건 모두 retrieval log 실재) | WebFetch/WebSearch 0회. Qdrant 39쿼리(TS 27 + TDoc 12) + Neo4j Cypher 4건 |
+| GPT | `usecase/answers/gpt/q3_beam_failure_recovery.md` | 319 | spec/section 언급(예: "38.331", "Clause 5.17")만, chunkId/문장 인용 없음. 마지막에 5개 spec 일반 참조만 | 외부 도구 사용 명시 없음. 학습지식 기반 구성 추정 |
+| Claude | `usecase/answers/claude/q3_beam_failure_recovery.md` | 568 | spec/section 언급("38.213 §6", "38.321 §5.17") + ASN.1 IE 직접 인용 + Release/WID 번호(RP-201305 등). chunkId/문장 출처 없음 | 외부 도구 사용 명시 없음. 학습지식 기반 추정 |
 
 ---
 

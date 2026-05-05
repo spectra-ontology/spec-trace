@@ -1,7 +1,6 @@
 # SPECTRA Parsing Pipeline (Sanitized)
 
-This directory contains the **sanitized parsing pipeline** that produces a
-SPECTRA-conformant knowledge graph from 3GPP source documents. The pipeline
+This directory contains the **sanitized parsing pipeline** that extracts cover-sheet metadata and structured content from 3GPP source documents into intermediate JSON-LD records; the loader (stage 5) maps these records to a SPECTRA-conformant knowledge graph (see `examples/process_kg/` for the loader-mapped form). Note: parser-emitted predicate names in the intermediate JSON-LD (e.g., `submittedToWG`, `crOtherComments`, `trScope`, `trConclusions`) are remapped or aggregated by the loader to ontology-defined terms; reusers writing direct queries should target the released `ontology/spectra.ttl` vocabulary, not the intermediate names. The pipeline
 is documented and released for inspection and re-execution by reusers; raw
 3GPP documents are not bundled and must be supplied by the user from the
 public 3GPP portal at <https://www.3gpp.org/ftp/>.

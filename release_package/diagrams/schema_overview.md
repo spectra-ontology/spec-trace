@@ -72,7 +72,7 @@ Total: 26 classes (5 Tdoc + Resolution + 3 Resolution subclasses + Spec/Section/
 
 ## Axiom summary
 
-- 23 `owl:FunctionalProperty` declarations (at-most-one cardinality)
+- 20 `owl:FunctionalProperty` declarations (at-most-one cardinality)
 - 2 `owl:InverseFunctionalProperty` (`hasCR`, `hasTRImpact`)
 - 15 inverse property pairs (`owl:inverseOf`) for bidirectional navigation
 - 6 `owl:IrreflexiveProperty` covering the section hierarchy (`hasSubSection`, `parentSection`), intra-section references (`referencesSection`, `referencedBySection`), and TR cross-references (`referencesTR`, `referencedByTR`)

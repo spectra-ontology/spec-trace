@@ -1,6 +1,6 @@
-# Anonymized index of the 137 SPECTRA Competency Questions
+# Schema-area index of the 137 SPECTRA Competency Questions
 
-This file enumerates all 137 competency questions used to design and validate SPECTRA across five development phases. The full text of each question and its executable Cypher/SPARQL are retained as internal validation evidence (see `PUBLISHING.md` and the paper's Availability section). For each CQ we publish the **identifier**, **phase**, **target category** (translated to English), and **schema area exercised** so third parties can verify (i) the breadth of the elicited CQ set across categories and (ii) which ontology classes / object properties each CQ traverses.
+This file enumerates all 137 competency questions used to design and validate SPECTRA across five development phases. The full text of each question and its executable Cypher (one file per CQ) are shipped under `cqs/spectra_cq_v1.0/` (see `cqs/spectra_cq_v1.0/README.md`). This index publishes, for each CQ, the **identifier**, **phase**, **target category** (translated to English), and **schema area exercised** so third parties can verify at a glance (i) the breadth of the elicited CQ set across categories and (ii) which ontology classes / object properties each CQ traverses.
 
 **Total**: 137 CQs across 5 phases (P1=25, P2=34, P3=45, P4=15, P5=18).
 

@@ -83,7 +83,7 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 | Paper claim | Evidence |
 |---|---|
 | 6 `rdfs:subClassOf` axioms (Resolution⊑prov:Activity, Tdoc⊑prov:Entity, Company⊑prov:Agent + Company⊑foaf:Organization, Contact⊑prov:Agent + Contact⊑foaf:Person) — 6 triples | `ontology/spectra.ttl` lines following "Optional PROV-O alignment" comment block; `structural_metrics.json::prov_o_alignment.subclass_axioms` (6 entries) |
-| Total triples 887 (after dropping 3 spurious owl:FunctionalProperty declarations on multi-valued links: presentedAt, modifies, originatedFrom) | `structural_metrics.json::triples_total=887`; reproducible by `tests/reproduce_structural_metrics.py` |
+| Total triples 886 (after dropping 3 spurious owl:FunctionalProperty declarations on multi-valued links: presentedAt, modifies, originatedFrom) | `structural_metrics.json::triples_total=886`; reproducible by `tests/reproduce_structural_metrics.py` |
 
 ## Schema growth (paper §5.1, Figure 4)
 

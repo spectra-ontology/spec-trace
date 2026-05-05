@@ -11,7 +11,7 @@
 ## 폴더 구조
 
 ```
-docs/usecase/
+usecase/
 ├─ README.md                                 ← 본 문서
 ├─ answers/                                  ← 1차 답변 (모든 모델, 원본 보존)
 │   ├─ tracer/                               ← 3gpp-tracer 답변 4개
@@ -191,7 +191,7 @@ docs/usecase/
 ## 산출물 요약
 
 ```
-docs/usecase/
+usecase/
 ├─ README.md                              ← 본 문서
 ├─ answers/  (12 files)
 │   ├─ tracer/    q[1-4]_*.md
@@ -200,10 +200,9 @@ docs/usecase/
 └─ evaluations/
     ├─ tracer/    q[1-4]_quality_eval.md  (D/O/R 포함, 4 files)
     └─ 3way/      q[1-4]_3way_comparison.md + summary.md  (5 files)
-
-scripts/cross-phase/usecase/
-├─ q[1-4]_search_*.py                     ← tracer 검색 스크립트 (재현용)
-
-logs/cross-phase/usecase/
-├─ q[1-4]_retrieval_log.json              ← tracer retrieval log (감사용)
+                  q[1-4]_retrieval_log.json              ← tracer retrieval log (감사용, 4 files)
 ```
+
+Source repository (not bundled in release_package):
+- `scripts/cross-phase/usecase/q[1-4]_search_*.py` — tracer search scripts (regeneration only).
+

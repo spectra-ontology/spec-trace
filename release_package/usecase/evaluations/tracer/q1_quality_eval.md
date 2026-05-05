@@ -3,7 +3,7 @@
 ## 평가 메타
 
 - 평가일: 2026-04-29
-- 1차 답변: `docs/usecase/answers/tracer/q1_rel16_typeii_codebook.md` (279 lines)
+- 1차 답변: `usecase/answers/tracer/q1_rel16_typeii_codebook.md` (279 lines)
 - Retrieval log: `logs/cross-phase/usecase/q1_retrieval_log.json` (3,457 lines, 280 hits, 150 unique chunkIds, 50 unique TDocs)
 - 평가자: Claude (Opus 4.7, web 외부 권위소스 대조)
 - 평가 방식: 1차 답변 fact-claim 추출 → retrieval log 존재 검증 (Python set 매칭) → 권위 출처(WebSearch + WebFetch) 사실 대조

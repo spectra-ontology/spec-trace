@@ -10,7 +10,6 @@ Register `https://w3id.org/spectra` as the persistent IRI for **SPECTRA: A Trace
 - **Maintainers (with commitment to keep the redirect target alive)**:
   - Sihyeon Choi — shyun12.choi@samsung.com (corresponding maintainer)
   - Junho Lee — junho515.lee@samsung.com
-  - Joon-Hyoung Ahn — junyung.ahn@samsung.com
 - **Hosting**: GitHub release of [spectra-ontology/spec-trace](https://github.com/spectra-ontology/spec-trace), preserved on Zenodo (DOI to be minted upon GitHub release).
 
 ## Why w3id
@@ -21,7 +20,7 @@ The SPECTRA ontology declares its IRI as `https://w3id.org/spectra#` so that the
 
 - **Type**: OWL 2 ontology (Turtle), 26 classes, 53 object properties, 81 data properties
 - **License**: CC-BY 4.0
-- **First public release**: v1.0.0 (2026-04-27)
+- **First public release**: v1.0.0 (2026-05-08)
 - **Accompanying paper**: ISWC 2026 Resources Track (under review)
 
 ## .htaccess behavior
