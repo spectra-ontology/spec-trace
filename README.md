@@ -8,7 +8,7 @@
 **License**: CC-BY 4.0 (SPECTRA-authored components); 3GPP-derived literal content carries explicit 3GPP attribution (see `LICENSE` Tier 2)
 **Version**: v1.0.0 (see `ontology/spectra.ttl` header for authoritative version)
 **Persistent identifier**: `https://w3id.org/spectra` (registration **pending**; PR template at `w3id/PR_DESCRIPTION.md`, target `perma-id/w3id.org`)
-**Zenodo DOI**: `10.5281/zenodo.20034872` *(populated when the v1.0.0 deposit is published; see `PUBLISHING.md`)*
+**Zenodo DOI**: `10.5281/zenodo.20034872` *(reserved; v1.0.0 deposit ready for publish — see `PUBLISHING.md`)*
 **Repository**: https://github.com/spectra-ontology/spec-trace
 
 ## Two-channel distribution
