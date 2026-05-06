@@ -43,3 +43,7 @@ The ontology content and documentation are hosted externally in the GitHub repos
   - Junho Lee — junho515.lee@samsung.com
 - **Affiliation**: System LSI Business, Device Solutions Division, Samsung Electronics, South Korea
 - **Files in this PR**: `spectra/.htaccess`
+
+## Optional Requests for W3ID Maintainers
+
+- [x] Please squash commits for me.
