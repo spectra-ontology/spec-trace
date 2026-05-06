@@ -8,7 +8,7 @@
 | GitHub Pages activation (`main`/`docs`) | ✅ Completed | https://spectra-ontology.github.io/spec-trace/ |
 | GitHub Release v1.0.0 | ✅ Completed | https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.0 |
 | Zenodo deposit publish | ✅ Completed | DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) (minted 2026-05-08) |
-| w3id PR submission | ✅ Submitted | [perma-id/w3id.org#6021](https://github.com/perma-id/w3id.org/pull/6021) (in review) |
+| w3id registration | ✅ Registered | [`https://w3id.org/spectra`](https://w3id.org/spectra) via [`perma-id/w3id.org#6021`](https://github.com/perma-id/w3id.org/pull/6021) |
 
 The detailed step-by-step record below documents the actions taken and reasoning, useful as a reference for subsequent releases or for reviewers wanting to understand the release process.
 
