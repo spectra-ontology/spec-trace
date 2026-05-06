@@ -18,7 +18,7 @@ https://w3id.org/spectra
 Redirect targets (all verified HTTP 200 prior to this PR):
 
 - HTML / browser → [https://spectra-ontology.github.io/spec-trace/](https://spectra-ontology.github.io/spec-trace/)
-- `text/turtle`, `application/rdf+xml`, `application/n-triples` → [https://github.com/spectra-ontology/spec-trace/releases/latest/download/spectra.ttl](https://github.com/spectra-ontology/spec-trace/releases/latest/download/spectra.ttl)
+- `text/turtle`, `application/rdf+xml`, `application/n-triples` → [https://spectra-ontology.github.io/spec-trace/spectra.ttl](https://spectra-ontology.github.io/spec-trace/spectra.ttl) (served as `text/turtle; charset=utf-8` for RDF tool auto-detection)
 - Sub-paths (term IRIs like `/spectra#Tdoc`) → same TTL (single-file ontology)
 
 The ontology content and documentation are hosted externally in the GitHub repository [spectra-ontology/spec-trace](https://github.com/spectra-ontology/spec-trace) (v1.0.0 published, [release page](https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.0)); the per-WG body-text knowledge graphs are deposited on Zenodo (DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872)).
