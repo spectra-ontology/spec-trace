@@ -38,9 +38,8 @@ The ontology content and documentation are hosted externally in the GitHub repos
 
 - **Type**: OWL 2 ontology (Turtle), 26 classes, 53 object properties, 81 data properties
 - **License**: CC-BY 4.0 (SPECTRA-authored components); per-WG body-text literals on Zenodo retain explicit 3GPP attribution
-- **Maintainers**:
-  - [@shychoi10](https://github.com/shychoi10) — Sihyeon Choi (corresponding) — shyun12.choi@samsung.com
-  - Junho Lee — junho515.lee@samsung.com
+- **Maintainer**: [@shychoi10](https://github.com/shychoi10) — Sihyeon Choi — shyun12.choi@samsung.com
+- **Co-author / contact**: Junho Lee — junho515.lee@samsung.com
 - **Affiliation**: System LSI Business, Device Solutions Division, Samsung Electronics, South Korea
 - **Files in this PR**: `spectra/.htaccess`
 
