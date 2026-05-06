@@ -203,7 +203,7 @@ Three population-time conventions and one upstream-data observation, derived dir
 
 \begin{itemize}
 \item \textbf{LS \texttt{originatedFrom} for outgoing LSs is implicit.} In 3GPP practice, an outgoing Liaison Statement (\texttt{direction = "out"}) has the host Working Group as its source by definition --- the originating WG is the one tabling the LS. The Phase-1 RAN loaders therefore record \texttt{originatedFrom} only for incoming LSs (\texttt{direction = "in"}; coverage 51.9--96.6\% across RAN1--RAN5, depending on the availability of an explicit \emph{Original LS} reference on the cover sheet). For outgoing LSs the host WG is recoverable from the LS's hosting KG.
-\item \textbf{LS \texttt{sentTo} reflects upstream coverage.} 1,556 of 25,586 distinct LSs (5.8\%) carry no \texttt{sentTo} edge in the released union, mirroring an empty \emph{To:} cell on the source TDoc cover sheet. SHACL therefore does not assert \texttt{sh:minCount} on \texttt{LSShape.\bk sentTo}; consumers requiring a complete recipient list should treat absence as upstream-metadata gap rather than schema violation.
+\item \textbf{LS \texttt{sentTo} reflects upstream coverage.} 1,556 of 25,586 distinct LSs (6.1\%) carry no \texttt{sentTo} edge in the released union, mirroring an empty \emph{To:} cell on the source TDoc cover sheet. SHACL therefore does not assert \texttt{sh:minCount} on \texttt{LSShape.\bk sentTo}; consumers requiring a complete recipient list should treat absence as upstream-metadata gap rather than schema violation.
 \item \textbf{Tdoc \texttt{presentedAt} can be multi-valued under re-tabling.} In the released RAN1 snapshot, 123,678 source metadata records resolve to 123,677 distinct TDoc identifiers because one TDoc was re-tabled at a subsequent meeting under the same identifier and so appears in the cover-sheet records of more than one Meeting. \texttt{TdocShape.\bk presentedAt} therefore omits \texttt{sh:maxCount}; queries treating \texttt{presentedAt} as functional should add an \texttt{ORDER BY} or aggregate clause.
 \item \textbf{Source companies are kept verbatim throughout.} Both the process-KG (\texttt{examples/\bk process\_\bk kg/}) and the SpectraCQ benchmark (\texttt{cqs/\bk spectra\_\bk cq\_v1.0/}) retain real company names matching the public 3GPP per-meeting \texttt{TDOC\_\bk List.\bk xlsx} and TDoc cover pages. No anonymization is applied because the names are already public.
 \end{itemize}
@@ -211,8 +211,6 @@ Three population-time conventions and one upstream-data observation, derived dir
 \noindent The corresponding SHACL shape relaxations (\texttt{LSShape.originatedFrom}, \texttt{LSShape.sentTo}, \texttt{CRShape.modifies}, \texttt{TdocShape.presentedAt}: \texttt{sh:maxCount} removed) are all annotated inline in \texttt{shapes/\bk spectra-core.\bk shacl.\bk ttl} with the rationales above.
 
 \noindent\textbf{CR-pack TSG plenary linkage.} CR-pack approval at the TSG plenary is currently captured by the literal \texttt{tsgMeeting} attribute on \texttt{CRPack} (\texttt{xsd:string}, e.g., ``RAN\#103''); a structural \texttt{approvedAt} OP linking \texttt{CRPack} to a \texttt{TSGPlenary}\,$\sqsubseteq$\,\texttt{Meeting} subclass is staged for v1.1 to support \emph{approved}/\emph{postponed}/\emph{rejected} CR-pack analytics directly in the schema.
-
-\end{document}
 
 % LLM eval pilot (originally §E6 in body draft) - moved here per submission scope
 \subsection{E6 --- Illustrative utility pilot against general LLM baselines}\label{sec:eval:llm}
