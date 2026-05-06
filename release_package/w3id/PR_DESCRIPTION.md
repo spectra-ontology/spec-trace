@@ -1,40 +1,45 @@
-# Register `/spectra` for the SPECTRA ontology
+<!-- Recommended W3ID Pull Request Details. -->
+## Brief Description
 
-## Summary
+This PR adds a new persistent identifier directory `/spectra` for **SPECTRA — A Traceability Ontology for the 3GPP RAN Standardization Process** (companion to an ISWC 2026 Resources Track submission, currently under review). The directory contains only redirect configuration with content negotiation: `text/turtle` (and equivalent RDF serialisation Accept headers) → ontology TTL on GitHub releases; HTML/browser → PyLODE documentation on GitHub Pages.
 
-Register `https://w3id.org/spectra` as the persistent IRI for **SPECTRA: A Traceability Ontology for the 3GPP RAN Standardization Process**, an OWL 2 ontology for modeling the 3GPP RAN standardization document lifecycle (Tdoc, Resolution, CR, LS, Section, Spec, TechnicalReport, etc.).
+Requested namespace:
 
-## Affiliation and accountability
+```text
+https://w3id.org/spectra#
+```
 
-- **Institution**: System LSI Business, Device Solutions Division, Samsung Electronics, South Korea
-- **Maintainers (with commitment to keep the redirect target alive)**:
-  - Sihyeon Choi — shyun12.choi@samsung.com (corresponding maintainer)
-  - Junho Lee — junho515.lee@samsung.com
-- **Hosting**: GitHub release of [spectra-ontology/spec-trace](https://github.com/spectra-ontology/spec-trace) (v1.0.0 published, [release page](https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.0)); per-WG body-text knowledge graphs preserved on Zenodo (DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872)).
+Ontology document IRI:
 
-## Why w3id
+```text
+https://w3id.org/spectra
+```
 
-The SPECTRA ontology declares its IRI as `https://w3id.org/spectra#` so that the ontology and its terms remain dereferenceable across hosting changes. We commit to maintaining the GitHub repository and any future hosting moves through w3id redirects.
+Redirect targets (all verified HTTP 200 prior to this PR):
+
+- HTML / browser → [https://spectra-ontology.github.io/spec-trace/](https://spectra-ontology.github.io/spec-trace/)
+- `text/turtle`, `application/rdf+xml`, `application/n-triples` → [https://github.com/spectra-ontology/spec-trace/releases/latest/download/spectra.ttl](https://github.com/spectra-ontology/spec-trace/releases/latest/download/spectra.ttl)
+- Sub-paths (term IRIs like `/spectra#Tdoc`) → same TTL (single-file ontology)
+
+The ontology content and documentation are hosted externally in the GitHub repository [spectra-ontology/spec-trace](https://github.com/spectra-ontology/spec-trace) (v1.0.0 published, [release page](https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.0)); the per-WG body-text knowledge graphs are deposited on Zenodo (DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872)).
+
+## General Checklist
+
+- [x] Changes have been tested. (TTL latest-download: HTTP 200; GitHub Pages root: HTTP 200; both verified.)
+- [x] The number of commits is minimal. Squash if needed.
+- [x] Commits only include redirects and basic information. Serving content and full documentation is not supported on this service.
+
+## New ID Directory Checklist
+
+- [x] Maintainer details are in `.htaccess`.
+- [x] GitHub username ids are listed in the maintainer details.
 
 ## Resource details
 
 - **Type**: OWL 2 ontology (Turtle), 26 classes, 53 object properties, 81 data properties
-- **License**: CC-BY 4.0
-- **First public release**: v1.0.0 (2026-05-08)
-- **Accompanying paper**: ISWC 2026 Resources Track (under review)
-
-## .htaccess behavior
-
-- `Accept: text/turtle | application/rdf+xml | application/n-triples` → latest GitHub release TTL ([example](https://github.com/spectra-ontology/spec-trace/releases/latest/download/spectra.ttl))
-- Other / browser → PyLODE-rendered HTML on GitHub Pages ([https://spectra-ontology.github.io/spec-trace/](https://spectra-ontology.github.io/spec-trace/))
-- Sub-paths (term IRIs like `/spectra#Tdoc`) → same TTL (single-file ontology)
-
-## Files in this PR
-
-- `spectra/.htaccess`
-
-## Confirmation
-
-- [x] I am authorized to register this IRI
-- [x] The redirect targets are under our maintenance
-- [x] The license (CC-BY 4.0) is explicitly stated in the released ontology
+- **License**: CC-BY 4.0 (SPECTRA-authored components); per-WG body-text literals on Zenodo retain explicit 3GPP attribution
+- **Maintainers**:
+  - [@shychoi10](https://github.com/shychoi10) — Sihyeon Choi (corresponding) — shyun12.choi@samsung.com
+  - Junho Lee — junho515.lee@samsung.com
+- **Affiliation**: System LSI Business, Device Solutions Division, Samsung Electronics, South Korea
+- **Files in this PR**: `spectra/.htaccess`
