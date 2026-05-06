@@ -107,7 +107,7 @@ release_package/
 ├── ARTIFACT.md                         # full artifact narrative (Tier 1 / Tier 2 boundary)
 ├── CITATION.cff                       # citation metadata (machine-readable)
 ├── CHANGELOG.md                       # release history
-├── PUBLISHING.md                      # day-by-day release checklist (Mon→Fri timeline)
+├── RELEASE_PROCESS.md                 # release process record (v1.0.0 completed)
 ├── TUTORIAL.md                        # short walkthrough for new users
 ├── codemeta.json                      # software/data metadata
 └── LICENSE                            # CC-BY 4.0 (Tier 1) + 3GPP attribution (Tier 2)

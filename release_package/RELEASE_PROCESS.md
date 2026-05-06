@@ -1,10 +1,26 @@
-# Publishing checklist (user actions, ISWC 2026 submission timeline)
+# Release Process — SPECTRA v1.0.0
 
-This checklist enumerates the manual steps required to make the SPECTRA
+**Status (2026-05-06)**: All release steps below have been **completed**. This document is retained as the historical record of the v1.0.0 release process and as a template for future releases.
+
+| Step | Status | Result |
+|---|---|---|
+| GitHub push to `spectra-ontology/spec-trace` | ✅ Completed | https://github.com/spectra-ontology/spec-trace |
+| GitHub Pages activation (`main`/`docs`) | ✅ Completed | https://spectra-ontology.github.io/spec-trace/ |
+| GitHub Release v1.0.0 | ✅ Completed | https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.0 |
+| Zenodo deposit publish | ✅ Completed | DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) (minted 2026-05-08) |
+| w3id PR submission | ✅ Submitted | [perma-id/w3id.org#6021](https://github.com/perma-id/w3id.org/pull/6021) (in review) |
+
+The detailed step-by-step record below documents the actions taken and reasoning, useful as a reference for subsequent releases or for reviewers wanting to understand the release process.
+
+---
+
+## Process Record
+
+This document originally enumerated the manual steps required to make the SPECTRA
 v1.0.0 release publicly resolvable for the ISWC 2026 Resource Track
-submission. All artifact-side preparation has been staged in the local
-repository; the steps below require account access only the human author
-has (GitHub push, Zenodo upload + publish, w3id PR submission).
+submission. All artifact-side preparation was staged in the local
+repository; the steps below required account access only the human author
+had (GitHub push, Zenodo upload + publish, w3id PR submission). All steps are now complete (see status table above).
 
 ## Architecture: GitHub + Zenodo split
 
