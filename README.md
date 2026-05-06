@@ -215,10 +215,10 @@ The full 137-CQ corpus with English question text, executable Cypher, and per-CQ
 
 If you reuse SPECTRA, please cite the accompanying paper (currently under review at ISWC 2026 Resources Track; BibTeX will be added once the venue assigns a citation key) and this software/data record via the metadata in `CITATION.cff` (machine-readable) or `codemeta.json`.
 
-## Contact
+## Authors
 
-- Author (first author and corresponding author): Sihyeon Choi (System LSI Business, Device Solutions Division, Samsung Electronics)
-- Email: shyun12.choi@samsung.com
+- **Sihyeon Choi** (first author and corresponding author) — System LSI Business, Device Solutions Division, Samsung Electronics — shyun12.choi@samsung.com
+- **Junho Lee** — System LSI Business, Device Solutions Division, Samsung Electronics — junho515.lee@samsung.com
 
 ## License
 
