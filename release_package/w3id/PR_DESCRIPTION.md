@@ -31,7 +31,7 @@ The ontology content and documentation are hosted externally in the GitHub repos
 
 ## New ID Directory Checklist
 
-- [x] Maintainer details are in `.htaccess`.
+- [x] Maintainer details are in `.htaccess` or `README.md`.
 - [x] GitHub username ids are listed in the maintainer details.
 
 ## Resource details
@@ -46,4 +46,4 @@ The ontology content and documentation are hosted externally in the GitHub repos
 
 ## Optional Requests for W3ID Maintainers
 
-- [x] Please squash commits for me.
+- [x] Please squash commits for me. I understand this will likely require resyncing my local repository before making further PRs.
