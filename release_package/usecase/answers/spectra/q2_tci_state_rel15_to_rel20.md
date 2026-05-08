@@ -1,56 +1,5 @@
 # Q2. Standards-Item Summary of TCI-state across Rel-15 to Rel-20 (SPECTRA RAG only)
 
-## Metadata
-
-| Item | Value |
-|---|---|
-| Question | Standards-item summary of TCI-state across Rel-15 to Rel-20 (WID introduction context + 38.214/38.321/38.331/38.306 changes + cross-document linkages) |
-| Search system | SPECTRA RAG (Qdrant + Neo4j). External LLM knowledge / Web prohibited |
-| Qdrant collections | `the section-level collection`, `the section-level collection`, `the IE-level collection`, `the TDoc collection`, `the TDoc collection` |
-| Neo4j instances | RAN1 (`bolt://localhost:7687`), RAN2 (`bolt://localhost:7688`) |
-| Embedding model | `openai/text-embedding-3-small` |
-| TS section queries | 14 (140 hits) |
-| ASN.1 vector queries | 8 (80 hits) |
-| ASN.1 ieName exact matches | 11 (11 IE bodies retrieved) |
-| 38.306 capability text-match probes | 6 (18 chunks, 96 TCI rows) |
-| TDoc queries | 48 (480 hits) |
-| Neo4j queries | 2 (33 sections) + RAN2 IE catalog (9 rows) = 42 rows |
-| Output | `logs/cross-phase/usecase/q2_retrieval_log_v2.json` |
-
-> Every factual sentence in this document is cited solely from the chunks / IEs / TDocs / Neo4j rows retrieved by the searches above.
-> Citation formats: `[spec §sec, chunkId=...]`, `[asn1 IE=..., chunkId=...]`, `[tdoc, mtg, type, ai=..., rel=...]`.
-
----
-
-## SPECTRA RAG Retrieval Summary
-
-### Hit counts by Release × collection (TDoc, top-10 × 4 queries combined)
-
-| Release | `the TDoc collection` (top score) | `the TDoc collection` (top score) |
-|---|---|---|
-| Rel-15 | 40 hits / max 0.699 | 40 hits / max 0.626 |
-| Rel-16 | 40 hits / max 0.756 | 40 hits / max 0.666 |
-| Rel-17 | 40 hits / max 0.744 | 40 hits / max 0.740 |
-| Rel-18 | 40 hits / max 0.716 | 40 hits / max 0.704 |
-| Rel-19 | 40 hits / max 0.716 | 40 hits / max 0.690 |
-| Rel-20 | 40 hits / max 0.665 | 40 hits / max 0.621 |
-
-### Top matches per TS
-
-| Area | Core chunks |
-|---|---|
-| 38.214 (RAN1) | §5.1.5 "Antenna ports quasi co-location" [chunkId=`38.214-5.1.5-001`/`-003`/`-005`/`-007`] |
-| 38.321 (RAN2 MAC) | §5.18.23 unified TCI MAC CE (top 0.772), §5.18.33 enhanced unified, §6.1.3.14/24/47/70/71/76/77 |
-| 38.331 ASN.1 (RAN2 RRC) | `TCI-State`, `TCI-StateId`, `QCL-Info`, `TCI-UL-State-r17`, `TCI-UL-StateId-r17`, `CandidateTCI-State-r18`, `CandidateTCI-UL-State-r18`, `LTM-QCL-Info-r18`, `PDSCH-Config`, `PDCCH-Config`, `ControlResourceSet` |
-| 38.306 (RAN2 cap) | §4.2.7.2 "BandNR parameters" — `tci-StatePDSCH`, `maxNumberConfiguredTCI-StatesPerCC`, `tci-StateSwitchInd-r18`, `tci-JointTCI-Update*-r18`, `tci-SeparateTCI-Update*-r18`, `ltm-BeamIndicationJointTCI-r18`, `cjt-QCL-PDSCH-Scheme*-r19` rows directly retrieved |
-
-### Neo4j section nodes (TCI / QCL / spatial relation)
-
-- RAN1: 1 (`38.214 §5.1.5 Antenna ports quasi co-location`)
-- RAN2: 32 — 16 PDSCH/PDCCH TCI activation MAC CE entries in 38.321; 8 TCI-related IE/field entries in 38.331; 9 entries from external RAN2 IE catalog scan
-
----
-
 ## Per-Release Answer Body
 
 ### Rel-15 — TCI Framework Introduction (NR initial)
@@ -173,8 +122,6 @@
 
 **Per-document changes for Rel-20 — not found (honesty preserved)**: spec-body changes for any **new Rel-20 TCI items** in 38.214 / 38.321 / 38.331 ASN.1 / 38.306 are not identified in the retrieval. The retrieved RAN1/RAN2 Rel-20 TDocs are all in the 6G air-interface overview / 6G mobility framing stage or in NR Phase-3 coverage enhancement, and chunks reflecting changes to TCI-related spec bodies do not predominate. → see "Coverage / Limitations".
 
----
-
 ## Release × Document 24-cell Matrix
 
 | Release | 38.214 | 38.321 | 38.331 (RRC) | 38.306 (cap) |
@@ -195,8 +142,6 @@
 | ❌ not found | 4/24 (16.7%) — all Rel-20 |
 
 The four Rel-20 cells remain ❌ intentionally because the dataset is still in the 6G framing stage (honest answer).
-
----
 
 ## Cross-Document Linkages (RRC IE → MAC-CE → PHY QCL → capability)
 
@@ -230,8 +175,6 @@ The four Rel-20 cells remain ❌ intentionally because the dataset is still in t
    - 38.306 §4.2.7.2: `cjt-QCL-PDSCH-Scheme[CDE]-r19` rows [chunkId=`38.306-4.2.7.2-005`].
 
 7. **TDoc → spec-change flow**: Rel-15 R2-1713533 [RAN2#100, ai=10.2.13] "MAC CEs for activating an RS resource and handling corresponding TCI states" → introduction of 38.321 §6.1.3.14 (PDSCH TCI MAC CE); Rel-17 R2-2110534 [RAN2#116-e, ai=8.17.2] "Considerations on Inter-Cell Beam Management" → introduction of 38.321 §5.18.23 unified TCI MAC CE and the 38.331 `dl-OrJointTCI-StateList-r17` IE; Rel-18 R1-2300932 [RAN1#112, ai=9.1.1.1] "Unified TCI Framework for Multi-TRP" + R2-2403134 [RAN2#125bis, ai=7.20.3] "Correction on Unified TCI operation" → 38.321 §6.1.3.70/71 + 38.331 `CandidateTCI-State-r18` IE; Rel-19 R1-2408118 [RAN1#118b, ai=9.2.4] asymmetric DL sTRP/UL mTRP + R2-2408402 [RAN2#127bis, ai=8.12.2] R19 MIMO RAN2 impact → 38.331 `pathlossOffset-r19` extension + 38.306 `cjt-QCL-PDSCH-Scheme*-r19`. Every step is traced solely from search results.
-
----
 
 ## Coverage / Limitations (SPECTRA RAG dataset)
 
@@ -272,8 +215,6 @@ The four Rel-20 cells remain ❌ intentionally because the dataset is still in t
 | Rel-18 | high++ (CandidateTCI-State-r18 + LTM-QCL-Info-r18 body + 16 38.306 cap rows) |
 | Rel-19 | high (pathlossOffset-r19 ASN.1 extension block + cjt-QCL-PDSCH-Scheme-r19 cap rows directly) |
 | Rel-20 | low (only 6G overview retrieved, intentionally honest) |
-
----
 
 ## Self-Verification
 

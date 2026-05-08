@@ -5,61 +5,6 @@
 
 ---
 
-## Metadata
-
-| Item | Value |
-|---|---|
-| Question | Standards-item summary of Rel-18 LTM (38.300/331/321/214/133/306) + Rel-19/20 extensions + cross-document linkages |
-| Embedding model | `openai/text-embedding-3-small` (OpenRouter) |
-| Qdrant collections | `the section-level collection`, `the section-level collection`, `the section-level collection`, `the TDoc collection`, `the TDoc collection`, `the TDoc collection`, `ran1_cr_chunks`, `ran2_cr_chunks` |
-| Neo4j | RAN1=7687, RAN2=7688, RAN4=7690 |
-| Query count | TS 33 + TDoc 27 + Cypher 3 = **63** |
-| Hits | TS 330, TDoc 270, Cypher rows 102 (44+2+56) |
-| Top-k | 10 |
-
----
-
-## SPECTRA RAG Retrieval Summary
-
-### Hits per collection (vector search totals)
-
-| Collection | Queries | Hits |
-|---|---:|---:|
-| the section-level collection (38.300/331/321/306) | 22 | 220 |
-| the section-level collection (38.214) | 6 | 60 |
-| the section-level collection (38.133) | 5 | 50 |
-| the TDoc collection | 15 | 150 |
-| the TDoc collection | 4 | 40 |
-| the TDoc collection | 3 | 30 |
-| ran2_cr_chunks | 3 | 30 |
-| ran1_cr_chunks | 2 | 20 |
-| **Total** | **60** | **600** |
-
-### Release-tag distribution (TDoc search results)
-
-| Release | hits |
-|---|---:|
-| Rel-18 | 94 |
-| Rel-19 | 70 |
-| Rel-20 | 30 |
-| (no release tag = CR / some discussions) | 61 |
-| Rel-15/16/17/14 (unrelated backfill) | 15 |
-
-### Neo4j Section catalog (LTM-related core nodes)
-
-| Spec | Core LTM sections / IE nodes (Cypher measurements) |
-|---|---|
-| 38.300 | 9.2.3.5 `L1/L2 Triggered Mobility`, 9.2.3.7 `Conditional L1/L2 Triggered Mobility` |
-| 38.331 | 5.3.5.18 `LTM configuration and execution` (sub 5.3.5.18.1–10), 5.3.5.13.6/.13.8 `Subsequent CPAC`, IE group `LTM-Config / LTM-Candidate / LTM-CSI-ReportConfig / LTM-ResourceConfigNRDC / LTM-ConfigNRDC / SK-CounterConfigLTM / VarLTM-*` |
-| 38.321 | 5.18.35 `(Enhanced) LTM Cell Switch Command`, 5.18.36 `Candidate Cell TCI States Activation/Deactivation`, 5.18.38 SP CSI-RS/CSI-IM for candidate cell, 5.2b `Maintenance of UL Synchronization for CLTM candidate cell`, 5.35.3.2–5.35.3.5 `Event LTM2~LTM5`, 5.36 `Conditional LTM`, 6.1.3.4b `LTM Candidate Timing Advance Command MAC CE`, 6.1.3.75 `LTM Cell Switch Command MAC CE`, 6.1.3.75a `Enhanced LTM Cell Switch Command MAC CE`, 6.1.3.76 `Candidate Cell TCI States Activation/Deactivation MAC CE`, 6.1.3.12a `SP CSI-RS/CSI-IM Resource Set Activation/Deactivation for Candidate Cell MAC CE` |
-| 38.214 | 5.2.1.5.4.2 `UE Initiated LTM reporting`, 5.2.4a `CSI Reporting for LTM and handover` |
-| 38.133 | 6.3 `L1/L2-Triggered Mobility` (6.3.1 LTM PCell, 6.3.1.2 LTM Cell Switch delay, 6.3.2 Conditional L1/L2-Triggered Mobility, 6.3.2.2 CLTM Cell Switch delay), 6.2.2C `PDCCH ordered Random Access for LTM`, 8.20 `LTM PSCell Cell Switch`, 8.25 `TCI state activation for LTM candidate cell`, 10.1.19D/19E/20A/20B `LTM Intra/Inter-frequency L1-RSRP accuracy (FR1/FR2)`, A.3.16B `LTM Candidate TCI State Configuration`, A.6.3.4/A.6.3.5/A.6.3.6 `LTM PCell/PSCell/CLTM PCell Switch` tests, A.6.6.26~33 / A.6.7.17 / A.7.6.20~29 / A.7.7.15 `LTM L1-RSRP measurement` tests |
-| 38.306 | 5.4 `Other features`, 5.6 `RRM measurement features`, 4.2.7.9 `MRDC-Parameters` (LTM-related capabilities exposed) |
-
-> The exact LTM-specific feature-group names in 38.306 were not directly retrieved as chunk bodies in this search; only the locational fact "they belong to the §5.4 Other features / §5.6 RRM measurement features cluster" is citable. Detailed feature-group numbers are **not found within SPECTRA RAG's search scope**.
-
----
-
 ## Answer Body
 
 ### 1. Rel-18 LTM Introduction Context — TDoc Evidence
@@ -171,8 +116,6 @@ Rel-20 is at the multi-discussion stage at RAN2 #132 (release="Rel-20" 30 hits),
 
 → **Formal spec adoption (additions to 38.300/331/321 §sections)** for Rel-20 is **not found** in this retrieval scope. So far the data are loaded only at the **discussion/study stage**, and only the directional statements that "LTM is a candidate baseline for 6G mobility / target for AIML measurement integration" are citable.
 
----
-
 ## Cross-Document Linkage Diagram
 
 ```
@@ -234,8 +177,6 @@ Rel-20 is at the multi-discussion stage at RAN2 #132 (release="Rel-20" 30 hits),
 
 Flow (one-line summary):
 **38.331 LTM-Config delivered in advance** → **38.214 candidate-cell L1-RSRP / CSI measurement and reporting** → **38.321 (Enh)LTM Cell Switch / Candidate TCI Activation MAC CE trigger** → **cell switch via 38.300 §9.2.3.5 procedure (subsequent LTM repeats)** → **38.133 §6.3 timing / accuracy requirements satisfied** ↔ **38.306 capability negotiation of supported stages**.
-
----
 
 ## Coverage / Limitations
 

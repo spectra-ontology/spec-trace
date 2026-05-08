@@ -1,45 +1,6 @@
 # Q1. Rel-16 Enhanced Type-II Codebook — Standards Item Summary
 
-> This document is composed solely from search results returned by spec-trace (SPECTRA RAG) over Qdrant + Neo4j. External web search and general model knowledge are forbidden. Every factual sentence is accompanied by a retrieved-chunk citation (`[spec §sec, chunkId=...]` or `[tdoc, meeting, agenda, type]`).
 
-## 0. Metadata
-
-| Item | Value |
-|------|------|
-| Question | Standards-item summary of the Rel-16 enhanced Type-II codebook (WID, 38.211/212/214/306/331/521-4 + cross-references) |
-| Embedding model | `openai/text-embedding-3-small` (OpenRouter) |
-| top_k | 5 |
-| Collections used | `the IE-level collection`, `the section-level collection` (1,002), `the section-level collection` (2,451), `the section-level collection` (16,248), `the section-level collection` (26,814), `the TDoc collection`, `the TDoc collection` |
-| Query set | 5 vector queries + 4 ASN.1 ieName exact lookups + 4 38.306 text-match probes = 13 |
-| Retrieved | 5 queries × 5 hits = 25 hits, plus 4 IEs exactly retrieved (CodebookConfig 985–2944 chars, full body) |
-| User notation "38.512-4" | Not present in spec-trace. Search results use **38.521-4** as the substitute (details §8). |
-| Retrieval log | `logs/cross-phase/usecase/q1_retrieval_log_v2.json` |
-
----
-
-## 1. SPECTRA RAG Retrieval Summary
-
-| Item | Collection | spec filter | Representative top-1 hit | Top score |
-|------|--------|-----------|------------------|-----------|
-| 38.211 CSI-RS | `the section-level collection` | 38.211 | §8.4.1.5.3 Mapping to physical resources `[chunkId=38.211-8.4.1.5.3-001]` | 0.597 |
-| 38.211 antenna ports | `the section-level collection` | 38.211 | §8.2.4 Antenna ports `[38.211-8.2.4-001]` | 0.527 |
-| 38.212 two-part UCI | `the section-level collection` | 38.212 | §6.3.2.1.2 CSI `[38.212-6.3.2.1.2-014]` | 0.606 |
-| 38.212 CSI report Type II | `the section-level collection` | 38.212 | §6.3.1.1.3 HARQ-ACK/SR and CSI `[38.212-6.3.1.1.3-001]` | 0.583 |
-| 38.214 Type II codebook | `the section-level collection` | 38.214 | §5.2.2.2.7 Further enhanced Type II port selection codebook `[38.214-5.2.2.2.7-001]` | 0.559 |
-| 38.214 Enhanced Type II (Rel-16) | `the section-level collection` | 38.214 | §5.2.2.2.5 Enhanced Type II Codebook `[38.214-5.2.2.2.5-001]` | 0.465 |
-| 38.214 codebookType typeII-r16 | `the section-level collection` | 38.214 | §5.2.2.2.5a Refined eType II / §5.2.2.2.5 Enhanced Type II `[38.214-5.2.2.2.5-001]` | 0.554 / 0.465 |
-| 38.306 capability | `the section-level collection` | 38.306 | §4.2.7.10 Phy-Parameters `[38.306-4.2.7.10-001]` | 0.455 |
-| 38.331 CodebookConfig | `the section-level collection` | 38.331 | (no direct match — limitation §10) | 0.46–0.57 |
-| 38.521-4 Type II performance | `the section-level collection` | 38.521-4 | §6.3.2.2.6 2Rx TDD FR1 Multiple PMI with 16Tx Enhanced TypeII codebook `[38.521-4-6.3.2.2.6-001]` | 0.514 |
-| 38.521-4 PMI reporting | `the section-level collection` | 38.521-4 | §6.3.2.1.6 / §6.3.3.1.6 Enhanced TypeII PMI test `[38.521-4-6.3.2.1.6-001]` | 0.512 |
-| 38.512-4 (user notation) | (all RAN4/RAN5 collections) | 38.512-4 | **0 hits — confirmed absent** | — |
-| WID/eT2 introduction (Rel-16) | `the TDoc collection` | release=Rel-16 | R1-2202121 RAN1#108-e ai=7.2.6 discussion | 0.697 |
-| DFT-based compression agreement | `the TDoc collection` | release=Rel-16 | R1-1909583 RAN1#98 ai=7.2.8.1 discussion | 0.640 |
-| eT2 UCI partitioning | `the TDoc collection` | release=Rel-16 | R1-2112195 RAN1#107-e ai=7.2.6 discussion | 0.689 |
-
-Of the 30 queries, **only 2 TS-literal queries returned 0 hits; the remaining 28 returned 10 hits each**.
-
----
 
 ## 2. WID Introduction Background (Rel-16)
 

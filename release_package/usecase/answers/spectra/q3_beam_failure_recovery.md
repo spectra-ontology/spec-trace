@@ -1,62 +1,5 @@
 # Q3. Beam Failure Detection / Beam Failure Recovery (BFD/BFR) Standard Procedures
 
-> **Answer-source constraint**: every factual sentence in this document is cited solely from spec-trace (SPECTRA RAG) search results (Qdrant TS/ASN.1 + Neo4j KG). External web / general knowledge are forbidden. Citation format: `[<TS> §<sec>, chunkId=...]` or `[ASN.1 IE, chunkId=...]`.
-
----
-
-## Metadata
-
-| Item | Value |
-|---|---|
-| Question | NR BFD/BFR — introduction context, 38.213/38.321/38.331/38.133/38.533, quantitative values (BLER, enumerated ranges, ms absolute values), cross-document linkages |
-| Search collections | `ran1/ran2/ran4/the section-level collection` + `the IE-level collection` |
-| Neo4j KG | RAN1=7687, RAN2=7688, RAN4=7690, RAN5=7691 |
-| Qdrant query count | TS 24 + ASN.1 15 = 39 queries |
-| Cypher query count | 4 (`Section→Spec`, BFD/BFR/Link recovery keywords) |
-| Embedding model | `openai/text-embedding-3-small` (OpenRouter) |
-| Result log | `logs/cross-phase/usecase/q3_retrieval_log_v2.json` |
-| Search script | `scripts/cross-phase/usecase/q3_search_bfd_bfr_v2.py` |
-| Retrieved chunks (unique) | TS 162 + ASN.1 29 = 191 chunks |
-
----
-
-## Search Result Summary
-
-### Qdrant TS
-
-| Collection / Spec | Representative top score | Notes |
-|---|---:|---|
-| `the section-level collection` / 38.213 | 0.4923 (BLER threshold query) | §5 RLM, §6 *Link recovery procedures* (Qout,LR/Qin,LR definition retrieved) |
-| `the section-level collection` / 38.321 | 0.5641 (ra-ResponseWindow query) | §5.17 BFR procedure body retrieved (parameter list included) |
-| `the section-level collection` / 38.331 | 0.5746 (RLM/BFD relaxation) | §5.7.13 RLM/BFD relaxation, §5.7.1a, etc. |
-| `the section-level collection` / 38.133 | 0.6378 (TEvaluate_BFD_SSB query) | §8.5B/§8.5C/§8.5D/§8.18 BFD evaluation period bodies |
-| `the section-level collection` / 38.533 | 0.6892 (L1-RSRP accuracy) | §16.7.4 / §7.5.6 / §A.5, etc. Body text empty (RAN5 title embedding — title embedding only) |
-
-### Qdrant ASN.1 (`the IE-level collection`)
-
-| IE name | chunkId | tokenCount | Citable quantitative values |
-|---|---|---:|---|
-| `BeamFailureRecoveryConfig` | `38.331-asn1-BeamFailureRecoveryConfig-001` | 285 | `beamFailureRecoveryTimer ENUMERATED {ms10..ms200}`, `ssb-perRACH-Occasion ENUMERATED {oneEighth..sixteen}`, `rootSequenceIndex-BFR INTEGER (0..137)`, etc. |
-| `RadioLinkMonitoringConfig` | `38.331-asn1-RadioLinkMonitoringConfig-001` | 65 (measured) | `beamFailureInstanceMaxCount ENUMERATED {n1, n2, n3, n4, n5, n6, n8, n10}`, `beamFailureDetectionTimer ENUMERATED {pbfd1..pbfd10}` |
-| `RadioLinkMonitoringRS` | `38.331-asn1-RadioLinkMonitoringRS-001` | — | `purpose ENUMERATED {beamFailure, rlf, both}`, `detectionResource CHOICE {ssb-Index, csi-RS-Index}` |
-| `PRACH-ResourceDedicatedBFR` | `38.331-asn1-PRACH-ResourceDedicatedBFR-001` | — | `CHOICE {ssb BFR-SSB-Resource, csi-RS BFR-CSIRS-Resource}` |
-| `BFR-SSB-Resource` | `38.331-asn1-BFR-SSB-Resource-001` | — | `ra-PreambleIndex INTEGER (0..63)` |
-| `BFR-CSIRS-Resource` | `38.331-asn1-BFR-CSIRS-Resource-001` | — | `ra-OccasionList SEQUENCE (SIZE (1..maxRA-OccasionsPerCSIRS)) OF INTEGER (0..maxRA-Occasions-1)` |
-| `BeamFailureDetectionSet-r17` | `38.331-asn1-BeamFailureDetectionSet-r17-001` | — | (Rel-17) `beamFailureInstanceMaxCount-r17 ENUMERATED {n1..n10}`, `beamFailureDetectionTimer-r17 ENUMERATED {pbfd1..pbfd10}` |
-| `RACH-ConfigDedicated` | `38.331-asn1-RACH-ConfigDedicated-001` | — | `cfra CFRA OPTIONAL`, `cfra-TwoStep-r16 CFRA-TwoStep-r16` |
-| `RACH-ConfigGeneric` | `38.331-asn1-RACH-ConfigGeneric-001` | — | `ra-ResponseWindow ENUMERATED {sl1, sl2, sl4, sl8, sl10, sl20, sl40, sl80}` (extensions: `sl60, sl160`, `sl240..sl2560`) |
-
-→ Bodies of 9 IEs are directly citable. All enumerated ranges previously not retrieved are now secured.
-
-### Neo4j KG (4 cypher)
-
-| KG | Matched section count | Representative sectionId |
-|---:|---:|---|
-| RAN1 (38.213) | 2 | `38.213-5`, `38.213-6` |
-| RAN2 (38.321/38.331) | 7 | `38.321-5.17`, `38.321-5.18.25`, `38.321-6.1.3.23/.43/.58`, `38.331-5.7.13` |
-| RAN4 (38.133) | 100 (LIMIT) | `38.133-8.18`, `38.133-8.18.2/.3/.7/.8` |
-| RAN5 (38.533) | 100 (LIMIT) | `38.533-10.3.4`, `38.533-11.4.4`, `38.533-10.3.4.0.1/.0.3` |
-
 ---
 
 ## Answer Body
@@ -267,8 +210,6 @@ Confirmed test dimensions (based on KG node names):
 - BFD-RS: **SSB-based vs CSI-RS-based**
 - Environment: **CCA (Coverage Constrained Adaptation), separate §10.3.4.0.x**
 
----
-
 ## Quantitative Verification Matrix
 
 | Item | Status | Source |
@@ -287,8 +228,6 @@ Confirmed test dimensions (based on KG node names):
 | 38.213 absolute BLER (% values, e.g. "10%") | ❌ (38.213 §6 delegates to "default value of rlmInSyncOutOfSyncThreshold [10, TS 38.133]" — % values absent in body) | — |
 
 → 9 quantitatively citable.
-
----
 
 ## Operational Sequence (reconstructed from retrieved bodies)
 
@@ -346,8 +285,6 @@ Confirmed test dimensions (based on KG node names):
   |     [38.533 §10.3.4.x, §11.4.4, §16.7.4.x]     |
 ```
 
----
-
 ## Cross-Document Linkages
 
 1. **38.213 → 38.133 (BLER thresholds)**: *"Qout,LR and Qin,LR correspond to ... rlmInSyncOutOfSyncThreshold, as described in [10, TS 38.133]"* [38.213 §6, `38.213-6-001`]. → **The PHY threshold definition is explicitly delegated to the RAN4 RRM document.**
@@ -371,8 +308,6 @@ Summary (chunkId/IE verification included):
 38.533 §10.3.4/§11.4.4/§16.7.4 BFD/LR conformance (EN-DC/SA × FR × DRX × SSB/CSI-RS)
 ```
 
----
-
 ## Coverage / Limitations
 
 | Item | Result |
@@ -395,8 +330,6 @@ Summary (chunkId/IE verification included):
 - 38.533 test bodies (text empty — RAN5 collection's title-embedding policy).
 
 These items are not included in the answer, in keeping with the no-fill-in principle (CLAUDE.md).
-
----
 
 ## Self-Verification
 
