@@ -211,6 +211,35 @@ python3 tests/test_e2e_sparql.py                # exit 0 on returning the expect
 ### SpectraCQ companion dataset
 The full 137-CQ corpus with English question text, executable Cypher, and per-CQ verdicts is at `cqs/spectra_cq_v1.0/`. It is independently citable via `cqs/spectra_cq_v1.0/citation.bib` and licensed CC-BY 4.0.
 
+## Use-case evaluation pilot
+
+The `usecase/` directory bundles the raw materials for the illustrative LLM-baseline pilot reported in Appendix §H of the paper. Four cross-WG practitioner questions were posed to three systems (SPECTRA RAG, GPT, Claude); answers were scored against authority sources on a five-axis 0–5 rubric and verified for hallucinations.
+
+| ID | Question | Cross-WG TS series |
+|---|---|---|
+| Q1 | Rel-16 enhanced Type-II codebook (CSI feedback enhancement for MU-MIMO) | 38.211 / 212 / 214 / 306 / 331 / 521-4 |
+| Q2 | TCI-state evolution from Rel-15 to Rel-20 | 38.214 / 321 / 331 / 306 |
+| Q3 | Beam Failure Detection (BFD) and Beam Failure Recovery (BFR) procedures | 38.213 / 321 / 331 / 133 / 533 |
+| Q4 | Rel-18 Layer-1/Layer-2 Triggered Mobility (LTM) and its Rel-19/20 extensions | 38.300 / 214 / 321 / 331 / 133 / 306 |
+
+**Layout** (22 files):
+
+```
+usecase/
+├── README.md                              ← question-by-system catalogue + rubric definitions
+├── answers/                               ← raw 12 answer files (4 questions × 3 systems)
+│   ├── spectra/q{1..4}_*.md               ← SPECTRA RAG answers
+│   ├── gpt/q{1..4}_*.md                   ← GPT answers
+│   └── claude/q{1..4}_*.md                ← Claude answers
+└── evaluations/
+    ├── spectra/q{1..4}_quality_eval.md    ← SPECTRA RAG single-system quality scoring
+    └── 3way/                              ← three-way comparison
+        ├── q{1..4}_3way_comparison.md
+        └── summary.md                     ← four-question composite + per-axis aggregates
+```
+
+The Composite scores in Appendix Table 12 (4.84 SPECTRA / 3.28 GPT / 3.65 Claude) are reproducible from `usecase/evaluations/3way/summary.md`. Limitations of the pilot (single evaluator, author-defined rubric, evaluator overlaps with one of the compared LLMs) are stated in Appendix §H.
+
 ## Citation
 
 If you reuse SPECTRA, please cite the accompanying paper (currently under review at ISWC 2026 Resources Track; BibTeX will be added once the venue assigns a citation key) and this software/data record via the metadata in `CITATION.cff` (machine-readable) or `codemeta.json`.
