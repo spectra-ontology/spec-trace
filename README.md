@@ -89,7 +89,7 @@ release_package/
 │   ├── structural_metrics.json        # class/property/axiom counts
 │   ├── oops_summary.json              # OOPS! pitfall scanner result
 │   ├── cq_coverage.json               # 137-CQ × ontology coverage matrix
-│   ├── cypher_to_sparql_portability.json # 136/137 SPARQL-equivalent classification
+│   ├── cypher_to_sparql_portability.json # 137/137 SPARQL-translatable classification
 │   ├── cross_wg_schema_diff.json      # RAN1 vs RAN2-5 schema diff
 │   ├── cross_wg_use_evidence.json     # cross-WG query counts on deployed KGs
 │   ├── per_wg_class_coverage.json     # per-WG class instantiation coverage
