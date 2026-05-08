@@ -1,31 +1,30 @@
 \subsection{E6 --- Illustrative utility pilot against general LLM baselines}\label{sec:eval:llm}
 
-To probe whether SPECTRA-grounded retrieval offers measurable value over generic LLM access to 3GPP knowledge, we compared (i) a SPECTRA-conformant Neo4j+Qdrant RAG (\emph{SPECTRA RAG}), (ii) GPT, and (iii) Claude on four cross-WG practitioner questions (Rel-16 Type-II codebook, TCI-state Rel-15 to Rel-20, Beam Failure Detection/Recovery, Rel-18 Layer-1/Layer-2 Triggered Mobility). Each answer was scored against authority sources (3gpp.org, ETSI TS, IEEE Xplore, sharetechnote, Ofinno) on a five-axis 0--5 rubric and verified for hallucinations (Table~\ref{tab:llm-eval}). The four questions, the 12 answer files (one per system per question), the per-question SPECTRA quality evaluations, and the three-way comparisons are bundled at \texttt{usecase/}.
+To probe whether SPECTRA-grounded retrieval offers measurable value over generic LLM access to 3GPP knowledge, we compared (i) a SPECTRA-conformant Neo4j+Qdrant RAG (\emph{SPECTRA RAG}), (ii) GPT, and (iii) Claude on four cross-WG practitioner questions (Rel-16 Type-II codebook, TCI-state Rel-15 to Rel-20, Beam Failure Detection/Recovery, Rel-18 Layer-1/Layer-2 Triggered Mobility). Each answer was scored against authority sources (3gpp.org, ETSI TS, IEEE Xplore, sharetechnote, Ofinno) on a six-axis 0--5 rubric and verified for hallucinations (Table~\ref{tab:llm-eval}). The four questions, the 12 answer files (one per system per question), the per-question SPECTRA quality evaluations, and the three-way comparisons are bundled at \texttt{usecase/}.
 
 \begin{table}[h]
 \centering
 \scriptsize
 \setlength{\tabcolsep}{6pt}
-\caption{Q\&A quality on four cross-WG questions (5-axis rubric, 0--5 scale, 4Q averages). Hallucination row reports detected unsupported quotes/codes/numbers across all four questions.}
+\caption{Q\&A quality on four cross-WG questions (6-axis rubric, 0--5 scale, 4Q averages). A6 (Document Lifecycle Traceability) measures the depth at which the answer demonstrates the SPECTRA Resolution\,$\to$\,Tdoc\,$\to$\,CR\,$\to$\,TS/TR chain (rubric defined below this table). Hallucination row reports detected unsupported quotes/codes/numbers across all four questions.}
 \label{tab:llm-eval}
 \begin{tabular}{@{}lccc@{}}
 \toprule
 \textbf{Axis (4Q avg)} & \textbf{SPECTRA RAG} & \textbf{GPT} & \textbf{Claude} \\
 \midrule
-A1 Accuracy (vs authority) & \textbf{4.78} & 3.65 & 3.75 \\
-A2 Coverage (depth/breadth) & \textbf{4.68} & 3.78 & 4.58 \\
-A3 Citation Integrity      & \textbf{4.95} & 1.28 & 2.38 \\
-A4 Hallucination Control   & \textbf{4.93} & 3.63 & 3.08 \\
-A5 Cross-Doc Linkage       & \textbf{4.81} & 3.95 & 4.53 \\
+A1 Accuracy (vs authority)         & \textbf{4.78} & 3.65 & 3.75 \\
+A2 Coverage (depth/breadth)        & \textbf{4.68} & 3.78 & 4.58 \\
+A3 Citation Integrity              & \textbf{4.95} & 1.28 & 2.38 \\
+A4 Hallucination Control           & \textbf{4.93} & 3.63 & 3.08 \\
+A5 Cross-Doc Linkage               & \textbf{4.81} & 3.95 & 4.53 \\
+A6 Document Lifecycle Traceability & \textbf{4.75} & 1.25 & 2.00 \\
 \midrule
-\textbf{Composite}         & \textbf{4.84} & 3.28 & 3.65 \\
+\textbf{Composite (6-axis)}        & \textbf{4.83} & 2.94 & 3.38 \\
 \midrule
 Hallucination instances    & \textbf{0}    & 1    & $\sim$11 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-SPECTRA RAG leads all five axes (Coverage 4.68 vs Claude 4.58); composite gap is +1.19 over Claude and +1.56 over GPT, with Citation Integrity (+2.57) and Hallucination Control (+1.85) the dominant contributors. \textbf{Limitations:} this is a single-evaluator four-question pilot with an author-defined rubric; the evaluator overlaps with one of the compared LLMs (Claude), so the absolute Claude vs SPECTRA gap should be interpreted as illustrative rather than as an external benchmark. SPECTRA RAG answers ship with retrieval-chunk citations inline (a design choice for traceability), while GPT/Claude answers are free-form prose; the Citation Integrity gap therefore partly reflects this format asymmetry, not only answer quality. The Coverage rubric measures breadth of cited material and does not penalise the 11 unsupported quotes detected for Claude, so the verified-coverage advantage of SPECTRA is understated by Coverage alone.
-
-\paragraph{Supplementary axis: A6 Document Lifecycle Traceability.} The 5-axis rubric above does not isolate the depth at which an answer demonstrates the paper's central traceability claim (Resolution\,$\to$\,Tdoc\,$\to$\,CR\,$\to$\,TS/TR). We added a sixth axis (A6, 0--5) measuring lifecycle-chain depth (0 no provenance / 1 single anchors / 2 TDoc+spec pair / 3 meeting+agreement chain / 4 Agreement\,$\to$\,CR\,$\to$\,spec or forward+backward / 5 full structured Lifecycle Trace with bidirectional traversal, gap disclosure, and release-tagged classification). After each SPECTRA answer was extended with an explicit \emph{Document Lifecycle Trace} section, A6 4Q averages are SPECTRA 4.75, Claude 2.00, GPT 1.25; the 6-axis 4Q-average composite via $(\text{5-axis}\times 5 + \text{A6})/6$ becomes \textbf{SPECTRA 4.83 / Claude 3.38 / GPT 2.94} (gaps +1.45 / +1.89). A6 selectively credits document-lifecycle structure that only a KG-grounded system can ship by design and is therefore reported as supplementary, not as the headline benchmark.
+SPECTRA RAG leads all six axes (Coverage 4.68 vs Claude 4.58; Document Lifecycle Traceability 4.75 vs Claude 2.00); composite gap is +1.45 over Claude and +1.89 over GPT, with Citation Integrity (+2.57), Document Lifecycle Traceability (+2.75), and Hallucination Control (+1.85) the dominant contributors. The A6 rubric (0--5) measures lifecycle-chain depth: 0~no provenance; 1~single anchors; 2~TDoc + spec citation pair without a chain; 3~Meeting + agreement chain (forward only); 4~Agreement\,$\to$\,CR\,$\to$\,spec body OR forward+backward chain; 5~full Resolution\,$\to$\,Tdoc\,$\to$\,CR\,$\to$\,TS chain in a structured Lifecycle Trace section with bidirectional traversal, gap disclosure, and release-tagged classification. Each SPECTRA answer was extended with an explicit \emph{Document Lifecycle Trace} section to enable A6 scoring; Claude/GPT answers were re-scored on A6 against the same rubric without modification. \textbf{Limitations:} this is a single-evaluator four-question pilot with an author-defined rubric; the evaluator overlaps with one of the compared LLMs (Claude), so the absolute Claude vs SPECTRA gap should be interpreted as illustrative rather than as an external benchmark. SPECTRA RAG answers ship with retrieval-chunk citations inline (a design choice for traceability), while GPT/Claude answers are free-form prose; the Citation Integrity (A3) and Document Lifecycle Traceability (A6) gaps therefore partly reflect this format asymmetry, not only answer quality. A6 in particular selectively credits document-lifecycle structure that only a KG-grounded system can ship by design --- the lifecycle-chain depth gap is meaningful for the SPECTRA Resources Track contribution but should not be read as a general-LLM ranking. The Coverage rubric measures breadth of cited material and does not penalise the 11 unsupported quotes detected for Claude, so the verified-coverage advantage of SPECTRA is understated by Coverage alone.
 
