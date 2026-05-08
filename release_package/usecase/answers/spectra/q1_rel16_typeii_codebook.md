@@ -10,7 +10,8 @@
 7. [38.521-4 — Performance (UE Conformance) Requirements](#7-38521-4--performance-ue-conformance-requirements)
 8. [Cross-Document Linkages](#8-cross-document-linkages)
 9. [Coverage and Limitations](#9-coverage-and-limitations)
-10. [Summary](#10-summary)
+11. [Document Lifecycle Trace (Rel-16 Enhanced Type-II Codebook)](#11-document-lifecycle-trace-rel-16-enhanced-type-ii-codebook)
+12. [Summary](#12-summary)
 
 ---
 
@@ -355,7 +356,67 @@ Only inter-spec references that can be confirmed via citations from the spec/TDo
 
 ---
 
-## 10. Summary
+## 11. Document Lifecycle Trace (Rel-16 Enhanced Type-II Codebook)
+
+The paper's Document Lifecycle ontology (§3) traces a feature from Resolution → Tdoc → CR → TS/TR. For Rel-16 Enhanced Type-II, the chain reconstructable from the indexed SPECTRA RAG dataset is:
+
+```
+[RAN Plenary]
+  RP-182067 (Rel-16 NR MIMO Enhancement WID)
+       └─ referenced from RAN1 contribution body
+          ↓
+[RAN1 WI cycle, RAN1#95-#98]
+  R1-1812322 (RAN1#95, FD-compression methods overview, ai=7.2.8.1)
+       ↓ companies' positions converged
+  R1-1902123 (RAN1#96, ALT3 highest compression ratio, ai=7.2.8.1)
+       ↓
+  R1-1909583 (RAN1#98, "agree on DFT-based compression as the adopted Type II rank 1-2 scheme", ai=7.2.8.1)
+  R1-1909918 (RAN1#98, identical agreement, ai=7.2.8)
+       ↓ adopted as the spec change scheme
+[Spec body incorporation (TS, post-RAN1#98)]
+  TS 38.214 §5.2.2.2.5 — codebookType='typeII-r16' [38.214-5.2.2.2.5-001]
+       ├─ requires RRC IE
+       ├─ requires UCI bit-field rule
+       └─ requires conformance test
+[RRC IE]    TS 38.331 CodebookConfig-r16 [38.331-asn1-CodebookConfig-r16-001]
+[UCI bits]  TS 38.212 §6.3.2.1.2 / §6.3.1.1.3 [38.212-6.3.2.1.2-014, -6.3.1.1.3-001]
+[Conformance] TS 38.521-4 §6.3.2.{1,2,3}.6 [38.521-4-6.3.2.2.6-001 etc.]
+       ↓ later-release derivatives (re-uses the same body line)
+[Rel-17] TS 38.214 §5.2.2.2.7 'Further enhanced TypeII Port Selection' [38.214-5.2.2.2.7-001]
+[Rel-19] TS 38.214 §5.2.2.2.5a 'eTypeII-r19' [38.214-5.2.2.2.5a-001]
+[Rel-19] TS 38.214 §§5.2.2.2.10-11a typeII-Doppler-r19 [38.214-5.2.2.2.{10,11,11a}-001]
+```
+
+### 11.1 Lifecycle Audit Table
+
+| Lifecycle Stage | Artefact (chunkId / TDoc) | Confirmed in Index? | Notes |
+|---|---|:---:|---|
+| WID | RP-182067 | indirect | Referenced inside R1-1903044 body; Plenary RP-* TDocs not loaded as a separate collection. |
+| Agreement | R1-1812322, R1-1902123, R1-1909583, R1-1909918 | ✓ | RAN1#95–#98, ai=7.2.8.x, type=discussion, release=Rel-16 |
+| Spec body | TS 38.214 §5.2.2.2.5 [chunkId=38.214-5.2.2.2.5-001] | ✓ | Verbatim body cited in §3 |
+| Spec body (RRC) | TS 38.331 CodebookConfig-r16 [chunkId=38.331-asn1-CodebookConfig-r16-001] | ✓ | Full ASN.1 IE body cited in §5 |
+| Spec body (UCI) | TS 38.212 §6.3.2.1.2 [chunkId=38.212-6.3.2.1.2-014] | ✓ | Verbatim X1/X2 + group split cited in §4 |
+| Conformance | TS 38.521-4 §6.3.2.x.6 [chunkId=38.521-4-6.3.2.2.6-001 etc.] | ✓ | Test condition body cited in §7 |
+| CR (between Agreement and Spec body) | not loaded | — | CR routing 1.25M-triple collection not queried for Q1; lifecycle is reconstructed via WID→Agreement→Spec body chain. |
+| Later-release derivatives | TS 38.214 §5.2.2.2.5a / .7 / .10 / .11 / .11a | ✓ | Adjacent codebook clauses cited in §3.2 |
+
+### 11.2 Bidirectional Traversal
+
+This lifecycle chain is reproducible in **both** directions over the SPECTRA KG / index:
+
+- **Forward** (WID → Spec): start from RP-182067 / R1-1903044 → traverse `discussedAt` to RAN1#95-#98 meetings → traverse `agreedIn` to R1-1909583 → traverse `incorporatedInto` (logical) to TS 38.214 §5.2.2.2.5.
+- **Backward** (Spec → WID): start from `[38.214-5.2.2.2.5-001]` body mentioning "DFT-based compression" → search `R1-*` TDocs with `release=Rel-16` and `ai=7.2.8.1` → recover R1-1909583 / R1-1909918 → recover RP-182067 reference.
+
+The forward direction is shipped as the §1 Motivation narrative. The backward direction is what enables a standards engineer to ask "given clause §5.2.2.2.5, what was its original justification?" and obtain RP-182067 / R1-1909583 as evidence.
+
+### 11.3 What this trace does NOT contain
+
+- **Direct CR chunks**: no Type-II-codebook CR is cited; the CR routing collection (1.25M triples per the released `examples/process_kg/`) was not queried for this question. The agreement → spec-body link is reconstructed from textual alignment, not from a CR number directly.
+- **Authoritative RP-182067 body**: Plenary RP-* TDoc bodies are not in the loaded collection; only the reference inside R1-1903044 is available.
+
+---
+
+## 12. Summary
 
 The Rel-16 Enhanced Type-II codebook is captured end-to-end across the 3GPP RAN spec stack as follows:
 

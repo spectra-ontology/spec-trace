@@ -11,7 +11,8 @@
 8. [Release × Document Coverage Matrix](#8-release--document-coverage-matrix)
 9. [Cross-Document Linkages (RRC IE → MAC-CE → PHY QCL → Capability)](#9-cross-document-linkages-rrc-ie--mac-ce--phy-qcl--capability)
 10. [Coverage and Limitations](#10-coverage-and-limitations)
-11. [Summary](#11-summary)
+11. [Document Lifecycle Trace (TCI-state Across Releases)](#11-document-lifecycle-trace-tci-state-across-releases)
+12. [Summary](#12-summary)
 
 ---
 
@@ -485,7 +486,307 @@ Every step in this trace is grounded in cited document bodies above.
 
 ---
 
-## 11. Summary
+## 11. Document Lifecycle Trace (TCI-state Across Releases)
+
+The paper's Document Lifecycle ontology (§3) traces features Release-by-Release through the canonical chain **RAN Plenary → WI / WID agreement (RAN1 / RAN2) → Spec body change (38.214 / 38.321 / 38.331 ASN.1 / 38.306)**. Because Q2 is itself a cross-release tracing question (Rel-15 → Rel-20), the lifecycle trace below is reorganised one chain per release rather than one chain for a single feature: each release walks the same RAN1-introduction → RAN2-introduction → spec-body change spine using only the TDocs and chunkIds that already appear in §2–§7. Where a stage is structurally absent from the SPECTRA RAG corpus (e.g. RP-WID files, CR-level chunks, Rel-20 spec adoption), the chain explicitly marks it as *not loaded* rather than fabricating a citation.
+
+### 11.1 Per-Release Lifecycle Chain
+
+#### Rel-15 — TCI Framework Introduction
+
+```
+RAN Plenary (RP-WID)             — not loaded (TSG_RAN Plenary not in SPECTRA corpus)
+        │
+        ▼
+RAN1 introduction
+  R1-1718541 (RAN1#90b, ai=7.2.2.3, type=discussion, release=Rel-15)
+    "Mapping between candidate TCI state and N-bit DCI field"
+  R1-1720662 (RAN1#91,  ai=7.2.2.3, type=discussion, release=Rel-15)
+    "DCI TCI field also conveys non-spatial QCL parameters"
+        │
+        ▼
+RAN2 introduction
+  R2-1713533 (RAN2#100, ai=10.2.13, type=discussion, release=Rel-15)
+    "MAC CEs for activating an RS resource and handling corresponding TCI states"
+        │
+        ▼
+Spec body change (Rel-15 base)
+  38.214 §5.1.5  PDSCH TCI-State list, capability tie-in
+                 [chunkId=38.214-5.1.5-001]
+  38.321 §6.1.3.14  PDSCH TCI MAC CE
+                 [chunkId=38.321-6.1.3.14-001]
+  38.331 ASN.1   TCI-State / TCI-StateId / QCL-Info / PDSCH-Config /
+                 PDCCH-Config / ControlResourceSet
+                 [chunkId=38.331-asn1-TCI-State-001,
+                          38.331-asn1-TCI-StateId-001,
+                          38.331-asn1-QCL-Info-001,
+                          38.331-asn1-PDSCH-Config-001,
+                          38.331-asn1-PDCCH-Config-001,
+                          38.331-asn1-ControlResourceSet-001]
+  38.306 §4.2.7.2  tci-StatePDSCH / maxNumberConfiguredTCI-StatesPerCC
+                 [chunkId=38.306-4.2.7.2-050]
+        │
+        ▼
+CR-level chunks                  — not loaded (CR chunks for the Rel-15 base
+                                   introduction are not present in the indexed
+                                   SPECTRA corpus for this question)
+```
+
+#### Rel-16 — eMIMO Multi-Beam Enhancement
+
+```
+RAN Plenary (RP-WID)             — not loaded
+        │
+        ▼
+RAN1 introduction
+  R1-1813443 (RAN1#95,  ai=7.2.8.3, type=discussion, release=Rel-16)
+    "Enhancements on Multi-beam Operation"
+  R1-1903044 (RAN1#96,  ai=7.2.8.3, type=discussion, release=Rel-16)
+    "Rel-16 NR MIMO WI: multi-beam enhancement deliverable"
+  R1-1907650 (RAN1#97,  ai=7.2.8.3, type=discussion, release=Rel-16)
+    "Feature lead summary of Enhancements on Multi-beam Operations"
+        │
+        ▼
+RAN2 introduction
+  R2-1910966 (RAN2#107, ai=11.16,    type=discussion, release=Rel-16)
+    "Up to 128 TCI states can be configured per BWP per serving cell"
+        │
+        ▼
+Spec body change (Rel-16)
+  38.214 §5.1.5  Activation procedure tying PHY to 38.321 §6.1.3.70
+                 [chunkId=38.214-5.1.5-003, 38.214-5.1.5-005]
+  38.321 §6.1.3.24  Enhanced PDSCH TCI MAC CE (eLCID variant)
+                 [chunkId=38.321-6.1.3.24-001]
+  38.331 ASN.1   No new top-level IE; tci-PresentInDCI / tci-PresentDCI-1-2
+                 carried inside ControlResourceSet / PDCCH-Config host bodies
+                 [chunkId=38.331-asn1-ControlResourceSet-001,
+                          38.331-asn1-PDCCH-Config-001]
+  38.306 §4.2.7.2  multipleTCI (multiple TCI configurations per CORESET)
+                 [chunkId=38.306-4.2.7.2-029]
+        │
+        ▼
+CR-level chunks                  — not loaded
+```
+
+#### Rel-17 — Unified TCI / Inter-cell Beam Management
+
+```
+RAN Plenary (RP-WID)             — not loaded
+        │
+        ▼
+RAN1 introduction
+  R1-2103287 (RAN1#104b-e, ai=8.1.1, type=discussion, release=Rel-17)
+    "Further enhancement on multi-beam operation"
+  R1-2109103 (RAN1#106b-e, ai=8.1.1, type=discussion, release=Rel-17)
+    "R17 feMIMO WI multi-beam operation track"
+        │
+        ▼
+RAN2 introduction
+  R2-2107995 (RAN2#115-e,  type=discussion, release=Rel-17)
+    "Discussion on multi-TRP BFR and new MIMO MAC CE"
+  R2-2110534 (RAN2#116-e,  ai=8.17.2, type=discussion, release=Rel-17)
+    "Considerations on Inter-Cell Beam Management — R17 Unified TCI framework"
+        │
+        ▼
+Spec body change (Rel-17)
+  38.214 §5.1.5  dl-OrJointTCI-StateList-r17 branch
+                 [chunkId=38.214-5.1.5-005, 38.214-5.1.5-007]
+  38.321 §5.18.23  Unified TCI MAC CE (simultaneousU-TCI-UpdateList*)
+                 [chunkId=38.321-5.18.23-001]
+  38.331 ASN.1   TCI-UL-State-r17 / TCI-UL-StateId-r17 / dl-OrJointTCI-StateList-r17
+                 + unifiedTCI-StateRef-r17 (extension of PDSCH-Config)
+                 [chunkId=38.331-asn1-TCI-UL-State-r17-001,
+                          38.331-asn1-TCI-UL-StateId-r17-001,
+                          38.331-asn1-PDSCH-Config-001]
+  38.306 §4.2.7.2  Unified-TCI capability cluster (presupposed by Rel-18 -r18 rows)
+                 [chunkId=38.306-4.2.7.2-024]
+        │
+        ▼
+CR-level chunks                  — not loaded
+```
+
+#### Rel-18 — Enhanced Unified TCI / Multi-TRP Unified / LTM Integration
+
+```
+RAN Plenary (RP-WID)             — not loaded
+        │
+        ▼
+RAN1 introduction
+  R1-2300932 (RAN1#112,  ai=9.1.1.1, type=discussion, release=Rel-18)
+    "Unified TCI Framework for Multi-TRP"
+  R1-2309110 (RAN1#114b, ai=8.7.1,   type=discussion, release=Rel-18)
+    "FL summary on L1 enhancements for inter-cell beam management"
+  R1-2403112 (RAN1#116b, ai=8.1,     type=discussion, release=Rel-18)
+    "Maintenance on NR MIMO Evolution for Downlink and Uplink"
+        │
+        ▼
+RAN2 introduction
+  R2-2207753 (RAN2#119-e,  ai=8.4.2.2, type=discussion, release=Rel-18)
+    "Discussion on candidate solutions for L1/L2 mobility — pegs Rel-17 unified TCI as base"
+  R2-2306181 (RAN2#122,    ai=7.1.2,   type=discussion, release=Rel-18)
+    "On MAC CE for Joint TCI State Indication"
+  R2-2307614 (RAN2#123,    ai=7.20.2,  type=discussion, release=Rel-18)
+    "Two TAs for multi-DCI multi-TRP — rationale for tag-Id-ptr-r18"
+  R2-2403134 (RAN2#125bis, ai=7.20.3,  type=discussion, release=Rel-18)
+    "[N110] Correction on Unified TCI operation"
+        │
+        ▼
+Spec body change (Rel-18)
+  38.214 §5.1.5  Joint/separate TCI mode branches
+                 [chunkId=38.214-5.1.5-003, 38.214-5.1.5-007]
+  38.321 §5.18.33  Enhanced Unified TCI States Activation/Deactivation MAC CE
+                 [chunkId=38.321-5.18.33-001]
+  38.321 §6.1.3.70  Joint TCI States MAC CE
+                 [chunkId=38.321-6.1.3.70-001]
+  38.321 §6.1.3.71  Separate TCI States MAC CE
+                 [chunkId=38.321-6.1.3.71-001]
+  38.331 ASN.1   CandidateTCI-State-r18 / CandidateTCI-UL-State-r18 / LTM-QCL-Info-r18
+                 + [[ tag-Id-ptr-r18 -- Cond 2TA ]] extension of TCI-State / TCI-UL-State-r17
+                 [chunkId=38.331-asn1-CandidateTCI-State-r18-001,
+                          38.331-asn1-CandidateTCI-UL-State-r18-001,
+                          38.331-asn1-LTM-QCL-Info-r18-001,
+                          38.331-asn1-TCI-State-001,
+                          38.331-asn1-TCI-UL-State-r17-001]
+  38.306 §4.2.7.2  Largest single-release expansion of capability cluster
+                 (tci-JointTCI-Update*-r18, tci-SeparateTCI-Update*-r18,
+                  tci-StateSwitchInd-r18, commonTCI-{Multi,Single}DCI-r18,
+                  ltm-BeamIndication{Joint,Separate}TCI-r18,
+                  tci-Selection{DCI,AperiodicCSI-RS,AperiodicCSI-RS-M-DCI}-r18)
+                 [chunkId=38.306-4.2.7.2-019, 38.306-4.2.7.2-024,
+                          38.306-4.2.7.2-050, 38.306-4.2.7.2-051]
+        │
+        ▼
+CR-level chunks                  — not loaded (R2-2403134 is itself a "[N110]
+                                   Correction on Unified TCI operation" thread,
+                                   but the corresponding CR-document chunks are
+                                   not present in the indexed dataset for Q2)
+```
+
+#### Rel-19 — Asymmetric DL sTRP / UL mTRP / NR MIMO Phase 5
+
+```
+RAN Plenary (RP-WID)             — not loaded (R2-2508663 cites
+                                   "RP-242394, Revised WI: NR MIMO Phase 5"
+                                   as a string, but the RP-WID document body
+                                   is not in the SPECTRA RAG dataset)
+        │
+        ▼
+RAN1 introduction
+  R1-2403985 (RAN1#117,  type=discussion, release=Rel-19)
+    "Enhancements for event driven beam management"
+  R1-2406432 (RAN1#118,  ai=9.9.1, type=discussion, release=Rel-19)
+    "Measurements enhancements for LTM"
+  R1-2408118 (RAN1#118b, ai=9.2.4, type=discussion, release=Rel-19)
+    "Discussion on enhancements for asymmetric DL sTRP/UL mTRP scenarios"
+        │
+        ▼
+RAN2 introduction
+  R2-2408402 (RAN2#127bis, ai=8.12.2, type=discussion, release=Rel-19)
+    "Initial Analysis on the RAN2 Impact for the R19 MIMO — reuse Rel-17/Rel-18 unified TCI"
+  R2-2505548 (RAN2#131,    ai=8.6.3,  type=discussion, release=Rel-19)
+    "L1 event triggered measurement reporting for LTM"
+  R2-2506415 (RAN2#131,    ai=8.6.1,  type=CR,         release=Rel-19)
+    "Introduction of NR mobility enhancements Phase 4 in TS 38.300 — current beam = indicated TCI"
+  R2-2508663 (RAN2#132,    ai=8.12.2, type=discussion, release=Rel-19)
+    "MAC issues for MIMO — references RP-242394 Revised WI: NR MIMO Phase 5"
+        │
+        ▼
+Spec body change (Rel-19)
+  38.321 §5.18.36   Candidate Cell TCI States Activation/Deactivation
+                  [Neo4j RAN2, sectionNumber=5.18.36]
+  38.321 §6.1.3.76  Candidate Cell TCI States Activation/Deactivation MAC CE
+                  [Neo4j RAN2, sectionNumber=6.1.3.76]
+  38.321 §6.1.3.77  Cross-RRH TCI State Indication for UE-specific PDCCH MAC CE
+                  [Neo4j RAN2, sectionNumber=6.1.3.77]
+  38.331 ASN.1   [[ pathlossOffset-r19 ENUMERATED {dB-12..dB60} ]] extension
+                 reused in BOTH TCI-State and TCI-UL-State-r17 IE bodies
+                 [chunkId=38.331-asn1-TCI-State-001,
+                          38.331-asn1-TCI-UL-State-r17-001]
+  38.306 §4.2.7.2  cjt-QCL-PDSCH-Scheme{C,D,E}-r19 (CJT QCL scheme)
+                 + ltm-BeamIndication{Joint,Separate}TCI-CSI-RS-r19
+                 [chunkId=38.306-4.2.7.2-005, 38.306-4.2.7.2-024]
+        │
+        ▼
+CR-level chunks   R2-2506415 is itself a CR-typed TDoc (type=CR for 38.300 Phase-4
+                  mobility); however, CR-document body chunks for the 38.321/38.331
+                  Rel-19 changes above are not present in the indexed dataset
+```
+
+#### Rel-20 — 6G Air Interface Phase
+
+```
+RAN Plenary (RP-WID)             — not loaded
+        │
+        ▼
+RAN1 introduction (6G framing only)
+  R1-2505125 (RAN1#122,  ai=11.1, type=discussion, release=Rel-20)
+    "Nokia Views on 6G Radio Air Interface"
+  R1-2506063 (RAN1#122,  ai=11.1, type=discussion, release=Rel-20)
+    "Overview of the 6GR air interface — Extreme-MIMO (E-MIMO)"
+  R1-2506358 (RAN1#122,  ai=11.1, type=discussion, release=Rel-20)
+    "Overview of 6G Air Interface — beam management/CSI framework still under design"
+  R1-2508116 (RAN1#122b, type=discussion, release=Rel-20)
+    "FL Summary #3 of Coverage Enhancement for NR Phase 3"
+  R1-2509334 (RAN1#123,  type=discussion, release=Rel-20)
+    "Discussion on Rel-20 Coverage Enhancement"
+        │
+        ▼
+RAN2 introduction (6G mobility framing only)
+  R2-2508085 (RAN2#132, ai=10.4, type=discussion, release=Rel-20)
+    "6G mobility — beam-based mobility around indicated TCI state"
+  R2-2508592 (RAN2#132, type=discussion, release=Rel-20)
+    "Discussion on Mobility management for 6GR"
+  R2-2508765 (RAN2#132, type=discussion, release=Rel-20)
+    "Discussion on Energy Efficiency aspects of 6GR"
+  R2-2508849 (RAN2#132, ai=10.4, type=discussion, release=Rel-20)
+    "Consideration for 6G connected mode mobility"
+        │
+        ▼
+Spec body change (Rel-20)        — NOT FOUND for any TCI item in
+                                   38.214 / 38.321 / 38.331 / 38.306.
+                                   See §7.3 / §10.2: dataset boundary.
+        │
+        ▼
+CR-level chunks                  — n/a (no Rel-20 spec adoption to track)
+```
+
+### 11.2 Lifecycle Audit Table
+
+The audit below records, per release, whether each lifecycle stage has a citable artefact in the indexed SPECTRA corpus. ✓ = citation in this file; "not loaded" = stage exists in the real 3GPP process but the corresponding document/chunk is absent from the SPECTRA RAG dataset for Q2; "n/a" = stage is not applicable (e.g. no Rel-20 spec change to chase).
+
+| Release | RAN1 introduction | RAN2 introduction | Spec body change | Capability addition (38.306) | CR-level |
+|---|---|---|---|---|---|
+| **Rel-15** | ✓ R1-1718541, R1-1720662 | ✓ R2-1713533 | ✓ 38.214 §5.1.5 / 38.321 §6.1.3.14 / 38.331 TCI-State, QCL-Info, PDSCH-Config, PDCCH-Config, ControlResourceSet, TCI-StateId | ✓ tci-StatePDSCH, maxNumberConfiguredTCI-StatesPerCC, additionalActiveTCI-StatePDCCH, multipleTCI rows | not loaded |
+| **Rel-16** | ✓ R1-1813443, R1-1903044, R1-1907650 | ✓ R2-1910966 | ✓ 38.214 §5.1.5 (activation procedure) / 38.321 §6.1.3.24 (eLCID enhanced PDSCH TCI MAC CE) / 38.331 host IE bodies (ControlResourceSet, PDCCH-Config) | ✓ multipleTCI per CORESET row | not loaded |
+| **Rel-17** | ✓ R1-2103287, R1-2109103 | ✓ R2-2107995, R2-2110534 | ✓ 38.214 §5.1.5 dl-OrJointTCI-StateList-r17 / 38.321 §5.18.23 unified TCI MAC CE / 38.331 TCI-UL-State-r17, TCI-UL-StateId-r17, dl-OrJointTCI-StateList-r17 + unifiedTCI-StateRef-r17 inside PDSCH-Config | ✓ unified-TCI cluster (presupposed by -r18 rows) | not loaded |
+| **Rel-18** | ✓ R1-2300932, R1-2309110, R1-2403112 | ✓ R2-2207753, R2-2306181, R2-2307614, R2-2403134 | ✓ 38.214 §5.1.5 joint/separate / 38.321 §5.18.33, §6.1.3.70, §6.1.3.71 / 38.331 CandidateTCI-State-r18, CandidateTCI-UL-State-r18, LTM-QCL-Info-r18 + [[tag-Id-ptr-r18]] extension | ✓ Largest single-release Rel-18 cluster (tci-JointTCI-Update*, tci-SeparateTCI-Update*, commonTCI-{Multi,Single}DCI, ltm-BeamIndication{Joint,Separate}TCI, tci-Selection*) | not loaded (R2-2403134 is a "[N110] Correction" thread; corresponding CR-doc chunks not in dataset) |
+| **Rel-19** | ✓ R1-2403985, R1-2406432, R1-2408118 | ✓ R2-2408402, R2-2505548, R2-2506415, R2-2508663 | ⚠️ 38.321 §5.18.36 / §6.1.3.76 / §6.1.3.77 via Neo4j Section nodes only / 38.331 [[pathlossOffset-r19]] extension in TCI-State and TCI-UL-State-r17 (direct ASN.1) | ✓ cjt-QCL-PDSCH-Scheme{C,D,E}-r19, ltm-BeamIndication{Joint,Separate}TCI-CSI-RS-r19 | partial (R2-2506415 itself is type=CR for 38.300 Phase-4; CR chunks for 38.321/38.331 Rel-19 changes not in dataset) |
+| **Rel-20** | ✓ R1-2505125, R1-2506063, R1-2506358, R1-2508116, R1-2509334 (6G framing only) | ✓ R2-2508085, R2-2508592, R2-2508765, R2-2508849 (6G mobility framing only) | ❌ not found — only 6G overview / Coverage Enhancement Phase-3 / 6G mobility framing TDocs are present | ❌ not found | n/a (no Rel-20 spec adoption to track) |
+
+### 11.3 Bidirectional Traversal
+
+The same chains are reproducible in both directions over the SPECTRA KG:
+
+- **Forward (TDoc → Meeting → Agreement / WI → Spec section).** Starting from any introduction-stage TDoc, the KG edges traverse `Tdoc -[:hasMeeting]-> Meeting`, `Tdoc -[:onAgendaItem]-> AgendaItem`, and the release-bound `Tdoc.release` field to the in-spec target. For example, `R1-2300932` (RAN1#112, ai=9.1.1.1, release=Rel-18) leads forward via the Rel-18 unified-TCI-for-multi-TRP design to 38.321 §6.1.3.70 / §6.1.3.71 and to the 38.331 IEs `CandidateTCI-State-r18` / `LTM-QCL-Info-r18` (all chunkIds cited above). Similarly `R2-2110534` (RAN2#116-e, ai=8.17.2, release=Rel-17) leads forward to 38.321 §5.18.23 and the 38.331 `dl-OrJointTCI-StateList-r17` branch (linkage 7 in §9 closes this loop).
+- **Backward (Spec section → originating TDoc, with `ai=` / `release=` filters).** Starting from a chunkId, the corresponding `Section` node in Neo4j is reachable, and from there the originating-TDoc set is the union of all TDocs whose `release` matches the section-introducing release and whose `agendaItem` lies inside the relevant RAN1/RAN2 multi-beam / unified-TCI / asymmetric-DL-sTRP-UL-mTRP track. For example, the 38.331 `[[ pathlossOffset-r19 ]]` extension in `TCI-State` `[chunkId=38.331-asn1-TCI-State-001]` filters back via `release=Rel-19` ∧ `ai∈{9.2.4 (RAN1), 8.12.2 (RAN2)}` to the introducing TDocs `R1-2408118` and `R2-2408402` cited in §6.1 / §6.2. The same chunkId, filtered with `release=Rel-15`, returns instead the Rel-15 base introduction TDocs `R1-1718541` / `R1-1720662` / `R2-1713533` cited in §2.1 / §2.2 — the same chunk is reachable from multiple releases because `TCI-State` is a cross-release host IE that accumulates extension blocks.
+
+This bidirectional reproducibility is exactly the property that the paper's Document Lifecycle ontology asserts for traceability: any factual sentence in §2–§7 of this report can be re-fetched from the chunkId, and the originating-TDoc set can be reconstructed from a release- and agendaItem-filtered Cypher query without re-reading the answer text.
+
+### 11.4 What this trace does NOT contain
+
+Honest caveats — the trace above intentionally does not assert artefacts that are not in the indexed corpus:
+
+1. **CR-level chunks are not queried for Q2.** None of the per-release chains above is supported by a CR-document body chunk; CR-typed TDocs (e.g. `R2-2506415`) appear only at the introduction stage as Tdoc nodes, not as parsed CR-section chunks. Wherever a "[N110] Correction" or "CR" thread is mentioned (Rel-18, Rel-19), the CR-document chunks are explicitly marked *not loaded* and the spec-body grounding is taken from TS bodies and ASN.1 IE bodies only.
+2. **RAN Plenary (RP-WID) documents are not in the SPECTRA corpus.** Strings such as "RP-242394, Revised WI: NR MIMO Phase 5" appear inside RAN2 TDocs (e.g. `R2-2508663`), but the RP-WID document body itself is not loaded; the lifecycle entry-point is therefore the RAN1/RAN2 WI-discussion stage, not the Plenary stage.
+3. **Rel-20 spec adoption is absent.** The Rel-20 row of §11.2 is intentionally `❌ / ❌ / n/a` for spec-body change, capability addition, and CR-level — not because no change occurs in the real standard, but because the loaded Rel-20 TDocs are at the 6G framing / Coverage Enhancement Phase-3 stage. §7.3 and §10.2 mark this as a dataset boundary.
+4. **38.306 row-level chunking is partial.** §4.2.7.2 chunkIds (`-001`, `-005`, `-019`, `-024`, `-029`, `-050`, `-051`) cover the rows cited per release, but §4.2.7.2 is a long capability section and not every row is materialised as its own chunk; the per-release row attributions in the audit table cite the chunkIds that the rows resolve to, not separate per-row chunks.
+5. **Rel-19 38.321 chunk-body text is weak.** §5.18.36 / §6.1.3.76 / §6.1.3.77 are catalogued as Neo4j Section nodes but their chunk bodies are weak in the current vector index (§10.2). The audit table marks this as ⚠️ rather than ✓ for the spec-body change cell.
+
+The lifecycle trace therefore demonstrates that the SPECTRA KG can reproduce the **RAN1/RAN2 introduction → spec-body change** chain release-by-release for Rel-15 → Rel-19 from existing citations alone, while honestly reporting where the corpus stops (no RP-WID, no CR chunks for Q2, no Rel-20 spec adoption).
+
+---
+
+## 12. Summary
 
 The TCI-state framework can be traced end-to-end across the 3GPP RAN spec stack from Rel-15 through Rel-19, with Rel-20 left as a dataset boundary:
 

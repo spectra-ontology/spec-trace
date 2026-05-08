@@ -12,7 +12,8 @@
 9. [Rel-20 Status (Study Stage)](#9-rel-20-status-study-stage)
 10. [Cross-Document Linkages](#10-cross-document-linkages)
 11. [Coverage and Limitations](#11-coverage-and-limitations)
-12. [Summary](#12-summary)
+13. [Document Lifecycle Trace (Rel-18 LTM and Rel-19/20 Extensions)](#13-document-lifecycle-trace-rel-18-ltm-and-rel-1920-extensions)
+14. [Summary](#14-summary)
 
 ---
 
@@ -414,7 +415,150 @@ End-to-end one-line flow:
 
 ---
 
-## 12. Summary
+## 13. Document Lifecycle Trace (Rel-18 LTM and Rel-19/20 Extensions)
+
+The paper's Document Lifecycle ontology (§3) traces features Release-by-Release across the artefact chain Resolution → Tdoc → CR → TS/TR. Q4 is a cross-release tracing question — the indexed SPECTRA RAG corpus reveals **Rel-18 LTM as a fully-incorporated feature** (WID → RAN1/RAN2 agreement → spec body in 38.300/331/321/214/133 → RAN4 RRM conformance), **Rel-19 as an in-progress extension at TDoc-level** (inter-CU / CLTM / event-triggered L1 discussions in RAN1#117–#118b and RAN2#125bis–#131, with partial spec-body realisations carried over from the Rel-18 LTM family), and **Rel-20 still at the study stage** (RAN2#132 discussion items only, no spec-body adoption). This is the most complete cross-release lifecycle reconstruction among the four Q-set answers because all three release tags (Rel-18, Rel-19, Rel-20) are present on the cited TDoc nodes and the Rel-18 chain reaches all the way from WID to conformance.
+
+### 13.1 Rel-18 LTM Introduction Chain (WID → Agreement → Spec Body → Conformance)
+
+```
+[RAN Plenary]
+  RP-221799 (Rel-18 WID — Further NR mobility enhancement)
+       └─ referenced from RAN2 contribution body (R2-2207340-001)
+          ↓
+[RAN2 WI cycle, RAN2#119-e / RAN2#121]
+  R2-2207340 (RAN2#119-e, ai=8.4.2.1, type=discussion, release=Rel-18)
+       │   "L1/L2-based signaling … Currently serving cell change is triggered by L3 measurements …"
+       ↓
+  R2-2301501 (RAN2#121, release=Rel-18)
+       │   "In Rel-18, L1L2 mobility … reduce latency, overhead and interruption time."
+[RAN1 WI cycle, RAN1#112b-e / RAN1#115]
+  R1-2302414 (RAN1#112b-e, ai=9.10.2, release=Rel-18)
+       │   "L1/L2 mobility (LTM) is the main part of the Rel-18 work item …"
+  R1-2311212 (RAN1#115, ai=8.7.1, release=Rel-18)
+       │   "The goal of LTM is to enable a serving cell change via L1/L2 signalling …"
+       ↓ adopted as the spec change scheme
+[Spec body incorporation, post-RAN1#115 / RAN2#121]
+  TS 38.300 §9.2.3.5.2 LTM C-Plane    [38.300-9.2.3.5.2-001]
+  TS 38.300 §9.2.3.7.1 CLTM            [38.300-9.2.3.7.1-001]
+       ├─ pre-configures candidate cells
+       ├─ MAC-CE-triggered cell switch
+       └─ subsequent LTM repeats
+[RRC IE / Procedure]
+  TS 38.331 §5.3.5.18.1 LTM-Config              [38.331-5.3.5.18.1-001]
+  TS 38.331 §5.3.5.18.3 LTM-Candidate add/mod   [38.331-5.3.5.18.3-001]
+  TS 38.331 §5.3.5.18.8 L3-cond LTM trigger     [38.331-5.3.5.18.8-001]
+[MAC behaviour + MAC CE format]
+  TS 38.321 §5.18.35 LTM Cell Switch trigger    [38.321-5.18.35-001]
+  TS 38.321 §5.18.36 Candidate-TCI Activation   [38.321-5.18.36-001]
+  TS 38.321 §6.1.3.75 LTM Cell Switch MAC CE    [38.321-6.1.3.75-001]
+  TS 38.321 §6.1.3.76 Candidate-TCI MAC CE      [38.321-6.1.3.76-001]
+[L1 measurement / reporting]
+  TS 38.214 §5.2.4a LTM CSI reporting           [38.214-5.2.4a-001]
+  TS 38.214 §5.2.1.5.4.2 UE-init eventTriggered [38.214-5.2.1.5.4.2-001]
+  TS 38.214 §5.2.1.4.3 generic L1-RSRP          [38.214-5.2.1.4.3-001]
+[Cell-switch delay / RRM]
+  TS 38.133 §6.3.1.2 PCell delay                [38.133-6.3.1.2-001]
+  TS 38.133 §8.20.2 PSCell delay                [38.133-8.20.2-001]
+       ↓
+[RAN4 RRM Conformance — Rel-18 baseline]
+  R4-2400104 (RAN4#110, "RRM performance requirements for R18 LTM")
+```
+
+The Rel-18 chain is complete from WID through RAN1/RAN2 agreement into the multi-spec body (38.300 / 38.331 / 38.321 / 38.214 / 38.133) and onward into RAN4 RRM conformance. The WID body itself (RP-221799) is referenced normatively but not loaded as a separate artefact (see §13.6).
+
+### 13.2 Rel-19 Extensions Chain (TDoc-Level Only)
+
+```
+[Rel-19 Mobility Enhancements Phase 4 — RAN#103 agreed objective]
+  referenced inside R1-2405859-001 body
+          ↓
+[RAN2 WI cycle, RAN2#125bis–#131]
+  R2-2402743 (RAN2#125bis, ai=8.6.3, release=Rel-19)
+       │   measurement-design objective for LTM
+  R2-2404271 (RAN2#126, ai=8.6.2, release=Rel-19)
+       │   "extend to support inter-CU LTM"
+  R2-2408088 (RAN2#127bis, ai=8.6.4, release=Rel-19)
+       │   "objective related to conditional LTM of Rel-19 was agreed"
+  R2-2504412 (RAN2#129, release=Rel-19)
+       │   "LTM cell switch CHO comparison"
+  R2-2503785 (RAN2#130, ai=8.6.1, type=CR, release=Rel-19)
+       │   "mixture of subsequent inter-CU LTM and subsequent intra-CU LTM"
+  R2-2505117 (RAN2#131, ai=8.6.2, release=Rel-19)
+       │   "periodic, aperiodic and semi-persistent L1 report"
+[RAN1 WI cycle, RAN1#118 / FL summary]
+  R1-2405859 (RAN1#118, ai=9.9.1, release=Rel-19)
+       │   "NR mobility enhancements Phase 4 was agreed …"
+  R1-2407319 (RAN1#118, ai=9.9.1, release=Rel-19)
+       │   FL summary — pre-switch CSI, dynamic measurement-RS update
+       ↓
+[Spec realisations — partial, carried over from Rel-18 LTM body family]
+  TS 38.321 §5.36 Conditional LTM      (catalogued, body not directly cited)
+  TS 38.321 §6.1.3.75a Enhanced LTM CE (referenced from §5.18.35 body)
+  TS 38.321 §5.35.3.2–.5 Event LTM2~5  (catalogued)
+       ↓
+[Spec-body Rel-19 adoption — pending in this dataset]
+  No directly-cited Rel-19 chunk body in 38.300 / 38.331 / 38.321 for the
+  Rel-19 inter-CU / CLTM / event-triggered L1 extension scope.
+```
+
+The Rel-19 chain stops at the **TDoc-level + catalogued-section** stage. The spec-section *locations* (§5.36, §6.1.3.75a, §5.35.3.2~5) are anchored from the §4.5 / §8.6 catalogue, but their **body chunks** are not directly cited in this answer's scope. The Rel-19 inter-CU / CLTM / event-triggered L1 scope is therefore traceable up to the agreement / FL-summary level but not yet through to a verbatim spec-body chunk.
+
+### 13.3 Rel-20 Discussion-Status Trace
+
+```
+[RAN2#132, ai=10.4 "Connected mobility for 6GR" / "6G Mobility Discussion"]
+  R2-2508706 (release=Rel-20, type=discussion)
+       │   "NR introduced multiple mobility procedures … L3 HO, CHO, LTM, C-LTM …"
+  R2-2508384 (release=Rel-20)
+       │   "RAN2 has started using L2 (specifically MAC layer with MAC CEs) …"
+  R2-2508657 (release=Rel-20)
+       │   "Mobility … 5G has extended the sophistication … There is too many mobility features"
+[RAN2#132, ai=9.3.x AI/ML measurement-prediction track]
+  R2-2508707 (RAN2#132, ai=9.3.2, release=Rel-20)
+  R2-2508722 (RAN2#132, ai=9.3.3, release=Rel-20)
+       │   "AIML mobility … rel-19 used the AIML BM use case as a baseline …"
+       ↓
+[Spec-body adoption — none]
+  No Rel-20 §section additions to 38.300 / 38.331 / 38.321 in this dataset.
+  The trace stops at the discussion stage. (§9, §11.3)
+```
+
+The Rel-20 trace is honest about its terminal point: the only artefacts retrievable at `release=Rel-20` are `type=discussion` TDocs at RAN2#132. No CR, no spec-body insertion, no conformance test. The trace deliberately stops there.
+
+### 13.4 Lifecycle Audit Table
+
+| Release | WID | RAN1 contribution | RAN2 contribution | Spec body change | Conformance | CR-level |
+|---|---|---|---|---|---|---|
+| **Rel-18 LTM (intra-gNB)** | RP-221799 (referenced in `R2-2207340-001` body; Plenary RP-* body not loaded) | R1-2302414 (RAN1#112b-e), R1-2311212 (RAN1#115) ✓ | R2-2207340 (RAN2#119-e), R2-2301501 (RAN2#121) ✓ | 38.300 §9.2.3.5.2 / §9.2.3.7.1 ✓; 38.331 §5.3.5.18.{1,3,8} ✓; 38.321 §5.18.{35,36} + §6.1.3.{75,76} ✓; 38.214 §5.2.4a / §5.2.1.5.4.2 / §5.2.1.4.3 ✓; 38.133 §6.3.1.2 / §8.20.2 ✓ | R4-2400104 (RAN4#110) ✓ | not cited (CR collection not queried for Q4; Rel-18 LTM CRs to 38.300/331/321/214/133 are reconstructed from agreement → spec-body alignment) |
+| **Rel-19 inter-CU LTM** | (Rel-19 Mobility WI cycle; RP body not loaded) | R1-2405859 (RAN1#118), R1-2407319 (RAN1#118 FL summary) ✓ | R2-2404271 (RAN2#126), R2-2503785 (RAN2#130) ✓ | discussed only — Rel-19 inter-CU body not directly cited | n/a in this dataset | partial: R2-2503785 is `type=CR` but body is at TDoc-level, not parsed into a CR-routing record here |
+| **Rel-19 Conditional LTM** | (Rel-19 Mobility WI cycle) | — | R2-2408088 (RAN2#127bis), R2-2504412 (RAN2#129 LTM↔CHO comparison) ✓ | catalogued: 38.321 §5.36 (body not cited); 38.300 §9.2.3.7 already in Rel-18 baseline ✓ | n/a in this dataset | not cited |
+| **Rel-19 event-triggered L1 / measurement enhancements** | (Rel-19 Mobility WI cycle) | R1-2405859, R1-2407319 ✓ | R2-2402743 (RAN2#125bis), R2-2505117 (RAN2#131) ✓ | catalogued: 38.321 §5.35.3.2–.5 Event LTM2~5; 38.214 §5.2.1.5.4.2 already in Rel-18 baseline ✓ | n/a in this dataset | not cited |
+| **Rel-20 (study stage)** | (Rel-20 study/SI under preparation) | — | R2-2508706, R2-2508384, R2-2508657 (RAN2#132 ai=10.4); R2-2508707, R2-2508722 (RAN2#132 ai=9.3.x) — all `type=discussion` ✓ | none — discussion only | n/a | n/a |
+
+### 13.5 Bidirectional Traversal
+
+This three-release lifecycle is reproducible in **both** directions over the SPECTRA KG / index:
+
+- **Forward** (WID → Spec → Conformance): start from RP-221799 (referenced in `R2-2207340-001` body) → traverse `discussedAt` to RAN2#119-e / RAN2#121 + RAN1#112b-e / RAN1#115 → traverse `agreedIn` to R1-2311212 / R2-2301501 → traverse `incorporatedInto` (logical) to TS 38.300 §9.2.3.5.2 / §9.2.3.7.1 → onwards to TS 38.331 §5.3.5.18.x, TS 38.321 §5.18.{35,36} + §6.1.3.{75,76}, TS 38.214 §5.2.4a / §5.2.1.5.4.2, TS 38.133 §6.3.1.2 / §8.20.2 → into RAN4 RRM via R4-2400104.
+- **Backward** (Spec → WID): start from `[38.321-6.1.3.75-001]` body mentioning "LTM Cell Switch Command MAC CE" → search `R*` TDocs with `release=Rel-18` and ai matching the LTM agenda items (RAN2 ai=8.4.2.1 / 8.6.x, RAN1 ai=8.7.x / 9.10.x) → recover R1-2302414 / R1-2311212 / R2-2207340 / R2-2301501 → recover RP-221799 reference inside `R2-2207340-001`.
+- **Cross-release projection**: the Rel-19 extension TDocs (`release=Rel-19`) and the Rel-20 study TDocs (`release=Rel-20`) attach to the same LTM root as the Rel-18 body via the `feature=LTM` axis, so a query "show all releases that touch LTM" recovers all three release branches in one traversal.
+
+The forward direction is shipped as the §1 Motivation narrative + §2–§6 spec body + §8–§9 Rel-19/20 extension narratives. The backward direction is what enables a standards engineer to ask "given clause TS 38.321 §6.1.3.75, what was its original Rel-18 justification, and what Rel-19/20 follow-up exists?" and obtain the chain RP-221799 ← R2-2207340 / R1-2311212 → spec → R2-2404271 / R2-2503785 → R2-2508706 in a single bidirectional traversal.
+
+### 13.6 What this trace does NOT contain
+
+- **Plenary RP-WID body (RP-221799)**: the RP-WID is referenced normatively from `R2-2207340-001` but the Plenary RP-* TDoc body itself is outside the loaded spec set; the WI motivation is reconstructed from the `type=discussion` documents that cite it. The Rel-19 and Rel-20 RP-WID bodies are similarly not loaded.
+- **CR-level chunks**: no LTM-related CR (e.g., Rel-18 introduction CRs to 38.300 / 38.331 / 38.321 / 38.214 / 38.133, or the Rel-19 CR `R2-2503785` at `type=CR`) is cited at the CR-routing-collection level for Q4. The agreement → spec-body link is reconstructed from textual alignment, not from a CR number directly.
+- **Rel-19 spec-body adoption pending**: the Rel-19 inter-CU / CLTM / event-triggered L1 scope is traceable up to the TDoc agreement / FL-summary stage and to *catalogued* spec-section locations (38.321 §5.36 / §6.1.3.75a / §5.35.3.2~5), but the body chunks of those Rel-19-specific sections are not directly cited in this answer. The `Enhanced LTM Cell Switch Command MAC CE` (§6.1.3.75a) is referenced only inside the §5.18.35 trigger-rule body, not as its own format-clause chunk.
+- **Rel-20 study stage**: only `type=discussion` TDocs from RAN2#132 are retrievable; no Rel-20 §section additions to 38.300 / 38.331 / 38.321 exist in this dataset. The trace stops there by design (§11.3).
+- **38.306 LTM detailed feature-group bodies**: §5.4 / §5.6 / §4.2.7.9 are catalogued as the LTM exposure points but the LTM-specific feature-group body (e.g., a `ltm-r18` capability bit) is not directly cited from a chunk body (§7 / §11.2).
+- **T-LTM timer body**: 38.321 §5.2b / §6.1.3.4b / §6.1.3.21 are catalogued under T304 / LTM-timer concerns but the LTM-specific timer body itself is not directly cited from a body chunk (§11.3).
+- **chunkIndex misnotations preserved**: the per-TDoc chunkIds are reproduced verbatim as they appear in the answer body (e.g., `R2-2503785-001`); where the underlying retrieval log records a different `chunkIndex` for the same TDoc (e.g., `R2-2503785-017` was the actual retrieved chunk on at least one query path), the answer body's `-001` notation is preserved as-is for audit-trail consistency rather than silently rewritten. The same caveat applies to a small number of other Rel-19/20 TDoc citations.
+
+---
+
+## 14. Summary
 
 The Rel-18 LTM feature is captured end-to-end across the 3GPP RAN spec stack as follows:
 

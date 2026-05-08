@@ -10,7 +10,8 @@
 7. [RAN1 / RAN2 Introduction Context (TDoc trail across releases)](#7-ran1--ran2-introduction-context-tdoc-trail-across-releases)
 8. [Cross-Document Linkages](#8-cross-document-linkages)
 9. [Coverage and Limitations](#9-coverage-and-limitations)
-10. [Summary](#10-summary)
+11. [Document Lifecycle Trace (BFD/BFR Procedures)](#11-document-lifecycle-trace-bfdbfr-procedures)
+12. [Summary](#12-summary)
 
 ---
 
@@ -455,7 +456,119 @@ Only inter-spec references that can be confirmed via citations from the spec/TDo
 
 ---
 
-## 10. Summary
+## 11. Document Lifecycle Trace (BFD/BFR Procedures)
+
+The paper's Document Lifecycle ontology (§3) traces a feature from Resolution → Tdoc → CR → TS/TR. For NR Beam Failure Detection / Beam Failure Recovery, the chain is reconstructed from the indexed SPECTRA RAG dataset across three release-tagged extension axes — Rel-15 introduction, Rel-16 SCell BFR, and Rel-17 multi-BFD-set (with a Rel-18 SCell-deactivated extension at the RAN2 contribution layer).
+
+### 11.1 Lifecycle Chain Diagram
+
+```
+[Rel-15 introduction — RACH-based link recovery]
+  RAN1 contributions (RAN1 phase)
+    R1-1707606 (RAN1, "Discussion on beam failure recovery", release=Rel-15)
+    R1-1713597 (RAN1, "Beam failure recovery", L1-RSRP candidate-beam metric, release=Rel-15)
+         ↓ adopted as L1 mechanism set
+  RAN2 reference into MAC procedure
+    R2-1803196 (RAN2, BFI-counting → RA-trigger model, release=Rel-15)
+         ↓ adopted as the spec change
+[Spec body incorporation — Rel-15]
+  TS 38.213 §6 — Link recovery procedures, BFD-RS / candidate-beam-RS sets
+                 Q_out,LR / Q_in,LR ↔ RRC mapping  [38.213-6-001 / -002 / -004]
+       ├─ requires RRC IE
+       ├─ requires MAC procedure
+       └─ requires RRM evaluation period
+  TS 38.321 §5.17 — MAC BFR procedure, 12 RRC parameters consumed
+                                       [38.321-5.17-001]
+  TS 38.331 IEs (Rel-15 baseline)
+                 BeamFailureRecoveryConfig (rootSequenceIndex-BFR, rach-ConfigBFR,
+                   rsrp-ThresholdSSB, candidateBeamRSList,
+                   ssb-perRACH-Occasion {oneEighth..sixteen},
+                   beamFailureRecoveryTimer {ms10..ms200})
+                                       [38.331-asn1-BeamFailureRecoveryConfig-001]
+                 RadioLinkMonitoringConfig (failureDetectionResourcesToAddModList,
+                   beamFailureInstanceMaxCount {n1..n10},
+                   beamFailureDetectionTimer {pbfd1..pbfd10})
+                                       [38.331-asn1-RadioLinkMonitoringConfig-001]
+                 RadioLinkMonitoringRS (purpose ∈ {beamFailure, rlf, both})
+                                       [38.331-asn1-RadioLinkMonitoringRS-001]
+                 PRACH-ResourceDedicatedBFR / BFR-SSB-Resource / BFR-CSIRS-Resource
+                                       [38.331-asn1-PRACH-ResourceDedicatedBFR-001]
+                 RACH-ConfigGeneric (ra-ResponseWindow {sl1..sl80} baseline)
+                                       [38.331-asn1-RACH-ConfigGeneric-001]
+  TS 38.133 §8.5.2.4 — TEvaluate_BFD_SSB_Relax / Qout_LR_SSB, FR1/FR2, N=8
+                                       [38.133-8.5.2.4-001]
+  TS 38.521-4 / RAN5 conformance back-link
+    R5-204985 (RAN5, "normative reference … TS 38.133 [6] clause A.4.5.5.1")
+       ↓ later-release derivatives (re-uses the same RRC IE / 38.321 procedure)
+[Rel-16 SCell BFR extension — RAN2 contribution layer]
+  RAN2 contribution
+    R2-1900212 (RAN2, SCell BFR via MAC-CE-driven branch, release=Rel-16)
+         ↓ incorporated as IE extension group / response-window extension
+  TS 38.331 RACH-ConfigGeneric Rel-16 add-on: ra-ResponseWindow-v1610 {sl60, sl160}
+                                       [38.331-asn1-RACH-ConfigGeneric-001]
+  TS 38.331 BeamFailureRecoveryConfig Rel-16 group: spCell-BFR-CBRA-r16,
+            ra-PrioritizationTwoStep-r16, candidateBeamRSListExt-v1610
+                                       [38.331-asn1-BeamFailureRecoveryConfig-001]
+  TS 38.213 §6 SCell BFR + recoverySearchSpaceId branch
+                                       [38.213-6-002 / -004]
+[Rel-17 multi-BFD-set — IE-level extension]
+  TS 38.331 RadioLinkMonitoringConfig Rel-17 hook:
+            beamFailure-r17 BeamFailureDetection-r17
+                                       [38.331-asn1-RadioLinkMonitoringConfig-001]
+  TS 38.331 BeamFailureDetectionSet-r17 (per-BFD-RS-set config:
+            beamFailureInstanceMaxCount-r17 {n1..n10},
+            beamFailureDetectionTimer-r17 {pbfd1..pbfd10},
+            bfdResourcesToAddModList-r17)
+                                       [38.331-asn1-BeamFailureDetectionSet-r17-001]
+  TS 38.331 RACH-ConfigGeneric Rel-17 add-on: ra-ResponseWindow-v1700
+            {sl240, sl320, sl640, sl960, sl1280, sl1920, sl2560}
+                                       [38.331-asn1-RACH-ConfigGeneric-001]
+  TS 38.213 §6 dual-set activation via failureDetectionSet1 / failureDetectionSet2
+            (MAC-CE-activated)         [38.213-6-001]
+  TS 38.133 RAN4 RRM evaluation-period variants:
+            §8.5B.2.2 (RedCap, FR1/FR2, N=8)   [38.133-8.5B.2.2-001]
+            §8.5C.2.2 (FR1-NTN)                [38.133-8.5C.2.2-001]
+            §8.5D.2.2 (ATG, FR1)               [38.133-8.5D.2.2-001]
+            §8.5D.3.2 (CSI-RS, FR1)            [38.133-8.5D.3.2-001]
+[Rel-18 SCell-deactivated extension — RAN2 contribution layer]
+  RAN2 contribution
+    R2-2301761 (RAN2, BFR for SCell-deactivated state, release=Rel-18)
+         (CR / IE-level chunks for this evolution are not present in the indexed dataset)
+[Rel-19 marker — IE-level only, no TDoc in this index]
+  TS 38.331 BeamFailureRecoveryConfig Rel-19 group: ra-OccasionType-r19 {sbfd}
+                                       [38.331-asn1-BeamFailureRecoveryConfig-001]
+```
+
+### 11.2 Lifecycle Audit Table
+
+| Release | RAN1 contribution | RAN2 contribution | Spec body change | RAN4 RRM (38.133) | RAN5 conformance (38.533) | CR-level |
+|---|---|---|---|---|---|---|
+| Rel-15 (introduction) | R1-1707606, R1-1713597 ✓ | R2-1803196 ✓ | 38.213 §6 [38.213-6-001] ✓; 38.321 §5.17 [38.321-5.17-001] ✓; 38.331 baseline IEs [BeamFailureRecoveryConfig-001 / RadioLinkMonitoringConfig-001 / RadioLinkMonitoringRS-001 / PRACH-ResourceDedicatedBFR-001 / RACH-ConfigGeneric-001] ✓ | §8.5.2.4 [38.133-8.5.2.4-001] ✓ | R5-204985 normative back-link ✓ (chunk bodies not loaded for 38.533) | not loaded |
+| Rel-16 (SCell BFR) | n/a in this index | R2-1900212 ✓ | 38.331 BeamFailureRecoveryConfig Rel-16 group (`spCell-BFR-CBRA-r16`, `ra-PrioritizationTwoStep-r16`, `candidateBeamRSListExt-v1610`) ✓; RACH-ConfigGeneric `ra-ResponseWindow-v1610 {sl60, sl160}` ✓; 38.213 §6 SCell BFR + `recoverySearchSpaceId` [38.213-6-002 / -004] ✓ | not specifically loaded as a Rel-16 §8.5.x clause | n/a in this index | not loaded |
+| Rel-17 (multi-BFD-set) | n/a in this index | n/a in this index | 38.331 `BeamFailureDetectionSet-r17` [-BeamFailureDetectionSet-r17-001] ✓; RadioLinkMonitoringConfig Rel-17 hook (`beamFailure-r17`) ✓; RACH-ConfigGeneric `ra-ResponseWindow-v1700 {sl240..sl2560}` ✓; 38.213 §6 dual-set activation (`failureDetectionSet1` / `failureDetectionSet2`) ✓ | §8.5B.2.2 (RedCap) ✓; §8.5C.2.2 (FR1-NTN) ✓; §8.5D.2.2 (ATG) ✓; §8.5D.3.2 (CSI-RS) ✓ | n/a in this index | not loaded |
+| Rel-18 (SCell-deactivated) | n/a in this index | R2-2301761 ✓ | (CR-level chunks for this evolution are not present in the indexed dataset) | not specifically loaded | n/a in this index | not loaded |
+| Rel-19 (marker only) | n/a in this index | n/a in this index | 38.331 BeamFailureRecoveryConfig Rel-19 group (`ra-OccasionType-r19 {sbfd}`) ✓ | n/a in this index | n/a in this index | not loaded |
+
+### 11.3 Bidirectional Traversal
+
+This lifecycle chain is reproducible in **both** directions over the SPECTRA KG / index:
+
+- **Forward** (Contribution → Spec): start from R1-1707606 / R1-1713597 (Rel-15 RAN1 candidate L1 mechanism set + L1-RSRP adoption) → traverse the RAN2 reference R2-1803196 (`release=Rel-15`) into 38.321 §5.17 → traverse the procedural-parameter list into 38.331 (BeamFailureRecoveryConfig / RadioLinkMonitoringConfig / RadioLinkMonitoringRS / PRACH-ResourceDedicatedBFR / RACH-ConfigGeneric) → traverse the PHY-threshold delegation into 38.213 §6 → traverse the quantitative delegation into 38.133 §8.5.2.4 → traverse the RAN5 normative back-link into 38.533 (R5-204985). Subsequent release axes are obtained by filtering on `release=Rel-16` (SCell BFR via R2-1900212 → IE Rel-16 extension groups) and on `release=Rel-18` (R2-2301761), and by enumerating the IE-level Rel-17 / Rel-19 extension blocks (`BeamFailureDetectionSet-r17`, `ra-ResponseWindow-v1700`, `ra-OccasionType-r19`) directly from the cited 38.331 chunks.
+- **Backward** (Spec → Contribution): start from `[38.331-asn1-BeamFailureDetectionSet-r17-001]` → recover the per-BFD-RS-set parameter naming and trace back through 38.213 §6's `failureDetectionSet1` / `failureDetectionSet2` activation [38.213-6-001] → search RAN2 contributions with `release=Rel-15` and BFR keyword to recover R2-1803196 as the original procedure-reference TDoc, and `release=Rel-16` for R2-1900212 (SCell BFR introduction). The same backward path from `[38.331-asn1-BeamFailureRecoveryConfig-001]` through `release=Rel-15` RAN1 contributions recovers R1-1707606 / R1-1713597 as the L1-RSRP candidate-beam-metric origin.
+
+The forward direction is shipped as the §1 / §7 motivation narrative. The backward direction is what enables a standards engineer to ask "given clause `BeamFailureDetectionSet-r17`, what was its original RAN2 procedural justification?" and obtain R2-1803196 (Rel-15 reference into 38.321 §5.17) plus R2-1900212 (Rel-16 SCell BFR extension) as the precursor evidence.
+
+### 11.4 What this trace does NOT contain
+
+- **Direct CR chunks**: no BFD/BFR CR is cited; the CR routing collection was not queried for this question. The Rel-15 contribution → Rel-16 SCell BFR → Rel-17 multi-BFD-set → Rel-18 SCell-deactivated chain is reconstructed from textual alignment between RAN1/RAN2 `type=discussion` TDocs and the cited 38.213 / 38.321 / 38.331 spec bodies, not from CR numbers directly.
+- **Plenary RP-* WID body**: the formal Rel-15 BFR work-item description / WID is not present as a `type=WID` chunk in this dataset; the introduction context is reconstructed from `type=discussion` documents (R1-1707606, R1-1713597, R2-1803196) only — see §9.3.
+- **Rel-17 RAN1 / RAN2 contribution layer**: the IE-level Rel-17 multi-BFD-set extension (`BeamFailureDetectionSet-r17`, `ra-ResponseWindow-v1700`) is attested in the 38.331 spec body, but no `R1-*` / `R2-*` TDoc with `release=Rel-17` for the multi-BFD-set discussion is present in the indexed Q3 retrieval scope. The Rel-17 row of §11.2 is therefore an IE-level entry rather than a contribution-traceable entry.
+- **Rel-19+ updates**: the indexed dataset for this question reaches RAN1 / RAN2 contributions up to the Rel-15 / Rel-16 / Rel-18 era. Rel-19 is attested only at the IE level (`ra-OccasionType-r19 {sbfd}` in `BeamFailureRecoveryConfig`); any Rel-19+ BFR enhancements (e.g., subsequent SCell-deactivated revisions, additional BFD-RS sets, sBFD-related BFR refinements) are **not currently traced** at the TDoc / contribution layer.
+- **38.533 chunk text bodies**: only `sectionTitle` is indexed for the RAN5 spec — the full conformance-test bodies for §10.3.4 / §11.4.4 / §16.7.4 are absent (only catalogued at section-title level; only RAN4 RRM 38.133 chunk bodies were retrieved as quantitative evidence, and the RAN5 cross-link is asserted only via the back-link in `R5-204985`).
+
+---
+
+## 12. Summary
 
 The NR Beam Failure Detection / Beam Failure Recovery procedure is captured end-to-end across the 3GPP RAN spec stack as follows:
 
