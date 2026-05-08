@@ -3,7 +3,7 @@
 ## Evaluation Metadata
 
 - Evaluation date: 2026-04-29
-- Initial answer: `docs/usecase/answers/tracer/q3_beam_failure_recovery.md` (323 lines)
+- Initial answer: `docs/usecase/answers/SPECTRA RAG/q3_beam_failure_recovery.md` (323 lines)
 - Retrieval log: `logs/cross-phase/usecase/q3_retrieval_log.json` (TS 27 queries / 270 hits, TDoc 12 queries / 120 hits, Cypher 4 entries)
 - Evaluation method: every fact-claim in the initial answer is verified along three axes — (a) existence in the retrieval log, (b) agreement with authoritative sources, (c) whether items the answer flagged as "preview cutoff, not retrieved" were filled in from training knowledge
 - Authoritative web sources used:

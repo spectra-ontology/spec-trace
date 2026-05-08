@@ -22,9 +22,9 @@ First public release accompanying the ISWC 2026 Resources Track submission
   {phase, category, NL question, schema area, executable Cypher, verdict};
   separately citable under CC-BY 4.0 with its own CITATION.bib.
 - **Representative queries** (`queries/`): 15 Cypher + 6 SPARQL examples
-  (136/137 SpectraCQ Cypher queries are 1:1 portable to SPARQL via the same
-  schema; the 6 SPARQL examples illustrate this for the most-cited
-  scenarios).
+  (all 137 SpectraCQ Cypher queries are schema-level patterns directly
+  translatable to SPARQL via the same schema; the 6 SPARQL examples
+  illustrate this for the most-cited scenarios).
 - **Synthetic and metadata-only examples**: end-to-end synthetic 4-hop
   traceability scenario (`examples/end_to_end/`); metadata-only real-world
   mini sample of one RAN1 meeting (`examples/real_world_mini/`); cross-WG

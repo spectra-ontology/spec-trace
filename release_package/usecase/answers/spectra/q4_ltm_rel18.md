@@ -11,7 +11,7 @@
 |---|---|
 | Question | Standards-item summary of Rel-18 LTM (38.300/331/321/214/133/306) + Rel-19/20 extensions + cross-document linkages |
 | Embedding model | `openai/text-embedding-3-small` (OpenRouter) |
-| Qdrant collections | `ran1_ts_sections`, `ran2_ts_sections`, `ran4_ts_sections`, `ran1_tdoc_chunks`, `ran2_tdoc_chunks`, `ran4_tdoc_chunks`, `ran1_cr_chunks`, `ran2_cr_chunks` |
+| Qdrant collections | `the section-level collection`, `the section-level collection`, `the section-level collection`, `the TDoc collection`, `the TDoc collection`, `the TDoc collection`, `ran1_cr_chunks`, `ran2_cr_chunks` |
 | Neo4j | RAN1=7687, RAN2=7688, RAN4=7690 |
 | Query count | TS 33 + TDoc 27 + Cypher 3 = **63** |
 | Hits | TS 330, TDoc 270, Cypher rows 102 (44+2+56) |
@@ -25,12 +25,12 @@
 
 | Collection | Queries | Hits |
 |---|---:|---:|
-| ran2_ts_sections (38.300/331/321/306) | 22 | 220 |
-| ran1_ts_sections (38.214) | 6 | 60 |
-| ran4_ts_sections (38.133) | 5 | 50 |
-| ran2_tdoc_chunks | 15 | 150 |
-| ran1_tdoc_chunks | 4 | 40 |
-| ran4_tdoc_chunks | 3 | 30 |
+| the section-level collection (38.300/331/321/306) | 22 | 220 |
+| the section-level collection (38.214) | 6 | 60 |
+| the section-level collection (38.133) | 5 | 50 |
+| the TDoc collection | 15 | 150 |
+| the TDoc collection | 4 | 40 |
+| the TDoc collection | 3 | 30 |
 | ran2_cr_chunks | 3 | 30 |
 | ran1_cr_chunks | 2 | 20 |
 | **Total** | **60** | **600** |
@@ -261,96 +261,3 @@ Using SPECTRA RAG search results alone, **the core clauses, IEs, MAC CEs, delay 
 
 ---
 
-## §11. Comparison of P2 + ASN.1 Collection Effects (latest reinforcement, 2026-04-29)
-
-> The earlier answer (2026-04-29 morning, P1 applied) annotated the 38.331 LTM IE bodies only via Neo4j-node catalog (IE names). The latest version (2026-04-29 afternoon, P2 applied + new `ran2_ts_asn1_chunks`) cites the ASN.1 IE bodies (SEQUENCE definitions) directly.
-
-### 11.1 Earlier vs latest retrieval effects (8 queries)
-
-| Query | Earlier retrieval | Latest retrieval | Notes |
-|---|---|---|---|
-| LTM-Config IE candidate cell list | §5.3.5.18.1 procedure (score 0.61) | **`LTM-Config-r18` IE SEQUENCE body** [chunkId=38.331-asn1-LTM-Config-r18-001, 0.6785] | ASN.1 body directly |
-| LTM-Candidate IE PCI SSB Config TA | §5.3.5.18.3 procedure (0.63) | **`LTM-Candidate-r18` IE body** [LTM-Candidate-r18-001, 0.6161] | 7 fields exposed |
-| LTM-CSI-ReportConfig | §5.5.1 false positive (0.56) | **`LTM-CSI-ReportConfig-r18` IE body** [0.6601] | ltm-ReportConfigType CHOICE exposed |
-| LTM Cell Switch Command MAC CE | §5.18.35 / §6.1.3.75 (0.71/0.68) | §5.18.35 / §6.1.3.75 (**0.7443/0.7294**) | main collection +0.04 |
-| D_LTM cell switch delay 38.133 | §6.3.1.2 (0.69) | §6.3.1.2 (**0.7808**) | highest score |
-| 38.214 LTM L1-RSRP measurement | §5.2.4a (0.62) | §5.2.4a (**0.6749**) | +0.05 |
-| 38.306 LTM capability | locations only (§5.4/§5.6) | §4.2.7.2 BandNR partial (0.55) | direct feature-group match still limited |
-
-### 11.2 IE bodies newly citable in the latest (ASN.1 collection)
-
-#### LTM-Config-r18 SEQUENCE [chunkId=38.331-asn1-LTM-Config-r18-001, 1,168 chars]
-```
-LTM-Config-r18 ::= SEQUENCE {
-    ltm-ReferenceConfiguration-r18  SetupRelease {ReferenceConfiguration-r18}  OPTIONAL,  -- Need M
-    ltm-CandidateToReleaseList-r18  SEQUENCE (SIZE (1..maxNrofLTM-Configs-r18)) OF LTM-CandidateId-r18  OPTIONAL,  -- Need N
-    ltm-CandidateToAddModList-r18   SEQUENCE (SIZE (1..maxNrofLTM-Configs-r18)) OF LTM-Candidate-r18  OPTIONAL,  -- Need N
-    ltm-ServingCellNoResetID-r18    INTEGER (1..maxNrofLTM-Configs-plus1-r18)  OPTIONAL,  -- Need N
-    ltm-CSI-ResourceConfigToAddModList-r18  SEQUENCE (...) OF LTM-CSI-ResourceConfig-r18  OPTIONAL,  -- Need N
-    ltm-CSI-ResourceConfigToReleaseList-r18  SEQUENCE (...) OF LTM-CSI-ResourceConfigId-r18  OPTIONAL,  -- Need N
-    attemptLTM-Switch-r18  ENUMERATED {true}  OPTIONAL,  -- Cond LTM-MCG
-    ltm-ServingCellUE-MeasuredTA-ID-r18  INTEGER (1..maxNrofLTM-Configs-plus1-r18)  OPTIONAL,  -- Need N
-    ...,
-    [[ ltm-ServingCellNoSecurityChangeID-r19  LTM-NoSecurityChangeId-r19  OPTIONAL,  -- Need N
-       ltm-ServingCellExecutionCondition-r19  SetupRelease {LTM-ExecutionConditionList-r19}  OPTIONAL ]]
-}
-```
-
-#### LTM-Candidate-r18 SEQUENCE [chunkId=38.331-asn1-LTM-Candidate-r18-001, 2,154 chars]
-```
-LTM-Candidate-r18 ::= SEQUENCE {
-    ltm-CandidateId-r18              LTM-CandidateId-r18,
-    ltm-CandidatePCI-r18             PhysCellId  OPTIONAL,  -- Need M
-    ltm-SSB-Config-r18               LTM-SSB-Config-r18  OPTIONAL,  -- Need M
-    ltm-CandidateConfig-r18          OCTET STRING (CONTAINING RRCReconfiguration)  OPTIONAL,
-    ltm-ConfigComplete-r18           ENUMERATED {true}  OPTIONAL,  -- Need R
-    ltm-EarlyUL-SyncConfig-r18       OCTET STRING (CONTAINING ...) OPTIONAL,
-    ...
-}
-```
-
-#### LTM-CSI-ReportConfig-r18 SEQUENCE [chunkId=38.331-asn1-LTM-CSI-ReportConfig-r18-001, 2,756 chars]
-```
-LTM-CSI-ReportConfig-r18 ::= SEQUENCE {
-    ltm-CSI-ReportConfigId-r18              LTM-CSI-ReportConfigId-r18,
-    ltm-ResourcesForChannelMeasurement-r18  LTM-CSI-ResourceConfigId-r18,
-    ltm-ReportConfigType-r18  CHOICE {
-        periodic-r18  SEQUENCE {
-            reportSlotConfig-r18    CSI-ReportPeriodicityAndOffset,
-            pucch-CSI-ResourceList-r18  SEQUENCE (SIZE (1..maxNrofBWPs)) OF PUCCH-CSI-Resource
-        },
-        semiPersistentOnPUCCH-r18  SEQUENCE { ... },
-        eventTriggered-r18  SEQUENCE { ... }
-    },
-    ...
-}
-```
-
-#### LTM-ConfigNRDC-r19, LTM-CandidateReportConfig-r19, SK-CounterConfigLTM-r19, VarLTM-*, plus 17 more IEs
-Earlier exposed only by catalog (names) → now retrievable as full SEQUENCE bodies. All 22 LTM IEs are loaded in the dedicated `ran2_ts_asn1_chunks` collection.
-
-### 11.3 Earlier weaknesses resolved in the latest
-
-| Earlier weakness | Latest resolution |
-|---|---|
-| LTM-Config IE body not directly citable (only Neo4j node names) | ✅ ASN.1 collection retrieves the SEQUENCE body directly (LTM-Config-r18, 1,168 chars verbatim) |
-| LTM-Candidate IE 7-field body not retrieved | ✅ LTM-Candidate-r18 SEQUENCE body (PCI / SSB / Config / EarlyUL-Sync, etc.) |
-| LTM-CSI-ReportConfig CHOICE structure not retrieved | ✅ periodic / semiPersistent / eventTriggered CHOICE body |
-| 4 chunkIndex `-001` blanket-notation errors | ✅ exact chunkIndex recorded in the latest retrieval log |
-
-### 11.4 Limitations remaining in the latest
-
-| Limitation | Reason |
-|---|---|
-| 38.306 LTM detailed feature-group rows (e.g. `ltm-r18` capability bit) body | 38.306 capability table rows are not separately chunked (same as earlier reports). Follow-up P3 work needed. |
-| Rel-20 LTM spec-body changes | Data-timeline reason (Stage-2 freeze 2026-09 / Stage-3 freeze 2027-03 are still ahead) — legitimate non-answer (D, time-resolved) |
-| Direct citation of RP-WID (Plenary RP-TDocs) bodies | RP-* dedicated collection not loaded — follow-up P2.x recommended |
-
-### 11.5 Updated answer-feasibility assessment
-
-- **Rel-18 LTM**: 6 spec core clauses + **38.331 LTM-Config / LTM-Candidate / LTM-CSI-ReportConfig SEQUENCE bodies** directly citable (estimated coverage earlier 70% → latest 90%)
-- **Rel-19**: inter-CU LTM, CLTM, event-trig L1 + ASN.1 LTM-ConfigNRDC-r19 / LTM-CandidateReportConfig-r19 IE bodies citable directly (earlier medium-high → latest high)
-- **Rel-20**: discussion stage only, no spec body found (unchanged from earlier, legitimate non-answer)
-- Row-level direct citation of 38.306 capabilities remains in the follow-up P3 area
-
-**References**: `docs/usecase/evaluations/3way/p1_poc_results.md`, `final_application_report.md` §4 (P2 results), `q4_ltm_rel18.v1.md` (P1 backup)

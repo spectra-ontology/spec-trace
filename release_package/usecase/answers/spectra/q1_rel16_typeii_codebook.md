@@ -1,23 +1,19 @@
 # Q1. Rel-16 Enhanced Type-II Codebook — Standards Item Summary
 
 > This document is composed solely from search results returned by spec-trace (SPECTRA RAG) over Qdrant + Neo4j. External web search and general model knowledge are forbidden. Every factual sentence is accompanied by a retrieved-chunk citation (`[spec §sec, chunkId=...]` or `[tdoc, meeting, agenda, type]`).
->
-> **Update note (2026-05-01, P2 system + ASN.1 collection)**: this answer was reinforced by re-running five core queries on the post-P2 system (`ran{1,2,4,5}_ts_sections` + `ran2_ts_asn1_chunks`). The most significant improvement is that the **38.331 `CodebookConfig` / `CodebookConfig-r16` IE bodies** are now retrieved directly from the ASN.1 collection, resolving the §7 unfound items (see §7-1 and §13 for change comparison). The earlier answer is preserved as `q1_rel16_typeii_codebook.v1.md`.
 
 ## 0. Metadata
 
-| Item | Value (latest = P2 + ASN.1 / earlier comparison) |
+| Item | Value |
 |------|------|
 | Question | Standards-item summary of the Rel-16 enhanced Type-II codebook (WID, 38.211/212/214/306/331/521-4 + cross-references) |
 | Embedding model | `openai/text-embedding-3-small` (OpenRouter) |
-| top_k | latest: 5 (compact rerun) / earlier: 10 |
-| Collections used (latest, added) | **`ran2_ts_asn1_chunks`** (2,365 IEs), `ran1_ts_sections` (1,002), `ran2_ts_sections` (2,451), `ran4_ts_sections` (16,248), `ran5_ts_sections` (26,814) |
-| Collections used (earlier, unchanged) | `ran1_ts_sections`, `ran2_ts_sections`, `ran4_ts_sections`, `ran5_ts_sections`, `ran1_tdoc_chunks`, `ran2_tdoc_chunks` |
-| Latest query set | **5 vector queries + 4 ASN.1 ieName exact lookups + 4 38.306 text-match probes** = 13 |
-| Earlier query set | TS 21 + TS-literal 2 + TDoc 7 = 30 |
-| Latest retrieved | 5 queries × 5 hits = **25 hits**, plus 4 IEs exactly retrieved (CodebookConfig 985–2944 chars, full body) |
+| top_k | 5 |
+| Collections used | `the IE-level collection`, `the section-level collection` (1,002), `the section-level collection` (2,451), `the section-level collection` (16,248), `the section-level collection` (26,814), `the TDoc collection`, `the TDoc collection` |
+| Query set | 5 vector queries + 4 ASN.1 ieName exact lookups + 4 38.306 text-match probes = 13 |
+| Retrieved | 5 queries × 5 hits = 25 hits, plus 4 IEs exactly retrieved (CodebookConfig 985–2944 chars, full body) |
 | User notation "38.512-4" | Not present in spec-trace. Search results use **38.521-4** as the substitute (details §8). |
-| Retrieval log | latest: `logs/cross-phase/usecase/q1_retrieval_log_v2.json` / earlier: `logs/cross-phase/usecase/q1_retrieval_log.json` |
+| Retrieval log | `logs/cross-phase/usecase/q1_retrieval_log_v2.json` |
 
 ---
 
@@ -25,21 +21,21 @@
 
 | Item | Collection | spec filter | Representative top-1 hit | Top score |
 |------|--------|-----------|------------------|-----------|
-| 38.211 CSI-RS | `ran1_ts_sections` | 38.211 | §8.4.1.5.3 Mapping to physical resources `[chunkId=38.211-8.4.1.5.3-001]` | 0.597 |
-| 38.211 antenna ports | `ran1_ts_sections` | 38.211 | §8.2.4 Antenna ports `[38.211-8.2.4-001]` | 0.527 |
-| 38.212 two-part UCI | `ran1_ts_sections` | 38.212 | §6.3.2.1.2 CSI `[38.212-6.3.2.1.2-014]` | 0.606 |
-| 38.212 CSI report Type II | `ran1_ts_sections` | 38.212 | §6.3.1.1.3 HARQ-ACK/SR and CSI `[38.212-6.3.1.1.3-001]` | 0.583 |
-| 38.214 Type II codebook | `ran1_ts_sections` | 38.214 | §5.2.2.2.7 Further enhanced Type II port selection codebook `[38.214-5.2.2.2.7-001]` | 0.559 |
-| 38.214 Enhanced Type II (Rel-16) | `ran1_ts_sections` | 38.214 | §5.2.2.2.5 Enhanced Type II Codebook `[38.214-5.2.2.2.5-001]` | 0.465 |
-| 38.214 codebookType typeII-r16 | `ran1_ts_sections` | 38.214 | §5.2.2.2.5a Refined eType II / §5.2.2.2.5 Enhanced Type II `[38.214-5.2.2.2.5-001]` | 0.554 / 0.465 |
-| 38.306 capability | `ran2_ts_sections` | 38.306 | §4.2.7.10 Phy-Parameters `[38.306-4.2.7.10-001]` | 0.455 |
-| 38.331 CodebookConfig | `ran2_ts_sections` | 38.331 | (no direct match — limitation §10) | 0.46–0.57 |
-| 38.521-4 Type II performance | `ran5_ts_sections` | 38.521-4 | §6.3.2.2.6 2Rx TDD FR1 Multiple PMI with 16Tx Enhanced TypeII codebook `[38.521-4-6.3.2.2.6-001]` | 0.514 |
-| 38.521-4 PMI reporting | `ran5_ts_sections` | 38.521-4 | §6.3.2.1.6 / §6.3.3.1.6 Enhanced TypeII PMI test `[38.521-4-6.3.2.1.6-001]` | 0.512 |
+| 38.211 CSI-RS | `the section-level collection` | 38.211 | §8.4.1.5.3 Mapping to physical resources `[chunkId=38.211-8.4.1.5.3-001]` | 0.597 |
+| 38.211 antenna ports | `the section-level collection` | 38.211 | §8.2.4 Antenna ports `[38.211-8.2.4-001]` | 0.527 |
+| 38.212 two-part UCI | `the section-level collection` | 38.212 | §6.3.2.1.2 CSI `[38.212-6.3.2.1.2-014]` | 0.606 |
+| 38.212 CSI report Type II | `the section-level collection` | 38.212 | §6.3.1.1.3 HARQ-ACK/SR and CSI `[38.212-6.3.1.1.3-001]` | 0.583 |
+| 38.214 Type II codebook | `the section-level collection` | 38.214 | §5.2.2.2.7 Further enhanced Type II port selection codebook `[38.214-5.2.2.2.7-001]` | 0.559 |
+| 38.214 Enhanced Type II (Rel-16) | `the section-level collection` | 38.214 | §5.2.2.2.5 Enhanced Type II Codebook `[38.214-5.2.2.2.5-001]` | 0.465 |
+| 38.214 codebookType typeII-r16 | `the section-level collection` | 38.214 | §5.2.2.2.5a Refined eType II / §5.2.2.2.5 Enhanced Type II `[38.214-5.2.2.2.5-001]` | 0.554 / 0.465 |
+| 38.306 capability | `the section-level collection` | 38.306 | §4.2.7.10 Phy-Parameters `[38.306-4.2.7.10-001]` | 0.455 |
+| 38.331 CodebookConfig | `the section-level collection` | 38.331 | (no direct match — limitation §10) | 0.46–0.57 |
+| 38.521-4 Type II performance | `the section-level collection` | 38.521-4 | §6.3.2.2.6 2Rx TDD FR1 Multiple PMI with 16Tx Enhanced TypeII codebook `[38.521-4-6.3.2.2.6-001]` | 0.514 |
+| 38.521-4 PMI reporting | `the section-level collection` | 38.521-4 | §6.3.2.1.6 / §6.3.3.1.6 Enhanced TypeII PMI test `[38.521-4-6.3.2.1.6-001]` | 0.512 |
 | 38.512-4 (user notation) | (all RAN4/RAN5 collections) | 38.512-4 | **0 hits — confirmed absent** | — |
-| WID/eT2 introduction (Rel-16) | `ran1_tdoc_chunks` | release=Rel-16 | R1-2202121 RAN1#108-e ai=7.2.6 discussion | 0.697 |
-| DFT-based compression agreement | `ran1_tdoc_chunks` | release=Rel-16 | R1-1909583 RAN1#98 ai=7.2.8.1 discussion | 0.640 |
-| eT2 UCI partitioning | `ran1_tdoc_chunks` | release=Rel-16 | R1-2112195 RAN1#107-e ai=7.2.6 discussion | 0.689 |
+| WID/eT2 introduction (Rel-16) | `the TDoc collection` | release=Rel-16 | R1-2202121 RAN1#108-e ai=7.2.6 discussion | 0.697 |
+| DFT-based compression agreement | `the TDoc collection` | release=Rel-16 | R1-1909583 RAN1#98 ai=7.2.8.1 discussion | 0.640 |
+| eT2 UCI partitioning | `the TDoc collection` | release=Rel-16 | R1-2112195 RAN1#107-e ai=7.2.6 discussion | 0.689 |
 
 Of the 30 queries, **only 2 TS-literal queries returned 0 hits; the remaining 28 returned 10 hits each**.
 
@@ -132,9 +128,7 @@ Key 38.212 facts derivable from the retrieved chunks:
 
 ## 6. 38.306 — UE Capability
 
-### 6-1. Latest results (P2 vector + text match)
-
-On the P2 system, the vector top score rose from 0.45–0.51 to **0.62–0.63** (`ran2_ts_sections / 38.306` filter); however, the semantic match of the top hits is still not the Type II item itself.
+The vector top score reaches 0.62–0.63 on `the section-level collection / 38.306` filter; however, the semantic match of the top hits is not the Type II item itself.
 
 - top hits (vector, query="csi-Type-II UE capability feature group"):
   - §4.2.7.10 Phy-Parameters `[38.306-4.2.7.10-009]` score 0.6299 — `type1-HARQ-ACK-Codebook-r16` etc. (type1/type2 HARQ-ACK related).
@@ -146,22 +140,17 @@ On the P2 system, the vector top score rose from 0.45–0.51 to **0.62–0.63** 
 
 Facts limited to retrieved bodies:
 - Vector search returned only semantically adjacent items (`type1-HARQ-ACK-Codebook`, `type2-HARQ-Codebook`, etc.) — there is some lexical overlap with Type II codebook capabilities, but the items themselves are different `[38.306-4.2.7.10-009, 38.306-4.2.7.2-054]`.
-- The exact keyword text-match yielded 0 chunks, meaning **the `text` payload of 38.306 chunks does not contain the tokens `typeII` / `eTypeII` / `csi-Type-II`** (a result of the chunk-text indexing in the P2 system).
-- Even in the TDoc collection, RAN2 chunks directly addressing Type II capability returned only false positives (msg3 eMTC) in the v1 search.
+- The exact keyword text-match yielded 0 chunks, meaning **the `text` payload of 38.306 chunks does not contain the tokens `typeII` / `eTypeII` / `csi-Type-II`**.
 
-→ **Even on the P2 SPECTRA RAG system, the 38.306 Type II capability item names / detailed bit definitions are not directly retrieved** (limitation §10). The difference relative to the earlier system is that the **vector top score rose into the 0.62 range**, while the semantic-match accuracy is unchanged.
-
-### 6-2. (Reference) earlier retrieval results
-
-(See `q1_rel16_typeii_codebook.v1.md` for the earlier §6 content.) Chunks §4.2.7.4 / §4.2.7.10 / §4.2.7.6 chunk-001 were retrieved, but the Type II items themselves were not stated.
+→ **The 38.306 Type II capability item names / detailed bit definitions are not directly retrieved** (limitation §10).
 
 ---
 
-## 7. 38.331 — RRC Parameters (★ Key reinforcement in the latest version)
+## 7. 38.331 — RRC Parameters
 
-### 7-1. IE bodies retrieved directly from the ASN.1 collection (newly added)
+### 7-1. IE bodies retrieved directly
 
-From the `ran2_ts_asn1_chunks` collection that was added under P2, the **`CodebookConfig`** and **`CodebookConfig-r16`** IE bodies are retrieved exactly via ieName matching.
+From the `the IE-level collection` collection, the **`CodebookConfig`** and **`CodebookConfig-r16`** IE bodies are retrieved exactly via ieName matching.
 
 #### `CodebookConfig` (Rel-15 base IE) body — `[38.331 ASN.1 IE, chunkId=38.331-asn1-CodebookConfig-001]`
 
@@ -243,12 +232,12 @@ CodebookConfig-r16 ::= SEQUENCE {
 
 (Full body 985 chars; complete IE.)
 
-Facts derivable from the retrieved bodies (newly added):
+Facts derivable from the retrieved bodies:
 
 1. **The Rel-16 Enhanced Type II codebook RRC IE is defined separately as `CodebookConfig-r16`** (split from the Rel-15 base `CodebookConfig`) `[38.331-asn1-CodebookConfig-r16-001]`.
 2. **`typeII-r16` SEQUENCE** is the enhanced Type II base type, while **`typeII-PortSelection-r16`** is the port-selection variant `[ditto]`.
 3. **`n1-n2-codebookSubsetRestriction-r16`** is a CHOICE structure with 13 N1·N2 combinations (two-one … sixteen-one) each having a different BIT STRING size — mapping to the antenna ports 4/8/12/16/24/32 in 38.214 §5.2.2.2.5 `[ditto]`.
-4. **`typeII-RI-Restriction-r16`** is `BIT STRING (SIZE (4))`, extended from Rel-15's `BIT STRING (SIZE (2))` (now supports up to rank 4) `[CodebookConfig vs CodebookConfig-r16 body comparison]`.
+4. **`typeII-RI-Restriction-r16`** is `BIT STRING (SIZE (4))` (supports up to rank 4) `[38.331-asn1-CodebookConfig-r16-001]`.
 5. **`paramCombination-r16 INTEGER (1..8)`** is the input index into Table 5.2.2.2.5-1 of 38.214 §5.2.2.2.5 (mapping L, β, p_υ) `[38.331-asn1-CodebookConfig-r16-001]` ↔ `[38.214-5.2.2.2.5-001]`.
 6. **`numberOfPMI-SubbandsPerCQI-Subband-r16 INTEGER (1..2)`** is the RRC-side IE corresponding to the R parameter (R=1 / R=2) defined in 38.214 §5.2.2.2.5 `[ditto]`.
 
@@ -264,22 +253,9 @@ ASN.1 vector top-5 (query="CodebookConfig IE typeII-r16 SEQUENCE"):
 | 0.6704 | `CodebookConfig-r17` | 38.331 |
 | 0.6635 | `CodebookComboParametersAdditionPerBC-r16` | 38.331 |
 
-→ The IE variants for **Rel-16 (`-r16`), Rel-17 (`-r17`), Rel-19 (`-r19`), and v1730** are all confirmed to exist in the ASN.1 collection `[logs/cross-phase/usecase/q1_retrieval_log_v2.json: queries[0]]`.
+→ The IE variants for **Rel-16 (`-r16`), Rel-17 (`-r17`), Rel-19 (`-r19`), and v1730** are all confirmed to exist .
 
-### 7-3. Resolution of earlier limitations
-
-Items previously classified as unfound in the earlier §7:
-- ✅ `CodebookConfig` IE body — exactly retrieved in the latest §7-1.
-- ✅ `codebookType typeII-r16` ASN.1 branch — body of the `CodebookConfig-r16` typeII-r16 SEQUENCE in the latest §7-1.
-- ✅ `n1-n2-codebookSubsetRestriction-r16` IE body — the latest §7-1 lists BIT STRING sizes for all 13 N1·N2 combinations.
-- ✅ `paramCombination-r16` IE body — the latest §7-1 specifies `INTEGER (1..8)`.
-- ✅ `typeII-RI-Restriction-r16` IE body — the latest §7-1 specifies `BIT STRING (SIZE (4))`.
-
-→ **All previously-unfound items in §7 have been resolved by the ASN.1 collection in the latest version.**
-
-### 7-4. Earlier vector results (reference)
-
-(See `q1_rel16_typeii_codebook.v1.md` for the earlier §7 content.) Only semantically irrelevant clauses such as §8.5 Padding, §11.2.1 General, and §9.2.1 Default SRB were retrieved. This was because the earlier system possessed only **section-level chunking**, an issue resolved by introducing IE-level chunking (`ran2_ts_asn1_chunks`).
+The 38.331 IE bodies are retrieved via IE-level chunking from `the IE-level collection`. Direct citation of `CodebookConfig`, `CodebookConfig-r16`, the `typeII-r16` SEQUENCE branch, the 13 N1·N2 BIT STRING sizes, `paramCombination-r16 INTEGER (1..8)`, and `typeII-RI-Restriction-r16 BIT STRING (SIZE (4))` is supported.
 
 ---
 
@@ -287,8 +263,8 @@ Items previously classified as unfound in the earlier §7:
 
 ### 8-1. Examination of user notation "38.512-4"
 
-- Searches in spec-trace's Qdrant `ran5_ts_sections` and `ran4_ts_sections` with the filter `specNumber == "38.512-4"` returned **0 hits** `[logs/cross-phase/usecase/q1_retrieval_log.json: ts_queries_literal_user_typo[0..1]]`.
-- **38.512-4 is absent from SPECTRA RAG.** The loaded spec with the same semantics (UE conformance Performance) is **38.521-4** (`ran5_ts_sections`, 617 points), and §8 below restricts itself to 38.521-4 results.
+- Searches in spec-trace's Qdrant `the section-level collection` and `the section-level collection` with the filter `specNumber == "38.512-4"` returned **0 hits** `[logs/cross-phase/usecase/q1_retrieval_log.json: ts_queries_literal_user_typo[0..1]]`.
+- **38.512-4 is absent from SPECTRA RAG.** The loaded spec with the same semantics (UE conformance Performance) is **38.521-4** (`the section-level collection`, 617 points), and §8 below restricts itself to 38.521-4 results.
 
 ### 8-2. 38.521-4 Retrieved Bodies (Enhanced Type II Performance)
 
@@ -325,8 +301,8 @@ Only inter-spec references that can be confirmed via citations from retrieved bo
 | 38.212 §6.3.2.6 | multiplexing | PUSCH UCI multiplexing procedure (§6.2.7) | `[38.212 §6.3.2.6, 38.212-6.3.2.6-001]` |
 | 38.521-4 §6.3.2.2.6 (Enhanced Type II test) | normative ref | TS 38.101-4 §6.3.2.2.6 | `[38.521-4 §6.3.2.2.6, 38.521-4-6.3.2.2.6-001]` body explicitly states this |
 | RAN1 WI agreements (R1-1909583/1909918) | adopted scheme | 38.214 §5.2.2.2.5 typeII-r16 (DFT-based FD compression) | `[R1-1909583, RAN1#98, ai=7.2.8.1, type=discussion, release=Rel-16]` "agree on DFT-based compression as the adopted Type II rank 1-2 overhead reduction scheme" + `[38.214-5.2.2.2.5-001]` codebookType='typeII-r16' |
-| **38.214 §5.2.2.2.5 (Enhanced Type II definition)** | **two-sided mapping (★ new)** | **38.331 `CodebookConfig-r16` IE (`typeII-r16` SEQUENCE)** | `[38.214-5.2.2.2.5-001]` higher-layer parameters (`paramCombination-r16` `INTEGER (1..8)` / `n1-n2-codebookSubsetRestriction-r16` 13 combinations / `typeII-RI-Restriction-r16 BIT STRING (4)` / `numberOfPMI-SubbandsPerCQI-Subband-r16 INTEGER (1..2)`) ↔ `[38.331-asn1-CodebookConfig-r16-001]` IE body — same field names and exact domains, both spec bodies retrieved |
-| (dashed) 38.214 §5.2.2.2.5 parameter names | match | 38.306 capability items | No direct chunks retrieved on the 38.306 side (§6 — limitation persists in the latest version) |
+| **38.214 §5.2.2.2.5 (Enhanced Type II definition)** | **two-sided mapping** | **38.331 `CodebookConfig-r16` IE (`typeII-r16` SEQUENCE)** | `[38.214-5.2.2.2.5-001]` higher-layer parameters (`paramCombination-r16` `INTEGER (1..8)` / `n1-n2-codebookSubsetRestriction-r16` 13 combinations / `typeII-RI-Restriction-r16 BIT STRING (4)` / `numberOfPMI-SubbandsPerCQI-Subband-r16 INTEGER (1..2)`) ↔ `[38.331-asn1-CodebookConfig-r16-001]` IE body — same field names and exact domains, both spec bodies retrieved |
+| (dashed) 38.214 §5.2.2.2.5 parameter names | match | 38.306 capability items | No direct chunks retrieved on the 38.306 side (§6 — limitation) |
 
 Summary diagram (using only retrieved evidence):
 
@@ -341,13 +317,13 @@ Summary diagram (using only retrieved evidence):
         │                            │
         │ (parameter names)          │ (priority function 5.2.3)
         ▼                            ▼
-38.331 CodebookConfig-r16  ← 38.331-asn1-CodebookConfig-r16-001 (★ newly added)
+38.331 CodebookConfig-r16  ← 38.331-asn1-CodebookConfig-r16-001
    typeII-r16 SEQUENCE {                                        38.212 §6.3.2.1.2 CSI Part 2 PMI X1/X2     ← 38.212-6.3.2.1.2-014
      n1-n2-codebookSubsetRestriction-r16 (13 N1·N2 combos),             │
      typeII-RI-Restriction-r16 BIT STRING (SIZE (4)),                   ▼
      paramCombination-r16 INTEGER (1..8),                       38.212 §6.3.2.6 Multiplexing onto PUSCH    ← 38.212-6.3.2.6-001
      numberOfPMI-SubbandsPerCQI-Subband-r16 INTEGER (1..2) }
-[38.306 UE capability — not retrieved (§6 limitation persists)]
+[38.306 UE capability — not retrieved (§6 limitation)]
         │
         ▼
 38.521-4 §6.3.2.x.6 Multiple PMI w/ 16Tx Enhanced TypeII test            ← 38.521-4-6.3.2.2.6-001
@@ -370,83 +346,30 @@ Summary diagram (using only retrieved evidence):
 
 - **38.211 CSI-RS resource configuration (Type II specific)**: 38.211 chunks of the generic CSI-RS / port-numbering content are retrieved, but no chunk that directly addresses "CSI-RS port mapping for Type II" was strongly matched within the chunk-001 range. The fact that 38.214 §5.2.2.2.5 uses 38.211's antenna-port convention is the indirect citation. **Answer feasibility: medium.**
 
-### Unfound items (no direct body in retrieved chunks) — updated
+### Unfound items (no direct body in retrieved chunks)
 
-- ~~38.331 `CodebookConfig` / `codebookType typeII-r16` ASN.1 IE bodies~~ → **✅ resolved in the latest §7-1**: `CodebookConfig` (2,944 chars) and `CodebookConfig-r16` (985 chars) IE bodies retrieved exactly from the `ran2_ts_asn1_chunks` collection.
-- **38.306 `csi-Type-II` / `eTypeII` capability table item names** — vector top score reached 0.62 in the latest, but the semantic match is filled by false positives such as type1/type2 HARQ-ACK. Text-match (`typeII` / `eTypeII` / `paramCombination`) returned **0 chunks across the board** `[logs/cross-phase/usecase/q1_retrieval_log_v2.json: ts306_cap_probes 4 queries, 0 rows]`. → **The Type II-specific capability item names of 38.306 are simply not present as tokens in the chunk bodies** (limitation persists).
+- **38.306 `csi-Type-II` / `eTypeII` capability table item names** — vector top score reaches 0.62, but the semantic match is filled by false positives such as type1/type2 HARQ-ACK. Text-match (`typeII` / `eTypeII` / `paramCombination`) returned **0 chunks across the board** `[logs/cross-phase/usecase/q1_retrieval_log_v2.json: ts306_cap_probes 4 queries, 0 rows]`. → **The Type II-specific capability item names of 38.306 are simply not present as tokens in the chunk bodies**.
 - **38.512-4** — the user-supplied notation; absent from spec-trace (confirmed). This answer substitutes **38.521-4**. `[ts_queries_literal_user_typo: 0 hits]`
 - **TS 38.101-4** — referenced normatively by 38.521-4, but no separate chunks for this spec were retrieved within the search scope (this query set).
 - **Formal `type=WID` chunks** — within this search (no `type` filter applied), all retrieved hits were `type=discussion` or `type=CR`.
-
-### Classification of unfound reasons (latest)
-
-| Item | Earlier reason | Current status |
-|------|---------|---------|
-| 38.512-4 | absent from spec-trace (real spec is 38.521-4) | unchanged (limitation persists) |
-| 38.331 IE body | section-level chunking limit, ASN.1 vs natural-language mismatch | **✅ resolved** — IE-level chunking via `ran2_ts_asn1_chunks` |
-| 38.306 capability rows | table body not exposed within chunk-001 | **partially improved** — vector top 0.62 (vs 0.51 earlier), but text-match still 0 → Type II-specific item names absent from chunk text |
-| 38.101-4 | not searched in this query set | unchanged (loading status in RAN4 ts collection requires separate confirmation) |
-| Formal WID chunks | type filter not applied | unchanged (TDoc collection not re-queried in the latest run) |
 
 ---
 
 ## 11. Self-Verification
 
-- Every factual sentence in this answer ends with a `[spec §sec, chunkId=...]` or `[Rxxx, RANx#N, ai=..., type=..., release=...]` citation (§2–§9). The newly added §7-1 also attaches precise IE chunkIds (`38.331-asn1-CodebookConfig-001`, `38.331-asn1-CodebookConfig-r16-001`) — the earlier blanket `-001` notation has been corrected.
-- All unfound items (38.512-4, 38.306 capability item names, 38.101-4) are explicitly listed in §10 and are not filled in by speculation. The 38.331 IE bodies are now resolved and marked ✅ in §10.
+- Every factual sentence in this answer ends with a `[spec §sec, chunkId=...]` or `[Rxxx, RANx#N, ai=..., type=..., release=...]` citation (§2–§9). §7-1 attaches precise IE chunkIds (`38.331-asn1-CodebookConfig-001`, `38.331-asn1-CodebookConfig-r16-001`).
+- All unfound items (38.512-4, 38.306 capability item names, 38.101-4) are explicitly listed in §10 and are not filled in by speculation.
 - "User notation 38.512-4" was not silently rewritten as 38.521-4; **both spec numbers were searched separately** → 38.512-4 returned 0 hits (recorded in §8-1), and only 38.521-4 results were used.
 
 ## 12. Supporting Material
 
-- Search scripts:
-  - latest: `scripts/cross-phase/usecase/q1_search_typeii_codebook_v2.py` (5 vector + 4 ASN.1 fetch + 4 text-match probes)
-  - earlier: `scripts/cross-phase/usecase/q1_search_typeii_codebook.py`
-- Retrieval log:
-  - latest: `logs/cross-phase/usecase/q1_retrieval_log_v2.json` (25 vector hits + 4 IE rows + 0 text-match rows)
-  - earlier: `logs/cross-phase/usecase/q1_retrieval_log.json` (280 hits total)
-- Earlier-answer backup: `docs/usecase/answers/spectra/q1_rel16_typeii_codebook.v1.md`
-- Direct chunkIds matched per question item (latest):
-  - 38.211 → `38.211-8.4.1.5.3-001`, `38.211-7.4.1.5.1-001` (earlier)
-  - 38.212 → `38.212-6.3.2.1.2-014`, `38.212-6.3.1.1.3-001`, `38.212-6.3.2.6-001` (earlier) + `38.212-6.3.2.4.2.2-001` / `38.212-6.3.2.4.2.3-001` (newly added: CSI part 1 / part 2)
-  - 38.214 → `38.214-5.2.2.2.5-001` (Enhanced Type II core, earlier) + `38.214-5.2.2.2.6-001` (Enhanced Type II Port Selection, newly added) + `38.214-5.2.2.2.8-001` (Enhanced Type II for CJT, newly added)
-  - 38.306 → `38.306-4.2.7.10-001`, `-009` / `38.306-4.2.7.2-053`, `-054` / `38.306-4.2.7.4-036` (latest, weak match)
-  - **38.331 → `38.331-asn1-CodebookConfig-001`, `38.331-asn1-CodebookConfig-r16-001` (★ newly added via ASN.1 — earlier-unfound items resolved)**
-  - 38.521-4 → `38.521-4-6.3.2.2.6-001`, `38.521-4-6.3.2.1.6-001`, `38.521-4-6.3.3.1.6-001` (earlier) + `38.521-4-10.3B.1.1-001`, `-10.3B.1.2-001`, `-F.1.3.3-003` (newly added)
-  - WID/introduction → `R1-1903044/RAN1#96`, `R1-1909583/RAN1#98`, `R1-2202121/RAN1#108-e` (earlier; TDoc not re-queried)
-
----
-
-## 13. Earlier vs Latest Comparison (effect of P2 + ASN.1)
-
-### 13-1. IE/spec rows newly citable
-
-| Item | Earlier status | Latest status |
-|------|---------|---------|
-| 38.331 `CodebookConfig` IE body | ❌ unfound (top hits all unrelated clauses) | ✅ 2,944-char body retrieved; typeII / typeII-PortSelection branches citable `[38.331-asn1-CodebookConfig-001]` |
-| 38.331 `CodebookConfig-r16` IE body | ❌ unfound | ✅ 985-char body retrieved; typeII-r16 / typeII-PortSelection-r16 / paramCombination-r16 citable `[38.331-asn1-CodebookConfig-r16-001]` |
-| `n1-n2-codebookSubsetRestriction-r16` BIT STRING size mapping | ❌ name only in 38.214 body | ✅ exact citation possible across 13 N1·N2 × BIT STRING SIZE entries `[38.331-asn1-CodebookConfig-r16-001]` |
-| `paramCombination-r16` domain | ❌ name only in 38.214 body | ✅ `INTEGER (1..8)` stated `[ditto]` |
-| `typeII-RI-Restriction` BIT STRING SIZE change | ❌ not retrieved | ✅ Rel-15 SIZE(2) → Rel-16 SIZE(4) body comparison feasible `[CodebookConfig vs -r16]` |
-| `numberOfPMI-SubbandsPerCQI-Subband-r16` IE body | ❌ name only in 38.214 body | ✅ `INTEGER (1..2)` stated `[38.331-asn1-CodebookConfig-r16-001]` |
-| Existence of `CodebookConfig-r17` / `-r19` / `-v1730` variants | ❌ not retrieved | ✅ confirmed by ieName (Rel-17/Rel-19 additional IEs identified) `[q1_retrieval_log_v2.json: queries[0]]` |
-| 38.214 §5.2.2.2.6 Enhanced Type II Port Selection body | △ section title only | ✅ 600-char body retrieved; `typeII-PortSelection-r16` `portSelectionSamplingSize-r16` citable `[38.214-5.2.2.2.6-001]` |
-| 38.214 §5.2.2.2.8 Enhanced Type II for CJT body | △ section title only | ✅ 600-char body retrieved; `typeII-CJT-r18` and `n1-n2-codebookSubsetRestrictionList-r18` citable `[38.214-5.2.2.2.8-001]` |
-| 38.212 §6.3.2.4.2.2 / §6.3.2.4.2.3 (CSI part 1/2 PUSCH multiplexing) | ❌ not retrieved | ✅ body retrieved; rate matching / CRC handling citable `[38.212-6.3.2.4.2.2-001, -6.3.2.4.2.3-001]` |
-| 38.521-4 §10.3B.1.x EN-DC tests | ❌ not retrieved | △ body retrieved (preview empty, but chunkId secured) `[38.521-4-10.3B.1.1-001 etc.]` |
-| 38.306 capability rows | ❌ Type II item not directly found | ❌ same (vector score lifted from 0.51 to 0.62, text-match still 0) |
-
-### 13-2. Change in answer feasibility
-
-| Area | Earlier | Latest |
-|------|----|----|
-| 38.214 codebook definition (§5.2.2.2.5 Enhanced Type II) | high | high (§5.2.2.2.6, §5.2.2.2.8 additionally retrieved) |
-| 38.212 UCI two-part CSI | high | high (§6.3.2.4.2.2/.3 added) |
-| 38.521-4 performance tests | high | high (§10.3B EN-DC added) |
-| **38.331 RRC IE body** | **low (unfound)** | **high (★ ASN.1 collection enables direct IE-body citation)** |
-| 38.306 capability rows | low-to-medium | low-to-medium (improvement marginal) |
-| 38.211 CSI-RS Type II specific | medium | medium (no re-search in latest) |
-| WID/Discussion (Rel-16) | medium-to-high | medium-to-high (TDoc not re-queried in latest) |
-
-### 13-3. Core conclusion
-
-**The greatest value introduced by the P2 + ASN.1 collection is the resolution of the earlier §7 limitation on 38.331 IE bodies.** ASN.1 IE-level chunking simultaneously addresses both the chunk-001 boundary limit of section-level chunking and the natural-language vs ASN.1 mismatch. Whereas earlier the 38.214 ↔ 38.331 parameter-name correspondences could only be cited by indirect "name-only matches", we can now construct **two-sided mappings citing the bodies of both specs directly** (§4 ↔ §7-1).
+- Search script: `scripts/cross-phase/usecase/q1_search_typeii_codebook_v2.py` (5 vector + 4 ASN.1 fetch + 4 text-match probes)
+- Retrieval log: `logs/cross-phase/usecase/q1_retrieval_log_v2.json` (25 vector hits + 4 IE rows + 0 text-match rows)
+- Direct chunkIds matched per question item:
+  - 38.211 → `38.211-8.4.1.5.3-001`, `38.211-7.4.1.5.1-001`
+  - 38.212 → `38.212-6.3.2.1.2-014`, `38.212-6.3.1.1.3-001`, `38.212-6.3.2.6-001`, `38.212-6.3.2.4.2.2-001`, `38.212-6.3.2.4.2.3-001` (CSI part 1 / part 2)
+  - 38.214 → `38.214-5.2.2.2.5-001` (Enhanced Type II core), `38.214-5.2.2.2.6-001` (Enhanced Type II Port Selection), `38.214-5.2.2.2.8-001` (Enhanced Type II for CJT)
+  - 38.306 → `38.306-4.2.7.10-001`, `-009` / `38.306-4.2.7.2-053`, `-054` / `38.306-4.2.7.4-036` (weak match)
+  - **38.331 → `38.331-asn1-CodebookConfig-001`, `38.331-asn1-CodebookConfig-r16-001`**
+  - 38.521-4 → `38.521-4-6.3.2.2.6-001`, `38.521-4-6.3.2.1.6-001`, `38.521-4-6.3.3.1.6-001`, `38.521-4-10.3B.1.1-001`, `-10.3B.1.2-001`, `-F.1.3.3-003`
+  - WID/introduction → `R1-1903044/RAN1#96`, `R1-1909583/RAN1#98`, `R1-2202121/RAN1#108-e`

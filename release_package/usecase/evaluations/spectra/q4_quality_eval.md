@@ -1,14 +1,14 @@
 # Q4 Quality Evaluation — Rel-18 LTM (L1/L2 Triggered Mobility) + Rel-19/20
 
 > **Meta note**: A pre-dispatched evaluation agent was interrupted twice by API errors. This evaluation was therefore written directly in the main context.
-> The initial answer (`docs/usecase/answers/tracer/q4_ltm_rel18.md`) was not modified and is preserved as the original for GPT comparison.
+> The initial answer (`docs/usecase/answers/SPECTRA RAG/q4_ltm_rel18.md`) was not modified and is preserved as the original for GPT comparison.
 
 ## Evaluation Metadata
 
 | Item | Value |
 |---|---|
 | Evaluation date | 2026-04-29 |
-| Initial answer | `docs/usecase/answers/tracer/q4_ltm_rel18.md` (259 lines, 28,925 bytes) |
+| Initial answer | `docs/usecase/answers/SPECTRA RAG/q4_ltm_rel18.md` (259 lines, 28,925 bytes) |
 | Retrieval log | `logs/cross-phase/usecase/q4_retrieval_log.json` (559 KB) |
 | chunkId citation verification | `grep -c` over the retrieval log (30-sample) |
 | Web sources used (4) | (1) IEEE Xplore "On L1/L2-Triggered Mobility in 3GPP Release 18 and Beyond" (2024) — `https://ieeexplore.ieee.org/document/10744020` <br> (2) ETSI TS 138 331 V18.6.0 (2025-07) — `https://www.etsi.org/deliver/etsi_ts/138300_138399/138331/18.06.00_60/ts_138331v180600p.pdf` <br> (3) 3GPP RP-241917 "Mobility Rel-19 work item" presentation — `https://www.slideshare.net/slideshow/rp-241917-mobility-rel-19-work-item-pptx/271829015` <br> (4) 3GPP Release 20 official page — `https://www.3gpp.org/specifications-technologies/releases/release-20` |

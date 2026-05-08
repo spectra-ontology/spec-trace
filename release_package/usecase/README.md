@@ -66,17 +66,17 @@ Pre-verified that all specs covered by the questions are loaded.
 
 | Spec | Collection | chunks | Notes |
 |---|---|---:|---|
-| 38.211 | `ran1_ts_sections` | 196 | |
-| 38.212 | `ran1_ts_sections` | 219 | |
-| 38.213 | `ran1_ts_sections` | 164 | |
-| 38.214 | `ran1_ts_sections` | 214 | |
-| 38.300 | `ran2_ts_sections` | 466 | |
-| 38.306 | `ran2_ts_sections` | 99 | (only capability table headers exposed — R weakness) |
-| 38.321 | `ran2_ts_sections` | 288 | |
-| 38.331 | `ran2_ts_sections` | 562 | (clause-level chunks; IE blocks not separately split — R weakness) |
-| 38.133 | `ran4_ts_sections` | 7,301 | (weak row-level chunking for tables — R weakness) |
-| 38.521-4 | `ran5_ts_sections` | 617 | (the user's notation "38.512-4" returns 0 hits; 38.521-4 is the actual spec) |
-| 38.533 | `ran5_ts_sections` | 2,221 | (some clauses contain FFS markers — D weakness) |
+| 38.211 | `the section-level collection` | 196 | |
+| 38.212 | `the section-level collection` | 219 | |
+| 38.213 | `the section-level collection` | 164 | |
+| 38.214 | `the section-level collection` | 214 | |
+| 38.300 | `the section-level collection` | 466 | |
+| 38.306 | `the section-level collection` | 99 | (only capability table headers exposed — R weakness) |
+| 38.321 | `the section-level collection` | 288 | |
+| 38.331 | `the section-level collection` | 562 | (clause-level chunks; IE blocks not separately split — R weakness) |
+| 38.133 | `the section-level collection` | 7,301 | (weak row-level chunking for tables — R weakness) |
+| 38.521-4 | `the section-level collection` | 617 | (the user's notation "38.512-4" returns 0 hits; 38.521-4 is the actual spec) |
+| 38.533 | `the section-level collection` | 2,221 | (some clauses contain FFS markers — D weakness) |
 
 | WG | Neo4j nodes | Latest meeting |
 |---|---:|---:|
