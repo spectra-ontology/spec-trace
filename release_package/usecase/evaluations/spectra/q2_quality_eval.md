@@ -3,8 +3,7 @@
 ## Evaluation Metadata
 
 - Evaluation date: 2026-04-29
-- Initial answer: `docs/usecase/answers/SPECTRA RAG/q2_tci_state_rel15_to_rel20.md` (247 lines)
-- Retrieval log: `logs/cross-phase/usecase/q2_retrieval_log.json` (ts_queries=14, tdoc_queries=48, neo4j RAN1/RAN2)
+- Initial answer: `docs/usecase/answers/spectra/q2_tci_state_rel15_to_rel20.md` (247 lines)
 - The initial answer must not be modified (preserved as the original for GPT comparison). This evaluation only cross-checks against external authoritative sources.
 - Web sources used:
   - 3GPP RAN1 Rel-18 page — https://www.3gpp.org/technologies/ran1-rel18
@@ -114,7 +113,7 @@ Information that exists in authoritative sources but is missing from the initial
 ## System improvement recommendations (RAG perspective)
 
 1. **38.331 ASN.1 IE body chunking improvement (current weakness)**
-   - The RAN2 KG registers IE Section nodes (`TCI-State`, `TCI-UL-State`, `TCI-ActivatedConfig`, `LTM-TCI-Info`, `CandidateTCI-State`, `CandidateTCI-UL-State`, etc.), but the ASN.1 IE definition bodies are not retrieved from the `the section-level collection` Qdrant chunks → split IE bodies into "field-level chunks" (e.g., `tci-StatesToAddModList`, `qcl-Type1`, `qcl-Type2`, `referenceSignal`). Add ASN.1 semantic-unit splitting to the Phase-7 RAN2 chunking policy.
+   - The RAN2 KG registers IE Section nodes (`TCI-State`, `TCI-UL-State`, `TCI-ActivatedConfig`, `LTM-TCI-Info`, `CandidateTCI-State`, `CandidateTCI-UL-State`, etc.), but the ASN.1 IE definition bodies are not retrieved from section-level chunks → split IE bodies into "field-level chunks" (e.g., `tci-StatesToAddModList`, `qcl-Type1`, `qcl-Type2`, `referenceSignal`). Add ASN.1 semantic-unit splitting to the Phase-7 RAN2 chunking policy.
 
 2. **Strengthen 38.306 capability table row-level chunks**
    - The currently retrieved chunks expose only the table header (`Definitions for parameters | Per | M | …`). Row-level chunks for exact capability items such as `maxNumberConfiguredTCIstatesPerCC`, `maxNumberActiveTCI-PerBWP`, and unified-TCI-cap rows are needed. Add a "table row-level chunk split" policy to the Phase-7 38.306 table parsing.
@@ -123,7 +122,7 @@ Information that exists in authoritative sources but is missing from the initial
    - 38.214 §5.1.5 is split into a single large chunk (`-001` ~ `-007`) of 7 pieces, making per-Rel separation difficult. Sub-chunk splitting by release tag (`-r17`, `-r18`, `-r19`) or release-aware metadata is needed. The body contains release tags such as `dl-OrJointTCI-StateList-r17`, but per-chunk retrieval cannot answer release-by-release questions.
 
 4. **Strengthen the RP-WID collection**
-   - `the TDoc collection`/`the TDoc collection` are meeting-centric TDoc collections. Reinforcing RP-WIDs (RP-211661, RP-213588, RP-242394, etc.) as a separate collection or KG metadata would let questions about WID introduction backgrounds quote RP-WIDs directly.
+   - TDoc-level chunks are meeting-centric TDoc collections. Reinforcing RP-WIDs (RP-211661, RP-213588, RP-242394, etc.) as a separate collection or KG metadata would let questions about WID introduction backgrounds quote RP-WIDs directly.
 
 5. **Rel-20 data loading timing**
    - Rel-20 is entering the 6G IMT-2030 phase. Re-loading is needed when spec body change chunks accumulate (estimated 2027–2028). Currently the Rel-20 answer is correctly tagged as "discussion only", so system integrity is preserved.

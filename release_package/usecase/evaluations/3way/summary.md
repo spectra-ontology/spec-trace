@@ -1,6 +1,6 @@
 # 3-way summary — SPECTRA RAG vs GPT vs Claude
 
-> Date: 2026-05-02
+> Date: 2026-05-02 (initial); 2026-05-08 (post-rewrite addendum below)
 > References: `q[1-4]_3way_comparison.md` (per-question comparisons)
 
 ## 1. Four-question composite scoring matrix
@@ -107,3 +107,48 @@ SPECTRA RAG remains at 0. Hallucinations persist for GPT and Claude in the noted
 1. **Answer format**: even at 4.84, the answer is not "ready to use as soon as received" - it is in RAG-dump form and requires human editing.
 2. **Tier B/C unresolved**: chunking 38.306 capability rows and a separate RP-WID collection remain follow-up work.
 3. **The three models have different strengths**: a single model cannot produce the ideal answer. The best answer comes from combining SPECTRA RAG (citations) + GPT (narrative) + Claude (depth).
+
+---
+
+## 9. Post-rewrite addendum (2026-05-08)
+
+The four SPECTRA RAG answers (`docs/usecase/answers/spectra/q[1-4]_*.md`) were reorganised on 2026-05-08 from "RAG citation dump" format into structured standards-analysis reports (Table-of-Contents + §0 Evidence Provenance + per-spec narrative + Cross-Document Linkages table + Coverage/Limitations + Summary). The rewrite **preserves every chunkId, every TDoc citation, every verbatim spec/IE body excerpt** verbatim; no new factual claims were introduced.
+
+### 9.1 Post-rewrite scores (re-applied 5-axis rubric)
+
+| Q | Composite (old) | Composite (new) | Δ | Drivers |
+|---|---:|---:|---:|---|
+| Q1 Rel-16 Type-II codebook | 4.80 | 4.82 | **+0.02** | A5 +0.1 (§8 Cross-Doc Linkages table + Trace Diagram) |
+| Q2 TCI-state Rel-15→Rel-20 | 4.90 | 4.90 | **0** | Already at near-ceiling; structural lifts offset by rounding |
+| Q3 BFD/BFR | 4.84 | 4.92 | **+0.08** | A2 +0.2 (§8.1 quantitative-verification matrix consolidated 9 enum items), A5 +0.2 (linkage table + sequence + trace diagram) |
+| Q4 Rel-18 LTM | 4.83 | 4.91 | **+0.08** | A2 +0.1 (§11 explicit Well-Covered / Weakly-Covered / Not-Present partition), A5 +0.1 (14-row §10 evidence table) |
+| **4Q Average** | **4.84** | **4.89** | **+0.05** | |
+
+### 9.2 Per-axis 4Q averages — pre vs post rewrite
+
+| Axis | Old | New | Δ |
+|---|---:|---:|---:|
+| A1 Accuracy | 4.78 | 4.78 | 0 (no facts changed) |
+| A2 Coverage | 4.68 | 4.76 | +0.08 (structural exposure of existing scope; underlying retrieval gaps unchanged) |
+| A3 Citation Integrity | 4.95 | 4.95 | 0 (already at ceiling; all chunkIds preserved 100%) |
+| A4 Hallucination Control | 4.93 | 4.94 | +0.01 (negligible — explicit §0 Evidence Provenance reinforces but cannot lower an already-zero hallucination count) |
+| A5 Cross-Doc Linkage | 4.81 | 4.91 | **+0.10** (largest single-axis gain — structured linkage tables, trace diagrams, and sequence views replace inline scattered references) |
+
+### 9.3 Paper Table 13 — update decision
+
+The +0.05 4Q-average composite delta sits **below the 0.10 threshold** the authors set for paper Table 13 updates. **Paper Table 13 (`main.tex` / `release_package/supplement/PAPER_APPENDIX.tex` / `release_package/supplement/LLM_EVAL_PILOT.tex`) is therefore left unchanged** at the pre-rewrite values: SPECTRA Composite 4.84 (A1=4.78 / A2=4.68 / A3=4.95 / A4=4.93 / A5=4.81). The post-rewrite scores are recorded here in `evaluations/3way/summary.md` as a supplementary record only.
+
+### 9.4 Format-asymmetry follow-up
+
+§3's earlier qualitative criticism ("the answer format is a RAG-output dump … cannot be used as-is for a standards-meeting report → the user must edit the narrative") was specific to the pre-rewrite SPECTRA answers. **Post-rewrite, that criticism is dropped.** The replacement assessment:
+
+> SPECTRA RAG answers in `docs/usecase/answers/spectra/` are now structured standards-analysis reports — Table-of-Contents-led, with §0 Evidence Provenance making KG/index reproducibility explicit, per-spec narrative sections with verbatim quoted ASN.1 / spec-body evidence, a consolidated Cross-Document Linkages table (each row carrying a chunkId-grounded evidence column), and a Coverage / Limitations partition that distinguishes verified-coverage, weakly-covered, and not-present-in-dataset items. Citation density and chunkId traceability are preserved verbatim while readability matches the narrative comparators (Claude/GPT). The paper's existing format-asymmetry caveat in §6 *Limitations* (re A3 Citation Integrity gap) remains valid — Claude/GPT answers are still free-form prose without inline retrieval citations — but the SPECTRA-side "RAG dump" framing no longer applies.
+
+### 9.5 Residual flaws (preserved from pre-rewrite)
+
+The rewrite did not address these baseline citation-discipline issues — they remain follow-up items:
+
+- **Q4 chunkIndex misnotations** — `R2-2503785-001`, `R1-2407319-001`, `R2-2508706-001`, `R2-2508384-001` are uniformly suffixed `-001` in the source retrieval log when the actual chunk indices are `-017 / -037 / -003 / -003`. The rewrite preserves the citations verbatim; correction requires a retrieval-log re-export, not an answer rewrite.
+- **Rel-20 spec-body absence** — Q2/Q4 cite Rel-20 documents only at the 6G-overview / Phase-3 framing stage; 38.214/38.321/38.331/38.306 spec-body changes for Rel-20 are not present in the indexed dataset (D-class limitation, resolved by time as Stage-2 freeze 2026-09 / Stage-3 freeze 2027-03 lands).
+- **38.306 capability row-level chunking** — capability-table rows are not chunked per row, so direct-row retrieval for Q1's `csi-Type-II` cap items remains unsuccessful (R+O class — Tier B follow-up).
+- **38.101-4 / RP-WID separate loading** — these are referenced normatively from 38.521-4 / Rel-16 MIMO WI but are not loaded into the indexed dataset (R class — Tier B/C follow-up).

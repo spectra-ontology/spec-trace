@@ -32,7 +32,7 @@
 | LTM-Config IE body | `LTM-Config-r18 ::= SEQUENCE` 1,168 chars verbatim - exposes seven fields including ltm-CandidateToAddModList-r18, ltm-ServingCellNoResetID-r18, etc. |
 | LTM-Candidate IE body | `LTM-Candidate-r18` 2,154 chars - including ltm-CandidatePCI / ltm-SSB-Config / ltm-CandidateConfig OCTET STRING (CONTAINING RRCReconfiguration) |
 | LTM-CSI-ReportConfig CHOICE structure | `LTM-CSI-ReportConfig-r18` 2,756 chars - periodic / semiPersistentOnPUCCH / eventTriggered CHOICE |
-| LTM-ConfigNRDC-r19, LTM-CandidateReportConfig-r19, LTM-QCL-Info-r18, and 17 other IEs | All directly retrievable from the IE-level collection |
+| LTM-ConfigNRDC-r19, LTM-CandidateReportConfig-r19, LTM-QCL-Info-r18, and 17 other IEs | All retrieved as 38.331 IE bodies |
 
 ### A3 Citation Integrity 4.9
 

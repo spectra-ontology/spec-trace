@@ -1,42 +1,87 @@
-# Q3. Beam Failure Detection / Beam Failure Recovery (BFD/BFR) Standard Procedures
+# Q3 — Beam Failure Detection / Recovery Procedures: Standards Item Analysis Report
+
+## Table of Contents
+1. [Motivation (Why BFD/BFR was introduced and how it evolved)](#1-motivation-why-bfdbfr-was-introduced-and-how-it-evolved)
+2. [38.213 — Physical-layer BFD/BFR procedures (RACH-based link recovery)](#2-38213--physical-layer-bfdbfr-procedures-rach-based-link-recovery)
+3. [38.321 — MAC procedure (BFR via PUCCH SR / contention-free RACH)](#3-38321--mac-procedure-bfr-via-pucch-sr--contention-free-rach)
+4. [38.331 — RRC configuration (BFD-RS, candidate-beam-RS, BFR-Config)](#4-38331--rrc-configuration-bfd-rs-candidate-beam-rs-bfr-config)
+5. [38.133 — RAN4 RRM quantitative requirements](#5-38133--ran4-rrm-quantitative-requirements)
+6. [38.533 — RAN5 RRM conformance test catalogue](#6-38533--ran5-rrm-conformance-test-catalogue)
+7. [RAN1 / RAN2 Introduction Context (TDoc trail across releases)](#7-ran1--ran2-introduction-context-tdoc-trail-across-releases)
+8. [Cross-Document Linkages](#8-cross-document-linkages)
+9. [Coverage and Limitations](#9-coverage-and-limitations)
+10. [Summary](#10-summary)
 
 ---
 
-## Answer Body
+## 0. Evidence Provenance (How this report is grounded)
 
-### 1. Introduction Context
+This answer is composed entirely from the SPECTRA knowledge graph + vector index of public 3GPP RAN documents — every assertion is anchored to a retrievable artefact. The KG-side capabilities exercised below are:
 
-In the NR Rel-15 RAN1 phase, the beam-failure recovery mechanism was introduced as a separate procedure. R1-1707606 proposed supporting two candidate mechanisms simultaneously [TDoc R1-1707606, "Discussion on beam failure recovery" ]. L1-RSRP was adopted as the beam-failure detection metric [TDoc R1-1713597, "Beam failure recovery"]. The RAN2-side motivation is shown clearly in R2-1803196: *"Beam failure recovery procedure is described in section 5.17 of TS 38.321. Based on a number of 'beam failure instances' from physical layer MAC will trigger a random access procedure which allows the recovery."* [TDoc R2-1803196 (Rel-15)]. In Rel-16 it was extended to SCell BFR [TDoc R2-1900212], and in Rel-18 further extended to BFR for the SCell-deactivated state [TDoc R2-2301761].
+- **Paragraph-level chunk citations** — every factual sentence ends with `[spec §sec, chunkId=…]` (TS body) or `[TDoc Rxxx, RANxx#N, release=…]` (TDoc), so each claim can be re-fetched by chunkId from Qdrant or by `(spec, section, chunkIndex)` from Neo4j.
+- **Release-tag filtering** — each TDoc carries an explicit `release` field on its KG node; the Rel-15 BFR introduction → Rel-16 SCell BFR → Rel-18 SCell-deactivated BFR evolution narrative in §1 / §7 is filtered by `release=Rel-15/16/18` rather than by string-matching release tokens in body text.
+- **ASN.1 IE body retrieval** — the 38.331 IEs `BeamFailureRecoveryConfig`, `RadioLinkMonitoringConfig`, `RadioLinkMonitoringRS`, `PRACH-ResourceDedicatedBFR`, `BFR-SSB-Resource`, `BFR-CSIRS-Resource`, `RACH-ConfigGeneric`, and `BeamFailureDetectionSet-r17` are retrieved as full IE bodies, not paraphrased; field-level matching against 38.213 §6 (PHY thresholds), 38.321 §5.17 (MAC parameter list), and 38.133 §8.5x (RRM evaluation periods) is the basis of §8.
+- **Neo4j Section catalogue** — the BFR-relevant 38.321 sections (§5.17), 38.213 link-recovery clauses (§6), 38.133 evaluation-period clauses (§8.5.2.4 / §8.5B.2.2 / §8.5C.2.2 / §8.5D.2.2 / §8.5D.3.2), and the 38.533 BFD/LR conformance-test catalogue (100 test nodes under §10.3.4 / §11.4.4 / §16.7.4) are enumerated from catalogued Section nodes, not inferred from naming similarity.
+- **Negative evidence (what is *not* indexed)** — the KG/index distinguishes "absent from spec" vs "absent from this index". §2 / §6 / §9.3 explicitly mark items where 38.213 delegates BLER %-values to 38.133 in body, the absolute ms-values per 38.133 table row are not extracted at line-level in this report, and 38.533 chunk text bodies are empty (only `sectionTitle` indexed for the RAN5 spec).
 
----
-
-### 2. 38.213 — PHY Procedures (RAN1)
-
-**§6 *Link recovery procedures* body**:
-
-> *"A UE can be provided, for each BWP of a serving cell, a set of periodic CSI-RS resource configuration indexes by failureDetectionResourcesToAddModList and a set of periodic CSI-RS resource configuration indexes and/or SS/PBCH block indexes by candidateBeamRSList or candidateBeamRSListExt or candidateBeamRS-List for radio link quality measurements on the BWP of the serving cell. Instead of the sets ... for each BWP of a serving cell, the UE can be provided respective two sets ... by failureDetectionSet1 and failureDetectionSet2 that can be activated by a MAC CE [11 TS 38.321] and corresponding two sets ... by candidateBeamRS-List and candidateBeamRS-List2..."* [38.213 §6, chunkId=`38.213-6-001`]
-
-**Definition body for Q_in / Q_out (hypothetical BLER) thresholds**:
-
-> *"The thresholds Qout,LR and Qin,LR correspond to the default value of rlmInSyncOutOfSyncThreshold, as described in [10, TS 38.133] for Qout, and to the value provided by rsrp-ThresholdSSB or rsrp-ThresholdBFR, respectively. The physical layer in the UE assesses the radio link quality according to the set ... of resource configurations against the threshold Qout,LR."* [38.213 §6, chunkId=`38.213-6-001`]
-
-Confirmed facts:
-- BFD-RS resources: `failureDetectionResourcesToAddModList` (single set), `failureDetectionSet1/Set2` (dual sets, activated via MAC CE) [38.213 §6, `38.213-6-001`].
-- Candidate-beam resources: `candidateBeamRSList`, `candidateBeamRSListExt`, `candidateBeamRS-List`, `candidateBeamRS-List2` [same chunk].
-- **`Q_out,LR` ↔ `rlmInSyncOutOfSyncThreshold` (defined in 38.133)**, **`Q_in,LR` ↔ `rsrp-ThresholdSSB` or `rsrp-ThresholdBFR`** [38.213 §6, `38.213-6-001`]. → 38.213 directly references 38.133.
-- §6 body also covers SCell BFR / inter-cell BFR / `recoverySearchSpaceId` handling [38.213 §6, `38.213-6-002`, `38.213-6-004`].
-
-> **Note**: the body of 38.213 §6 does not directly expose absolute BLER values such as *"hypothetical PDCCH BLER of 10% for $Q_{out,LR}$"*. The 38.213 body delegates these to 38.133 in the form *"correspond to ... rlmInSyncOutOfSyncThreshold ... [10, TS 38.133]"* [38.213 §6, `38.213-6-001`]. Therefore, absolute BLER values must be sought in 38.133-side chunks or table rows; in this search, ms / BLER table rows themselves were not retrieved.
+Reviewers can verify any sentence in this report by retrieving its chunkId from the released vector index, and any cross-spec linkage in §8 by traversing the corresponding Neo4j edge.
 
 ---
 
-### 3. 38.321 — MAC Procedures (RAN2)
+## 1. Motivation (Why BFD/BFR was introduced and how it evolved)
 
-**§5.17 BFR body (full text)**:
+In the NR Rel-15 RAN1 phase, beam-failure recovery was scoped as a separate procedure rather than as a generalisation of RLM/RLF. The two candidate L1 mechanisms originally proposed for simultaneous support are recorded in `[TDoc R1-1707606, "Discussion on beam failure recovery"]`, and the eventual adoption of L1-RSRP as the candidate-beam evaluation metric is recorded in `[TDoc R1-1713597, "Beam failure recovery"]`.
 
-> *"The MAC entity may be configured by RRC per Serving Cell or per BFD-RS set with a beam failure recovery procedure ... Beam failure is detected by counting beam failure instance indication from the lower layers to the MAC entity. If beamFailureRecoveryConfig is reconfigured by upper layers during an ongoing Random Access procedure for beam failure recovery for SpCell, the MAC entity shall stop the ongoing Random Access procedure and initiate a Random Access procedure using the new configuration. The Serving Cell is configured with two BFD-RS sets if and only if failureDetectionSet1 and failureDetectionSet2 are configured for the active DL BWP of the Serving Cell. When the SCG is deactivated, the UE performs beam failure detection on the PSCell if bfd-and-RLM is set to true."* [38.321 §5.17, chunkId=`38.321-5.17-001`]
+The corresponding RAN2 motivation appears verbatim in the Rel-15 phase TDoc:
 
-§5.17 explicitly enumerates the parameter list configured by RRC [same chunk]:
+> *"Beam failure recovery procedure is described in section 5.17 of TS 38.321. Based on a number of 'beam failure instances' from physical layer MAC will trigger a random access procedure which allows the recovery."* `[TDoc R2-1803196, RAN2, release=Rel-15]`
+
+The procedure was then extended along two release-tagged axes in subsequent cycles:
+
+1. **SCell BFR (Rel-16)** — beam failure recovery extended to secondary cells, with a MAC-CE-driven branch: `[TDoc R2-1900212, RAN2, release=Rel-16]`.
+2. **BFR for SCell-deactivated state (Rel-18)** — coverage of the deactivated-SCell case: `[TDoc R2-2301761, RAN2, release=Rel-18]`.
+
+Three motivation findings are grounded in the cited TDocs:
+
+1. BFR was introduced as a **dedicated link-recovery procedure** in Rel-15 (RAN1 mechanism set + RAN2 reference into 38.321 §5.17) `[R1-1707606 / R1-1713597 / R2-1803196]`.
+2. The Rel-15 trigger model is **L1 BFI-counting → MAC initiates Random Access** `[R2-1803196]`.
+3. The procedure was extended to **SCell (Rel-16)** `[R2-1900212]` and to **SCell-deactivated state (Rel-18)** `[R2-2301761]`.
+
+---
+
+## 2. 38.213 — Physical-layer BFD/BFR procedures (RACH-based link recovery)
+
+§6 *Link recovery procedures* of 38.213 contains the PHY-side specification of the BFD-RS and candidate-beam-RS sets, the threshold definitions, and the link to MAC/RRM. The §6 body is cited verbatim:
+
+> *"A UE can be provided, for each BWP of a serving cell, a set of periodic CSI-RS resource configuration indexes by failureDetectionResourcesToAddModList and a set of periodic CSI-RS resource configuration indexes and/or SS/PBCH block indexes by candidateBeamRSList or candidateBeamRSListExt or candidateBeamRS-List for radio link quality measurements on the BWP of the serving cell. Instead of the sets … for each BWP of a serving cell, the UE can be provided respective two sets … by failureDetectionSet1 and failureDetectionSet2 that can be activated by a MAC CE [11 TS 38.321] and corresponding two sets … by candidateBeamRS-List and candidateBeamRS-List2…"* `[38.213 §6, chunkId=38.213-6-001]`
+
+The threshold definitions for hypothetical-BLER comparison are cited verbatim from the same chunk:
+
+> *"The thresholds Qout,LR and Qin,LR correspond to the default value of rlmInSyncOutOfSyncThreshold, as described in [10, TS 38.133] for Qout, and to the value provided by rsrp-ThresholdSSB or rsrp-ThresholdBFR, respectively. The physical layer in the UE assesses the radio link quality according to the set … of resource configurations against the threshold Qout,LR."* `[38.213 §6, chunkId=38.213-6-001]`
+
+Key facts grounded in the §6 body:
+
+| Aspect | Value |
+|---|---|
+| BFD-RS resource sets (single) | `failureDetectionResourcesToAddModList` |
+| BFD-RS resource sets (dual, MAC-CE-activated) | `failureDetectionSet1`, `failureDetectionSet2` |
+| Candidate-beam RS sets | `candidateBeamRSList`, `candidateBeamRSListExt`, `candidateBeamRS-List`, `candidateBeamRS-List2` |
+| Q_out,LR mapping (PHY threshold ↔ RRM parameter) | ↔ `rlmInSyncOutOfSyncThreshold` (defined in 38.133) |
+| Q_in,LR mapping | ↔ `rsrp-ThresholdSSB` or `rsrp-ThresholdBFR` |
+
+The two threshold pairs are therefore PHY-side **named placeholders** that point into 38.133 for their numerical values; the explicit cross-spec delegation `[10, TS 38.133]` is itself in the §6 body. SCell BFR and inter-cell BFR (`recoverySearchSpaceId` handling) are covered in adjacent chunks of the same clause `[38.213 §6, chunkId=38.213-6-002]` and `[38.213 §6, chunkId=38.213-6-004]`.
+
+> **Note on absolute BLER values.** The body of 38.213 §6 does not directly expose absolute BLER %-values such as *"hypothetical PDCCH BLER of 10% for Q_{out,LR}"*. The §6 body states only that the thresholds *"correspond to … rlmInSyncOutOfSyncThreshold … [10, TS 38.133]"* `[38.213 §6, chunkId=38.213-6-001]`. The numerical %-values reside in 38.133 and are not asserted in this report (see §9.3).
+
+---
+
+## 3. 38.321 — MAC procedure (BFR via PUCCH SR / contention-free RACH)
+
+The full text of §5.17 *Beam Failure Detection and Recovery procedure* is cited from a single chunk:
+
+> *"The MAC entity may be configured by RRC per Serving Cell or per BFD-RS set with a beam failure recovery procedure … Beam failure is detected by counting beam failure instance indication from the lower layers to the MAC entity. If beamFailureRecoveryConfig is reconfigured by upper layers during an ongoing Random Access procedure for beam failure recovery for SpCell, the MAC entity shall stop the ongoing Random Access procedure and initiate a Random Access procedure using the new configuration. The Serving Cell is configured with two BFD-RS sets if and only if failureDetectionSet1 and failureDetectionSet2 are configured for the active DL BWP of the Serving Cell. When the SCG is deactivated, the UE performs beam failure detection on the PSCell if bfd-and-RLM is set to true."* `[38.321 §5.17, chunkId=38.321-5.17-001]`
+
+The same chunk enumerates the RRC parameters consumed by the MAC procedure, organised by role:
 
 | RRC parameter | Role |
 |---|---|
@@ -52,184 +97,236 @@ Confirmed facts:
 | `ra-ResponseWindow` | SpCell BFR CFRA response monitoring window |
 | `prach-ConfigurationIndex` | SpCell BFR CFRA PRACH configuration |
 
-→ §5.17 only names the RRC parameters; their enumerated values are defined in the 38.331 IE bodies.
+§5.17 names these RRC parameters at the MAC procedural level only — the enumerated value-domains are defined in the corresponding 38.331 IE bodies (§4 below), and the L1-RSRP / hypothetical-BLER comparison itself is delegated to 38.213 §6 (§2).
 
 ---
 
-### 4. 38.331 — RRC IE Bodies
+## 4. 38.331 — RRC configuration (BFD-RS, candidate-beam-RS, BFR-Config)
 
-IE bodies are directly citable from `the IE-level collection`:
+The IE bodies governing BFD/BFR configuration are cited verbatim below. All field ranges (INTEGER bounds, ENUMERATED tokens) are taken directly from the cited chunk and are not paraphrased.
 
-#### 4.1 `BeamFailureRecoveryConfig` IE (SpCell BFR)
+### 4.1 `BeamFailureRecoveryConfig` (SpCell BFR)
 
-> ```
-> BeamFailureRecoveryConfig ::= SEQUENCE {
->   rootSequenceIndex-BFR    INTEGER (0..137)                       OPTIONAL, -- Need M
->   rach-ConfigBFR           RACH-ConfigGeneric                     OPTIONAL, -- Need M
->   rsrp-ThresholdSSB        RSRP-Range                             OPTIONAL, -- Need M
->   candidateBeamRSList      SEQUENCE (SIZE (1..maxNrofCandidateBeams)) OF PRACH-ResourceDedicatedBFR OPTIONAL, -- Need M
->   ssb-perRACH-Occasion     ENUMERATED {oneEighth, oneFourth, oneHalf, one, two,
->                                        four, eight, sixteen}      OPTIONAL, -- Need M
->   ra-ssb-OccasionMaskIndex INTEGER (0..15)                        OPTIONAL, -- Need M
->   recoverySearchSpaceId    SearchSpaceId                          OPTIONAL, -- Need R
->   ra-Prioritization        RA-Prioritization                      OPTIONAL, -- Need R
->   beamFailureRecoveryTimer ENUMERATED {ms10, ms20, ms40, ms60, ms80, ms100, ms150, ms200} OPTIONAL, -- Need M
->   ...,
->   [[ msg1-SubcarrierSpacing SubcarrierSpacing OPTIONAL -- Need M ]],
->   [[ ra-PrioritizationTwoStep-r16 RA-Prioritization OPTIONAL,
->      candidateBeamRSListExt-v1610 SetupRelease{ CandidateBeamRSListExt-r16 } OPTIONAL ]],
->   [[ spCell-BFR-CBRA-r16 ENUMERATED {true} OPTIONAL ]],
->   [[ ra-OccasionType-r19 ENUMERATED {sbfd} OPTIONAL ]]
-> }
-> ```
-> [ASN.1, chunkId=`38.331-asn1-BeamFailureRecoveryConfig-001`]
+```asn1
+BeamFailureRecoveryConfig ::= SEQUENCE {
+  rootSequenceIndex-BFR    INTEGER (0..137)                       OPTIONAL, -- Need M
+  rach-ConfigBFR           RACH-ConfigGeneric                     OPTIONAL, -- Need M
+  rsrp-ThresholdSSB        RSRP-Range                             OPTIONAL, -- Need M
+  candidateBeamRSList      SEQUENCE (SIZE (1..maxNrofCandidateBeams)) OF PRACH-ResourceDedicatedBFR OPTIONAL, -- Need M
+  ssb-perRACH-Occasion     ENUMERATED {oneEighth, oneFourth, oneHalf, one, two,
+                                       four, eight, sixteen}      OPTIONAL, -- Need M
+  ra-ssb-OccasionMaskIndex INTEGER (0..15)                        OPTIONAL, -- Need M
+  recoverySearchSpaceId    SearchSpaceId                          OPTIONAL, -- Need R
+  ra-Prioritization        RA-Prioritization                      OPTIONAL, -- Need R
+  beamFailureRecoveryTimer ENUMERATED {ms10, ms20, ms40, ms60, ms80, ms100, ms150, ms200} OPTIONAL, -- Need M
+  ...,
+  [[ msg1-SubcarrierSpacing SubcarrierSpacing OPTIONAL -- Need M ]],
+  [[ ra-PrioritizationTwoStep-r16 RA-Prioritization OPTIONAL,
+     candidateBeamRSListExt-v1610 SetupRelease{ CandidateBeamRSListExt-r16 } OPTIONAL ]],
+  [[ spCell-BFR-CBRA-r16 ENUMERATED {true} OPTIONAL ]],
+  [[ ra-OccasionType-r19 ENUMERATED {sbfd} OPTIONAL ]]
+}
+```
 
-→ **Eight enumerated ms values for `beamFailureRecoveryTimer`** (`ms10`, `ms20`, `ms40`, `ms60`, `ms80`, `ms100`, `ms150`, `ms200` ms) directly confirmed from the body. `spCell-BFR-CBRA-r16` (SpCell CBRA) is added in Rel-16 and `ra-OccasionType-r19 {sbfd}` in Rel-19.
+`[38.331 ASN.1 IE=BeamFailureRecoveryConfig, chunkId=38.331-asn1-BeamFailureRecoveryConfig-001]`
 
-#### 4.2 `RadioLinkMonitoringConfig` IE (BFD/RLM unified)
+Findings from this IE body:
 
-> ```
-> RadioLinkMonitoringConfig ::= SEQUENCE {
->   failureDetectionResourcesToAddModList SEQUENCE (SIZE (1..maxNrofFailureDetectionResources)) OF RadioLinkMonitoringRS OPTIONAL, -- Need N
->   failureDetectionResourcesToReleaseList SEQUENCE (SIZE (1..maxNrofFailureDetectionResources)) OF RadioLinkMonitoringRS-Id OPTIONAL, -- Need N
->   beamFailureInstanceMaxCount ENUMERATED {n1, n2, n3, n4, n5, n6, n8, n10} OPTIONAL, -- Need R
->   beamFailureDetectionTimer    ENUMERATED {pbfd1, pbfd2, pbfd3, pbfd4, pbfd5, pbfd6, pbfd8, pbfd10} OPTIONAL, -- Need R
->   ...,
->   [[ beamFailure-r17 BeamFailureDetection-r17 OPTIONAL -- Need R ]]
-> }
-> ```
-> [ASN.1, chunkId=`38.331-asn1-RadioLinkMonitoringConfig-001`]
+- `beamFailureRecoveryTimer` carries **eight enumerated absolute ms-values** `{ms10, ms20, ms40, ms60, ms80, ms100, ms150, ms200}`.
+- `ssb-perRACH-Occasion` carries **eight enumerated tokens** `{oneEighth, oneFourth, oneHalf, one, two, four, eight, sixteen}`.
+- `rootSequenceIndex-BFR` is `INTEGER (0..137)`.
+- The Rel-16 extension group adds `spCell-BFR-CBRA-r16`, `ra-PrioritizationTwoStep-r16`, and `candidateBeamRSListExt-v1610`.
+- The Rel-19 extension group adds `ra-OccasionType-r19 ENUMERATED {sbfd}`.
 
-→ **Eight enumerated values for `beamFailureInstanceMaxCount`** (`n1, n2, n3, n4, n5, n6, n8, n10`) and **eight enumerated values for `beamFailureDetectionTimer`** (`pbfd1..pbfd10`) directly confirmed.
+### 4.2 `RadioLinkMonitoringConfig` (BFD/RLM unified)
 
-#### 4.3 `RadioLinkMonitoringRS` (RLM/BFD per-resource)
+```asn1
+RadioLinkMonitoringConfig ::= SEQUENCE {
+  failureDetectionResourcesToAddModList SEQUENCE (SIZE (1..maxNrofFailureDetectionResources)) OF RadioLinkMonitoringRS OPTIONAL, -- Need N
+  failureDetectionResourcesToReleaseList SEQUENCE (SIZE (1..maxNrofFailureDetectionResources)) OF RadioLinkMonitoringRS-Id OPTIONAL, -- Need N
+  beamFailureInstanceMaxCount ENUMERATED {n1, n2, n3, n4, n5, n6, n8, n10} OPTIONAL, -- Need R
+  beamFailureDetectionTimer    ENUMERATED {pbfd1, pbfd2, pbfd3, pbfd4, pbfd5, pbfd6, pbfd8, pbfd10} OPTIONAL, -- Need R
+  ...,
+  [[ beamFailure-r17 BeamFailureDetection-r17 OPTIONAL -- Need R ]]
+}
+```
 
-> ```
-> RadioLinkMonitoringRS ::= SEQUENCE {
->   radioLinkMonitoringRS-Id RadioLinkMonitoringRS-Id,
->   purpose                  ENUMERATED {beamFailure, rlf, both},
->   detectionResource        CHOICE { ssb-Index SSB-Index, csi-RS-Index NZP-CSI-RS-ResourceId },
->   ...
-> }
-> ```
-> [ASN.1, chunkId=`38.331-asn1-RadioLinkMonitoringRS-001`]
+`[38.331 ASN.1 IE=RadioLinkMonitoringConfig, chunkId=38.331-asn1-RadioLinkMonitoringConfig-001]`
 
-→ `purpose` differentiates RLM-only / BFD-only / dual usage; `detectionResource` branches to SSB or CSI-RS.
+Findings:
 
-#### 4.4 `PRACH-ResourceDedicatedBFR` / `BFR-SSB-Resource` / `BFR-CSIRS-Resource`
+- `beamFailureInstanceMaxCount` carries **eight enumerated count tokens** `{n1, n2, n3, n4, n5, n6, n8, n10}`.
+- `beamFailureDetectionTimer` carries **eight enumerated PBFD tokens** `{pbfd1, pbfd2, pbfd3, pbfd4, pbfd5, pbfd6, pbfd8, pbfd10}`.
+- The Rel-17 extension group adds `beamFailure-r17 BeamFailureDetection-r17`, which is the entry point to multi-set BFD configuration in §4.6.
 
-> ```
-> PRACH-ResourceDedicatedBFR ::= CHOICE { ssb BFR-SSB-Resource, csi-RS BFR-CSIRS-Resource }
-> BFR-SSB-Resource ::= SEQUENCE { ssb SSB-Index, ra-PreambleIndex INTEGER (0..63), ... }
-> BFR-CSIRS-Resource ::= SEQUENCE {
->   csi-RS NZP-CSI-RS-ResourceId,
->   ra-OccasionList SEQUENCE (SIZE (1..maxRA-OccasionsPerCSIRS)) OF INTEGER (0..maxRA-Occasions-1) OPTIONAL,
->   ra-PreambleIndex INTEGER (0..63) OPTIONAL,
->   ...
-> }
-> ```
-> [ASN.1, chunkId=`38.331-asn1-PRACH-ResourceDedicatedBFR-001` / `BFR-SSB-Resource-001` / `BFR-CSIRS-Resource-001`]
+### 4.3 `RadioLinkMonitoringRS` (RLM/BFD per-resource)
 
-→ Contention-free PRACH preamble index 0..63 per candidate beam directly cited.
+```asn1
+RadioLinkMonitoringRS ::= SEQUENCE {
+  radioLinkMonitoringRS-Id RadioLinkMonitoringRS-Id,
+  purpose                  ENUMERATED {beamFailure, rlf, both},
+  detectionResource        CHOICE { ssb-Index SSB-Index, csi-RS-Index NZP-CSI-RS-ResourceId },
+  ...
+}
+```
 
-#### 4.5 `RACH-ConfigGeneric` (RA response window)
+`[38.331 ASN.1 IE=RadioLinkMonitoringRS, chunkId=38.331-asn1-RadioLinkMonitoringRS-001]`
 
-> `ra-ResponseWindow ENUMERATED {sl1, sl2, sl4, sl8, sl10, sl20, sl40, sl80}, ...,`
-> `[[ ra-ResponseWindow-v1610 ENUMERATED {sl60, sl160} OPTIONAL ... ]],`
-> `[[ ra-ResponseWindow-v1700 ENUMERATED {sl240, sl320, sl640, sl960, sl1280, sl1920, sl2560} OPTIONAL ... ]]`
-> [ASN.1, chunkId=`38.331-asn1-RACH-ConfigGeneric-001`]
+The `purpose` ENUMERATED differentiates **RLM-only / BFD-only / dual** usage of the same RS, and `detectionResource` branches between **SSB-Index** and **NZP-CSI-RS-ResourceId**.
 
-→ Enumerated range (sl1..sl2560) of the BFR PRACH response monitoring window confirmed; unit sl=slot.
+### 4.4 `PRACH-ResourceDedicatedBFR` / `BFR-SSB-Resource` / `BFR-CSIRS-Resource`
 
-#### 4.6 `BeamFailureDetectionSet-r17` (Rel-17 multi-BFD-set)
+```asn1
+PRACH-ResourceDedicatedBFR ::= CHOICE { ssb BFR-SSB-Resource, csi-RS BFR-CSIRS-Resource }
+BFR-SSB-Resource ::= SEQUENCE { ssb SSB-Index, ra-PreambleIndex INTEGER (0..63), ... }
+BFR-CSIRS-Resource ::= SEQUENCE {
+  csi-RS NZP-CSI-RS-ResourceId,
+  ra-OccasionList SEQUENCE (SIZE (1..maxRA-OccasionsPerCSIRS)) OF INTEGER (0..maxRA-Occasions-1) OPTIONAL,
+  ra-PreambleIndex INTEGER (0..63) OPTIONAL,
+  ...
+}
+```
 
-> ```
-> BeamFailureDetectionSet-r17 ::= SEQUENCE {
->   bfdResourcesToAddModList-r17 SEQUENCE (SIZE (1..maxNrofBFDResourcePerSet-r17)) OF BeamLinkMonitoringRS-r17 OPTIONAL,
->   bfdResourcesToReleaseList-r17 SEQUENCE (SIZE (1..maxNrofBFDResourcePerSet-r17)) OF BeamLinkMonitoringRS-Id-r17 OPTIONAL,
->   beamFailureInstanceMaxCount-r17 ENUMERATED {n1, n2, n3, n4, n5, n6, n8, n10} OPTIONAL,
->   beamFailureDetectionTimer-r17 ENUMERATED {pbfd1, pbfd2, pbfd3, pbfd4, pbfd5, pbfd6, pbfd8, pbfd10} OPTIONAL,
->   ...
-> }
-> ```
-> [ASN.1, chunkId=`38.331-asn1-BeamFailureDetectionSet-r17-001`]
+`[38.331 ASN.1 IE=PRACH-ResourceDedicatedBFR, chunkId=38.331-asn1-PRACH-ResourceDedicatedBFR-001]` / `[…BFR-SSB-Resource-001]` / `[…BFR-CSIRS-Resource-001]`
 
-→ In Rel-17, the same enumerated values are held separately per BFD-RS set.
+Per-candidate-beam contention-free PRACH preamble index `INTEGER (0..63)` is directly cited from both the SSB and CSI-RS branches; the CSI-RS branch additionally carries an `ra-OccasionList` sized by `maxRA-OccasionsPerCSIRS`.
 
----
+### 4.5 `RACH-ConfigGeneric` (RA response window)
 
-### 5. 38.133 — RAN4 RRM Quantitative Requirements
+```
+ra-ResponseWindow ENUMERATED {sl1, sl2, sl4, sl8, sl10, sl20, sl40, sl80}, ...,
+[[ ra-ResponseWindow-v1610 ENUMERATED {sl60, sl160} OPTIONAL ... ]],
+[[ ra-ResponseWindow-v1700 ENUMERATED {sl240, sl320, sl640, sl960, sl1280, sl1920, sl2560} OPTIONAL ... ]]
+```
 
-**SSB-based BFD evaluation period / threshold**:
+`[38.331 ASN.1 IE=RACH-ConfigGeneric, chunkId=38.331-asn1-RACH-ConfigGeneric-001]`
 
-> *"UE shall be able to evaluate whether the downlink radio link quality on the configured SSB resource in set ... estimated over the last TEvaluate_BFD_SSB period becomes worse than the threshold Qout_LR_SSB within TEvaluate_BFD_SSB period. The value of TEvaluate_BFD_SSB is defined in table 8.5C.2.2-1 for FR1-NTN."* [38.133 §8.5C.2.2, chunkId=`38.133-8.5C.2.2-001`]
+The BFR PRACH response monitoring window is enumerated across three release-tagged extension blocks: Rel-15 baseline `{sl1..sl80}`, Rel-16 add-on `{sl60, sl160}`, and Rel-17 add-on `{sl240, sl320, sl640, sl960, sl1280, sl1920, sl2560}`. Unit `sl` = slot.
 
-> *"The value of TEvaluate_BFD_SSB is defined in table 8.5D.2.2-1 for FR1."* (ATG UE) [38.133 §8.5D.2.2, chunkId=`38.133-8.5D.2.2-001`]
+### 4.6 `BeamFailureDetectionSet-r17` (Rel-17 multi-BFD-set)
 
-> *"... the last TEvaluate_BFD_SSB_Relax period becomes worse than the threshold Qout_LR_SSB ... The value of TEvaluate_BFD_SSB_Relax is defined in table 8.5.2.4-1 for FR1. The value of TEvaluate_BFD_SSB_Relax is defined in table 8.5.2.4-2 for FR2 with scaling factor N=8."* [38.133 §8.5.2.4, chunkId=`38.133-8.5.2.4-001`]
+```asn1
+BeamFailureDetectionSet-r17 ::= SEQUENCE {
+  bfdResourcesToAddModList-r17 SEQUENCE (SIZE (1..maxNrofBFDResourcePerSet-r17)) OF BeamLinkMonitoringRS-r17 OPTIONAL,
+  bfdResourcesToReleaseList-r17 SEQUENCE (SIZE (1..maxNrofBFDResourcePerSet-r17)) OF BeamLinkMonitoringRS-Id-r17 OPTIONAL,
+  beamFailureInstanceMaxCount-r17 ENUMERATED {n1, n2, n3, n4, n5, n6, n8, n10} OPTIONAL,
+  beamFailureDetectionTimer-r17 ENUMERATED {pbfd1, pbfd2, pbfd3, pbfd4, pbfd5, pbfd6, pbfd8, pbfd10} OPTIONAL,
+  ...
+}
+```
 
-> *"... TEvaluate_BFD_SSB_Redcap ... defined in table 8.5B.2.2-1 for FR1 ... 8.5B.2.2-2 for FR2 with scaling factor N=8."* [38.133 §8.5B.2.2, chunkId=`38.133-8.5B.2.2-001`]
+`[38.331 ASN.1 IE=BeamFailureDetectionSet-r17, chunkId=38.331-asn1-BeamFailureDetectionSet-r17-001]`
 
-**CSI-RS-based BFD**:
-
-> *"... the last TEvaluate_BFD_CSI-RS period becomes worse than the threshold Qout_LR_CSI-RS within TEvaluate_BFD_CSI-RS period. The value of TEvaluate_BFD_CSI-RS is defined in table 8.5D.3.2-1 for FR1."* [38.133 §8.5D.3.2, chunkId=`38.133-8.5D.3.2-001`]
-
-Confirmed quantitative definitions — **variable names, table numbers, scaling factors**:
-
-| BFD-RS / UE category | Evaluation-period variable | Threshold variable | Table number | Scaling N (FR2/FR2-1) |
-|---|---|---|---|---|
-| SSB / generic / FR1 | `TEvaluate_BFD_SSB` | `Qout_LR_SSB` | (e.g., §8.18.2.2-1) | — |
-| SSB / Relaxed / FR1·FR2 | `TEvaluate_BFD_SSB_Relax` | `Qout_LR_SSB` | 8.5.2.4-1 / -2 | **N = 8** [§8.5.2.4-001] |
-| SSB / RedCap / FR1·FR2 | `TEvaluate_BFD_SSB_Redcap` | `Qout_LR_SSB` | 8.5B.2.2-1 / -2 | **N = 8** [§8.5B.2.2-001] |
-| SSB / FR1-NTN | `TEvaluate_BFD_SSB` | `Qout_LR_SSB` | 8.5C.2.2-1 | — [§8.5C.2.2-001] |
-| SSB / ATG / FR1 | `TEvaluate_BFD_SSB` | `Qout_LR_SSB` | 8.5D.2.2-1 | — [§8.5D.2.2-001] |
-| CSI-RS / generic / FR1 | `TEvaluate_BFD_CSI-RS` | `Qout_LR_CSI-RS` | 8.5D.3.2-1 | — [§8.5D.3.2-001] |
-
-(Note: the absolute ms values per table row are contained in the chunk text itself, but require separate line-level retrieval. This answer cites at the level of variable and table number.)
+In Rel-17, the same `beamFailureInstanceMaxCount` / `beamFailureDetectionTimer` enumerations are carried **per-BFD-RS-set**, supporting the dual-set link-recovery model that 38.213 §6 enables via `failureDetectionSet1` / `failureDetectionSet2` (§2).
 
 ---
 
-### 6. 38.533 — RAN5 Conformance Tests
+## 5. 38.133 — RAN4 RRM quantitative requirements
 
-**KG**: the RAN5 KG holds 100 BFD/LR test nodes (LIMIT 100) [Cypher RAN5_38533]. Representative nodes:
+38.133 holds the RAN4-side quantitative requirements that close the BFD/BFR loop: evaluation periods (`TEvaluate_BFD_*`) and threshold variables (`Qout_LR_*`) for both SSB-based and CSI-RS-based BFD, with separate FR1 and FR2 tables. The relevant clause bodies are cited verbatim:
 
-- `38.533-10.3.4` *Beam failure detection and link recovery procedures* (EN-DC FR1)
-- `38.533-10.3.4.0.1` *Minimum conformance requirements for SSB based Beam Failure Detection under CCA*
-- `38.533-10.3.4.0.3` *Scheduling availability of UE during beam failure detection under CCA*
-- `38.533-10.3.4.1/.2` *PSCell SSB-based BFD/LR — non-DRX / DRX*
-- `38.533-11.4.4` *NR SA FR1 BFD/LR procedures*
-- `38.533-7.5.6.1.1/.1.2`, `38.533-16.7.4.x` (L1-RSRP accuracy measurement tests — title match score 0.6892)
+> *"UE shall be able to evaluate whether the downlink radio link quality on the configured SSB resource in set … estimated over the last TEvaluate_BFD_SSB period becomes worse than the threshold Qout_LR_SSB within TEvaluate_BFD_SSB period. The value of TEvaluate_BFD_SSB is defined in table 8.5C.2.2-1 for FR1-NTN."* `[38.133 §8.5C.2.2, chunkId=38.133-8.5C.2.2-001]`
 
-> **Body limitation**: in the `the section-level collection` collection, chunk text bodies are empty and only `sectionTitle` exists (intentional outcome of RAN5 title embedding) [measurement: §16.7.4.2.2 etc. chunk text length = 0]. Therefore RAN5 is citable only at the **test-case name / structure level**, and FFS / test tolerance markers are not exposed (as expected from title-only embedding).
+> *"The value of TEvaluate_BFD_SSB is defined in table 8.5D.2.2-1 for FR1."* (ATG UE) `[38.133 §8.5D.2.2, chunkId=38.133-8.5D.2.2-001]`
 
-Confirmed test dimensions (based on KG node names):
+> *"… the last TEvaluate_BFD_SSB_Relax period becomes worse than the threshold Qout_LR_SSB … The value of TEvaluate_BFD_SSB_Relax is defined in table 8.5.2.4-1 for FR1. The value of TEvaluate_BFD_SSB_Relax is defined in table 8.5.2.4-2 for FR2 with scaling factor N=8."* `[38.133 §8.5.2.4, chunkId=38.133-8.5.2.4-001]`
+
+> *"… TEvaluate_BFD_SSB_Redcap … defined in table 8.5B.2.2-1 for FR1 … 8.5B.2.2-2 for FR2 with scaling factor N=8."* `[38.133 §8.5B.2.2, chunkId=38.133-8.5B.2.2-001]`
+
+> *"… the last TEvaluate_BFD_CSI-RS period becomes worse than the threshold Qout_LR_CSI-RS within TEvaluate_BFD_CSI-RS period. The value of TEvaluate_BFD_CSI-RS is defined in table 8.5D.3.2-1 for FR1."* `[38.133 §8.5D.3.2, chunkId=38.133-8.5D.3.2-001]`
+
+The cited bodies above directly establish the variable / table-number / scaling structure used by every BFD-RS × UE-category combination loaded for this question:
+
+| BFD-RS / UE category | Evaluation-period variable | Threshold variable | Table number | Scaling N (FR2 / FR2-1) | Source |
+|---|---|---|---|---|---|
+| SSB / Relaxed / FR1·FR2 | `TEvaluate_BFD_SSB_Relax` | `Qout_LR_SSB` | 8.5.2.4-1 / -2 | **N = 8** | `[38.133-8.5.2.4-001]` |
+| SSB / RedCap / FR1·FR2 | `TEvaluate_BFD_SSB_Redcap` | `Qout_LR_SSB` | 8.5B.2.2-1 / -2 | **N = 8** | `[38.133-8.5B.2.2-001]` |
+| SSB / FR1-NTN | `TEvaluate_BFD_SSB` | `Qout_LR_SSB` | 8.5C.2.2-1 | — | `[38.133-8.5C.2.2-001]` |
+| SSB / ATG / FR1 | `TEvaluate_BFD_SSB` | `Qout_LR_SSB` | 8.5D.2.2-1 | — | `[38.133-8.5D.2.2-001]` |
+| CSI-RS / generic / FR1 | `TEvaluate_BFD_CSI-RS` | `Qout_LR_CSI-RS` | 8.5D.3.2-1 | — | `[38.133-8.5D.3.2-001]` |
+
+This report cites at the level of **variable name + table number + scaling factor**. The absolute ms-values per individual table row reside in the 38.133 tables themselves and are not extracted at line-level here (see §9.3).
+
+---
+
+## 6. 38.533 — RAN5 RRM conformance test catalogue
+
+The 38.533 catalogue exposes **100 BFD/LR test nodes**. Representative section IDs from the Neo4j catalogue:
+
+| Section | Title (catalogue) |
+|---|---|
+| `38.533-10.3.4` | *Beam failure detection and link recovery procedures* (EN-DC FR1) |
+| `38.533-10.3.4.0.1` | *Minimum conformance requirements for SSB based Beam Failure Detection under CCA* |
+| `38.533-10.3.4.0.3` | *Scheduling availability of UE during beam failure detection under CCA* |
+| `38.533-10.3.4.1` / `.2` | *PSCell SSB-based BFD/LR — non-DRX / DRX* |
+| `38.533-11.4.4` | *NR SA FR1 BFD/LR procedures* |
+| `38.533-7.5.6.1.1` / `.1.2`, `38.533-16.7.4.x` | L1-RSRP accuracy measurement tests |
+
+> **Body limitation.** Only `sectionTitle` is indexed for 38.533 sections; the chunk text bodies are empty. RAN5 is therefore citable at the **test-case name / structure level** only, and FFS / test-tolerance markers are not exposed (see §9.3).
+
+The catalogued test dimensions form a Cartesian structure across the 100 nodes:
+
 - Mode: **EN-DC vs NR SA**
 - Frequency: **FR1 vs FR2**
 - Cell: **PCell vs PSCell**
 - DRX state: **non-DRX vs DRX**
 - BFD-RS: **SSB-based vs CSI-RS-based**
-- Environment: **CCA (Coverage Constrained Adaptation), separate §10.3.4.0.x**
+- Environment: **CCA (Coverage Constrained Adaptation), separately catalogued under §10.3.4.0.x**
 
-## Quantitative Verification Matrix
+The normative back-link from 38.533 into 38.133 follows the pattern *"normative reference … TS 38.133 [6] clause A.4.5.5.1"* cited from `[TDoc R5-204985]`.
+
+---
+
+## 7. RAN1 / RAN2 Introduction Context (TDoc trail across releases)
+
+Pulling the TDoc-level evolution into a single trail aligned with §1:
+
+| Release | Trail | Source TDoc(s) |
+|---|---|---|
+| Rel-15 | RAN1 candidate L1 mechanism + L1-RSRP adoption | `[R1-1707606]`, `[R1-1713597]` |
+| Rel-15 | RAN2 reference into 38.321 §5.17 (BFI-counting → RA-trigger model) | `[R2-1803196]` |
+| Rel-16 | SCell BFR extension | `[R2-1900212]` |
+| Rel-18 | BFR for SCell-deactivated state | `[R2-2301761]` |
+| Rel-? | RAN5 conformance back-link to 38.133 | `[R5-204985]` |
+
+Each row above is filtered by the explicit `release` tag on the TDoc node, not by string matching release tokens in the title.
+
+---
+
+## 8. Cross-Document Linkages
+
+Only inter-spec references that can be confirmed via citations from the spec/TDoc bodies are listed.
+
+| From | → | To | Evidence |
+|---|---|---|---|
+| 38.213 §6 (Q_out,LR / Q_in,LR) | normative ref | 38.133 (`rlmInSyncOutOfSyncThreshold` / `rsrp-ThresholdSSB` / `rsrp-ThresholdBFR`) | `[38.213-6-001]` body explicitly states *"correspond to the default value of rlmInSyncOutOfSyncThreshold, as described in [10, TS 38.133]"* |
+| 38.213 §6 | uses RRC parameter names | 38.331 IE `RadioLinkMonitoringConfig` / `BeamFailureRecoveryConfig` | `[38.213-6-001]` body names `failureDetectionResourcesToAddModList`, `candidateBeamRSList`, `rsrp-ThresholdSSB`, `rsrp-ThresholdBFR`, `recoverySearchSpaceId`; matched by `[38.331-asn1-RadioLinkMonitoringConfig-001]` and `[38.331-asn1-BeamFailureRecoveryConfig-001]` |
+| 38.331 IE bodies | parameter list consumed by | 38.321 §5.17 procedure | `[38.321-5.17-001]` body enumerates the 12 RRC parameters configured by `beamFailureRecoveryConfig`, `beamFailureRecoverySpCellConfig`, `beamFailureRecoverySCellConfig`, and `radioLinkMonitoringConfig` |
+| 38.321 §5.17 | counter input from | 38.213 §6 (BFI indication) | `[38.321-5.17-001]` body: *"Beam failure is detected by counting beam failure instance indication from the lower layers to the MAC entity"* |
+| 38.331 (`BeamFailureRecoveryConfig` / `RACH-ConfigGeneric`) | enumerated absolutes | 38.321 procedural use of timers / windows | `[38.331-asn1-BeamFailureRecoveryConfig-001]` `beamFailureRecoveryTimer ∈ {ms10..ms200}`, `[38.331-asn1-RACH-ConfigGeneric-001]` `ra-ResponseWindow ∈ {sl1..sl2560}` consumed by `[38.321-5.17-001]` `ra-ResponseWindow` row |
+| 38.213/331 quantitative | implemented as RRM requirement by | 38.133 §8.5.2.4 / §8.5B.2.2 / §8.5C.2.2 / §8.5D.2.2 / §8.5D.3.2 | matching variables `TEvaluate_BFD_*`, `Qout_LR_*` across 38.133 chunk bodies |
+| 38.133 | normative ref | 38.533 §10.3.4 / §11.4.4 / §16.7.4 BFD/LR test catalogue | `[R5-204985]` body cites *"normative reference … TS 38.133 [6] clause A.4.5.5.1"* |
+
+### 8.1 Quantitative Verification Matrix
 
 | Item | Status | Source |
 |---|---|---|
-| `Q_out,LR` / `Q_in,LR` definition (reference mapping) | ✅ *"Qout,LR ... rlmInSyncOutOfSyncThreshold ... [10, TS 38.133]; Qin,LR ... rsrp-ThresholdSSB or rsrp-ThresholdBFR"* | 38.213 §6, `38.213-6-001` |
-| `beamFailureInstanceMaxCount` enumerated range | ✅ `{n1, n2, n3, n4, n5, n6, n8, n10}` | ASN.1 `RadioLinkMonitoringConfig`, `RadioLinkMonitoringConfig-001` |
-| `beamFailureDetectionTimer` enumerated range | ✅ `{pbfd1, pbfd2, pbfd3, pbfd4, pbfd5, pbfd6, pbfd8, pbfd10}` | ASN.1 `RadioLinkMonitoringConfig-001` |
-| `beamFailureRecoveryTimer` enumerated (absolute ms) | ✅ `{ms10, ms20, ms40, ms60, ms80, ms100, ms150, ms200}` | ASN.1 `BeamFailureRecoveryConfig-001` |
-| `ssb-perRACH-Occasion` enumerated | ✅ `{oneEighth, oneFourth, oneHalf, one, two, four, eight, sixteen}` | ASN.1 `BeamFailureRecoveryConfig-001` |
-| `rootSequenceIndex-BFR` range | ✅ `INTEGER (0..137)` | ASN.1 `BeamFailureRecoveryConfig-001` |
-| `ra-PreambleIndex` range | ✅ `INTEGER (0..63)` | ASN.1 `BFR-SSB-Resource-001`, `BFR-CSIRS-Resource-001` |
-| `ra-ResponseWindow` enumerated (Rel-15/16/17) | ✅ `{sl1..sl80}`, `+ {sl60, sl160}` (r16), `+ {sl240..sl2560}` (r17) | ASN.1 `RACH-ConfigGeneric-001` |
-| `RadioLinkMonitoringRS.purpose` | ✅ `ENUMERATED {beamFailure, rlf, both}` | ASN.1 `RadioLinkMonitoringRS-001` |
-| 38.133 BFD evaluation-period variables / table numbers | ✅ (variable names + table numbers + scaling N) | 38.133 §8.5B/§8.5C/§8.5D/§8.5.2.4 chunks |
-| Absolute ms values in 38.133 table rows (per-line numbers) | △ (present in chunk; line-level citation not performed in this answer) | beyond this answer's retrieval scope |
-| 38.213 absolute BLER (% values, e.g. "10%") | ❌ (38.213 §6 delegates to "default value of rlmInSyncOutOfSyncThreshold [10, TS 38.133]" — % values absent in body) | — |
+| Q_out,LR / Q_in,LR ↔ RRC mapping | ✅ verbatim from §6 body | `[38.213 §6, 38.213-6-001]` |
+| `beamFailureInstanceMaxCount` enumerated range | ✅ `{n1, n2, n3, n4, n5, n6, n8, n10}` | `[38.331-asn1-RadioLinkMonitoringConfig-001]` |
+| `beamFailureDetectionTimer` enumerated range | ✅ `{pbfd1, pbfd2, pbfd3, pbfd4, pbfd5, pbfd6, pbfd8, pbfd10}` | `[38.331-asn1-RadioLinkMonitoringConfig-001]` |
+| `beamFailureRecoveryTimer` enumerated (absolute ms) | ✅ `{ms10, ms20, ms40, ms60, ms80, ms100, ms150, ms200}` | `[38.331-asn1-BeamFailureRecoveryConfig-001]` |
+| `ssb-perRACH-Occasion` enumerated | ✅ `{oneEighth, oneFourth, oneHalf, one, two, four, eight, sixteen}` | `[38.331-asn1-BeamFailureRecoveryConfig-001]` |
+| `rootSequenceIndex-BFR` range | ✅ `INTEGER (0..137)` | `[38.331-asn1-BeamFailureRecoveryConfig-001]` |
+| `ra-PreambleIndex` range | ✅ `INTEGER (0..63)` | `[38.331-asn1-BFR-SSB-Resource-001 / -BFR-CSIRS-Resource-001]` |
+| `ra-ResponseWindow` enumerated (Rel-15/16/17 stacked) | ✅ `{sl1..sl80}` + `{sl60, sl160}` (r16) + `{sl240..sl2560}` (r17) | `[38.331-asn1-RACH-ConfigGeneric-001]` |
+| `RadioLinkMonitoringRS.purpose` | ✅ `ENUMERATED {beamFailure, rlf, both}` | `[38.331-asn1-RadioLinkMonitoringRS-001]` |
+| 38.133 BFD evaluation-period variables / table numbers | ✅ variables + table numbers + scaling N=8 | `[38.133 §8.5.2.4 / §8.5B.2.2 / §8.5C.2.2 / §8.5D.2.2 / §8.5D.3.2]` chunks |
+| Absolute ms-values in 38.133 table rows (per-line) | △ structurally present, line-level extraction not performed in this report | — |
+| 38.213 absolute BLER %-values | ❌ delegated to 38.133 in §6 body — not cited | — |
 
-→ 9 quantitatively citable.
+→ **Nine quantitatively citable items** are resolved end-to-end.
 
-## Operational Sequence (reconstructed from retrieved bodies)
+### 8.2 Operational Sequence
 
 ```
 [gNB]                                            [UE — RRC + MAC + L1]
@@ -243,8 +340,8 @@ Confirmed test dimensions (based on KG node names):
   |     · rsrp-ThresholdSSB / rsrp-ThresholdBFR    |
   |     · beamFailureRecoveryTimer {ms10..ms200}   |
   |———————————————————————————————→               |
-  |   [ASN.1 RadioLinkMonitoringConfig-001,        |
-  |    BeamFailureRecoveryConfig-001]              |
+  |   [38.331-asn1-RadioLinkMonitoringConfig-001,  |
+  |    38.331-asn1-BeamFailureRecoveryConfig-001]  |
   |                                                |
   |                                                | (2) L1: measure hypothetical PDCCH BLER on q0 →
   |                                                |     compare radio link quality vs Qout,LR
@@ -264,80 +361,109 @@ Confirmed test dimensions (based on KG node names):
   |                                                |     · BFR-SSB-Resource: ra-PreambleIndex 0..63
   |                                                |     · BFR-CSIRS-Resource: ra-OccasionList +
   |                                                |       ra-PreambleIndex 0..63
-  |                                                |     [ASN.1 PRACH-ResourceDedicatedBFR-001]
+  |                                                |     [38.331-asn1-PRACH-ResourceDedicatedBFR-001]
   |←———————————————————————————————                |
   |                                                |
   | (6) gNB response monitoring                    |
   |     · ra-ResponseWindow                        |
-  |       {sl1..sl80} (+r16 sl60/sl160) (+r17 sl240..sl2560)
+  |       {sl1..sl80} (+r16 sl60/sl160)            |
+  |       (+r17 sl240..sl2560)                     |
   |     · recoverySearchSpaceId                    |
-  |     [ASN.1 RACH-ConfigGeneric-001 +            |
-  |      BeamFailureRecoveryConfig-001]            |
+  |     [38.331-asn1-RACH-ConfigGeneric-001 +      |
+  |      38.331-asn1-BeamFailureRecoveryConfig-001]|
   |                                                |
   |                                                | (7) Meet RAN4 evaluation-period requirements
   |                                                |     · TEvaluate_BFD_SSB / SSB_Redcap /
   |                                                |       SSB_Relax / SSB_NTN / CSI-RS
   |                                                |     · Qout_LR_SSB / Qout_LR_CSI-RS
-  |                                                |     [38.133 §8.5B/§8.5C/§8.5D/§8.5.2.4]
+  |                                                |     [38.133 §8.5.2.4 / §8.5B.2.2 /
+  |                                                |      §8.5C.2.2 / §8.5D.2.2 / §8.5D.3.2]
   |                                                |
   | (8) RAN5 conformance (EN-DC/SA × FR1/FR2 ×     |
   |     PCell/PSCell × DRX/non-DRX × SSB/CSI-RS)   |
-  |     [38.533 §10.3.4.x, §11.4.4, §16.7.4.x]     |
+  |     [38.533 §10.3.4.x / §11.4.4 / §16.7.4.x]   |
 ```
 
-## Cross-Document Linkages
+### 8.3 Trace Diagram
 
-1. **38.213 → 38.133 (BLER thresholds)**: *"Qout,LR and Qin,LR correspond to ... rlmInSyncOutOfSyncThreshold, as described in [10, TS 38.133]"* [38.213 §6, `38.213-6-001`]. → **The PHY threshold definition is explicitly delegated to the RAN4 RRM document.**
-2. **38.213 ↔ 38.331 RRC parameters**: 38.213 §6 directly references `failureDetectionResourcesToAddModList`, `candidateBeamRSList`, `rsrp-ThresholdSSB`, `rsrp-ThresholdBFR`, `recoverySearchSpaceId` [38.213 §6, `38.213-6-001`]. All of these are body-defined in 38.331 IEs (`RadioLinkMonitoringConfig`, `BeamFailureRecoveryConfig`) [ASN.1 IE bodies].
-3. **38.331 IE → 38.321 procedure**: 38.321 §5.17 body states *"RRC configures the following parameters in the beamFailureRecoveryConfig, beamFailureRecoverySpCellConfig, beamFailureRecoverySCellConfig and the radioLinkMonitoringConfig ..."* [38.321 §5.17, `38.321-5.17-001`]. → **One-to-one mapping from RRC parameters to MAC procedures** in the body.
-4. **38.321 ↔ 38.213 (instance counting)**: §5.17 *"Beam failure is detected by counting beam failure instance indication from the lower layers to the MAC entity"* [38.321 §5.17, `38.321-5.17-001`]. → Explicit **L1 (38.213) → MAC (38.321) indication**.
-5. **38.213/331 → 38.133 (RRM quantitative)**: 38.133 defines evaluation periods for the same BFD-RS structure (SSB / CSI-RS) and threshold variables (`Qout_LR_*`) [38.133 §8.5B/§8.5C/§8.5D/§8.5.2.4 chunks].
-6. **38.133 → 38.533**: RAN5 defines BFD/LR test cases in §10.3.4 / §11.4.4 / §16.7.4 [Cypher RAN5_38533, 100 rows]. The pattern *"normative reference ... TS 38.133 [6] clause A.4.5.5.1"* is cited from R5-204985.
-
-Summary (chunkId/IE verification included):
 ```
-38.331 IE (RadioLinkMonitoringConfig, BeamFailureRecoveryConfig, BFR-SSB/CSIRS-Resource, RACH-ConfigGeneric)
-  └ ASN.1 enumerated absolutes (n1..n10, pbfd1..pbfd10, ms10..ms200, sl1..sl2560)
-  ↓ (RRC → MAC)
-38.321 §5.17 BFR procedure (instance counting, ra-ResponseWindow start, parameter list named)
-  ↓ (MAC ← L1 indication, q0/q1 resource definition)
-38.213 §5/§6 Link recovery (Qout,LR/Qin,LR ↔ rlmInSyncOutOfSyncThreshold/rsrp-ThresholdSSB/BFR)
-  ↓ (quantitative evaluation)
-38.133 §8.5B/§8.5C/§8.5D/§8.5.2.4 (TEvaluate_BFD_*, Qout_LR_*, FR1/FR2 tables + scaling N=8)
-  ↓ (normative reference)
-38.533 §10.3.4/§11.4.4/§16.7.4 BFD/LR conformance (EN-DC/SA × FR × DRX × SSB/CSI-RS)
+[Rel-15 RAN1 mechanism set + L1-RSRP adoption]                              ← R1-1707606 / R1-1713597
+        │
+        ▼
+[Rel-15 RAN2 reference: 38.321 §5.17 BFI-counting → RA trigger]            ← R2-1803196
+        │
+        ▼
+38.331 IEs (RadioLinkMonitoringConfig, BeamFailureRecoveryConfig,           ← 38.331-asn1-*-001
+           PRACH-ResourceDedicatedBFR, RACH-ConfigGeneric,
+           RadioLinkMonitoringRS, BeamFailureDetectionSet-r17)
+        │
+        │ (RRC parameters consumed by MAC procedure)
+        ▼
+38.321 §5.17 BFR procedure (counter + timer + RA branch + parameter list)  ← 38.321-5.17-001
+        │
+        │ (BFI indication from L1)
+        ▼
+38.213 §6 Link recovery (BFD-RS sets, candidate-beam-RS sets,              ← 38.213-6-001
+           Qout,LR ↔ rlmInSyncOutOfSyncThreshold,                              38.213-6-002
+           Qin,LR ↔ rsrp-ThresholdSSB / rsrp-ThresholdBFR,                     38.213-6-004
+           SCell BFR + recoverySearchSpaceId)
+        │
+        │ (quantitative evaluation delegated)
+        ▼
+38.133 §8.5.2.4 / §8.5B.2.2 / §8.5C.2.2 / §8.5D.2.2 / §8.5D.3.2            ← 38.133-8.5.2.4-001
+       (TEvaluate_BFD_SSB_Relax / SSB_Redcap / SSB / SSB / CSI-RS,             38.133-8.5B.2.2-001
+        Qout_LR_SSB / Qout_LR_CSI-RS, FR1/FR2 tables, scaling N=8)              38.133-8.5C.2.2-001
+        │                                                                       38.133-8.5D.2.2-001
+        │ (normative reference)                                                 38.133-8.5D.3.2-001
+        ▼
+38.533 §10.3.4 / §11.4.4 / §16.7.4 BFD/LR conformance (100 nodes)          ← R5-204985 normative back-link
+        │
+        ├─ Rel-16 SCell BFR extension                                       ← R2-1900212
+        └─ Rel-18 SCell-deactivated state                                   ← R2-2301761
 ```
 
-## Coverage / Limitations
+---
 
-| Item | Result |
-|---|---|
-| 38.213 §6 *Link recovery* body | ✅ multiple chunks (`38.213-6-001/-002/-004`) |
-| 38.213 Q_out,LR / Q_in,LR definition | ✅ definition cited directly |
-| 38.213 absolute BLER (% value) | ❌ (38.213 body delegates to 38.133) |
-| 38.321 §5.17 BFR full text | ✅ full chunk body + 12 RRC parameters named |
-| 38.321 `beamFailureInstanceMaxCount` expiry → RACH branching body | △ (§5.17 body states trigger behaviour; sub-clause line-level handled separately) |
-| 38.331 IE ASN.1 (`BeamFailureRecoveryConfig`, `RadioLinkMonitoringConfig`, ...) | ✅ direct IE retrieval (9 IEs) |
-| 38.331 IE enumerated absolutes | ✅ ms10..ms200 / n1..n10 / pbfd1..pbfd10 / sl1..sl2560 / oneEighth..sixteen, etc. |
-| 38.133 §8.18 BFD/BFR variables / tables / scaling N | ✅ variables + table numbers + N=8 |
-| Absolute ms values in 38.133 table rows | △ (present in chunk text; line-level citation not performed in this answer) |
-| 38.533 test-case KG node structure | ✅ |
-| 38.533 body (FFS / tolerance) | ❌ (text empty — RAN5 title-only embedding result) |
+## 9. Coverage and Limitations
 
-**Items not retrievable**:
-- Absolute BLER (%) on the 38.213 side — explicit delegation to 38.133 in the spec body (structural limit).
-- Line-level absolute ms values for table rows 8.5B.2.2-1 / 8.5C.2.2-1 / 8.5D.2.2-1 / 8.5D.3.2-1 of 38.133 (present in chunk bodies, but separate line extraction not performed).
-- 38.533 test bodies (text empty — RAN5 collection's title-embedding policy).
+### 9.1 Well-Covered
 
-These items are not included in the answer, in keeping with the no-fill-in principle (CLAUDE.md).
+- **38.213 §6 link-recovery body** — multiple chunks `[38.213-6-001 / -002 / -004]` cited verbatim. Q_out,LR / Q_in,LR mapping into 38.133 RRC parameters cited from the §6 body. **High confidence.**
+- **38.321 §5.17 BFR full body** — single chunk `[38.321-5.17-001]` cited verbatim with full RRC-parameter enumeration (12 parameters across SpCell BFR / SCell BFR / per-BFD-RS-set BFR). **High confidence.**
+- **38.331 IE bodies** — nine IEs cited as full ASN.1 bodies (`BeamFailureRecoveryConfig`, `RadioLinkMonitoringConfig`, `RadioLinkMonitoringRS`, `PRACH-ResourceDedicatedBFR`, `BFR-SSB-Resource`, `BFR-CSIRS-Resource`, `RACH-ConfigGeneric`, `BeamFailureDetectionSet-r17`). All enumerated absolute domains (`{ms10..ms200}` / `{n1..n10}` / `{pbfd1..pbfd10}` / `{sl1..sl2560}` / `{oneEighth..sixteen}`) are read directly from the cited chunks. **High confidence.**
+- **38.133 BFD evaluation-period structure** — five clause bodies `[§8.5.2.4 / §8.5B.2.2 / §8.5C.2.2 / §8.5D.2.2 / §8.5D.3.2]` cited verbatim with variable names, table numbers, and scaling factor N=8 visible in the body. **High confidence at variable-and-table level.**
+- **38.533 BFD/LR test-case catalogue** — 100 catalogued test nodes structured across mode × FR × cell × DRX × BFD-RS dimensions. **High confidence at section-title level.**
+- **Release-tagged TDoc trail** — six TDocs across Rel-15 / Rel-16 / Rel-18 RAN1 / RAN2 / RAN5 (`R1-1707606`, `R1-1713597`, `R2-1803196`, `R2-1900212`, `R2-2301761`, `R5-204985`), each filtered on the explicit `release` field. **Medium-to-high confidence** (RAN1 / RAN2 introduction context is reconstructed from `type=discussion` documents only — no `type=WID` chunk for the Rel-15 BFR work item is present in the loaded dataset).
 
-## Self-Verification
+### 9.2 Weakly Covered
 
-| Check | Status |
-|---|---|
-| Every factual sentence carries a chunkId or IE chunkId citation | OK |
-| Use of external web / general knowledge | None (0 WebFetch / WebSearch invocations) |
-| Were any enumerated values / ms values filled in from learned knowledge? | **NO** — `{n1..n10}`, `{pbfd1..pbfd10}`, `{ms10..ms200}`, `{sl1..sl2560}`, `{oneEighth..sixteen}` etc. are all cited directly from ASN.1 chunk bodies. Absolute BLER % values are absent in 38.213 chunks → not cited. |
-| Quantitatively citable items | 9 resolved (Qout,LR / Qin,LR definition, 4 enumerated ranges, ms absolutes, sl absolutes, INTEGER ranges). 1 unresolved (absolute BLER % — structural). |
-| Do the Cypher queries match the actual KG schema? | OK — `Section`-`[:BELONGS_TO_SPEC]`-`Spec` structure; RAN1=2 / RAN2=7 / RAN4=100 / RAN5=100 rows. |
-| Search-script / log artefact paths | `scripts/cross-phase/usecase/q3_search_bfd_bfr_v2.py`, `logs/cross-phase/usecase/q3_retrieval_log_v2.json`. |
+- **38.321 sub-clause line-level branching** — §5.17 body states the trigger behaviour (*"counting beam failure instance indication from the lower layers"*) but the per-step branching when `beamFailureInstanceMaxCount` expires (PCell RA vs SCell MAC-CE vs SR-BFR fork) is held at sub-clause line-level rather than within the `[38.321-5.17-001]` chunk's prose body. **Medium confidence.**
+
+### 9.3 Items Not Present in the Dataset
+
+- **Absolute BLER %-values on the 38.213 side** (e.g., *"hypothetical PDCCH BLER of 10% for Q_{out,LR}"*) — the 38.213 §6 body delegates these to *"the default value of rlmInSyncOutOfSyncThreshold … [10, TS 38.133]"*. This is a **structural delegation in the spec**, not an indexing gap. Not asserted in this report.
+- **Line-level absolute ms-values in 38.133 table rows** for tables 8.5B.2.2-1 / 8.5C.2.2-1 / 8.5D.2.2-1 / 8.5D.3.2-1 / 8.5.2.4-1 / -2 — present in the 38.133 tables themselves; per-row line extraction is not performed in this report.
+- **38.533 chunk text bodies (FFS / tolerance markers)** — only `sectionTitle` is indexed for the RAN5 spec. RAN5 is therefore citable at test-case name / structure level only.
+- **Formal `type=WID` chunks for the Rel-15 BFR work item** — the introduction context in §1 / §7 is reconstructed from `type=discussion` documents (`R1-1707606`, `R1-1713597`, `R2-1803196`) only.
+
+### 9.4 Self-Verification Notes
+
+- Every factual sentence in §1–§8 ends with a `[spec §sec, chunkId=…]` or `[TDoc Rxxx, RANxx#N, release=…]` citation.
+- §4.1–§4.6 attach precise IE chunkIds for all nine IE bodies cited.
+- All items not present in the dataset (38.213 BLER %-values, line-level 38.133 table-row ms-values, 38.533 body chunks, formal Rel-15 WID chunk) are explicitly listed in §9.3 and are not filled in by speculation.
+- No external web / general-knowledge invocation was used; all enumerated values (`{n1..n10}`, `{pbfd1..pbfd10}`, `{ms10..ms200}`, `{sl1..sl2560}`, `{oneEighth..sixteen}`) are read from the cited ASN.1 IE bodies, not from learned knowledge.
+
+---
+
+## 10. Summary
+
+The NR Beam Failure Detection / Beam Failure Recovery procedure is captured end-to-end across the 3GPP RAN spec stack as follows:
+
+1. **Motivation** — BFR was scoped in Rel-15 as a dedicated link-recovery procedure (RAN1 candidate L1 mechanism set + L1-RSRP adoption + RAN2 reference into 38.321 §5.17). The procedure was extended to **SCell (Rel-16)** and to the **SCell-deactivated state (Rel-18)** `[R1-1707606 / R1-1713597 / R2-1803196 / R2-1900212 / R2-2301761]`.
+2. **38.213 §6** — Defines the BFD-RS sets (`failureDetectionResourcesToAddModList`, `failureDetectionSet1` / `failureDetectionSet2`) and candidate-beam-RS sets (`candidateBeamRSList`, `…Ext`, `…-List`, `…-List2`), and maps the PHY thresholds Q_out,LR / Q_in,LR to RRC parameters with explicit normative ref to 38.133 in body `[38.213 §6, 38.213-6-001]`.
+3. **38.321 §5.17** — Defines the MAC BFR procedure: BFI-counting from lower layers → declaration on `beamFailureInstanceMaxCount` → SpCell RA trigger / SCell MAC-CE branch, with twelve named RRC parameters consumed `[38.321 §5.17, 38.321-5.17-001]`.
+4. **38.331 IEs** — Carry the full configuration: `BeamFailureRecoveryConfig` (`rootSequenceIndex-BFR INTEGER (0..137)`, `beamFailureRecoveryTimer ∈ {ms10..ms200}`, `ssb-perRACH-Occasion ∈ {oneEighth..sixteen}`, Rel-16 / Rel-19 extensions), `RadioLinkMonitoringConfig` (`beamFailureInstanceMaxCount ∈ {n1..n10}`, `beamFailureDetectionTimer ∈ {pbfd1..pbfd10}`, Rel-17 multi-set hook), `RadioLinkMonitoringRS` (`purpose ∈ {beamFailure, rlf, both}`), `PRACH-ResourceDedicatedBFR` (`ra-PreambleIndex 0..63`), `RACH-ConfigGeneric` (`ra-ResponseWindow ∈ {sl1..sl2560}` stacked across Rel-15 / Rel-16 / Rel-17), and `BeamFailureDetectionSet-r17` `[38.331-asn1-*-001]`.
+5. **38.133 §8.5.2.4 / §8.5B.2.2 / §8.5C.2.2 / §8.5D.2.2 / §8.5D.3.2** — Defines `TEvaluate_BFD_SSB_Relax / SSB_Redcap / SSB / SSB / CSI-RS` and `Qout_LR_SSB` / `Qout_LR_CSI-RS` with FR1 / FR2 tables and scaling factor N=8 `[38.133 §8.5.2.4 / §8.5B.2.2 / §8.5C.2.2 / §8.5D.2.2 / §8.5D.3.2 chunks]`.
+6. **38.533 §10.3.4 / §11.4.4 / §16.7.4** — RAN5 BFD/LR conformance test catalogue (100 nodes) covering EN-DC / SA × FR1 / FR2 × PCell / PSCell × DRX / non-DRX × SSB / CSI-RS, with normative back-link to 38.133 cited from `[R5-204985]`.
+
+Nine quantitatively citable items are resolved end-to-end (§8.1). One item — absolute BLER %-values on the 38.213 side — is structurally absent because 38.213 §6 explicitly delegates the value to 38.133 in body; this is reported as a delegation, not as an indexing gap (§9.3).

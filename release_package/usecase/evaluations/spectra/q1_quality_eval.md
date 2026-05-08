@@ -3,8 +3,7 @@
 ## Evaluation Metadata
 
 - Evaluation date: 2026-04-29
-- Initial answer: `docs/usecase/answers/SPECTRA RAG/q1_rel16_typeii_codebook.md` (279 lines)
-- Retrieval log: `logs/cross-phase/usecase/q1_retrieval_log.json` (3,457 lines, 280 hits, 150 unique chunkIds, 50 unique TDocs)
+- Initial answer: `docs/usecase/answers/spectra/q1_rel16_typeii_codebook.md` (279 lines)
 - Evaluator: Claude (Opus 4.7, cross-checked against external authoritative sources via web)
 - Evaluation method: extract fact-claims from the initial answer → verify existence in the retrieval log (Python set matching) → cross-check facts against authoritative sources (WebSearch + WebFetch)
 
