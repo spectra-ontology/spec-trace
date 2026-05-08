@@ -10,7 +10,7 @@
 | GPT | 406 | spec section, no RP citation |
 | Claude | 693 | spec section + ASN.1 code (disguised assertions) |
 
-## 5-axis scoring
+## 6-axis scoring
 
 | Axis | **SPECTRA RAG** | GPT | Claude |
 |---|---:|---:|---:|
@@ -20,9 +20,9 @@
 | A4 Hallucination Control | **4.95** | 4.0 | 3.0 |
 | A5 Cross-Doc Linkage | **4.85** | 4.0 | 4.5 |
 | A6 Document Lifecycle Traceability | **5.0** | 2.0 | 1.0 |
-| **Overall (6-axis)** | **4.85** | **3.25** | **3.20** |
+| **Overall (6-axis)** | **4.86** | **3.25** | **3.17** |
 
--> SPECTRA RAG leads Claude by **+1.65** and GPT by **+1.60** on the 6-axis composite. A6 is the largest single-axis gap (4.0 over Claude; 3.0 over GPT).
+→ SPECTRA RAG leads Claude by **+1.69** and GPT by **+1.61** on the 6-axis composite. A6 is the largest single-axis gap (4.0 over Claude; 3.0 over GPT).
 
 ## A6 Document Lifecycle Traceability (qualitative)
 
@@ -83,11 +83,10 @@ SPECTRA's new §13 reaches all four lifecycle stages for Rel-18 (WID RP-221799 r
 
 ## Honest assessment (user perspective)
 
-### SPECTRA RAG - "rich data, format remains a RAG dump"
+### SPECTRA RAG — rich data, structured standards-analysis reports with explicit Document Lifecycle Trace
 
-- Strengths: ASN.1 IE SEQUENCE bodies are inserted directly into the answer. chunkId verifiable.
-- Weakness: the answer reads as a RAG dump and would ideally be rewritten as continuous prose.
-- **Practical use**: best as base material for a standards-meeting contribution, given citation traceability. Narrative editing is the user's responsibility.
+- Strengths: ASN.1 IE SEQUENCE bodies are inserted directly into the answer; chunkId verifiable; §13 ships a structured Document Lifecycle Trace for Rel-18 (RP-221799 → RAN1/RAN2 agreement TDocs → 5-spec body → R4-2400104) plus Rel-19 and Rel-20 branches with bidirectional traversal and honest gap disclosure.
+- **Practical use**: best as base material for a standards-meeting contribution, given citation traceability and lifecycle reconstruction.
 
 ### GPT - "safe generalities, strong Rel-20 honesty"
 
@@ -114,4 +113,4 @@ SPECTRA's new §13 reaches all four lifecycle stages for Rel-18 (WID RP-221799 r
 | Quick technical-depth grasp | Claude (but RP-WIDs / Rel-20 / ASN.1 code must be fact-checked) |
 | Rel-19/20 forward-looking discussion | SPECTRA RAG or GPT (Claude's Rel-20 ASN.1 assertions must not be cited) |
 
-**Headline**: the gap between SPECTRA RAG and Claude is **+1.23**. SPECTRA RAG directly cites LTM IE bodies and preserves Rel-20 honesty.
+**Headline**: the gap between SPECTRA RAG and Claude on the 6-axis composite is **+1.69** (SPECTRA 4.86 / Claude 3.17). SPECTRA RAG directly cites LTM IE bodies, ships a Rel-18 Document Lifecycle Trace, and preserves Rel-20 honesty.

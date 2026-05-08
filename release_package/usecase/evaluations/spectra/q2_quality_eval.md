@@ -20,7 +20,7 @@
   - 5G-Advanced Rel-19 / Qualcomm material — https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/5G-A-Rel-19-Presentation.pdf
   - Itecspec 38.321 §5.18 / 38.331 IE — https://itecspec.com/spec/3gpp-38-321-5-18-handling-of-mac-ces/, https://itecspec.com/spec/3gpp-38-331-6-3-2-radio-resource-control-information-elements/
 
-## Five-axis scores (0–5)
+## Six-axis scores (0–5)
 
 | Axis | Score | Summary of evidence |
 |---|---:|---|

@@ -19,7 +19,7 @@ System characteristics:
 
 ---
 
-## Five-axis scores
+## Six-axis scores
 
 | Axis | SPECTRA RAG | GPT | Claude | First place | Comment |
 |---|---:|---:|---:|---|---|
@@ -29,7 +29,7 @@ System characteristics:
 | A4 Hallucination Control | **4.9** | 3.0 | 3.5 | SPECTRA RAG | The full §7-1 ASN.1 body (985 chars / 2,944 chars) is fetched directly from the chunk payload — 0% training knowledge. The 38.306 limitation is honestly noted in §6-1/§10. |
 | A5 Cross-Doc Linkage | **4.8** | 3.8 | 4.6 | SPECTRA RAG | The §9 mapping table contains a **two-way mapping (★)** row: 38.214 §5.2.2.2.5 (paramCombination-r16 INTEGER 1..8) ↔ 38.331-asn1-CodebookConfig-r16 body, citing the same domain directly. |
 | A6 Document Lifecycle Traceability | **5.0** | 1.0 | 2.0 | SPECTRA RAG | SPECTRA §11 ships a structured Resolution → Tdoc → CR → TS/TR trace with audit table, bidirectional traversal narrative, and honest CR-level gap disclosure. GPT has no TDoc citations and only bare spec numbers. Claude states WID numbers (RP-182863 / RP-191085) and spec sections but no agreement → CR → spec body chain or bidirectional traversal. |
-| **Overall** | **4.85** | **2.72** | **3.58** | SPECTRA RAG | All 6 axes lead. (6-axis mean — A6 lifts SPECTRA marginally and widens the gap to GPT/Claude.) |
+| **Overall (6-axis)** | **4.83** | **2.75** | **3.58** | SPECTRA RAG | SPECTRA leads on every axis. |
 
 ### Gap vs. Claude / GPT
 
@@ -41,7 +41,7 @@ System characteristics:
 | A4 Hallucination | **+1.4** (vs. Claude 3.5) |
 | A5 Cross-Doc | **+0.2** (vs. Claude 4.6) |
 | A6 Document Lifecycle | **+3.0** (vs. Claude 2.0) |
-| **Overall** | **+1.27** (vs. Claude 3.58) |
+| **Overall (6-axis)** | **+1.25** (vs. Claude 3.58) |
 
 ### A6 Document Lifecycle Traceability — qualitative
 
@@ -159,4 +159,4 @@ Cross-check base for this evaluation:
 
 ---
 
-*Evaluation complete. SPECTRA RAG's 5-axis overall score is **4.8**; the gap to Claude is **+0.9**. The 38.306 capability rows remain as a P3 chunking improvement target.*
+*Evaluation complete. SPECTRA RAG's 6-axis overall score is **4.83** (A6 Document Lifecycle Traceability=5.0). Gap to Claude is **+1.25**; gap to GPT is **+2.08**. The 38.306 capability rows remain as a P3 chunking improvement target.*

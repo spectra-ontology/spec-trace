@@ -17,7 +17,7 @@
 
 ---
 
-## Five-axis scores (0–5)
+## Six-axis scores (0–5)
 
 | Axis | Score | Summary of evidence |
 |---|---:|---|

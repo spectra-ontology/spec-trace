@@ -2,7 +2,7 @@
 
 ## Purpose
 
-For **four cross-WG integrated questions** that an in-house modem standards engineer might pose in practice, this study **compares answers from three systems using a 5-axis rubric**:
+For **four cross-WG integrated questions** that an in-house modem standards engineer might pose in practice, this study **compares answers from three systems using a 6-axis rubric**:
 
 1. **SPECTRA RAG** — the spec-trace project's Neo4j (7687-7691) + Qdrant (6333) RAG. Strictly no external tools or learned knowledge.
 2. **GPT** — OpenAI GPT answers (provided by user input).
@@ -44,13 +44,13 @@ docs/usecase/
 
 ### Stage 2: SPECTRA Single-Model Evaluation (`evaluations/spectra/`)
 - Stage-1 answers are checked against authoritative sources (IEEE Xplore, ETSI TS, 3gpp.org, sharetechnote, Ofinno, Ericsson).
-- 5-axis scoring + hallucination detection + coverage gaps + **D/O/R weakness root-cause classification**.
+- 6-axis scoring (A1-A6) + hallucination detection + coverage gaps + **D/O/R weakness root-cause classification**.
 
 ### Stage 3: 3-way Comparison (`evaluations/3way/`)
-- SPECTRA vs GPT vs Claude answers compared on the same 5-axis rubric.
+- SPECTRA vs GPT vs Claude answers compared on the same 6-axis rubric.
 - Per-model strengths/weaknesses + hallucination detection patterns + SPECTRA improvement implications + practical usage conclusions.
 
-## 5-Axis Evaluation Rubric
+## 6-Axis Evaluation Rubric
 
 | Axis | Definition | Key discriminator |
 |---|---|---|

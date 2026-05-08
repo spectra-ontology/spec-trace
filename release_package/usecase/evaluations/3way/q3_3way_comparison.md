@@ -1,7 +1,7 @@
 # Q3 3-way — BFD/BFR
 
 > Evaluation date: 2026-05-01 - Evaluator: spec-trace evaluation team
-> This report compares the SPECTRA RAG answer (using inline IE-level citations) against GPT and Claude using a 5-axis scoring scheme together with a quantitative-value matrix.
+> This report compares the SPECTRA RAG answer (using inline IE-level citations) against GPT and Claude using a 6-axis scoring scheme (A1–A6) together with a quantitative-value matrix.
 > Authority verification was performed in this session via four WebSearch calls and one WebFetch call (TS 38.213 Q_out 10% definition, TS 38.331 enumerated ranges, TS 38.133 BFD evaluation period, RACH-ConfigGeneric ra-ResponseWindow).
 
 ---
@@ -18,7 +18,7 @@
 
 ---
 
-## 5-axis scoring
+## 6-axis scoring
 
 | Axis | **SPECTRA RAG** | GPT | Claude | Top |
 |---|:---:|:---:|:---:|:---:|
@@ -133,7 +133,7 @@ Authority URLs (reproducible):
 
 ## Practical conclusions
 
-1. **SPECTRA RAG ranks first overall (4.84/5.0)**: 9 correct quantitative answers (the 38.213 §6 body's delegation citation plus direct citation of eight IE enumerated bodies). Citation Integrity and Hallucination Control are a perfect 5.0 (zero fabrications).
+1. **SPECTRA RAG ranks first overall (4.70/5; A6=4.0 capped because Rel-17 RAN1/RAN2 contribution layer is IE-only)**: 9 correct quantitative answers (the 38.213 §6 body's delegation citation plus direct citation of eight IE enumerated bodies). Citation Integrity and Hallucination Control are a perfect 5.0 (zero fabrications). The A6 cap reflects the absence of R1-/R2- TDoc citations at the Rel-17 contribution layer (see §11.4 of the SPECTRA answer) and the lack of an explicit CR number on the Agreement → CR → spec-body link.
 
 2. **Claude is strong on quantitative richness (6 correct)**, but with three disguised assertions (`-110 dBm default`, `< 80 ms typical FR2`, `BFD-RS 8 or more`) the hallucination risk ranks Claude > SPECTRA RAG ~= GPT. Within the verification scope of this session, ASN.1 citation accuracy matches authority.
 
