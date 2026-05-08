@@ -34,7 +34,7 @@
 **Strengths**:
 - ASN.1 IE SEQUENCE bodies cited **directly** (Q1 CodebookConfig-r16 / Q2 TCI-State / Q3 BeamFailureRecoveryConfig / Q4 LTM-Config and 22+ IEs)
 - Q3 has 9 quantitative items citable
-- Q2 24-cell matrix has **20 confirmed cells**
+- Q2 24-cell matrix has **18 ✅ + 2 ⚠️ + 4 ❌ (Rel-20 honestly reported)**
 - chunkIndex labeling is accurate
 
 **Areas still weak**:
@@ -79,7 +79,7 @@ SPECTRA RAG remains at 0. Hallucinations persist for GPT and Claude in the noted
 | **chunker hard_max + tiktoken accurate measurement** | All five WGs | 0 zero-vector chunks; search accuracy maintained |
 | **chunkIndex labeling accuracy** | Q4 in particular | chunkIndex labels match retrieval logs |
 | **Enumerated quantitative-value citation** | Q3 | 9 citable items (n1~n10, ms10~ms200, sl1~sl2560, etc.) |
-| **Filling the Release x document matrix** | Q2 | 20 confirmed cells |
+| **Filling the Release x document matrix** | Q2 | 18 ✅ + 2 ⚠️ + 4 ❌ (Rel-20 honestly reported) |
 
 ## 6. Remaining limits (across four questions)
 

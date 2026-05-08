@@ -399,8 +399,8 @@ The matrix below tracks per-release coverage across the four spec documents in s
 
 | Level | Count |
 |---|---|
-| ✅ direct body citation | 20/24 (83.3%) |
-| ⚠️ Neo4j Section node only / proxy | 1/24 (4.2%) |
+| ✅ direct body citation | 19/24 (79.2%) |
+| ⚠️ Neo4j Section node only / proxy | 1/24 (4.2%) — Rel-19 38.214 §5.1.5 (cumulative section, Rel-19-specific separator chunks weak) |
 | ❌ not found | 4/24 (16.7%) — all Rel-20 |
 
 The four Rel-20 cells remain ❌ because the loaded Rel-20 documents are still at the 6G framing stage.
@@ -482,7 +482,7 @@ Every step in this trace is grounded in cited document bodies above.
 - IE-node citations come from the spec catalogue.
 - "Not found" items are marked as dataset limitations. The report does not assert presence/absence of spec changes themselves (Rel-20).
 - Release-mismatch review: TDoc `release` fields used as-is. All TDocs cited in the body are present under the same release key.
-- The "Release × Document 24-cell Matrix" reaches 20/24 (83.3%); the four ❌ cells are all Rel-20.
+- The "Release × Document 24-cell Matrix" reaches 19/24 (79.2%); the four ❌ cells are all Rel-20.
 
 ---
 

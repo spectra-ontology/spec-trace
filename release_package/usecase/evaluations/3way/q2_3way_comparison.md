@@ -21,7 +21,7 @@ SPECTRA RAG retrieved resources:
 | Axis | SPECTRA RAG | GPT | Claude | First place | Comment |
 |---|---:|---:|---:|---|---|
 | A1 Accuracy | **4.9** | 3.6 | 3.4 | SPECTRA RAG | Direct citation of 11 ASN.1 IE bodies (`TCI-State`, `QCL-Info`, `TCI-UL-State-r17`, `CandidateTCI-State-r18`, `LTM-QCL-Info-r18`, `PDSCH-Config`, `PDCCH-Config`, `ControlResourceSet`, etc.) — 1:1 with the ETSI 138.331 V18.x body. The 38.306 capability rows (`tci-StatePDSCH`/`maxNumberConfiguredTCI-StatesPerCC`/`tci-JointTCI-Update*-r18`/`cjt-QCL-PDSCH-SchemeC/D/E-r19`) are also row-level direct. One weak hallucination on the §6.1.3.14 Rel-15 attribution. |
-| A2 Coverage | **4.7** | 3.6 | 4.4 | SPECTRA RAG | 24-cell fill: **20 ✅**. 38.331 ASN.1 area covered for Rel-15/17/18/19; 38.306 area covered for Rel-15/16/18/19. The 4 Rel-20 ❌ remain honestly reported (6G framing stage). Claude fills 24/24 but retains Rel-20 ASN.1 speculation. |
+| A2 Coverage | **4.7** | 3.6 | 4.4 | SPECTRA RAG | 24-cell fill: **18 ✅ + 2 ⚠️ + 4 ❌** (Rel-17 38.306 capability cell ⚠️ — only -r18 introduction-premise rows retrieved; Rel-19 38.214 §5.1.5 ⚠️ — Rel-19-specific separate chunks weak). 38.331 ASN.1 area covered for Rel-15/17/18/19; 38.306 area covered for Rel-15/16/18/19. The 4 Rel-20 ❌ remain honestly reported (6G framing stage). Claude fills 24/24 but retains Rel-20 ASN.1 speculation. |
 | A3 Citation Integrity | **5.0** | 1.5 | 2.0 | SPECTRA RAG | IE bodies are directly verifiable from the retrieval log via `asn1_by_name[*].rows[*].text` + `asn1_vector_queries[*].hits[*].text` (no truncation, 200~800 chars per IE). 11 ASN.1 IEs + 13 TS chunkIds + 31 TDocs. All verified ✅. |
 | A4 Hallucination Control | **4.9** | 3.5 | 2.8 | SPECTRA RAG | Honest reporting on Rel-20 spec body absence ("only 6G overview / coverage Phase 3 framing stage"). One weak hallucination on §6.1.3.14 Rel-15 attribution (-0.1). Claude's Rel-20 ASN.1 speculative fills (`crossCarrierRefRS-r20`/`subbandTCI-Application-r20`/`ntn-DopplerComp-r20`) present. |
 | A5 Cross-Doc Linkage | **4.9** | 4.0 | 4.5 | SPECTRA RAG | The trace RRC IE → MAC CE → PHY QCL → capability is evidenced directly through ASN.1 bodies (7 linkages). Example: `PDSCH-Config { tci-StatesToAddModList SEQUENCE OF TCI-State }` → 38.214 §5.1.5 "up to M TCI-State configurations within PDSCH-Config" → 38.306 `maxNumberConfiguredTCI-StatesPerCC`. The Rel-19 extension block `[[ pathlossOffset-r19 ENUMERATED {dB-12..dB60} ]]` of `TCI-State` ↔ 38.306 `cjt-QCL-PDSCH-Scheme*-r19` evidences both ASN.1 and capability sides. |
@@ -47,11 +47,11 @@ Notation: T=SPECTRA RAG / G=GPT / C=Claude. ✅=filled accurately, ⚠️=partia
 
 | Model | ✅ | ⚠️ | ❌ |
 |---|---:|---:|---:|
-| **SPECTRA RAG** | **20/24 (83.3%)** | 1 | 4 (Rel-20, honest) |
+| **SPECTRA RAG** | **18/24 (75.0%)** | 2 | 4 (Rel-20, honest) |
 | GPT | 16/24 | 8 | 0 |
 | Claude | 14/24 | 0 | 10 (Rel-19/20 inference dominates) |
 
-**SPECTRA RAG fills 20 ✅ (83.3%)**. 38.331 ASN.1 area (Rel-15/17/18/19) and 38.306 area (Rel-15/16/18/19) are fully covered. Claude has Rel-19 misclassification (AI/ML) and Rel-20 ASN.1 hallucination.
+**SPECTRA RAG fills 18 ✅ + 2 ⚠️ + 4 ❌ (75.0%)**. 38.331 ASN.1 area (Rel-15/17/18/19) and 38.306 area (Rel-15/16/18/19) are fully covered. Claude has Rel-19 misclassification (AI/ML) and Rel-20 ASN.1 hallucination.
 
 ### A6 Document Lifecycle Traceability (qualitative)
 
@@ -133,7 +133,7 @@ SPECTRA's §11 supplies a per-release lifecycle chain for Rel-15 → Rel-20 (RP-
 ## Practical conclusion
 
 1. **SPECTRA RAG ranks first across all 5 axes (4.9/5.0)**. Citation integrity 5.0 + direct ASN.1 body citation lift accuracy/coverage/cross-doc simultaneously.
-2. **24-cell fill rate 20/24 (83.3%)**. The 38.331 ASN.1 area and 38.306 capability rows area are filled. The Rel-19 spec body change (`pathlossOffset-r19`) is cited as direct evidence.
+2. **24-cell fill rate 18/24 ✅ + 2/24 ⚠️ (75.0%/8.3%)**. The 38.331 ASN.1 area and 38.306 capability rows area are filled. The Rel-19 spec body change (`pathlossOffset-r19`) is cited as direct evidence.
 3. **Claude's Rel-20 ASN.1 hallucination is present**. Only SPECTRA RAG consistently maintains the honest non-answer (Rel-20 spec body not found). Acknowledging the dataset limitation aligns with authoritative sources.
 4. **Direct citation of 38.331 IE bodies is the decisive factor.**
 5. **Retrieval-grounded answers outperform LLM-knowledge-based answers in verifiability** (citation integrity 5.0 vs. 1.5/2.0).
