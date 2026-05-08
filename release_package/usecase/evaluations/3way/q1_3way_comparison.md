@@ -15,7 +15,7 @@
 | Claude | 404 | Spec clause numbers + RP-* WID numbers + ASN.1 syntax direct citations | Training knowledge |
 
 System characteristics:
-- New collection: **`the IE-level collection`** — IE-level chunking.
+- IE-level collection — IE-level chunking.
 - Query strategy: 5 vector + 4 ASN.1 ieName exact retrieval + 4 38.306 text-match probes (= 13 calls).
 - Retrieval log: `logs/cross-phase/usecase/q1_retrieval_log.json`.
 

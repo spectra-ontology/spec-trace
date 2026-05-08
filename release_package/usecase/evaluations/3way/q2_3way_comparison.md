@@ -8,7 +8,7 @@
 
 | Model | File | lines | Citation format | External tools |
 |---|---|---:|---|---|
-| SPECTRA RAG | `docs/usecase/answers/SPECTRA RAG/q2_tci_state_rel15_to_rel20.md` | **293** | `[spec §sec, chunkId=...]` / `[asn1 IE=..., chunkId=...]` ★ / `[tdoc, mtg, type, ai=..., release]` / `[Neo4j RAN2, sectionNumber=...]` | None (Qdrant `ran{1,2}_ts_sections` + **`the IE-level collection` ★** + `ran{1,2}_tdoc_chunks` + Neo4j RAN1/RAN2) |
+| SPECTRA RAG | `docs/usecase/answers/SPECTRA RAG/q2_tci_state_rel15_to_rel20.md` | **293** | `[spec §sec, chunkId=...]` / `[asn1 IE=..., chunkId=...]` ★ / `[tdoc, mtg, type, ai=..., release]` / `[Neo4j RAN2, sectionNumber=...]` | None (Qdrant section collection + IE-level collection ★ + tdoc chunks + Neo4j RAN1/RAN2) |
 | GPT | `docs/usecase/answers/gpt/q2_tci_state_rel15_to_rel20.md` | 323 | Spec name + IE name only (no URL/§/chunkId) | LLM training knowledge |
 | Claude | `docs/usecase/answers/claude/q2_tci_state_rel15_to_rel20.md` | 497 | § number + ASN.1 code blocks + WID number (no chunkId/URL) | LLM training knowledge |
 

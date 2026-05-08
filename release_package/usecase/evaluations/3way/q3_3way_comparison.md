@@ -1,7 +1,7 @@
 # Q3 3-way — BFD/BFR
 
 > Evaluation date: 2026-05-01 - Evaluator: spec-trace evaluation team
-> This report compares the SPECTRA RAG answer (using the `the IE-level collection` collection) against GPT and Claude using a 5-axis scoring scheme together with a quantitative-value matrix.
+> This report compares the SPECTRA RAG answer (using the IE-level collection) against GPT and Claude using a 5-axis scoring scheme together with a quantitative-value matrix.
 > Authority verification was performed in this session via four WebSearch calls and one WebFetch call (TS 38.213 Q_out 10% definition, TS 38.331 enumerated ranges, TS 38.133 BFD evaluation period, RACH-ConfigGeneric ra-ResponseWindow).
 
 ---
@@ -14,7 +14,7 @@
 | GPT | `gpt/q3_beam_failure_recovery.md` | 319 | No external tool use stated | General spec/clause references |
 | Claude | `claude/q3_beam_failure_recovery.md` | 568 | No external tool use stated | ASN.1 IE references and WID numbers. Zero chunkId citations |
 
--> The main `*_ts_sections` collection uses the chunker policy (max 6,494 tokens); the `the IE-level collection` collection allows direct citation of 38.331 IE enumerated ranges; full chunk text is preserved.
+-> The main `*_ts_sections` collection uses the chunker policy (max 6,494 tokens); the IE-level collection allows direct citation of 38.331 IE enumerated ranges; full chunk text is preserved.
 
 ---
 
