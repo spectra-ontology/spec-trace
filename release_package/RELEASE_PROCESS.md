@@ -88,16 +88,15 @@ GitHub push will not attempt to upload the large body files.
    - RAN5-body.ttl (186 MB)
    Estimated upload: 30–60 minutes on a typical residential link.
 
-3. Reserve a DOI ("Save draft" auto-reserves a DOI; the deposit is still
-   editable until you click Publish).
+3. ✅ DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872)
+   minted on 2026-05-08; the paper RAS, README, and CITATION/codemeta files
+   reference the live DOI rather than a placeholder.
 
-4. Edit the paper RAS to use the reserved DOI (replace the
-   `10.5281/zenodo.20034872` placeholders in `docs/paper/iswc/latex/main.tex`
-   and `release_package/README.md`).
+4. ✅ Paper PDF compiled against the live DOI; `verify_release.py` reports
+   37/37 checks passed locally and 32/32 + 5 deferred (body-text TTLs) on
+   the public mirror per the GitHub/Zenodo split (§7).
 
-5. Recompile the paper PDF and run `verify_release.py` once more.
-
-6. **Publish** the Zenodo deposit. **This is irreversible** — the DOI is
+5. **Publish** of the Zenodo deposit is **irreversible** — the DOI is
    permanent; metadata can only be amended via Zenodo's "edit metadata"
    feature, and files can only be replaced by issuing a new version.
 
@@ -124,7 +123,9 @@ Upload the final PDF to EasyChair before 23:59 AoE.
 ```bash
 # Local artifact integrity (run before push):
 python3 release_package/tests/verify_release.py
-# Expected: 37/37 PASS (all checks).
+# Expected on the dev tree: 37/37 PASS (all checks).
+# Expected on the public mirror (no body-text TTLs, no Neo4j):
+#                              32/32 PASS + 5 SKIP (body-text deferred to Zenodo).
 
 # Public reachability after push (run after Day 2):
 curl -ILs https://github.com/spectra-ontology/spec-trace                | head -1

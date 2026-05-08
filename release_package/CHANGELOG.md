@@ -3,7 +3,7 @@
 All notable changes to the SPECTRA release package are documented in this file.
 Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] — 2026 (camera-ready, pending Zenodo DOI mint)
+## [1.0.0] — 2026-05-08 (camera-ready; Zenodo DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) minted)
 
 First public release accompanying the ISWC 2026 Resources Track submission
 *"SPECTRA: A Traceability Ontology for the 3GPP RAN Standardization Process"*.

@@ -1,7 +1,9 @@
 {
   "metadata": {
     "measured_at": "2026-04-27",
-    "source": "cross_wg_schema_diff.json"
+    "rationale_added_at": "2026-05-08",
+    "source": "cross_wg_schema_diff.json",
+    "rationale_basis": "docs/cross-phase/standards/wg_decision_pattern_comparison.md (per-WG decision-form patterns) + Phase-2 Final Report parsing logs (figure/chart/summary/sessionnotes incidence per WG) + 3GPP RAN charter scope (RAN5 = mobile terminal conformance testing)."
   },
   "per_wg_class_coverage": {
     "RAN1": {
@@ -21,7 +23,13 @@
         "Figure",
         "SessionNotes",
         "Summary"
-      ]
+      ],
+      "absence_reasons": {
+        "Chart": "Native OpenXML chart objects (<c:chart>) embedded in DOCX Final Reports are rare by 3GPP authoring convention; no instances were extracted from the released RAN2 Final Report corpus.",
+        "Figure": "RAN2 Final Reports center on protocol decisions and rarely include raster figures in the chairman-note body; the released RAN2 snapshot extracted no Figure instances. Schema is unchanged; future ingestion can populate.",
+        "SessionNotes": "RAN2 chairman notes do not separate per-session annotations as a distinct artifact; session-level information is folded into Agreement/Conclusion entries.",
+        "Summary": "RAN2 does not customarily produce a 'Summary' Tdoc subtype as a standalone document class; agenda-item-level summaries appear inside Final Reports rather than as separate TDocs."
+      }
     },
     "RAN3": {
       "classes_used_from_ttl": 23,
@@ -32,7 +40,12 @@
         "Chart",
         "Figure",
         "SessionNotes"
-      ]
+      ],
+      "absence_reasons": {
+        "Chart": "Same as RAN2: native OpenXML chart objects are uncommon in 3GPP DOCX authoring; none extracted from the released RAN3 corpus.",
+        "Figure": "RAN3 Final Reports are decision-text dominant (NG-RAN architecture descriptions) and do not embed figures in the released snapshot.",
+        "SessionNotes": "RAN3 chairman notes use the 'Decision: ...' TDoc-level format rather than per-session annotation blocks (see docs/cross-phase/standards/wg_decision_pattern_comparison.md)."
+      }
     },
     "RAN4": {
       "classes_used_from_ttl": 24,
@@ -42,7 +55,11 @@
       "classes_not_used_here": [
         "SessionNotes",
         "Summary"
-      ]
+      ],
+      "absence_reasons": {
+        "SessionNotes": "RAN4 chairman notes use the 'Decision: ...' TDoc-level format predominantly (see wg_decision_pattern_comparison.md: 982-1192 Decision lines per meeting vs 0 Agreement headers); per-session annotation is not maintained as a separate artifact in the RAN4 release scope.",
+        "Summary": "Like RAN2, RAN4 does not customarily produce a standalone Summary TDoc subtype; agenda-item summaries are absorbed into the chairman-note body."
+      }
     },
     "RAN5": {
       "classes_used_from_ttl": 20,
@@ -56,7 +73,21 @@
         "SessionNotes",
         "Summary",
         "WorkingAssumption"
-      ]
+      ],
+      "absence_reasons": {
+        "Agreement": "RAN5 is the mobile-terminal-conformance-testing WG: decisions are dominated by per-TDoc 'Decision: agreed/revised' lines (~50% of TDocs marked agreed; 30,950 of 62,069) rather than meeting-level Agreement headers. Only 83 Resolution-headed entries appear across all RAN5 meetings, all classified as Conclusion. The released snapshot therefore instantiates Conclusion but no Agreement nodes; the schema admits Agreement and instantiation will follow if/when RAN5 chairman-note format converges with RAN1/2.",
+        "Chart": "Same as RAN2/RAN3: native OpenXML chart embedding is rare; no instances extracted.",
+        "Figure": "RAN5 Final Reports are conformance-test-table heavy (Table is numerous) but seldom embed raster figures; the released snapshot extracted no Figure instances.",
+        "SessionNotes": "Same TDoc-level decision pattern as RAN3/RAN4 - chairman notes use 'Decision: ...' lines rather than per-session annotation blocks.",
+        "Summary": "Same as RAN2/RAN4: no standalone Summary TDoc subtype is produced; conformance test summaries appear inside the body of CR/TR documents.",
+        "WorkingAssumption": "Conformance testing decisions are typically firm pass/fail outcomes rather than provisional assumptions awaiting later confirmation; the chairman-note format does not use the 'Working Assumption' phrasing characteristic of RAN1/2 design discussions."
+      }
     }
-  }
+  },
+  "interpretation_notes": [
+    "All absences reflect released-snapshot and loader scope, not schema gaps. Each absent class is defined in spectra.ttl and can be populated by future ingestion if/when the source documents change.",
+    "An OWL diff of kg/per_wg_schema/RAN{1..5}-schema.ttl against ontology/spectra.ttl reproduces the per-WG presence/absence pattern recorded above.",
+    "The decision-pattern context (Agreement headers vs TDoc-level 'Decision:' lines) is documented in docs/cross-phase/standards/wg_decision_pattern_comparison.md (in the dev tree; not redistributed in the public release_package, but the per-WG counts above suffice to reproduce the conclusion).",
+    "RAN5 conformance-testing scope is the structural reason five of its six absent classes (Agreement, Chart, Figure, Summary, WorkingAssumption) differ from the RAN1 design-WG profile; SessionNotes is absent across RAN3/4/5 by a separate authoring convention shared with the chairman-note format used in those WGs."
+  ]
 }

@@ -17,6 +17,10 @@ pip install rdflib pyshacl
 python3 tests/verify_release.py
 # Expected last line:
 #   === Summary: 37/37 checks passed ===
+#   On the public mirror (without local Neo4j and without
+#   bundled body-text TTLs) the equivalent run reports
+#   "32/32 PASS, 5 SKIP" — body-text checks defer to the
+#   Zenodo deposit per the GitHub/Zenodo split (§7).
 ```
 
 This single command runs all ten check sections (ontology triples, SHACL
