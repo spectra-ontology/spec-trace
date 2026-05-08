@@ -144,7 +144,58 @@ The +0.05 4Q-average composite delta sits **below the 0.10 threshold** the autho
 
 > SPECTRA RAG answers in `docs/usecase/answers/spectra/` are now structured standards-analysis reports — Table-of-Contents-led, with §0 Evidence Provenance making KG/index reproducibility explicit, per-spec narrative sections with verbatim quoted ASN.1 / spec-body evidence, a consolidated Cross-Document Linkages table (each row carrying a chunkId-grounded evidence column), and a Coverage / Limitations partition that distinguishes verified-coverage, weakly-covered, and not-present-in-dataset items. Citation density and chunkId traceability are preserved verbatim while readability matches the narrative comparators (Claude/GPT). The paper's existing format-asymmetry caveat in §6 *Limitations* (re A3 Citation Integrity gap) remains valid — Claude/GPT answers are still free-form prose without inline retrieval citations — but the SPECTRA-side "RAG dump" framing no longer applies.
 
-### 9.5 Residual flaws (preserved from pre-rewrite)
+### 9.5 A6 Document Lifecycle Traceability — new sixth axis (added 2026-05-08)
+
+A sixth scoring axis was added on 2026-05-08 to directly measure the SPECTRA paper's central traceability contribution (Resolution → Tdoc → CR → TS/TR document lifecycle), which the original 5-axis rubric did not isolate. **Rubric** (0–5):
+
+- **0** — No provenance metadata.
+- **1** — Single-anchor references (page numbers, paragraph mentions, or non-document URLs only).
+- **2** — TDoc + spec citation pair without explicit chain.
+- **3** — Meeting + agreement chain (RAN1#XX agreed → spec change), forward direction only.
+- **4** — Agreement → CR → spec body incorporation tracked, OR forward + backward chain explicit.
+- **5** — Full Resolution → Tdoc → CR → TS chain in a structured Lifecycle Trace section, with bidirectional traversal AND honest gap disclosure AND release-tagged classification.
+
+**Per-question A6 scores** (post-rewrite, after Document Lifecycle Trace sections were added to all four SPECTRA answers):
+
+| Q | SPECTRA A6 | Claude A6 | GPT A6 | Gap (SPECTRA − runner-up) |
+|---|---:|---:|---:|---:|
+| Q1 Rel-16 Type-II codebook | **5.0** | 2.0 | 1.0 | +3.0 |
+| Q2 TCI-state Rel-15→Rel-20 | **5.0** | 2.0 | 1.0 | +3.0 |
+| Q3 BFD/BFR | **4.0** | 3.0 | 1.0 | +1.0 |
+| Q4 Rel-18 LTM | **5.0** | 1.0 | 2.0 | +3.0 |
+| **A6 4Q Average** | **4.75** | **2.00** | **1.25** | **+2.75** |
+
+**6-axis composite per question — canonical computation.**
+
+To avoid mixing pre-rewrite vs post-rewrite 5-axis baselines, we adopt the **paper-published 5-axis Table 13 per-Q values** as the canonical baseline (SPECTRA Q1/Q2/Q3/Q4 = 4.80 / 4.90 / 4.84 / 4.83; Claude = 3.9 / 3.4 / 3.7 / 3.6; GPT = 3.1 / 3.2 / 3.3 / 3.5). The 6-axis composite for question Q is computed exactly as `(5_axis_composite_paper × 5 + A6_score) / 6`, rounded to 2 decimals.
+
+| Q | SPECTRA (5-axis paper × 5 + A6) / 6 | Claude (same) | GPT (same) |
+|---|---:|---:|---:|
+| Q1 | (4.80·5 + 5.0)/6 = **4.83** | (3.9·5 + 2.0)/6 = **3.58** | (3.1·5 + 1.0)/6 = **2.75** |
+| Q2 | (4.90·5 + 5.0)/6 = **4.92** | (3.4·5 + 2.0)/6 = **3.17** | (3.2·5 + 1.0)/6 = **2.83** |
+| Q3 | (4.84·5 + 4.0)/6 = **4.70** | (3.7·5 + 3.0)/6 = **3.58** | (3.3·5 + 1.0)/6 = **2.92** |
+| Q4 | (4.83·5 + 5.0)/6 = **4.86** | (3.6·5 + 1.0)/6 = **3.17** | (3.5·5 + 2.0)/6 = **3.25** |
+| **6-axis 4Q Avg** | **4.83** | **3.38** | **2.94** |
+
+(The per-Q 6-axis figures inside the individual `evaluations/3way/qN_3way_comparison.md` files were computed by axis-scoring agents that used a mix of pre-rewrite and post-rewrite 5-axis baselines, leading to ±0.02–0.05 per-Q drift versus this canonical table; the 4Q averages still agree within reporting precision.)
+
+**6-axis vs 5-axis comparison (4Q averages)**:
+
+| Rubric | SPECTRA | Claude | GPT | SPECTRA−Claude | SPECTRA−GPT |
+|---|---:|---:|---:|---:|---:|
+| 5-axis (paper Table) | 4.84 | 3.65 | 3.28 | +1.19 | +1.56 |
+| 5-axis (post-rewrite) | 4.89 | 3.65 | 3.28 | +1.24 | +1.61 |
+| **6-axis (canonical, with A6)** | **4.83** | **3.38** | **2.94** | **+1.45** | **+1.89** |
+
+The 6-axis composite **widens the SPECTRA lead** because A6 selectively credits the document-lifecycle structure that only a KG-grounded system can ship — Claude/GPT cite WID strings or spec sections without the lifecycle chain Q3GPP standardization actually produces. Claude's Q4 score (1.0) reflects fabricated lifecycle anchors (RP-234037, LTM-Configuration-r20 ASN.1 — see q4_3way_comparison.md) that actively mislead.
+
+### 9.6 Paper / Appendix update decision (post-A6)
+
+**Paper main.tex**: no score citations exist in the body — no update required for scores. We add a single supplementary mention in §7 Availability so that ISWC reviewers find the Document Lifecycle Trace material in the released supplement.
+
+**Appendix `PAPER_APPENDIX.tex` (§H) and `LLM_EVAL_PILOT.tex`**: the existing 5-axis Table 13 is preserved (consistency with pre-A6 reporting; A1-A5 scores pre/post rewrite delta is +0.05 < 0.10 threshold and unchanged in 5-axis form). A new supplementary table is added directly below Table 13 reporting the A6 axis and the 6-axis composite, with an explicit caveat that A6 is a structural axis favouring KG-grounded systems by design and is reported as supplementary evidence rather than as the headline benchmark.
+
+### 9.7 Residual flaws (preserved from pre-rewrite)
 
 The rewrite did not address these baseline citation-discipline issues — they remain follow-up items:
 

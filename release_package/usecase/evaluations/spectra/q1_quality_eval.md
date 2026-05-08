@@ -22,7 +22,7 @@
 
 ---
 
-## Five-axis scores (0–5)
+## Six-axis scores (0–5)
 
 | Axis | Score | Summary of evidence |
 |---|---:|---|
@@ -31,7 +31,8 @@
 | A3 Citation Integrity | **5.0** | All 27 chunkIds and 10 TDoc numbers cited in the initial answer **are present** in the retrieval log (100%). Python set verification confirms 0 missing entries. |
 | A4 Hallucination Control | **4.8** | The answer does not embed knowledge-based external WID numbers such as "RP-181453/RP-191038" in the body (these are not even mentioned in the meta section, and the answer honestly notes "absent from the SPECTRA RAG corpus" as a limitation). The "RP-182067" citation in §2 is taken directly from the body of a retrieved chunk (R1-1903044), so it is retrieved-grounded rather than knowledge-injected. The dotted arrows in §9 also correctly limit the linkage to "name-match retrieved-grounded only". |
 | A5 Cross-Doc Linkage | **4.5** | Of the 5 core linkages, 4 (38.214↔38.211 antenna port convention, 38.214↔RRC parameter names, 38.212↔38.214 §5.2.3 priority function, 38.521-4↔38.101-4 normative reference) are quoted directly from retrieved bodies. Only the 38.331/38.306 link is dotted — logically correct. The mapping from RAN1 WI agreement → 38.214 §5.2.2.2.5 typeII-r16 is also robustly retrieval-grounded. |
-| **Overall** | **4.5 / 5** | Exemplary case of a retrieval-grounded answer. No knowledge injection + 100% citation integrity + honest limitation reporting. The deductions stem from missing 38.331/38.306 retrieval (a system limitation, not a defect of the answer itself). |
+| A6 Document Lifecycle Traceability | **5.0** | §11 ships a structured Lifecycle Trace covering Resolution (RP-182067) → Tdoc (R1-1812322 / R1-1902123 / R1-1909583 / R1-1909918, RAN1#95–#98) → Spec body (TS 38.214 §5.2.2.2.5 / 38.331 CodebookConfig-r16 / 38.212 §6.3.2.1.2 / 38.521-4 §6.3.2.x.6) with §11.1 audit table (Confirmed-in-Index column), §11.2 explicit forward + backward traversal narrative, §11.3 honest CR-level gap ("Direct CR chunks: no Type-II-codebook CR is cited; the CR routing collection was not queried"), and release-tagged later-Rel derivatives (Rel-17/Rel-19). |
+| **Overall** | **4.6 / 5** | Exemplary case of a retrieval-grounded answer. No knowledge injection + 100% citation integrity + honest limitation reporting + structured lifecycle trace with honest CR gap. The deductions stem from missing 38.331/38.306 retrieval (a system limitation, not a defect of the answer itself). |
 
 ---
 

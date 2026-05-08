@@ -19,9 +19,14 @@
 | A3 Citation Integrity | **4.9** | 1.5 | 2.5 |
 | A4 Hallucination Control | **4.95** | 4.0 | 3.0 |
 | A5 Cross-Doc Linkage | **4.85** | 4.0 | 4.5 |
-| **Overall** | **4.83** | **3.5** | **3.6** |
+| A6 Document Lifecycle Traceability | **5.0** | 2.0 | 1.0 |
+| **Overall (6-axis)** | **4.85** | **3.25** | **3.20** |
 
--> SPECTRA RAG leads Claude by **+1.23** and GPT by **+1.33**.
+-> SPECTRA RAG leads Claude by **+1.65** and GPT by **+1.60** on the 6-axis composite. A6 is the largest single-axis gap (4.0 over Claude; 3.0 over GPT).
+
+## A6 Document Lifecycle Traceability (qualitative)
+
+SPECTRA's new §13 reaches all four lifecycle stages for Rel-18 (WID RP-221799 referenced indirectly → RAN1/RAN2 agreement TDocs → 5-spec body in 38.300/331/321/214/133 → RAN4 RRM conformance R4-2400104), with explicit bidirectional traversal (§13.5), a 7-column audit table covering Rel-18/19/20 (§13.4), release-tagged nodes throughout, and an honest gap disclosure (§13.6) covering RP body absence, CR-level non-citation, Rel-19 spec body pending, and chunkIndex misnotation. GPT lists spec-to-spec phase mappings but cites no WID, no Tdoc, and no CR — a spec-pair structure without provenance, further degraded by misclassifying Rel-19 inter-CU LTM as Rel-20. Claude builds an ostensible WID→spec chain on fabricated anchors (RP-234037 misattributed to Rel-18, RP-234041/242630 unverified, LTM-Configuration-r20 ASN.1 invented), making its lifecycle trace actively misleading rather than thin.
 
 ## Key strengths (SPECTRA RAG)
 

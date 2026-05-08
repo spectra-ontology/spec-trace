@@ -25,7 +25,8 @@ SPECTRA RAG retrieved resources:
 | A3 Citation Integrity | **5.0** | 1.5 | 2.0 | SPECTRA RAG | IE bodies are directly verifiable from the retrieval log via `asn1_by_name[*].rows[*].text` + `asn1_vector_queries[*].hits[*].text` (no truncation, 200~800 chars per IE). 11 ASN.1 IEs + 13 TS chunkIds + 31 TDocs. All verified ✅. |
 | A4 Hallucination Control | **4.9** | 3.5 | 2.8 | SPECTRA RAG | Honest reporting on Rel-20 spec body absence ("only 6G overview / coverage Phase 3 framing stage"). One weak hallucination on §6.1.3.14 Rel-15 attribution (-0.1). Claude's Rel-20 ASN.1 speculative fills (`crossCarrierRefRS-r20`/`subbandTCI-Application-r20`/`ntn-DopplerComp-r20`) present. |
 | A5 Cross-Doc Linkage | **4.9** | 4.0 | 4.5 | SPECTRA RAG | The trace RRC IE → MAC CE → PHY QCL → capability is evidenced directly through ASN.1 bodies (7 linkages). Example: `PDSCH-Config { tci-StatesToAddModList SEQUENCE OF TCI-State }` → 38.214 §5.1.5 "up to M TCI-State configurations within PDSCH-Config" → 38.306 `maxNumberConfiguredTCI-StatesPerCC`. The Rel-19 extension block `[[ pathlossOffset-r19 ENUMERATED {dB-12..dB60} ]]` of `TCI-State` ↔ 38.306 `cjt-QCL-PDSCH-Scheme*-r19` evidences both ASN.1 and capability sides. |
-| **Overall** | **4.9** | 3.2 | 3.4 | **SPECTRA RAG** | First place on all 5 axes. Citation integrity 5.0 + direct ASN.1 body citation lift accuracy/coverage/cross-doc simultaneously. |
+| A6 Document Lifecycle Traceability | **5.0** | 1.0 | 2.0 | SPECTRA RAG | SPECTRA §11 Document Lifecycle Trace walks the canonical chain (RP-WID → RAN1 intro → RAN2 intro → Spec body change → CR-level) one chain per release for Rel-15 → Rel-20, with §11.2 6-row Lifecycle Audit Table, §11.3 bidirectional traversal (forward Tdoc→Meeting/AgendaItem→spec; backward chunkId→release/ai filter→originating TDocs), §11.4 honest gap disclosure (RP-WID not loaded, CR-level chunks not loaded, Rel-20 spec adoption absent), and ✓/⚠️/❌/n/a release-tagged markers — meets all rubric criteria for 5. Claude pairs WID strings (RP-170739/RP-181433/RP-193133/RP-211583) with spec sections in §8.2 "Cross-Document Flow" diagram for Rel-17 only, but no explicit per-release chain, no audit table, no bidirectional traversal, no CR-level marking → 2 (TDoc + spec citation pair, no explicit chain). GPT relies on spec name + IE name only with no TDoc/WID/Meeting/chunkId provenance metadata anywhere → 1 (single-anchor references). |
+| **Overall** | **4.9** | 2.8 | 3.2 | **SPECTRA RAG** | 6-axis composite (4.9+4.7+5.0+4.9+4.9+5.0)/6 = 4.90 (SPECTRA), (3.6+3.6+1.5+3.5+4.0+1.0)/6 = 2.87 (GPT), (3.4+4.4+2.0+2.8+4.5+2.0)/6 = 3.18 (Claude). SPECTRA first place on all 6 axes. Citation integrity 5.0 + direct ASN.1 body citation + structured Document Lifecycle Trace lift accuracy/coverage/cross-doc/lifecycle simultaneously. |
 
 ---
 
@@ -51,6 +52,10 @@ Notation: T=SPECTRA RAG / G=GPT / C=Claude. ✅=filled accurately, ⚠️=partia
 | Claude | 14/24 | 0 | 10 (Rel-19/20 inference dominates) |
 
 **SPECTRA RAG fills 20 ✅ (83.3%)**. 38.331 ASN.1 area (Rel-15/17/18/19) and 38.306 area (Rel-15/16/18/19) are fully covered. Claude has Rel-19 misclassification (AI/ML) and Rel-20 ASN.1 hallucination.
+
+### A6 Document Lifecycle Traceability (qualitative)
+
+SPECTRA's §11 supplies a per-release lifecycle chain for Rel-15 → Rel-20 (RP-WID → RAN1 intro → RAN2 intro → spec body change → CR-level), a 6-row audit table, bidirectional traversal examples, and explicit dataset-boundary markers, satisfying the full Document Lifecycle ontology. Claude couples WIDs with spec sections in a single §8.2 flow diagram for Rel-17 only, missing per-release chains, audit table, and bidirectional traversal. GPT lists spec/IE names without TDoc, WID, meeting, or chunkId metadata — single-anchor only.
 
 ---
 

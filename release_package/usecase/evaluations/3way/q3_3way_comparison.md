@@ -27,13 +27,19 @@
 | A3 Citation Integrity | **5.0** | 1.5 | 2.5 | SPECTRA RAG |
 | A4 Hallucination Control | **5.0** | 4.0 | 3.0 | SPECTRA RAG |
 | A5 Cross-Doc Linkage | **4.7** | 4.0 | 4.5 | SPECTRA RAG |
-| **Overall** | **4.84** | **3.3** | **3.7** | **SPECTRA RAG** |
+| A6 Document Lifecycle Traceability | **4.0** | 1.0 | 3.0 | SPECTRA RAG |
+| **Overall (6-axis)** | **4.70** | **2.92** | **3.58** | **SPECTRA RAG** |
 
 Rationale:
 - A1 (4.8): "Qout,LR/Qin,LR definitions" resolved by direct citation of the 38.213 §6 body. Nine enumerated items retrieved verbatim.
 - A2 (4.7): direct citation of nine ASN.1 IE bodies (`BeamFailureRecoveryConfig`, `RadioLinkMonitoringConfig`, `RadioLinkMonitoringRS`, `PRACH-ResourceDedicatedBFR`, `BFR-SSB-Resource`, `BFR-CSIRS-Resource`, `BeamFailureDetectionSet-r17`, `RACH-ConfigGeneric`, `RACH-ConfigDedicated`) strengthens the RRC-layer depth.
 - A3 and A4 (5.0): all 16 chunkId citations and nine ASN.1 chunkId citations exist in the retrieval log. Zero fabricated quantitative values.
 - A5 (4.7): 12 RRC parameters of §5.17 are named verbatim, and the mapping to IE enumerated bodies is explicit.
+- A6 (4.0/1.0/3.0): SPECTRA's §11 ships an explicit Document Lifecycle Trace — Rel-15/16/17/18/19 release-tagged TDoc chain into spec bodies, a 5-row per-release audit table, bidirectional Forward/Backward traversal, and §11.4 honest gap disclosure (no CR chunks, no RP-WID, Rel-17 RAN1/RAN2 contribution gap, Rel-19+ untraced); scores 4 (not 5) because the Agreement→CR→spec-body link cites no CR number and the Rel-17 contribution layer is itself flagged as a gap. Claude scores 3 — release evolution with WID numbers (RP-201305 / RP-211583 / RP-234037) gives a forward-only chain, no bidirectional traversal, no gap disclosure. GPT scores 1 — its §2 "cross-document structure" lists only TS-to-TS linkages (38.331→38.213→38.321→38.133/38.533) with no TDoc / Resolution / CR / release-tagged provenance.
+
+### A6 Lifecycle qualitative summary
+
+SPECTRA's §11 reconstructs Resolution→Tdoc→CR→TS/TR over five releases with release-tagged TDocs into 38.331 IEs and §5.17/§6 bodies, plus bidirectional traversal and explicit gap disclosure (CR chunks absent, Rel-17 contribution gap, RP-WID absent) — capped at 4 because no CR-numbered citation appears. Claude lists WID numbers and per-release evolution tables (forward-only, no gap disclosure, score 3). GPT exposes only TS-to-TS document structure with no TDoc / CR / release provenance (single-anchor spec references, score 1).
 
 ---
 

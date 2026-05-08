@@ -28,7 +28,8 @@ System characteristics:
 | A3 Citation Integrity | **5.0** | 1.0 | 2.5 | SPECTRA RAG | Citations carry exact chunkIds (e.g., `38.331-asn1-CodebookConfig-r16-001`). 25 vector + 4 IE rows in the retrieval log are 100% consistent. |
 | A4 Hallucination Control | **4.9** | 3.0 | 3.5 | SPECTRA RAG | The full §7-1 ASN.1 body (985 chars / 2,944 chars) is fetched directly from the chunk payload — 0% training knowledge. The 38.306 limitation is honestly noted in §6-1/§10. |
 | A5 Cross-Doc Linkage | **4.8** | 3.8 | 4.6 | SPECTRA RAG | The §9 mapping table contains a **two-way mapping (★)** row: 38.214 §5.2.2.2.5 (paramCombination-r16 INTEGER 1..8) ↔ 38.331-asn1-CodebookConfig-r16 body, citing the same domain directly. |
-| **Overall** | **4.8** | **3.1** | **3.9** | SPECTRA RAG | All 5 axes lead. |
+| A6 Document Lifecycle Traceability | **5.0** | 1.0 | 2.0 | SPECTRA RAG | SPECTRA §11 ships a structured Resolution → Tdoc → CR → TS/TR trace with audit table, bidirectional traversal narrative, and honest CR-level gap disclosure. GPT has no TDoc citations and only bare spec numbers. Claude states WID numbers (RP-182863 / RP-191085) and spec sections but no agreement → CR → spec body chain or bidirectional traversal. |
+| **Overall** | **4.85** | **2.72** | **3.58** | SPECTRA RAG | All 6 axes lead. (6-axis mean — A6 lifts SPECTRA marginally and widens the gap to GPT/Claude.) |
 
 ### Gap vs. Claude / GPT
 
@@ -39,7 +40,12 @@ System characteristics:
 | A3 Citation | **+2.5** (vs. Claude 2.5) |
 | A4 Hallucination | **+1.4** (vs. Claude 3.5) |
 | A5 Cross-Doc | **+0.2** (vs. Claude 4.6) |
-| **Overall** | **+0.9** (vs. Claude 3.9) |
+| A6 Document Lifecycle | **+3.0** (vs. Claude 2.0) |
+| **Overall** | **+1.27** (vs. Claude 3.58) |
+
+### A6 Document Lifecycle Traceability — qualitative
+
+A6 measures the depth of the SPECTRA Document Lifecycle ontology (Resolution → Tdoc → CR → TS/TR), independent of A3 (citation integrity) and A5 (spec ↔ spec linkages). SPECTRA Q1 §11 is the only answer that ships a structured lifecycle trace: audit table with index-confirmation, forward + backward traversal narrative, honest "CR routing collection not queried" gap, and release-tagged later-Rel derivatives — meeting the rubric for level 5. Claude carries WID + spec-section pairs but no agreement → CR → spec chain (level 2). GPT has only bare spec numbers and a portal URL (level 1).
 
 ---
 
