@@ -215,7 +215,25 @@ Three population-time conventions and one upstream-data observation, derived dir
 % LLM eval pilot (originally §E6 in body draft) - moved here per submission scope
 \subsection{E6 --- Illustrative utility pilot against general LLM baselines}\label{sec:eval:llm}
 
-To probe whether SPECTRA-grounded retrieval offers measurable value over generic LLM access to 3GPP knowledge, we compared (i) a SPECTRA-conformant Neo4j+Qdrant RAG (\emph{SPECTRA RAG}), (ii) GPT, and (iii) Claude on four cross-WG practitioner questions (Rel-16 Type-II codebook, TCI-state Rel-15 to Rel-20, Beam Failure Detection/Recovery, Rel-18 Layer-1/Layer-2 Triggered Mobility). Each answer was scored against authority sources (3gpp.org, ETSI TS, IEEE Xplore, sharetechnote, Ofinno) on a five-axis 0--5 rubric and verified for hallucinations (Table~\ref{tab:llm-eval}). The four questions, the 12 answer files (one per system per question), the per-question quality evaluations, and the three-way comparison evaluations are bundled at \texttt{usecase/} (\texttt{usecase/answers/\{spectra,gpt,claude\}/} and \texttt{usecase/evaluations/\{spectra,3way\}/}); all numbers reported below are reproducible from those files. The author-defined rubric assigns each axis a 0--5 score: \textbf{A1 Accuracy} (factual correctness against the cited authority sources: 0=wrong, 3=partially correct with caveats, 5=fully correct); \textbf{A2 Coverage} (depth and breadth of relevant 3GPP context: 0=missing major aspects, 5=complete with cross-version notes); \textbf{A3 Citation Integrity} (every quoted code/clause/number traceable to the authority document: 0=untraceable, 5=fully cite-resolvable); \textbf{A4 Hallucination Control} (penalises unsupported quoted text/codes/numbers; 0=heavy hallucination, 5=none detected); \textbf{A5 Cross-Doc Linkage} (correct identification of dependencies across TS/TR sections, e.g., Rel-N$\to$Rel-M migration: 0=none, 5=complete and correctly directional). The Composite is the unweighted mean of A1--A5; the Hallucination row independently counts unsupported claims as a robustness check beyond the rubric.
+To probe whether SPECTRA-grounded retrieval offers measurable value over generic LLM access to 3GPP knowledge, we compared (i) a SPECTRA-conformant Neo4j+Qdrant RAG (\emph{SPECTRA RAG}), (ii) GPT, and (iii) Claude on four cross-WG practitioner questions (Table~\ref{tab:llm-eval-questions}). Each answer was scored against authority sources (3gpp.org, ETSI TS, IEEE Xplore, sharetechnote, Ofinno) on a five-axis 0--5 rubric and verified for hallucinations (Table~\ref{tab:llm-eval}). The four questions, the 12 answer files (one per system per question), the per-question quality evaluations, and the three-way comparison evaluations are bundled at \texttt{usecase/} (\texttt{usecase/answers/\{spectra,gpt,claude\}/} and \texttt{usecase/evaluations/\{spectra,3way\}/}); all numbers reported below are reproducible from those files.
+
+\begin{table}[h]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\caption{The four cross-WG practitioner questions evaluated in §\ref{sec:eval:llm}. Each question requires synthesising information across multiple Working Groups and TS series.}
+\label{tab:llm-eval-questions}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.04\textwidth}>{\raggedright\arraybackslash}p{0.55\textwidth}>{\raggedright\arraybackslash}p{0.30\textwidth}@{}}
+\toprule
+\textbf{ID} & \textbf{Question} & \textbf{Cross-WG TS series touched} \\
+\midrule
+Q1 & What standardisation items define Rel-16 enhanced Type-II codebook (CSI feedback enhancement for MU-MIMO)? & 38.211 / 212 / 214 / 306 / 331 / 521-4 \\
+Q2 & How does the TCI-state mechanism evolve across Rel-15 to Rel-20? & 38.214 / 321 / 331 / 306 \\
+Q3 & What are the Beam Failure Detection (BFD) and Beam Failure Recovery (BFR) procedures? & 38.213 / 321 / 331 / 133 / 533 \\
+Q4 & What is the Rel-18 Layer-1/Layer-2 Triggered Mobility (LTM) feature, and how is it extended in Rel-19/20? & 38.300 / 214 / 321 / 331 / 133 / 306 \\
+\bottomrule
+\end{tabular}
+\end{table} The author-defined rubric assigns each axis a 0--5 score: \textbf{A1 Accuracy} (factual correctness against the cited authority sources: 0=wrong, 3=partially correct with caveats, 5=fully correct); \textbf{A2 Coverage} (depth and breadth of relevant 3GPP context: 0=missing major aspects, 5=complete with cross-version notes); \textbf{A3 Citation Integrity} (every quoted code/clause/number traceable to the authority document: 0=untraceable, 5=fully cite-resolvable); \textbf{A4 Hallucination Control} (penalises unsupported quoted text/codes/numbers; 0=heavy hallucination, 5=none detected); \textbf{A5 Cross-Doc Linkage} (correct identification of dependencies across TS/TR sections, e.g., Rel-N$\to$Rel-M migration: 0=none, 5=complete and correctly directional). The Composite is the unweighted mean of A1--A5; the Hallucination row independently counts unsupported claims as a robustness check beyond the rubric.
 
 \begin{table}[h]
 \centering
