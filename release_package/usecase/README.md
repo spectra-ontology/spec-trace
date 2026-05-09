@@ -59,6 +59,16 @@ docs/usecase/
 | **A3 Citation Integrity** | Verifiability of cited facts | SPECTRA chunkId / GPT-Claude spec section numbers / ASN.1 code provenance |
 | **A4 Hallucination Control** | Absence of injected learned knowledge | Honest marking of unfound regions, avoidance of speculative Rel-20 fill-ins |
 | **A5 Cross-Doc Linkage** | Accuracy of inter-document mapping | RRC IE → MAC-CE → PHY → RRM → capability flow |
+| **A6 Document Lifecycle Traceability** | Depth of `Resolution → Tdoc → CR → TS/TR` provenance chain demonstrated in the answer | Structured Lifecycle Trace section + bidirectional traversal + release-tagged classification + honest gap disclosure |
+
+### Why SPECTRA leads — the structural differentiators
+
+The 6-axis composite (SPECTRA 4.83 / Claude 3.38 / GPT 2.94, gap +1.45 / +1.89) is dominated by **A3 Citation Integrity (+2.57)**, **A6 Document Lifecycle Traceability (+2.75)**, and **A4 Hallucination Control (+1.85)**. Two architectural decisions in SPECTRA produce these gaps:
+
+1. **IE-level ASN.1 ingestion** — the 38.331 RRC ASN.1 module is parsed IE-by-IE; each IE body becomes both a Qdrant chunk (with chunkId `38.331-asn1-{IE}-{idx}`) and a Neo4j `RRCParameter` node. Result: 22+ IE bodies citable verbatim across the four questions (`CodebookConfig-r16`, `TCI-State`, `TCI-UL-State-r17`, `CandidateTCI-State-r18`, `LTM-QCL-Info-r18`, `BeamFailureRecoveryConfig`, `RadioLinkMonitoringConfig`, `BeamFailureDetectionSet-r17`, `RACH-ConfigGeneric`, `LTM-Config`, etc.). Other telecom KG resources in scope (TSpec-LLM, GSMA `telecom-kg-rel19`) model specification *content* without an IE-level RRC schema layer, so this dual indexing is the structural differentiator.
+2. **Release extension blocks preserved** — each IE retains its `[[ ... -r17 ]] / [[ ... -r18 ]] / [[ ... -r19 ]]` extension addition groups; per-release diff is auditable directly from the indexed chunk rather than from a CR-by-CR docx review. Spec-implementer value: a release-walkthrough that previously required manual CR review becomes a single KG / Qdrant query (Q2 TCI-state Rel-15→Rel-20 demonstrates this end-to-end).
+
+Combined with the Document Lifecycle Trace section in each SPECTRA answer (§11 or §13), this anchors every quoted fact to an artefact that reviewers can re-fetch from the released vector index or KG. Full strength table in [`evaluations/3way/summary.md` §5](evaluations/3way/summary.md).
 
 ## Infrastructure State / Data Freshness (evaluation date 2026-04-29)
 

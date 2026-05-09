@@ -77,12 +77,13 @@ SPECTRA RAG remains at 0. Hallucinations persist for GPT and Claude in the noted
 
 | Strength | Affected questions | Result |
 |---|---|---|
-| **Direct citation of 38.331 ASN.1 IE bodies** | Q1/Q2/Q3/Q4 | Bodies retrieved for 22+ IEs including CodebookConfig, TCI-State, BeamFailureRecoveryConfig, LTM-Config |
-| **chunker hard_max + tiktoken accurate measurement** | All five WGs | 0 zero-vector chunks; search accuracy maintained |
-| **chunkIndex labeling accuracy** | Q4 in particular | chunkIndex labels match retrieval logs |
-| **Enumerated quantitative-value citation** | Q3 | 9 citable items (n1~n10, ms10~ms200, sl1~sl2560, etc.) |
-| **Filling the Release × document matrix** | Q2 | 18 ✅ + 2 ⚠️ + 4 ❌ (Rel-20 honestly reported) |
-| **Document Lifecycle Trace section** | Q1/Q2/Q3/Q4 | Resolution → Tdoc → CR → TS/TR chain with bidirectional traversal, audit table, release-tagged classification, and honest gap disclosure |
+| **IE-level ASN.1 ingestion: each 38.331 IE body becomes a Qdrant chunk + a KG node simultaneously** | Q1/Q2/Q3/Q4 | 22+ IE bodies citable verbatim by IE name (e.g., `CodebookConfig-r16`, `TCI-State`, `TCI-UL-State-r17`, `CandidateTCI-State-r18`, `LTM-QCL-Info-r18`, `BeamFailureRecoveryConfig`, `RadioLinkMonitoringConfig`, `BeamFailureDetectionSet-r17`, `RACH-ConfigGeneric`, `LTM-Config`). The IE-level dual indexing (vector + ontology) is the structural differentiator versus other telecom KG resources in scope (TSpec-LLM, GSMA `telecom-kg-rel19`), which model the *content* of specifications without an IE-level RRC schema layer. |
+| **Release-extension-block traceability via `[[ ... -rXX ]]` chunks** | Q2 (TCI-state Rel-15→Rel-20), Q3 (BeamFailureDetectionSet-r17), Q4 (LTM extensions) | Each IE preserves its release extension blocks (`[[ additionalPCI-r17 ... ]]`, `[[ tag-Id-ptr-r18 ... ]]`, `[[ pathlossOffset-r19 ... ]]`); per-release diff is auditable directly from the indexed chunk without a CR-by-CR docx diff. Spec-implementer value: a release-walkthrough that previously required manual CR review is now a KG/Qdrant query. |
+| **Enumerated quantitative-value citation from IE bodies** | Q3 (BFD/BFR), Q1 (paramCombination), Q2 (TCI extensions) | 9 enum-bound thresholds citable verbatim (`beamFailureInstanceMaxCount {n1..n10}`, `beamFailureRecoveryTimer {ms10..ms200}`, `ra-ResponseWindow` Rel-15 baseline + Rel-16 `[[v1610: sl60, sl160]]` + Rel-17 `[[v1700: sl240..sl2560]]`, `paramCombination-r16 INTEGER (1..8)`, `n1-n2-codebookSubsetRestriction-r16` 13-element CHOICE, etc.). Claude relies on training memory and is correct on common IEs but fabricates `TCI-State-r20` / `LTM-Configuration-r20` (not in any released spec), which IE-level retrieval cannot generate. |
+| **Document Lifecycle Trace section (Resolution → Tdoc → CR → TS/TR)** | Q1/Q2/Q3/Q4 | Per-question §11 (or §13 in Q4) walks the chain release-by-release with bidirectional traversal, audit table, release-tagged TDoc classification, and honest gap disclosure (CR chunks not loaded; RP-WID bodies indirect; Rel-20 spec adoption absent). The structural artefact A6 scores against. |
+| **Filling the Release × document matrix** | Q2 | 18 ✅ + 2 ⚠️ + 4 ❌ (Rel-20 honestly reported) — Claude fills 24/24 only by speculating Rel-20 IE bodies. |
+| **chunker hard_max + tiktoken accurate measurement** | All five WGs | 0 zero-vector chunks; search accuracy maintained — pipeline-level robustness for the IE-level chunking convention. |
+| **chunkIndex labeling accuracy** | Q4 in particular | chunkIndex labels match retrieval logs (with one preserved audit-trail caveat in Q4 §13.6). |
 
 ## 6. Remaining limits (across four questions)
 
