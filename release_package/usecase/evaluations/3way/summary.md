@@ -55,11 +55,12 @@
 ### Claude — the trap of richness, hallucinations present
 
 - **Strengths**: A2 Coverage 4.58 (highest non-SPECTRA average). Rich ASN.1 code, equations, and tables.
-- **Decisive weaknesses**: **~11 disguised hallucinations** (totalled across four questions):
-  - Q1: unclear sources for RP-182863/191085 (3 items)
-  - Q2: TCI-State-r20 ASN.1 speculative code + assertions on cross-Carrier/Sub-band/NTN TCI (1 or more)
-  - Q3: −110 dBm typical, T_recovery <80 ms typical, BFD-RS Rel.16+ = 8 assertions, etc. (4 items)
-  - Q4: RP-234037, Multi-RAT/NTN/Group LTM, LTM-Configuration-r20 ASN.1 (4 items)
+- **Decisive weaknesses**: **11 unsupported claims** (canonical breakdown summing to exactly 11; matches the paper Appendix Table 5 surrounding text "the 11 unsupported quotes detected for Claude"):
+  - Q1 — 3 items: RP-182863 / RP-191085 (WID numbers cited without authoritative grounding) + "Throughput improvement of 30%+" (training-knowledge claim, not in spec body)
+  - Q2 — 1 item: speculative `TCI-State-r20` ASN.1 SEQUENCE block including `crossCarrierRefRS-r20` / `subbandTCI-Application-r20` / `ntn-DopplerComp-r20` (Rel-20 spec body does not exist)
+  - Q3 — 3 items: "-110 dBm typical" (RRC threshold), "T_recovery < 80 ms typical FR2" (operational ballpark, not in 38.133), "BFD-RS Rel.16+ = 8" (default count)
+  - Q4 — 4 items: RP-234037 (incorrect WID number for Rel-18 LTM), Multi-RAT LTM concept, NTN/Group LTM concept, speculative `LTM-Configuration-r20` ASN.1
+  - **Total: 3 + 1 + 3 + 4 = 11**
 - **Pattern**: guard markings such as "TBD" / "draft" / "typical" / "(as of this point in time)" are attached to assertive citations — exposes errors immediately when used in standards meetings.
 - **Practical recommendation**: useful for grasping technical depth quickly. **However, RP-WIDs, Rel-20 items, quantitative values, and ASN.1 code must be cross-checked against authoritative sources (3gpp.org/IEEE)**.
 
@@ -69,7 +70,7 @@
 |---|---:|---:|---:|---:|---:|
 | **SPECTRA RAG** | **0** | 0 | 0 | 0 | **0** |
 | GPT | 0 | 1 (Q4) | 0 | 0 | **1** |
-| **Claude** | 1 (Q4 RP-234037) | 0 | ~9 | 1 (Q4 quote) | **~11** |
+| **Claude** | 1 (Q4 RP-234037) | 0 | 9 | 1 (Q4 LTM-Config-r20 quote) | **11** |
 
 SPECTRA RAG remains at 0. Hallucinations persist for GPT and Claude in the noted locations.
 

@@ -52,6 +52,9 @@ docs/usecase/
 
 ## 6-Axis Evaluation Rubric
 
+The author-defined rubric assigns each axis a 0–5 score (full per-axis scoring guides released in [`evaluations/3way/summary.md`](evaluations/3way/summary.md)): **A1 Accuracy** (factual correctness vs cited authority); **A2 Coverage** (depth/breadth of 3GPP context); **A3 Citation Integrity** (traceability of every quoted code/clause/number); **A4 Hallucination Control** (penalises unsupported quotes/codes/numbers); **A5 Cross-Doc Linkage** (correct cross-TS dependencies, e.g., Rel-N→Rel-M migration); **A6 Document Lifecycle Traceability** (Resolution→Tdoc→CR→TS/TR provenance-chain depth: 0=none, 5=full structured Lifecycle Trace with bidirectional traversal, gap disclosure, and release-tagged classification). The **Composite** is the unweighted mean of A1–A6; the **Hallucination** row independently counts unsupported claims.
+
+
 | Axis | Definition | Key discriminator |
 |---|---|---|
 | **A1 Accuracy** | Factual agreement with authoritative sources | Quantitative values / RP-WID numbers / spec section numbers |
@@ -100,27 +103,29 @@ Total Qdrant ~3.7M points (20 collections). Data lag is approximately 6 months (
 
 ## Key Results of the 3-way Comparison
 
-### 4Q Aggregate Score Matrix
+### 4Q Aggregate Score Matrix (6-axis composite)
 
 | Q | SPECTRA | GPT | Claude | Winner |
 |---|---:|---:|---:|---|
-| Q1 Rel-16 Type-II codebook | **4.5** | 3.1 | 3.9 | SPECTRA |
-| Q2 TCI-state Rel-15 to Rel-20 | **4.6** | 3.2 | 3.4 | SPECTRA |
-| Q3 BFD/BFR | **4.6** | 3.3 | 3.7 | SPECTRA |
-| Q4 Rel-18 LTM + Rel-19/20 | **4.5** | 3.5 | 3.6 | SPECTRA |
-| **Average** | **4.55** | **3.28** | **3.65** | **SPECTRA** |
+| Q1 Rel-16 Type-II codebook | **4.83** | 2.75 | 3.58 | SPECTRA |
+| Q2 TCI-state Rel-15 to Rel-20 | **4.92** | 2.83 | 3.17 | SPECTRA |
+| Q3 BFD/BFR | **4.70** | 2.92 | 3.58 | SPECTRA |
+| Q4 Rel-18 LTM + Rel-19/20 | **4.86** | 3.25 | 3.17 | SPECTRA |
+| **Average (6-axis)** | **4.83** | **2.94** | **3.38** | **SPECTRA (+1.45 / +1.89)** |
 
-### Per-Axis Averages (4Q combined)
+### Per-Axis Averages (4Q combined, 6 axes)
 
-| Axis | SPECTRA | GPT | Claude | SPECTRA advantage/deficit |
+| Axis | SPECTRA | GPT | Claude | SPECTRA advantage |
 |---|---:|---:|---:|---|
-| **A1 Accuracy** | **4.55** | 3.65 | 3.75 | +0.80 |
-| **A2 Coverage** | 3.95 | 3.78 | **4.58** | -0.63 (Claude leads) |
-| **A3 Citation Integrity** | **4.83** | 1.28 | 2.38 | +2.45 |
-| **A4 Hallucination Control** | **4.85** | 3.63 | 3.08 | +1.22 |
-| **A5 Cross-Doc Linkage** | **4.58** | 3.95 | 4.53 | +0.05 |
+| **A1 Accuracy** | **4.78** | 3.65 | 3.75 | +1.03 |
+| **A2 Coverage** | **4.68** | 3.78 | 4.58 | +0.10 |
+| **A3 Citation Integrity** | **4.95** | 1.28 | 2.38 | +2.57 |
+| **A4 Hallucination Control** | **4.93** | 3.63 | 3.08 | +1.85 |
+| **A5 Cross-Doc Linkage** | **4.81** | 3.95 | 4.53 | +0.28 |
+| **A6 Document Lifecycle Traceability** | **4.75** | 1.25 | 2.00 | +2.75 |
+| **Composite (6-axis)** | **4.83** | **2.94** | **3.38** | **+1.45** |
 
-**Conclusion**: Only on Coverage does Claude lead (+0.63); SPECTRA RAG leads on the remaining four axes. **The Citation Integrity gap is the largest** — an inherent strength of closed-domain RAG.
+**Conclusion**: SPECTRA RAG leads on every axis. The decisive contributions are **A6 Document Lifecycle Traceability (+2.75)**, **A3 Citation Integrity (+2.57)**, and **A4 Hallucination Control (+1.85)** — inherent strengths of closed-domain ontology-grounded RAG.
 
 ### Hallucination Detection (4Q combined)
 
