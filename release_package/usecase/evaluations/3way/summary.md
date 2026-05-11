@@ -61,6 +61,8 @@
   - Q3 — 3 items: "-110 dBm typical" (RRC threshold), "T_recovery < 80 ms typical FR2" (operational ballpark, not in 38.133), "BFD-RS Rel.16+ = 8" (default count)
   - Q4 — 4 items: RP-234037 (incorrect WID number for Rel-18 LTM), Multi-RAT LTM concept, NTN/Group LTM concept, speculative `LTM-Configuration-r20` ASN.1
   - **Total: 3 + 1 + 3 + 4 = 11**
+- **Counting rule (disclosed for reproducibility — does not alter the "11" total cited in paper Appendix Table 5):** an unsupported claim is a distinct fabricated/under-grounded token, where (i) RP-* WID number pairs presented as `RP-X / RP-Y` with no archive citation count as 2 distinct items, (ii) a speculative ASN.1 SEQUENCE block under a hedged header (e.g., "(not yet finalized)") counts as 1 cluster regardless of how many `-rXX` sub-fields it contains, and (iii) a numeric value attributed to an RRC parameter without spec-body citation counts as 1 even when the value carries a guard like "typical". Stricter rule (hedge-aware, RP-pair clustered) gives 6; looser rule (split every `-r20` sub-field) gives 14+. The "11" figure used in the paper applies the rule above.
+- **Internal-consistency footnote (Q3, Claude answer):** Claude's q3 answer contains an internal contradiction — `BFD-RS Rel.16+: up to 64 RSs` at line 113 versus `Rel.16+ = up to 8 or more` at line 311 (verified via grep). Counted once as a single hallucination ("BFD-RS Rel.16+ = 8") in the breakdown above; if the contradiction itself were counted as a separate quality defect the total would be 12.
 - **Pattern**: guard markings such as "TBD" / "draft" / "typical" / "(as of this point in time)" are attached to assertive citations — exposes errors immediately when used in standards meetings.
 - **Practical recommendation**: useful for grasping technical depth quickly. **However, RP-WIDs, Rel-20 items, quantitative values, and ASN.1 code must be cross-checked against authoritative sources (3gpp.org/IEEE)**.
 
@@ -121,3 +123,59 @@ The following baseline citation-discipline issues are tracked as system-level fo
 - **Rel-20 spec-body absence** — Q2/Q4 cite Rel-20 documents only at the 6G-overview / Phase-3 framing stage; 38.214/38.321/38.331/38.306 spec-body changes for Rel-20 are not present in the indexed dataset (D-class limitation, resolved by time as Stage-2 freeze 2026-09 / Stage-3 freeze 2027-03 lands).
 - **38.306 capability row-level chunking** — capability-table rows are not chunked per row, so direct-row retrieval for Q1's `csi-Type-II` cap items remains unsuccessful (R+O class — Tier B follow-up).
 - **38.101-4 / RP-WID separate loading** — these are referenced normatively from 38.521-4 / Rel-16 MIMO WI but are not loaded into the indexed dataset (R class — Tier B/C follow-up).
+
+## 10. Cross-WG LS arithmetic — sender-side vs receiver-side reconciliation (Table tab:scenarios S2)
+
+The S2 scenario figures cited in the paper (`3,644 LSs RAN1→RAN2` and `1,450 received in RAN2 KG`) measure two **different identifier spaces** at two different points in the LS lifecycle, not the same set of LSs with leakage. The paper-cited figures are correct (verified directly via SPARQL on `examples/process_kg/ls_routing.ttl`); this section explains the relationship without altering either number.
+
+**Identifier-space note:**
+- 3,644 = RAN1-side outgoing edges with `tdocNumber` prefix `R1-XXXXXXX` (sender-side count, from `MATCH (ls:LS)-[:SENT_TO]->(:WorkingGroup {wgName:"RAN2"}) WHERE ls.tdocNumber STARTS WITH "R1-" RETURN count(DISTINCT ls)`).
+- 1,450 = RAN2-side inbound LSs with `tdocNumber` prefix `R2-YYYYYYY` (receiver-side count). The two `R1-XXXXXXX` and `R2-YYYYYYY` identifier spaces share zero TDoc IDs by design; a set-difference between 3,644 and 1,450 is therefore not meaningful.
+
+**Decomposition of the apparent 2,194-LS gap (verified via direct SPARQL on `ls_routing.ttl`, all numbers reproducible):**
+- 513 LSs are RAN1-side records with `direction="in"` whose `sentTo` list happens to include RAN2; the no-direction-filter Cypher query that produced the 3,644 figure includes them. The corrected RAN1-outgoing-only total is 3,131.
+- Of the 3,131 outgoing total: 983 carry `status="revised"` (only the final approved revision typically reaches the receiver docket); 901+38+9+9+2 = 959 carry status `not treated`/`withdrawn`/`postponed`/`not pursued`/`reserved` (the receiving WG never tabled them). The two categories overlap and jointly bound the residual 1,681-LS gap to the 1,450 receiver-side total.
+- 441 of the 3,131 are multi-WG broadcasts where RAN2 may be a CC rather than the primary recipient; the released schema collapses CC and primary recipients into a single `sentTo` predicate, so this bucket cannot be split apart by ontology alone (an upstream metadata-modeling limit; a future `ccTo` predicate distinct from `sentTo` would precisely attribute it).
+
+**Status distribution of R1-out → RAN2 LSs (3,131 total, full status breakdown):**
+
+| Status | Count |
+|---|---:|
+| approved | 1,024 |
+| revised | 983 |
+| not treated | 901 |
+| agreed | 80 |
+| noted | 48 |
+| withdrawn | 38 |
+| available | 20 |
+| endorsed | 17 |
+| postponed | 9 |
+| not pursued | 9 |
+| reserved | 2 |
+| **TOTAL** | **3,131** |
+
+The reconciliation closes the gap completely (513 + 1,681 = 2,194 = 3,644 − 1,450). The paper's Table tab:scenarios narrative is preserved as-is; this section is supplementary clarification for reviewers diffing against the released `examples/process_kg/ls_routing.ttl`.
+
+## 11. RP-WID number cross-check (Q1/Q4 indirect citation grounding)
+
+All 9 RP-* TDoc numbers appearing in pilot Q1-Q4 retrieval contexts have been cross-checked against the public 3GPP plenary archive (`www.3gpp.org/ftp/tsg_ran/TSG_RAN/TSGR_*/Docs/RP-*.zip`); all 9 resolve to existing WID/SID documents with titles, source companies, and release targets matching the retrieved excerpts. In particular:
+
+- **`RP-221799`** (cited indirectly in Q4 SPECTRA answer via R2-2207340) — verified as the RAN#96 (Jun 2022) revision of the Rel-18 NR_Mob_enh2 WID by MediaTek; it is one revision step in the chain `RP-213565 (RAN#94e Dec 2021 original)` → `RP-221558 (RAN#95-e Mar 2022)` → `RP-221799 (RAN#96 Jun 2022)` → `RP-222332 (RAN#97-e Sep 2022)`. All four numbers exist in the archive; SPECTRA's answer cites `RP-221799` because that is the version the source TDoc R2-2207340 (RAN2#119-e Aug 2022) author wrote.
+- **`RP-182067`** (cited indirectly in Q1 SPECTRA answer via R1-1903044) — verified as the Samsung-led "Revised WID: Enhancements on MIMO for NR" (NR_eMIMO) at RAN#81 (Sep 2018), Rel-16. Matches the R1-1903044 chunk-body quote exactly.
+
+Verified RP numbers (with archive URLs):
+
+| RP-# | Title | Meeting | Release |
+|---|---|---|---|
+| RP-182067 | Revised WID: Enhancements on MIMO for NR (NR_eMIMO) | RAN#81 (Sep 2018) | Rel-16 |
+| RP-202024 | Revised WID: Further enhancements on MIMO for NR (NR_FeMIMO) | RAN#89e (Sep 2020) | Rel-17 |
+| RP-213565 | New WID on Further NR mobility enhancements (NR_Mob_enh2) | RAN#94e (Dec 2021) | Rel-18 |
+| RP-221458 | Revised WID: Enhancements of NR Multicast and Broadcast Services | RAN#96 (Jun 2022) | Rel-17 |
+| RP-221799 | Revised WID on Further NR mobility enhancements | RAN#96 (Jun 2022) | Rel-18 |
+| RP-222332 | Revised WID on Further NR mobility enhancements | RAN#97-e (Sep 2022) | Rel-18 |
+| RP-241515 | Revised Work Item: NR mobility enhancements Phase 4 | RAN#104 (Jun 2024) | Rel-19 |
+| RP-242394 | WID revision: NR MIMO Phase 5 (NR_MIMO_Ph5) | RAN#105 (Sep 2024) | Rel-19 |
+| RP-250810 | Revised SID: Study on 6G Scenarios and Requirements | RAN#107 (Mar 2025) | Rel-19 |
+| RP-252899 | Revised WI: AI/ML for mobility in NR (NR_AIML_Mob) | RAN#109 (Sep 2025) | Rel-20 |
+
+Source: 9 ZIPs downloaded directly from `www.3gpp.org/ftp/tsg_ran/TSG_RAN/TSGR_*/Docs/RP-*.zip` (HTTP 200 with browser User-Agent); titles extracted from cover-page text via `python-docx`. Verification trail and source URLs in `docs/paper/iswc/rebuttal_preparation/agent_d_rp_wid_verification.md` (internal repo).

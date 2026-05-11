@@ -6,7 +6,16 @@ omitted.
 
 ## Files
 
-| File | Coverage | Triples (measured) |
+Triple counts below are **export-time snapshot values (2026-04-29)**.
+Re-parsing the released files with `rdflib` may produce slightly
+larger counts (e.g., `ls_routing.ttl` re-parses to 195,968 triples
+under rdflib 6.x as of 2026-05-11) because some implementation-side
+metadata triples are emitted on parse. The paper Appendix §G ("2.44M
+union triples") cites the rounded sum that is reproducible under
+either reading; reviewers re-parsing should not interpret a small
+delta (≤0.3%) as inconsistency.
+
+| File | Coverage | Triples (export-time, 2026-04-29) |
 |------|----------|-------------------:|
 | `ls_routing.ttl`         | RAN1–RAN5 LS routing edges        |   195,434 |
 | `cr_routing.ttl`         | RAN1–RAN5 CR routing edges        | 1,254,391 |

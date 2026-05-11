@@ -104,3 +104,16 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 |---|---|
 | 5-stage pipeline (scrape → deterministic Tdoc/Resolution metadata parse → deterministic CR/TR document parse via python-docx → SHACL → bulk Neo4j load); LLM (Gemini-2.5-flash) is used only for downstream validation (NL-CQ → Cypher, answer-quality scoring), not in the KG-population path | `scripts/paper/generate_metadata_kg_snapshot.py` (whitelist of 89 metadata fields, 20 excluded text fields documents the parser output schema); paper §7 |
 | Throughput claim "$O(10^3)$ TDocs/min on a single workstation" | Internal benchmark; not part of the public release artifact (see "Reproducibility" caveat below) |
+
+## Notes on inter-artefact count differences (paper-side numbers unchanged)
+
+The following small deltas exist between the operational-KG snapshot (the `validation/*.json` artefacts that source paper Tables 6–8) and the metadata-only TTL export at `examples/process_kg/_export_summary.txt`. **All paper-cited numbers remain those in the operational-KG snapshot; the deltas below are export-time properties of the public TTL bundle and do not change any paper claim.**
+
+- **CR per-RAN1**: `ran1_instance_counts.json` (Table 6 source) = **10,715**; `_export_summary.txt` "RAN1 TDoc metadata > CR" = **10,671**. The 44-CR delta arises because the metadata-only export strips body content and applies stricter join semantics on cross-referencing fields; reviewers diffing the two artefacts should not interpret the delta as inconsistency.
+- **Summary per-RAN1**: `ran1_instance_counts.json` = **3,468**; `_export_summary.txt` = **3,469**. Same export-side cause; +1 cell delta.
+- **LS aggregate across RAN1–RAN5**: `_export_summary.txt` shows two figures on adjacent lines:
+  - `PER-WG-ENDPOINT SUM: 26,791` — **NOT a distinct-LS count**; each cross-WG LS is counted once per endpoint WG it touches. This figure should NOT be cited as the distinct LS total.
+  - `CANONICAL DISTINCT LS COUNT: 25,586` — paper-cited figure; de-duplicated by `tdocNumber` across the union. This is the value paper Appendix §A.dq cites as "1,556 of 25,586 distinct LSs (6.1%)".
+  The `_export_summary.txt` header was clarified on 2026-05-11 to make this distinction prominent and reduce the risk of downstream consumers (or future agents) accidentally citing 26,791 instead of 25,586.
+- **`ls_routing.ttl` triple count**: `examples/process_kg/SCHEMA.md` reports `195,434 triples` (export-time snapshot, 2026-04-29). Re-parsing the same file under `rdflib 6.x` as of 2026-05-11 yields `195,968 triples` — a +0.27% delta from implementation-side metadata triples that rdflib emits on parse. Paper Appendix §G "2.44M union triples" is reproducible under either reading.
+- **Per-WG outgoing LS coverage range (51.9–96.6%)** mentioned in Appendix §A.dq is computed per RAN-WG over `ls_routing.ttl` and is not currently exposed as a separate `ls_coverage_per_wg.json` artefact. Future v1.0.x releases may add this JSON; in the interim the range is reproducible via offline parse of the released `examples/process_kg/ls_routing.ttl`.
