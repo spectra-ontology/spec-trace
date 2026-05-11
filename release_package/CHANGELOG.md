@@ -3,6 +3,79 @@
 All notable changes to the SPECTRA release package are documented in this file.
 Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] — 2026-05-11 (pre-rebuttal patch; backwards-compatible)
+
+Backwards-compatible additions in response to OOPS! P10 and pre-emptive
+adversarial-review (`docs/paper/iswc/rebuttal_preparation/`) findings:
+
+### Ontology (`ontology/spectra.ttl`)
+
+- Introduced `tdoc:StudyItem ⊑ tdoc:WorkItem` (3GPP Study Item produces TR
+  without normative TS changes; v1.0 collapsed both under WorkItem).
+- Introduced `tdoc:Discussion ⊑ tdoc:Tdoc` (the most common Tdoc type;
+  v1.0 left it as the implicit base case, untyped Tdoc instances remain
+  valid).
+- Added `owl:IrreflexiveProperty` / `owl:AsymmetricProperty` characteristics
+  to lineage OPs: `replyTo`, `revisedTo`, `isRevisionOf`, `promotedTo`,
+  `hasCR`, `belongsToCRPack`. Reasoner-detectable error coverage on
+  these directional flow predicates is now correct.
+- Added 10 conservative `owl:disjointWith` axioms among Resolution
+  subclasses (Agreement ⊥ Conclusion ⊥ WorkingAssumption) and Tdoc
+  subclasses (CR ⊥ {LS, Summary, SessionNotes, Discussion}; LS ⊥
+  {Summary, SessionNotes, Discussion}). Closes OOPS! P10.
+
+### Documentation (`validation/validation_manifest.md`)
+
+- Added "Notes on inter-artefact count differences" section explaining
+  the small CR/Summary deltas between the operational-KG snapshot
+  (Table 6 source) and the metadata-only export, and noting the
+  per-WG LS outgoing coverage range (51.9–96.6%) reproducibility
+  pathway.
+
+### Documentation (`supplement/PAPER_APPENDIX.tex` §A.dq)
+
+- Added cross-WG LS sender-side vs receiver-side count reconciliation:
+  the S2 figures "3,644 RAN1→RAN2 / 1,450 received in RAN2 KG"
+  measure two different identifier spaces (sender R1-XXXXXXX vs
+  receiver R2-YYYYYYY); decomposed offline against `ls_routing.ttl`,
+  the 2,194-LS gap is fully accounted for (513 RAN1-incoming records
+  with non-direction-filtered Cypher → corrected RAN1-out = 3,131;
+  remaining 1,681 = revisedTo compression + status not_treated /
+  withdrawn; additional 441 = multi-WG broadcasts where RAN2 may
+  be CC rather than primary recipient).
+
+### Documentation (`docs/usecase/evaluations/3way/summary.md`)
+
+- Added explicit counting rule for the "11 unsupported claims" total
+  (RP-* WID pairs split as 2 distinct items; speculative ASN.1 SEQUENCE
+  block under hedged header counts as 1 cluster; numeric values
+  attributed to RRC parameters without spec citation count as 1 even
+  with 'typical' guard) — under this rule Q1=3 + Q2=1 + Q3=3 + Q4=4 = 11.
+- Documented Q3 internal contradiction in Claude's answer (BFD-RS
+  Rel.16+ "up to 64 RSs" vs "up to 8 or more") as a separate quality
+  defect not currently double-counted.
+
+### Documentation (`paper main.tex`)
+
+- Reworded Table tab:scenarios S2 row to disambiguate sender-side vs
+  receiver-side LS counts (3,131 RAN1-out edges with R1-XXXXXXX IDs;
+  1,450 RAN2-in distinct LSs with R2-YYYYYYY IDs after compression).
+
+### Triple count
+
+886 → 915 (+29). pyshacl conformance against `kg/per_wg/RAN1-body.ttl`:
+25,240 pre-existing minCount violations unchanged (zero new violations
+introduced). All v1.0 instances remain valid.
+
+### Pre-rebuttal verification trail
+
+`docs/paper/iswc/rebuttal_preparation/agent_d_rp_wid_verification.md`
+records the cross-check of all 9 RP-* WID numbers cited in pilot Q1-Q4
+retrieval contexts against the public 3GPP plenary archive (`www.3gpp.org/
+ftp/tsg_ran/TSG_RAN/TSGR_*/Docs/RP-*.zip`). All 9 RP numbers verified
+correct including `RP-221799` (RAN#96 revision of NR_Mob_enh2 by MediaTek)
+and `RP-182067` (RAN#81 revised Rel-16 NR_eMIMO WID by Samsung).
+
 ## [1.0.0] — 2026-05-08 (camera-ready; Zenodo DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) minted)
 
 First public release accompanying the ISWC 2026 Resources Track submission
