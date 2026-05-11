@@ -19,12 +19,10 @@
     dc:creator "Sihyeon Choi (Samsung System LSI)" ,
                "Junho Lee (Samsung System LSI)" ;
     dc:date "2026-05-08" ;
-    dcterms:modified "2026-05-11" ;
     dc:rights "Creative Commons Attribution 4.0 International (CC-BY 4.0)" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-    owl:versionInfo "1.0.1 — backwards-compatible additions: tdoc:StudyItem (subclass of WorkItem), tdoc:Discussion (subclass of Tdoc), irreflexive/asymmetric axioms on lineage OPs, conservative owl:disjointWith axioms among Resolution and Tdoc subclasses. No removals; v1.0 instances remain valid."@en ;
-    owl:versionIRI <https://w3id.org/spectra/1.0.1> ;
-    owl:priorVersion <https://w3id.org/spectra/1.0.0> ;
+    owl:versionInfo "1.0.0" ;
+    owl:versionIRI <https://w3id.org/spectra/1.0.0> ;
     rdfs:seeAlso <https://github.com/spectra-ontology/spec-trace> .
 
 # =============================================================================
@@ -58,11 +56,6 @@ tdoc:SessionNotes a owl:Class ;
     rdfs:subClassOf tdoc:Tdoc ;
     rdfs:label "Session Notes"@en ;
     rdfs:comment "Session notes for ad-hoc discussions from Final Report"@en .
-
-tdoc:Discussion a owl:Class ;
-    rdfs:subClassOf tdoc:Tdoc ;
-    rdfs:label "Discussion TDoc"@en ;
-    rdfs:comment "Generic discussion-type Tdoc. The most common Tdoc type in 3GPP RAN. v1.0 left this as the implicit base case (untyped Tdoc); v1.0.1 makes it explicit as a subclass without removing untyped Tdoc instances (which remain valid Tdoc instances)."@en .
 
 # -----------------------------------------------------------------------------
 # Resolution Classes
@@ -107,12 +100,7 @@ tdoc:Contact a owl:Class ;
 
 tdoc:WorkItem a owl:Class ;
     rdfs:label "Work Item"@en ;
-    rdfs:comment "3GPP Work Item (WI). Produces CRs and normative TS changes. The sibling class StudyItem (added in v1.0.1) covers the SI case; both share the same parent class WorkItem for v1.0 backwards-compatibility."@en .
-
-tdoc:StudyItem a owl:Class ;
-    rdfs:subClassOf tdoc:WorkItem ;
-    rdfs:label "Study Item"@en ;
-    rdfs:comment "3GPP Study Item (SI). Produces a TR (Technical Report); does not modify normative TS text directly. Distinguished from a Work Item (WI) which produces CRs and TS changes. v1.0 collapsed both under WorkItem; v1.0.1 introduces this subclass without removing the parent class."@en .
+    rdfs:comment "3GPP Work Item (WI) or Study Item (SI)"@en .
 
 tdoc:AgendaItem a owl:Class ;
     rdfs:label "Agenda Item"@en ;
@@ -226,26 +214,23 @@ tdoc:presentedAt a owl:ObjectProperty ;
     rdfs:domain tdoc:Tdoc ;
     rdfs:range tdoc:Meeting .
 
-tdoc:isRevisionOf a owl:ObjectProperty, owl:FunctionalProperty,
-                    owl:IrreflexiveProperty, owl:AsymmetricProperty ;
+tdoc:isRevisionOf a owl:ObjectProperty, owl:FunctionalProperty ;
     rdfs:label "is revision of"@en ;
-    rdfs:comment "Previous version TDoc that this TDoc revises. Irreflexive (a Tdoc cannot revise itself) and asymmetric (revision is one-directional)."@en ;
+    rdfs:comment "Previous version TDoc that this TDoc revises"@en ;
     rdfs:domain tdoc:Tdoc ;
     rdfs:range tdoc:Tdoc ;
     owl:inverseOf tdoc:revisedTo .
 
-tdoc:revisedTo a owl:ObjectProperty, owl:FunctionalProperty,
-                 owl:IrreflexiveProperty, owl:AsymmetricProperty ;
+tdoc:revisedTo a owl:ObjectProperty, owl:FunctionalProperty ;
     rdfs:label "revised to"@en ;
-    rdfs:comment "Newer version TDoc that revises this TDoc. Irreflexive (a Tdoc cannot be revised to itself) and asymmetric."@en ;
+    rdfs:comment "Newer version TDoc that revises this TDoc"@en ;
     rdfs:domain tdoc:Tdoc ;
     rdfs:range tdoc:Tdoc ;
     owl:inverseOf tdoc:isRevisionOf .
 
-tdoc:replyTo a owl:ObjectProperty, owl:FunctionalProperty,
-               owl:IrreflexiveProperty ;
+tdoc:replyTo a owl:ObjectProperty, owl:FunctionalProperty ;
     rdfs:label "reply to"@en ;
-    rdfs:comment "TDoc that this TDoc replies to (typically for LS responses). Irreflexive (a Tdoc cannot reply to itself)."@en ;
+    rdfs:comment "TDoc that this TDoc replies to (typically for LS responses)"@en ;
     rdfs:domain tdoc:Tdoc ;
     rdfs:range tdoc:Tdoc ;
     owl:inverseOf tdoc:replyIn .
@@ -345,10 +330,9 @@ tdoc:hasResolutions a owl:ObjectProperty ;
     rdfs:range tdoc:Resolution ;
     owl:inverseOf tdoc:resolutionBelongsTo .
 
-tdoc:promotedTo a owl:ObjectProperty, owl:FunctionalProperty,
-                  owl:IrreflexiveProperty, owl:AsymmetricProperty ;
+tdoc:promotedTo a owl:ObjectProperty, owl:FunctionalProperty ;
     rdfs:label "promoted to"@en ;
-    rdfs:comment "Agreement that this WorkingAssumption was promoted to. Asymmetric and irreflexive (a WorkingAssumption cannot promote to itself, and the relation is one-directional WA→Agreement)."@en ;
+    rdfs:comment "Agreement that this WorkingAssumption was promoted to"@en ;
     rdfs:domain tdoc:WorkingAssumption ;
     rdfs:range tdoc:Agreement .
 
@@ -458,18 +442,16 @@ tdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;
 # CR Document Object Properties (7) - Spec: tdoc_ontology_specs(CR).md Step 5
 # -----------------------------------------------------------------------------
 
-tdoc:hasCR a owl:ObjectProperty, owl:InverseFunctionalProperty,
-             owl:AsymmetricProperty ;
+tdoc:hasCR a owl:ObjectProperty, owl:InverseFunctionalProperty ;
     rdfs:label "has CR"@en ;
-    rdfs:comment "CR(s) included in this CRPack. Asymmetric (the containment direction is fixed: CRPack→CR)."@en ;
+    rdfs:comment "CR(s) included in this CRPack"@en ;
     rdfs:domain tdoc:CRPack ;
     rdfs:range tdoc:CR ;
     owl:inverseOf tdoc:belongsToCRPack .
 
-tdoc:belongsToCRPack a owl:ObjectProperty, owl:FunctionalProperty,
-                       owl:AsymmetricProperty ;
+tdoc:belongsToCRPack a owl:ObjectProperty, owl:FunctionalProperty ;
     rdfs:label "belongs to CR pack"@en ;
-    rdfs:comment "CRPack that this CR belongs to (at most one). Asymmetric (one-directional CR→CRPack)."@en ;
+    rdfs:comment "CRPack that this CR belongs to (at most one)"@en ;
     rdfs:domain tdoc:CR ;
     rdfs:range tdoc:CRPack ;
     owl:inverseOf tdoc:hasCR .
@@ -1211,28 +1193,6 @@ tdoc:impactDescription a owl:DatatypeProperty ;
     rdfs:range xsd:string .
 
 # =============================================================================
-# DISJOINTNESS BLOCK (v1.0.1)
-# Conservative owl:disjointWith axioms. Each axiom is asserted only where
-# class membership is unambiguous in 3GPP practice (a Resolution is exactly
-# one of Agreement/Conclusion/WorkingAssumption; a CR cannot simultaneously
-# be an LS or Summary, etc.). Disjointness is NOT asserted between
-# StudyItem and WorkItem (StudyItem is a subClassOf WorkItem) nor between
-# Discussion and other Tdoc subclasses where overlap is conceivable.
-# =============================================================================
-
-# Resolution subclass disjointness — a single Resolution instance is exactly
-# one of these three categories per 3GPP final-report conventions.
-tdoc:Agreement owl:disjointWith tdoc:Conclusion , tdoc:WorkingAssumption .
-tdoc:WorkingAssumption owl:disjointWith tdoc:Conclusion .
-
-# Tdoc subclass disjointness — restricted to pairs whose distinct document
-# semantics make co-membership impossible. CR, LS, Summary, SessionNotes,
-# and Discussion correspond to distinct 3GPP document categories with
-# non-overlapping cover-sheet metadata.
-tdoc:CR owl:disjointWith tdoc:LS , tdoc:Summary , tdoc:SessionNotes , tdoc:Discussion .
-tdoc:LS owl:disjointWith tdoc:Summary , tdoc:SessionNotes , tdoc:Discussion .
-
-# =============================================================================
 # Optional PROV-O alignment (declarative; reasoners may exploit these axioms,
 # but SPECTRA core remains usable without PROV-O).
 # Resolution is the meeting-decision activity; Tdoc is a contributed entity;
@@ -1247,5 +1207,5 @@ tdoc:Contact    rdfs:subClassOf <http://www.w3.org/ns/prov#Agent> ,
                                 <http://www.w3.org/ns/prov#Person> .
 
 # =============================================================================
-# End of SPECTRA ontology v1.0.1
+# End of SPECTRA ontology v1.0.0
 # =============================================================================
