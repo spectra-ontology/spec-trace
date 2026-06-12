@@ -36,6 +36,16 @@ docs/usecase/
 
 **Recommended starting point**: [evaluations/3way/summary.md](evaluations/3way/summary.md) — 4Q synthesis + per-model consistent patterns + SPECTRA RAG improvement priorities + practical usage guide.
 
+## Real Engineering Cases from Practitioner Teams
+
+Beyond the four benchmark questions above, [`board/`](board/README.md) contains **real,
+unedited engineering questions** raised by practicing engineers across three
+organizationally separate engineering teams — cellular-modem design, protocol-software
+implementation, and 3GPP RAN standardization — each answered by SPECTRA with inline 3GPP
+citations. To protect individual contributors, no case is bound to a named organizational
+unit. Questions were translated from Korean; all spec references and quoted standard text
+are unchanged.
+
 ## Evaluation Workflow (3 Stages)
 
 ### Stage 1: Answer Generation (each model independent)
