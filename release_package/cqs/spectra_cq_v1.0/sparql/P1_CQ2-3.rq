@@ -1,0 +1,19 @@
+# SPARQL translation of P1_CQ2-3 — Identify which incoming LS the TDoc R1-2000004 is replying to (replyTo lookup).
+# Source: ../cypher/P1_CQ2-3.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?reply_tdoc ?reply_title ?original_tdoc ?original_title
+WHERE {
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:tdocNumber ?reply_tdoc ;
+     spectra:replyTo ?original .
+  FILTER(?reply_tdoc = "R1-2000004")
+  FILTER EXISTS { ?original a spectra:Tdoc }
+  OPTIONAL { ?t spectra:title ?reply_title }
+  OPTIONAL { ?original spectra:tdocNumber ?original_tdoc }
+  OPTIONAL { ?original spectra:title ?original_title }
+}
+ORDER BY ASC(?reply_tdoc)
+LIMIT 10

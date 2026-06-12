@@ -1,0 +1,22 @@
+# SPARQL translation of P5_CQ3-1 — Which TS sections did TR 38.875 (RedCap) impact (low-power-IoT team reference)?
+# Source: ../cypher/P5_CQ3-1.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?trNumber ?trTitle ?impactType ?sectionId ?impactDescription
+WHERE {
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:trNumber ?trNumber ;
+      spectra:hasTrImpact ?ti .
+  FILTER(?trNumber = "38.875")
+  FILTER EXISTS { ?ti a spectra:TRImpact }
+  ?ti
+      spectra:impactsSection ?s .
+  FILTER EXISTS { ?s a spectra:Section }
+  OPTIONAL { ?tr spectra:trTitle ?trTitle }
+  OPTIONAL { ?ti spectra:impactType ?impactType }
+  OPTIONAL { ?s spectra:sectionId ?sectionId }
+  OPTIONAL { ?ti spectra:impactDescription ?impactDescription }
+}
+ORDER BY ?sectionId

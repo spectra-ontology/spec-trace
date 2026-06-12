@@ -1,0 +1,190 @@
+@prefix dcat:    <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix void:    <http://rdfs.org/ns/void#> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix spectra: <https://w3id.org/spectra#> .
+@prefix sd:      <https://w3id.org/spectra/dataset/> .
+
+###############################################################################
+# DCAT + VoID description of the SPECTRA release artifacts.
+# All statistics are measured directly on the released files
+# (rdflib re-parse, set semantics; byte sizes from the file system).
+# Distribution channels: GitHub (spectra-ontology/spec-trace) for files
+# within GitHub size limits; Zenodo (DOI 10.5281/zenodo.20034872) for the
+# large per-WG body-text KGs.
+###############################################################################
+
+<https://w3id.org/spectra/catalog>
+    a dcat:Catalog ;
+    dcterms:title "SPECTRA release catalog"@en ;
+    dcterms:description "Machine-readable catalog of all artifacts released with SPECTRA: the OWL ontology, three schema-instantiation process-KG exports (GitHub), and five per-WG body-text knowledge graphs (Zenodo)."@en ;
+    dcterms:publisher [ a foaf:Agent ; foaf:name "SPECTRA Project" ] ;
+    dcterms:issued "2026-05-08"^^xsd:date ;
+    dcterms:modified "2026-06-12"^^xsd:date ;
+    foaf:homepage <https://github.com/spectra-ontology/spec-trace> ;
+    dcat:dataset sd:ontology , sd:cr-routing , sd:ls-routing ,
+                 sd:ran1-tdoc-metadata , sd:per-wg-body-kg .
+
+###############################################################################
+# 1. Ontology
+###############################################################################
+
+sd:ontology
+    a dcat:Dataset , void:Dataset ;
+    dcterms:title "SPECTRA OWL ontology"@en ;
+    dcterms:description "OWL 2 ontology modelling the 3GPP RAN standardization process: 26 named classes, 53 object properties, 81 datatype properties."@en ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:conformsTo <http://www.w3.org/2002/07/owl> ;
+    void:vocabulary <https://w3id.org/spectra#> ;
+    void:triples 886 ;
+    void:classes 26 ;
+    void:properties 134 ;
+    dcat:landingPage <https://w3id.org/spectra> ;
+    dcat:distribution [
+        a dcat:Distribution ;
+        dcterms:title "spectra.ttl (GitHub)"@en ;
+        dcat:downloadURL <https://github.com/spectra-ontology/spec-trace/raw/main/release_package/ontology/spectra.ttl> ;
+        dcat:mediaType "text/turtle" ;
+        dcat:byteSize "50669"^^xsd:nonNegativeInteger ;
+    ] .
+
+###############################################################################
+# 2. Schema-instantiation process-KG exports (metadata-only, GitHub)
+#    Body-content literals are stripped; see examples/process_kg/SCHEMA.md.
+###############################################################################
+
+sd:cr-routing
+    a dcat:Dataset , void:Dataset ;
+    dcterms:title "Cross-WG CR routing export"@en ;
+    dcterms:description "Change-Request routing edges across RAN1-RAN5: CR -> modified Spec -> target Release. Metadata-only (body fields stripped)."@en ;
+    dcterms:created "2026-04-29"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    void:vocabulary <https://w3id.org/spectra#> ;
+    void:triples 1254391 ;
+    void:classPartition
+        [ void:class spectra:CR ;      void:entities 192967 ] ,
+        [ void:class spectra:Spec ;    void:entities 573 ] ,
+        [ void:class spectra:Release ; void:entities 13 ] ;
+    dcat:distribution [
+        a dcat:Distribution ;
+        dcat:downloadURL <https://github.com/spectra-ontology/spec-trace/raw/main/release_package/examples/process_kg/cr_routing.ttl> ;
+        dcat:mediaType "text/turtle" ;
+        dcat:byteSize "44551745"^^xsd:nonNegativeInteger ;
+    ] .
+
+sd:ls-routing
+    a dcat:Dataset , void:Dataset ;
+    dcterms:title "Cross-WG LS routing export"@en ;
+    dcterms:description "Liaison-Statement routing edges across RAN1-RAN5: LS -> origin/destination WorkingGroup and Meeting. Metadata-only. Triple count is the rdflib distinct-triple value; the asserted serialization repeats cross-WG liaisons per WG block (see SCHEMA.md)."@en ;
+    dcterms:created "2026-04-29"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    void:vocabulary <https://w3id.org/spectra#> ;
+    void:triples 195968 ;
+    void:classPartition
+        [ void:class spectra:LS ;           void:entities 25586 ] ,
+        [ void:class spectra:WorkingGroup ; void:entities 468 ] ,
+        [ void:class spectra:Meeting ;      void:entities 267 ] ;
+    dcat:distribution [
+        a dcat:Distribution ;
+        dcat:downloadURL <https://github.com/spectra-ontology/spec-trace/raw/main/release_package/examples/process_kg/ls_routing.ttl> ;
+        dcat:mediaType "text/turtle" ;
+        dcat:byteSize "7816706"^^xsd:nonNegativeInteger ;
+    ] .
+
+sd:ran1-tdoc-metadata
+    a dcat:Dataset , void:Dataset ;
+    dcterms:title "RAN1 TDoc structural-metadata export"@en ;
+    dcterms:description "RAN1 TDoc lifecycle metadata: submission, revision chains, meeting presentation, work-item and release targeting. Metadata-only."@en ;
+    dcterms:created "2026-04-29"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    void:vocabulary <https://w3id.org/spectra#> ;
+    void:triples 991205 ;
+    void:classPartition
+        [ void:class spectra:Tdoc ;    void:entities 102517 ] ,
+        [ void:class spectra:CR ;      void:entities 10671 ] ,
+        [ void:class spectra:LS ;      void:entities 6343 ] ,
+        [ void:class spectra:Company ; void:entities 711 ] ;
+    dcat:distribution [
+        a dcat:Distribution ;
+        dcat:downloadURL <https://github.com/spectra-ontology/spec-trace/raw/main/release_package/examples/process_kg/ran1_tdoc_metadata.ttl> ;
+        dcat:mediaType "text/turtle" ;
+        dcat:byteSize "40792485"^^xsd:nonNegativeInteger ;
+    ] .
+
+###############################################################################
+# 3. Per-WG body-text knowledge graphs (Zenodo; 3GPP-derived literal content)
+###############################################################################
+
+sd:per-wg-body-kg
+    a dcat:Dataset , void:Dataset ;
+    dcterms:title "SPECTRA per-WG body-text knowledge graphs (RAN1-RAN5)"@en ;
+    dcterms:description "Five per-WG knowledge graphs with 3GPP-derived literal content (TDoc titles, decision text, CR rationale, specification section structure). 13,705,475 triples in total. Snapshot of 2026-05-04."@en ;
+    dcterms:created "2026-05-04"^^xsd:date ;
+    # Two-tier licensing (see LICENSE): the schema/structure is SPECTRA-authored
+    # (CC-BY 4.0), but the 3GPP-derived text literals are NOT relicensed under
+    # CC-BY; they carry explicit 3GPP source attribution instead.
+    dcterms:license <https://github.com/spectra-ontology/spec-trace/blob/main/release_package/LICENSE> ;
+    dcterms:rights "Contains 3GPP-derived literal content redistributed for academic research per 3GPP IPR policy and the precedent of TSpec-LLM and GSMA TelecomKG. The 3GPP-derived text literals are not relicensed under CC-BY 4.0; re-users must retain 3GPP attribution. See the two-tier LICENSE file."@en ;
+    dcterms:rightsHolder "3GPP" ;
+    dcterms:source <https://www.3gpp.org/ftp/> ;
+    void:vocabulary <https://w3id.org/spectra#> ;
+    void:triples 13705475 ;
+    dcat:landingPage <https://doi.org/10.5281/zenodo.20034872> ;
+    void:subset sd:ran1-body , sd:ran2-body , sd:ran3-body ,
+                sd:ran4-body , sd:ran5-body .
+
+sd:ran1-body
+    a void:Dataset ;
+    dcterms:title "RAN1 body-text KG"@en ;
+    void:triples 2543626 ;
+    void:classPartition
+        [ void:class spectra:Tdoc ;       void:entities 123677 ] ,
+        [ void:class spectra:Resolution ; void:entities 24710 ] ,
+        [ void:class spectra:Agreement ;  void:entities 21058 ] ,
+        [ void:class spectra:CR ;         void:entities 10715 ] ,
+        [ void:class spectra:AgendaItem ; void:entities 6439 ] ;
+    void:dataDump <https://doi.org/10.5281/zenodo.20034872> ;
+    dcat:byteSize "194299920"^^xsd:nonNegativeInteger .
+
+sd:ran2-body
+    a void:Dataset ;
+    dcterms:title "RAN2 body-text KG"@en ;
+    void:triples 2733427 ;
+    void:classPartition
+        [ void:class spectra:Tdoc ; void:entities 120000 ] ,
+        [ void:class spectra:CR ;   void:entities 34622 ] ,
+        [ void:class spectra:LS ;   void:entities 9400 ] ;
+    void:dataDump <https://doi.org/10.5281/zenodo.20034872> ;
+    dcat:byteSize "195235898"^^xsd:nonNegativeInteger .
+
+sd:ran3-body
+    a void:Dataset ;
+    dcterms:title "RAN3 body-text KG"@en ;
+    void:triples 1313585 ;
+    void:classPartition
+        [ void:class spectra:Tdoc ; void:entities 58482 ] ,
+        [ void:class spectra:CR ;   void:entities 19974 ] ;
+    void:dataDump <https://doi.org/10.5281/zenodo.20034872> ;
+    dcat:byteSize "89510839"^^xsd:nonNegativeInteger .
+
+sd:ran4-body
+    a void:Dataset ;
+    dcterms:title "RAN4 body-text KG"@en ;
+    void:triples 4266603 ;
+    void:classPartition
+        [ void:class spectra:Tdoc ; void:entities 167017 ] ,
+        [ void:class spectra:CR ;   void:entities 74347 ] ;
+    void:dataDump <https://doi.org/10.5281/zenodo.20034872> ;
+    dcat:byteSize "292844148"^^xsd:nonNegativeInteger .
+
+sd:ran5-body
+    a void:Dataset ;
+    dcterms:title "RAN5 body-text KG"@en ;
+    void:triples 2848234 ;
+    void:classPartition
+        [ void:class spectra:Tdoc ; void:entities 62069 ] ,
+        [ void:class spectra:CR ;   void:entities 53309 ] ;
+    void:dataDump <https://doi.org/10.5281/zenodo.20034872> ;
+    dcat:byteSize "195347022"^^xsd:nonNegativeInteger .

@@ -1,0 +1,22 @@
+# SPARQL translation of P5_CQ3-3 — Return TR 38.824 (URLLC) impacts on TS 38.211 and 38.214 with details (low-latency industrial communications).
+# Source: ../cypher/P5_CQ3-3.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?trNumber ?specNumber ?impactType ?affectedSection ?impactDescription
+WHERE {
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:trNumber ?trNumber ;
+      spectra:hasTrImpact ?ti .
+  FILTER(?trNumber = "38.824")
+  FILTER EXISTS { ?ti a spectra:TRImpact }
+  ?ti
+      spectra:impactsSpec ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?ti spectra:impactType ?impactType }
+  OPTIONAL { ?ti spectra:affectedSection ?affectedSection }
+  OPTIONAL { ?ti spectra:impactDescription ?impactDescription }
+}
+ORDER BY ?specNumber

@@ -1,0 +1,38 @@
+# SPARQL translation of P3_CQ013 — Compare cross-reference density per TS (inter-section-reference tightness).
+# Source: ../cypher/P3_CQ013.cypher
+# Note: like Cypher's `OPTIONAL MATCH ... WITH count(*)`, COUNT(*) over the OPTIONAL block
+#       yields 1 (not 0) for a TS with no outgoing references — semantics preserved.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?ts ?secCnt ?refCnt ((ROUND(xsd:double(?refCnt) / ?secCnt * 100)) / 100 AS ?refDensity)
+WHERE {
+  {
+    SELECT ?ts ?secCnt (COUNT(*) AS ?refCnt)
+    WHERE {
+      {
+        SELECT ?ts (COUNT(?sec) AS ?secCnt)
+        WHERE {
+          FILTER EXISTS { ?sec a spectra:Section }
+          ?sec
+               spectra:belongsToSpec ?sp .
+          FILTER EXISTS { ?sp a spectra:Spec }
+          ?sp
+              spectra:specNumber ?ts .
+        }
+        GROUP BY ?ts
+      }
+      OPTIONAL {
+        FILTER EXISTS { ?src a spectra:Section }
+        ?src
+             spectra:sectionId ?srcId ;
+             spectra:referencesSection ?tgt .
+        FILTER EXISTS { ?tgt a spectra:Section }
+        FILTER(STRSTARTS(?srcId, ?ts))
+      }
+    }
+    GROUP BY ?ts ?secCnt
+  }
+}
+ORDER BY DESC(?refDensity)

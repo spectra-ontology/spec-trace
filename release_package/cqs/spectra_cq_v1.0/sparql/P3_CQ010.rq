@@ -1,0 +1,18 @@
+# SPARQL translation of P3_CQ010 — Return the sections that reference TS 38.211 §5.2.1 (Pseudo-random sequence) — base-algorithm dependents.
+# Source: ../cypher/P3_CQ010.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?sectionNumber ?sectionTitle
+WHERE {
+  FILTER EXISTS { ?tgt a spectra:Section }
+  ?tgt
+       spectra:sectionId "38.211-5.2.1" .
+  FILTER EXISTS { ?src a spectra:Section }
+  ?src
+       spectra:referencesSection ?tgt .
+  OPTIONAL { ?src spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?src spectra:sectionTitle ?sectionTitle }
+}
+ORDER BY ?sectionNumber
+LIMIT 30

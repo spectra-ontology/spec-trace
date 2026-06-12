@@ -1,0 +1,23 @@
+# SPARQL translation of P5_CQ5-3 — Return the top-5 most-referenced TRs (core-foundation research identification).
+# Source: ../cypher/P5_CQ5-3.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?trNumber ?trTitle ?refCount
+WHERE {
+  {
+    SELECT ?ref (COUNT(?src) AS ?refCount)
+    WHERE {
+      FILTER EXISTS { ?ref a spectra:TechnicalReport }
+      FILTER EXISTS { ?src a spectra:TechnicalReport }
+      ?src
+           spectra:referencesTr ?ref .
+    }
+    GROUP BY ?ref
+    ORDER BY DESC(?refCount)
+    LIMIT 5
+  }
+  OPTIONAL { ?ref spectra:trNumber ?trNumber }
+  OPTIONAL { ?ref spectra:trTitle ?trTitle }
+}
+ORDER BY DESC(?refCount)

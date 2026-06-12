@@ -1,0 +1,25 @@
+# SPARQL translation of P1_CQ1-2 — List the TDocs presented at meeting RAN1#121 under agenda items beginning with 9.2 (AI/ML for NR session preparation).
+# Source: ../cypher/P1_CQ1-2.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?type ?agendaNumber
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#121" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:belongsTo ?a .
+  FILTER EXISTS { ?a a spectra:AgendaItem }
+  ?a
+     spectra:agendaNumber ?agendaNumber .
+  FILTER(STRSTARTS(STR(?agendaNumber), "9.2"))
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:type ?type }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+ORDER BY DESC(?meetingNumberInt) ASC(?tdocNumber)
+LIMIT 10

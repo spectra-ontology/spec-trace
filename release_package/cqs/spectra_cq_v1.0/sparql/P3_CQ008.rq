@@ -1,0 +1,32 @@
+# SPARQL translation of P3_CQ008 — Compare the section/table/figure counts across the 8 TSes (TS-complexity comparison).
+# Source: ../cypher/P3_CQ008.cypher
+# Realization note: each UNION branch walks one counting path (sections, tables
+# via their sections, figures via their sections) to the spec hub, and the
+# three counts are folded in a single group per specNumber. This avoids the
+# OPTIONAL cross-product of the straightforward translation.
+# Engine note: rdflib raises NotBoundError when a bare unbound variable reaches
+# a DISTINCT aggregate, so each count wraps the variable in COALESCE(?v, "")
+# and subtracts the sentinel with MAX(IF(BOUND(?v), 0, 1)) — exact whether the
+# group has all-bound, all-unbound, or mixed rows.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?ts
+       ((COUNT(DISTINCT COALESCE(?sec, "")) - MAX(IF(BOUND(?sec), 0, 1))) AS ?secCnt)
+       ((COUNT(DISTINCT COALESCE(?tbl, "")) - MAX(IF(BOUND(?tbl), 0, 1))) AS ?tblCnt)
+       ((COUNT(DISTINCT COALESCE(?fig, "")) - MAX(IF(BOUND(?fig), 0, 1))) AS ?figCnt)
+WHERE {
+  {
+    ?sec spectra:belongsToSpec ?sp .
+    ?sp spectra:specNumber ?ts .
+  } UNION {
+    ?tbl spectra:tableInSection ?tsec .
+    ?tsec spectra:belongsToSpec ?sp .
+    ?sp spectra:specNumber ?ts .
+  } UNION {
+    ?fig spectra:figureInSection ?fsec .
+    ?fsec spectra:belongsToSpec ?sp .
+    ?sp spectra:specNumber ?ts .
+  }
+}
+GROUP BY ?ts
+ORDER BY DESC(?secCnt)

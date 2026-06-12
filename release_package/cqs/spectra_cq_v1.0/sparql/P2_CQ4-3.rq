@@ -1,0 +1,16 @@
+# SPARQL translation of P2_CQ4-3 — Return the top-10 companies by FL Summary count (technology-leadership ranking).
+# Source: ../cypher/P2_CQ4-3.cypher
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?companyName (COUNT(?t) AS ?flCount)
+WHERE {
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:moderatedBy ?c ;
+     spectra:summaryType 'FL' .
+  FILTER EXISTS { ?c a spectra:Company }
+  OPTIONAL { ?c spectra:companyName ?companyName . }
+}
+GROUP BY ?companyName
+ORDER BY DESC(?flCount)
+LIMIT 10

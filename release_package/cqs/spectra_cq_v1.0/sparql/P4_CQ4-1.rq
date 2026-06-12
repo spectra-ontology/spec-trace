@@ -1,0 +1,23 @@
+# SPARQL translation of P4_CQ4-1 — Return change-reason patterns for recent CRs modifying TS 38.214 §5.1.5 (PDSCH MIMO, most-modified).
+# Source: ../cypher/P4_CQ4-1.cypher
+# Realization note: spec-level modifies, clausesAffected and reasonForChange
+# co-occur on the Tdoc IRI of the paired CR/Tdoc twins (measured: 552 IRIs
+# carry all three); modifies is emitted only for CRs, so the CR class
+# restriction is implied. The spec hub is type-checked to keep the anchor
+# pinned to the Spec hub (defensive; in the released TTL specNumber occurs
+# only on Spec hubs).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?sectionId ?tdocNumber ?reasonForChange
+WHERE {
+  ?sp spectra:specNumber "38.214" .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  ?cr spectra:modifies ?sp ;
+      spectra:clausesAffected ?clausesAffected ;
+      spectra:reasonForChange ?reasonForChange .
+  FILTER(CONTAINS(?clausesAffected, "5.1.5"))
+  OPTIONAL { ?cr spectra:tdocNumber ?tdocNumber }
+  BIND("38.214-5.1.5" AS ?sectionId)
+}
+ORDER BY DESC(?tdocNumber)
+LIMIT 15

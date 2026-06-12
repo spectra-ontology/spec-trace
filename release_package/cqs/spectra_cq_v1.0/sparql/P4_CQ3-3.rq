@@ -1,0 +1,17 @@
+# SPARQL translation of P4_CQ3-3 — Return CR Packs submitted at RAN#109 with the CR count per pack.
+# Source: ../cypher/P4_CQ3-3.cypher
+# Realization note: hasCr points predominantly to the Tdoc IRI of the paired
+# CR/Tdoc twins; pack membership implies CR-ness, so no class re-check on the
+# membership target.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tsgMeeting ?crPackId (COUNT(?cr) AS ?crCount)
+WHERE {
+  ?pack spectra:tsgMeeting "RAN#109" ;
+        spectra:hasCr ?cr .
+  FILTER EXISTS { ?pack a spectra:CRPack }
+  BIND("RAN#109" AS ?tsgMeeting)
+  OPTIONAL { ?pack spectra:crPackId ?crPackId }
+}
+GROUP BY ?tsgMeeting ?crPackId
+ORDER BY DESC(?crCount)

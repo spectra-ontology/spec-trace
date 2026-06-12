@@ -1,0 +1,24 @@
+# SPARQL translation of P1_CQ3-1 — List the TDocs submitted by Samsung under Work Item NR_MIMO_evo_DL_UL-Core.
+# Source: ../cypher/P1_CQ3-1.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?type ?status
+WHERE {
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName "Samsung" .
+  FILTER EXISTS { ?wi a spectra:WorkItem }
+  ?wi
+      spectra:workItemCode "NR_MIMO_evo_DL_UL-Core" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:submittedBy ?c ;
+     spectra:relatedTo ?wi .
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:type ?type }
+  OPTIONAL { ?t spectra:status ?status }
+}
+ORDER BY ASC(?tdocNumber)
+LIMIT 10

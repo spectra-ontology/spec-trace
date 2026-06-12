@@ -1,0 +1,22 @@
+# SPARQL translation of P4_CQ4-5 — Return CRs referenced by Resolutions made at RAN1#121, with each change summary.
+# Source: ../cypher/P4_CQ4-5.cypher
+# Realization note: references points to Tdoc IRIs of the paired CR/Tdoc twins;
+# requiring summaryOfChange on the referenced IRI restricts to CR cover-sheet
+# carriers (the Cypher CR class restriction). The meeting is type-checked
+# because meetingNumber is also carried by AgendaItem IRIs.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?meetingNumber ?resolutionId ?tdocNumber ?summaryOfChange
+WHERE {
+  ?m spectra:meetingNumber "RAN1#121" .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?res spectra:madeAt ?m ;
+       spectra:references ?cr .
+  FILTER EXISTS { ?res a spectra:Resolution }
+  ?cr spectra:summaryOfChange ?summaryOfChange .
+  BIND("RAN1#121" AS ?meetingNumber)
+  OPTIONAL { ?res spectra:resolutionId ?resolutionId }
+  OPTIONAL { ?cr spectra:tdocNumber ?tdocNumber }
+}
+ORDER BY DESC(?tdocNumber)
+LIMIT 15

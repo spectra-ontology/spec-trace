@@ -1,0 +1,18 @@
+# SPARQL translation of P3_CQ035 — Return sections containing measurement or reporting keywords (measurement-reporting scope).
+# Source: ../cypher/P3_CQ035.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber ?sectionNumber ?sectionTitle
+WHERE {
+  FILTER EXISTS { ?sec a spectra:Section }
+  ?sec
+       spectra:belongsToSpec ?sp ;
+       spectra:sectionTitle ?sectionTitle .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  FILTER(REGEX(?sectionTitle, "(measurement|reporting)", "i"))
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?sec spectra:sectionNumber ?sectionNumber }
+}
+ORDER BY ?specNumber ?sectionNumber
+LIMIT 20

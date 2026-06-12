@@ -1,0 +1,20 @@
+# SPARQL translation of P1_CQ2-6 — List the TDocs at meeting RAN1#120 that were postponed to the next meeting (open-issue tracking).
+# Source: ../cypher/P1_CQ2-6.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?type
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#120" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:status "postponed" .
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:type ?type }
+}
+ORDER BY ASC(?tdocNumber)
+LIMIT 10

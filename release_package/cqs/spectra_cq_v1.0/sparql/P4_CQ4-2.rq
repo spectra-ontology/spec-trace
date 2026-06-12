@@ -1,0 +1,19 @@
+# SPARQL translation of P4_CQ4-2 — Return the change-reason and change-summary of CRs approved by Resolution AGR-115-7.1-004.
+# Source: ../cypher/P4_CQ4-2.cypher
+# Realization note: references points to Tdoc IRIs (not the paired CR IRIs),
+# so CR-ness is checked through the shared tdocNumber bridge against the CR
+# twin; cover-sheet fields are read from the referenced Tdoc IRI.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?resolutionId ?tdocNumber ?reasonForChange ?summaryOfChange
+WHERE {
+  ?res spectra:resolutionId "AGR-115-7.1-004" ;
+       spectra:references ?cr .
+  FILTER EXISTS { ?res a spectra:Resolution }
+  ?cr spectra:tdocNumber ?tdocNumber .
+  FILTER EXISTS { ?crTwin a spectra:CR ; spectra:tdocNumber ?tdocNumber }
+  BIND("AGR-115-7.1-004" AS ?resolutionId)
+  OPTIONAL { ?cr spectra:reasonForChange ?reasonForChange }
+  OPTIONAL { ?cr spectra:summaryOfChange ?summaryOfChange }
+}
+ORDER BY ASC(?tdocNumber)

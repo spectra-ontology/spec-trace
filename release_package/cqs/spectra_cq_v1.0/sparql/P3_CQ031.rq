@@ -1,0 +1,19 @@
+# SPARQL translation of P3_CQ031 — Return sections containing 'HARQ' across TSes (HARQ-process implementation scope).
+# Source: ../cypher/P3_CQ031.cypher
+# Note: Cypher collect(sec.sectionNumber) is rendered as GROUP_CONCAT — same rows.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber (COUNT(?sec) AS ?sectionCount) (GROUP_CONCAT(?sectionNumber; SEPARATOR=", ") AS ?sections)
+WHERE {
+  FILTER EXISTS { ?sec a spectra:Section }
+  ?sec
+       spectra:belongsToSpec ?sp ;
+       spectra:sectionTitle ?sectionTitle .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  FILTER(REGEX(?sectionTitle, "HARQ", "i"))
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?sec spectra:sectionNumber ?sectionNumber }
+}
+GROUP BY ?specNumber
+ORDER BY DESC(?sectionCount)

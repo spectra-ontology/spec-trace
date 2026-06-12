@@ -1,19 +1,32 @@
 # SPARQL translation of CQ2-1 — Phase 2
 # "Agreements recorded at a given meeting under a given agenda item"
+#
+# Realization note: the released RDF materializes each Neo4j node that carried
+# both the Agreement and Resolution labels as two IRIs sharing one
+# spectra:resolutionId. The Agreement IRI carries the decision content; the
+# Resolution IRI carries the process placement (madeAt, resolutionBelongsTo).
+# The query therefore bridges the two via resolutionId.
+#
+# Engine note: class membership is asserted via FILTER EXISTS rather than
+# positive `?x a <Class>` triple patterns. Greedy join planners (e.g. rdflib)
+# order single-variable patterns first, and two class enumerations in one
+# basic graph pattern form a cross product (|Resolution| x |Agreement| is
+# ~5x10^8 here) before any selective join applies. FILTER EXISTS keeps the
+# membership check per-solution. Constants verified against the released
+# RAN1-body.ttl.
 
-PREFIX tdoc: <https://w3id.org/spectra#>
+PREFIX spectra: <https://w3id.org/spectra#>
 
 SELECT ?resolutionId ?content
 WHERE {
-  ?m a tdoc:Meeting ;
-     tdoc:meetingNumber ?meetingNumber .
-  ?ai a tdoc:AgendaItem ;
-      tdoc:agendaNumber ?agendaNumber .
-  ?r a tdoc:Agreement ;
-     tdoc:madeAt ?m ;
-     tdoc:resolutionBelongsTo ?ai ;
-     tdoc:resolutionId ?resolutionId ;
-     tdoc:content ?content .
-  FILTER (?meetingNumber = "RAN1#120" && ?agendaNumber = "9.1.1")
+  ?m spectra:meetingNumber "RAN1#120" .
+  ?ai spectra:agendaNumber "9.1.1" .
+  ?r spectra:madeAt ?m ;
+     spectra:resolutionBelongsTo ?ai ;
+     spectra:resolutionId ?resolutionId .
+  ?ag spectra:resolutionId ?resolutionId ;
+      spectra:content ?content .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  FILTER EXISTS { ?ag a spectra:Agreement }
 }
 ORDER BY ?resolutionId

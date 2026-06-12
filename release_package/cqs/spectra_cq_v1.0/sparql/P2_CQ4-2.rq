@@ -1,0 +1,20 @@
+# SPARQL translation of P2_CQ4-2 — List the agenda items in which Huawei authored an FL Summary.
+# Source: ../cypher/P2_CQ4-2.cypher
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?agendaNumber (COUNT(?t) AS ?flCount)
+WHERE {
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:belongsTo ?ai ;
+     spectra:moderatedBy ?c ;
+     spectra:summaryType 'FL' .
+  FILTER EXISTS { ?ai a spectra:AgendaItem }
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName 'Huawei' .
+  OPTIONAL { ?ai spectra:agendaNumber ?agendaNumber . }
+}
+GROUP BY ?agendaNumber
+ORDER BY DESC(?flCount)
+LIMIT 15

@@ -15,8 +15,12 @@
 
 To accommodate GitHub's 100 MB-per-file limit, this release is split:
 
-- **GitHub repository (this repo)** — small files: ontology, SHACL, SpectraCQ v1.0, schema-instantiation TTLs, validation JSONs, scripts, supplement, parsing pipeline. Total ~5 MB.
+- **GitHub repository (this repo)** — ontology, SHACL, SpectraCQ v1.0, schema-instantiation process-KG TTLs (`examples/process_kg/`, ~93 MB, each file under the 100 MB limit), validation JSONs, scripts, supplement, parsing pipeline. Tracked total ~103 MB.
 - **Zenodo deposit** — large files: per-WG body-text Knowledge Graphs (`RAN{1..5}-body.ttl`, ~922 MB total). See `kg/per_wg/README.md` for the inventory and the DOI link.
+
+A machine-readable DCAT/VoID description of every dataset in both
+channels (triple counts, class partitions, distributions, licenses)
+is provided in [`metadata/dcat_void.ttl`](metadata/dcat_void.ttl).
 
 This follows the academic two-tier distribution pattern of TSpec-LLM and GSMA telecom-kg-rel19. The `verify_release.py` test accepts either layout (Git checkout: body files absent by design; Zenodo download: body files present).
 
@@ -45,10 +49,11 @@ release_package/
 │       ├── LICENSE                    # CC-BY 4.0
 │       ├── citation.bib               # BibTeX for citing SpectraCQ
 │       ├── questions.json             # 137 CQ × {id, phase, category, question_en, schema_area, verdict}
-│       └── cypher/                    # 137 executable Cypher files (one per CQ)
+│       ├── cypher/                    # 137 executable Cypher files (one per CQ)
+│       └── sparql/                    # 137 SPARQL translations (one per CQ, from the reference Cypher)
 ├── queries/
 │   ├── cypher/                        # 15 Cypher translations (incl. MULTI_HOP_traceability)
-│   └── sparql/                        # 6 SPARQL examples (incl. MULTI_HOP_traceability)
+│   └── sparql/                        # 6 representative SPARQL examples (full set: cqs/spectra_cq_v1.0/sparql/)
 ├── examples/
 │   ├── instantiation_snippet.ttl      # small synthetic instantiation
 │   ├── end_to_end/                    # full E2E synthetic example (data + queries + expected)

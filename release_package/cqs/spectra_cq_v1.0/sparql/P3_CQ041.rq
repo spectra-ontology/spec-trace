@@ -1,0 +1,26 @@
+# SPARQL translation of P3_CQ041 — Return sections with 5+ embedded tables (parameter-dense implementation hotspots).
+# Source: ../cypher/P3_CQ041.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber ?sectionNumber ?sectionTitle ?tableCount
+WHERE {
+  {
+    SELECT ?sec (COUNT(?tbl) AS ?tableCount)
+    WHERE {
+      FILTER EXISTS { ?sec a spectra:Section }
+      ?sec
+           spectra:containsTable ?tbl .
+      FILTER EXISTS { ?tbl a spectra:TSTable }
+    }
+    GROUP BY ?sec
+    HAVING(COUNT(?tbl) >= 5)
+  }
+  ?sec spectra:belongsToSpec ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?sec spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?sec spectra:sectionTitle ?sectionTitle }
+}
+ORDER BY DESC(?tableCount)
+LIMIT 15

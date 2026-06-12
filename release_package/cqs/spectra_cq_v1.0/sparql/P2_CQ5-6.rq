@@ -1,0 +1,21 @@
+# SPARQL translation of P2_CQ5-6 — Return the Agreement count per meeting from RAN1#100 to RAN1#121 (standardization-activity trend).
+# Source: ../cypher/P2_CQ5-6.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?meetingNumber (COUNT(?a) AS ?agreementCount)
+WHERE {
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?rid .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?rid ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber ?meetingNumber .
+  FILTER (?meetingNumber IN ('RAN1#100', 'RAN1#101', 'RAN1#102', 'RAN1#103', 'RAN1#104', 'RAN1#105', 'RAN1#106', 'RAN1#107', 'RAN1#108', 'RAN1#109', 'RAN1#110', 'RAN1#111', 'RAN1#112', 'RAN1#113', 'RAN1#114', 'RAN1#115', 'RAN1#116', 'RAN1#117', 'RAN1#118', 'RAN1#119', 'RAN1#120', 'RAN1#121'))
+}
+GROUP BY ?meetingNumber
+ORDER BY ?meetingNumber

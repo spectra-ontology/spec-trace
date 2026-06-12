@@ -1,0 +1,22 @@
+# SPARQL translation of P1_CQ4-2 — Summarize Ericsson's TDoc outcomes at meeting RAN1#120 by status.
+# Source: ../cypher/P1_CQ4-2.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?status (COUNT(?t) AS ?count)
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#120" .
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName "Ericsson" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:submittedBy ?c .
+  OPTIONAL { ?t spectra:status ?status }
+}
+GROUP BY ?status
+ORDER BY DESC(?count)
+LIMIT 10

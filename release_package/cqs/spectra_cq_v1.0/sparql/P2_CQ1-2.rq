@@ -1,0 +1,26 @@
+# SPARQL translation of P2_CQ1-2 — Return the Agreements at meeting RAN1#100 on agenda item 5.1 (UL Tx switching technical decisions).
+# Source: ../cypher/P2_CQ1-2.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?resolutionId ?content
+WHERE {
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?resolutionId .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:resolutionBelongsTo ?ai ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?ai a spectra:AgendaItem }
+  ?ai
+      spectra:agendaNumber '5.1' .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber 'RAN1#100' .
+  OPTIONAL { ?a spectra:content ?content . }
+  OPTIONAL { ?a spectra:sequence ?sequence . }
+}
+ORDER BY ?sequence
+LIMIT 10

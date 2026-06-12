@@ -1,0 +1,28 @@
+# SPARQL translation of P1_CQ2-2 — LS routing of R1-2505678 (origin, destination, cc Working Groups).
+# Source: ../cypher/P1_CQ2-2.cypher
+# Realization note: LS routing edges (originatedFrom, sentTo, ccTo) and meeting
+# placement sit on the Tdoc IRI of a multi-role TDoc; anchoring on presentedAt
+# selects that IRI (the paired LS IRI repeats only cover metadata).
+# Engine note: COALESCE inside the DISTINCT aggregates guards against rdflib
+# raising NotBoundError on unbound OPTIONAL values in grouped rows.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?type ?originated_from
+       (GROUP_CONCAT(DISTINCT COALESCE(?destName, ""); separator=", ") AS ?sent_to)
+       (GROUP_CONCAT(DISTINCT COALESCE(?ccName, ""); separator=", ") AS ?cc_to)
+WHERE {
+  ?t spectra:tdocNumber "R1-2505678" ;
+     spectra:presentedAt ?pm .
+  BIND("R1-2505678" AS ?tdocNumber)
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:type ?type }
+  OPTIONAL { ?t spectra:originatedFrom ?orig .
+             ?orig spectra:wgName ?originated_from }
+  OPTIONAL { ?t spectra:sentTo ?dest .
+             ?dest spectra:wgName ?destName }
+  OPTIONAL { ?t spectra:ccTo ?cc .
+             ?cc spectra:wgName ?ccName }
+}
+GROUP BY ?tdocNumber ?title ?type ?originated_from
+ORDER BY ASC(?tdocNumber)
+LIMIT 10

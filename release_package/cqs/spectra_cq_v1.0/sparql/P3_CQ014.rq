@@ -1,0 +1,28 @@
+# SPARQL translation of P3_CQ014 — Return bidirectional reference pairs between sections (circular-dependency check).
+# Source: ../cypher/P3_CQ014.cypher
+# Note: Cypher's id(a) < id(b) (internal-id tiebreak so each unordered pair appears once)
+#       is translated as STR(?a) < STR(?b) on the node IRIs — same pair count.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?sectionA ?sectionB
+WHERE {
+  FILTER EXISTS { ?a a spectra:Section }
+  ?a
+     spectra:referencesSection ?b .
+  FILTER EXISTS { ?b a spectra:Section }
+  ?b
+     spectra:referencesSection ?a .
+  FILTER(STR(?a) < STR(?b))
+  ?a spectra:belongsToSpec ?sp1 .
+  FILTER EXISTS { ?sp1 a spectra:Spec }
+  ?b spectra:belongsToSpec ?sp2 .
+  FILTER EXISTS { ?sp2 a spectra:Spec }
+  OPTIONAL { ?sp1 spectra:specNumber ?spNum1 }
+  OPTIONAL { ?a spectra:sectionNumber ?secNumA }
+  OPTIONAL { ?sp2 spectra:specNumber ?spNum2 }
+  OPTIONAL { ?b spectra:sectionNumber ?secNumB }
+  BIND(CONCAT(?spNum1, "-", ?secNumA) AS ?sectionA)
+  BIND(CONCAT(?spNum2, "-", ?secNumB) AS ?sectionB)
+}
+LIMIT 20

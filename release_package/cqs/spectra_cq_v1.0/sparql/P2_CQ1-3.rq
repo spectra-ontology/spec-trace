@@ -1,0 +1,22 @@
+# SPARQL translation of P2_CQ1-3 — List the Conclusions recorded at the most recent meeting (RAN1#121) for open-issue review.
+# Source: ../cypher/P2_CQ1-3.cypher
+# Note: Conclusion literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?resolutionId ?content
+WHERE {
+  FILTER EXISTS { ?conc a spectra:Conclusion }
+  ?conc
+        spectra:resolutionId ?resolutionId .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber 'RAN1#121' .
+  OPTIONAL { ?conc spectra:content ?content . }
+  OPTIONAL { ?conc spectra:sequence ?sequence . }
+}
+ORDER BY ?sequence
+LIMIT 15

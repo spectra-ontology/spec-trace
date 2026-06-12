@@ -1,0 +1,22 @@
+# SPARQL translation of P2_CQ5-1 — Return the chronological progression of Agreements about CSI-RS (technology-evolution tracing).
+# Source: ../cypher/P2_CQ5-1.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?meetingNumber ?resolutionId ?content
+WHERE {
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?resolutionId ;
+     spectra:content ?content .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  FILTER (CONTAINS(?content, 'CSI-RS'))
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber . }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt . }
+}
+ORDER BY ASC(?meetingNumberInt)
+LIMIT 15

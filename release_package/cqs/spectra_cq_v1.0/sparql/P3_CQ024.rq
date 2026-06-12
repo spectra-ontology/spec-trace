@@ -1,0 +1,28 @@
+# SPARQL translation of P3_CQ024 — Return the 10 most recent Agreements affecting TS 38.213.
+# Source: ../cypher/P3_CQ024.cypher
+# Realization note: in the released RDF, spec-level modifies edges, meeting
+# placement (presentedAt) and authorship (submittedBy) sit on the Tdoc IRI of a
+# multi-role TDoc; spec-level modifies edges are carried only by CR-role TDocs
+# (measured: 10,671 = CR count in RAN1-body.ttl), so the CR class restriction
+# is implied by the modifies edge. Agreement/Resolution pairs share one
+# spectra:resolutionId across two IRIs (decision content on the Agreement IRI,
+# process placement on the Resolution IRI).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT DISTINCT ?resolutionId ?content ?meetingNumber ?meetingNumberInt
+WHERE {
+  ?sp spectra:specNumber "38.213" .
+  ?t spectra:modifies ?sp .
+  ?res spectra:references ?t ;
+       spectra:madeAt ?m ;
+       spectra:resolutionId ?resolutionId .
+  ?agr spectra:resolutionId ?resolutionId .
+  FILTER EXISTS { ?agr a spectra:Agreement }
+  OPTIONAL { ?agr spectra:contentWithEquations ?cwe }
+  OPTIONAL { ?agr spectra:content ?c }
+  BIND(COALESCE(?cwe, ?c) AS ?content)
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+ORDER BY DESC(?meetingNumberInt)
+LIMIT 10

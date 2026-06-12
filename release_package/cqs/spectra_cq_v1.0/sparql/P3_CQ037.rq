@@ -1,0 +1,21 @@
+# SPARQL translation of P3_CQ037 — Top contributing companies by CR count across the 8 TSes.
+# Source: ../cypher/P3_CQ037.cypher
+# Realization note: in the released RDF, spec-level modifies edges, meeting
+# placement (presentedAt), authorship (submittedBy) and work-item links
+# (relatedTo) sit on the Tdoc IRI of a multi-role TDoc; spec-level modifies
+# edges are carried only by CR-role TDocs (measured: 10,671 = CR count in
+# RAN1-body.ttl). Agreement/Resolution pairs share one spectra:resolutionId
+# across two IRIs.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?companyName (COUNT(?t) AS ?crCount)
+WHERE {
+  ?t spectra:modifies ?sp ;
+     spectra:submittedBy ?co .
+  ?sp spectra:specNumber ?specNumber .
+  FILTER(?specNumber IN ("38.211", "38.212", "38.213", "38.214", "38.215", "38.201", "38.202", "38.291"))
+  OPTIONAL { ?co spectra:companyName ?companyName }
+}
+GROUP BY ?companyName
+ORDER BY DESC(?crCount)
+LIMIT 15

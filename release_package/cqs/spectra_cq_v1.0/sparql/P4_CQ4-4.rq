@@ -1,0 +1,28 @@
+# SPARQL translation of P4_CQ4-4 — Return Samsung-submitted CRs with the specs they declare as affected.
+# Source: ../cypher/P4_CQ4-4.cypher
+# Realization note: submittedBy and affects*Spec edges co-occur on the Tdoc IRI
+# of the paired CR/Tdoc twins; affects*Spec is emitted only for CRs, so the CR
+# class restriction is implied and not re-checked against the Tdoc IRI.
+# Engine note: the pattern starts from the affects*Spec edges (the most
+# selective predicate) and uses plain type triples instead of per-row
+# FILTER EXISTS, which rdflib evaluates with a fresh sub-query per row and
+# times out on this join size. COALESCE inside the DISTINCT aggregate guards
+# against rdflib raising NotBoundError on unbound OPTIONAL values.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?companyName ?tdocNumber
+       (GROUP_CONCAT(DISTINCT COALESCE(?specNumber, ""); separator=", ") AS ?affectedSpecs)
+WHERE {
+  VALUES ?rel { spectra:affectsCoreSpec spectra:affectsTestSpec spectra:affectsOmSpec }
+  ?cr ?rel ?sp .
+  ?cr spectra:submittedBy ?co .
+  ?co spectra:companyName "Samsung" ;
+      a spectra:Company .
+  ?sp a spectra:Spec .
+  BIND("Samsung" AS ?companyName)
+  OPTIONAL { ?cr spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+}
+GROUP BY ?companyName ?tdocNumber
+ORDER BY DESC(?tdocNumber)
+LIMIT 15

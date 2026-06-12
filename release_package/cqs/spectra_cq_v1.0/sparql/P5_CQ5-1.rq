@@ -1,0 +1,18 @@
+# SPARQL translation of P5_CQ5-1 — Return TRs that TR 38.859 (Ambient IoT for NR) references (related-research overview).
+# Source: ../cypher/P5_CQ5-1.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?trNumber ?trTitle ?refTrNumber ?refTrTitle
+WHERE {
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:trNumber ?trNumber ;
+      spectra:referencesTr ?ref .
+  FILTER(?trNumber = "38.859")
+  FILTER EXISTS { ?ref a spectra:TechnicalReport }
+  OPTIONAL { ?tr spectra:trTitle ?trTitle }
+  OPTIONAL { ?ref spectra:trNumber ?refTrNumber }
+  OPTIONAL { ?ref spectra:trTitle ?refTrTitle }
+}
+ORDER BY ?refTrNumber

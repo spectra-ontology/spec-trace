@@ -1,0 +1,26 @@
+# SPARQL translation of P1_CQ1-9 — List the full agenda of meeting RAN1#120 with item descriptions (meeting preparation).
+# Source: ../cypher/P1_CQ1-9.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?agendaNumber ?agendaDescription
+WHERE {
+  {
+    # Cypher "WITH DISTINCT a": deduplicate on the AgendaItem node itself
+    SELECT DISTINCT ?a
+    WHERE {
+      FILTER EXISTS { ?m a spectra:Meeting }
+      ?m
+         spectra:meetingNumber "RAN1#120" .
+      FILTER EXISTS { ?t a spectra:Tdoc }
+      ?t
+         spectra:presentedAt ?m ;
+         spectra:belongsTo ?a .
+      FILTER EXISTS { ?a a spectra:AgendaItem }
+    }
+  }
+  OPTIONAL { ?a spectra:agendaNumber ?agendaNumber }
+  OPTIONAL { ?a spectra:agendaDescription ?agendaDescription }
+}
+ORDER BY ASC(?agendaNumber)
+LIMIT 10

@@ -1,0 +1,25 @@
+# SPARQL translation of P1_CQ1-3 — List the TDocs submitted at meeting RAN1#120 by Huawei (competitor-contribution trend analysis).
+# Source: ../cypher/P1_CQ1-3.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?type ?status
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#120" .
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName "Huawei" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:submittedBy ?c .
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:type ?type }
+  OPTIONAL { ?t spectra:status ?status }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+ORDER BY DESC(?meetingNumberInt) ASC(?tdocNumber)
+LIMIT 10

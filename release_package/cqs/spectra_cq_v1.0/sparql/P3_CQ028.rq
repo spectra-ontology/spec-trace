@@ -1,0 +1,35 @@
+# SPARQL translation of P3_CQ028 — HARQ-related resolutions that reference CRs modifying TS 38.213.
+# Source: ../cypher/P3_CQ028.cypher
+# Realization note: spec-level modifies edges sit on the Tdoc IRI of the paired
+# CR/Tdoc twins and are emitted only for CRs, so the CR class restriction is
+# implied by the modifies edge. Decision IRIs carry more than one rdf:type
+# (e.g. Agreement + Resolution); the types are folded with GROUP_CONCAT so one
+# result row corresponds to one Cypher row (labels(res) is a list in one row).
+# Engine note: Cypher `=~` performs a FULL-string match in which `.` does not
+# cross line terminators, so multi-line content never matches '(?i).*HARQ.*'.
+# SPARQL REGEX is a substring search, so the translation reproduces the
+# reference selection explicitly: content contains "HARQ" (case-insensitive)
+# AND contains no line terminator.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT (GROUP_CONCAT(DISTINCT ?ty; separator=", ") AS ?type)
+       ?resolutionId ?content ?meetingNumber
+WHERE {
+  ?sp spectra:specNumber "38.213" ;
+      a spectra:Spec .
+  ?t spectra:modifies ?sp .
+  ?res spectra:references ?t ;
+       spectra:madeAt ?m ;
+       spectra:resolutionId ?resolutionId ;
+       a ?ty .
+  OPTIONAL { ?res spectra:contentWithEquations ?cwe }
+  OPTIONAL { ?res spectra:content ?c }
+  BIND(COALESCE(?cwe, ?c, "") AS ?contentRaw)
+  FILTER(REGEX(?contentRaw, "HARQ", "i") && !REGEX(?contentRaw, "[\\n\\r]"))
+  BIND(COALESCE(?cwe, ?c) AS ?content)
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+GROUP BY ?res ?t ?resolutionId ?content ?meetingNumber ?meetingNumberInt
+ORDER BY DESC(?meetingNumberInt)
+LIMIT 10

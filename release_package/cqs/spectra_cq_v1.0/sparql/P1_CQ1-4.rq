@@ -1,0 +1,24 @@
+# SPARQL translation of P1_CQ1-4 — List recently submitted TDocs targeting Release 18 (per-release contribution status).
+# Source: ../cypher/P1_CQ1-4.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?type ?status ?meetingNumber
+WHERE {
+  FILTER EXISTS { ?r a spectra:Release }
+  ?r
+     spectra:releaseName "Rel-18" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:targetRelease ?r ;
+     spectra:presentedAt ?m .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:type ?type }
+  OPTIONAL { ?t spectra:status ?status }
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+ORDER BY DESC(?meetingNumberInt) ASC(?tdocNumber)
+LIMIT 10

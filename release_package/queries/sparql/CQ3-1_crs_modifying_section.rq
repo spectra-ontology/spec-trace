@@ -1,18 +1,23 @@
 # SPARQL translation of CQ3-1 — Phase 3
 # "Change Requests that modify a specific TS section"
+#
+# Constants verified against the released RAN1-body.ttl: TS 38.214 §5.1.5 is
+# modified by CRs that also carry cover-sheet text fields. reasonForChange is
+# kept OPTIONAL because clause-level modifiesSection edges and cover-sheet
+# fields come from different 3GPP source documents and not every CR has both.
 
-PREFIX tdoc: <https://w3id.org/spectra#>
+PREFIX spectra: <https://w3id.org/spectra#>
 
 SELECT ?crNumber ?reasonForChange
 WHERE {
-  ?spec a tdoc:Spec ;
-        tdoc:specNumber "38.214" .
-  ?sec a tdoc:Section ;
-       tdoc:sectionNumber ?sectionNumber ;
-       tdoc:belongsToSpec ?spec .
-  ?cr a tdoc:CR ;
-      tdoc:modifiesSection ?sec ;
-      tdoc:tdocNumber ?crNumber ;
-      tdoc:reasonForChange ?reasonForChange .
-  FILTER (?sectionNumber = "5.1.3")
+  ?spec a spectra:Spec ;
+        spectra:specNumber "38.214" .
+  ?sec a spectra:Section ;
+       spectra:sectionNumber "5.1.5" ;
+       spectra:belongsToSpec ?spec .
+  ?cr a spectra:CR ;
+      spectra:modifiesSection ?sec ;
+      spectra:tdocNumber ?crNumber .
+  OPTIONAL { ?cr spectra:reasonForChange ?reasonForChange . }
 }
+ORDER BY ?crNumber

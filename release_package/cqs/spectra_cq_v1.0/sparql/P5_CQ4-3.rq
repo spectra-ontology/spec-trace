@@ -1,0 +1,24 @@
+# SPARQL translation of P5_CQ4-3 — Return the conclusions and TS-impact status of TR 38.808 (52.6 GHz--71 GHz) — mmWave product planning.
+# Source: ../cypher/P5_CQ4-3.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?trNumber ?trTitle ?trStatus ?conclusions ?impactType ?specNumber
+WHERE {
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:trNumber ?trNumber .
+  FILTER(?trNumber = "38.808")
+  OPTIONAL { ?tr spectra:trTitle ?trTitle }
+  OPTIONAL { ?tr spectra:trStatus ?trStatus }
+  OPTIONAL { ?tr spectra:conclusions ?conclusions }
+  OPTIONAL {
+    ?tr spectra:hasTrImpact ?ti .
+    FILTER EXISTS { ?ti a spectra:TRImpact }
+    ?ti
+        spectra:impactsSpec ?sp .
+    FILTER EXISTS { ?sp a spectra:Spec }
+    OPTIONAL { ?ti spectra:impactType ?impactType }
+    OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  }
+}

@@ -1,0 +1,22 @@
+# SPARQL translation of P1_CQ1-5 — List the TDocs at meeting RAN1#121 with status approved or agreed.
+# Source: ../cypher/P1_CQ1-5.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?type ?status
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#121" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:status ?status .
+  FILTER(?status IN ("approved", "agreed"))
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:type ?type }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+ORDER BY DESC(?meetingNumberInt) ASC(?tdocNumber)
+LIMIT 10

@@ -1,0 +1,25 @@
+# SPARQL translation of P3_CQ017 — Return the 20 most recent CRs that modify TS 38.213.
+# Source: ../cypher/P3_CQ017.cypher
+# Realization note: in the released RDF, spec-level modifies edges, meeting
+# placement (presentedAt) and authorship (submittedBy) sit on the Tdoc IRI of a
+# multi-role TDoc; spec-level modifies edges are carried only by CR-role TDocs
+# (measured: 10,671 = CR count in RAN1-body.ttl), so the CR class restriction
+# is implied by the modifies edge. Agreement/Resolution pairs share one
+# spectra:resolutionId across two IRIs (decision content on the Agreement IRI,
+# process placement on the Resolution IRI).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?companyName ?meetingNumber
+WHERE {
+  ?sp spectra:specNumber "38.213" .
+  ?t spectra:modifies ?sp ;
+     spectra:presentedAt ?m ;
+     spectra:submittedBy ?co ;
+     spectra:tdocNumber ?tdocNumber .
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?co spectra:companyName ?companyName }
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+ORDER BY DESC(?meetingNumberInt)
+LIMIT 20

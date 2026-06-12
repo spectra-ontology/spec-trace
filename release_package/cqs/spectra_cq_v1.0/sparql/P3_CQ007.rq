@@ -1,0 +1,18 @@
+# SPARQL translation of P3_CQ007 — List sections with 'PDSCH' in the title across all TSes.
+# Source: ../cypher/P3_CQ007.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber ?sectionNumber ?sectionTitle ?level
+WHERE {
+  FILTER EXISTS { ?sec a spectra:Section }
+  ?sec
+       spectra:belongsToSpec ?sp ;
+       spectra:sectionTitle ?sectionTitle .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  FILTER(REGEX(?sectionTitle, "PDSCH", "i"))
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?sec spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?sec spectra:level ?level }
+}
+ORDER BY ?specNumber ?sectionNumber

@@ -1,0 +1,16 @@
+# SPARQL translation of P3_CQ009 — Return the cross-references for TS 38.214 §5.1 (which sections must be co-read during implementation).
+# Source: ../cypher/P3_CQ009.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?sectionNumber ?sectionTitle
+WHERE {
+  FILTER EXISTS { ?src a spectra:Section }
+  ?src
+       spectra:sectionId "38.214-5.1" ;
+       spectra:referencesSection ?tgt .
+  FILTER EXISTS { ?tgt a spectra:Section }
+  OPTIONAL { ?tgt spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?tgt spectra:sectionTitle ?sectionTitle }
+}
+ORDER BY ?sectionNumber

@@ -1,0 +1,22 @@
+# SPARQL translation of P2_CQ1-5 — List recent Agreements that contain FFS (For Further Study) markers (items needing additional review).
+# Source: ../cypher/P2_CQ1-5.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?resolutionId ?content ?meetingNumber
+WHERE {
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?resolutionId ;
+     spectra:hasFFS true .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  OPTIONAL { ?a spectra:content ?content . }
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber . }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt . }
+}
+ORDER BY DESC(?meetingNumberInt)
+LIMIT 15

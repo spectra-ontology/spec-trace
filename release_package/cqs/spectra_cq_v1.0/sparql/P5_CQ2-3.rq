@@ -1,0 +1,23 @@
+# SPARQL translation of P5_CQ2-3 — Return all TRs that affected TS 38.211 with their impact types (TS 38.211 revision history).
+# Source: ../cypher/P5_CQ2-3.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?trNumber ?trTitle ?impactType ?affectedSection ?impactDescription
+WHERE {
+  FILTER EXISTS { ?sp a spectra:Spec }
+  ?sp
+      spectra:specNumber "38.211" .
+  FILTER EXISTS { ?ti a spectra:TRImpact }
+  ?ti
+      spectra:impactsSpec ?sp .
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:hasTrImpact ?ti .
+  OPTIONAL { ?tr spectra:trNumber ?trNumber }
+  OPTIONAL { ?tr spectra:trTitle ?trTitle }
+  OPTIONAL { ?ti spectra:impactType ?impactType }
+  OPTIONAL { ?ti spectra:affectedSection ?affectedSection }
+  OPTIONAL { ?ti spectra:impactDescription ?impactDescription }
+}
+ORDER BY ?trNumber

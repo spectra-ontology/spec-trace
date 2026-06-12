@@ -1,0 +1,27 @@
+# SPARQL translation of P2_CQ1-1 — List the Agreements made at meeting RAN1#115 under agenda items beginning with 7.1 (NR MIMO outcome review).
+# Source: ../cypher/P2_CQ1-1.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?resolutionId ?content ?agendaNumber
+WHERE {
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?resolutionId .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:resolutionBelongsTo ?ai ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?ai a spectra:AgendaItem }
+  ?ai
+      spectra:agendaNumber ?agendaNumber .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber 'RAN1#115' .
+  FILTER (STRSTARTS(?agendaNumber, '7.1'))
+  OPTIONAL { ?a spectra:content ?content . }
+  OPTIONAL { ?a spectra:sequence ?sequence . }
+}
+ORDER BY ?agendaNumber ?sequence
+LIMIT 15

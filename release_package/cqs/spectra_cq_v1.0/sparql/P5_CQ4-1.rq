@@ -1,0 +1,27 @@
+# SPARQL translation of P5_CQ4-1 — List Rel-18-target TRs and each TR's impact types on TSes.
+# Source: ../cypher/P5_CQ4-1.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT DISTINCT ?trNumber ?trTitle ?trStatus ?impactType ?specNumber
+WHERE {
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:targetRelease ?r .
+  FILTER EXISTS { ?r a spectra:Release }
+  ?r
+     spectra:releaseName "Rel-18" .
+  OPTIONAL { ?tr spectra:trNumber ?trNumber }
+  OPTIONAL { ?tr spectra:trTitle ?trTitle }
+  OPTIONAL { ?tr spectra:trStatus ?trStatus }
+  OPTIONAL {
+    ?tr spectra:hasTrImpact ?ti .
+    FILTER EXISTS { ?ti a spectra:TRImpact }
+    ?ti
+        spectra:impactsSpec ?sp .
+    FILTER EXISTS { ?sp a spectra:Spec }
+    OPTIONAL { ?ti spectra:impactType ?impactType }
+    OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  }
+}
+ORDER BY ?trNumber

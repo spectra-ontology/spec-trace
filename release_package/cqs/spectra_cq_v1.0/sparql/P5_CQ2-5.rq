@@ -1,0 +1,21 @@
+# SPARQL translation of P5_CQ2-5 — List TRs that produced an entirely new TS (NewTS impact type) with the new TS number.
+# Source: ../cypher/P5_CQ2-5.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT DISTINCT ?trNumber ?trTitle ?specNumber ?impactDescription
+WHERE {
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:hasTrImpact ?ti .
+  FILTER EXISTS { ?ti a spectra:TRImpact }
+  ?ti
+      spectra:impactType "NewTS" ;
+      spectra:impactsSpec ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  OPTIONAL { ?tr spectra:trNumber ?trNumber }
+  OPTIONAL { ?tr spectra:trTitle ?trTitle }
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?ti spectra:impactDescription ?impactDescription }
+}
+ORDER BY ?trNumber

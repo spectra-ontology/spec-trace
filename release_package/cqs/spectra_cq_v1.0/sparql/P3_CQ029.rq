@@ -1,0 +1,18 @@
+# SPARQL translation of P3_CQ029 — Return sections whose titles contain 'antenna' (antenna-port spec locations).
+# Source: ../cypher/P3_CQ029.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber ?sectionNumber ?sectionTitle ?level
+WHERE {
+  FILTER EXISTS { ?sec a spectra:Section }
+  ?sec
+       spectra:belongsToSpec ?sp ;
+       spectra:sectionTitle ?sectionTitle .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  FILTER(REGEX(?sectionTitle, "antenna", "i"))
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?sec spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?sec spectra:level ?level }
+}
+ORDER BY ?specNumber ?sectionNumber

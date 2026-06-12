@@ -1,0 +1,25 @@
+# SPARQL translation of P1_CQ1-1 — List the TDocs presented at meeting RAN1#120 that are linked to Work Item NR_eMIMO-Core (MIMO meeting preparation).
+# Source: ../cypher/P1_CQ1-1.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?type ?status
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#120" .
+  FILTER EXISTS { ?wi a spectra:WorkItem }
+  ?wi
+      spectra:workItemCode "NR_eMIMO-Core" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:relatedTo ?wi .
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:type ?type }
+  OPTIONAL { ?t spectra:status ?status }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+ORDER BY DESC(?meetingNumberInt) ASC(?tdocNumber)
+LIMIT 10

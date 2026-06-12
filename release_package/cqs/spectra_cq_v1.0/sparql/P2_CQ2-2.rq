@@ -1,0 +1,23 @@
+# SPARQL translation of P2_CQ2-2 — Identify which Agreement TDoc R1-2001110 led to (TDoc-to-standard outcome tracing).
+# Source: ../cypher/P2_CQ2-2.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?resolutionId ?content ?meetingNumber
+WHERE {
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:tdocNumber ?tdocNumber .
+  FILTER (?tdocNumber = 'R1-2001110')
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:references ?t ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?resolutionId .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  OPTIONAL { ?a spectra:content ?content . }
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber . }
+}

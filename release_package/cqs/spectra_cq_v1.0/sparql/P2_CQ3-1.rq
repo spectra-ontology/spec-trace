@@ -1,0 +1,29 @@
+# SPARQL translation of P2_CQ3-1 — List TDocs from Huawei that led to Agreements (company-level standard-contribution tracing).
+# Source: ../cypher/P2_CQ3-1.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?resolutionId ?meetingNumber
+WHERE {
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:references ?t ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?resolutionId .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:submittedBy ?c .
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName 'Huawei' .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber . }
+  OPTIONAL { ?t spectra:title ?title . }
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber . }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt . }
+}
+ORDER BY DESC(?meetingNumberInt)
+LIMIT 15

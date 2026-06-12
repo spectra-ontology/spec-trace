@@ -1,0 +1,19 @@
+# SPARQL translation of P4_CQ2-3 — Return the CRs that declare TS 38.214 as an affected spec, with a sample list.
+# Source: ../cypher/P4_CQ2-3.cypher
+# Realization note: affects*Spec edges sit on the Tdoc IRI of the paired
+# CR/Tdoc twins and are emitted only for CRs, so the CR class restriction is
+# implied; the spec hub is type-checked to keep the anchor pinned to the Spec
+# hub (defensive; in the released TTL specNumber occurs only on Spec hubs).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber (COUNT(?cr) AS ?crCount)
+       (GROUP_CONCAT(?tdocNumber; SEPARATOR=", ") AS ?sampleCRs)
+WHERE {
+  ?sp spectra:specNumber "38.214" .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  VALUES ?rel { spectra:affectsCoreSpec spectra:affectsTestSpec spectra:affectsOmSpec }
+  ?cr ?rel ?sp .
+  BIND("38.214" AS ?specNumber)
+  OPTIONAL { ?cr spectra:tdocNumber ?tdocNumber }
+}
+GROUP BY ?sp ?specNumber

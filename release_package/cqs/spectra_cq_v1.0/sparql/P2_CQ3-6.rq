@@ -1,0 +1,18 @@
+# SPARQL translation of P2_CQ3-6 — List Apple's TDocs that reached approved status.
+# Source: ../cypher/P2_CQ3-6.cypher
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title
+WHERE {
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:status 'approved' ;
+     spectra:submittedBy ?c .
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName 'ZTE' .
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber . }
+  OPTIONAL { ?t spectra:title ?title . }
+}
+ORDER BY DESC(?tdocNumber)
+LIMIT 15

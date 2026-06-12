@@ -1,0 +1,27 @@
+# SPARQL translation of P1_CQ2-7 — List incoming LSes received at RAN1#120 with their associated agenda items (cross-WG-request review).
+# Source: ../cypher/P1_CQ2-7.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?agendaNumber ?from_wg
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#120" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:type "LS in" ;
+     spectra:belongsTo ?a .
+  FILTER EXISTS { ?a a spectra:AgendaItem }
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?a spectra:agendaNumber ?agendaNumber }
+  OPTIONAL {
+    ?t spectra:originatedFrom ?wg .
+    FILTER EXISTS { ?wg a spectra:WorkingGroup }
+    OPTIONAL { ?wg spectra:wgName ?from_wg }
+  }
+}
+ORDER BY ASC(?tdocNumber)
+LIMIT 10

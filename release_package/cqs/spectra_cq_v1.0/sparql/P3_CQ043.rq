@@ -1,0 +1,24 @@
+# SPARQL translation of P3_CQ043 — Return a Neo4j graph summary (node and relationship counts by type).
+# Source: ../cypher/P3_CQ043.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?label ?cnt
+WHERE {
+  { SELECT ("Section" AS ?label) (COUNT(?n) AS ?cnt) WHERE { ?n a spectra:Section } }
+  UNION
+  { SELECT ("TSTable" AS ?label) (COUNT(?n) AS ?cnt) WHERE { ?n a spectra:TSTable } }
+  UNION
+  { SELECT ("TSFigure" AS ?label) (COUNT(?n) AS ?cnt) WHERE { ?n a spectra:TSFigure } }
+  UNION
+  { SELECT ("Spec" AS ?label) (COUNT(?n) AS ?cnt) WHERE { ?n a spectra:Spec } }
+  UNION
+  { SELECT ("CR" AS ?label) (COUNT(?n) AS ?cnt) WHERE { ?n a spectra:CR } }
+  UNION
+  { SELECT ("Meeting" AS ?label) (COUNT(?n) AS ?cnt) WHERE { ?n a spectra:Meeting } }
+  UNION
+  { SELECT ("Company" AS ?label) (COUNT(?n) AS ?cnt) WHERE { ?n a spectra:Company } }
+  UNION
+  { SELECT ("Resolution" AS ?label) (COUNT(?n) AS ?cnt) WHERE { ?n a spectra:Resolution } }
+}
+ORDER BY DESC(?cnt)

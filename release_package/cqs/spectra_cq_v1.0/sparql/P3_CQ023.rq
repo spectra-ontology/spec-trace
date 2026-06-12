@@ -1,0 +1,17 @@
+# SPARQL translation of P3_CQ023 — Return the count of Agreements that approved CRs modifying TS 38.214 (decision-making activity).
+# Source: ../cypher/P3_CQ023.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT (COUNT(DISTINCT ?agr) AS ?agrCount)
+WHERE {
+  FILTER EXISTS { ?agr a spectra:Agreement }
+  ?agr
+       spectra:references ?cr .
+  FILTER EXISTS { ?cr a spectra:CR }
+  ?cr
+      spectra:modifies ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  ?sp
+      spectra:specNumber "38.214" .
+}

@@ -1,0 +1,22 @@
+# SPARQL translation of P5_CQ3-2 — Which new sections did TR 38.869 (LP-WUS) add to TS 38.211 and 38.213 (UE power-saving feature implementation)?
+# Source: ../cypher/P5_CQ3-2.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?trNumber ?affectedSection ?sectionId ?impactDescription
+WHERE {
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:trNumber ?trNumber ;
+      spectra:hasTrImpact ?ti .
+  FILTER(?trNumber = "38.869")
+  FILTER EXISTS { ?ti a spectra:TRImpact }
+  ?ti
+      spectra:impactType "NewSection" ;
+      spectra:impactsSection ?s .
+  FILTER EXISTS { ?s a spectra:Section }
+  OPTIONAL { ?ti spectra:affectedSection ?affectedSection }
+  OPTIONAL { ?s spectra:sectionId ?sectionId }
+  OPTIONAL { ?ti spectra:impactDescription ?impactDescription }
+}
+ORDER BY ?sectionId

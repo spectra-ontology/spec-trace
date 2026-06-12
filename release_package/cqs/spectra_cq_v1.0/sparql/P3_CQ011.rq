@@ -1,0 +1,25 @@
+# SPARQL translation of P3_CQ011 — Return the top-15 most-referenced sections across all 8 TSes.
+# Source: ../cypher/P3_CQ011.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber ?sectionNumber ?sectionTitle ?refByCnt
+WHERE {
+  {
+    SELECT ?tgt (COUNT(?src) AS ?refByCnt)
+    WHERE {
+      FILTER EXISTS { ?src a spectra:Section }
+      ?src
+           spectra:referencesSection ?tgt .
+      FILTER EXISTS { ?tgt a spectra:Section }
+    }
+    GROUP BY ?tgt
+  }
+  ?tgt spectra:belongsToSpec ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?tgt spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?tgt spectra:sectionTitle ?sectionTitle }
+}
+ORDER BY DESC(?refByCnt)
+LIMIT 15

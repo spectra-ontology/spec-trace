@@ -1,0 +1,23 @@
+# SPARQL translation of P2_CQ2-3 — List Agreements at meeting RAN1#115 that approved CRs (spec-change decision tracing).
+# Source: ../cypher/P2_CQ2-3.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?resolutionId ?content
+WHERE {
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?resolutionId ;
+     spectra:content ?content .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber 'RAN1#115' .
+  FILTER (CONTAINS(?content, 'CR') && (CONTAINS(?content, 'agreed') || CONTAINS(?content, 'approved')))
+  OPTIONAL { ?a spectra:sequence ?sequence . }
+}
+ORDER BY ?sequence
+LIMIT 15

@@ -1,0 +1,20 @@
+# SPARQL translation of P3_CQ045 — Per-TS resolution and CR counts for work item NR_FeMIMO-Core.
+# Source: ../cypher/P3_CQ045.cypher
+# Realization note: in the released RDF, spec-level modifies edges, meeting
+# placement (presentedAt), authorship (submittedBy) and work-item links
+# (relatedTo) sit on the Tdoc IRI of a multi-role TDoc; spec-level modifies
+# edges are carried only by CR-role TDocs (measured: 10,671 = CR count in
+# RAN1-body.ttl). Agreement/Resolution pairs share one spectra:resolutionId
+# across two IRIs.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?spec (COUNT(DISTINCT ?res) AS ?resolutionCount) (COUNT(DISTINCT ?t) AS ?crCount)
+WHERE {
+  ?w spectra:workItemCode "NR_FeMIMO-Core" .
+  ?t spectra:relatedTo ?w ;
+     spectra:modifies ?sp .
+  ?sp spectra:specNumber ?spec .
+  ?res spectra:references ?t .
+}
+GROUP BY ?spec
+ORDER BY DESC(?resolutionCount)

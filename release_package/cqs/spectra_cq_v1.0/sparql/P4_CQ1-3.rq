@@ -1,0 +1,26 @@
+# SPARQL translation of P4_CQ1-3 — CRs of work item NR_LPWUS-Core with stated consequences if not approved.
+# Source: ../cypher/P4_CQ1-3.cypher
+# Realization note: in the released RDF, spec-level modifies edges, meeting
+# placement (presentedAt), authorship (submittedBy) and work-item links
+# (relatedTo) sit on the Tdoc IRI of a multi-role TDoc; spec-level modifies
+# edges are carried only by CR-role TDocs (measured: 10,671 = CR count in
+# RAN1-body.ttl). Agreement/Resolution pairs share one spectra:resolutionId
+# across two IRIs.
+# Cover-sheet fields are partially duplicated across the Tdoc and CR IRIs;
+# COALESCE reads whichever twin carries the field.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?consequencesIfNotApproved
+WHERE {
+  ?w spectra:workItemCode "NR_LPWUS-Core" .
+  ?cr a spectra:CR ;
+      spectra:tdocNumber ?tdocNumber .
+  ?t spectra:tdocNumber ?tdocNumber ;
+     spectra:relatedTo ?w .
+  OPTIONAL { ?cr spectra:consequencesIfNotApproved ?cc }
+  OPTIONAL { ?t spectra:consequencesIfNotApproved ?ct }
+  BIND(COALESCE(?cc, ?ct) AS ?consequencesIfNotApproved)
+  FILTER(BOUND(?consequencesIfNotApproved))
+  FILTER(?t != ?cr)
+}
+ORDER BY DESC(?tdocNumber)

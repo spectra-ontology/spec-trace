@@ -1,0 +1,22 @@
+# SPARQL translation of P2_CQ2-5 — List Resolutions related to TS 38.211 amendments (38.211 revision history).
+# Source: ../cypher/P2_CQ2-5.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?resolutionId ?meetingNumber ?content
+WHERE {
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?resolutionId ;
+     spectra:content ?content .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  FILTER (CONTAINS(?content, '38.211'))
+  OPTIONAL { ?m spectra:meetingNumber ?meetingNumber . }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt . }
+}
+ORDER BY DESC(?meetingNumberInt)
+LIMIT 15

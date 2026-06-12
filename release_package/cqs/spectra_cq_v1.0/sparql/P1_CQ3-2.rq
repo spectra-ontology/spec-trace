@@ -1,0 +1,26 @@
+# SPARQL translation of P1_CQ3-2 — List TDocs from other companies on agenda item 8.1 (NR Coverage Enhancement) at meeting RAN1#120 (competitor contribution review).
+# Source: ../cypher/P1_CQ3-2.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?companyName ?agendaNumber
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#120" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:belongsTo ?a ;
+     spectra:submittedBy ?c .
+  FILTER EXISTS { ?a a spectra:AgendaItem }
+  ?a
+     spectra:agendaNumber ?agendaNumber .
+  FILTER(STRSTARTS(STR(?agendaNumber), "8.1"))
+  FILTER EXISTS { ?c a spectra:Company }
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?c spectra:companyName ?companyName }
+}
+ORDER BY ASC(?tdocNumber)
+LIMIT 10

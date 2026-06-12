@@ -1,0 +1,25 @@
+# SPARQL translation of P4_CQ4-3 — Return the full list of TS sections modified by CRs from Work Item NR_MIMO_evo_DL_UL-Core, with each change reason.
+# Source: ../cypher/P4_CQ4-3.cypher
+# Realization note: relatedTo, spec-level modifies and cover-sheet fields
+# co-occur on the Tdoc IRI of the paired CR/Tdoc twins; modifies is emitted
+# only for CRs, so the CR class restriction is implied. The spec hub is
+# type-checked to keep the anchor pinned to the Spec hub (defensive; in the
+# released TTL specNumber occurs only on Spec hubs).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?workItemCode ?sectionId ?tdocNumber ?reasonForChange
+WHERE {
+  ?wi spectra:workItemCode "NR_MIMO_evo_DL_UL-Core" .
+  FILTER EXISTS { ?wi a spectra:WorkItem }
+  ?cr spectra:relatedTo ?wi ;
+      spectra:modifies ?sp ;
+      spectra:clausesAffected ?clausesAffected ;
+      spectra:reasonForChange ?reasonForChange .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  BIND("NR_MIMO_evo_DL_UL-Core" AS ?workItemCode)
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?cr spectra:tdocNumber ?tdocNumber }
+  BIND(CONCAT(COALESCE(?specNumber, ""), "-", ?clausesAffected) AS ?sectionId)
+}
+ORDER BY DESC(?tdocNumber)
+LIMIT 15

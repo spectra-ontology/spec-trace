@@ -1,0 +1,17 @@
+# SPARQL translation of P3_CQ004 — Return the per-level section count of TS 38.213 (structural-complexity profile).
+# Source: ../cypher/P3_CQ004.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?level (COUNT(?sec) AS ?sectionCount)
+WHERE {
+  FILTER EXISTS { ?sec a spectra:Section }
+  ?sec
+       spectra:belongsToSpec ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  ?sp
+      spectra:specNumber "38.213" .
+  OPTIONAL { ?sec spectra:level ?level }
+}
+GROUP BY ?level
+ORDER BY ?level

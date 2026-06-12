@@ -1,0 +1,25 @@
+# SPARQL translation of P1_CQ3-5 — List TDocs from other companies that share the same agenda item with TDoc R1-2501234 (competing-contribution review).
+# Source: ../cypher/P1_CQ3-5.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?companyName ?agendaNumber
+WHERE {
+  FILTER EXISTS { ?t0 a spectra:Tdoc }
+  ?t0
+      spectra:tdocNumber "R1-2501234" ;
+      spectra:belongsTo ?a .
+  FILTER EXISTS { ?a a spectra:AgendaItem }
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:belongsTo ?a ;
+     spectra:submittedBy ?c ;
+     spectra:tdocNumber ?tdocNumber .
+  FILTER(?tdocNumber != "R1-2501234")
+  FILTER EXISTS { ?c a spectra:Company }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?c spectra:companyName ?companyName }
+  OPTIONAL { ?a spectra:agendaNumber ?agendaNumber }
+}
+ORDER BY ASC(?tdocNumber)
+LIMIT 10

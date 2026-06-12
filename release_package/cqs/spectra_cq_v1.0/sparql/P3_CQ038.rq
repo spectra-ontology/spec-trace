@@ -1,0 +1,34 @@
+# SPARQL translation of P3_CQ038 — Return the top-10 most-referenced sections and their CR-modification count (stability assessment).
+# Source: ../cypher/P3_CQ038.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber ?sectionNumber ?sectionTitle ?refCount (COUNT(?cr) AS ?crCount)
+WHERE {
+  {
+    SELECT ?tgt (COUNT(?src) AS ?refCount)
+    WHERE {
+      FILTER EXISTS { ?src a spectra:Section }
+      ?src
+           spectra:referencesSection ?tgt .
+      FILTER EXISTS { ?tgt a spectra:Section }
+    }
+    GROUP BY ?tgt
+    ORDER BY DESC(?refCount)
+    LIMIT 10
+  }
+  ?tgt spectra:belongsToSpec ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?tgt spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?tgt spectra:sectionTitle ?sectionTitle }
+  OPTIONAL {
+    FILTER EXISTS { ?cr a spectra:CR }
+    ?cr
+        spectra:modifies ?sp ;
+        spectra:clausesAffected ?clausesAffected .
+    FILTER(CONTAINS(?clausesAffected, ?sectionNumber))
+  }
+}
+GROUP BY ?specNumber ?sectionNumber ?sectionTitle ?refCount
+ORDER BY DESC(?refCount)

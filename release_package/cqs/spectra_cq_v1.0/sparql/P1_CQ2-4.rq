@@ -1,0 +1,21 @@
+# SPARQL translation of P1_CQ2-4 — List the CRs that modify TS 38.214, with each CR's status (TS 38.214 amendment status).
+# Source: ../cypher/P1_CQ2-4.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?status ?type
+WHERE {
+  FILTER EXISTS { ?s a spectra:Spec }
+  ?s
+     spectra:specNumber "38.214" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:modifies ?s ;
+     spectra:type ?type .
+  FILTER(?type IN ("CR", "draftCR"))
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?t spectra:status ?status }
+}
+ORDER BY ASC(?tdocNumber)
+LIMIT 1

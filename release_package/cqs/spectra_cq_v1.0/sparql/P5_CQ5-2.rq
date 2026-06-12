@@ -1,0 +1,19 @@
+# SPARQL translation of P5_CQ5-2 — Return TRs that reference TR 38.802 (RedCap) — reverse reference, follow-up research tracking.
+# Source: ../cypher/P5_CQ5-2.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?trNumber ?trTitle ?srcTrNumber ?srcTrTitle
+WHERE {
+  FILTER EXISTS { ?tr a spectra:TechnicalReport }
+  ?tr
+      spectra:trNumber ?trNumber .
+  FILTER(?trNumber = "38.802")
+  FILTER EXISTS { ?src a spectra:TechnicalReport }
+  ?src
+       spectra:referencesTr ?tr .
+  OPTIONAL { ?tr spectra:trTitle ?trTitle }
+  OPTIONAL { ?src spectra:trNumber ?srcTrNumber }
+  OPTIONAL { ?src spectra:trTitle ?srcTrTitle }
+}
+ORDER BY ?srcTrNumber

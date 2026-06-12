@@ -34,19 +34,35 @@ removed from every released record:
 
 ## Retained properties (released)
 
-Only structural / categorical metadata:
+Only structural / categorical metadata. The lists below are measured
+directly on the released files (predicate census, 2026-06-12):
 
-- `spectra:tdocNumber`, `spectra:agendaNumber`, `spectra:status`,
-  `spectra:type`, `spectra:direction` (LS), `spectra:crCategory` (CR),
-  `spectra:specVersion` (CR), `spectra:uploadedDate`
+- Identifiers / categorical values: `spectra:tdocNumber`,
+  `spectra:status`, `spectra:type`, `spectra:direction` (LS),
+  `spectra:crCategory` (CR), `spectra:crNumber` (CR),
+  `spectra:specNumber`, `spectra:releaseName`, `spectra:meetingNumber`,
+  `spectra:wgName`, `spectra:workItemCode`, `spectra:uploadedDate`
 - Relations: `spectra:presentedAt`, `spectra:submittedBy`,
-  `spectra:isRevisionOf`, `spectra:references`, `spectra:modifies`,
-  `spectra:modifiesSection`, `spectra:targetRelease`, `spectra:sentTo`,
-  `spectra:originatedFrom`, `spectra:replyIn`, `spectra:replyTo`,
-  `spectra:relatedToWorkItem`
+  `spectra:isRevisionOf`, `spectra:modifies`, `spectra:targetRelease`,
+  `spectra:sentTo`, `spectra:originatedFrom`
 - `spectra:Company` instances carry their real `spectra:companyName`,
   identical to the source values published in 3GPP's per-meeting
   `TDOC_List.xlsx` and on every TDoc cover page (already public).
+
+Per-file predicate scope: `cr_routing.ttl` carries the CR identifiers
+plus `modifies`/`targetRelease`; `ls_routing.ttl` carries the LS
+identifiers plus `presentedAt`/`sentTo`/`originatedFrom`;
+`ran1_tdoc_metadata.ttl` carries the TDoc identifiers plus
+`presentedAt`/`submittedBy`/`isRevisionOf`/`targetRelease`.
+
+Not instantiated in this export: the finer-grained provenance
+relations `spectra:references`, `spectra:modifiesSection`,
+`spectra:replyIn`, `spectra:replyTo`, `spectra:relatedToWorkItem` and
+the data properties `spectra:agendaNumber`, `spectra:specVersion` are
+exercised in the per-WG body-text KGs distributed on Zenodo (e.g.,
+RAN1: `references` 19,454, `modifiesSection` 4,769, `replyTo` 427,
+`agendaNumber` 6,439; `specVersion` appears in RAN2-RAN5), not in
+these three metadata-only exports.
 
 ## Verifying release integrity
 

@@ -1,0 +1,21 @@
+# SPARQL translation of P3_CQ005 — Return the section in TS 38.213 with the most embedded tables (parameter-dense implementation hotspot).
+# Source: ../cypher/P3_CQ005.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?sectionNumber ?sectionTitle (COUNT(?tbl) AS ?tableCount)
+WHERE {
+  FILTER EXISTS { ?sec a spectra:Section }
+  ?sec
+       spectra:belongsToSpec ?sp ;
+       spectra:containsTable ?tbl .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  ?sp
+      spectra:specNumber "38.213" .
+  FILTER EXISTS { ?tbl a spectra:TSTable }
+  OPTIONAL { ?sec spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?sec spectra:sectionTitle ?sectionTitle }
+}
+GROUP BY ?sectionNumber ?sectionTitle
+ORDER BY DESC(?tableCount)
+LIMIT 15

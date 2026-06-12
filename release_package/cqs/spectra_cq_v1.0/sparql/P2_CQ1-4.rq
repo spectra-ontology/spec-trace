@@ -1,0 +1,22 @@
+# SPARQL translation of P2_CQ1-4 — List the Working Assumptions of meeting RAN1#115 (revisitable agenda items).
+# Source: ../cypher/P2_CQ1-4.cypher
+# Note: WorkingAssumption literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?resolutionId ?content
+WHERE {
+  FILTER EXISTS { ?wa a spectra:WorkingAssumption }
+  ?wa
+      spectra:resolutionId ?resolutionId .
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?resolutionId ;
+     spectra:madeAt ?m .
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber 'RAN1#115' .
+  OPTIONAL { ?wa spectra:content ?content . }
+  OPTIONAL { ?wa spectra:sequence ?sequence . }
+}
+ORDER BY ?sequence
+LIMIT 15

@@ -1,0 +1,20 @@
+# SPARQL translation of P1_CQ3-6 — Return Nokia's top-10 work items by contribution count (technology-leadership distribution).
+# Source: ../cypher/P1_CQ3-6.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?workItemCode (COUNT(?t) AS ?tdocCount)
+WHERE {
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName "Nokia" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:submittedBy ?c ;
+     spectra:relatedTo ?wi .
+  FILTER EXISTS { ?wi a spectra:WorkItem }
+  OPTIONAL { ?wi spectra:workItemCode ?workItemCode }
+}
+GROUP BY ?workItemCode
+ORDER BY DESC(?tdocCount) ASC(?workItemCode)
+LIMIT 10

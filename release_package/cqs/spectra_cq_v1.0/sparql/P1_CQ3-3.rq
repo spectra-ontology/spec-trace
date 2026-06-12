@@ -1,0 +1,20 @@
+# SPARQL translation of P1_CQ3-3 — Return the top-10 companies by contribution count to Work Item NR_unlic-Core (competitive landscape per technology area).
+# Source: ../cypher/P1_CQ3-3.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?companyName (COUNT(?t) AS ?tdocCount)
+WHERE {
+  FILTER EXISTS { ?wi a spectra:WorkItem }
+  ?wi
+      spectra:workItemCode "NR_unlic-Core" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:relatedTo ?wi ;
+     spectra:submittedBy ?c .
+  FILTER EXISTS { ?c a spectra:Company }
+  OPTIONAL { ?c spectra:companyName ?companyName }
+}
+GROUP BY ?companyName
+ORDER BY DESC(?tdocCount) ASC(?companyName)
+LIMIT 10

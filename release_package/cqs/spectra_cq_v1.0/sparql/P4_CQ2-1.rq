@@ -1,0 +1,19 @@
+# SPARQL translation of P4_CQ2-1 — Return the 5 specs affected by CR R1-2504971 along with each impact-relation type (Core/Test/OM).
+# Source: ../cypher/P4_CQ2-1.cypher
+# Realization note: in the released RDF the affectsCoreSpec/affectsTestSpec/
+# affectsOmSpec edges sit on the Tdoc IRI of the paired CR/Tdoc twins (measured:
+# R1-2504971 carries 5 affectsCoreSpec edges on the Tdoc IRI, 0 on the CR IRI),
+# and these predicates are emitted only for CRs, so the CR class restriction is
+# implied and must not be re-checked against the Tdoc IRI.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?specNumber ?relationType
+WHERE {
+  VALUES ?relationType { spectra:affectsCoreSpec spectra:affectsTestSpec spectra:affectsOmSpec }
+  ?cr spectra:tdocNumber "R1-2504971" ;
+      ?relationType ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  BIND("R1-2504971" AS ?tdocNumber)
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+}
+ORDER BY ASC(?specNumber)

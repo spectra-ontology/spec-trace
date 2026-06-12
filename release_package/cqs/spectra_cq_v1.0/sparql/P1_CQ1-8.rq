@@ -1,0 +1,16 @@
+# SPARQL translation of P1_CQ1-8 — Return the contact (submitter contact) of TDoc R1-2501234.
+# Source: ../cypher/P1_CQ1-8.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?contactName
+WHERE {
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:tdocNumber ?tdocNumber ;
+     spectra:hasContact ?ct .
+  FILTER(?tdocNumber = "R1-2501234")
+  FILTER EXISTS { ?ct a spectra:Contact }
+  OPTIONAL { ?ct spectra:contactName ?contactName }
+}
+LIMIT 1

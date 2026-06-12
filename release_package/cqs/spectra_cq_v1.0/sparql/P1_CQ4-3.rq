@@ -1,0 +1,25 @@
+# SPARQL translation of P1_CQ4-3 — List TDocs at meeting RAN1#120 on agenda item 9.3 (NR duplex evolution) that remain not treated (open-issue review).
+# Source: ../cypher/P1_CQ4-3.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?title ?agendaNumber
+WHERE {
+  FILTER EXISTS { ?m a spectra:Meeting }
+  ?m
+     spectra:meetingNumber "RAN1#120" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:presentedAt ?m ;
+     spectra:belongsTo ?a ;
+     spectra:status "not treated" .
+  FILTER EXISTS { ?a a spectra:AgendaItem }
+  ?a
+     spectra:agendaNumber ?agendaNumber .
+  FILTER(STRSTARTS(STR(?agendaNumber), "9.3"))
+  OPTIONAL { ?t spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?t spectra:title ?title }
+  OPTIONAL { ?m spectra:meetingNumberInt ?meetingNumberInt }
+}
+ORDER BY DESC(?meetingNumberInt) ASC(?tdocNumber)
+LIMIT 10

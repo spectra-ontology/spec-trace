@@ -1,0 +1,18 @@
+# SPARQL translation of P1_CQ3-4 — Return the count and ratio of TDocs submitted by Qualcomm that reached approved/agreed status (company-level outcome analysis).
+# Source: ../cypher/P1_CQ3-4.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT (COUNT(?t) AS ?total)
+       (SUM(COALESCE(IF(?status IN ("approved", "agreed"), 1, 0), 0)) AS ?approved)
+       (ROUND(1000.0 * SUM(COALESCE(IF(?status IN ("approved", "agreed"), 1, 0), 0)) / COUNT(?t)) / 10.0 AS ?approvalRate)
+WHERE {
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName "Qualcomm" .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:submittedBy ?c .
+  OPTIONAL { ?t spectra:status ?status }
+}
+LIMIT 10

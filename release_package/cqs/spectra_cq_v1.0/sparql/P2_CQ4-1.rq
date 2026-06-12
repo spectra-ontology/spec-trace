@@ -1,0 +1,21 @@
+# SPARQL translation of P2_CQ4-1 — Return the top-5 companies by FL Summary authorship in agenda 7.1 (NR MIMO) — technology-leadership analysis.
+# Source: ../cypher/P2_CQ4-1.cypher
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?companyName (COUNT(?t) AS ?flCount)
+WHERE {
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:belongsTo ?ai ;
+     spectra:moderatedBy ?c ;
+     spectra:summaryType 'FL' .
+  FILTER EXISTS { ?ai a spectra:AgendaItem }
+  ?ai
+      spectra:agendaNumber ?agendaNumber .
+  FILTER EXISTS { ?c a spectra:Company }
+  FILTER (STRSTARTS(?agendaNumber, '7.1'))
+  OPTIONAL { ?c spectra:companyName ?companyName . }
+}
+GROUP BY ?companyName
+ORDER BY DESC(?flCount)
+LIMIT 5

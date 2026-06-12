@@ -1,0 +1,22 @@
+# SPARQL translation of P3_CQ012 — Return mutually-referencing section pairs in TS 38.213 (closely-coupled procedures).
+# Source: ../cypher/P3_CQ012.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?sectionA ?titleA ?sectionB ?titleB
+WHERE {
+  FILTER EXISTS { ?a a spectra:Section }
+  ?a
+     spectra:sectionId ?aId ;
+     spectra:referencesSection ?b .
+  FILTER EXISTS { ?b a spectra:Section }
+  ?b
+     spectra:sectionId ?bId ;
+     spectra:referencesSection ?a .
+  FILTER(STRSTARTS(?aId, "38.213") && STRSTARTS(?bId, "38.213") && ?aId < ?bId)
+  OPTIONAL { ?a spectra:sectionNumber ?sectionA }
+  OPTIONAL { ?a spectra:sectionTitle ?titleA }
+  OPTIONAL { ?b spectra:sectionNumber ?sectionB }
+  OPTIONAL { ?b spectra:sectionTitle ?titleB }
+}
+LIMIT 20

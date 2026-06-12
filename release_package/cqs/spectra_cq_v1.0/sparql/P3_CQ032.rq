@@ -1,0 +1,24 @@
+# SPARQL translation of P3_CQ032 — Return PDCCH-related sections and tables (control-channel implementation scope).
+# Source: ../cypher/P3_CQ032.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber ?sectionNumber ?sectionTitle ?level (GROUP_CONCAT(?tableNumber; SEPARATOR=", ") AS ?tables)
+WHERE {
+  FILTER EXISTS { ?sec a spectra:Section }
+  ?sec
+       spectra:belongsToSpec ?sp ;
+       spectra:sectionTitle ?sectionTitle .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  FILTER(REGEX(?sectionTitle, "PDCCH", "i"))
+  OPTIONAL {
+    ?sec spectra:containsTable ?tbl .
+    FILTER EXISTS { ?tbl a spectra:TSTable }
+    OPTIONAL { ?tbl spectra:tableNumber ?tableNumber }
+  }
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?sec spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?sec spectra:level ?level }
+}
+GROUP BY ?specNumber ?sectionNumber ?sectionTitle ?level
+ORDER BY ?specNumber ?sectionNumber

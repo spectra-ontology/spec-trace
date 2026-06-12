@@ -1,16 +1,21 @@
 # SPARQL translation of CQ5-1 — Phase 5
 # "Technical Reports that have impacted a given Technical Specification"
+#
+# Predicate name per the released ontology/data: spectra:impactOfTr.
+# Constant verified against the released RAN1-body.ttl: TS 38.211 has 11
+# TRImpact individuals. trTitle is OPTIONAL (not every TR carries it).
 
-PREFIX tdoc: <https://w3id.org/spectra#>
+PREFIX spectra: <https://w3id.org/spectra#>
 
 SELECT ?trNumber ?trTitle
 WHERE {
-  ?spec a tdoc:Spec ;
-        tdoc:specNumber "38.211" .
-  ?impact a tdoc:TRImpact ;
-          tdoc:impactsSpec ?spec ;
-          tdoc:impactOfTR ?tr .
-  ?tr a tdoc:TechnicalReport ;
-      tdoc:trNumber ?trNumber ;
-      tdoc:trTitle ?trTitle .
+  ?spec a spectra:Spec ;
+        spectra:specNumber "38.211" .
+  ?impact a spectra:TRImpact ;
+          spectra:impactsSpec ?spec ;
+          spectra:impactOfTr ?tr .
+  ?tr a spectra:TechnicalReport ;
+      spectra:trNumber ?trNumber .
+  OPTIONAL { ?tr spectra:trTitle ?trTitle . }
 }
+ORDER BY ?trNumber

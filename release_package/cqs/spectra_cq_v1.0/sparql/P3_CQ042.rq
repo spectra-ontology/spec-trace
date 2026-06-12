@@ -1,0 +1,31 @@
+# SPARQL translation of P3_CQ042 — Return the top-10 sections with both many sub-sections and tables (high-complexity areas).
+# Source: ../cypher/P3_CQ042.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber ?sectionNumber ?sectionTitle ?tableCount (COUNT(?sub) AS ?subSectionCount)
+WHERE {
+  {
+    SELECT ?sec (COUNT(?tbl) AS ?tableCount)
+    WHERE {
+      FILTER EXISTS { ?sec a spectra:Section }
+      ?sec
+           spectra:containsTable ?tbl .
+      FILTER EXISTS { ?tbl a spectra:TSTable }
+    }
+    GROUP BY ?sec
+    HAVING(COUNT(?tbl) >= 3)
+  }
+  ?sec spectra:belongsToSpec ?sp .
+  FILTER EXISTS { ?sp a spectra:Spec }
+  OPTIONAL { ?sp spectra:specNumber ?specNumber }
+  OPTIONAL { ?sec spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?sec spectra:sectionTitle ?sectionTitle }
+  OPTIONAL {
+    ?sec spectra:hasSubSection ?sub .
+    FILTER EXISTS { ?sub a spectra:Section }
+  }
+}
+GROUP BY ?specNumber ?sectionNumber ?sectionTitle ?tableCount
+ORDER BY DESC(?tableCount)
+LIMIT 10

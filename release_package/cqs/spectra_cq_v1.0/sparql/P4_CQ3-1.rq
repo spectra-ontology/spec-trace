@@ -1,0 +1,18 @@
+# SPARQL translation of P4_CQ3-1 — Return the CRs bundled in CR Pack RP-252634 with each change summary.
+# Source: ../cypher/P4_CQ3-1.cypher
+# Realization note: hasCr points predominantly to the Tdoc IRI of the paired
+# CR/Tdoc twins (measured: 1,904 Tdoc / 44 CR objects); pack membership itself
+# implies CR-ness, so no class re-check against the membership target.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?crPackId ?tsgMeeting ?tdocNumber ?summaryOfChange
+WHERE {
+  ?pack spectra:crPackId "RP-252634" ;
+        spectra:hasCr ?cr .
+  FILTER EXISTS { ?pack a spectra:CRPack }
+  BIND("RP-252634" AS ?crPackId)
+  OPTIONAL { ?pack spectra:tsgMeeting ?tsgMeeting }
+  OPTIONAL { ?cr spectra:tdocNumber ?tdocNumber }
+  OPTIONAL { ?cr spectra:summaryOfChange ?summaryOfChange }
+}
+ORDER BY ASC(?tdocNumber)

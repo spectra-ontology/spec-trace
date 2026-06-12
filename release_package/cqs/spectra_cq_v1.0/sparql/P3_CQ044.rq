@@ -1,0 +1,19 @@
+# SPARQL translation of P3_CQ044 — Per-TS CR counts for work item NR_newRAT-Core.
+# Source: ../cypher/P3_CQ044.cypher
+# Realization note: in the released RDF, spec-level modifies edges, meeting
+# placement (presentedAt), authorship (submittedBy) and work-item links
+# (relatedTo) sit on the Tdoc IRI of a multi-role TDoc; spec-level modifies
+# edges are carried only by CR-role TDocs (measured: 10,671 = CR count in
+# RAN1-body.ttl). Agreement/Resolution pairs share one spectra:resolutionId
+# across two IRIs.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?spec (COUNT(?t) AS ?crCount)
+WHERE {
+  ?w spectra:workItemCode "NR_newRAT-Core" .
+  ?t spectra:relatedTo ?w ;
+     spectra:modifies ?sp .
+  ?sp spectra:specNumber ?spec .
+}
+GROUP BY ?spec
+ORDER BY DESC(?crCount)

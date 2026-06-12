@@ -1,0 +1,21 @@
+# SPARQL translation of P4_CQ3-2 — Return the CR Packs that bundle CRs from Work Item NR_newRAT-Core toward TSG approval.
+# Source: ../cypher/P4_CQ3-2.cypher
+# Realization note: relatedTo and belongsToCrPack sit on the Tdoc IRI of the
+# paired CR/Tdoc twins (measured: 1,898 IRIs carry both); pack membership
+# implies CR-ness, so the CR class restriction is not re-checked.
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?workItemCode ?crPackId ?tsgMeeting (COUNT(?cr) AS ?crCount)
+WHERE {
+  ?wi spectra:workItemCode "NR_newRAT-Core" .
+  FILTER EXISTS { ?wi a spectra:WorkItem }
+  ?cr spectra:relatedTo ?wi ;
+      spectra:belongsToCrPack ?pack .
+  FILTER EXISTS { ?pack a spectra:CRPack }
+  BIND("NR_newRAT-Core" AS ?workItemCode)
+  OPTIONAL { ?pack spectra:crPackId ?crPackId }
+  OPTIONAL { ?pack spectra:tsgMeeting ?tsgMeeting }
+}
+GROUP BY ?workItemCode ?crPackId ?tsgMeeting
+ORDER BY DESC(?tsgMeeting) DESC(?crCount)
+LIMIT 15

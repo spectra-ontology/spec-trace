@@ -1,0 +1,24 @@
+# SPARQL translation of P2_CQ3-5 — Compare Ericsson's and Nokia's Resolution contributions.
+# Source: ../cypher/P2_CQ3-5.cypher
+# Note: Agreement literals and Resolution edges live on paired IRIs sharing resolutionId (1:1 in the released TTL).
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?companyName (COUNT(DISTINCT ?a) AS ?contributionCount)
+WHERE {
+  FILTER EXISTS { ?r a spectra:Resolution }
+  ?r
+     spectra:resolutionId ?rid ;
+     spectra:references ?t .
+  FILTER EXISTS { ?a a spectra:Agreement }
+  ?a
+     spectra:resolutionId ?rid .
+  FILTER EXISTS { ?t a spectra:Tdoc }
+  ?t
+     spectra:submittedBy ?c .
+  FILTER EXISTS { ?c a spectra:Company }
+  ?c
+     spectra:companyName ?companyName .
+  FILTER (?companyName IN ('Ericsson', 'Nokia'))
+}
+GROUP BY ?companyName
+ORDER BY DESC(?contributionCount)

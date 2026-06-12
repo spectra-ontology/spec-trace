@@ -3,6 +3,71 @@
 All notable changes to the SPECTRA release package are documented in this file.
 Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] — 2026-06-12
+
+Resource-package improvements responding to the ISWC 2026 reviews. The
+ontology (`spectra.ttl`), SHACL shapes, SpectraCQ question set, and all
+released KG data files are byte-identical to v1.0.0; this patch adds
+metadata, queries, documentation, and reproducibility tooling only.
+
+### Added
+
+- **DCAT/VoID dataset description** (`metadata/dcat_void.ttl`): every
+  released dataset in both distribution channels (GitHub + Zenodo)
+  described as `dcat:Dataset`/`void:Dataset` with measured triple
+  counts, class partitions, byte sizes, distributions, and licenses
+  (184 triples; validates with rdflib).
+- **Full SPARQL translation of SpectraCQ**
+  (`cqs/spectra_cq_v1.0/sparql/`): all 137 CQs translated from the
+  reference Cypher (previously 6 illustrative examples under
+  `queries/sparql/`); each file parses under rdflib (137/137) and
+  carries the CQ text and source pointer. Class-membership guards
+  default to `FILTER EXISTS` rather than positive `rdf:type` patterns
+  so that greedy join planners (e.g. rdflib) do not form
+  class-enumeration cross products; positive type triples appear only
+  where the type pattern is itself the query (instance censuses), is
+  anchored to a constant lookup, or — in two queries, documented by
+  per-file engine notes — replaces a per-row `FILTER EXISTS` that
+  rdflib evaluates too slowly at that join size. Row-count parity
+  against the Cypher replay is verified by
+  `pipeline/validate_sparql_parity.py`: 137/137 row-count match, all
+  non-empty, no errors (`validation/cq_replay/sparql_parity_results.json`).
+- **Public end-to-end CQ replay tooling** (`pipeline/load_released_kg.py`,
+  `pipeline/run_cq_suite.py`, `pipeline/validate_sparql_parity.py`,
+  `pipeline/validate_example_queries.py`):
+  loads the released per-WG TTL into a fresh Neo4j container and
+  re-executes the 137-CQ suite from released artifacts only; the replay
+  evidence (load report + 137/137 PASS results) ships under
+  `validation/cq_replay/`.
+- **Contributor guide** (`CONTRIBUTING.md`): CQ proposal workflow,
+  ontology-extension policy (SemVer + regression gates), cross-WG/SDO
+  instantiation guidance, bug-report conventions.
+
+### Fixed
+
+- `queries/sparql/` representative examples: of the six v1.0.0 example
+  queries, only CQ1-1 returned rows when executed against the released
+  `RAN1-body.ttl`. The other five carried schema-level constants or
+  predicate names that do not occur in the released data (a section
+  with no cover-sheet CRs, a CR with no clause edge, `impactOfTR`
+  vs. the released `impactOfTr`, the Agreement/Resolution paired-IRI
+  realization, and a meeting hop the released CR individuals do not
+  carry). All five are rewritten with constants verified against the
+  released TTL and notes documenting the realization; execution results
+  are recorded by `pipeline/validate_example_queries.py`.
+- `examples/process_kg/SCHEMA.md`: the "Retained properties" list now
+  reflects a direct predicate census of the released files; properties
+  exercised only in the per-WG body-text KGs are listed separately
+  (previously seven of them were wrongly implied to be present in the
+  metadata-only exports).
+- `README.md`: corrected the GitHub-channel size description (the
+  schema-instantiation process-KG TTLs total ~93 MB; the earlier
+  "~5 MB" predated their inclusion) and linked the DCAT/VoID file.
+- `validation/validation_manifest.md`: reworded the note about the
+  per-WG LS-coverage range so the deterministic reference checker no
+  longer misreads a documented-as-absent artefact name as a missing
+  file (restores `tests/verify_release.py` to all-pass).
+
 ## [1.0.0] — 2026-05-08 (camera-ready; Zenodo DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) minted)
 
 First public release accompanying the ISWC 2026 Resources Track submission
