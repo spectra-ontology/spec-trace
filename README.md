@@ -6,7 +6,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20034872.svg)](https://doi.org/10.5281/zenodo.20034872)
 
 **License**: CC-BY 4.0 (SPECTRA-authored components); 3GPP-derived literal content carries explicit 3GPP attribution (see `LICENSE` Tier 2)
-**Version**: v1.0.0 (see `ontology/spectra.ttl` header for authoritative version)
+**Release package version**: v1.0.1 (review-response patch; see `CHANGELOG.md`)
+**Ontology version**: v1.0.0 (logical content unchanged from v1.0.0 — identical classes, axioms, and properties; only non-normative comments cleaned; see `ontology/spectra.ttl` header for authoritative version)
 **Persistent identifier**: [`https://w3id.org/spectra`](https://w3id.org/spectra) (registered via [`perma-id/w3id.org`](https://github.com/perma-id/w3id.org))
 **Zenodo DOI**: [`10.5281/zenodo.20034872`](https://doi.org/10.5281/zenodo.20034872) (minted 2026-05-08; concept DOI [`10.5281/zenodo.20034871`](https://doi.org/10.5281/zenodo.20034871))
 **Repository**: https://github.com/spectra-ontology/spec-trace
@@ -15,8 +16,12 @@
 
 To accommodate GitHub's 100 MB-per-file limit, this release is split:
 
-- **GitHub repository (this repo)** — small files: ontology, SHACL, SpectraCQ v1.0, schema-instantiation TTLs, validation JSONs, scripts, supplement, parsing pipeline. Total ~5 MB.
+- **GitHub repository (this repo)** — ontology, SHACL, SpectraCQ v1.0, schema-instantiation process-KG TTLs (`examples/process_kg/`, ~93 MB, each file under the 100 MB limit), validation JSONs, scripts, supplement, parsing pipeline. Tracked total ~103 MB.
 - **Zenodo deposit** — large files: per-WG body-text Knowledge Graphs (`RAN{1..5}-body.ttl`, ~922 MB total). See `kg/per_wg/README.md` for the inventory and the DOI link.
+
+A machine-readable DCAT/VoID description of every dataset in both
+channels (triple counts, class partitions, distributions, licenses)
+is provided in [`metadata/dcat_void.ttl`](metadata/dcat_void.ttl).
 
 This follows the academic two-tier distribution pattern of TSpec-LLM and GSMA telecom-kg-rel19. The `verify_release.py` test accepts either layout (Git checkout: body files absent by design; Zenodo download: body files present).
 
@@ -45,10 +50,11 @@ release_package/
 │       ├── LICENSE                    # CC-BY 4.0
 │       ├── citation.bib               # BibTeX for citing SpectraCQ
 │       ├── questions.json             # 137 CQ × {id, phase, category, question_en, schema_area, verdict}
-│       └── cypher/                    # 137 executable Cypher files (one per CQ)
+│       ├── cypher/                    # 137 executable Cypher files (one per CQ)
+│       └── sparql/                    # 137 SPARQL translations (one per CQ, from the reference Cypher)
 ├── queries/
 │   ├── cypher/                        # 15 Cypher translations (incl. MULTI_HOP_traceability)
-│   └── sparql/                        # 6 SPARQL examples (incl. MULTI_HOP_traceability)
+│   └── sparql/                        # 6 representative SPARQL examples (full set: cqs/spectra_cq_v1.0/sparql/)
 ├── examples/
 │   ├── instantiation_snippet.ttl      # small synthetic instantiation
 │   ├── end_to_end/                    # full E2E synthetic example (data + queries + expected)
@@ -210,35 +216,6 @@ python3 tests/test_e2e_sparql.py                # exit 0 on returning the expect
 
 ### SpectraCQ companion dataset
 The full 137-CQ corpus with English question text, executable Cypher, and per-CQ verdicts is at `cqs/spectra_cq_v1.0/`. It is independently citable via `cqs/spectra_cq_v1.0/citation.bib` and licensed CC-BY 4.0.
-
-## Use-case evaluation pilot
-
-The `usecase/` directory bundles the raw materials for the illustrative LLM-baseline pilot reported in Appendix §H of the paper. Four cross-WG practitioner questions were posed to three systems (SPECTRA RAG, GPT, Claude); answers were scored against authority sources on a five-axis 0–5 rubric and verified for hallucinations.
-
-| ID | Question | Cross-WG TS series |
-|---|---|---|
-| Q1 | Rel-16 enhanced Type-II codebook (CSI feedback enhancement for MU-MIMO) | 38.211 / 212 / 214 / 306 / 331 / 521-4 |
-| Q2 | TCI-state evolution from Rel-15 to Rel-20 | 38.214 / 321 / 331 / 306 |
-| Q3 | Beam Failure Detection (BFD) and Beam Failure Recovery (BFR) procedures | 38.213 / 321 / 331 / 133 / 533 |
-| Q4 | Rel-18 Layer-1/Layer-2 Triggered Mobility (LTM) and its Rel-19/20 extensions | 38.300 / 214 / 321 / 331 / 133 / 306 |
-
-**Layout** (22 files):
-
-```
-usecase/
-├── README.md                              ← question-by-system catalogue + rubric definitions
-├── answers/                               ← raw 12 answer files (4 questions × 3 systems)
-│   ├── spectra/q{1..4}_*.md               ← SPECTRA RAG answers
-│   ├── gpt/q{1..4}_*.md                   ← GPT answers
-│   └── claude/q{1..4}_*.md                ← Claude answers
-└── evaluations/
-    ├── spectra/q{1..4}_quality_eval.md    ← SPECTRA RAG single-system quality scoring
-    └── 3way/                              ← three-way comparison
-        ├── q{1..4}_3way_comparison.md
-        └── summary.md                     ← four-question composite + per-axis aggregates
-```
-
-The Composite scores in Appendix Table 12 (4.84 SPECTRA / 3.28 GPT / 3.65 Claude) are reproducible from `usecase/evaluations/3way/summary.md`. Limitations of the pilot (single evaluator, author-defined rubric, evaluator overlaps with one of the compared LLMs) are stated in Appendix §H.
 
 ## Citation
 

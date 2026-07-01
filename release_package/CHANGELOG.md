@@ -16,7 +16,7 @@ metadata, queries, documentation, and reproducibility tooling only.
   released dataset in both distribution channels (GitHub + Zenodo)
   described as `dcat:Dataset`/`void:Dataset` with measured triple
   counts, class partitions, byte sizes, distributions, and licenses
-  (184 triples; validates with rdflib).
+  (208 triples; validates with rdflib).
 - **Full SPARQL translation of SpectraCQ**
   (`cqs/spectra_cq_v1.0/sparql/`): all 137 CQs translated from the
   reference Cypher (previously 6 illustrative examples under
@@ -31,7 +31,13 @@ metadata, queries, documentation, and reproducibility tooling only.
   rdflib evaluates too slowly at that join size. Row-count parity
   against the Cypher replay is verified by
   `pipeline/validate_sparql_parity.py`: 137/137 row-count match, all
-  non-empty, no errors (`validation/cq_replay/sparql_parity_results.json`).
+  non-empty, no errors. The validator further classifies each match by
+  re-running every `LIMIT` query unbounded: 75 are exact-cardinality
+  (the count is the full result-set size) and 62 are top-N bounded by a
+  shared `LIMIT` (cardinality parity only — N == N is guaranteed by the
+  shared truncation, so it does not yet establish row-level equivalence).
+  A value-level cross-engine result-set comparison is tracked as future
+  work (`validation/cq_replay/sparql_parity_results.json`).
 - **Public end-to-end CQ replay tooling** (`pipeline/load_released_kg.py`,
   `pipeline/run_cq_suite.py`, `pipeline/validate_sparql_parity.py`,
   `pipeline/validate_example_queries.py`):

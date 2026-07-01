@@ -6,7 +6,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20034872.svg)](https://doi.org/10.5281/zenodo.20034872)
 
 **License**: CC-BY 4.0 (SPECTRA-authored components); 3GPP-derived literal content carries explicit 3GPP attribution (see `LICENSE` Tier 2)
-**Version**: v1.0.0 (see `ontology/spectra.ttl` header for authoritative version)
+**Release package version**: v1.0.1 (review-response patch; see `CHANGELOG.md`)
+**Ontology version**: v1.0.0 (logical content unchanged from v1.0.0 — identical classes, axioms, and properties; only non-normative comments cleaned; see `ontology/spectra.ttl` header for authoritative version)
 **Persistent identifier**: [`https://w3id.org/spectra`](https://w3id.org/spectra) (registered via [`perma-id/w3id.org`](https://github.com/perma-id/w3id.org))
 **Zenodo DOI**: [`10.5281/zenodo.20034872`](https://doi.org/10.5281/zenodo.20034872) (minted 2026-05-08; concept DOI [`10.5281/zenodo.20034871`](https://doi.org/10.5281/zenodo.20034871))
 **Repository**: https://github.com/spectra-ontology/spec-trace

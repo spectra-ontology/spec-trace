@@ -50,6 +50,29 @@ def main() -> int:
     except Exception as e:
         check("ontology parse", False, str(e))
 
+    section("1b. Documentation copy byte-identical to canonical ontology")
+    # The ontology ships once as the authoritative source (ontology/spectra.ttl)
+    # and once more as the download target of the PyLODE page (docs/spectra.ttl,
+    # linked as <a href="spectra.ttl">). Those are physical copies of one logical
+    # artifact: nothing but this check keeps them in step, and an earlier hand
+    # edit to the canonical file left the doc copy stale. The released package
+    # must therefore never carry a doc copy that diverges from the canonical.
+    canonical = ROOT / "ontology/spectra.ttl"
+    doc_ttl = ROOT / "docs/spectra.ttl"
+    try:
+        canon_bytes = canonical.read_bytes()
+        if not doc_ttl.exists():
+            check("docs/spectra.ttl present", False,
+                  "missing — PyLODE 'RDF (turtle)' download link has no target")
+        else:
+            same = doc_ttl.read_bytes() == canon_bytes
+            check("docs/spectra.ttl is byte-identical to ontology/spectra.ttl",
+                  same,
+                  "OK" if same else
+                  "DRIFT — regenerate docs/spectra.ttl from the canonical ontology")
+    except Exception as e:
+        check("doc-copy identity", False, str(e))
+
     section("2. SHACL conformance on instantiation snippet")
     try:
         from pyshacl import validate

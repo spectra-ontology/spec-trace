@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Reproduce the end-to-end SPARQL example.
 
-Loads ontology/spectra.ttl + examples/end_to_end/data.ttl, runs
-queries/sparql/MULTI_HOP_traceability.rq, and verifies the expected row
-(R1-2599998 / RAN1#121).
+Loads ontology/spectra.ttl + examples/end_to_end/data.ttl, runs the
+example's own query (examples/end_to_end/query.sparql), and verifies the
+expected row (R1-2599998 / RAN1#121). This is the standalone counterpart
+of the E2E check in verify_release.py, which runs the same query.
+
+The full-corpus SpectraCQ translations under queries/sparql/ target the
+released RAN1-body.ttl, not this 47-triple synthetic example, so they are
+exercised by the parity harness rather than here.
 
 Exit 0 on success; non-zero on any deviation.
 """
@@ -24,7 +29,7 @@ def main():
     print(f'Loaded data:     {len(g) - initial} additional triples')
     print(f'Total:           {len(g)} triples')
 
-    with open(ROOT / 'queries' / 'sparql' / 'MULTI_HOP_traceability.rq') as f:
+    with open(ROOT / 'examples' / 'end_to_end' / 'query.sparql') as f:
         q = f.read()
     rows = list(g.query(q))
     print(f'\nQuery rows: {len(rows)}')
