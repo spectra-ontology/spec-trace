@@ -61,7 +61,7 @@ print(len(list(g.query(open('sparql/P1_CQ1-1.rq').read()))))"
 
 - SPECTRA OWL ontology (this dataset's schema): https://w3id.org/spectra
 - Paper: "SPECTRA: A Traceability Ontology for the 3GPP RAN Standardization
-  Process" (under review at ISWC 2026 Resources Track).
+  Process" (citation will be added upon publication).
 
 ## Citation
 

@@ -1,6 +1,6 @@
-# Release Process — SPECTRA v1.0.0
+# Release Process — SPECTRA (v1.0.0 and v1.0.1 record)
 
-**Status (2026-05-06)**: All release steps below have been **completed**. This document is retained as the historical record of the v1.0.0 release process and as a template for future releases.
+**Status (2026-05-06)**: All v1.0.0 release steps below have been **completed**. This document is retained as the historical record of the release process and as a template for future releases. The v1.0.1 record follows the v1.0.0 status table.
 
 | Step | Status | Result |
 |---|---|---|
@@ -11,6 +11,20 @@
 | w3id registration | ✅ Registered | [`https://w3id.org/spectra`](https://w3id.org/spectra) via [`perma-id/w3id.org#6021`](https://github.com/perma-id/w3id.org/pull/6021) |
 
 The detailed step-by-step record below documents the actions taken and reasoning, useful as a reference for subsequent releases or for reviewers wanting to understand the release process.
+
+## v1.0.1 Release Record
+
+Content scope: see `CHANGELOG.md` `[1.0.1]` (137 executable SPARQL translations with a row-count parity harness, DCAT/VoID dataset description, TUTORIAL.md, CONTRIBUTING.md, replay tooling, and four fixes). The package content was finalized and pushed to the public `main` branch on 2026-06-12; the git tag and GitHub Release were created on 2026-07-17.
+
+| Step | Status | Result |
+|---|---|---|
+| Package content on public `main` | ✅ Completed (2026-06-12) | commit history on `main` |
+| Metadata refresh (`CITATION.cff`, `codemeta.json`, READMEs) | ✅ Completed (2026-07-17) | version 1.0.1; submission-status wording removed |
+| Git tag `v1.0.1` + GitHub Release | ✅ Completed (2026-07-17) | https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.1 |
+| Zenodo | ⏸ No new version deposit | All large data files (per-WG body-text TTLs) are byte-identical to the v1.0.0 deposit; the record description was already updated. Re-uploading ~922 MB would change nothing. DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) remains the citable record. |
+| w3id | ✅ Unchanged | `https://w3id.org/spectra` redirects are content-addressed to the repository and require no update |
+
+Note: `ontology/spectra.ttl` keeps `owl:versionInfo "1.0.0"` — the ontology axioms are unchanged in v1.0.1; the package version and the ontology version are versioned independently.
 
 ---
 

@@ -27,7 +27,7 @@ This follows the academic two-tier distribution pattern of TSpec-LLM and GSMA te
 
 ## What this package releases
 
-This is the **publicly released** component of the SPECTRA ontology resource described in a paper submitted to the ISWC Resources Track *"SPECTRA: A Traceability Ontology for 3GPP Standardization"* (under review).
+This is the **publicly released** component of the SPECTRA ontology resource described in the accompanying paper *"SPECTRA: A Traceability Ontology for 3GPP Standardization"*.
 
 ```
 release_package/
@@ -113,7 +113,7 @@ release_package/
 ├── ARTIFACT.md                         # full artifact narrative (Tier 1 / Tier 2 boundary)
 ├── CITATION.cff                       # citation metadata (machine-readable)
 ├── CHANGELOG.md                       # release history
-├── RELEASE_PROCESS.md                 # release process record (v1.0.0 completed)
+├── RELEASE_PROCESS.md                 # release process record (v1.0.0 and v1.0.1)
 ├── TUTORIAL.md                        # short walkthrough for new users
 ├── codemeta.json                      # software/data metadata
 └── LICENSE                            # CC-BY 4.0 (Tier 1) + 3GPP attribution (Tier 2)
@@ -219,7 +219,7 @@ The full 137-CQ corpus with English question text, executable Cypher, and per-CQ
 
 ## Citation
 
-If you reuse SPECTRA, please cite the accompanying paper (currently under review at ISWC 2026 Resources Track; BibTeX will be added once the venue assigns a citation key) and this software/data record via the metadata in `CITATION.cff` (machine-readable) or `codemeta.json`.
+If you reuse SPECTRA, please cite this software/data record via the metadata in `CITATION.cff` (machine-readable) or `codemeta.json`. A paper BibTeX entry will be added once the accompanying paper is published.
 
 ## Authors
 
