@@ -178,4 +178,4 @@ Verified RP numbers (with archive URLs):
 | RP-250810 | Revised SID: Study on 6G Scenarios and Requirements | RAN#107 (Mar 2025) | Rel-19 |
 | RP-252899 | Revised WI: AI/ML for mobility in NR (NR_AIML_Mob) | RAN#109 (Sep 2025) | Rel-20 |
 
-Source: 9 ZIPs downloaded directly from `www.3gpp.org/ftp/tsg_ran/TSG_RAN/TSGR_*/Docs/RP-*.zip` (HTTP 200 with browser User-Agent); titles extracted from cover-page text via `python-docx`. Verification trail and source URLs in `docs/paper/iswc/rebuttal_preparation/agent_d_rp_wid_verification.md` (internal repo).
+Source: 9 ZIPs downloaded directly from `www.3gpp.org/ftp/tsg_ran/TSG_RAN/TSGR_*/Docs/RP-*.zip` (HTTP 200 with browser User-Agent); titles extracted from cover-page text via `python-docx`.
