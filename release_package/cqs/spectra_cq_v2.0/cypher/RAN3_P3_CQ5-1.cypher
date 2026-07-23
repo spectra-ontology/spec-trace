@@ -1,0 +1,5 @@
+// SpectraCQ RAN3_P3_CQ5-1 (RAN3, phase 3) -- CQ5
+// Question: Return the total number of CRs modifying spec 38.423 (change-volume metric).
+// Gold: 1 rows, primary column "totalCRs"
+
+MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.423'}) RETURN count(cr) AS totalCRs

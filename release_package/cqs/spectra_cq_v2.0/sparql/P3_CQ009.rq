@@ -1,0 +1,29 @@
+# SPARQL translation of P3_CQ009 — Which sections does TS 38.214 Section 5.1 reference? (companion reading for implementation)
+# Source: ../cypher/RAN1_P3_CQ009.cypher
+# Anchor mirrors the reference Cypher: highest-release Spec carrying §5.1.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?sectionNumber ?sectionTitle
+WHERE {
+  {
+    SELECT ?src
+    WHERE {
+      ?rk a spectra:Spec ;
+          spectra:specNumber "38.214" ;
+          spectra:specRelease ?rel .
+      ?src a spectra:Section ;
+           spectra:belongsToSpec ?rk ;
+           spectra:sectionNumber "5.1" .
+      BIND(xsd:integer(REPLACE(?rel, "Rel-", "")) AS ?relNum)
+    }
+    ORDER BY DESC(?relNum)
+    LIMIT 1
+  }
+  ?src spectra:referencesSection ?tgt .
+  FILTER EXISTS { ?tgt a spectra:Section }
+  OPTIONAL { ?tgt spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?tgt spectra:sectionTitle ?sectionTitle }
+}
+ORDER BY ?sectionNumber

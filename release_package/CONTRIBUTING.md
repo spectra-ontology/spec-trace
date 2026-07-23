@@ -6,8 +6,8 @@ four areas.
 
 ## 1. Competency questions (SpectraCQ)
 
-The CQ benchmark (`cqs/spectra_cq_v1.0/`) is designed to grow beyond its
-current 137 entries. To propose a CQ:
+The CQ benchmark (`cqs/spectra_cq_v2.0/`) is designed to grow beyond its
+current 624 scored entries. To propose a CQ:
 
 1. Open a **CQ request** issue (template provided in the repository) with
    the natural-language question, the lifecycle phase it targets
@@ -30,7 +30,7 @@ Schema changes follow semantic versioning (`ontology/spectra.ttl` header):
 
 Open an **ontology extension** issue describing the standardization
 phenomenon the current schema cannot express, ideally with a real 3GPP
-document instance that motivates it. Extensions must keep the 137-CQ
+document instance that motivates it. Extensions must keep the 624-CQ
 regression green (`pipeline/run_cq_suite.py` against a loaded release KG)
 and pass SHACL (`shapes/spectra-core.shacl.ttl`).
 

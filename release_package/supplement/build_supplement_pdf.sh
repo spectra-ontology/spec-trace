@@ -18,7 +18,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 # Symlink llncs.cls + splncs04.bst from the main paper's TeX directory if missing.
-LATEX_SRC_DIR="$SCRIPT_DIR/../../docs/paper/iswc/latex"
+LATEX_SRC_DIR="$SCRIPT_DIR/../../docs/paper/past-venues/iswc/latex"
 [ ! -e llncs.cls ]      && ln -sf "$LATEX_SRC_DIR/llncs.cls" llncs.cls
 [ ! -e splncs04.bst ]   && ln -sf "$LATEX_SRC_DIR/splncs04.bst" splncs04.bst
 

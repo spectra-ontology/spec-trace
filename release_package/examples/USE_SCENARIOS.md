@@ -1,7 +1,7 @@
 # SPECTRA Use Scenarios — Release File Mapping
 
 This document maps the seven use scenarios (S1–S7) discussed in §6.5 / Table 9
-of the SPECTRA ISWC 2026 paper to the concrete artifacts in this release.
+of the SPECTRA paper to the concrete artifacts in this release.
 
 The mapping is conservative: where a scenario does not have a dedicated
 end-to-end query in `queries/`, the scenario can still be exercised by
@@ -11,8 +11,8 @@ document says so explicitly rather than implying it is.
 
 The release ships per-Phase representative CQ queries in
 `queries/cypher/` and `queries/sparql/` (one per Phase plus a
-`MULTI_HOP_traceability` query); the larger 137-CQ benchmark is at
-`cqs/spectra_cq_v1.0/`.
+`MULTI_HOP_traceability` query); the larger 624-CQ benchmark is at
+`cqs/spectra_cq_v2.0/`.
 
 | Code | Scenario                          | Status in v1.0.0           | Where to find / how to run                                                                                                                                                                                |
 |------|-----------------------------------|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -20,7 +20,7 @@ The release ships per-Phase representative CQ queries in
 | S2   | Cross-WG LS impact                | populated (real metadata)  | `examples/process_kg/ls_routing.ttl` (25 586 distinct LSs across RAN1–RAN5; per-WG breakdown and de-duplication note in `examples/process_kg/_export_summary.txt`). No dedicated single-file query ships; LS-fan-out queries are composed using `originatedFrom` / `sentTo` against this TTL.  |
 | S3   | Release-scoped CR analytics       | populated (real metadata)  | `examples/process_kg/cr_routing.ttl` (192 967 CRs; per-WG breakdown in `_export_summary.txt`). Phase-4 representative CQ at `queries/cypher/P4_CQ1-1.cypher` and `queries/sparql/CQ4-1_cr_reason_for_change.rq` exercises the CR layer and can be parameterised by Release.                  |
 | S4   | Working-Assumption promotion lineage | **schema-only pattern** in v1.0.0 — *not* populated in the released or deployed snapshots; data-side population by enhanced ingest is future work | Schema fragment: `WorkingAssumption --promotedTo--> Agreement`, joined on `madeAt`. Defined in `ontology/spectra.ttl` (object property `promotedTo`). No instance file or scenario query ships in v1.0.0. |
-| S5   | TR → TS impact propagation        | populated (RAN1 KG)        | `validation/ran1_instance_counts.json` reports `TRImpact = 29`. Phase-5 representative CQ at `queries/cypher/P5_CQ1-1.cypher` and `queries/sparql/CQ5-1_trs_impacting_spec.rq` exercises the reified TR-to-TS chain via `hasTRImpact` / `impactsSection`.                                  |
+| S5   | TR → TS impact propagation        | populated (RAN1 KG)        | `validation/ran1_instance_counts.json` reports `TRImpact = 29`. `queries/sparql/CQ5-1_trs_impacting_spec.rq` exercises the reified TR-to-spec chain via `impactsSpec`; the Cypher TR-impact chain is in `queries/cypher/MULTI_HOP_traceability.cypher` (TR layer), and `queries/cypher/P5_CQ1-1.cypher` returns TR-level attributes (scope, conclusions).                                  |
 | S6   | Per-company contribution profile  | populated (real metadata)  | `examples/process_kg/ran1_tdoc_metadata.ttl` (123 678 RAN1 TDocs with `submittedBy`). Phase-1 representative CQ filtered by Company at `queries/cypher/P1_CQ1-3.cypher`; the SPARQL counterpart `queries/sparql/CQ1-1_tdocs_by_meeting_and_workitem.rq` is parameterisable on `submittedBy`. |
 | S7   | Work-Item-scoped lineage          | populated (real metadata)  | `examples/process_kg/ran1_tdoc_metadata.ttl` carries `relatedToWorkItem`; `validation/ran1_instance_counts.json` reports WorkItem = 423. Representative CQ joining Meeting and WorkItem at `queries/cypher/P1_CQ1-1.cypher` and `queries/sparql/CQ1-1_tdocs_by_meeting_and_workitem.rq`.    |
 
@@ -39,9 +39,10 @@ The release ships per-Phase representative CQ queries in
   fully exercisable on the metadata-only `examples/process_kg/` artifacts;
   body-text-dependent queries (e.g., free-text retrieval over CR / TR
   rendered prose) require the Zenodo deposit.
-* `tests/verify_release.py` exits 0 with 37/37 PASS on the dev tree
-  (with body TTLs locally) and 32/32 PASS + 5 SKIP on the public mirror
-  (body TTLs deferred to Zenodo per §7 of the paper).
+* `tests/verify_release.py` re-verifies the shipped counts and evidence
+  (run from `release_package/`); checks that require the per-WG body TTLs
+  are skipped when only the GitHub package is present (body TTLs deferred
+  to Zenodo per §7 of the paper).
 
 ## Re-deriving the per-WG counts above
 

@@ -1,5 +1,0 @@
-// SpectraCQ P1_CQ2-5 — CQ2_Tdoc_relation_tracing
-// Question (English): Return the CR category (F/A/B/C/D) and the affected clauses for CR R1-2504971.
-// Schema area: classes=['Tdoc'], rels=[]
-
-MATCH (t:Tdoc {tdocNumber: 'R1-2504971'}) RETURN t.tdocNumber, t.title, t.crCategory, t.clausesAffected, t.status LIMIT 1

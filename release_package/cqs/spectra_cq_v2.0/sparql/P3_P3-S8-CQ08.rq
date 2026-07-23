@@ -1,0 +1,14 @@
+# SPARQL translation of P3_P3-S8-CQ08 — Are all 22 features from the feature catalog loaded as :Feature nodes? (feature-catalog parity check)
+# Source: ../cypher/RAN1_P3_P3-S8-CQ08.cypher
+# Realization note: mirrors the Cypher count + collect(f.featureId); Feature
+# nodes carry no featureId property in the released graph, so the collected
+# list is empty on both sides while the count row is returned.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT (COUNT(?f) AS ?feature_count)
+       (GROUP_CONCAT(?fid; SEPARATOR=", ") AS ?feature_ids)
+WHERE {
+  ?f a spectra:Feature .
+  OPTIONAL { ?f spectra:featureId ?fid }
+}

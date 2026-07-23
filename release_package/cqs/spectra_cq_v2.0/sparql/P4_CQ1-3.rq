@@ -1,0 +1,19 @@
+# SPARQL translation of P4_CQ1-3 — What happens if the CRs under Work Item NR_LPWUS-Core (Rel-19 LP-WUS/WUR) are not approved? (consequences-if-not-approved)
+# Source: ../cypher/RAN1_P4_CQ1-3.cypher
+# Realization note: in the released RDF each CR-role TDoc is a single IRI
+# typed both spectra:CR and spectra:Tdoc, carrying the cover-sheet fields and
+# the work-item link (relatedTo) directly, so the Cypher pattern maps to one
+# subject.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?tdocNumber ?consequencesIfNotApproved
+WHERE {
+  ?wi a spectra:WorkItem ;
+      spectra:workItemCode "NR_LPWUS-Core" .
+  ?cr a spectra:CR ;
+      spectra:relatedTo ?wi ;
+      spectra:consequencesIfNotApproved ?consequencesIfNotApproved .
+  OPTIONAL { ?cr spectra:tdocNumber ?tdocNumber }
+}
+ORDER BY DESC(?tdocNumber)

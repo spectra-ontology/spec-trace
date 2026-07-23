@@ -6,9 +6,9 @@ Executes every query under queries/sparql/ on the released per-WG body KG
 row counts to a JSON report. Used to keep the representative examples
 execution-validated against the released data.
 
-사용: cd release_package/pipeline && python3 validate_example_queries.py
+Usage: cd release_package/pipeline && python3 validate_example_queries.py
       [--ttl PATH] [--out PATH] [--timeout SECONDS]
-LLM 호출: 없음
+LLM calls: none
 """
 from __future__ import annotations
 
@@ -72,8 +72,12 @@ def main() -> None:
         results.append(res)
         print(f"[run] {rq.name}: rows={res['rows']} error={res['error']} ({res['elapsed_s']:.0f}s)", flush=True)
 
+    try:
+        ttl_label = str(ttl.resolve().relative_to(PKG))
+    except ValueError:
+        ttl_label = ttl.name
     summary = {
-        "ttl": str(ttl),
+        "ttl": ttl_label,
         "triples": len(g),
         "total_queries": len(results),
         "zero_row": [r["query"] for r in results if r["rows"] == 0],

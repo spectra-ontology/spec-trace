@@ -1,0 +1,30 @@
+# SPARQL translation of P3_CQ002 — Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).
+# Source: ../cypher/RAN1_P3_CQ002.cypher
+# Anchor mirrors the reference Cypher: among the release-qualified Section
+# nodes numbered 5.1 in TS 38.214, take the one on the highest-release Spec.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?sectionNumber ?sectionTitle
+WHERE {
+  {
+    SELECT ?root
+    WHERE {
+      ?rk a spectra:Spec ;
+          spectra:specNumber "38.214" ;
+          spectra:specRelease ?rel .
+      ?root a spectra:Section ;
+            spectra:belongsToSpec ?rk ;
+            spectra:sectionNumber "5.1" .
+      BIND(xsd:integer(REPLACE(?rel, "Rel-", "")) AS ?relNum)
+    }
+    ORDER BY DESC(?relNum)
+    LIMIT 1
+  }
+  ?root spectra:hasSubSection ?sub .
+  FILTER EXISTS { ?sub a spectra:Section }
+  OPTIONAL { ?sub spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?sub spectra:sectionTitle ?sectionTitle }
+}
+ORDER BY ?sectionNumber

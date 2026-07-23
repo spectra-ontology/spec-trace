@@ -1,0 +1,20 @@
+# SPARQL translation of P3_P3-S8-CQ05 — What is the granularity-property distribution across the five entity classes? (item-level vs. section-level)
+# Source: ../cypher/RAN1_P3_P3-S8-CQ05.cypher
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?class ?granularity (COUNT(?n) AS ?c)
+WHERE {
+  VALUES (?cls ?class) {
+    (spectra:RRCParameter "RRCParameter")
+    (spectra:CapabilityItem "CapabilityItem")
+    (spectra:Procedure "Procedure")
+    (spectra:PerformanceRequirement "PerformanceRequirement")
+    (spectra:ConformanceTest "ConformanceTest")
+  }
+  ?n a ?cls .
+  OPTIONAL { ?n spectra:granularity ?g }
+  BIND(COALESCE(?g, "<unset>") AS ?granularity)
+}
+GROUP BY ?class ?granularity
+ORDER BY ?class ?granularity

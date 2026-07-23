@@ -30,7 +30,7 @@ exists and *which CQ(s)* the extension would enable.
 
 ### Which competency question does this enable?
 
-<!-- Reference an existing CQ ID from cqs/spectra_cq_v1.0/, or attach a new -->
+<!-- Reference an existing CQ ID from cqs/spectra_cq_v2.0/, or attach a new -->
 <!-- CQ proposal (see cq-request.md template). -->
 
 ### Source-data evidence

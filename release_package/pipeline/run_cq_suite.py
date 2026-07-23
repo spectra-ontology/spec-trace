@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""run_cq_suite.py — execute the released CQ suite (cqs/spectra_cq_v1.0/cypher/*.cypher) against Neo4j and record PASS/FAIL.
+"""run_cq_suite.py — execute the released CQ suite (cqs/spectra_cq_v2.0/cypher/*.cypher) against Neo4j and record PASS/FAIL.
 
 Re-executes all 137 SpectraCQ queries on a graph restored with
 load_released_kg.py and compares the verdicts with the released
 expectation file (validation/cq_results.json).
 
 Usage: python3 run_cq_suite.py --bolt bolt://localhost:7697 --user neo4j \
-           --password replaytest [--cypher-dir ../cqs/spectra_cq_v1.0/cypher] \
+           --password replaytest [--cypher-dir ../cqs/spectra_cq_v2.0/cypher] \
            [--expected ../validation/cq_results.json] --out results.json
 
 Verdict: PASS = at least one result row. Zero rows or an execution error
@@ -35,7 +35,7 @@ def main() -> None:
     ap.add_argument("--user", default="neo4j")
     ap.add_argument("--password", required=True)
     ap.add_argument("--cypher-dir", type=Path,
-                    default=here.parent / "cqs" / "spectra_cq_v1.0" / "cypher")
+                    default=here.parent / "cqs" / "spectra_cq_v2.0" / "cypher")
     ap.add_argument("--expected", type=Path,
                     default=here.parent / "validation" / "cq_results.json")
     ap.add_argument("--out", required=True, type=Path)
@@ -66,7 +66,7 @@ def main() -> None:
                 rows = len(list(s.run(query)))
                 entry["rows"] = rows
                 entry["pass"] = rows > 0
-            except Exception as e:  # 실행 오류도 FAIL 로 기록
+            except Exception as e:  # execution errors are recorded as FAIL too
                 entry["rows"] = 0
                 entry["pass"] = False
                 entry["error"] = f"{type(e).__name__}: {e}"

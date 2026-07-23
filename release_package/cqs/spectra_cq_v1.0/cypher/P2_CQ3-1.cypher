@@ -1,5 +1,0 @@
-// SpectraCQ P2_CQ3-1 — CQ3_company_contribution
-// Question (English): List TDocs from Huawei that led to Agreements (company-level standard-contribution tracing).
-// Schema area: classes=['Agreement', 'Company', 'Meeting', 'Tdoc'], rels=['MADE_AT', 'REFERENCES', 'SUBMITTED_BY']
-
-MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, a.resolutionId, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 15

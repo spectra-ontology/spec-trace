@@ -15,21 +15,24 @@ pip install rdflib pyshacl
 
 ```bash
 python3 tests/verify_release.py
-# Expected last line:
-#   === Summary: 37/37 checks passed ===
-#   On the public mirror (without local Neo4j and without
-#   bundled body-text TTLs) the equivalent run reports
-#   "32/32 PASS, 5 SKIP" — body-text checks defer to the
-#   Zenodo deposit per the GitHub/Zenodo split (§7).
+# Prints one [PASS]/[FAIL] line per check and ends with a summary of the form:
+#   === Summary: <passed>/<total> checks passed ===
+# Exit code 0 only if every executed check passes. On a full checkout
+# (Zenodo body-text TTLs downloaded into kg/per_wg/) the verifier runs
+# 48 checks; on a Git-only checkout the five per-WG body-text checks in
+# section 8b print [SKIP] instead (they defer to the Zenodo deposit per
+# the GitHub/Zenodo split) and drop out of the total.
 ```
 
-This single command runs all ten check sections (ontology triples, SHACL
-conformance on instantiation snippet, SHACL conformance on process-KG union,
-end-to-end SPARQL, SpectraCQ counts/verdict, structural metrics, manifest
+This single command runs all eleven labelled check sections (1, 1b, 2, 2b,
+3, 4, 5, 6, 7, 8, 8b: ontology triples, docs-copy byte-identity, SHACL
+conformance on the instantiation snippet, SHACL conformance on the
+metadata-only process-KG union, end-to-end SPARQL, SpectraCQ benchmark
+counts and gold integrity, structural metrics, validation-manifest
 references, synthetic-instantiation sanity, release directory inventory,
-per-WG body-text KGs on Zenodo) and returns
-exit 0 only if every check passes. If you only have time for one check,
-run this one.
+per-WG body-text and schema KGs) and returns
+exit 0 only if every executed check passes. If you only have time for one
+check, run this one.
 
 The remainder of this document explains the same checks individually for
 reviewers who want to inspect each step.
@@ -70,21 +73,22 @@ python3 tests/test_e2e_sparql.py
 #   "PASS"
 ```
 
-### 5. Inspect the SpectraCQ v1.0 dataset
+### 5. Inspect the SpectraCQ v2.0 scored benchmark
 
 ```bash
 python3 -c "
 import json
-with open('cqs/spectra_cq_v1.0/questions.json') as f:
+with open('cqs/spectra_cq_v2.0/questions.json') as f:
     d = json.load(f)
-print(f'CQs: {d[\"metadata\"][\"total_cqs\"]}')
-print(f'Phases: {d[\"metadata\"][\"phases\"]}')
-print(f'PASS: {sum(1 for c in d[\"cqs\"] if c[\"verdict\"]==\"PASS\")}')
+m = d['metadata']
+print(f'Released: {m[\"released_scored_cqs\"]} / Authored: {m[\"authored_cqs\"]} / Held out: {m[\"held_cqs\"]}')
+print(f'By WG: {m[\"released_by_wg\"]}')
+print(f'Gold PASS: {sum(1 for c in d[\"cqs\"] if c[\"gold\"][\"status\"]==\"PASS\")}')
 "
 # Expected:
-#   CQs: 137
-#   Phases: {'P1': 25, 'P2': 34, 'P3': 45, 'P4': 15, 'P5': 18}
-#   PASS: 137
+#   Released: 624 / Authored: 654 / Held out: 30
+#   By WG: {'RAN1': 142, 'RAN2': 128, 'RAN3': 123, 'RAN4': 117, 'RAN5': 114}
+#   Gold PASS: 624
 ```
 
 ### 6. Inspect 21 representative queries
@@ -99,23 +103,33 @@ ls queries/sparql/  # 6 files
 
 ```bash
 ls validation/
-# 11 JSON files + validation_manifest.md
-# Every paper number is mapped to its evidence file in validation_manifest.md
+# 12 JSON evidence files + cq_replay/ + chart_parser_fidelity_note.md
+#   + validation_manifest.md
+# Every paper number is mapped to its evidence file in validation_manifest.md.
+# validation/cq_replay/ holds the benchmark reproducibility evidence:
+# scratch-reload graph counts, per-WG load reports, 624/624 gold replay
+# results, and 142/142 SPARQL row-count parity on the released RAN1 CQs.
 ```
 
 ## Reviewer trust path
 
 The four artifacts above (TTL parse, structural metrics, SHACL conformance,
 e2e SPARQL) reproduce the *publicly verifiable* part of the paper's
-quantitative claims (Table "Structural metrics", §6.2 OOPS, the synthetic
-multi-hop traceability example, and SpectraCQ v1.0 contents).
+quantitative claims (the ontology structural-metrics table, the synthetic
+multi-hop traceability example, and the SpectraCQ v2.0 benchmark contents).
 
-The remaining numbers (RAN1 instance counts, cross-WG schema diff,
-cross-WG query counts, OOPS scan output) are pre-computed snapshots
+The remaining design-phase numbers (RAN1 instance counts, cross-WG schema
+diff, cross-WG query counts, OOPS scan output) are pre-computed snapshots
 shipped under `validation/*.json`; each has an entry in
 `validation/validation_manifest.md` mapping the paper claim to its
-JSON field. These cannot be re-derived without access to the internal
-3GPP-licensed knowledge graphs.
+JSON field. These come from the internal build pipeline and are shipped
+as evidence rather than re-derived here.
+
+The benchmark gold sets, by contrast, *are* re-derivable from the release
+alone: load the released per-WG TTLs into a scratch Neo4j and re-run the
+624 reference Cypher queries. `validation/cq_replay/` records exactly such
+a reload — graph counts, per-WG load reports, a 624/624 gold match, and
+142/142 SPARQL row-count parity covering all released RAN1 CQs.
 
 ## Estimated time
 

@@ -15,18 +15,18 @@
 
 <https://w3id.org/spectra> a owl:Ontology ;
     dc:title "SPECTRA: A Traceability Ontology for 3GPP RAN Standardization"@en ;
-    dc:description "OWL 2 ontology modeling the 3GPP RAN standardization document lifecycle (Tdoc, Resolution, CR, LS, Section, Spec, TechnicalReport, TRImpact, Meeting, Company, WorkingGroup). Designed from RAN1 competency questions and validated by cross-WG instantiation against RAN2-RAN5 with no additional classes required."@en ;
-    dc:creator "Sihyeon Choi (Samsung System LSI)" ,
-               "Junho Lee (Samsung System LSI)" ;
+    dc:description "OWL 2 ontology modeling the 3GPP RAN standardization document lifecycle (Tdoc, Resolution, CR, LS, Section, Spec, TechnicalReport, TRImpact, Meeting, Company, WorkingGroup). Designed from RAN1 competency questions and validated by cross-WG instantiation against RAN2-RAN5 with no additional process-layer classes required. Also declares six entity-layer classes (RRCParameter, CapabilityItem, Feature, Procedure, PerformanceRequirement, ConformanceTest) modeling spec-body entities: ASN.1 IEs, UE capability items, named standardization features, protocol procedures, performance requirements, and conformance test specifications."@en ;
+    dc:creator "Sihyeon Choi (Samsung System LSI)" ;
     dc:date "2026-05-08" ;
     dc:rights "Creative Commons Attribution 4.0 International (CC-BY 4.0)" ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-    owl:versionInfo "1.0.0" ;
-    owl:versionIRI <https://w3id.org/spectra/1.0.0> ;
+    owl:versionInfo "1.1.0" ;
+    owl:versionIRI <https://w3id.org/spectra/1.1.0> ;
+    owl:priorVersion <https://w3id.org/spectra/1.0.0> ;
     rdfs:seeAlso <https://github.com/spectra-ontology/spec-trace> .
 
 # =============================================================================
-# Classes (26 classes)
+# Classes (32 classes)
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -169,6 +169,34 @@ tdoc:TechnicalReport a owl:Class ;
 tdoc:TRImpact a owl:Class ;
     rdfs:label "TR Impact"@en ;
     rdfs:comment "Reification node for TR→TS impact relationship with impactType attribute (NewTS, NewSection, ExtendSection, NoChange)."@en .
+
+# -----------------------------------------------------------------------------
+# Entity-Layer Classes (Spec-Body Entities)
+# -----------------------------------------------------------------------------
+
+tdoc:RRCParameter a owl:Class ;
+    rdfs:label "ASN.1 IE (RRC + interface IE)"@en ;
+    rdfs:comment "3GPP ASN.1 IE body — covers RRC IE (38.331 CodebookConfig-r16, etc.), NGAP IE (38.413), XnAP IE (38.423), F1AP IE (38.473), E1AP IE (38.463). The class name 'RRCParameter' is retained for continuity, but the class semantically represents any 3GPP-spec ASN.1 IE. Independent class — not a subclass of Section."@en .
+
+tdoc:CapabilityItem a owl:Class ;
+    rdfs:label "UE Capability Item"@en ;
+    rdfs:comment "Individual UE capability row in 3GPP capability spec (e.g., 38.306 §4.2.7.2 BandNR `codebookParametersAddition-r16`, `ltm-MCG-IntraFreq-r18`). Independent class — not a subclass of Section."@en .
+
+tdoc:Feature a owl:Class ;
+    rdfs:label "3GPP Standard Feature"@en ;
+    rdfs:comment "A named 3GPP standardization feature spanning one or more IEs/Sections/Capabilities/Releases (e.g., 'Rel-16 Enhanced Type-II codebook', 'Rel-18 LTM', 'BFD/BFR'). Independent class — not a subclass of Tdoc/Section/CR. Instances are curated per working group in a feature catalog."@en .
+
+tdoc:Procedure a owl:Class ;
+    rdfs:label "Procedure"@en ;
+    rdfs:comment "A protocol procedure spanning one or more sections (e.g., 'BFR Procedure' in 38.321 §5.17, 'RACH Procedure' in 38.321 §5.1). Independent class; a procedure may span multiple sections."@en .
+
+tdoc:PerformanceRequirement a owl:Class ;
+    rdfs:label "RRM/RF Performance Requirement"@en ;
+    rdfs:comment "Quantitative performance requirements specs body (38.133 RRM perf req, 38.101-x RF/EMC requirements, 38.104 BS RF requirements). Includes evaluation periods (TEvaluate_*), scaling factors (FR1/FR2/FR2-1/FR2-2), scheduling availability windows, minimum requirements per RS type, timing budgets (e.g., T = T1 × Ceil((T2+D)/T1)). Independent class. Distinct from CapabilityItem (UE capability declarations) and Procedure (protocol procedures)."@en .
+
+tdoc:ConformanceTest a owl:Class ;
+    rdfs:label "Conformance Test Specification"@en ;
+    rdfs:comment "3GPP conformance test specifications body — by spec body nature (test procedure / test environment / verdict / applicability), regardless of working group. Examples: RAN5 UE test (38.508-x, 38.509, 38.521-x, 38.523-1, 38.533), RAN4 BS test (38.141-1 conducted, 38.141-2 radiated, 38.181 AAS BS). Independent class. Distinct from Procedure (protocol procedure in spec body, not conformance test)."@en .
 
 # =============================================================================
 # Object Properties (53 properties)
@@ -365,7 +393,7 @@ tdoc:containedIn a owl:ObjectProperty, owl:FunctionalProperty ;
     rdfs:range tdoc:Meeting .
 
 # -----------------------------------------------------------------------------
-# TS Structure Object Properties (10)
+# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5
 # -----------------------------------------------------------------------------
 
 tdoc:hasSection a owl:ObjectProperty ;
@@ -439,7 +467,7 @@ tdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;
     owl:inverseOf tdoc:containsFigure .
 
 # -----------------------------------------------------------------------------
-# CR Document Object Properties (7)
+# CR Document Object Properties (7) - Spec: tdoc_ontology_specs(CR).md Step 5
 # -----------------------------------------------------------------------------
 
 tdoc:hasCR a owl:ObjectProperty, owl:InverseFunctionalProperty ;
@@ -489,7 +517,7 @@ tdoc:modifiedByCR a owl:ObjectProperty ;
     owl:inverseOf tdoc:modifiesSection .
 
 # -----------------------------------------------------------------------------
-# TR Document Object Properties (10)
+# TR Document Object Properties (10) - Spec: tdoc_ontology_specs(TR).md
 # -----------------------------------------------------------------------------
 
 tdoc:hasTRImpact a owl:ObjectProperty, owl:InverseFunctionalProperty ;
@@ -1011,7 +1039,7 @@ tdoc:filePath a owl:DatatypeProperty ;
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Section Data Properties (5)
+# Section Data Properties (5) - Spec: tdoc_ontology_specs(TS).md Step 5
 # -----------------------------------------------------------------------------
 
 tdoc:sectionId a owl:DatatypeProperty ;
@@ -1045,7 +1073,7 @@ tdoc:isVoid a owl:DatatypeProperty ;
     rdfs:range xsd:boolean .
 
 # -----------------------------------------------------------------------------
-# TSTable Data Property (1)
+# TSTable Data Property (1) - Spec: tdoc_ontology_specs(TS).md Step 5
 # Note: tableId, tableNumber are shared with Table (domain expanded above)
 # -----------------------------------------------------------------------------
 
@@ -1056,7 +1084,7 @@ tdoc:tableCaption a owl:DatatypeProperty ;
     rdfs:range xsd:string .
 
 # -----------------------------------------------------------------------------
-# TSFigure Data Property (1)
+# TSFigure Data Property (1) - Spec: tdoc_ontology_specs(TS).md Step 5
 # Note: figureId, figureNumber are shared with Figure (domain expanded above)
 # -----------------------------------------------------------------------------
 
@@ -1071,7 +1099,7 @@ tdoc:figureCaption a owl:DatatypeProperty ;
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# CRPack Data Properties (2)
+# CRPack Data Properties (2) - Spec: tdoc_ontology_specs(CR).md Step 5
 # -----------------------------------------------------------------------------
 
 tdoc:crPackId a owl:DatatypeProperty ;
@@ -1087,7 +1115,7 @@ tdoc:tsgMeeting a owl:DatatypeProperty ;
     rdfs:range xsd:string .
 
 # -----------------------------------------------------------------------------
-# CR Extension Data Properties (3)
+# CR Extension Data Properties (3) - Spec: tdoc_ontology_specs(CR).md Step 5
 # -----------------------------------------------------------------------------
 
 tdoc:reasonForChange a owl:DatatypeProperty ;
@@ -1113,7 +1141,7 @@ tdoc:consequencesIfNotApproved a owl:DatatypeProperty ;
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# TechnicalReport Data Properties (8)
+# TechnicalReport Data Properties (8) - Spec: tdoc_ontology_specs(TR).md
 # -----------------------------------------------------------------------------
 
 tdoc:trNumber a owl:DatatypeProperty ;
@@ -1165,7 +1193,7 @@ tdoc:workItemRpNumber a owl:DatatypeProperty ;
     rdfs:range xsd:string .
 
 # -----------------------------------------------------------------------------
-# TRImpact Data Properties (4)
+# TRImpact Data Properties (4) - Spec: tdoc_ontology_specs(TR).md
 # -----------------------------------------------------------------------------
 
 tdoc:trImpactId a owl:DatatypeProperty ;

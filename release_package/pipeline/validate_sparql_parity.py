@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""validate_sparql_parity.py — execute all 137 SpectraCQ SPARQL translations
-against the released RAN1-body.ttl and compare row counts with the Neo4j
+"""validate_sparql_parity.py — execute every shipped SpectraCQ SPARQL
+translation against the released RAN1-body.ttl and compare row counts with the Neo4j
 Cypher replay results (validation/cq_replay/ran1_replay_results.json).
 
 Verifies translation fidelity using released artifacts only: the per-WG body
-KG, the SPARQL translations under cqs/spectra_cq_v1.0/sparql/, and the shipped
+KG, the SPARQL translations under cqs/spectra_cq_v2.0/sparql/, and the shipped
 Cypher replay oracle.
 
 Two levels of evidence are recorded per CQ:
@@ -67,7 +67,7 @@ def main() -> None:
     base = os.path.dirname(os.path.abspath(__file__))
     pkg = os.path.dirname(base)
     ap.add_argument("--ttl", default=os.path.join(pkg, "kg/per_wg/RAN1-body.ttl"))
-    ap.add_argument("--sparql-dir", default=os.path.join(pkg, "cqs/spectra_cq_v1.0/sparql"))
+    ap.add_argument("--sparql-dir", default=os.path.join(pkg, "cqs/spectra_cq_v2.0/sparql"))
     ap.add_argument("--oracle", default=os.path.join(
         pkg, "validation/cq_replay/ran1_replay_results.json"))
     ap.add_argument("--out", default=os.path.join(
@@ -85,7 +85,16 @@ def main() -> None:
     load_s = time.time() - t0
     print(f"loaded {len(g):,} triples in {load_s:.0f}s", flush=True)
 
-    oracle = {r["id"]: r["rows"] for r in json.load(open(args.oracle))["results"]}
+    # Oracle = the Cypher reference cardinality reproduced on the current graph.
+    # replay_released_cqs.py records it as got_rc (== gold_rc when the CQ passed);
+    # the legacy replay format used a flat "rows" field. Accept either.
+    # The SPARQL translations are named without a WG prefix (P1_CQ1-1.rq) while the
+    # replay oracle keys carry it (RAN1_P1_CQ1-1); index by both so the join holds.
+    oracle = {}
+    for r in json.load(open(args.oracle))["results"]:
+        rc = r.get("got_rc") if r.get("got_rc") is not None else r.get("rows")
+        oracle[r["id"]] = rc
+        oracle[re.sub(r"^RAN\d+_", "", r["id"])] = rc
 
     signal.signal(signal.SIGALRM, _alarm)
     results = []

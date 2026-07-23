@@ -1,0 +1,40 @@
+# SPARQL translation of P3_CQ015 — What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)
+# Source: ../cypher/RAN1_P3_CQ015.cypher
+# Anchor mirrors the reference Cypher: highest-release Spec carrying §5.1.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?via ?target ?sectionTitle
+WHERE {
+  {
+    SELECT ?start
+    WHERE {
+      ?rk a spectra:Spec ;
+          spectra:specNumber "38.214" ;
+          spectra:specRelease ?rel .
+      ?start a spectra:Section ;
+             spectra:belongsToSpec ?rk ;
+             spectra:sectionNumber "5.1" .
+      BIND(xsd:integer(REPLACE(?rel, "Rel-", "")) AS ?relNum)
+    }
+    ORDER BY DESC(?relNum)
+    LIMIT 1
+  }
+  ?start spectra:referencesSection ?mid .
+  FILTER EXISTS { ?mid a spectra:Section }
+  ?mid spectra:referencesSection ?end .
+  FILTER EXISTS { ?end a spectra:Section }
+  ?mid spectra:belongsToSpec ?sp1 .
+  FILTER EXISTS { ?sp1 a spectra:Spec }
+  ?end spectra:belongsToSpec ?sp2 .
+  FILTER EXISTS { ?sp2 a spectra:Spec }
+  OPTIONAL { ?sp1 spectra:specNumber ?spNum1 }
+  OPTIONAL { ?mid spectra:sectionNumber ?midNum }
+  OPTIONAL { ?sp2 spectra:specNumber ?spNum2 }
+  OPTIONAL { ?end spectra:sectionNumber ?endNum }
+  OPTIONAL { ?end spectra:sectionTitle ?sectionTitle }
+  BIND(CONCAT(?spNum1, "-", ?midNum) AS ?via)
+  BIND(CONCAT(?spNum2, "-", ?endNum) AS ?target)
+}
+LIMIT 20

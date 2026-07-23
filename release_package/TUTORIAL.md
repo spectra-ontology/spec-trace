@@ -150,15 +150,16 @@ the paper:
 
 ## 6. Authoring Competency Questions
 
-`cqs/spectra_cq_v1.0/questions.json` and `cqs/spectra_cq_v1.0/cypher/`
-together form a 137-CQ benchmark. Each entry has:
+`cqs/spectra_cq_v2.0/questions.json` and `cqs/spectra_cq_v2.0/cypher/`
+together form a 624-CQ scored benchmark spanning RAN1-RAN5. Each entry has:
 
 - a natural-language question (concrete contributing companies, where the
   CQ targets a specific vendor, appear verbatim using their public 3GPP
   identifiers from `TDOC_List.xlsx`, e.g., Huawei, Samsung, Qualcomm);
 - an executable Cypher specification (Neo4j 4.x syntax);
 - a phase tag (P1–P5);
-- a per-CQ verdict on the released RAN1 KG.
+- a deterministic gold answer set from the released per-WG KG
+  (full sets in `cqs/spectra_cq_v2.0/gold/`; scoring lines in `benchmark.jsonl`).
 
 To author your own CQ:
 
@@ -166,7 +167,7 @@ To author your own CQ:
 2. Identify the lifecycle classes it touches (one CQ may legitimately span
    `Tdoc`, `Resolution`, `Section`, and `Spec`).
 3. Translate the question to a Cypher MATCH pattern; keep the Neo4j syntax
-   conventions used in the existing 137 cyphers (`:LABEL` for class,
+   conventions used in the existing 624 cyphers (`:LABEL` for class,
    `[:RELATIONSHIP]` for object property, property dot-access for data
    property).
 4. Validate the query returns at least one row on a SPECTRA-conformant

@@ -1,48 +1,53 @@
 {
-  "_description": "Per-relation integrity in the RAN1 instantiation. 'pct' = (instances with relation / instances of source class) * 100. Snapshot 2026-05-01.",
+  "_description": "Per-relation integrity in the RAN1 instantiation. 'pct' = (instances of the source class carrying at least one such relation / instances of the source class) * 100. 'edge_count' = total number of relation edges; it can exceed the instance count because a source instance may carry several edges (e.g. a document listing multiple submitting companies). Snapshot 2026-07-23.",
   "_caveat": "100% on presentedAt/madeAt reflects loader policy (every Tdoc carries a meeting placement, every Resolution is tied to a meeting). Lower coverage on references/modifiesSection is not a schema gap but a 3GPP convention: authors often cite source documents at Spec granularity (modifies) rather than clause granularity (modifiesSection), and Resolutions often reference TDoc context implicitly without a directed references edge.",
-  "snapshot_date": "2026-05-01",
+  "snapshot_date": "2026-07-23",
   "ran_wg": "RAN1",
   "relations": {
     "presentedAt": {
       "domain": "Tdoc",
       "range": "Meeting",
-      "domain_total": 123678,
-      "with_relation": 123678,
+      "domain_total": 123677,
+      "with_relation": 123677,
       "pct": 100.0,
+      "edge_count": 123678,
       "interpretation": "Every Tdoc carries a meeting placement (loader-enforced)."
     },
     "madeAt": {
       "domain": "Resolution",
       "range": "Meeting",
-      "domain_total": 24956,
-      "with_relation": 24956,
+      "domain_total": 24710,
+      "with_relation": 24710,
       "pct": 100.0,
-      "interpretation": "Every Resolution is tied to a meeting (loader-enforced)."
+      "edge_count": 24956,
+      "interpretation": "Every Resolution is tied to a meeting (loader-enforced); a resolution recorded across sessions can carry more than one edge."
     },
     "submittedBy": {
       "domain": "Tdoc",
       "range": "Company",
-      "domain_total": 155525,
-      "with_relation": 154525,
-      "pct": 99.36,
-      "interpretation": "Most exercised CQ relation; the 0.64% gap traces to missing source metadata in the original 3GPP TDoc list."
+      "domain_total": 123677,
+      "with_relation": 122677,
+      "pct": 99.19,
+      "edge_count": 154525,
+      "interpretation": "Most exercised CQ relation; the 0.81% gap (1,000 documents) traces to missing source metadata in the original 3GPP TDoc list. The edge count exceeds the document count because co-signed documents list several submitting companies."
     },
     "references": {
       "domain": "Resolution",
       "range": "Tdoc",
-      "domain_total": 37738,
-      "with_relation": 19454,
-      "pct": 51.55,
-      "interpretation": "About half of Resolutions explicitly reference a TDoc; the remainder cite TDoc context implicitly within chairman-note text rather than via a directed references edge. Not a schema gap."
+      "domain_total": 24710,
+      "with_relation": 6426,
+      "pct": 26.01,
+      "edge_count": 19454,
+      "interpretation": "About a quarter of Resolutions explicitly reference a TDoc; the remainder cite TDoc context implicitly within chairman-note text rather than via a directed references edge. Not a schema gap."
     },
     "modifiesSection": {
       "domain": "CR",
       "range": "Section",
-      "domain_total": 13759,
-      "with_relation": 4769,
-      "pct": 34.66,
-      "interpretation": "About one-third of CRs declare a section-level target; the remainder cite modifies (Spec-level) only, reflecting 3GPP CR cover-sheet convention. Not a schema gap."
+      "domain_total": 10715,
+      "with_relation": 1797,
+      "pct": 16.77,
+      "edge_count": 5200,
+      "interpretation": "About one-sixth of CRs declare a clause-level target section; the remainder cite modifies (Spec-level) only, reflecting 3GPP CR cover-sheet convention. Not a schema gap."
     }
   }
 }

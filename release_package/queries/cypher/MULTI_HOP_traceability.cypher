@@ -1,25 +1,27 @@
-// Multi-hop traceability: which TDoc(s) motivated the current text of TS 38.214 §5.1.3?
+// Multi-hop traceability: for TS 38.214 §5.1.5, which change requests
+// modified it (and why), and which technical reports shaped the parent
+// specification?
+// Cypher twin of ../sparql/MULTI_HOP_traceability.rq — same two-layer chain,
+// expressed against the property graph restored by pipeline/load_released_kg.py:
+//   CR layer:  (Spec 38.214) <-[:BELONGS_TO_SPEC]- (Section 5.1.5)
+//              <-[:MODIFIES_SECTION]- (CR) (.reasonForChange)
+//   TR layer:  (Spec 38.214) <-[:IMPACTS_SPEC]- (TRImpact)
+//              -[:IMPACT_OF_TR]-> (TechnicalReport)
 //
-// Pattern: Section <- modifiesSection <- CR -> presentedAt -> Meeting <- madeAt <- Resolution -> references -> Tdoc.
-// The Resolution may be a WorkingAssumption (which optionally promotedTo an Agreement)
-// or an Agreement made directly at the meeting; the pattern below handles both via
-// OPTIONAL MATCH so the query degrades gracefully on per-WG KGs that do not emit
-// WorkingAssumption resolutions (e.g., RAN5, scoped to conformance testing, records
-// only Conclusions; running this query against a Conclusion-only KG returns no rows
-// rather than an error). The released `examples/end_to_end/` exercises the WA->Agreement
-// branch against synthetic data; on a live SPECTRA-conformant KG it returns the
-// contributions that justify the current text of any TS section.
+// Modeling note: the released KG carries release-scoped Spec editions
+// (e.g. 38.214 Rel-15..Rel-19), which own the Section nodes, plus a
+// release-unscoped spec-level node, which receives TRImpact edges. The two
+// layers are therefore joined on the natural key specNumber (the same
+// property-keyed idiom the benchmark Cypher uses) rather than on one shared
+// Spec node — hence the two independent MATCH anchors below.
+//
+// Coverage note: in the released RAN1 KG, meeting placement is carried by
+// Tdoc and Resolution nodes rather than by CR nodes (see CQ1-1 and CQ2-1
+// for those hops), so this example chains the CR and TR layers that are
+// materialized end-to-end. All constants verified against the released
+// RAN1-body.ttl.
 
-MATCH (sec:Section {sectionId:'38.214-5.1.3'})
-      <-[:MODIFIES_SECTION]-(cr:CR)
-      -[:PRESENTED_AT]->(m:Meeting)
-WITH sec, cr, m
-OPTIONAL MATCH (m)<-[:MADE_AT]-(wa:WorkingAssumption)-[:REFERENCES]->(t1:Tdoc)
-OPTIONAL MATCH (m)<-[:MADE_AT]-(ag:Agreement)-[:REFERENCES]->(t2:Tdoc)
-OPTIONAL MATCH (m)<-[:MADE_AT]-(ag2:Agreement)<-[:PROMOTED_TO]-(wa2:WorkingAssumption)-[:REFERENCES]->(t3:Tdoc)
-WITH m, COLLECT(DISTINCT t1) + COLLECT(DISTINCT t2) + COLLECT(DISTINCT t3) AS tdocs
-UNWIND tdocs AS t
-WITH DISTINCT t, m
-WHERE t IS NOT NULL
-RETURN t.tdocNumber, t.title, m.meetingNumber
-ORDER BY m.meetingNumberInt DESC, t.tdocNumber
+MATCH (secSpec:Spec {specNumber: '38.214'})<-[:BELONGS_TO_SPEC]-(sec:Section {sectionNumber: '5.1.5'})<-[:MODIFIES_SECTION]-(cr:CR)
+MATCH (trSpec:Spec {specNumber: '38.214'})<-[:IMPACTS_SPEC]-(ti:TRImpact)-[:IMPACT_OF_TR]->(tr:TechnicalReport)
+RETURN DISTINCT cr.tdocNumber AS crNumber, cr.reasonForChange AS reasonForChange, tr.trNumber AS trNumber
+ORDER BY crNumber, trNumber

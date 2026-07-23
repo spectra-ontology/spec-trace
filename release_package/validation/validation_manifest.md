@@ -2,13 +2,22 @@
 
 This manifest maps every quantitative claim in the accompanying paper to a JSON evidence file in this directory, so reviewers can directly inspect each cited number without access to the internal knowledge graphs.
 
+## Two evidence layers
+
+This directory carries two distinct evidence layers; numbers from one must not be read as contradicting the other:
+
+1. **Design-phase ontology validation (RAN1-first, 137 CQs).** The claim tables below date from the ontology-design phase, in which RAN1 served as the development WG: the 137-CQ coverage matrix, RAN1 instance counts, OOPS! scan, schema-growth series, and SPARQL-portability scan all validate the *schema*. They are kept intact as the paper's design-phase evidence.
+2. **Released benchmark reproducibility (5 WGs, 624 scored CQs).** The released SpectraCQ v2.0 benchmark (`cqs/spectra_cq_v2.0/`; 654 authored / 624 released / 30 held out) is governed by `../MANIFEST.md`, the canonical counts manifest. Its reproducibility evidence lives under `cq_replay/`: scratch-reload graph counts (`cq_replay/graph_counts.json`: 966,859 nodes / 4,908,850 relationships; `cq_replay/triple_counts.json`: 12,931,842 RDF triples), five per-WG load reports, five per-WG replay results (624/624 gold match), and `cq_replay/sparql_parity_results.json` (142/142 SPARQL row-count parity — SPARQL translations of all released RAN1 CQs).
+
+The "137" appearing in layer 1 is a design-phase scope label; the SPARQL portability set covers the 142 released RAN1 CQs; the scored benchmark itself is the 624-CQ layer.
+
 ## Mapping: paper claim → evidence file
 
 ### Structural quality (paper §3, §6.2)
 
 | Paper claim | Evidence file | Field |
 |---|---|---|
-| 26 classes | `structural_metrics.json` | `classes_total` |
+| 32 classes | `structural_metrics.json` | `classes_total` |
 | 53 object properties | `structural_metrics.json` | `object_properties` |
 | 81 data properties | `structural_metrics.json` | `data_properties` |
 | 134 properties total | `structural_metrics.json` | `properties_total` |
@@ -20,7 +29,7 @@ This manifest maps every quantitative claim in the accompanying paper to a JSON 
 | 8 reused external terms (5 DC + 1 DCTERMS + 2 FOAF) | `structural_metrics.json` | `reused_external_terms_count`, `reused_dc_terms`, `reused_foaf_terms` |
 | OOPS! results: 0 critical / 2 Important / 2 Minor | `oops_summary.json` | `severity_counts`, `pitfalls` |
 
-### CQ coverage (paper §6.1)
+### CQ coverage (design-phase RAN1 layer)
 
 | Paper claim | Evidence file | Field |
 |---|---|---|
@@ -71,19 +80,20 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 - `cross_wg_use_evidence.json` — Cypher counts measured on the deployed per-WG KGs for cross-WG use-evidence claims.
 - `per_wg_class_coverage.json` — per-WG class-coverage breakdown (which RAN1 classes each non-RAN1 WG instantiates).
 - `ran1_instance_counts.json` — full per-class counts of the RAN1 SPECTRA instantiation, plus referential-integrity statistics for `submittedBy`.
-- `cq_results.json` — 137 CQ × {phase, id, category, status, source_file} produced by re-executing each CQ's reference Cypher against the internal RAN1 Neo4j KG; the per-phase 100% pass rate reported inline in §6.1 (P1=25/25, P2=34/34, P3=45/45, P4=15/15, P5=18/18) is reconstructable from this file's `summary.by_phase`. Also surfaced as a `verdict` field in `release_package/cqs/spectra_cq_v1.0/questions.json` for per-CQ inspection.
+- `cq_results.json` — 137 CQ × {phase, id, category, status, source_file} produced by re-executing each CQ's reference Cypher against the internal RAN1 Neo4j KG; the per-phase 100% pass rate reported inline in §6.1 (P1=25/25, P2=34/34, P3=45/45, P4=15/15, P5=18/18) is reconstructable from this file's `summary.by_phase`. (Design-phase record. In the released benchmark, per-CQ execution status is carried as `gold.status` inside `cqs/spectra_cq_v2.0/questions.json`, and benchmark-wide replay evidence lives under `cq_replay/`.)
 - `ran1_relation_integrity.json` — per-relation integrity metrics on the operational RAN1 KG: `submittedBy` referential integrity (99.36%), `presentedAt`/`madeAt` loader-enforced (100%), `references`/`modifiesSection` machine-resolvable linkage coverage (51.55%/34.66%). Each metric carries an explicit denominator and source.
 - `schema_growth_evidence.json` — per-phase counts (classes / OPs / DPs / cumulative CQs) for Figure on schema growth (§5.1), with refactoring notes for the Released v1.0.0 bar (net −6 DPs, +2 OPs, classes and 137 CQs unchanged).
-- `cypher_to_sparql_portability.json` — static-scan classification of the 137 SpectraCQ Cypher queries by SPARQL-translation portability (graph-pattern + standard-aggregate vs Neo4j-specific). Backs the 136/137 portability indicator quoted in §7.
+- `cypher_to_sparql_portability.json` — static-scan classification of the 137 RAN1-subset SpectraCQ Cypher queries by SPARQL-translation portability: 137/137 schema-level translatable, 0 Neo4j-specific. Executed row-count parity for the shipped SPARQL set — all 142 released RAN1 CQs — is recorded in `cq_replay/sparql_parity_results.json` (142/142 match).
+- `example_queries_results.json` — execution results of the 6 bundled representative SPARQL queries (`queries/sparql/*.rq`) against the released `kg/per_wg/RAN1-body.ttl` (row counts, first-row samples, per-query elapsed time).
 
-**Total: 11 JSON evidence files** under `validation/`. The deterministic verification (`tests/verify_release.py` §6) walks `validation_manifest.md` and resolves every `*.json` reference.
+**Total: 12 JSON evidence files** at the top level of `validation/`, plus the `cq_replay/` benchmark-reproducibility directory (graph/triple counts, five per-WG load reports, five per-WG replay results, SPARQL parity) and `chart_parser_fidelity_note.md`. The deterministic verification (`tests/verify_release.py` §6) walks `validation_manifest.md` and resolves every `*.json` reference.
 
 ## PROV-O alignment (paper §4.3)
 
 | Paper claim | Evidence |
 |---|---|
 | 6 `rdfs:subClassOf` axioms (Resolution⊑prov:Activity, Tdoc⊑prov:Entity, Company⊑prov:Agent + Company⊑foaf:Organization, Contact⊑prov:Agent + Contact⊑foaf:Person) — 6 triples | `ontology/spectra.ttl` lines following "Optional PROV-O alignment" comment block; `structural_metrics.json::prov_o_alignment.subclass_axioms` (6 entries) |
-| Total triples 886 (after dropping 3 spurious owl:FunctionalProperty declarations on multi-valued links: presentedAt, modifies, originatedFrom) | `structural_metrics.json::triples_total=886`; reproducible by `tests/reproduce_structural_metrics.py` |
+| Total triples 904 (after dropping 3 spurious owl:FunctionalProperty declarations on multi-valued links: presentedAt, modifies, originatedFrom) | `structural_metrics.json::triples_total=904`; reproducible by `tests/reproduce_structural_metrics.py` |
 
 ## Schema growth (paper §5.1, Figure 4)
 
@@ -114,6 +124,6 @@ The following small deltas exist between the operational-KG snapshot (the `valid
 - **LS aggregate across RAN1–RAN5**: `_export_summary.txt` shows two figures on adjacent lines:
   - `PER-WG-ENDPOINT SUM: 26,791` — **NOT a distinct-LS count**; each cross-WG LS is counted once per endpoint WG it touches. This figure should NOT be cited as the distinct LS total.
   - `CANONICAL DISTINCT LS COUNT: 25,586` — paper-cited figure; de-duplicated by `tdocNumber` across the union. This is the value paper Appendix §A.dq cites as "1,556 of 25,586 distinct LSs (6.1%)".
-  The `_export_summary.txt` header was clarified on 2026-05-11 to make this distinction prominent and reduce the risk of downstream consumers (or future agents) accidentally citing 26,791 instead of 25,586.
+  The `_export_summary.txt` header makes this distinction prominent to reduce the risk of downstream consumers accidentally citing 26,791 instead of 25,586.
 - **`ls_routing.ttl` triple count**: `examples/process_kg/SCHEMA.md` reports `195,434 triples` (export-time snapshot, 2026-04-29). Re-parsing the same file under `rdflib 6.x` as of 2026-05-11 yields `195,968 triples` — a +0.27% delta from implementation-side metadata triples that rdflib emits on parse. Paper Appendix §G "2.44M union triples" is reproducible under either reading.
 - **Per-WG outgoing LS coverage range (51.9–96.6%)** mentioned in Appendix §A.dq is computed per RAN-WG over `ls_routing.ttl` and is not currently exposed as a separate per-WG LS-coverage JSON artefact. Future v1.0.x releases may add such a JSON; in the interim the range is reproducible via offline parse of the released `examples/process_kg/ls_routing.ttl`.

@@ -1,0 +1,21 @@
+# SPARQL translation of P3_P3-S8-CQ01 — Return the item-level node count for each of the five entity classes: RRCParameter, CapabilityItem, Procedure, PerformanceRequirement, ConformanceTest (entity-layer inventory).
+# Source: ../cypher/RAN1_P3_P3-S8-CQ01.cypher
+# Realization note: only classes with at least one item-level instance
+# produce a group row, matching the Cypher MATCH-then-aggregate semantics.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?class (COUNT(?n) AS ?items)
+WHERE {
+  VALUES (?cls ?class) {
+    (spectra:RRCParameter "RRCParameter")
+    (spectra:CapabilityItem "CapabilityItem")
+    (spectra:Procedure "Procedure")
+    (spectra:PerformanceRequirement "PerformanceRequirement")
+    (spectra:ConformanceTest "ConformanceTest")
+  }
+  ?n a ?cls ;
+     spectra:granularity "item" .
+}
+GROUP BY ?class
+ORDER BY DESC(?items)

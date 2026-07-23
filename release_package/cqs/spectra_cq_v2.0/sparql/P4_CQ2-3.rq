@@ -1,0 +1,22 @@
+# SPARQL translation of P4_CQ2-3 — How many CRs list TS 38.214 as a cross-spec impact target, and which are representative?
+# Source: ../cypher/RAN1_P4_CQ2-3.cypher
+# Realization note: the three affects*Spec predicates are expanded as a UNION
+# over fixed predicates (a predicate-variable VALUES pattern forces a full
+# scan in rdflib). GROUP_CONCAT carries the full CR list where the Cypher
+# returns a [..10] sample; the row count (one aggregate row) is unaffected.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?specNumber (COUNT(?cr) AS ?crCount)
+       (GROUP_CONCAT(?tdocNumber; SEPARATOR=", ") AS ?sampleCRs)
+WHERE {
+  ?sp a spectra:Spec ;
+      spectra:specNumber ?specNumber .
+  FILTER(?specNumber = "38.214")
+  { ?cr spectra:affectsCoreSpec ?sp }
+  UNION { ?cr spectra:affectsTestSpec ?sp }
+  UNION { ?cr spectra:affectsOmSpec ?sp }
+  FILTER EXISTS { ?cr a spectra:CR }
+  OPTIONAL { ?cr spectra:tdocNumber ?tdocNumber }
+}
+GROUP BY ?sp ?specNumber

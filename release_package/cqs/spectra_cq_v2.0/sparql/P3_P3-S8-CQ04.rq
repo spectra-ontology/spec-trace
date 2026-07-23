@@ -1,0 +1,18 @@
+# SPARQL translation of P3_P3-S8-CQ04 — Do the disjointWith relations between Features (LTM, CHO, CPC, CPAC, etc.) match the feature catalog's disjoint groups? (consistency check)
+# Source: ../cypher/RAN1_P3_P3-S8-CQ04.cypher
+# Realization note: the property-graph relationship disjointWith is
+# serialized as spectra:_disjointWith in the released TTL (the loader strips
+# the underscore prefix when restoring relationships).
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?a ?b
+WHERE {
+  ?fa a spectra:Feature ;
+      spectra:_disjointWith ?fb ;
+      spectra:name ?a .
+  ?fb a spectra:Feature ;
+      spectra:name ?b .
+  FILTER(?a < ?b)
+}
+ORDER BY ?a ?b

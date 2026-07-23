@@ -1,29 +1,41 @@
-# Multi-hop traceability: for the current text of TS 38.214 §5.1.5, which
-# change requests modified it (and why), and which technical reports shaped
-# the parent specification?
+# Multi-hop traceability: for TS 38.214 §5.1.5, which change requests
+# modified it (and why), and which technical reports shaped the parent
+# specification?
 # Walks two traceability layers from one section:
-#   CR layer:  Section <- modifiesSection <- CR (-> reasonForChange)
-#   TR layer:  Section -> belongsToSpec -> Spec <- impactsSpec <- TRImpact -> impactOfTr -> TR
+#   CR layer:  Spec(38.214) <- belongsToSpec <- Section(5.1.5)
+#              <- modifiesSection <- CR (-> reasonForChange)
+#   TR layer:  Spec(38.214) <- impactsSpec <- TRImpact -> impactOfTr -> TR
 #
-# Coverage note: in the released RAN1 KG, meeting placement is carried by Tdoc
-# and Resolution individuals rather than by CR individuals (see CQ1-1 and
-# CQ2-1 for those hops), so this example chains the CR and TR layers that are
-# materialized end-to-end. All constants verified against the released
-# RAN1-body.ttl.
+# Modeling note: the released KG carries release-scoped Spec editions
+# (e.g. 38.214 Rel-15..Rel-19), which own the Section individuals, plus a
+# release-unscoped spec-level individual, which receives TRImpact edges.
+# The two layers are therefore joined on the natural key specNumber (the
+# same property-keyed idiom the benchmark Cypher uses) rather than on one
+# shared Spec node.
+#
+# Coverage note: in the released RAN1 KG, meeting placement is carried by
+# Tdoc and Resolution individuals rather than by CR individuals (see CQ1-1
+# and CQ2-1 for those hops), so this example chains the CR and TR layers
+# that are materialized end-to-end. All constants verified against the
+# released RAN1-body.ttl.
 
 PREFIX spectra: <https://w3id.org/spectra#>
 
 SELECT DISTINCT ?crNumber ?reasonForChange ?trNumber
 WHERE {
+  ?secSpec a spectra:Spec ;
+           spectra:specNumber "38.214" .
   ?sec a spectra:Section ;
-       spectra:sectionId "38.214-5.1.5" ;
-       spectra:belongsToSpec ?spec .
+       spectra:sectionNumber "5.1.5" ;
+       spectra:belongsToSpec ?secSpec .
   ?cr a spectra:CR ;
       spectra:modifiesSection ?sec ;
       spectra:tdocNumber ?crNumber .
   OPTIONAL { ?cr spectra:reasonForChange ?reasonForChange . }
+  ?trSpec a spectra:Spec ;
+          spectra:specNumber "38.214" .
   ?impact a spectra:TRImpact ;
-          spectra:impactsSpec ?spec ;
+          spectra:impactsSpec ?trSpec ;
           spectra:impactOfTr ?tr .
   ?tr spectra:trNumber ?trNumber .
 }

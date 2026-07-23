@@ -1,0 +1,57 @@
+# SPARQL translation of P3_CQ003 — Show the breadcrumb path to TS 38.214 Section 5.1.3.2 (locating a section in the hierarchy).
+# Source: ../cypher/RAN1_P3_CQ003.cypher
+# Anchor mirrors the reference Cypher: among the release-qualified Section
+# nodes numbered 5.1.3.2 in TS 38.214, take the one on the highest-release
+# Spec. The ancestor walk is split into an explicit zero-step branch plus a
+# parentSection+ branch (equivalent to parentSection*): rdflib evaluates a
+# zero-or-more path with unbound endpoints by enumerating every term in the
+# graph, which does not terminate within the harness time limit on the
+# full body graph, whereas the one-or-more form only closes over the
+# parentSection edges. The anchor subquery is repeated in each branch so
+# ?target is bound locally regardless of join order.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?sectionNumber ?sectionTitle
+WHERE {
+  {
+    {
+      SELECT ?target
+      WHERE {
+        ?rk a spectra:Spec ;
+            spectra:specNumber "38.214" ;
+            spectra:specRelease ?rel .
+        ?target a spectra:Section ;
+                spectra:belongsToSpec ?rk ;
+                spectra:sectionNumber "5.1.3.2" .
+        BIND(xsd:integer(REPLACE(?rel, "Rel-", "")) AS ?relNum)
+      }
+      ORDER BY DESC(?relNum)
+      LIMIT 1
+    }
+    BIND(?target AS ?n)
+  }
+  UNION
+  {
+    {
+      SELECT ?target
+      WHERE {
+        ?rk a spectra:Spec ;
+            spectra:specNumber "38.214" ;
+            spectra:specRelease ?rel .
+        ?target a spectra:Section ;
+                spectra:belongsToSpec ?rk ;
+                spectra:sectionNumber "5.1.3.2" .
+        BIND(xsd:integer(REPLACE(?rel, "Rel-", "")) AS ?relNum)
+      }
+      ORDER BY DESC(?relNum)
+      LIMIT 1
+    }
+    ?target spectra:parentSection+ ?n .
+  }
+  OPTIONAL { ?n spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?n spectra:sectionTitle ?sectionTitle }
+  OPTIONAL { ?n spectra:level ?level }
+}
+ORDER BY ?level

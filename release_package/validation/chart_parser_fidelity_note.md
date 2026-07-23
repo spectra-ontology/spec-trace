@@ -7,7 +7,7 @@ maintainers can verify the parser's behaviour.
 
 ## What the parser does
 
-`scripts/phase-2/RAN1/report-parser/chart_extractor.py` walks every DOCX Final
+`scripts/RAN/formal/RAN1/phase-2/report-parser/chart_extractor.py` walks every DOCX Final
 Report and distinguishes two embedded-content cases inside `w:drawing`:
 
 | Element                     | SPECTRA class | Rationale                                                  |
@@ -25,7 +25,7 @@ each embedded drawing to the matching subtype.
 Source meeting: **RAN1#114b** (Toulouse, 2023-08; AI/ML for air interface,
 Rel-18 Work Item).
 
-Parsed metadata (from `ontology/output/parsed_reports/RAN1/RAN1_114b.json`):
+Parsed metadata (from `ontology/output/RAN/formal/parsed_reports/RAN1/RAN1_114b.json`):
 
 ```json
 {
@@ -37,7 +37,7 @@ Parsed metadata (from `ontology/output/parsed_reports/RAN1/RAN1_114b.json`):
 }
 ```
 
-Chart payload (`ontology/output/charts/RAN1/RAN1_114b/CHT-114b-001.xml`,
+Chart payload (`ontology/output/RAN/formal/charts/RAN1/RAN1_114b/CHT-114b-001.xml`,
 ~19 KB OOXML):
 
 - **Type:** `scatterChart` on log–log axes

@@ -6,8 +6,8 @@ labels: spectraCQ, enhancement
 assignees: ''
 ---
 
-Use this template to propose adding a new competency question to **SpectraCQ v1.0**
-(the 137-CQ companion dataset shipped with the SPECTRA ontology).
+Use this template to propose adding a new competency question to **SpectraCQ v2.0**
+(the 624-CQ scored companion dataset shipped with the SPECTRA ontology).
 
 ## Question (English)
 

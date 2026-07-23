@@ -3,9 +3,45 @@
 All notable changes to the SPECTRA release package are documented in this file.
 Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] — 2026-07-23
+
+Major release for the KDD 2027 Datasets & Benchmarks submission.
+
+### Changed
+- **Ontology 1.1.0** (`ontology/spectra.ttl`, mirrored at `docs/spectra.ttl`):
+  declares the six entity-layer classes (`RRCParameter`, `CapabilityItem`,
+  `Feature`, `Procedure`, `PerformanceRequirement`, `ConformanceTest`) whose
+  instances the per-WG body KG exports already carry, alongside the 26
+  process-layer classes — 32 classes, 904 triples. Adds `owl:versionIRI`
+  and `owl:priorVersion` to the ontology header. Object/data property
+  counts (53/81) and all axiom counts are unchanged.
+- **SpectraCQ v2.0** (`cqs/spectra_cq_v2.0/`, directory renamed from
+  `cqs/spectra_cq_v1.0/`): the released question set is now the full
+  scored 5-WG suite — 624 scored CQs (654 authored; 30 held out under
+  `held/`) with per-WG deterministic gold answer sets — replacing the
+  137 design-phase CQ set shipped in v1.0.x. Dataset metadata
+  (`questions.json`, `croissant.json`, `CITATION.cff`, `citation.bib`)
+  and all living references updated to the new path and version.
+- **SpectraCQ gold regeneration with deterministic tie-breaks**: gold
+  answers regenerated from the deployed graphs with explicit deterministic
+  ordering; replay now reproduces 624/624 released CQs exactly.
+- **Per-WG body KG exports**: 3,214 repo-relative path literals (internal
+  build-environment artifacts) removed from the TTL exports; graph
+  structure and all entity/relationship content unchanged.
+- **Authorship de-anonymized** for the Datasets & Benchmarks submission:
+  author attribution restored in release metadata.
+- Structural metrics, release gates (`verify_release.py`,
+  `paper_claim_verifier.py`), DCAT/VoID metadata, README, and schema
+  overview updated to the 32-class / 904-triple state.
+- Repository URLs corrected across metadata and docs
+  (`spectra-ontology/spectra` → `spectra-ontology/spec-trace`; the former
+  was never a live repository).
+- Supplement (`supplement/standalone_appendix.tex`, `supplement/README.md`)
+  aligned with the unified single-author, venue-neutral release metadata.
+
 ## [1.0.1] — 2026-06-12
 
-Resource-package improvements responding to the ISWC 2026 reviews. The
+Resource-package improvements responding to peer-review feedback. The
 ontology (`spectra.ttl`), SHACL shapes, SpectraCQ question set, and all
 released KG data files are byte-identical to v1.0.0; this patch adds
 metadata, queries, documentation, and reproducibility tooling only.
@@ -76,7 +112,7 @@ metadata, queries, documentation, and reproducibility tooling only.
 
 ## [1.0.0] — 2026-05-08 (camera-ready; Zenodo DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) minted)
 
-First public release accompanying the ISWC 2026 Resources Track submission
+First public release accompanying the paper
 *"SPECTRA: A Traceability Ontology for the 3GPP RAN Standardization Process"*.
 
 ### Included

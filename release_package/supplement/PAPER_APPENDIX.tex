@@ -153,14 +153,14 @@ Table~\ref{tab:repro-map} expands the Reproducibility paragraph in §\ref{sec:fa
 \toprule
 \textbf{Claim} & \textbf{Artifact} & \textbf{Check} \\
 \midrule
-Ontology has 886 triples & \texttt{ontology/spectra.ttl} & \texttt{verify\_release.py §1} \\
+Ontology has 904 triples & \texttt{ontology/spectra.ttl} & \texttt{verify\_release.py §1} \\
 Bundled instantiation snippet conforms to SHACL & \texttt{examples/\bk instantiation\_\bk snippet.\bk ttl}, \texttt{shapes/\bk spectra-\bk core.\bk shacl.\bk ttl} & \texttt{verify\_release.py §2} \\
 Process-KG union conforms to SHACL ($\sim$2.44M triples, Appendix~\ref{app:dq}) & \texttt{examples/\bk process\_\bk kg/}*.ttl, \texttt{shapes/\bk spectra-\bk core.\bk shacl.\bk ttl} & \texttt{verify\_release.py §2b} \\
 End-to-end SPARQL example returns the documented row & \texttt{examples/end\_to\_end/} & \texttt{verify\_release.py §3} \\
-SpectraCQ ships 137 CQ + 137 Cypher with 25/34/45/15/18 phase distribution and 137-PASS RAN1 verdict & \texttt{cqs/spectra\_cq\_v1.0/} & \texttt{verify\_release.py §4} \\
+SpectraCQ ships 137 CQ + 137 Cypher with 25/34/45/15/18 phase distribution and 137-PASS RAN1 verdict & \texttt{cqs/spectra\_cq\_v2.0/} & \texttt{verify\_release.py §4} \\
 Structural metrics (26/53/81/20/2/15/6/2 + 6 PROV-O axioms) & \texttt{validation/\bk structural\_\bk metrics.\bk json} & \texttt{verify\_release.py §5} \\
 All validation manifest references resolve & \texttt{validation/validation\_manifest.md} & \texttt{verify\_release.py §6} \\
-SpectraCQ contains only public 3GPP company identifiers (verbatim from \texttt{TDOC\_List.xlsx} where present in 14/137 CQs); no private contacts or non-public personal data & \texttt{cqs/spectra\_cq\_v1.0/} & \texttt{verify\_release.py §7} \\
+SpectraCQ contains only public 3GPP company identifiers (verbatim from \texttt{TDOC\_List.xlsx} where present in 49/624 released CQs); no private contacts or non-public personal data & \texttt{cqs/spectra\_cq\_v2.0/} & \texttt{verify\_release.py §7} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -191,13 +191,13 @@ Body content (CR/TR/TS text, \texttt{discussionText} \emph{values}) & verbatim &
 
 \noindent\textbf{Company names.} Both process-KG metadata and SpectraCQ retain verbatim company names matching the public 3GPP per-meeting \texttt{TDOC\_List.xlsx} and TDoc cover pages. No anonymization is applied because the names are already public 3GPP metadata. The \texttt{Contact} class instances populated in our internal operational KG are excluded from the public release; the released TTLs contain no personal correspondence from document body text.
 
-\noindent\textbf{Two-tier licence boundary.} SPECTRA-authored components (the OWL ontology, SHACL shapes, PyLODE documentation, SpectraCQ v1.0, sample SPARQL/Cypher queries, synthetic instantiation examples, sanitized parsing-pipeline source, and \texttt{verify\_release.py}) are released under CC-BY 4.0. Body-text literals derived from 3GPP CR/TR/TS PDFs are redistributed with explicit 3GPP source attribution, following the academic redistribution practice established by~\cite{nikbakht2024tspec,gsma2026telecomkg}.
+\noindent\textbf{Two-tier licence boundary.} SPECTRA-authored components (the OWL ontology, SHACL shapes, PyLODE documentation, SpectraCQ v2.0, sample SPARQL/Cypher queries, synthetic instantiation examples, sanitized parsing-pipeline source, and \texttt{verify\_release.py}) are released under CC-BY 4.0. Body-text literals derived from 3GPP CR/TR/TS PDFs are redistributed with explicit 3GPP source attribution, following the academic redistribution practice established by~\cite{nikbakht2024tspec,gsma2026telecomkg}.
 
 \noindent\textbf{Verifiable boundary.} The \texttt{verify\_release.py} script (Section~7) verifies the \texttt{real\_world\_mini} synthetic instantiation contains only synthetic identifiers (no real company-name leak from the operational KG into the synthetic example set).
 
 \section{Process-KG Data Quality and SHACL Conformance}\label{app:dq}
 
-The cross-WG process KG (\texttt{examples/process\_kg/}) is shipped as three union-compatible Turtle files: \texttt{ls\_routing.ttl} (195K triples, 25,586 distinct LSs), \texttt{cr\_routing.ttl} (1.25M triples, 192,967 CRs), and \texttt{ran1\_tdoc\_metadata.ttl} (991K triples, 123,678 TDocs). Together they form a 2.44M-triple union graph that conforms to \texttt{shapes/\bk spectra-core.\bk shacl.\bk ttl} with zero violations under pyshacl. Note: the schema graph (\texttt{ontology/spectra.ttl}, 886 triples) and this 2.44M-triple process KG measure different things---the 886 number counts \emph{schema axioms} (class/property declarations), while 2.44M counts \emph{instance triples} populated against that schema.
+The cross-WG process KG (\texttt{examples/process\_kg/}) is shipped as three union-compatible Turtle files: \texttt{ls\_routing.ttl} (195K triples, 25,586 distinct LSs), \texttt{cr\_routing.ttl} (1.25M triples, 192,967 CRs), and \texttt{ran1\_tdoc\_metadata.ttl} (991K triples, 123,678 TDocs). Together they form a 2.44M-triple union graph that conforms to \texttt{shapes/\bk spectra-core.\bk shacl.\bk ttl} with zero violations under pyshacl. Note: the schema graph (\texttt{ontology/spectra.ttl}, 904 triples) and this 2.44M-triple process KG measure different things---the 904 number counts \emph{schema axioms} (class/property declarations), while 2.44M counts \emph{instance triples} populated against that schema.
 
 Three population-time conventions and one upstream-data observation, derived directly from inspection of the released TTLs and the source RAN1--RAN5 KGs, govern how the schema's lifecycle classes are instantiated; readers querying the release should be aware of them:
 

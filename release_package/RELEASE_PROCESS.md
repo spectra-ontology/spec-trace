@@ -1,6 +1,6 @@
-# Release Process — SPECTRA (v1.0.0 and v1.0.1 record)
+# Release Process — SPECTRA (v1.0.0 · v1.0.1 · v2.0.0 record)
 
-**Status (2026-05-06)**: All v1.0.0 release steps below have been **completed**. This document is retained as the historical record of the release process and as a template for future releases. The v1.0.1 record follows the v1.0.0 status table.
+**Status (2026-05-06)**: All v1.0.0 release steps below have been **completed**. This document is retained as the historical record of the release process and as a template for future releases. The v1.0.1 and v2.0.0 records follow the v1.0.0 status table.
 
 | Step | Status | Result |
 |---|---|---|
@@ -24,14 +24,28 @@ Content scope: see `CHANGELOG.md` `[1.0.1]` (137 executable SPARQL translations 
 | Zenodo | ⏸ No new version deposit | All large data files (per-WG body-text TTLs) are byte-identical to the v1.0.0 deposit; the record description was already updated. Re-uploading ~922 MB would change nothing. DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) remains the citable record. |
 | w3id | ✅ Unchanged | `https://w3id.org/spectra` redirects are content-addressed to the repository and require no update |
 
-Note: `ontology/spectra.ttl` keeps `owl:versionInfo "1.0.0"` — the ontology axioms are unchanged in v1.0.1; the package version and the ontology version are versioned independently.
+Note: `ontology/spectra.ttl` keeps `owl:versionInfo "1.0.0"` in v1.0.1 — the ontology axioms are unchanged in v1.0.1; the package version and the ontology version are versioned independently.
+
+## v2.0.0 Release Record
+
+Content scope: see `CHANGELOG.md` `[2.0.0]` (SpectraCQ v2.0 — 624 scored CQs of 654 authored with deterministic gold answer sets and per-WG gold files, a 142-query SPARQL parity subset, croissant metadata, the evaluation suite, and the validation manifest mapping paper claims to evidence files).
+
+| Step | Status | Result |
+|---|---|---|
+| Package content on public `main` | ✅ Completed (2026-07-23) | `sync_to_public.sh` run against the v2.0.0 dev tree |
+| Metadata refresh (`.zenodo.json`, `CITATION.cff`, `codemeta.json`, `croissant.json`) | ✅ Completed | version 2.0.0; single-author attribution; venue-neutral wording |
+| Zenodo new version | ⏳ In preparation | New version under concept DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871); the version DOI is minted at publish, which is a human-author action. Until publication, no DOI should be cited for the 624-CQ benchmark (see `MANIFEST.md` §5). |
+| Git tag `v2.0.0` + GitHub Release | ⏳ Pending | created after the Zenodo version DOI is minted |
+| w3id | ✅ Unchanged | redirects are content-addressed to the repository |
+
+Note: `ontology/spectra.ttl` carries `owl:versionInfo "1.1.0"` in the 2.0.0 package — the entity-layer classes are an additive minor revision of the ontology; the package version and the ontology version are versioned independently.
 
 ---
 
 ## Process Record
 
 This document originally enumerated the manual steps required to make the SPECTRA
-v1.0.0 release publicly resolvable for the ISWC 2026 Resource Track
+v1.0.0 release publicly resolvable for the accompanying paper
 submission. All artifact-side preparation was staged in the local
 repository; the steps below required account access only the human author
 had (GitHub push, Zenodo upload + publish, w3id PR submission). All steps are now complete (see status table above).

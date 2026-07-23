@@ -36,11 +36,14 @@ Contact     ⊑ foaf:Person
 
 TSFigure, TSTable  (figures/tables embedded in TS sections)
 Figure, Table, Chart  (embedded artefacts referenced by TDocs)
+
+Feature, Procedure, RRCParameter, CapabilityItem,
+PerformanceRequirement, ConformanceTest  (entity layer: spec-body entities)
 ```
 
-Total: 26 classes (5 Tdoc + Resolution + 3 Resolution subclasses + Spec/Section/TSTable/TSFigure
+Total: 32 classes (5 Tdoc + Resolution + 3 Resolution subclasses + Spec/Section/TSTable/TSFigure
 + TechnicalReport/TRImpact/CRPack + Meeting/WorkingGroup/WorkItem/AgendaItem/Release
-+ Company/Contact + Figure/Table/Chart).
++ Company/Contact + Figure/Table/Chart + 6 entity-layer classes).
 
 ## Key relationships
 

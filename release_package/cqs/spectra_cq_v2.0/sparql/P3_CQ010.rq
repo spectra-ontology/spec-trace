@@ -1,0 +1,30 @@
+# SPARQL translation of P3_CQ010 — Which sections reference TS 38.211 Section 5.2.1 (Pseudo-random sequence)? (finding users of this base algorithm)
+# Source: ../cypher/RAN1_P3_CQ010.cypher
+# Anchor mirrors the reference Cypher: highest-release Spec carrying §5.2.1.
+
+PREFIX spectra: <https://w3id.org/spectra#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?sectionNumber ?sectionTitle
+WHERE {
+  {
+    SELECT ?tgt
+    WHERE {
+      ?rk a spectra:Spec ;
+          spectra:specNumber "38.211" ;
+          spectra:specRelease ?rel .
+      ?tgt a spectra:Section ;
+           spectra:belongsToSpec ?rk ;
+           spectra:sectionNumber "5.2.1" .
+      BIND(xsd:integer(REPLACE(?rel, "Rel-", "")) AS ?relNum)
+    }
+    ORDER BY DESC(?relNum)
+    LIMIT 1
+  }
+  ?src spectra:referencesSection ?tgt .
+  FILTER EXISTS { ?src a spectra:Section }
+  OPTIONAL { ?src spectra:sectionNumber ?sectionNumber }
+  OPTIONAL { ?src spectra:sectionTitle ?sectionTitle }
+}
+ORDER BY ?sectionNumber
+LIMIT 30

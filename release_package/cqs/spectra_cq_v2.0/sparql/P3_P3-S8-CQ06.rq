@@ -1,0 +1,26 @@
+# SPARQL translation of P3_P3-S8-CQ06 — Do the baseline IEs (CodebookConfig-r16, LTM-Config-r18, BeamFailureRecoveryConfig, TCI-State) exist as :RRCParameter nodes? (baseline-presence check)
+# Source: ../cypher/RAN1_P3_P3-S8-CQ06.cypher
+# Realization note: mirrors the Cypher UNWIND + OPTIONAL MATCH — one row per
+# probed IE name regardless of whether a matching RRCParameter node exists
+# (?found is false and spec/release stay unbound when it does not).
+
+PREFIX spectra: <https://w3id.org/spectra#>
+
+SELECT ?expected ?found ?spec ?release
+WHERE {
+  VALUES ?expected {
+    "CodebookConfig-r16"
+    "LTM-Config-r18"
+    "BeamFailureRecoveryConfig"
+    "TCI-State"
+    "TCI-UL-State-r17"
+    "RadioLinkMonitoringConfig"
+  }
+  OPTIONAL {
+    ?ie a spectra:RRCParameter ;
+        spectra:ieName ?expected .
+    OPTIONAL { ?ie spectra:specNumber ?spec }
+    OPTIONAL { ?ie spectra:release ?release }
+  }
+  BIND(BOUND(?ie) AS ?found)
+}
