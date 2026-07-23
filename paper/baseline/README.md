@@ -11,6 +11,9 @@ recomputed offline from the files in this directory.
 bench_common.py           shared infra: env, OpenRouter chat/embeddings, Qdrant search, Neo4j exec
 run_baseline.py           campaign runner (dry-run by default; --confirm to call APIs)
 score.py                  deterministic re-scorer (no network, no LLM)
+protocol_bounds.py        recomputes the paper's protocol-level bounds from recorded
+                          artifacts (retrieval coverage at top-k, KG failure accounting,
+                          gold cardinality); no network, no LLM
 make_results_figure.py    regenerates the results figure from results/scores.json
 models.json               the nine-model roster (OpenRouter catalog IDs)
 schema_cards.json         per-WG Neo4j schema cards shown to kg_grounded models
