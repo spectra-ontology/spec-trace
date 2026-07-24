@@ -17,10 +17,10 @@ set -euo pipefail
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
-# Symlink llncs.cls + splncs04.bst from the main paper's TeX directory if missing.
-LATEX_SRC_DIR="$SCRIPT_DIR/../../docs/paper/past-venues/iswc/latex"
-[ ! -e llncs.cls ]      && ln -sf "$LATEX_SRC_DIR/llncs.cls" llncs.cls
-[ ! -e splncs04.bst ]   && ln -sf "$LATEX_SRC_DIR/splncs04.bst" splncs04.bst
+# llncs.cls + splncs04.bst are vendored alongside this script; fail early if absent.
+for f in llncs.cls splncs04.bst; do
+  [ -e "$f" ] || { echo "FAIL: missing $f (vendored LNCS class/bst shipped in this directory)"; exit 1; }
+done
 
 echo "[1/3] pdflatex pass 1..."
 pdflatex -interaction=nonstopmode standalone_appendix.tex > /tmp/sup_build_p1.log 2>&1 \

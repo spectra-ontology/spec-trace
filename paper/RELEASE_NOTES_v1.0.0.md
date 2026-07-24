@@ -1,4 +1,4 @@
-# SPECTRA v1.0.0 — companion to ISWC 2026 Resources Track submission (under review)
+# SPECTRA v1.0.0 — initial public release of the SPECTRA ontology
 
 **Release date**: 2026-04-27
 **License**: CC-BY 4.0
@@ -28,6 +28,6 @@ The full 137-CQ suite, the operational parsing/loading pipeline, and the per-WG 
 
 ## Citation
 
-See `CITATION.cff` for machine-readable citation metadata. The accompanying paper (currently under review at ISWC 2026 Resources Track):
+See `CITATION.cff` for machine-readable citation metadata. The manuscript associated with this release:
 
-> Choi, S., Lee, J. (2026). SPECTRA: A Traceability Ontology for the 3GPP RAN Standardization Process. International Semantic Web Conference (ISWC) 2026, Resources Track.
+> Choi, S., Lee, J. (2026). SPECTRA: A Traceability Ontology for the 3GPP RAN Standardization Process. Manuscript.
