@@ -83,13 +83,13 @@ def main():
         if key == "kg_grounded":
             for b, v in zip(bars, vals):
                 ax.text(b.get_x() + b.get_width() / 2, v + 0.006, f"{v:.2f}",
-                        ha="center", va="bottom", fontsize=6.3, color="#0072B2")
+                        ha="center", va="bottom", fontsize=7.0, color="#005A8F")
 
     ax.set_ylabel("Set F1", fontsize=9)
     ax.set_ylim(0, 0.36)
     ax.set_yticks([0.0, 0.1, 0.2, 0.3])
     ax.set_xticks(xs)
-    ax.set_xticklabels([DISPLAY.get(m, m) for m in models], fontsize=6.6)
+    ax.set_xticklabels([DISPLAY.get(m, m) for m in models], fontsize=7.2)
     ax.tick_params(axis="y", labelsize=7.5)
     ax.tick_params(axis="x", length=0)
 
