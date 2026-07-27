@@ -121,10 +121,13 @@ and set precision / recall / F1 on normalised values.
 
 ## Citation
 
-See `CITATION.cff` / `citation.bib`. The 624-CQ scored benchmark is **not yet
-deposited** on Zenodo; no DOI should be cited for it until a public record is
-minted (the existing SPECTRA DOI identifies the prior ontology-centric
-release — see `../../MANIFEST.md` §5).
+See `CITATION.cff` / `citation.bib`. Cite the concept DOI
+**10.5281/zenodo.20034871**, which always resolves to the newest published
+deposit; the 624-CQ scored benchmark is carried by the release-package 2.0.0
+deposit under that concept. Two additions in this directory —
+`splits/` and `answer_contract.jsonl` — were made after the 2.0.0 archive was
+built and are present in the Git tree only; both are plain text and rebuild
+offline. See `../../MANIFEST.md` §5 for the deposit-versus-repository split.
 
 ## License
 

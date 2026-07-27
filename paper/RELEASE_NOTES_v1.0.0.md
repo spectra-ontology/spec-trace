@@ -3,7 +3,7 @@
 **Release date**: 2026-04-27
 **License**: CC-BY 4.0
 **Persistent IRI**: https://w3id.org/spectra
-**DOI**: (assigned by Zenodo upon publication of this release)
+**DOI**: 10.5281/zenodo.20034872 (this version) · 10.5281/zenodo.20034871 (concept, resolves to the newest deposit)
 
 ## What this release contains
 
