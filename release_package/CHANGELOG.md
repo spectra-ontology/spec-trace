@@ -7,6 +7,29 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 
 Major release for the KDD 2027 Datasets & Benchmarks submission.
 
+### Added
+- **Canonical splits** (`cqs/spectra_cq_v2.0/splits/`): four evaluation
+  splits over the 624-question key — standard 60/20/20 stratified over the
+  20 (working group x track) strata, a template-disjoint split, a
+  cross-group split holding RAN5 out in full, and a 33-question challenge
+  subset — with the stratification axis, the composition and leakage audit,
+  and `rebuild_splits.py`, which reproduces every list byte for byte with
+  no database and no network.
+- **Answer contract** (`cqs/spectra_cq_v2.0/answer_contract.jsonl`): one
+  line per SpectraCQ-Core item (560) recording the graded answer type and
+  columns, the ordering key and cardinality the reference query imposes,
+  and what would have to change for the item to hold exactly as asked.
+- **Release verifier** (`tests/verify_benchmark.py`): two modes — a quick
+  mode that checks the shipped files against the recorded answer key with
+  no database, and a full mode that reloads and replays.
+- **Cell-level SPARQL/Cypher comparison harness**
+  (`paper/baseline/sparql_row_equivalence.py`, at the repository root): puts
+  the full result sets side by side cell by cell rather than counting rows,
+  with a stated normalization ladder, a mutation-sensitivity control and an
+  RDFS-closure control. This supersedes the "value-level cross-engine
+  comparison tracked as future work" noted under 1.0.0 below; see
+  `MANIFEST.md` §2.1 for the result and for what is and is not shipped.
+
 ### Changed
 - **Ontology 1.1.0** (`ontology/spectra.ttl`, mirrored at `docs/spectra.ttl`):
   declares the six entity-layer classes (`RRCParameter`, `CapabilityItem`,

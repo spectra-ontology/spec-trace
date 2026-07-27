@@ -15,6 +15,11 @@ protocol_bounds.py        recomputes the paper's protocol-level bounds from reco
                           artifacts (retrieval coverage at top-k, KG failure accounting,
                           gold cardinality); no network, no LLM
 make_results_figure.py    regenerates the results figure from results/scores.json
+sparql_row_equivalence.py compares the 142 RAN1 SPARQL translations against their
+                          Cypher references cell by cell rather than by row count;
+                          needs a live Neo4j holding the RAN1 graph for the Cypher
+                          side, but --classify-untranslated-only runs offline.
+                          See release_package/MANIFEST.md §2.1
 models.json               the nine-model roster (OpenRouter catalog IDs)
 schema_cards.json         per-WG Neo4j schema cards shown to kg_grounded models
 results/scores.json       aggregate metrics for all 27 (model x condition) runs

@@ -125,13 +125,43 @@ executing all 142 SPARQL translations over the released `RAN1-body.ttl` and
 comparing row counts against the Cypher replay oracle yields **142/142
 row-count match**, of which **80 are exact_cardinality** (the count is the true
 unbounded result-set size) and **62 are limit_bound_topn** (the count equals a
-shared `LIMIT` — cardinality parity, with row-level cross-engine equivalence
-tracked as future work). 0 errors, 0 mismatches.
+shared `LIMIT`). 0 errors, 0 mismatches. This is *cardinality* parity: it
+establishes that the two engines return the same number of rows, not that they
+return the same rows.
 
 Regenerate:
 
 ```
 python3 release_package/pipeline/validate_sparql_parity.py   # -> sparql_parity_results.json
+```
+
+**Cell-level comparison (stronger, separate evidence).** The paper reports a
+second comparison that puts the full result sets side by side cell by cell
+instead of counting rows: **138** of the 142 return the same multiset of rows
+and **4** differ, each in a single column. The harness that computes it ships as
+`paper/baseline/sparql_row_equivalence.py` (at the repository root, beside
+`release_package/`); the paper's appendix states the normalization ladder it
+applies, the four disagreements by name, the mutation-sensitivity control and
+the RDFS-closure control.
+
+Unlike every other number in this manifest, the recorded JSON output of that
+harness is **not** included in this snapshot, so the 138/4 pair is not
+independently checkable from the files here — it is reproducible instead of
+shipped. Reproducing it needs the SPARQL side (present: the released
+`kg/per_wg/RAN1-body.ttl`, the 142 `.rq` files and `ontology/spectra.ttl`, all
+read in-process by rdflib, no triplestore server) **and** the Cypher side from a
+live Neo4j holding the RAN1 graph, which this package does not contain. Load it
+with the shipped `pipeline/load_released_kg.py` first, then:
+
+```
+python3 paper/baseline/sparql_row_equivalence.py --bolt bolt://localhost:7687
+```
+
+The classification of the 482 untranslated questions that the same appendix
+reports needs neither engine and runs directly from the shipped benchmark:
+
+```
+python3 paper/baseline/sparql_row_equivalence.py --classify-untranslated-only
 ```
 
 ### 2.2 Splits
@@ -240,7 +270,9 @@ authored_cqs       = 654
 released_cqs       = 624
 held_cqs           = 30
 cypher_queries     = 624
-sparql_subset      = 142   (142/142 parity: 80 exact + 62 limit-bound top-k)
+sparql_subset      = 142   (142/142 cardinality parity: 80 exact + 62 limit-bound top-k)
+sparql_cell_level  = 138/4 (same row multiset / single-column difference;
+                            reproducible, output JSON not shipped)
 core_items         = 560   (answer_contract.jsonl)
 splits             = 374/125/125, 375/125/124, 382/128/114, challenge 33
 models             = 9
