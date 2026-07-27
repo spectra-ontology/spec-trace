@@ -42,8 +42,12 @@ counts). They contain **no** TDoc body literals, no Resolution
 
 ## Regeneration
 
-```bash
-python3 scripts/paper/export_per_wg_schema_ttl.py
-```
+These files are produced by a read-only exporter that queries the five
+source Neo4j instances directly. That exporter belongs to the authors'
+build pipeline and is **not part of this release package**, because it is
+meaningless without those instances.
 
-Read-only against the five Neo4j RAN instances (ports 7687-7691).
+What a third party can check against the deposit instead: OWL-diff each
+schema TTL against `../../ontology/spectra.ttl` (the cross-WG generality
+numbers in the paper), and re-derive the class and property census with
+`../../tests/reproduce_structural_metrics.py`.

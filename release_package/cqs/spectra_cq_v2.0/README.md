@@ -53,6 +53,15 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
   `primary_column`, preview of primary values).
 - `benchmark.jsonl` — the scored benchmark, one JSON object per line
   (624 rows): question + gold answer set + row count.
+- `answer_contract.jsonl` — one line per SpectraCQ-Core item (a `_header`
+  line plus 560 items): the graded `answer_type` and `answer_columns`, the
+  `ordering_key` and `cardinality` read from the clauses that govern the
+  reference query's final `RETURN` (null where none is imposed), and a
+  `contract_disposition` recording what would have to change for the item
+  to hold exactly as asked.
+- `splits/` — the four canonical splits as identifier lists, with their
+  per-track and per-group composition, the leakage audit, and a
+  deterministic rebuild script. See `splits/README.md`.
 - `cypher/{WG}_P{phase}_{id}.cypher` — 624 executable Cypher reference
   queries (one per released CQ).
 - `sparql/P{phase}_{id}.rq` — 142 SPARQL translations covering **all

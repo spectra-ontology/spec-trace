@@ -112,7 +112,7 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 
 | Paper claim | Evidence |
 |---|---|
-| 5-stage pipeline (scrape → deterministic Tdoc/Resolution metadata parse → deterministic CR/TR document parse via python-docx → SHACL → bulk Neo4j load); LLM (Gemini-2.5-flash) is used only for downstream validation (NL-CQ → Cypher, answer-quality scoring), not in the KG-population path | `scripts/paper/generate_metadata_kg_snapshot.py` (whitelist of 89 metadata fields, 20 excluded text fields documents the parser output schema); paper §7 |
+| 5-stage pipeline (scrape → deterministic Tdoc/Resolution metadata parse → deterministic CR/TR document parse via python-docx → SHACL → bulk Neo4j load); LLM (Gemini-2.5-flash) is used only for downstream validation (NL-CQ → Cypher, answer-quality scoring), not in the KG-population path | The metadata-snapshot generator in the authors' build pipeline (whitelist of 89 metadata fields, 20 excluded text fields documents the parser output schema) is not part of the public release artifact, because it runs against the five source Neo4j instances; its output schema is visible in `examples/process_kg/_export_summary.txt`; paper §7 |
 | Throughput claim "$O(10^3)$ TDocs/min on a single workstation" | Internal benchmark; not part of the public release artifact (see "Reproducibility" caveat below) |
 
 ## Notes on inter-artefact count differences (paper-side numbers unchanged)

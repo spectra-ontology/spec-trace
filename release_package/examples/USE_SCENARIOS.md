@@ -34,7 +34,7 @@ The release ships per-Phase representative CQ queries in
   identifiers (consistent with the per-meeting `TDOC_List.xlsx` and the
   3GPP attribution policy in `ARTIFACT.md`).
 * Per-WG body-text TTLs (`kg/per_wg/RAN{1..5}-body.ttl`) are deposited on
-  Zenodo (DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872))
+  Zenodo (DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871))
   and are not redistributed in the GitHub package. Scenarios S2/S3/S6 are
   fully exercisable on the metadata-only `examples/process_kg/` artifacts;
   body-text-dependent queries (e.g., free-text retrieval over CR / TR

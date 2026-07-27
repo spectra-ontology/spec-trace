@@ -6,7 +6,7 @@ SpectraCQ suite (624 Cypher CQs across the five RAN working groups) can be
 re-executed from released artifacts only, without access to any operational KG.
 
 Usage: python3 load_released_kg.py --ttl ../kg/per_wg/RAN1-body.ttl \
-           --bolt bolt://localhost:7697 --user neo4j --password replaytest \
+           --bolt bolt://localhost:7687 --user neo4j --password replaytest \
            [--report out.json]
 
 Restoration rules (inverse of the export conventions documented in

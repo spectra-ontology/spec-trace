@@ -49,13 +49,25 @@ separately and never conflated:
   necessarily larger than the node+relationship count because most triples are
   literal attributes, not edges.
 
+**Known defect counted in the numbers above:** 634 of the 4,935
+`Contact` nodes are duplicates of a contact already present (RAN3 181,
+RAN4 291, RAN5 162; RAN1 and RAN2 zero), so the graphs hold 4,301
+distinct contacts and the node total is inflated by 634 (0.066%). The
+cause, the per-WG breakdown, and the effect on the two benchmark items
+that count `Contact` nodes are documented in `kg/per_wg/README.md`.
+
 Regenerate:
 
 ```
-python3 scripts/paper/replay_released_cqs.py \
-    --bolt bolt://localhost:7697 --user neo4j --password <pw>   # -> graph_counts.json
 python3 release_package/pipeline/count_triples.py               # -> triple_counts.json
 ```
+
+`graph_counts.json` is written by the authors' replay driver, which is
+not part of this package. It uses released artifacts only — it reloads
+`kg/per_wg/RAN{1..5}-body.ttl` into a scratch store with the shipped
+`pipeline/load_released_kg.py` and reads the live counts back — so the
+shipped `tests/verify_benchmark.py --full` reproduces the same numbers
+from the same inputs, in the per-WG loader reports it writes.
 
 ---
 
@@ -122,11 +134,46 @@ Regenerate:
 python3 release_package/pipeline/validate_sparql_parity.py   # -> sparql_parity_results.json
 ```
 
+### 2.2 Splits
+
+Four canonical splits over the 624-question key ship as identifier lists under
+`cqs/spectra_cq_v2.0/splits/`: a standard 60/20/20 split stratified over the 20
+(working group x track) strata (**374/125/125**), a template-disjoint split that
+moves whole leakage groups so no query shape and no question string spans a
+boundary (**375/125/124**), a cross-group split holding RAN5 out in full
+(**382/128/114**, all 114 RAN5 questions in test), and an evaluation-only
+challenge subset of **33** questions satisfying at least four of five per-row
+difficulty conditions.
+
+`splits/composition.json` carries the per-track and per-group composition of
+every part, the stratification deviation, the leakage audit and the challenge
+conditions; `splits/track_assignment.json` carries the stratification axis
+(lookup 213, aggregation 195, relational 164, multihop 52). Membership is a
+salted SHA-256 function of the question identifier, not a random draw, so a
+rebuild reproduces the files byte for byte.
+
+Regenerate and verify (no database, no network):
+
+```
+python3 release_package/cqs/spectra_cq_v2.0/splits/rebuild_splits.py
+```
+
+### 2.3 Answer contract
+
+`cqs/spectra_cq_v2.0/answer_contract.jsonl` carries one line per SpectraCQ-Core
+item (a `_header` line plus **560** items): the graded `answer_type` and
+`answer_columns`, the `ordering_key` and `cardinality` governing the reference
+query's final `RETURN` (null where none is imposed), and a
+`contract_disposition` recording what would have to change for the item to hold
+exactly as asked.
+
 ---
 
 ## 3. Evaluation — baseline suite
 
-Evidence: `scripts/paper/baseline/results/scores.json`.
+Evidence: `paper/baseline/results/scores.json` (at the repository root, beside
+`release_package/`), together with the per-condition prediction files under
+`paper/baseline/results/`.
 
 - **Models: 9** — claude-opus-4.8, claude-haiku-4.5, deepseek-v3.1,
   gemini-2.5-pro, gemini-2.5-flash, gpt-5.1, gpt-5-mini, llama-3.3-70b,
@@ -164,10 +211,20 @@ Evidence: `scripts/paper/baseline/results/scores.json`.
   **SpectraCQ v2.0** (`cqs/spectra_cq_v2.0/`), distinct from the deposited
   137-CQ SpectraCQ v1.0; the release package version is 2.0.0 (see
   `CHANGELOG.md`).
-- The 2.0.0 package (624-CQ scored benchmark + evaluation suite) is prepared
-  as a **new Zenodo version** under concept DOI **10.5281/zenodo.20034871**;
-  its version DOI is minted when the deposit is published. Until publication,
-  no DOI should be cited for the 624-CQ benchmark.
+- The 2.0.0 package (624-CQ scored benchmark + evaluation suite) is published
+  as a **new Zenodo version** under concept DOI **10.5281/zenodo.20034871**.
+  Cite the concept DOI: it always resolves to the newest published deposit,
+  which is the one carrying the 624-CQ benchmark. A citation pinned to an
+  individual version DOI keeps pointing at superseded files once a further
+  version is deposited.
+- **What is in the deposit vs. what is in this repository.** The archives
+  under `dist/` are the snapshots as deposited, kept byte-identical to the
+  Zenodo files so their checksums in `dist/SHA256SUMS` verify against the
+  record. The Git tree is the living release and runs ahead of the newest
+  deposit: `cqs/spectra_cq_v2.0/splits/` and
+  `cqs/spectra_cq_v2.0/answer_contract.jsonl` were added after the v2.0.0
+  archive was built and are present here but not inside that archive. Both
+  are plain text and rebuild with no database and no network.
 
 ---
 
@@ -184,6 +241,8 @@ released_cqs       = 624
 held_cqs           = 30
 cypher_queries     = 624
 sparql_subset      = 142   (142/142 parity: 80 exact + 62 limit-bound top-k)
+core_items         = 560   (answer_contract.jsonl)
+splits             = 374/125/125, 375/125/124, 382/128/114, challenge 33
 models             = 9
 conditions         = 3
 predictions_scored = 16,848

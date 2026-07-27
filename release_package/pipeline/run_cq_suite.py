@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 """run_cq_suite.py — execute the released CQ suite (cqs/spectra_cq_v2.0/cypher/*.cypher) against Neo4j and record PASS/FAIL.
 
-Re-executes all 137 SpectraCQ queries on a graph restored with
-load_released_kg.py and compares the verdicts with the released
-expectation file (validation/cq_results.json).
+Re-executes every Cypher file in --cypher-dir on a graph restored with
+load_released_kg.py. The default directory is the released SpectraCQ v2.0
+set (624 scored CQs); pointing --cypher-dir at a per-WG subset re-executes
+only that subset.
 
-Usage: python3 run_cq_suite.py --bolt bolt://localhost:7697 --user neo4j \
+--expected is an optional cross-check: verdicts are compared only for CQ
+ids that appear in both the expectation file and --cypher-dir. The default
+expectation file (validation/cq_results.json) belongs to the design-phase
+RAN1 layer and uses unprefixed ids (P1_CQ1-1), whereas the released v2.0
+Cypher files use WG-prefixed ids (RAN1_P1_CQ1-1), so with both defaults the
+id intersection is empty and no comparison is performed. To cross-check the
+released set, pass the per-WG replay evidence under
+validation/cq_replay/ran{1..5}_replay_results.json, whose ids are prefixed.
+
+Usage: python3 run_cq_suite.py --bolt bolt://localhost:7687 --user neo4j \
            --password replaytest [--cypher-dir ../cqs/spectra_cq_v2.0/cypher] \
            [--expected ../validation/cq_results.json] --out results.json
 

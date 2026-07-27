@@ -3,13 +3,13 @@
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Ontology: OWL 2](https://img.shields.io/badge/Ontology-OWL_2-blue.svg)](https://www.w3.org/TR/owl2-overview/)
 [![Persistent IRI](https://img.shields.io/badge/IRI-w3id.org%2Fspectra-success.svg)](https://w3id.org/spectra)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20034872.svg)](https://doi.org/10.5281/zenodo.20034872)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20034871.svg)](https://doi.org/10.5281/zenodo.20034871)
 
 **License**: CC-BY 4.0 (SPECTRA-authored components); 3GPP-derived literal content carries explicit 3GPP attribution (see `LICENSE` Tier 2)
 **Release package version**: v2.0.0 (see `CHANGELOG.md`)
 **Ontology version**: v1.1.0 (adds the six entity-layer classes; see `ontology/spectra.ttl` header for authoritative version)
 **Persistent identifier**: [`https://w3id.org/spectra`](https://w3id.org/spectra) (registered via [`perma-id/w3id.org`](https://github.com/perma-id/w3id.org))
-**Zenodo DOI**: [`10.5281/zenodo.20034872`](https://doi.org/10.5281/zenodo.20034872) (minted 2026-05-08; concept DOI [`10.5281/zenodo.20034871`](https://doi.org/10.5281/zenodo.20034871))
+**Zenodo DOI**: [`10.5281/zenodo.20034871`](https://doi.org/10.5281/zenodo.20034871) (concept DOI — cite this one; it always resolves to the newest deposited version. Each individual deposit also carries its own version DOI, listed on the Zenodo record.)
 **Repository**: https://github.com/spectra-ontology/spec-trace
 
 ## Two-channel distribution
@@ -145,6 +145,18 @@ The following artifacts are part of the paper's **internal validation evidence**
 - Neo4j instance dumps (`.dump`) and VectorDB embeddings: regenerable from the released per-WG body-text KGs (`kg/per_wg/`) and sanitized parsing pipeline (`pipeline/`); not bundled because raw dumps exceed the archival package's size budget. Original 3GPP TDocs remain publicly accessible via the 3GPP portal: https://www.3gpp.org
 - Internal operational deployment glue: company-specific monitoring, authentication, and Slack/incident hooks around the parsing pipeline; the deterministic parser logic itself is released at `pipeline/`.
 
+## Known data quality issues
+
+- **Duplicated `Contact` nodes.** 634 of the 4,935 `Contact` nodes in the
+  per-WG body-text KGs are duplicates of a contact already present (RAN3
+  181, RAN4 291, RAN5 162; RAN1 and RAN2 zero), so the graphs hold 4,301
+  distinct contacts. The cause is a float-rendered contact identifier
+  producing a second IRI for the same contact. This inflates the node
+  totals reported in `MANIFEST.md` §1 by 634 (0.066%) and makes the two
+  benchmark items that count `Contact` nodes report the node count rather
+  than the distinct-contact count. Full breakdown and effects:
+  `kg/per_wg/README.md`.
+
 ## Anonymization policy (asymmetric by design)
 
 Different artifact tiers follow different policies, each driven by what 3GPP itself publishes:
@@ -232,7 +244,16 @@ See `queries/sparql/` for additional example queries.
 pip install rdflib pyshacl
 python3 tests/reproduce_structural_metrics.py   # exit 0 on agreement with validation/structural_metrics.json
 python3 tests/test_e2e_sparql.py                # exit 0 on returning the expected R1-2599998 / RAN1#121 row
+python3 tests/verify_release.py                 # file-level release gate, no arguments, no database
 ```
+
+### Release gate
+`tests/verify_benchmark.py` is the one-command gate over the whole
+release. `--quick` needs no database and runs 52 checks, of which 47
+apply to a Git-only checkout (the other five need the body-text deposit).
+`--full` reloads the released graphs into a scratch store and re-derives
+all 624 published answer sets; it wipes the database it connects to, so
+`--bolt` and `--password` have no defaults. See `tests/README.md`.
 
 ### SpectraCQ scored benchmark
 The scored benchmark — 624 released CQs (of 654 authored; 30 held out) with English question text, executable reference Cypher, and deterministic gold answer sets (`benchmark.jsonl`) — is at `cqs/spectra_cq_v2.0/`. It is independently citable via `cqs/spectra_cq_v2.0/citation.bib` and licensed CC-BY 4.0. Reproducibility evidence (624/624 self-replay on a scratch reload) lives under `validation/cq_replay/`; canonical counts are in `MANIFEST.md`.

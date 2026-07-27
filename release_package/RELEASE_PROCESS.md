@@ -21,7 +21,7 @@ Content scope: see `CHANGELOG.md` `[1.0.1]` (137 executable SPARQL translations 
 | Package content on public `main` | ✅ Completed (2026-06-12) | commit history on `main` |
 | Metadata refresh (`CITATION.cff`, `codemeta.json`, READMEs) | ✅ Completed (2026-07-17) | version 1.0.1; submission-status wording removed |
 | Git tag `v1.0.1` + GitHub Release | ✅ Completed (2026-07-17) | https://github.com/spectra-ontology/spec-trace/releases/tag/v1.0.1 |
-| Zenodo | ⏸ No new version deposit | All large data files (per-WG body-text TTLs) are byte-identical to the v1.0.0 deposit; the record description was already updated. Re-uploading ~922 MB would change nothing. DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) remains the citable record. |
+| Zenodo | ⏸ No new version deposit | All large data files (per-WG body-text TTLs) are byte-identical to the v1.0.0 deposit; the record description was already updated. Re-uploading the deposit would change nothing. DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) was the citable record for v1.0.1; v2.0.0 superseded it (see below). |
 | w3id | ✅ Unchanged | `https://w3id.org/spectra` redirects are content-addressed to the repository and require no update |
 
 Note: `ontology/spectra.ttl` keeps `owl:versionInfo "1.0.0"` in v1.0.1 — the ontology axioms are unchanged in v1.0.1; the package version and the ontology version are versioned independently.
@@ -34,8 +34,8 @@ Content scope: see `CHANGELOG.md` `[2.0.0]` (SpectraCQ v2.0 — 624 scored CQs o
 |---|---|---|
 | Package content on public `main` | ✅ Completed (2026-07-23) | `sync_to_public.sh` run against the v2.0.0 dev tree |
 | Metadata refresh (`.zenodo.json`, `CITATION.cff`, `codemeta.json`, `croissant.json`) | ✅ Completed | version 2.0.0; single-author attribution; venue-neutral wording |
-| Zenodo new version | ⏳ In preparation | New version under concept DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871); the version DOI is minted at publish, which is a human-author action. Until publication, no DOI should be cited for the 624-CQ benchmark (see `MANIFEST.md` §5). |
-| Git tag `v2.0.0` + GitHub Release | ⏳ Pending | created after the Zenodo version DOI is minted |
+| Zenodo new version | ✅ Published | New version deposited under concept DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871), which resolves to it as the newest deposit. The concept DOI is the citable identifier for the 624-CQ benchmark (see `MANIFEST.md` §5). |
+| Git tag `v2.0.0` + GitHub Release | ✅ Completed | https://github.com/spectra-ontology/spec-trace/releases/tag/v2.0.0 |
 | w3id | ✅ Unchanged | redirects are content-addressed to the repository |
 
 Note: `ontology/spectra.ttl` carries `owl:versionInfo "1.1.0"` in the 2.0.0 package — the entity-layer classes are an additive minor revision of the ontology; the package version and the ontology version are versioned independently.
