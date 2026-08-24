@@ -7,7 +7,7 @@
 
 **License**: CC-BY 4.0 (SPECTRA-authored components); 3GPP-derived literal content carries explicit 3GPP attribution (see `LICENSE` Tier 2)
 **Release package version**: v2.0.0 (see `CHANGELOG.md`)
-**Ontology version**: v1.1.0 (adds the six entity-layer classes; see `ontology/spectra.ttl` header for authoritative version)
+**Ontology version**: v1.1.1 (six entity-layer classes plus LOV-conformant vocabulary metadata; see `ontology/spectra.ttl` header for authoritative version)
 **Persistent identifier**: [`https://w3id.org/spectra`](https://w3id.org/spectra) (registered via [`perma-id/w3id.org`](https://github.com/perma-id/w3id.org))
 **Zenodo DOI**: [`10.5281/zenodo.20034871`](https://doi.org/10.5281/zenodo.20034871) (concept DOI — cite this one; it always resolves to the newest deposited version. Each individual deposit also carries its own version DOI, listed on the Zenodo record.)
 **Repository**: https://github.com/spectra-ontology/spec-trace
@@ -33,7 +33,7 @@ This is the **publicly released** component of the SPECTRA ontology resource des
 release_package/
 ├── README.md                          # this file
 ├── ontology/
-│   └── spectra.ttl                    # SPECTRA OWL 2 ontology (Turtle, 904 triples incl. PROV-O alignment)
+│   └── spectra.ttl                    # SPECTRA OWL 2 ontology (Turtle, 914 triples incl. PROV-O alignment)
 ├── docs/
 │   └── spectra.html                   # PyLODE-generated HTML documentation
 ├── shapes/
@@ -174,7 +174,7 @@ The `tests/verify_release.py` anonymization check (Section 7 of the script) targ
 
 - **32 classes** organized around: contributions (`Tdoc` and its subclasses `CR`, `LS`, `Summary`, `SessionNotes`), resolutions (`Resolution` → `Agreement`, `Conclusion`, `WorkingAssumption`), specifications (`Spec`, `Section`, `TSTable`, `TSFigure`, `TechnicalReport`, `TRImpact`), organizational entities (`Meeting`, `Company`, `Contact`, `WorkItem`, `AgendaItem`, `Release`, `WorkingGroup`), artefacts (`Figure`, `Table`, `Chart`, `CRPack`), and spec-body entities (`Feature`, `Procedure`, `RRCParameter`, `CapabilityItem`, `PerformanceRequirement`, `ConformanceTest`).
 - **53 object properties** + **81 data properties** (134 total).
-- Reuses **Dublin Core** (`dc:title`, `dc:description`, `dc:creator`, `dc:date`, `dc:rights`), **DCTERMS** (`dcterms:license`), and **FOAF** (`foaf:Person`, `foaf:Organization`).
+- Reuses **DCMI Terms** (`dcterms:title`, `dcterms:description`, `dcterms:creator`, `dcterms:publisher`, `dcterms:issued`, `dcterms:modified`, `dcterms:rights`, `dcterms:license`), **FOAF** (`foaf:Person`, `foaf:Organization`, `foaf:name`, `foaf:homepage`), and **VANN** (`vann:preferredNamespacePrefix`, `vann:preferredNamespaceUri`); the legacy DC Elements 1.1 (`dc:`) namespace is not used.
 - Axiomatization: 20 `owl:FunctionalProperty`, 2 `owl:InverseFunctionalProperty`, 15 inverse property pairs, 6 `owl:IrreflexiveProperty`, 2 `owl:AsymmetricProperty`.
 
 > **Entity-layer instances in the KG exports.** Beyond the 26 process-layer classes, the per-WG TTL exports carry instances of the six entity-layer classes — `Feature` (22 per WG), `Procedure` (RAN1 79 / RAN2 81 / RAN3 60), `RRCParameter` (RAN2 2,281 / RAN3 2,950), `CapabilityItem` (RAN2 86), `PerformanceRequirement` (RAN4 20,449), and `ConformanceTest` (RAN4 1,126 / RAN5 73,033). 28 of the 624 released CQs query these labels (the `P3-S8` group in `cqs/cq_index.md`). All six classes are declared in `ontology/spectra.ttl` (32 classes total). The auxiliary annotation properties the exports attach to these instances (`_definedInSection`, `_disjointWith`, `granularity`) remain undeclared annotation-layer terms; under OWL open-world semantics the exports remain valid RDF, and the export counts above match the deployed graphs exactly.

@@ -47,7 +47,7 @@ def main() -> int:
         g = rdflib.Graph()
         g.parse(ROOT / "ontology/spectra.ttl", format="turtle")
         n = len(g)
-        check("triples_total = 904", n == 904, f"actual {n}")
+        check("triples_total = 914", n == 914, f"actual {n}")
     except Exception as e:
         check("ontology parse", False, str(e))
 
@@ -185,7 +185,7 @@ def main() -> int:
         sm = json.loads((ROOT / "validation/structural_metrics.json").read_text())
         for key, expected in [
             ("classes_total", 32),
-            ("triples_total", 904),
+            ("triples_total", 914),
         ]:
             ok = sm.get(key) == expected
             check(f"{key} = {expected}", ok, f"actual {sm.get(key)}")

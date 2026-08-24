@@ -26,7 +26,7 @@ The "137" appearing in layer 1 is a design-phase scope label; the SPARQL portabi
 | 15 inverse property pairs | `structural_metrics.json` | `inverse_property_pairs` |
 | 6 owl:IrreflexiveProperty (sec hierarchy + intra-section + TR cross-ref) | `structural_metrics.json` | `irreflexive_properties` |
 | 2 owl:AsymmetricProperty (sec hierarchy) | `structural_metrics.json` | `asymmetric_properties` |
-| 8 reused external terms (5 DC + 1 DCTERMS + 2 FOAF) | `structural_metrics.json` | `reused_external_terms_count`, `reused_dc_terms`, `reused_foaf_terms` |
+| 14 reused external terms (8 DCTERMS + 4 FOAF + 2 VANN; the 5 PROV-O terms are counted separately under `prov_o_alignment`) | `structural_metrics.json` | `reused_external_terms_count`, `reused_dcterms_terms`, `reused_foaf_terms`, `reused_vann_terms` |
 | OOPS! results: 0 critical / 2 Important / 2 Minor | `oops_summary.json` | `severity_counts`, `pitfalls` |
 
 ### CQ coverage (design-phase RAN1 layer)
@@ -93,7 +93,7 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 | Paper claim | Evidence |
 |---|---|
 | 6 `rdfs:subClassOf` axioms (Resolution⊑prov:Activity, Tdoc⊑prov:Entity, Company⊑prov:Agent + Company⊑foaf:Organization, Contact⊑prov:Agent + Contact⊑foaf:Person) — 6 triples | `ontology/spectra.ttl` lines following "Optional PROV-O alignment" comment block; `structural_metrics.json::prov_o_alignment.subclass_axioms` (6 entries) |
-| Total triples 904 (after dropping 3 spurious owl:FunctionalProperty declarations on multi-valued links: presentedAt, modifies, originatedFrom) | `structural_metrics.json::triples_total=904`; reproducible by `tests/reproduce_structural_metrics.py` |
+| Total triples 914 (after dropping 3 spurious owl:FunctionalProperty declarations on multi-valued links: presentedAt, modifies, originatedFrom) | `structural_metrics.json::triples_total=914`; reproducible by `tests/reproduce_structural_metrics.py` |
 
 ## Schema growth (paper §5.1, Figure 4)
 

@@ -38,7 +38,7 @@ Content scope: see `CHANGELOG.md` `[2.0.0]` (SpectraCQ v2.0 — 624 scored CQs o
 | Git tag `v2.0.0` + GitHub Release | ✅ Completed | https://github.com/spectra-ontology/spec-trace/releases/tag/v2.0.0 |
 | w3id | ✅ Unchanged | redirects are content-addressed to the repository |
 
-Note: `ontology/spectra.ttl` carries `owl:versionInfo "1.1.0"` in the 2.0.0 package — the entity-layer classes are an additive minor revision of the ontology; the package version and the ontology version are versioned independently.
+Note: `ontology/spectra.ttl` carries `owl:versionInfo "1.1.1"` in the 2.0.0 package — the entity-layer classes are an additive minor revision of the ontology and the LOV vocabulary metadata a subsequent patch revision; the package version and the ontology version are versioned independently.
 
 ---
 

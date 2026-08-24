@@ -3,6 +3,51 @@
 All notable changes to the SPECTRA release package are documented in this file.
 Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Ontology 1.1.1** (`ontology/spectra.ttl`, mirrored at `docs/spectra.ttl`):
+  metadata-only change making the vocabulary conform to the Linked Open
+  Vocabularies (LOV) submission requirements. Adds
+  `vann:preferredNamespacePrefix` / `vann:preferredNamespaceUri`, replaces
+  the literal creator string with the author's ORCID iD as a
+  `dcterms:creator` URI (typed `foaf:Person`), adds a `dcterms:publisher`
+  organization URI (typed `foaf:Organization`), and adds `rdfs:label`,
+  `dcterms:issued` and `dcterms:modified`. The five DC Elements 1.1
+  properties the header used are migrated to DCMI Terms, so the `dc:`
+  prefix no longer appears in the ontology file; the hand-written example
+  instance data under `examples/` still uses it. No class, property, or
+  axiom is added, changed, or removed — 32 classes and 53/81 object/data
+  properties are unchanged; the triple count rises 904 → 914 and reused
+  external terms 8 → 14 (8 DCTERMS + 4 FOAF + 2 VANN) purely from the
+  added metadata statements. Structural metrics, release gates
+  (`verify_release.py`), DCAT/VoID metadata, README, ARTIFACT and supplement
+  appendix updated to the new counts.
+- **Ontology serialization** (`ontology/spectra.ttl`): the namespace
+  `https://w3id.org/spectra#` is bound to the prefix `spectra:` instead of
+  `tdoc:`, so the file agrees with its own `vann:preferredNamespacePrefix`
+  and with the prefix already used by the SpectraCQ SPARQL suite, the
+  released KG exports and the example queries. Prefix binding is
+  file-local Turtle syntax and carries no meaning: apart from the
+  `rdfs:label` literal the two graphs are isomorphic, checked with
+  `rdflib.compare.to_isomorphic` (913 shared triples, one replaced).
+  Three declared-but-unused prefixes are dropped, `prov:` is declared so
+  the six PROV-O alignment axioms read in prefixed form rather than as
+  full IRIs, `rdfs:label` carries the full ontology title instead of the
+  bare string "SPECTRA", and the closing comment loses a version stamp
+  that had been left behind at 1.0.0.
+- **HTML documentation** (`docs/spectra.html`): regenerated with
+  pyLODE 2.13.2 from the 1.1.1 TTL. The previous file carried a
+  hand-edited author line with no triple behind it; the generated page
+  now derives everything it shows from the ontology — ORCID iD,
+  publisher organization, `dcterms:issued` / `dcterms:modified`, the
+  full title, and `default (spectra)` in the namespace table.
+- **DCAT/VoID description** (`metadata/dcat_void.ttl`): the catalog
+  publisher is now the same `foaf:Organization` URI used by the ontology
+  header instead of a blank node, and the ontology dataset's measured
+  `void:triples` (914) and `dcat:byteSize` (55,202 bytes) are re-measured
+  against the new TTL (208 → 209 triples in this description file).
+
 ## [2.0.0] — 2026-07-23
 
 Major release for the KDD 2027 Datasets & Benchmarks submission.

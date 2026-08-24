@@ -43,7 +43,7 @@ reviewers who want to inspect each step.
 
 ```bash
 python3 -c "import rdflib; g=rdflib.Graph(); g.parse('ontology/spectra.ttl', format='turtle'); print(f'Triples: {len(g)}')"
-# Expected: Triples: 904
+# Expected: Triples: 914
 ```
 
 ### 2. Reproduce the structural metrics in the paper
@@ -53,7 +53,7 @@ python3 tests/reproduce_structural_metrics.py
 # Expected: every row prints ✓; exit code 0
 # Reproduces paper Table 3 (Ontology structural metrics):
 #   Classes 32 / OPs 53 / DPs 81 / Functional 20 / IFP 2 / Inverse pairs 15
-#   Irreflexive 6 / Asymmetric 2 / subclass 15 / triples 904
+#   Irreflexive 6 / Asymmetric 2 / subclass 15 / triples 914
 ```
 
 ### 3. Validate the SHACL shapes against the synthetic instantiation
