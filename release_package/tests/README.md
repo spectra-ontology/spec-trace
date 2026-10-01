@@ -15,6 +15,7 @@ verifier's `--full` mode additionally needs a scratch Neo4j instance.
   that need the body-text deposit report `[SKIP]` in a Git-only
   checkout.
 - **`verify_benchmark.py`** — benchmark gate, described below.
+- **`reproduce_scenario_counts.py`**: recount of the cross-WG query counts on the released graphs, described below.
 
 Run:
 ```bash
@@ -63,3 +64,23 @@ Nothing inside `release_package/` is written by a run.
 
 Drift between the paper's figures and the released files surfaces as a
 failed check.
+
+## `reproduce_scenario_counts.py`
+
+Recounts, on the five body-text graphs of the deposit, the 18 cross-WG
+query counts of `validation/cross_wg_use_evidence.json` (measured on the
+deployed per-WG KGs) and compares the result with
+`validation/released_graph_scenario_counts.json`. Standard library only, no
+database. Put the deposit's RAN1-body.ttl to RAN5-body.ttl files in
+`kg/per_wg/` (see `kg/per_wg/README.md`), or name their directory:
+
+```bash
+python3 tests/reproduce_scenario_counts.py
+python3 tests/reproduce_scenario_counts.py --ttl-dir /path/to/deposit
+```
+
+Exit status 0 when every field agrees with the shipped JSON, 1 on a
+difference, 2 when the graph files are missing. In the shipped JSON,
+17 of the 18 counts are the same on both graphs; `compared_with_deployed`
+lists all 18, and the one that differs is the RAN3 count of change
+requests on TS 38.300 (270 deployed, 1,249 released).

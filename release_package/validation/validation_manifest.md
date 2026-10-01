@@ -65,11 +65,39 @@ The "137" appearing in layer 1 is a design-phase scope label; the SPARQL portabi
 | RAN2 KG: 1,450 LSes originated from RAN1; peak RAN2#118-e (62) | `cross_wg_use_evidence.json` | `queries[1].total`, `queries[1].top_meetings` |
 | TS 38.300 jointly modified by 2,039 RAN2 CRs and 270 RAN3 CRs | `cross_wg_use_evidence.json` | `queries[2].result` |
 
+### Cross-WG queries recounted on the released graphs (paper §6.5)
+
+`cross_wg_use_evidence.json` was measured on the deployed per-WG KGs. `tests/reproduce_scenario_counts.py` recounts each of its 18 counts on the five body-text graphs of the deposit (`kg/per_wg/`) and writes `released_graph_scenario_counts.json`; `compared_with_deployed` sets each count next to its deployed value. 17 of the 18 counts are the same.
+
+| Count | Deployed KG | Released graph | Field |
+|---|---|---|---|
+| RAN1 LSes to each of the ten recipients listed in `queries[0].result` | ten counts, RAN2 3,644 | the same ten | `s2_ran1_ls_by_recipient.listed`, `s2_ran1_ls_sent_to_ran2` |
+| RAN2 LSes originated from RAN1 | 1,450 | 1,450 | `ran2_ls_originated_from_ran1.total` |
+| The same, at each of the five meetings listed in `queries[1].top_meetings` | 62, 57, 52, 45, 42 | 62, 57, 52, 45, 42 | `ran2_ls_originated_from_ran1.listed` |
+| RAN2 CRs modifying TS 38.300 | 2,039 | 2,039 | `s3_ts_38_300.RAN2.cr_instances` |
+| RAN3 CRs modifying TS 38.300 | 270 | 1,249 | `s3_ts_38_300.RAN3.cr_instances` |
+
+The RAN3 count differs. On the released RAN3 graph, 1,249 instances typed `spectra:CR` modify TS 38.300; by their `spectra:type` value, 1,144 draftCR, 105 pCR, and none is CR (`s3_ts_38_300.RAN3.by_type`). The RAN2 count splits into 1,705 CR, 322 draftCR, 12 pCR. Where the paper describes the S2 and S3 cardinalities as reproducible on the released cross-WG graphs, this holds for 17 of the 18 counts and not for the RAN3 count; these files do not establish why the two graphs differ.
+
+Each list of the evidence file has one name outside it with the same count as the lowest entry of the list: one recipient with 26 LSes and one meeting with 42 (`unlisted_at_or_above_lowest_listed`). The 25,586 LS instances of the five graphs carry 25,586 distinct `spectra:tdocNumber` values (`ls_total`, `ls_distinct_tdoc_number`), the canonical distinct LS count in the notes on inter-artefact count differences below.
+
+`queries[0].cypher` sorts on `count`, a name the query does not bind, so as written it stops with a syntax error; the recount counts the same pattern. `queries[1]` records no query text.
+
+### Source fidelity of the released graph (paper appendix)
+
+| Paper claim | Evidence file | Field |
+|---|---|---|
+| 2,637 flagged rows: 2,303 cleared by the repair, 334 held | `source_fidelity_note.md` | tables "Checks" and "Held records" |
+| 334 held records, each naming the invariant it violates and the conflicting values | `source_fidelity_quarantine.json` | `records[]`: `class`, `wg`, `record`, `evidence`, `why` |
+| Repair lists: 2,035 value repairs, 153 missing inverse revision links, 979 undeclared origin edges | `source_fidelity_repair_manifest.json` | `repairs[]`, `inverse_edges[]`, `undeclared_origin_edges[]` |
+
+The released 2.0.0 graph carries the values before repair. `source_fidelity_note.md` states how to apply the lists, what they change and which benchmark items they reach.
+
 ## Reproducibility
 
 Structural metrics, OOPS! results, and cross-WG schema diff are reproducible against the released ontology TTL (`ontology/spectra.ttl`) using rdflib / OOPS! / pySHACL with no further data dependencies.
 
-The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instance counts (`ran1_instance_counts.json`) come from the internal SPECTRA-conformant KGs and are reproducible only against a SPECTRA-conformant instantiation; the queries are recorded inside the JSON for re-execution by reusers who instantiate the schema from public 3GPP TDocs.
+The RAN1 instance counts (`ran1_instance_counts.json`) come from the internal SPECTRA-conformant KGs and are reproducible only against a SPECTRA-conformant instantiation; the queries are recorded inside the JSON for re-execution by reusers who instantiate the schema from public 3GPP TDocs. The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) were measured on the same internal KGs; `tests/reproduce_scenario_counts.py` recounts them on the released graphs (17 of 18 the same, see above), and the note above on its query text applies.
 
 ## Files
 
@@ -85,8 +113,11 @@ The cross-WG use-evidence counts (`cross_wg_use_evidence.json`) and RAN1 instanc
 - `schema_growth_evidence.json` — per-phase counts (classes / OPs / DPs / cumulative CQs) for Figure on schema growth (§5.1), with refactoring notes for the Released v1.0.0 bar (net −6 DPs, +2 OPs, classes and 137 CQs unchanged).
 - `cypher_to_sparql_portability.json` — static-scan classification of the 137 RAN1-subset SpectraCQ Cypher queries by SPARQL-translation portability: 137/137 schema-level translatable, 0 Neo4j-specific. Executed row-count parity for the shipped SPARQL set — all 142 released RAN1 CQs — is recorded in `cq_replay/sparql_parity_results.json` (142/142 match).
 - `example_queries_results.json` — execution results of the 6 bundled representative SPARQL queries (`queries/sparql/*.rq`) against the released `kg/per_wg/RAN1-body.ttl` (row counts, first-row samples, per-query elapsed time).
+- `source_fidelity_repair_manifest.json`: the repair lists of the source-fidelity audit, namely value repairs (`repairs[]`), missing inverse revision links (`inverse_edges[]`) and origin edges no source field declares (`undeclared_origin_edges[]`). Not applied in the released 2.0.0 graph; see `source_fidelity_note.md`.
+- `source_fidelity_quarantine.json`: the 334 held records, each with the invariant it violates (`class`), the conflicting values (`evidence`) and the reason (`why`).
+- `released_graph_scenario_counts.json`: the 18 counts of `cross_wg_use_evidence.json` recounted on the released body-text graphs by `tests/reproduce_scenario_counts.py`, with the digests of the graph files read (`inputs`) and each count next to its deployed value (`compared_with_deployed`).
 
-**Total: 12 JSON evidence files** at the top level of `validation/`, plus the `cq_replay/` benchmark-reproducibility directory (graph/triple counts, five per-WG load reports, five per-WG replay results, SPARQL parity) and `chart_parser_fidelity_note.md`. The deterministic verification (`tests/verify_release.py` §6) walks `validation_manifest.md` and resolves every `*.json` reference.
+**Total: 15 JSON evidence files** at the top level of `validation/` (the 2.0.0 deposit carries all but the two source-fidelity lists and the scenario recount), plus the `cq_replay/` benchmark-reproducibility directory (graph/triple counts, five per-WG load reports, five per-WG replay results, SPARQL parity), `chart_parser_fidelity_note.md` and `source_fidelity_note.md`. The deterministic verification (`tests/verify_release.py` §6) walks `validation_manifest.md` and resolves every `*.json` reference.
 
 ## PROV-O alignment (paper §4.3)
 

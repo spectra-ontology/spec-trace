@@ -59,9 +59,23 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
   reference query's final `RETURN` (null where none is imposed), and a
   `contract_disposition` recording what would have to change for the item
   to hold exactly as asked.
+- `core_answer_gold.jsonl`: the scoring key of SpectraCQ-Core (a `_header`
+  line plus 560 items): each item's declared answer column
+  (`answer_columns[0]` of `answer_contract.jsonl`) and the gold value set of
+  that column. For 553 items the set comes from the released reference
+  query. For the other 7, whose reference query restricts a property to a
+  literal list of values the question does not all state, it comes from the
+  same query with that restriction replaced by `true`; the line carries that
+  query as `repaired_cypher` and keeps the released query's values as
+  `gold_values_released_query`. Scored by `paper/baseline/score_core.py` at
+  the repository root.
 - `splits/` — the four canonical splits as identifier lists, with their
   per-track and per-group composition, the leakage audit, and a
   deterministic rebuild script. See `splits/README.md`.
+- `splits/contract_exact_241.txt`: the 241 Core items whose
+  `contract_disposition` is 1 in `answer_contract.jsonl` (the contract holds as
+  released), one identifier per line. An evaluation subset of Core, not one of
+  the four splits; see `splits/README.md`.
 - `cypher/{WG}_P{phase}_{id}.cypher` — 624 executable Cypher reference
   queries (one per released CQ).
 - `sparql/P{phase}_{id}.rq` — 142 SPARQL translations covering **all
@@ -80,6 +94,11 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
   (the authored superset is kept intact), plus `gold/_gold_summary.json`
   recording the 654 / 624 / 30 split.
 - `held/held_cqs.json` — the 30 held-out CQs with Cypher and status.
+- `held/contract_held_out.json`: the 64 released CQs outside
+  SpectraCQ-Core, each with its question, gold columns, gold row count and a
+  reason in one of 5 classes. Core (560) and these 64 make up the
+  624 released CQs. They are distinct from the 30 authored CQs of
+  `held/held_cqs.json`, which are not among the 624.
 - `croissant.json` — Croissant ML dataset metadata.
 - `CITATION.cff` / `citation.bib` — citation metadata.
 - `LICENSE` — CC-BY 4.0.
@@ -128,6 +147,8 @@ deposit under that concept. Two additions in this directory —
 `splits/` and `answer_contract.jsonl` — were made after the 2.0.0 archive was
 built and are present in the Git tree only; both are plain text and rebuild
 offline. See `../../MANIFEST.md` §5 for the deposit-versus-repository split.
+Three later additions, `core_answer_gold.jsonl`, `held/contract_held_out.json`
+and `splits/contract_exact_241.txt`, are likewise in the Git tree only.
 
 ## License
 

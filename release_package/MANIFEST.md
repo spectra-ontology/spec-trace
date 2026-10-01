@@ -56,6 +56,13 @@ distinct contacts and the node total is inflated by 634 (0.066%). The
 cause, the per-WG breakdown, and the effect on the two benchmark items
 that count `Contact` nodes are documented in `kg/per_wg/README.md`.
 
+**Source-fidelity repairs not applied in the numbers above:** the graphs
+carry the values before the repair lists of
+`validation/source_fidelity_repair_manifest.json`. Applied, those lists
+leave the node counts unchanged and change relationships by RAN1 +153, RAN3 -553, RAN4 -426
+(total 4,908,024) and RDF triples by RAN1 +153, RAN3 -596, RAN4 -468 (total
+12,930,931). `validation/source_fidelity_note.md` states how.
+
 Regenerate:
 
 ```
@@ -197,6 +204,16 @@ query's final `RETURN` (null where none is imposed), and a
 `contract_disposition` recording what would have to change for the item to hold
 exactly as asked.
 
+`cqs/spectra_cq_v2.0/core_answer_gold.jsonl` is the scoring key of Core: for
+each of the **560** items, its declared answer column and the gold value set of
+that column (**553** from the released reference query, **7** from a
+scope-repaired query carried on the same line).
+`cqs/spectra_cq_v2.0/splits/contract_exact_241.txt` lists the **241** items with
+`contract_disposition` 1. The **64** released questions outside Core are listed,
+each with its reason, in `cqs/spectra_cq_v2.0/held/contract_held_out.json`
+(560 + 64 = 624); they are distinct from the 30 authored CQs of
+`cqs/spectra_cq_v2.0/held/held_cqs.json`.
+
 ---
 
 ## 3. Evaluation — baseline suite
@@ -213,6 +230,17 @@ Evidence: `paper/baseline/results/scores.json` (at the repository root, beside
   (`rows_scored` in `scores.json`; `gold_cqs = 624`; every one of the 27
   model×condition cells has n = 624; duplicates_skipped = 0,
   rows_without_gold = 0, rows_with_call_error = 0).
+- **Core and contract-exact scoring.** `paper/baseline/score_core.py` re-scores
+  the same prediction files on the **241** contract-exact items (default) or on
+  all **560** Core items against `cqs/spectra_cq_v2.0/core_answer_gold.jsonl`,
+  with no network and no model call.
+- **Relational arm: 1 run.** claude-opus-4.8 under `sql_grounded`: **624**
+  predictions, 0 call errors, in `paper/baseline/relational/runs/`. The model
+  writes SQL over SQLite copies of the five graphs, built by
+  `paper/baseline/build_relational_db.py`, and is shown
+  `paper/baseline/sql_schema_cards.json`. The run is not part of `scores.json`;
+  from `paper/baseline/`, `python3 score_core.py --results relational/runs`
+  scores it.
 
 ---
 
@@ -228,6 +256,14 @@ Evidence: `paper/baseline/results/scores.json` (at the repository root, beside
 - **Independent blind reload: 624/624, 0 mismatch.** An independent reload of
   the released artifacts (TTL + loader + queries + gold) reproduces every
   published answer set with no re-normalization.
+- **Cross-WG scenario counts on the released graphs: 17 of 18 the same.**
+  `tests/reproduce_scenario_counts.py` recounts the 18 counts of
+  `validation/cross_wg_use_evidence.json` on the five body-text graphs and
+  writes `validation/released_graph_scenario_counts.json`. The RAN3 count of
+  change requests on TS 38.300 is 270 on the deployed KG and 1,249 on the
+  released graph (1,144 draftCR, 105 pCR). The 25,586 LS instances of the five
+  graphs carry 25,586 distinct document numbers. See
+  `validation/validation_manifest.md`.
 
 ---
 
@@ -255,6 +291,10 @@ Evidence: `paper/baseline/results/scores.json` (at the repository root, beside
   `cqs/spectra_cq_v2.0/answer_contract.jsonl` were added after the v2.0.0
   archive was built and are present here but not inside that archive. Both
   are plain text and rebuild with no database and no network.
+  `cqs/spectra_cq_v2.0/core_answer_gold.jsonl`,
+  `cqs/spectra_cq_v2.0/held/contract_held_out.json` and
+  `cqs/spectra_cq_v2.0/splits/contract_exact_241.txt` were added after those two
+  and are likewise present here but not inside that archive.
 
 ---
 

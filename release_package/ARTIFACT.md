@@ -103,8 +103,8 @@ ls queries/sparql/  # 6 files
 
 ```bash
 ls validation/
-# 12 JSON evidence files + cq_replay/ + chart_parser_fidelity_note.md
-#   + validation_manifest.md
+# 15 JSON evidence files + cq_replay/ + chart_parser_fidelity_note.md
+#   + source_fidelity_note.md + validation_manifest.md
 # Every paper number is mapped to its evidence file in validation_manifest.md.
 # validation/cq_replay/ holds the benchmark reproducibility evidence:
 # scratch-reload graph counts, per-WG load reports, 624/624 gold replay
@@ -123,7 +123,12 @@ diff, cross-WG query counts, OOPS scan output) are pre-computed snapshots
 shipped under `validation/*.json`; each has an entry in
 `validation/validation_manifest.md` mapping the paper claim to its
 JSON field. These come from the internal build pipeline and are shipped
-as evidence rather than re-derived here.
+as evidence rather than re-derived here. The cross-WG query counts are the
+exception: `tests/reproduce_scenario_counts.py` recounts all 18 of them on
+the body-text graphs of the deposit
+(`validation/released_graph_scenario_counts.json`). 17 are the same; the
+RAN3 count of change requests on TS 38.300 is 270 on the deployed KG and
+1,249 on the released graph (`validation/validation_manifest.md`).
 
 The benchmark gold sets, by contrast, *are* re-derivable from the release
 alone: load the released per-WG TTLs into a scratch Neo4j and re-run the

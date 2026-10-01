@@ -53,10 +53,14 @@ release_package/
 │       ├── croissant.json             # Croissant ML dataset metadata
 │       ├── questions.json             # 624 CQ × {id, wg, phase, category, question_en, schema_area, cypher_file, gold_file, gold}
 │       ├── benchmark.jsonl            # 624 scored rows (one JSON object per line: question + gold answer set + row count)
+│       ├── answer_contract.jsonl      # answer contract of the 560 SpectraCQ-Core items (Git tree only)
+│       ├── core_answer_gold.jsonl     # Core scoring key: answer column + gold value set per item (Git tree only)
 │       ├── cypher/                    # 624 executable Cypher reference queries (one per released CQ)
 │       ├── sparql/                    # 142 SPARQL translations (all released RAN1 CQs; see MANIFEST.md §2.1)
 │       ├── gold/                      # deterministic gold answer sets (RAN{1..5}_gold.json, 654 authored + _gold_summary.json)
+│       ├── splits/                    # four canonical splits + contract_exact_241.txt, 241 Core items (Git tree only)
 │       └── held/                      # 30 held-out CQs (degenerate/empty gold; excluded from scoring)
+│                                      # contract_held_out.json: 64 released CQs outside Core, with reasons (Git tree only)
 ├── queries/
 │   ├── cypher/                        # 15 Cypher translations (incl. MULTI_HOP_traceability)
 │   └── sparql/                        # 6 representative SPARQL examples (full set: cqs/spectra_cq_v2.0/sparql/)
@@ -95,7 +99,7 @@ release_package/
 │   ├── README.md                      # what is here and why
 │   ├── PAPER_APPENDIX.tex             # original Appendix A-G (TTL/SHACL/SPARQL excerpts, etc.)
 │   └── LLM_EVAL_PILOT.tex             # single-evaluator LLM-baseline pilot (was §6.6 in body draft)
-├── validation/                         # ★ JSON evidence for paper's quantitative claims (12 JSONs)
+├── validation/                         # ★ JSON evidence for paper's quantitative claims (15 JSONs)
 │   ├── validation_manifest.md         # paper claim → JSON file mapping
 │   ├── structural_metrics.json        # class/property/axiom counts
 │   ├── oops_summary.json              # OOPS! pitfall scanner result
@@ -110,6 +114,10 @@ release_package/
 │   ├── example_queries_results.json   # bundled example queries → verified result rows
 │   ├── schema_growth_evidence.json    # schema growth evidence across WG onboarding
 │   ├── chart_parser_fidelity_note.md  # chart-parser fidelity caveat
+│   ├── source_fidelity_note.md        # source-fidelity repairs and quarantine: state, application, reach
+│   ├── source_fidelity_repair_manifest.json # repair lists (not applied in the 2.0.0 graph)
+│   ├── source_fidelity_quarantine.json # 334 held records
+│   ├── released_graph_scenario_counts.json # cross-WG query counts recounted on the released graphs
 │   └── cq_replay/                     # ★ 624-CQ benchmark reproducibility evidence (see MANIFEST.md §4)
 │       ├── graph_counts.json          # per-WG loaded node/relationship counts (966,859 / 4,908,850)
 │       ├── triple_counts.json         # per-WG RDF triple counts (12,931,842)
@@ -118,8 +126,10 @@ release_package/
 │       └── sparql_parity_results.json # 142/142 SPARQL/Cypher row-count parity (released RAN1 CQs)
 ├── tests/                              # ★ reproducibility scripts (rdflib + pyshacl)
 │   ├── README.md
+│   ├── reproduce_scenario_counts.py    # recount the cross-WG query counts on the released graphs
 │   ├── reproduce_structural_metrics.py # recompute Table 4 numbers from spectra.ttl
 │   ├── test_e2e_sparql.py              # run multi-hop traceability against synthetic data
+│   ├── verify_benchmark.py             # one-command gate over the whole release
 │   └── verify_release.py               # deterministic per-claim verifier
 ├── metadata/
 │   └── dcat_void.ttl                  # DCAT/VoID machine-readable description of both channels
@@ -156,6 +166,19 @@ The following artifacts are part of the paper's **internal validation evidence**
   benchmark items that count `Contact` nodes report the node count rather
   than the distinct-contact count. Full breakdown and effects:
   `kg/per_wg/README.md`.
+- **Source-fidelity repairs not applied.** A content-fidelity audit flags
+  2,637 rows that a correct conversion cannot produce. Its repair lists
+  and its 334 held records ship in `validation/`, but the 2.0.0 graph
+  carries the values before repair. Gold answers are defined on the graph
+  as deposited, so the lists change no gold answer. How to apply them, what
+  they change and which benchmark items they reach:
+  `validation/source_fidelity_note.md`.
+- **One cross-WG count differs on the released graphs.** RAN3 change
+  requests on TS 38.300 number 270 on the deployed KG behind
+  `validation/cross_wg_use_evidence.json` and 1,249 on the released RAN3
+  graph (1,144 draftCR, 105 pCR); the other 17 counts of that file are the
+  same. `tests/reproduce_scenario_counts.py` recounts all 18 into
+  `validation/released_graph_scenario_counts.json`.
 
 ## Anonymization policy (asymmetric by design)
 
@@ -254,6 +277,13 @@ apply to a Git-only checkout (the other five need the body-text deposit).
 `--full` reloads the released graphs into a scratch store and re-derives
 all 624 published answer sets; it wipes the database it connects to, so
 `--bolt` and `--password` have no defaults. See `tests/README.md`.
+
+### Cross-WG query counts on the released graphs
+`tests/reproduce_scenario_counts.py` recounts the 18 counts of
+`validation/cross_wg_use_evidence.json` on the body-text graphs of the
+deposit (standard library, no database) and compares the result with
+`validation/released_graph_scenario_counts.json`. 17 of the 18 are
+the same; the one that differs is listed under Known data quality issues.
 
 ### SpectraCQ scored benchmark
 The scored benchmark — 624 released CQs (of 654 authored; 30 held out) with English question text, executable reference Cypher, and deterministic gold answer sets (`benchmark.jsonl`) — is at `cqs/spectra_cq_v2.0/`. It is independently citable via `cqs/spectra_cq_v2.0/citation.bib` and licensed CC-BY 4.0. Reproducibility evidence (624/624 self-replay on a scratch reload) lives under `validation/cq_replay/`; canonical counts are in `MANIFEST.md`.

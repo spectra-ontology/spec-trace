@@ -5,6 +5,45 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **SpectraCQ-Core scoring key** (`cqs/spectra_cq_v2.0/core_answer_gold.jsonl`):
+  for each of the 560 Core items, its declared answer column and the gold
+  value set of that column; 553 sets come from the released reference query
+  and 7 from a scope-repaired query carried on the same line.
+- **Contract-exact subset** (`cqs/spectra_cq_v2.0/splits/contract_exact_241.txt`):
+  the 241 Core items whose answer contract holds as released
+  (`contract_disposition` 1). An evaluation subset, not a fifth split.
+- **Contract held-out list** (`cqs/spectra_cq_v2.0/held/contract_held_out.json`):
+  the 64 released CQs outside Core, with question, gold columns, gold row
+  count and one of 5 reason classes. Distinct from the 30 CQs of
+  `cqs/spectra_cq_v2.0/held/held_cqs.json`.
+- **Core scorer** (`paper/baseline/score_core.py`, at the repository root):
+  re-scores the recorded runs on the contract-exact subset (default) or on all
+  of Core against the Core scoring key, with no network and no model call.
+- **Full-record scorer** (`paper/baseline/score_full_record.py`, at the
+  repository root) and its replay files (`paper/baseline/results/_full_record/`):
+  every query the graph-grounded runs recorded, executed again on the released
+  graph of its group together with the reference queries, so that the 560 Core
+  items can be scored on whole returned records rather than on the answer
+  column alone. Scoring reads the replay files and needs no database.
+- **Relational (NL-to-SQL) arm** (under `paper/baseline/`, at the repository
+  root): the loader `build_relational_db.py`, which flattens each group's graph
+  into SQLite; the schema cards `sql_schema_cards.json` the model is shown; and
+  one recorded run of 624 rows under `relational/runs/`. The SQLite files
+  are rebuilt by the loader and are not tracked.
+- **Source-fidelity lists** (`validation/source_fidelity_repair_manifest.json`,
+  `validation/source_fidelity_quarantine.json`, `validation/source_fidelity_note.md`):
+  the repair lists and the 334 held records of the content-fidelity
+  audit, with a note on their state (not applied in the 2.0.0 graph), how to
+  apply them and the benchmark items they reach.
+- **Scenario recount** (`tests/reproduce_scenario_counts.py`,
+  `validation/released_graph_scenario_counts.json`): the 18 cross-WG query
+  counts of `validation/cross_wg_use_evidence.json` recounted on the
+  body-text graphs of the deposit. 17 are the same; the RAN3 count of
+  change requests on TS 38.300 is 1,249 rather than 270.
+
+These additions are in the Git tree only; none is inside the 2.0.0 deposit.
+
 ### Changed
 - **Ontology 1.1.1** (`ontology/spectra.ttl`, mirrored at `docs/spectra.ttl`):
   metadata-only change making the vocabulary conform to the Linked Open

@@ -15,6 +15,17 @@ Each split directory holds `train.txt`, `dev.txt`, `test.txt`: one question
 identifier per line, sorted. The three parts of each split partition the
 624-question key exactly.
 
+## Contract-exact subset
+
+`contract_exact_241.txt` lists the 241 SpectraCQ-Core items whose
+`contract_disposition` is 1 in `../answer_contract.jsonl` (the contract holds
+as released), one identifier per line, sorted. It is an evaluation subset of
+Core, not a fifth split: it partitions nothing, and `rebuild_splits.py`
+neither rebuilds nor checks it. By working group it holds RAN1 48, RAN2 47, RAN3 42, RAN4 53 and RAN5 51; by track,
+lookup 77, aggregation 107, relational 44 and multihop 13, against lookup 178, aggregation 179, relational 154 and multihop 49 over all
+560 Core items. `paper/baseline/score_core.py`, at the repository root,
+scores this subset by default and all of Core with `--set core`.
+
 ## Composition and audits
 
 `composition.json` carries, for every split and every part, the per-track and

@@ -108,6 +108,20 @@ numeric identifier was reused for two different people.
   differing pairs split.
 - No other released count is derived from `Contact`.
 
+## Known defect: source-fidelity repairs not applied
+
+A content-fidelity audit of the deposited graphs flags 2,637 rows that a
+correct conversion cannot produce. Its repair lists
+(`../../validation/source_fidelity_repair_manifest.json`) and its 334
+held records (`../../validation/source_fidelity_quarantine.json`) ship in
+this repository, not in the 2.0.0 deposit, and the TTL files above carry
+the values before repair. Applied, the lists leave the node counts
+unchanged and change the relationship total to 4,908,024 and the RDF
+triple total to 12,930,931. Gold answers in SpectraCQ v2.0 are defined on
+the graph as deposited, so the lists change no gold answer. How to apply
+them and which benchmark items they reach:
+`../../validation/source_fidelity_note.md`.
+
 ## License and attribution
 
 The text literals are **3GPP-derived content** redistributed with explicit
