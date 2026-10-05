@@ -139,7 +139,17 @@ database:
 ```bash
 python3 score_full_record.py score                   # repaired rows for the 7 items (default)
 python3 score_full_record.py score --gold released   # released rows for the 7 items
+python3 score_full_record.py score --set contract_exact_241 --ci    # the 241 contract-exact items, with intervals
+python3 score_full_record.py score --answer-type tuple_set,mapping  # Core items whose answer is a tuple set or a mapping
 ```
+
+`--set` takes the subset names of `score_core.py`, and `--answer-type` keeps the items whose
+`answer_type` in `answer_contract.jsonl` is one of the listed types; both change which items
+are averaged, not how an item is scored. `--ci` adds a 95% interval to each model's F1 from a
+paired item bootstrap: 10,000 resamples of the selected items drawn with `random.Random(0)`,
+one resample shared by every model, the interval running from the 251st to the 9,750th
+sorted resample mean. A model pair counts as separated when the interval of its difference
+excludes zero. The integrity counts below always cover all 560 Core items.
 
 Scores from these files with the default gold:
 

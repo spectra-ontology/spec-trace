@@ -33,6 +33,10 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
   graph of its group together with the reference queries, so that the 560 Core
   items can be scored on whole returned records rather than on the answer
   column alone. Scoring reads the replay files and needs no database.
+- **Full-record scorer options** (`paper/baseline/score_full_record.py score`):
+  `--set` and `--answer-type` average over a subset of Core, and `--ci` adds
+  paired bootstrap 95% intervals of each model's F1 and counts the model pairs
+  they separate. The default output is unchanged.
 - **Relational (NL-to-SQL) arm** (under `paper/baseline/`, at the repository
   root): the loader `build_relational_db.py`, which flattens each group's graph
   into SQLite; the schema cards `sql_schema_cards.json` the model is shown; and

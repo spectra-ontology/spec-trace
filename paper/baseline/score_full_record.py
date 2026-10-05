@@ -12,7 +12,8 @@ executing every recorded query again on the released graph. Two steps:
                      queries (benchmark.jsonl), and the repaired reference
                      query of each of its scope-repaired Core items. Writes
                      results/_full_record/RANn.jsonl.gz.
-  score              Score the 560 Core items from the five replay files.
+  score              Score the 560 Core items, or a subset of them (--set,
+                     --answer-type), from the five replay files.
 
 Load one working group at a time before its replay, for example with
 
@@ -53,6 +54,19 @@ Every model is averaged over all 560 items: an item without a query, or whose
 query fails or times out, scores zero. The answer-column scores of score_core.py
 for the same runs are printed alongside.
 
+Three options of `score` select items and add a summary; without them the
+output is the one described here. `--set NAME` averages over a subset of
+Core named as in score_core.py (contract_exact_241, the split files under
+splits/) or core, the default. `--answer-type T[,T]` keeps the items whose
+answer_type in answer_contract.jsonl is one of the listed types (scalar_set,
+ranked_top_k, tuple_set, mapping). `--ci` adds a 95% interval to each model's
+F1 from a paired item bootstrap: 10,000 resamples of the selected items drawn
+with random.Random(0), one resample shared by every model, the interval
+running from the 251st to the 9,750th sorted resample mean. A model pair
+counts as separated when the interval of its difference excludes zero. The
+options change which items are averaged, not how an item is scored, and the
+integrity check always covers all 560 Core items.
+
 The replay is also an integrity check, reported under `integrity`: whether the
 released reference queries return the gold records on the loaded graph, whether
 each recorded execution error recurs or now times out, and whether the replayed first column
@@ -62,6 +76,8 @@ query carries a LIMIT.
 Usage:  python3 score_full_record.py replay --wg RAN1 --bolt bolt://localhost:7687 \\
             --user neo4j --password PASSWORD        # once per working group
         python3 score_full_record.py score --json full_record_scores.json
+        python3 score_full_record.py score --set contract_exact_241 --ci
+        python3 score_full_record.py score --answer-type tuple_set,mapping
 """
 import argparse
 import gzip
@@ -70,6 +86,7 @@ import inspect
 import io
 import json
 import os
+import random
 import re
 import time
 from pathlib import Path
@@ -87,6 +104,7 @@ _EXEC = inspect.signature(bc.exec_cypher).parameters
 ROW_CAP = _EXEC['row_cap'].default
 TIMEOUT_S = _EXEC['timeout_s'].default
 METRICS = ('exact', 'precision', 'recall', 'f1')
+N_BOOT, SEED = 10000, 0
 WRITE_WORDS = (' create ', ' merge ', ' delete ', ' set ', ' remove ', ' drop ')
 
 
@@ -325,6 +343,48 @@ def integrity(logs, runs, ids):
     return c
 
 
+
+def read_contract(cq_dir):
+    """{id: answer_contract record} for the 560 Core items."""
+    contract = {}
+    with open(cq_dir / 'answer_contract.jsonl') as f:
+        for line in f:
+            if line.strip():
+                r = json.loads(line)
+                if '_header' not in r:
+                    contract[r['id']] = r
+    return contract
+
+
+def bootstrap(per_item, n_boot=N_BOOT, seed=SEED):
+    """Paired item bootstrap. `per_item` is {scorer: {model: [item F1, ...]}}, every list in one item order;
+    each resample of the items is shared by every scorer and model."""
+    n = len(next(iter(next(iter(per_item.values())).values())))
+    rng = random.Random(seed)
+    boots = {s: {m: [] for m in d} for s, d in per_item.items()}
+    for _ in range(n_boot):
+        draw = [rng.randrange(n) for _ in range(n)]
+        for s, d in per_item.items():
+            for m, v in d.items():
+                boots[s][m].append(sum(map(v.__getitem__, draw)) / n)
+    lo, hi = int(0.025 * n_boot), int(0.975 * n_boot) - 1
+
+    def interval(vals):
+        vals = sorted(vals)
+        return [round(vals[lo], 6), round(vals[hi], 6)]
+
+    out = {}
+    for s, b in boots.items():
+        ms = sorted(b)
+        ci = {m: interval(b[m]) for m in ms}
+        diffs = [interval([x - y for x, y in zip(b[p], b[q])]) for i, p in enumerate(ms) for q in ms[i + 1:]]
+        half = [(h - l) / 2 for l, h in ci.values()]
+        out[s] = {'ci95': ci, 'model_pairs': len(diffs),
+                  'model_pairs_separated': sum(l > 0 or h < 0 for l, h in diffs),
+                  'half_width_min': round(min(half), 6), 'half_width_max': round(max(half), 6)}
+    return {'n_boot': n_boot, 'seed': seed, 'scores': out}
+
+
 def score(a):
     cq_dir = Path(a.cq_dir)
     core = read_core(cq_dir)
@@ -354,22 +414,35 @@ def score(a):
                 gold[cid] = {row_key(row) for row in ref['rows']}
 
     key = sc.load_key(cq_dir, a.gold)
+    sel = sorted(sc.load_set(cq_dir, a.set, key))
+    types = a.answer_type.split(',') if a.answer_type else None
+    if types:
+        contract = read_contract(cq_dir)
+        unknown = sorted(set(types) - {r['answer_type'] for r in contract.values()})
+        if unknown:
+            raise SystemExit(f'unknown answer type {unknown[0]}')
+        sel = [cid for cid in sel if contract[cid]['answer_type'] in types]
+    if not sel:
+        raise SystemExit('no item is selected')
     models, pooled = {}, {'full_record': [], 'answer_column': []}
+    per_item = {'full_record': {}, 'answer_column': {}}
     for m, recs in sorted(logs.items()):
         full = []
-        for cid in ids:
+        for cid in sel:
             r = runs.get((m, cid))
             if r is None or r['status'] != 'OK':
                 full.append(dict.fromkeys(METRICS, 0.0))
             else:
                 full.append(score_sets({row_key(row) for row in r['rows']}, gold[cid]))
         col = [sc.score_row(recs[cid].get('predicted_values'), key[cid]['values']) if cid in recs
-               else dict.fromkeys(METRICS, 0.0) for cid in ids]
-        models[m] = {'n': len(ids), 'n_executed': sum(runs.get((m, c), {}).get('status') == 'OK' for c in ids),
+               else dict.fromkeys(METRICS, 0.0) for cid in sel]
+        models[m] = {'n': len(sel), 'n_executed': sum(runs.get((m, c), {}).get('status') == 'OK' for c in sel),
                      'full_record': {k: round(mean(full, k), 6) for k in METRICS},
                      'answer_column': {k: round(mean(col, k), 6) for k in METRICS}}
         pooled['full_record'] += full
         pooled['answer_column'] += col
+        per_item['full_record'][m] = [r['f1'] for r in full]
+        per_item['answer_column'][m] = [r['f1'] for r in col]
 
     ref_check = {'compared': 0, 'equal': 0, 'not_ok': [], 'differ': []}
     for cid in ids:
@@ -382,22 +455,38 @@ def score(a):
         else:
             ref_check['differ'].append(cid)
 
-    out = {'set': 'core', 'gold': a.gold, 'n': len(ids), 'replay_headers': header,
+    boot = bootstrap(per_item) if a.ci else None
+    out = {'set': a.set, **({'answer_type': types} if types else {}), 'gold': a.gold, 'n': len(sel),
+           'replay_headers': header,
            'pooled': {s: {k: round(mean(v, k), 6) for k in METRICS} for s, v in pooled.items()},
-           'models': models,
+           'models': models, **({'bootstrap': boot} if boot else {}),
            'integrity': {'reference_rows_equal_gold_core': ref_check,
                          'core': integrity(logs, runs, ids),
                          'all_released_items': integrity(logs, runs, sorted({c for m, c in expected}))}}
     if a.json:
         Path(a.json).write_text(json.dumps(out, indent=1) + '\n')
 
-    print(f'kg_grounded runs, Core n={len(ids)}, gold={a.gold}')
+    label = 'Core' if a.set == 'core' else a.set
+    if types:
+        label += ' answer_type=' + ','.join(types)
+    print(f'kg_grounded runs, {label} n={len(sel)}, gold={a.gold}')
     print(f"{'model':<18} {'executed':>8} {'rec.exact':>9} {'rec.f1':>7} {'col.exact':>9} {'col.f1':>7}")
     for m, s in models.items():
         fr, ac = s['full_record'], s['answer_column']
         print(f"{m:<18} {s['n_executed']:>8} {fr['exact']:>9.4f} {fr['f1']:>7.4f} {ac['exact']:>9.4f} {ac['f1']:>7.4f}")
     fr, ac = out['pooled']['full_record'], out['pooled']['answer_column']
     print(f"{'(pooled)':<18} {'':>8} {fr['exact']:>9.4f} {fr['f1']:>7.4f} {ac['exact']:>9.4f} {ac['f1']:>7.4f}")
+    if boot:
+        fb, cb = boot['scores']['full_record'], boot['scores']['answer_column']
+        print(f"paired bootstrap over the {len(sel)} items: {boot['n_boot']} resamples, seed {boot['seed']}, "
+              'one resample shared by every model')
+        print(f"{'model':<18} {'rec.f1 95% interval':>20} {'col.f1 95% interval':>20}")
+        for m in models:
+            (fl, fh), (cl, ch) = fb['ci95'][m], cb['ci95'][m]
+            print(f"{m:<18}   [{fl:.4f}, {fh:.4f}]   [{cl:.4f}, {ch:.4f}]")
+        for name, b in (('full record', fb), ('answer column', cb)):
+            print(f"{name}: {b['model_pairs_separated']} of {b['model_pairs']} model pairs separated (difference "
+                  f"interval excludes 0); interval half-width {b['half_width_min']:.4f} to {b['half_width_max']:.4f}")
     print('released reference queries return the gold records on the loaded graph: '
           f"{ref_check['equal']}/{ref_check['compared']} Core items")
     for scope in ('core', 'all_released_items'):
@@ -421,6 +510,10 @@ def main():
     sp.add_argument('--gold', choices=('repaired', 'released'), default='repaired')
     sp.add_argument('--replay', default=str(REPLAY))
     sp.add_argument('--json', help='write the scores to this path')
+    sp.add_argument('--set', default='core', help='a subset named as in score_core.py, or core (default)')
+    sp.add_argument('--answer-type', help='keep the items of these answer types, comma-separated')
+    sp.add_argument('--ci', action='store_true',
+                    help='add paired bootstrap 95%% intervals of F1 and count the model pairs they separate')
     for p in (rp, sp):
         p.add_argument('--runs', default=str(RUNS))
         p.add_argument('--cq-dir', default=str(CQ))
