@@ -55,10 +55,11 @@ release_package/
 │       ├── benchmark.jsonl            # 624 scored rows (one JSON object per line: question + gold answer set + row count)
 │       ├── answer_contract.jsonl      # answer contract of the 560 SpectraCQ-Core items (Git tree only)
 │       ├── core_answer_gold.jsonl     # Core scoring key: answer column + gold value set per item (Git tree only)
+│       ├── contract_demand_provenance.jsonl # column-demand verdicts behind the answer contract, each with what decided it (Git tree only)
 │       ├── cypher/                    # 624 executable Cypher reference queries (one per released CQ)
 │       ├── sparql/                    # 142 SPARQL translations (all released RAN1 CQs; see MANIFEST.md §2.1)
 │       ├── gold/                      # deterministic gold answer sets (RAN{1..5}_gold.json, 654 authored + _gold_summary.json)
-│       ├── splits/                    # four canonical splits + contract_exact_241.txt, 241 Core items (Git tree only)
+│       ├── splits/                    # four canonical splits + contract_exact_241.txt, 241 Core items, and contract_exact_rule_only_149.txt, 149 of them (Git tree only)
 │       └── held/                      # 30 held-out CQs (degenerate/empty gold; excluded from scoring)
 │                                      # contract_held_out.json: 64 released CQs outside Core, with reasons (Git tree only)
 ├── queries/

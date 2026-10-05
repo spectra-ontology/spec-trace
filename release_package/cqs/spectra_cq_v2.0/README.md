@@ -69,6 +69,15 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
   query as `repaired_cypher` and keeps the released query's values as
   `gold_values_released_query`. Scored by `paper/baseline/score_core.py` at
   the repository root.
+- `contract_demand_provenance.jsonl`: one line per released CQ (a `_header`
+  line plus 624 items) with one verdict per returned column: whether the
+  question requires that column (`required`, `not_required` or
+  `undecidable`), the method that decided it, and the words it rests on.
+  Word-overlap rules between the column name and the question decide
+  1,339 of the 1,616 columns. A language model decides the other 277,
+  on 232 items: columns after the first that the rules leave
+  undecidable (275), and 2 columns where its verdict replaced a rule
+  verdict. The header defines every method.
 - `splits/` — the four canonical splits as identifier lists, with their
   per-track and per-group composition, the leakage audit, and a
   deterministic rebuild script. See `splits/README.md`.
@@ -76,6 +85,10 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
   `contract_disposition` is 1 in `answer_contract.jsonl` (the contract holds as
   released), one identifier per line. An evaluation subset of Core, not one of
   the four splits; see `splits/README.md`.
+- `splits/contract_exact_rule_only_149.txt`: the 149 items of
+  `splits/contract_exact_241.txt` with no language-model verdict (`method`
+  in `contract_demand_provenance.jsonl`), one identifier per line. An
+  evaluation subset, like the 241; see `splits/README.md`.
 - `cypher/{WG}_P{phase}_{id}.cypher` — 624 executable Cypher reference
   queries (one per released CQ).
 - `sparql/P{phase}_{id}.rq` — 142 SPARQL translations covering **all
@@ -147,8 +160,9 @@ deposit under that concept. Two additions in this directory —
 `splits/` and `answer_contract.jsonl` — were made after the 2.0.0 archive was
 built and are present in the Git tree only; both are plain text and rebuild
 offline. See `../../MANIFEST.md` §5 for the deposit-versus-repository split.
-Three later additions, `core_answer_gold.jsonl`, `held/contract_held_out.json`
-and `splits/contract_exact_241.txt`, are likewise in the Git tree only.
+Five later additions, `core_answer_gold.jsonl`, `held/contract_held_out.json`,
+`splits/contract_exact_241.txt`, `contract_demand_provenance.jsonl` and
+`splits/contract_exact_rule_only_149.txt`, are likewise in the Git tree only.
 
 ## License
 

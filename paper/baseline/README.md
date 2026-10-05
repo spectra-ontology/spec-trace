@@ -112,6 +112,7 @@ directly and writes nothing unless `--json` is given.
 ```bash
 python3 score_core.py                    # the 241 contract-exact items (default)
 python3 score_core.py --set core         # all 560 Core items
+python3 score_core.py --set contract_exact_rule_only_149   # the 149 contract-exact items with no language-model verdict
 python3 score_core.py --gold released    # as the default, but the 7 scope-repaired items keep the released query's values
 ```
 

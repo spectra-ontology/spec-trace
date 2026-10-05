@@ -26,6 +26,17 @@ lookup 77, aggregation 107, relational 44 and multihop 13, against lookup 178, a
 560 Core items. `paper/baseline/score_core.py`, at the repository root,
 scores this subset by default and all of Core with `--set core`.
 
+`contract_exact_rule_only_149.txt` lists the 149 items of
+`contract_exact_241.txt` in which no column or phrase verdict was made by a
+language model (`method` in `../contract_demand_provenance.jsonl`), one
+identifier per line, sorted. Like the 241, it is an evaluation subset that
+`rebuild_splits.py` neither rebuilds nor checks. By working group it holds
+RAN1 24, RAN2 27, RAN3 26, RAN4 37 and RAN5 35; by track, lookup 50,
+aggregation 75, relational 16 and multihop 8; by answer type, scalar_set 115
+and ranked_top_k 34.
+`python3 paper/baseline/score_core.py --set contract_exact_rule_only_149`
+scores it.
+
 ## Composition and audits
 
 `composition.json` carries, for every split and every part, the per-track and

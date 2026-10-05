@@ -13,6 +13,13 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 - **Contract-exact subset** (`cqs/spectra_cq_v2.0/splits/contract_exact_241.txt`):
   the 241 Core items whose answer contract holds as released
   (`contract_disposition` 1). An evaluation subset, not a fifth split.
+- **Column-demand provenance** (`cqs/spectra_cq_v2.0/contract_demand_provenance.jsonl`):
+  for each returned column of the 624 released CQs, whether the question
+  requires it, the method that decided it and the words it rests on. Rules
+  decide 1,339 of the 1,616 columns; a language model decides 277, on 232 items.
+- **Rule-only contract-exact subset** (`cqs/spectra_cq_v2.0/splits/contract_exact_rule_only_149.txt`):
+  the 149 contract-exact items with no language-model verdict. An evaluation
+  subset, not a fifth split.
 - **Contract held-out list** (`cqs/spectra_cq_v2.0/held/contract_held_out.json`):
   the 64 released CQs outside Core, with question, gold columns, gold row
   count and one of 5 reason classes. Distinct from the 30 CQs of

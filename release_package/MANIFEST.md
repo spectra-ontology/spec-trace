@@ -214,6 +214,14 @@ each with its reason, in `cqs/spectra_cq_v2.0/held/contract_held_out.json`
 (560 + 64 = 624); they are distinct from the 30 authored CQs of
 `cqs/spectra_cq_v2.0/held/held_cqs.json`.
 
+`cqs/spectra_cq_v2.0/contract_demand_provenance.jsonl` records, for every
+returned column of the **624** released CQs (**1,616** columns), whether the
+question requires it and what decided that: word-overlap rules between the
+column name and the question (**1,339** columns) or a language model
+(**277** columns on **232** items).
+`cqs/spectra_cq_v2.0/splits/contract_exact_rule_only_149.txt` lists the **149**
+contract-exact items with no language-model verdict.
+
 ---
 
 ## 3. Evaluation — baseline suite
@@ -234,6 +242,8 @@ Evidence: `paper/baseline/results/scores.json` (at the repository root, beside
   the same prediction files on the **241** contract-exact items (default) or on
   all **560** Core items against `cqs/spectra_cq_v2.0/core_answer_gold.jsonl`,
   with no network and no model call.
+  `--set contract_exact_rule_only_149` scores the **149** contract-exact items
+  with no language-model verdict (§2.3).
 - **Relational arm: 1 run.** claude-opus-4.8 under `sql_grounded`: **624**
   predictions, 0 call errors, in `paper/baseline/relational/runs/`. The model
   writes SQL over SQLite copies of the five graphs, built by
@@ -294,6 +304,9 @@ Evidence: `paper/baseline/results/scores.json` (at the repository root, beside
   `cqs/spectra_cq_v2.0/core_answer_gold.jsonl`,
   `cqs/spectra_cq_v2.0/held/contract_held_out.json` and
   `cqs/spectra_cq_v2.0/splits/contract_exact_241.txt` were added after those two
+  and are likewise present here but not inside that archive.
+  `cqs/spectra_cq_v2.0/contract_demand_provenance.jsonl` and
+  `cqs/spectra_cq_v2.0/splits/contract_exact_rule_only_149.txt` came after those
   and are likewise present here but not inside that archive.
 
 ---

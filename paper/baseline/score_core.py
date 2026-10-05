@@ -19,6 +19,8 @@ Sets (--set):
   contract_exact_241 (default)  splits/contract_exact_241.txt: the items whose
                                 answer contract holds as released
                                 (contract_disposition 1 in answer_contract.jsonl)
+  contract_exact_rule_only_149  the 149 of those items with no column verdict
+                                made by a language model (contract_demand_provenance.jsonl)
   core                          all 560 Core items
 
 Every arm is scored over the whole set: an item a run never answered scores
