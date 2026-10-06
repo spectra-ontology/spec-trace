@@ -15,30 +15,37 @@ Each split directory holds `train.txt`, `dev.txt`, `test.txt`: one question
 identifier per line, sorted. The three parts of each split partition the
 624-question key exactly.
 
-## Contract-exact subsets
+## Annotation-derived contract subsets
 
-Four identifier lists here are evaluation subsets of SpectraCQ-Core, not
+The four `contract_exact_*` identifier lists are evaluation subsets of SpectraCQ-Core, not
 splits: they partition nothing, and `rebuild_splits.py` neither rebuilds nor
 checks them; `rebuild_contract_splits.py` does both (see Rebuilding). Each
 holds one identifier per line, sorted.
 
-A Core item holds as asked when no contract flag is set in
-`../answer_contract.jsonl` and every returned column its question demands
-(verdict `required` in `../contract_demand_provenance.jsonl`) is the scored
-answer column, `answer_columns[0]`. A question may demand no column.
+A Core item enters the 208-item subset when no contract flag is set in
+`../answer_contract.jsonl` and every column with a recorded `required`
+verdict in `../contract_demand_provenance.jsonl` is the scored answer column,
+`answer_columns[0]`. An item may have no recorded `required` column. These
+are conditions on the released annotations, not an independent validation
+of everything the question asks. The `contract_exact_*` filenames are kept
+for compatibility.
 
-`contract_exact_script_fixed_133.txt` lists the 133 items that hold as asked
-whatever a language model decided: they hold as asked, every column verdict
-made by a language model falls on the scored answer column, and no phrase
-verdict is recorded. By working group it holds RAN1 20, RAN2 23, RAN3 25,
+`contract_exact_script_fixed_133.txt` lists the 133 items of the 208 for
+which every column verdict made by a language model falls on the scored
+answer column and no phrase verdict is recorded. Membership is invariant to
+changing those model verdicts while keeping the rule verdicts, flags and
+scored answer column fixed. The rules and flags can still miss a requested
+count, relationship attribute or ordering requirement. By working group it
+holds RAN1 20, RAN2 23, RAN3 25,
 RAN4 32 and RAN5 33; by track, lookup 47, aggregation 65, relational 13 and
 multihop 8; by answer type, scalar_set 105 and ranked_top_k 28.
 `paper/baseline/score_core.py`, at the repository root, scores this subset by
 default and all of Core with `--set core`.
 
-`contract_exact_asked_208.txt` lists the 208 items that hold as asked under
-the recorded verdicts: 117 demand exactly the scored answer column and 91
-demand no column. By working group it holds RAN1 40, RAN2 41, RAN3 40, RAN4 45
+`contract_exact_asked_208.txt` lists the 208 items satisfying the recorded
+conditions above: 117 have exactly the scored answer column marked
+`required` and 91 have no column marked `required`. By working group it
+holds RAN1 40, RAN2 41, RAN3 40, RAN4 45
 and RAN5 42; by track, lookup 69, aggregation 90, relational 38 and multihop
 11; by answer type, scalar_set 155 and ranked_top_k 53.
 `python3 paper/baseline/score_core.py --set contract_exact_asked_208` scores
@@ -48,9 +55,10 @@ it.
 superseded. The 241 are the Core items whose `contract_disposition` is 1,
 that is, with no contract flag set. A column-demand flag
 (`question_names_extra_columns` or `mapping_answer`) is set exactly when a
-question demands two or more returned columns, so disposition 1 bounds how
-many columns are demanded, not which: in 33 of the 241 the one demanded
-column is not the scored answer column. By working group the 241 hold RAN1
+the annotations mark two or more returned columns as required, so
+disposition 1 bounds the recorded column-demand count, not the column's
+identity: in 33 of the 241 the one column marked `required` is not the
+scored answer column. By working group the 241 hold RAN1
 48, RAN2 47, RAN3 42, RAN4 53 and RAN5 51; by track, lookup 77, aggregation
 107, relational 44 and multihop 13, against lookup 178, aggregation 179,
 relational 154 and multihop 49 over all 560 Core items. The 149 are the items
@@ -62,6 +70,80 @@ and ranked_top_k 34. Of the 33, 17 are among the 149; the other 132 of the
 149 all lie in the 133. Both lists stay so that earlier scores on them can be
 reproduced with `--set contract_exact_241` and
 `--set contract_exact_rule_only_149`.
+
+The 132-item rule-only diagnostic subset is the intersection of the
+preserved 149 and 133 lists. It has no separately authored membership file;
+it removes the 17 items with a recorded off-answer-column demand from the
+legacy 149. Neither the 132 nor the 133 is a human-validated semantic subset.
+`paper/baseline/analyse_contract_subsets.py` at the repository root derives
+the 132 without a new membership file and reports the 133/208/132 scores,
+declared-type and column-position sensitivities, and optional paired
+bootstrap comparisons with the best original text run reselected per draw.
+The [recorded 30-population analysis](../../../../paper/baseline/results/contract_subset_analysis.json)
+contains the actual identifiers, input/source hashes and 10,000-draw seed-0
+intervals. The [baseline README](../../../../paper/baseline/README.md) gives
+the reproduction commands and `--ids PATH` for a separately fixed Core list.
+
+The scoring key is the reference query's declared answer-column value set.
+It does not grade other returned columns, row multiplicity or row order.
+For example, `RAN4_P1_CQ5-1` asks for node counts by label but its scored
+column is `label`, and `RAN5_P1_CQ1-5` asks for Samsung's TDocs newest first
+but the set score ignores their order. Both are in the 133. The subset
+conditions therefore cannot establish that all count, routing or ranking
+requirements are scored.
+
+Names and labels in the frozen annotations are historical; the membership
+conditions do not validate natural-language questions. The
+[annotation diagnostic](../contract_annotation_diagnostics.json), produced
+by [audit_demand_annotations.py](audit_demand_annotations.py), enumerates
+unscored returned fields and query syntax over all Core items and the 133/208
+subsets, with three source-grounded examples. Syntactic signals do not measure
+semantic error prevalence and are not independent practitioner validation.
+
+## AI-assisted field-coverage diagnostic
+
+`field_coverage_reviewed_ids.txt` contains the 67 items that both recorded
+AI reviews of all 133 candidates marked `field_aligned`. The
+[review record](../field_coverage_review.json) includes the fixed protocol,
+source hashes and both judgments with question/query anchors. Each review
+saw the question, reference query, returned columns and declared answer
+column, with predictions, scores, annotation labels and the other review
+hidden. The intersection was frozen before its subset was scored; any
+`mismatch` or `ambiguous` judgment excluded the item, with no later
+score-based adjudication. The other 66 items are exclusions under this
+procedure, not 66 independently confirmed semantic errors.
+
+These are two isolated Codex AI reviews, not human or 3GPP expert validation.
+Their judgments may share errors; the exact model snapshot was not recorded.
+This diagnostic does not replace Core, the 133/208 or the Core scorer's
+133-item compatibility default. Questions, gold and recorded outputs are
+unchanged. By working group it has RAN1 7, RAN2 9, RAN3 15, RAN4 21 and
+RAN5 15; by track, lookup 21, aggregation 42, relational 3 and multihop 1.
+There are no declared tuple/mapping items, so results on this selected
+cohort do not establish broad performance on multi-field answers or all tracks.
+The cohort was selected for coverage by value-set scoring; it is not a random
+or representative sample of Core.
+
+From the repository root:
+
+```bash
+python3 release_package/cqs/spectra_cq_v2.0/splits/rebuild_field_coverage_subset.py --check
+```
+
+This checks the stored judgments, source/input anchors and their intersection
+against the shipped identifier list. It does not repeat the AI reviews or
+verify that their semantic judgments are true. The
+[recorded analysis](../../../../paper/baseline/results/field_coverage_subset_analysis.json)
+uses that fixed list with `analyse_contract_subsets.py --ids`, 10,000 paired
+seed-0 resamples and the original 18 text runs; the
+[baseline README](../../../../paper/baseline/README.md) gives the command and
+the distinct answer-column and record-scoring definitions.
+
+The supplementary [structured-access analysis](../../../../paper/baseline/results/structured_access_core_analysis.json)
+uses all 560 Core identifiers, not a success-filtered subset. It re-scores
+retained SQL/Cypher outputs on the same repaired answer-column key and includes
+failed queries as zero; it changes no split or subset membership. See the
+baseline README for its paired interval and historical/provenance limits.
 
 ## Composition and audits
 

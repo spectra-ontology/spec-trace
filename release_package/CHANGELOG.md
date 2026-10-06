@@ -18,19 +18,26 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
   for each returned column of the 624 released CQs, whether the question
   requires it, the method that decided it and the words it rests on. Rules
   decide 1,339 of the 1,616 columns; a language model decides 277, on 232 items.
-- **Rule-only contract-exact subset** (`cqs/spectra_cq_v2.0/splits/contract_exact_rule_only_149.txt`):
-  the 149 contract-exact items with no language-model verdict. An evaluation
+- **Rule-only legacy contract subset** (`cqs/spectra_cq_v2.0/splits/contract_exact_rule_only_149.txt`):
+  the 149 legacy items with no language-model verdict. An evaluation
   subset, not a fifth split; superseded (see Changed).
-- **Contract-exact subsets that hold as asked**
+- **Annotation-derived contract subsets**
   (`cqs/spectra_cq_v2.0/splits/contract_exact_asked_208.txt`,
   `cqs/spectra_cq_v2.0/splits/contract_exact_script_fixed_133.txt`): the 208
-  Core items in which no contract flag is set and every returned column the
-  question demands is the scored answer column, and the 133 of them that hold
-  as asked whatever a language model decided. Evaluation subsets, not splits.
+  Core items in which no contract flag is set and every column marked
+  `required` is the scored answer column, and the 133 of them whose membership
+  is invariant to model verdicts with the rules, flags and answer column fixed.
+  Evaluation subsets, not splits or semantic validation sets; historical
+  filenames and annotation labels are preserved.
 - **Contract-exact list rebuild** (`cqs/spectra_cq_v2.0/splits/rebuild_contract_splits.py`):
   rebuilds the four contract-exact lists from three files in
   `cqs/spectra_cq_v2.0/` and checks them byte for byte, with no database and
   no network.
+- **Annotation diagnostic** (`cqs/spectra_cq_v2.0/contract_annotation_diagnostics.json`
+  and `cqs/spectra_cq_v2.0/splits/audit_demand_annotations.py`): complete
+  enumeration of unscored returned fields and syntactic query-order/limit
+  signals, input hashes and three source-grounded examples. These diagnose
+  scoring scope; they are not semantic error prevalence or expert validation.
 - **Contract held-out list** (`cqs/spectra_cq_v2.0/held/contract_held_out.json`):
   the 64 released CQs outside Core, with question, gold columns, gold row
   count and one of 5 reason classes. Distinct from the 30 CQs of
@@ -49,11 +56,49 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
   `--set` and `--answer-type` average over a subset of Core, and `--ci` adds
   paired bootstrap 95% intervals of each model's F1 and counts the model pairs
   they separate. The default output is unchanged.
+- **Offline scoring-sensitivity analysis** (`paper/baseline/analyse_contract_subsets.py`):
+  derives the 133/208/132 populations from public annotations and preserved
+  lists, separates answer-column and whole-record S/P/C scoring, and reports
+  declared-type, track, group and surface query composition analyses. Optional
+  paired item intervals compare each graph model with both fixed and
+  per-resample reselected original 18-arm text comparators. The JSON records
+  input/source hashes, population identifiers, metric definitions and limits;
+  no new model or database query is run.
+- **Recorded scoring-sensitivity artifact** (`paper/baseline/results/contract_subset_analysis.json`):
+  actual all-scope analysis of 30 populations, with 52 input/source hashes,
+  10,000 paired seed-0 resamples and fixed/reselected original-text comparisons.
+  The CLI's `--ids PATH` also supports one externally fixed Core identifier
+  list, hashing it and rejecting empty, duplicate or unknown identifiers.
+- **AI-assisted field-coverage diagnostic** (`cqs/spectra_cq_v2.0/field_coverage_review.json`,
+  `splits/field_coverage_reviewed_ids.txt` and `splits/rebuild_field_coverage_subset.py`
+  under that CQ directory): two isolated Codex AI reviews of all 133
+  candidates, with a fixed question/query/column protocol, stored judgments
+  and anchors, and their 67-item intersection frozen before re-scoring.
+  The checker reproduces the stored intersection without repeating AI
+  judgments or certifying semantics. This is not human or expert validation;
+  excluded mismatch/ambiguous items do not estimate semantic error prevalence.
+- **Recorded field-coverage subset analysis** (`paper/baseline/results/field_coverage_subset_analysis.json`):
+  offline `--ids` scoring of the fixed 67, with 10,000 paired seed-0
+  resamples. Answer-column pooled F1 is 0.650757; full-record S/P/C is
+  0.428063 under each rule, with 9 models above reselected original-text
+  scoring under each. The cohort has no declared tuple/mapping items and is
+  concentrated in lookup/aggregation. It supplements Core and the 133/208;
+  the annotation-derived 133 remains the compatibility default. Questions,
+  gold and recorded outputs are unchanged; the field judgments are AI-assisted.
 - **Relational (NL-to-SQL) arm** (under `paper/baseline/`, at the repository
   root): the loader `build_relational_db.py`, which flattens each group's graph
   into SQLite; the schema cards `sql_schema_cards.json` the model is shown; and
   one recorded run of 624 rows under `relational/runs/`. The SQLite files
   are rebuilt by the loader and are not tracked.
+- **Retained full-Core SQL/Cypher comparison** (`paper/baseline/analyse_structured_access.py`
+  and `paper/baseline/results/structured_access_core_analysis.json`): the two
+  claude-opus-4.8 runs scored on the same repaired 560-item answer-column key,
+  retaining failed queries as zero. SQL/Cypher F1 is 0.373614/0.351949;
+  the difference 0.021665 has paired seed-0/10,000-draw CI
+  [-0.001249, 0.044760], including zero. Per-item results and 13 input/source
+  hashes are retained. No new model, query or database execution occurs;
+  this does not restore the historical SQL325/290 comparison or its database
+  snapshot, establish engine causality or certify all question requirements.
 - **Source-fidelity lists** (`validation/source_fidelity_repair_manifest.json`,
   `validation/source_fidelity_quarantine.json`, `validation/source_fidelity_note.md`):
   the repair lists and the 334 held records of the content-fidelity
@@ -71,11 +116,20 @@ These additions are in the Git tree only; none is inside the 2.0.0 deposit.
 - **Core scorer default** (`paper/baseline/score_core.py`): the default set is
   now `contract_exact_script_fixed_133`. `contract_exact_241` and
   `contract_exact_rule_only_149` stay selectable and are superseded:
-  disposition 1 bounds how many columns a question demands, not which, and in
-  33 of the 241 the one demanded column is not the scored answer column. No
+  disposition 1 bounds the recorded required-column count, not identity, and
+  in 33 of the 241 the one column marked `required` is not the scored answer column. No
   scoring rule changed. The docstring of `paper/baseline/score_full_record.py`
   now states that a returned row is compared as its values sorted within the
   row.
+- **Scoring and reproduction scope documentation:** the 133/208 conditions
+  are now stated as properties of recorded annotations, with count and
+  ordering counterexamples to a semantic guarantee. The 132 diagnostic subset
+  is explicitly `149 ∩ 133`. Documentation distinguishes answer-column value
+  scoring, whole-record replay and frozen Zenodo bytes from Git additions.
+  It also records the missing historical SQL325 cohort identifiers, the
+  unverified meaning of the associated `290` label and the absent per-item
+  outputs of rebuilt text comparators. These are disclosed limitations; the
+  benchmark, gold, annotations, subset membership and recorded runs are unchanged.
 - **Ontology 1.1.1** (`ontology/spectra.ttl`, mirrored at `docs/spectra.ttl`):
   metadata-only change making the vocabulary conform to the Linked Open
   Vocabularies (LOV) submission requirements. Adds
@@ -133,7 +187,8 @@ Major release for the KDD 2027 Datasets & Benchmarks submission.
 - **Answer contract** (`cqs/spectra_cq_v2.0/answer_contract.jsonl`): one
   line per SpectraCQ-Core item (560) recording the graded answer type and
   columns, the ordering key and cardinality the reference query imposes,
-  and what would have to change for the item to hold exactly as asked.
+  and annotated contract flags (historically described as changes needed to
+  hold exactly as asked; see the scope clarification under Unreleased).
 - **Release verifier** (`tests/verify_benchmark.py`): two modes — a quick
   mode that checks the shipped files against the recorded answer key with
   no database, and a full mode that reloads and replays.

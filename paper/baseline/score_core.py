@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""score_core.py - score the recorded runs on SpectraCQ-Core and its contract-exact subsets.
+"""score_core.py - score the recorded runs on SpectraCQ-Core and annotation-selected subsets.
 
 score.py scores the released key: the first returned column of all 624 items.
-The paper's Core and contract-exact numbers use a different key, V2 in the
+The paper's Core and subset numbers use a different key, V2 in the
 gold-remediation table: each of the 560 Core items is scored on its declared
 answer column. That key ships as
 
@@ -20,21 +20,23 @@ Sets (--set):
                                 the 133 of the 208 below in which every column
                                 verdict made by a language model falls on the
                                 scored answer column and no phrase verdict is
-                                recorded: they hold as asked whatever a
-                                language model decided
-  contract_exact_asked_208      the 208 items that hold as asked under the
-                                recorded verdicts (contract_demand_provenance.jsonl):
-                                no contract flag is set, and every returned
-                                column the question demands is the scored
-                                answer column
+                                recorded. Membership is stable under changes
+                                to those judgments, conditional on the stored
+                                rule verdicts and demand-column universe
+  contract_exact_asked_208      the 208 items selected by the recorded demand
+                                verdicts (contract_demand_provenance.jsonl):
+                                no contract flag is set, and every column with
+                                a required verdict is the scored answer column
   contract_exact_241            superseded: the 241 items with
                                 contract_disposition 1, which bounds how many
                                 returned columns a question demands, not which
   contract_exact_rule_only_149  superseded: the 149 of the 241 with no column
                                 or phrase verdict made by a language model
   core                          all 560 Core items
-Each set but core is a list under release_package/cqs/spectra_cq_v2.0/splits/,
-whose README.md defines when a Core item holds as asked.
+Each set but core is a list under release_package/cqs/spectra_cq_v2.0/splits/.
+The historical filenames are retained. Membership does not establish that
+every field, count, attribute or ordering requirement in the question is
+graded; see that directory's README.md and the annotation diagnostic sidecar.
 
 Every arm is scored over the whole set: an item a run never answered scores
 zero. When a log repeats an id, the first record counts. No network, no LLM.

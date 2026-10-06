@@ -5,7 +5,9 @@ validate the SPECTRA ontology across all five 3GPP RAN working groups, now
 released as a **scored benchmark**: each released CQ pairs a natural-language
 question with an executable Cypher reference query and a **deterministic gold
 answer set** obtained by executing that query against the released per-WG
-knowledge graphs. No LLM and no human annotation is in the gold path.
+knowledge graphs. Gold-value extraction is automated query execution; the
+reference queries and the separate column-demand annotations have their own
+provenance. Query replay is not independent semantic validation of a question.
 
 Canonical counts for every number below: `../../MANIFEST.md`.
 
@@ -57,12 +59,13 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
   line plus 560 items): the graded `answer_type` and `answer_columns`, the
   `ordering_key` and `cardinality` read from the clauses that govern the
   reference query's final `RETURN` (null where none is imposed), and a
-  `contract_disposition` recording what would have to change for the item
-  to hold exactly as asked. Disposition 1 means that no contract flag is
-  set, so the question demands at most one returned column. That bounds how
-  many columns are demanded, not which: in 33 of the 241 items with
-  disposition 1 the one demanded column is not the scored answer column.
-  `splits/contract_exact_asked_208.txt` lists the items that hold as asked.
+  `contract_disposition` recording the annotated contract flags. Disposition
+  1 means that no flag is set. Under the recorded column-demand annotations,
+  this bounds the number of required columns, not their identity: in 33 of
+  the 241 items with disposition 1 the column marked `required` is not the
+  scored answer column. The annotation-derived 208-item subset corrects
+  that recorded identity mismatch; it is not a semantic validation of each
+  question's full requirements.
 - `core_answer_gold.jsonl`: the scoring key of SpectraCQ-Core (a `_header`
   line plus 560 items): each item's declared answer column
   (`answer_columns[0]` of `answer_contract.jsonl`) and the gold value set of
@@ -85,20 +88,21 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
 - `splits/` — the four canonical splits as identifier lists, with their
   per-track and per-group composition, the leakage audit, and a
   deterministic rebuild script. See `splits/README.md`.
-- `splits/contract_exact_script_fixed_133.txt`: the 133 Core items that hold
-  as asked whatever a language model decided: they hold as asked, every
-  column verdict made by a language model falls on the scored answer column,
-  and no phrase verdict is recorded. One identifier per line. The default set
-  of `paper/baseline/score_core.py` at the repository root.
-- `splits/contract_exact_asked_208.txt`: the 208 Core items that hold as
-  asked: no contract flag is set in `answer_contract.jsonl`, and every
-  column the question demands (verdict `required` in
-  `contract_demand_provenance.jsonl`) is the scored answer column
-  `answer_columns[0]`; a question may demand none. One identifier per line.
+- `splits/contract_exact_script_fixed_133.txt`: the 133 items of the
+  annotation-derived 208 in which every language-model column verdict falls
+  on the scored answer column and no phrase verdict is recorded. Membership
+  is invariant to those model verdicts with rule verdicts, flags and answer
+  column fixed. One identifier per line. The default set of
+  `paper/baseline/score_core.py` at the repository root.
+- `splits/contract_exact_asked_208.txt`: the 208 Core items with no contract
+  flag set and every column marked `required` in
+  `contract_demand_provenance.jsonl` equal to the scored answer column
+  `answer_columns[0]`; an item may have none marked `required`. One identifier
+  per line. These conditions do not certify question-level semantic validity.
 - `splits/contract_exact_241.txt`: superseded. The 241 Core items whose
   `contract_disposition` is 1, that is, with no contract flag set. In 33 of
-  them the one demanded column is not the scored answer column, so they do
-  not all hold as asked. Kept so that earlier scores can be reproduced.
+  them the one column marked `required` is not the scored answer column.
+  Kept so that earlier scores can be reproduced.
 - `splits/contract_exact_rule_only_149.txt`: superseded. The 149 items of
   `splits/contract_exact_241.txt` with no column or phrase verdict made by a
   language model (`method` in `contract_demand_provenance.jsonl`); 17 of the
@@ -107,6 +111,12 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
   `answer_contract.jsonl`, `contract_demand_provenance.jsonl` and
   `core_answer_gold.jsonl` and checks them byte for byte. All four are
   evaluation subsets of Core, not splits; see `splits/README.md`.
+- `field_coverage_review.json`: a fixed protocol and two stored AI-assisted
+  field-coverage judgments for every item of the annotation-derived 133,
+  with source hashes, question/query anchors and limitations.
+- `splits/field_coverage_reviewed_ids.txt`: the 67 items both AI reviews
+  marked `field_aligned`. A supplementary diagnostic subset, with its
+  composition and rebuild command in `splits/README.md`.
 - `cypher/{WG}_P{phase}_{id}.cypher` — 624 executable Cypher reference
   queries (one per released CQ).
 - `sparql/P{phase}_{id}.rq` — 142 SPARQL translations covering **all
@@ -133,6 +143,67 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
 - `croissant.json` — Croissant ML dataset metadata.
 - `CITATION.cff` / `citation.bib` — citation metadata.
 - `LICENSE` — CC-BY 4.0.
+
+## Scoring scope and annotation limits
+
+The 132-item rule-only diagnostic subset is the intersection of the 149
+and 133 lists; no new membership file replaces the preserved lists. The
+subset names and labels in frozen annotations are historical. They describe
+annotation conditions, without validating all natural-language requirements.
+
+The Core gold projects a reference query onto its declared answer column.
+Exact and Set-F1 compare normalized value sets, discarding duplicate values
+and row order; other returned columns receive no credit or penalty. In
+`RAN4_P1_CQ5-1` the question asks for counts by label, but the scored column
+is `label`. In `RAN5_P1_CQ1-5` the question asks for Samsung's TDocs newest
+first, but set scoring does not compare their order. Both belong to the
+133. Replaying a reference query checks its stored outputs, not that this
+projection fully answers the question. See [subset definitions](splits/README.md)
+and the [baseline README](../../../paper/baseline/README.md) for the limits of
+the recorded predictions and whole-record diagnostics.
+
+The [annotation diagnostic](contract_annotation_diagnostics.json), generated
+by [audit_demand_annotations.py](splits/audit_demand_annotations.py), enumerates
+unscored returned fields and syntactic `ORDER BY`/`LIMIT` signals for all Core
+items and the 133/208 subsets, checks the denominator of the later-column
+demand count, and gives three source-grounded count, recipient and ranking
+examples. These signals are not an estimate of semantic error prevalence or
+independent practitioner validation. It preserves questions, annotations,
+gold and subset membership.
+
+The [AI-assisted field-coverage review](field_coverage_review.json) examined
+all 133 candidates using their question, reference Cypher, returned column
+names and scored answer column. Two mutually isolated Codex AI agents saw
+neither the other review nor demand/type labels, predictions or item scores.
+The protocol tested whether the requested fields, counts, mapping, order and
+multiplicity could be represented by the scored unordered value set, and
+whether an evident query scope or cap conflicted with the question. Explicit
+top-k membership can be set-scored when its k and criterion are specified;
+explicit rank/order cannot. The exact AI model snapshot was not recorded.
+
+One review recorded 70 `field_aligned`, 54 `mismatch` and 9 `ambiguous`; the
+other recorded 67, 56 and 10. They gave the same status on 129 of 133 items.
+The [67-item intersection](splits/field_coverage_reviewed_ids.txt) was frozen
+before its new subset scores were computed. Any mismatch or ambiguity
+excluded an item, without score-based adjudication. The 66 excluded items
+are not 66 independently confirmed semantic errors. These are fallible
+AI judgments, not human or 3GPP expert validation, semantic certification or
+an estimate of error prevalence.
+
+The intersection contains 21 lookup, 42 aggregation, 3 relational and
+1 multihop item, and no declared tuple/mapping item. This composition limits
+generalization to richer answer types and tracks. Its recorded offline
+scores and reproduction commands are in the
+[baseline README](../../../paper/baseline/README.md). The diagnostic preserves
+all questions, reference queries, gold and original outputs; it replaces
+neither Core nor the 133/208. The Core scorer default remains the
+annotation-derived 133 for compatibility, without a semantic-validity guarantee.
+
+The [baseline README](../../../paper/baseline/README.md) also links a retained
+SQL/Cypher comparison on all 560 Core items using the same repaired
+answer-column key, with query failures included as zero. Its paired interval
+includes zero; it does not establish an engine's causal advantage or validate
+all question requirements, and it does not reconstruct the historical SQL cohort.
 
 ## Company-name policy
 

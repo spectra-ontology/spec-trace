@@ -9,7 +9,7 @@
 **Release package version**: v2.0.0 (see `CHANGELOG.md`)
 **Ontology version**: v1.1.1 (six entity-layer classes plus LOV-conformant vocabulary metadata; see `ontology/spectra.ttl` header for authoritative version)
 **Persistent identifier**: [`https://w3id.org/spectra`](https://w3id.org/spectra) (registered via [`perma-id/w3id.org`](https://github.com/perma-id/w3id.org))
-**Zenodo DOI**: [`10.5281/zenodo.20034871`](https://doi.org/10.5281/zenodo.20034871) (concept DOI — cite this one; it always resolves to the newest deposited version. Each individual deposit also carries its own version DOI, listed on the Zenodo record.)
+**Zenodo DOI**: [`10.5281/zenodo.20034871`](https://doi.org/10.5281/zenodo.20034871) (concept DOI — locates the newest deposited version; each deposit's version DOI pins its archival bytes. Git-only additions also require a commit reference.)
 **Repository**: https://github.com/spectra-ontology/spec-trace
 
 ## Two-channel distribution
@@ -60,7 +60,7 @@ release_package/
 │       ├── sparql/                    # 142 SPARQL translations (all released RAN1 CQs; see MANIFEST.md §2.1)
 │       ├── gold/                      # deterministic gold answer sets (RAN{1..5}_gold.json, 654 authored + _gold_summary.json)
 │       ├── splits/                    # four canonical splits and contract-exact subsets of Core, with the scripts that rebuild them (Git tree only):
-│       │                              # 208 that hold as asked, 133 of them that hold as asked whatever a language model decided (scorer default), superseded 241 and 149
+│       │                              # annotation-derived 208 and 133 (Core scorer default), superseded 241 and 149
 │       └── held/                      # 30 held-out CQs (degenerate/empty gold; excluded from scoring)
 │                                      # contract_held_out.json: 64 released CQs outside Core, with reasons (Git tree only)
 ├── queries/
@@ -289,6 +289,31 @@ the same; the one that differs is listed under Known data quality issues.
 
 ### SpectraCQ scored benchmark
 The scored benchmark — 624 released CQs (of 654 authored; 30 held out) with English question text, executable reference Cypher, and deterministic gold answer sets (`benchmark.jsonl`) — is at `cqs/spectra_cq_v2.0/`. It is independently citable via `cqs/spectra_cq_v2.0/citation.bib` and licensed CC-BY 4.0. Reproducibility evidence (624/624 self-replay on a scratch reload) lives under `validation/cq_replay/`; canonical counts are in `MANIFEST.md`.
+
+Self-replay checks the reference queries' stored outputs. The Core answer-column
+gold and the annotation-derived 133/208 subsets do not establish that every
+question requirement is scored: counts, relationship roles and ranking can
+remain ungraded. Their definitions and examples are in the benchmark README
+and `splits/README.md`. The contract data, subset lists and later analysis
+tools are Git additions outside the frozen Zenodo 2.0.0 archives; cite the
+Git commit when using them. An individual Zenodo version DOI pins archival
+bytes, while the concept DOI locates the newest deposit. The baseline README
+states which recorded results can be recomputed and which historical inputs
+or rebuilt outputs were not retained.
+Its offline analysis artifact records 30 populations, their identifiers and
+input/source hashes, with 10,000 paired seed-0 resamples; the baseline README
+provides the reproduction commands and metric definitions.
+An additional AI-assisted field-coverage diagnostic reviewed all 133
+candidates and froze the 67-item intersection before re-scoring. Its protocol,
+stored judgments, identifiers and offline scores are linked from the benchmark
+and baseline READMEs. It is not expert validation or a replacement for Core
+or the 133/208; the compatibility scorer default remains the annotation-derived
+133. The selected cohort is mostly lookup/aggregation and has no declared
+tuple/mapping items, limiting generalization to other answer types and tracks.
+The baseline bundle also records an all-Core560 retained SQL/Cypher comparison
+with the same repaired answer-column key. The paired difference interval
+includes zero; this adds a reproducible current comparison without recovering
+the historical SQL cohort or establishing a causal graph-engine advantage.
 
 ## Citation
 

@@ -14,34 +14,27 @@ byte for byte with the shipped one:
 Besides these and the four shipped lists it reads nothing: no database, no
 network, no third-party package.
 
-A Core item holds as asked when no contract flag is set and every returned
-column its question demands (verdict `required`) is the scored answer column.
-A question may demand no column.
+The lists are defined by the released annotations. A Core item passes the
+column-identity condition when no contract flag is set and every column marked
+`required` is its scored answer column. Recorded annotations can miss requested
+counts, recipients or ranking. Passing this condition therefore does not
+establish that the complete natural-language information need is graded.
 
-  contract_exact_asked_208.txt         the items that hold as asked under the
-                                       recorded verdicts
-  contract_exact_script_fixed_133.txt  the items of the 208 in which every
-                                       column verdict made by a language model
-                                       falls on the scored answer column and
-                                       no phrase verdict is recorded, so that
-                                       they hold as asked whatever a language
-                                       model decided; the default set of
-                                       paper/baseline/score_core.py at the
-                                       repository root
-  contract_exact_241.txt               superseded: the items whose
-                                       contract_disposition is 1, that is,
-                                       with no contract flag set
-  contract_exact_rule_only_149.txt     superseded: the items of the 241 with
-                                       no column or phrase verdict made by a
-                                       language model
+  contract_exact_asked_208.txt         passes the recorded annotation condition
+  contract_exact_script_fixed_133.txt  passes that condition with every
+                                       model-mediated column verdict marked
+                                       required and model-matched phrases
+                                       excluded; default of the Core scorer
+  contract_exact_241.txt               historical: contract_disposition is 1
+  contract_exact_rule_only_149.txt     historical: no model-mediated column or
+                                       phrase verdict within the 241
 
-Why the 241 over-count the items that hold as asked. A column-demand flag
-(question_names_extra_columns or mapping_answer) is set exactly when a
-question demands two or more returned columns, so contract_disposition 1
-bounds how many columns a question demands, not which. In 33 of the 241
-items the one demanded column is not the scored answer column, and 17 of
-those 33 are among the 149. Both lists stay so that earlier scores on them
-can be reproduced.
+These filenames and identifier lists are retained for score reproducibility.
+The 241 condition bounds the number of required annotations, not the identity
+of the scored column. In 33 items its one required column is another column;
+17 of those are among the 149. Even after that correction, the annotations
+are not independent semantic validation. See audit_demand_annotations.py and
+../contract_annotation_diagnostics.json for source-grounded limitations.
 
 Usage:
   python3 rebuild_contract_splits.py           # verify against the shipped lists

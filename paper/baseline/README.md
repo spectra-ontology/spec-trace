@@ -9,6 +9,23 @@ recomputed here as printed; the exceptions include the table's 95% interval colu
 (500,000 bootstrap replicates), its Exec column, its full-record rows and the whiskers of
 the paper's results figure.
 
+The original 18 closed-book/RAG runs are retained. Per-item outputs for the
+later rebuilt text comparators are not retained here, so their reported
+results cannot be regenerated from this bundle. The historical 325-item SQL
+comparison cohort was not retained as an identifier list; neither that
+cohort nor the meaning of the paper's associated `290` label has been
+verified from the available artifacts. The recorded 624-row SQL run can be
+scored on explicit, published subsets, without reconstructing that historical
+comparison. These provenance gaps remain open.
+The full-Core SQL/Cypher comparison below is a new retained-output analysis
+on the explicit 560-item key; it does not recover that historical comparison.
+
+`analyse_contract_subsets.py` provides an offline path for the later
+annotation-subset, declared-type and column-position sensitivity analyses,
+including paired intervals against a reselected best original text run.
+Its inputs are the public annotations, original prediction logs and retained
+full-record replay files. It does not rerun a model or a database query.
+
 ## Layout
 
 ```
@@ -16,10 +33,14 @@ bench_common.py           shared infra: env, OpenRouter chat/embeddings, Qdrant 
 run_baseline.py           campaign runner (dry-run by default; --confirm to call APIs)
 score.py                  deterministic re-scorer (no network, no LLM)
 score_core.py             re-scores the recorded runs on SpectraCQ-Core (560) or a
-                          contract-exact subset of it (133, the default); no network, no model call
+                          annotation-derived subset (133, the default); no network, no model call
 score_full_record.py      scores the kg_grounded runs on SpectraCQ-Core by whole
                           returned records, from the replay files below; its replay
                           step needs a Neo4j holding the released graph
+analyse_contract_subsets.py offline subset/type/column-position sensitivity and paired
+                          bootstrap versus the original 18 text arms; no model/query execution
+analyse_structured_access.py offline retained SQL/Cypher comparison on all Core560,
+                          using the same repaired answer-column key and paired intervals
 protocol_bounds.py        recomputes the paper's protocol-level bounds from recorded
                           artifacts (retrieval coverage at top-k, KG failure accounting,
                           gold cardinality); no network, no LLM
@@ -92,8 +113,8 @@ Per-row records include `raw_text`, parsed `predicted_values`, token `usage`, `c
 `score.py` is fully deterministic and offline. Gold and prediction values are normalized
 (canonicalization, whitespace collapse, casefold) and compared as sets:
 
-- `exact` — strict set equality (for kg_grounded this is execution accuracy in the
-  BIRD sense: the executed query's value set equals the reference query's value set);
+- `exact` — strict normalized value-set equality; for kg_grounded this compares
+  the executed query's first-column values with the reference answer set;
 - set-level `precision`, `recall`, `f1` — partial credit for multi-value answers;
 - all metrics macro-averaged over questions.
 
@@ -107,17 +128,19 @@ python3 score.py          # rewrites results/scores.json
 `make_results_figure.py` then draws a grouped bar chart of the Set F1 values in
 `scores.json`, without the whiskers of the paper's results figure.
 
-### SpectraCQ-Core and the contract-exact subsets
+### SpectraCQ-Core and the annotation-derived contract subsets
 
 `score.py` scores the released key: the first returned column of all 624 questions.
-`score_core.py` scores the same recorded outputs on the 560 SpectraCQ-Core items, each
-on its declared answer column, against
+`score_core.py` scores the same recorded outputs on the 560 SpectraCQ-Core items against
 `release_package/cqs/spectra_cq_v2.0/core_answer_gold.jsonl`. It reads the `.gz` logs
-directly and writes nothing unless `--json` is given.
+directly and writes nothing unless `--json` is given. The gold is the reference query's
+declared answer-column projection; the KG predictions retained in the original logs are
+the first returned column of the model's query. The scorer compares these value sets; it
+does not verify that the model selected the requested property or relationship role.
 
 ```bash
-python3 score_core.py                    # the 133 contract-exact items that hold as asked whatever a language model decided (default)
-python3 score_core.py --set contract_exact_asked_208   # the 208 contract-exact items that hold as asked
+python3 score_core.py                    # annotation-derived 133 (default)
+python3 score_core.py --set contract_exact_asked_208   # annotation-derived 208
 python3 score_core.py --set core         # all 560 Core items
 python3 score_core.py --set contract_exact_241   # superseded: the 241 items with contract_disposition 1
 python3 score_core.py --set contract_exact_rule_only_149   # superseded: the 149 of the 241 with no language-model verdict
@@ -126,17 +149,21 @@ python3 score_core.py --set core --gold released   # all 560 Core items, but the
 
 Every run is scored over the whole set, so a question a run never answered scores zero.
 
-A Core item holds as asked when no contract flag is set in `answer_contract.jsonl` and
-every returned column its question demands (verdict `required` in
-`contract_demand_provenance.jsonl`; both files are under `release_package/cqs/spectra_cq_v2.0/`)
-is the scored answer column. A question may demand no column. Under the recorded verdicts
-208 Core items hold as asked. The 133 are those of the 208 in which every column verdict
+A Core item enters the annotation-derived 208 when no contract flag is set in
+`answer_contract.jsonl` and every column marked `required` in
+`contract_demand_provenance.jsonl` (both files are under `release_package/cqs/spectra_cq_v2.0/`)
+is the scored answer column. An item may have no column marked `required`. The 133 are
+those of the 208 in which every column verdict
 made by a language model falls on the scored answer column and no phrase verdict is
-recorded, so they hold as asked whatever a language model decided. The 241 and 149 are
-superseded: `contract_disposition` 1 means that no contract flag is set, which bounds how
-many returned columns a question demands, not which, and in 33 of the 241 the one demanded
-column is not the scored answer column. They stay selectable so that earlier scores can be
-reproduced. `release_package/cqs/spectra_cq_v2.0/splits/README.md` gives the composition of each set.
+recorded. Their membership is invariant to changes in those model verdicts with the rule
+verdicts, flags and answer column fixed. The 241 and 149 are superseded: disposition 1
+bounds the recorded demand count, not column identity, and in 33 of the 241 the one column
+marked `required` is not the scored answer column. They stay selectable for historical
+reproduction. The 132-item rule-only diagnostic subset is `149 ∩ 133`, with no new
+membership file. These conditions do not independently validate the questions or certify
+that count, routing and ranking requirements are graded. Normalized set scoring ignores
+value multiplicity and row order, including `ORDER BY` requirements. See
+`release_package/cqs/spectra_cq_v2.0/splits/README.md` for composition and concrete examples.
 
 ### Full-record scoring
 
@@ -155,12 +182,14 @@ The run logs keep only the first returned column of each query, so the records c
 executing again, on the released graph of each working group, all 5,520
 queries the kg_grounded runs recorded, together with the released and repaired reference
 queries. The five files in `results/_full_record/` hold that replay, so scoring needs no
-database:
+database. These are replayed query outputs, not the original run's whole returned rows.
+The original logs retain a sorted value set, which loses original row order; the replay
+rows retain the ordering of this later execution:
 
 ```bash
 python3 score_full_record.py score                   # repaired rows for the 7 items (default)
 python3 score_full_record.py score --gold released   # released rows for the 7 items
-python3 score_full_record.py score --set contract_exact_script_fixed_133 --ci   # the 133 contract-exact items, with intervals
+python3 score_full_record.py score --set contract_exact_script_fixed_133 --ci   # annotation-derived 133, with intervals
 python3 score_full_record.py score --answer-type tuple_set,mapping  # Core items whose answer is a tuple set or a mapping
 ```
 
@@ -213,11 +242,130 @@ for example with `python3 release_package/tests/verify_benchmark.py --full --wg 
 `python3 score_full_record.py replay --wg RAN1 --ttl ../../release_package/kg/per_wg/RAN1-body.ttl`
 with the same connection options; `--ttl` records the loaded file in the header.
 
+### Offline subset and scoring-sensitivity analysis
+
+From this directory:
+
+```bash
+python3 analyse_contract_subsets.py --scope headline
+python3 analyse_contract_subsets.py --scope all --ci --n-boot 10000 --seed 0 --json results/contract_subset_analysis.recomputed.json
+python3 -m unittest discover -s tests -p 'test_analyse_contract_subsets.py'
+```
+
+The recorded [contract_subset_analysis.json](results/contract_subset_analysis.json)
+contains all 30 populations from `--scope all --ci --n-boot 10000 --seed 0`,
+using the NumPy engine. It records 52 input/source hashes and each population's
+identifiers. Its SHA256 is
+`c7322b4f0549800bff2c7fcf298501b34eb7ce6cba9380b050b0b87a1dc80aea`.
+The recomputation command writes a separate result file, leaving this record
+available for comparison.
+
+The default `headline` scope reports Core560 and the annotation-derived
+133, 208 and rule-only132 (`149 ∩ 133`). `typed` adds the 141 declared
+tuple/mapping items and their separate type populations. `tracks` and
+`groups` report the 133/208 by track and working group. `composition` reports
+surface query features within the 133; `all` combines these scopes. No
+membership, gold or original output is changed. The JSON records each
+population's identifiers, input/source SHA256 values and metric definitions.
+
+`--ids PATH` instead analyzes one externally fixed list of Core identifiers as
+`external_subset`, overriding `--scope`. Fix membership before inspecting the
+scores. Identifiers are sorted internally; empty lists, duplicates and unknown
+identifiers are rejected. The output records the ID-file hash and checks that
+it did not change during analysis. For example, the existing 133 list can be
+passed explicitly without creating a new subset:
+
+```bash
+python3 analyse_contract_subsets.py --ids ../../release_package/cqs/spectra_cq_v2.0/splits/contract_exact_script_fixed_133.txt --ci --json results/fixed_subset_analysis.json
+```
+
+Seven graph scoring variants are reported separately:
+
+| Variant | Comparison |
+|---|---|
+| `answer_column` | Original retained prediction value set against the declared Core answer-column gold |
+| `full_record_S` | Replay row sets, sorting normalized values within each row |
+| `full_record_P` | Replay row sets with normalized values in `RETURN` column positions |
+| `full_record_C` | Maximum row-set overlap over one common column permutation per item/model, using gold as an oracle; differing widths fall back to P |
+| `declared_type_S/P/C` | Corresponding record rule on declared tuple/mapping items, answer-column scoring on other types |
+
+P compares positions, not property names; C is an oracle alignment sensitivity
+measure. Neither validates the requested property or relationship role. All
+record variants ignore outer row order, ranking and duplicate-row multiplicity.
+An observed C=S equality is a result for these retained outputs, not a general
+integrity condition. Text always uses the original 18 closed-book/RAG
+answer-column runs. Comparisons of a record variant with that text score use
+different answer representations; they do not provide a text full-record baseline.
+
+With `--ci`, the same item resample is shared by every model, graph scoring
+variant and text run. The output includes a fixed best-text comparison and a
+comparison that reselects the best of the 18 text runs within each resample.
+The default uses 10,000 draws from `random.Random(0)`; sorted endpoints at
+indices 250 and 9,749 are rounded to six decimals, then a lower endpoint >0
+counts as above text and an upper endpoint <0 as below. These are individual
+item-bootstrap intervals with no adjustment for template/cluster dependence
+or multiple comparisons. `--bootstrap-engine python` uses the standard library;
+`auto` uses NumPy when available to accelerate the same item draws. The
+historical 500,000-replicate paper intervals and absent rebuilt text runs
+remain outside this analysis's reproduction scope.
+
+The recorded artifact gives nine models above the reselected original-text
+bar for each of the 133, 208 and 132 under answer-column and full-record
+S/P/C scoring. On the 141 declared tuple/mapping items, full-record S/P/C
+give 6/5/6 models above that bar. These are findings for the retained outputs
+under the stated comparison, and do not validate the semantic completeness
+of the annotation-derived subsets.
+
+### AI-assisted field-coverage diagnostic
+
+The [field-coverage review](../../release_package/cqs/spectra_cq_v2.0/field_coverage_review.json)
+stores two isolated Codex AI reviews of every item in the annotation-derived
+133. Their supplied inputs hid predictions and item/aggregate scores while
+they compared each question's requested fields, counts, mappings, order and
+multiplicity with the reference query, its evident scope/caps and the
+declared answer-column set score. The 67-item intersection of both
+`field_aligned` judgments was frozen
+before it was re-scored; mismatch or ambiguity excluded an item, without
+score-based adjudication. The [subset README](../../release_package/cqs/spectra_cq_v2.0/splits/README.md)
+gives the protocol, composition and limits. This is AI-assisted diagnostic
+review, not human or 3GPP expert validation; the exact model snapshot was
+not recorded, and the excluded 66 are not confirmed semantic-error counts.
+
+From this directory, check the fixed list and re-score the retained outputs:
+
+```bash
+python3 ../../release_package/cqs/spectra_cq_v2.0/splits/rebuild_field_coverage_subset.py --check
+python3 analyse_contract_subsets.py --ids ../../release_package/cqs/spectra_cq_v2.0/splits/field_coverage_reviewed_ids.txt --ci --n-boot 10000 --seed 0 --json results/field_coverage_subset_analysis.recomputed.json
+```
+
+The first command checks source/input anchors, recorded judgments and their
+intersection; it does not repeat the AI review or establish judgment truth.
+The second performs offline scoring and bootstrap resampling, with no new
+model or query execution. The field judgments themselves were AI-assisted.
+The [recorded field_coverage_subset_analysis.json](results/field_coverage_subset_analysis.json)
+contains the fixed 67 IDs, their input hash and 10,000 paired seed-0 resamples.
+
+| Scoring rule | Pooled graph F1 | Best original answer-column text F1 | Models above reselected text, paired CI |
+|---|---:|---:|---:|
+| Answer column | 0.650757 | 0.074627 | 9/9 |
+| Full record S/P/C (same F1 on this cohort) | 0.428063 | 0.074627 | 9/9 under each rule |
+
+Pooled F1 here averages the unrounded model/item scores. The answer-column
+model-rank correlation with Core under that same rule is Spearman
+0.833333. The record comparison retains the answer-column text comparator,
+as defined above. All 67 are outside the declared tuple/mapping types; its
+21 lookup and 42 aggregation items leave only 3 relational and 1 multihop
+item. This selected-cohort evidence therefore does not establish broad
+multi-field or track performance. Selection for value-set field coverage
+also makes this cohort unrepresentative of Core. It is supplementary to Core and the
+133/208, and `score_core.py` keeps the annotation-derived 133 as its
+compatibility default. No question, gold value or original output changed.
+
 ## Relational (NL-to-SQL) arm
 
 A fourth condition, `sql_grounded`, asks the model to answer in SQL over SQLite copies of
-the same graphs, so that a gap against `kg_grounded` reflects the access structure rather
-than the records. `build_relational_db.py` builds `relational/{WG}.sqlite` from each
+the same graphs, providing an alternative access representation.
+`build_relational_db.py` builds `relational/{WG}.sqlite` from each
 group's Neo4j graph: one table per node label, one join table per relationship type and a
 `node` registry (the mapping is documented at the top of the script).
 `sql_schema_cards.json` holds the cards the model was shown; its `kg_card_parity` field
@@ -230,7 +378,7 @@ It sits outside `results/`, so `score.py`, `scores.json` and the results figure 
 it. Score it with the Core scorer:
 
 ```bash
-python3 score_core.py --results relational/runs               # the 133 contract-exact items (default)
+python3 score_core.py --results relational/runs               # annotation-derived 133 (default)
 python3 score_core.py --results relational/runs --set core    # all 560 Core items
 ```
 
@@ -240,6 +388,46 @@ tracked (1.48 GB in the recorded build). A rebuild or `--verify-only` also write
 `relational/manifest.json` with per-table row counts against the graph, likewise not
 tracked. The loader prints `parity=False` for a group whose graph differs from
 `schema_cards.json`; `--cards-only` rewrites `sql_schema_cards.json` from the live graphs.
+
+### Retained SQL/Cypher comparison on all Core560
+
+`analyse_structured_access.py` compares the retained `sql_grounded` and
+`kg_grounded` runs of claude-opus-4.8 on the same current repaired Core
+answer-column key, including its seven scope repairs. All 560 fixed items
+enter both arms; failed or missing predictions score zero. The actual runs
+have no missing or duplicate Core records. This re-scores stored predictions,
+without executing a query, building a database or calling a model.
+
+From this directory:
+
+```bash
+python3 analyse_structured_access.py --ci --n-boot 10000 --seed 0 --bootstrap-engine python --json results/structured_access_core_analysis.recomputed.json
+python3 -m unittest discover -s tests -p 'test_analyse_structured_access.py'
+```
+
+The recorded [structured_access_core_analysis.json](results/structured_access_core_analysis.json)
+contains all 560 identifiers, per-item scores/statuses and 13 input/source
+hashes. The command writes a separate result for comparison.
+
+| Retained arm | Answer-column F1 | Exact matches | Query OK | Query errors |
+|---|---:|---:|---:|---:|
+| SQL | 0.373614 | 146/560 | 547 | 13 |
+| Cypher | 0.351949 | 137/560 | 544 | 16 |
+
+SQL-minus-Cypher F1 is 0.021665. Its paired item-bootstrap 95% interval is
+[-0.001249, 0.044760], using 10,000 common seed-0 draws and six-decimal
+endpoints; it includes zero and does not separate the arms under this
+protocol. The denominator remains 560, including all query errors. Status
+decompositions in the artifact are descriptive and do not select the headline
+cohort. The item intervals do not adjust for schema/template clusters.
+
+This is one model's recorded-run comparison: languages, prompts and queries
+differ, so it does not identify a causal graph-engine benefit. The recorded
+SQL database byte snapshot is not retained; loader/schema-card hashes give
+provenance without reconstructing it. This analysis also does not recover the
+historical 325-item cohort or `290` label, or validate the full question
+contract: scoring compares normalized answer-column sets, ignoring other
+fields, whole records, ranking and multiplicity.
 
 ## Re-running the campaign
 
