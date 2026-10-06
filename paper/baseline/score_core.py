@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""score_core.py - score the recorded runs on SpectraCQ-Core and its contract-exact subset.
+"""score_core.py - score the recorded runs on SpectraCQ-Core and its contract-exact subsets.
 
 score.py scores the released key: the first returned column of all 624 items.
 The paper's Core and contract-exact numbers use a different key, V2 in the
@@ -16,18 +16,32 @@ does not state, it comes from the same query with that list removed
 released query's rows instead (V1 in the same table).
 
 Sets (--set):
-  contract_exact_241 (default)  splits/contract_exact_241.txt: the items whose
-                                answer contract holds as released
-                                (contract_disposition 1 in answer_contract.jsonl)
-  contract_exact_rule_only_149  the 149 of those items with no column verdict
-                                made by a language model (contract_demand_provenance.jsonl)
+  contract_exact_script_fixed_133 (default)
+                                the 133 of the 208 below in which every column
+                                verdict made by a language model falls on the
+                                scored answer column and no phrase verdict is
+                                recorded: they hold as asked whatever a
+                                language model decided
+  contract_exact_asked_208      the 208 items that hold as asked under the
+                                recorded verdicts (contract_demand_provenance.jsonl):
+                                no contract flag is set, and every returned
+                                column the question demands is the scored
+                                answer column
+  contract_exact_241            superseded: the 241 items with
+                                contract_disposition 1, which bounds how many
+                                returned columns a question demands, not which
+  contract_exact_rule_only_149  superseded: the 149 of the 241 with no column
+                                or phrase verdict made by a language model
   core                          all 560 Core items
+Each set but core is a list under release_package/cqs/spectra_cq_v2.0/splits/,
+whose README.md defines when a Core item holds as asked.
 
 Every arm is scored over the whole set: an item a run never answered scores
 zero. When a log repeats an id, the first record counts. No network, no LLM.
 
 Usage:  gunzip -k results/*/*/all.jsonl.gz     # optional: .gz logs are read directly
-        python3 score_core.py                   # contract_exact_241, V2 gold
+        python3 score_core.py                   # contract_exact_script_fixed_133, V2 gold
+        python3 score_core.py --set contract_exact_asked_208
         python3 score_core.py --set core --json core_scores.json
 """
 import argparse
@@ -102,7 +116,7 @@ def mean(rows, metric):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
-    ap.add_argument('--set', default='contract_exact_241', help='split file name under splits/, or core')
+    ap.add_argument('--set', default='contract_exact_script_fixed_133', help='split file name under splits/, or core')
     ap.add_argument('--gold', choices=('repaired', 'released'), default='repaired')
     ap.add_argument('--results', default=str(BASE / 'results'))
     ap.add_argument('--cq-dir', default=str(CQ))

@@ -202,7 +202,10 @@ item (a `_header` line plus **560** items): the graded `answer_type` and
 `answer_columns`, the `ordering_key` and `cardinality` governing the reference
 query's final `RETURN` (null where none is imposed), and a
 `contract_disposition` recording what would have to change for the item to hold
-exactly as asked.
+exactly as asked. Disposition 1 means that no contract flag is set, which bounds
+how many returned columns a question demands, not which: in **33** of the
+**241** items with disposition 1 the one demanded column is not the scored
+answer column.
 
 `cqs/spectra_cq_v2.0/core_answer_gold.jsonl` is the scoring key of Core: for
 each of the **560** items, its declared answer column and the gold value set of
@@ -222,6 +225,19 @@ column name and the question (**1,339** columns) or a language model
 `cqs/spectra_cq_v2.0/splits/contract_exact_rule_only_149.txt` lists the **149**
 contract-exact items with no language-model verdict.
 
+A Core item holds as asked when no contract flag is set and every returned
+column its question demands (verdict `required` in
+`contract_demand_provenance.jsonl`) is the scored answer column; a question
+may demand no column. `cqs/spectra_cq_v2.0/splits/contract_exact_asked_208.txt`
+lists the **208** items that hold as asked under the recorded verdicts, and
+`cqs/spectra_cq_v2.0/splits/contract_exact_script_fixed_133.txt` the **133** of
+them in which every language-model verdict falls on the scored answer column
+and no phrase verdict is recorded, so that they hold as asked whatever a
+language model decided. The **241** and **149** lists are superseded; **17** of
+the **33** items above lie in the **149**.
+`python3 cqs/spectra_cq_v2.0/splits/rebuild_contract_splits.py --check`
+rebuilds and checks all four lists.
+
 ---
 
 ## 3. Evaluation — baseline suite
@@ -239,11 +255,13 @@ Evidence: `paper/baseline/results/scores.json` (at the repository root, beside
   model×condition cells has n = 624; duplicates_skipped = 0,
   rows_without_gold = 0, rows_with_call_error = 0).
 - **Core and contract-exact scoring.** `paper/baseline/score_core.py` re-scores
-  the same prediction files on the **241** contract-exact items (default) or on
-  all **560** Core items against `cqs/spectra_cq_v2.0/core_answer_gold.jsonl`,
-  with no network and no model call.
-  `--set contract_exact_rule_only_149` scores the **149** contract-exact items
-  with no language-model verdict (§2.3).
+  the same prediction files on the **133** contract-exact items that hold as
+  asked whatever a language model decided (default) or on all **560** Core items
+  against `cqs/spectra_cq_v2.0/core_answer_gold.jsonl`, with no network and no
+  model call. `--set contract_exact_asked_208` scores the **208** items that
+  hold as asked; `--set contract_exact_241` and
+  `--set contract_exact_rule_only_149` still select the superseded **241** and
+  **149** (section 2.3).
 - **Relational arm: 1 run.** claude-opus-4.8 under `sql_grounded`: **624**
   predictions, 0 call errors, in `paper/baseline/relational/runs/`. The model
   writes SQL over SQLite copies of the five graphs, built by
@@ -300,13 +318,19 @@ Evidence: `paper/baseline/results/scores.json` (at the repository root, beside
   deposit: `cqs/spectra_cq_v2.0/splits/` and
   `cqs/spectra_cq_v2.0/answer_contract.jsonl` were added after the v2.0.0
   archive was built and are present here but not inside that archive. Both
-  are plain text and rebuild with no database and no network.
+  are plain text; the identifier lists under `splits/` rebuild with no
+  database and no network from files in `cqs/spectra_cq_v2.0/`, and
+  `answer_contract.jsonl` ships as data.
   `cqs/spectra_cq_v2.0/core_answer_gold.jsonl`,
   `cqs/spectra_cq_v2.0/held/contract_held_out.json` and
   `cqs/spectra_cq_v2.0/splits/contract_exact_241.txt` were added after those two
   and are likewise present here but not inside that archive.
   `cqs/spectra_cq_v2.0/contract_demand_provenance.jsonl` and
   `cqs/spectra_cq_v2.0/splits/contract_exact_rule_only_149.txt` came after those
+  and are likewise present here but not inside that archive.
+  `cqs/spectra_cq_v2.0/splits/contract_exact_asked_208.txt`,
+  `cqs/spectra_cq_v2.0/splits/contract_exact_script_fixed_133.txt` and
+  `cqs/spectra_cq_v2.0/splits/rebuild_contract_splits.py` came after those
   and are likewise present here but not inside that archive.
 
 ---

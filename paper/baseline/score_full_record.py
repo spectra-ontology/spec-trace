@@ -42,10 +42,12 @@ the timeout and a digest of the executing code; each record carries its
 execution time. A replay interrupted midway resumes from its partial file only
 with the same settings.
 
-Scoring. A record becomes the sorted tuple of its normalized values, so column
-names and column order are ignored; the predicted and gold record sets are
-compared, so row order and duplicate rows are ignored. Exact is 1 when the two
-sets are equal; precision, recall and F1 are those of the set overlap. The
+Scoring. Each returned row is a record, compared as the tuple of its
+normalized values sorted within the row (row_key below), so column names and
+column order are ignored and a value is not tied to the column that returned
+it; the predicted and gold record sets are compared, so row order and
+duplicate rows are ignored. Exact is 1 when the two sets are equal; precision,
+recall and F1 are those of the set overlap. The
 gold records are the rows of the released reference query
 (release_package/cqs/spectra_cq_v2.0/gold/RANn_gold.json). For the 7
 scope-repaired items they are the rows of `repaired_cypher` in
@@ -56,8 +58,9 @@ for the same runs are printed alongside.
 
 Three options of `score` select items and add a summary; without them the
 output is the one described here. `--set NAME` averages over a subset of
-Core named as in score_core.py (contract_exact_241, the split files under
-splits/) or core, the default. `--answer-type T[,T]` keeps the items whose
+Core named as in score_core.py (contract_exact_script_fixed_133,
+contract_exact_asked_208 or another list under splits/) or core, the
+default. `--answer-type T[,T]` keeps the items whose
 answer_type in answer_contract.jsonl is one of the listed types (scalar_set,
 ranked_top_k, tuple_set, mapping). `--ci` adds a 95% interval to each model's
 F1 from a paired item bootstrap: 10,000 resamples of the selected items drawn
@@ -76,7 +79,7 @@ query carries a LIMIT.
 Usage:  python3 score_full_record.py replay --wg RAN1 --bolt bolt://localhost:7687 \\
             --user neo4j --password PASSWORD        # once per working group
         python3 score_full_record.py score --json full_record_scores.json
-        python3 score_full_record.py score --set contract_exact_241 --ci
+        python3 score_full_record.py score --set contract_exact_script_fixed_133 --ci
         python3 score_full_record.py score --answer-type tuple_set,mapping
 """
 import argparse

@@ -59,7 +59,8 @@ release_package/
 │       ├── cypher/                    # 624 executable Cypher reference queries (one per released CQ)
 │       ├── sparql/                    # 142 SPARQL translations (all released RAN1 CQs; see MANIFEST.md §2.1)
 │       ├── gold/                      # deterministic gold answer sets (RAN{1..5}_gold.json, 654 authored + _gold_summary.json)
-│       ├── splits/                    # four canonical splits + contract_exact_241.txt, 241 Core items, and contract_exact_rule_only_149.txt, 149 of them (Git tree only)
+│       ├── splits/                    # four canonical splits and contract-exact subsets of Core, with the scripts that rebuild them (Git tree only):
+│       │                              # 208 that hold as asked, 133 of them that hold as asked whatever a language model decided (scorer default), superseded 241 and 149
 │       └── held/                      # 30 held-out CQs (degenerate/empty gold; excluded from scoring)
 │                                      # contract_held_out.json: 64 released CQs outside Core, with reasons (Git tree only)
 ├── queries/

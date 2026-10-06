@@ -11,22 +11,34 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
   value set of that column; 553 sets come from the released reference query
   and 7 from a scope-repaired query carried on the same line.
 - **Contract-exact subset** (`cqs/spectra_cq_v2.0/splits/contract_exact_241.txt`):
-  the 241 Core items whose answer contract holds as released
-  (`contract_disposition` 1). An evaluation subset, not a fifth split.
+  the 241 Core items whose `contract_disposition` is 1, that is, with no
+  contract flag set. An evaluation subset, not a fifth split; superseded (see
+  Changed).
 - **Column-demand provenance** (`cqs/spectra_cq_v2.0/contract_demand_provenance.jsonl`):
   for each returned column of the 624 released CQs, whether the question
   requires it, the method that decided it and the words it rests on. Rules
   decide 1,339 of the 1,616 columns; a language model decides 277, on 232 items.
 - **Rule-only contract-exact subset** (`cqs/spectra_cq_v2.0/splits/contract_exact_rule_only_149.txt`):
   the 149 contract-exact items with no language-model verdict. An evaluation
-  subset, not a fifth split.
+  subset, not a fifth split; superseded (see Changed).
+- **Contract-exact subsets that hold as asked**
+  (`cqs/spectra_cq_v2.0/splits/contract_exact_asked_208.txt`,
+  `cqs/spectra_cq_v2.0/splits/contract_exact_script_fixed_133.txt`): the 208
+  Core items in which no contract flag is set and every returned column the
+  question demands is the scored answer column, and the 133 of them that hold
+  as asked whatever a language model decided. Evaluation subsets, not splits.
+- **Contract-exact list rebuild** (`cqs/spectra_cq_v2.0/splits/rebuild_contract_splits.py`):
+  rebuilds the four contract-exact lists from three files in
+  `cqs/spectra_cq_v2.0/` and checks them byte for byte, with no database and
+  no network.
 - **Contract held-out list** (`cqs/spectra_cq_v2.0/held/contract_held_out.json`):
   the 64 released CQs outside Core, with question, gold columns, gold row
   count and one of 5 reason classes. Distinct from the 30 CQs of
   `cqs/spectra_cq_v2.0/held/held_cqs.json`.
 - **Core scorer** (`paper/baseline/score_core.py`, at the repository root):
-  re-scores the recorded runs on the contract-exact subset (default) or on all
-  of Core against the Core scoring key, with no network and no model call.
+  re-scores the recorded runs on a contract-exact subset (the 133, by default)
+  or on all of Core against the Core scoring key, with no network and no model
+  call.
 - **Full-record scorer** (`paper/baseline/score_full_record.py`, at the
   repository root) and its replay files (`paper/baseline/results/_full_record/`):
   every query the graph-grounded runs recorded, executed again on the released
@@ -56,6 +68,14 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
 These additions are in the Git tree only; none is inside the 2.0.0 deposit.
 
 ### Changed
+- **Core scorer default** (`paper/baseline/score_core.py`): the default set is
+  now `contract_exact_script_fixed_133`. `contract_exact_241` and
+  `contract_exact_rule_only_149` stay selectable and are superseded:
+  disposition 1 bounds how many columns a question demands, not which, and in
+  33 of the 241 the one demanded column is not the scored answer column. No
+  scoring rule changed. The docstring of `paper/baseline/score_full_record.py`
+  now states that a returned row is compared as its values sorted within the
+  row.
 - **Ontology 1.1.1** (`ontology/spectra.ttl`, mirrored at `docs/spectra.ttl`):
   metadata-only change making the vocabulary conform to the Linked Open
   Vocabularies (LOV) submission requirements. Adds

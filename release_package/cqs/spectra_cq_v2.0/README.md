@@ -58,7 +58,11 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
   `ordering_key` and `cardinality` read from the clauses that govern the
   reference query's final `RETURN` (null where none is imposed), and a
   `contract_disposition` recording what would have to change for the item
-  to hold exactly as asked.
+  to hold exactly as asked. Disposition 1 means that no contract flag is
+  set, so the question demands at most one returned column. That bounds how
+  many columns are demanded, not which: in 33 of the 241 items with
+  disposition 1 the one demanded column is not the scored answer column.
+  `splits/contract_exact_asked_208.txt` lists the items that hold as asked.
 - `core_answer_gold.jsonl`: the scoring key of SpectraCQ-Core (a `_header`
   line plus 560 items): each item's declared answer column
   (`answer_columns[0]` of `answer_contract.jsonl`) and the gold value set of
@@ -81,14 +85,28 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
 - `splits/` — the four canonical splits as identifier lists, with their
   per-track and per-group composition, the leakage audit, and a
   deterministic rebuild script. See `splits/README.md`.
-- `splits/contract_exact_241.txt`: the 241 Core items whose
-  `contract_disposition` is 1 in `answer_contract.jsonl` (the contract holds as
-  released), one identifier per line. An evaluation subset of Core, not one of
-  the four splits; see `splits/README.md`.
-- `splits/contract_exact_rule_only_149.txt`: the 149 items of
-  `splits/contract_exact_241.txt` with no language-model verdict (`method`
-  in `contract_demand_provenance.jsonl`), one identifier per line. An
-  evaluation subset, like the 241; see `splits/README.md`.
+- `splits/contract_exact_script_fixed_133.txt`: the 133 Core items that hold
+  as asked whatever a language model decided: they hold as asked, every
+  column verdict made by a language model falls on the scored answer column,
+  and no phrase verdict is recorded. One identifier per line. The default set
+  of `paper/baseline/score_core.py` at the repository root.
+- `splits/contract_exact_asked_208.txt`: the 208 Core items that hold as
+  asked: no contract flag is set in `answer_contract.jsonl`, and every
+  column the question demands (verdict `required` in
+  `contract_demand_provenance.jsonl`) is the scored answer column
+  `answer_columns[0]`; a question may demand none. One identifier per line.
+- `splits/contract_exact_241.txt`: superseded. The 241 Core items whose
+  `contract_disposition` is 1, that is, with no contract flag set. In 33 of
+  them the one demanded column is not the scored answer column, so they do
+  not all hold as asked. Kept so that earlier scores can be reproduced.
+- `splits/contract_exact_rule_only_149.txt`: superseded. The 149 items of
+  `splits/contract_exact_241.txt` with no column or phrase verdict made by a
+  language model (`method` in `contract_demand_provenance.jsonl`); 17 of the
+  33 above are among them. Kept so that earlier scores can be reproduced.
+- `splits/rebuild_contract_splits.py`: rebuilds the four lists above from
+  `answer_contract.jsonl`, `contract_demand_provenance.jsonl` and
+  `core_answer_gold.jsonl` and checks them byte for byte. All four are
+  evaluation subsets of Core, not splits; see `splits/README.md`.
 - `cypher/{WG}_P{phase}_{id}.cypher` — 624 executable Cypher reference
   queries (one per released CQ).
 - `sparql/P{phase}_{id}.rq` — 142 SPARQL translations covering **all
@@ -156,13 +174,18 @@ and set precision / recall / F1 on normalised values.
 See `CITATION.cff` / `citation.bib`. Cite the concept DOI
 **10.5281/zenodo.20034871**, which always resolves to the newest published
 deposit; the 624-CQ scored benchmark is carried by the release-package 2.0.0
-deposit under that concept. Two additions in this directory —
-`splits/` and `answer_contract.jsonl` — were made after the 2.0.0 archive was
-built and are present in the Git tree only; both are plain text and rebuild
-offline. See `../../MANIFEST.md` §5 for the deposit-versus-repository split.
-Five later additions, `core_answer_gold.jsonl`, `held/contract_held_out.json`,
-`splits/contract_exact_241.txt`, `contract_demand_provenance.jsonl` and
-`splits/contract_exact_rule_only_149.txt`, are likewise in the Git tree only.
+deposit under that concept. Two additions in this directory, `splits/` and
+`answer_contract.jsonl`, were made after the 2.0.0 archive was built and are
+present in the Git tree only. Both are plain text: the identifier lists under
+`splits/` rebuild offline from files in this directory, and
+`answer_contract.jsonl` ships as data. See section 5 of `../../MANIFEST.md`
+for the deposit-versus-repository split. Eight later additions,
+`core_answer_gold.jsonl`, `held/contract_held_out.json`,
+`splits/contract_exact_241.txt`, `contract_demand_provenance.jsonl`,
+`splits/contract_exact_rule_only_149.txt`,
+`splits/contract_exact_asked_208.txt`,
+`splits/contract_exact_script_fixed_133.txt` and
+`splits/rebuild_contract_splits.py`, are likewise in the Git tree only.
 
 ## License
 

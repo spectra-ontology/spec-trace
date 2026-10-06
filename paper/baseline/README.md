@@ -2,8 +2,12 @@
 
 Complete harness and per-question outputs for the three-condition baseline reported in the
 paper: closed-book, RAG over the released text collections, and knowledge-graph-grounded
-query generation. Every number in the paper's baseline table and results figure can be
-recomputed offline from the files in this directory.
+query generation. From the recorded runs in this directory, `score_core.py --set core`
+recomputes offline the Exact and Set F1 values that the paper's baseline table prints for
+nine models under three conditions and for its pooled row. Not every printed value is
+recomputed here as printed; the exceptions include the table's 95% interval column
+(500,000 bootstrap replicates), its Exec column, its full-record rows and the whiskers of
+the paper's results figure.
 
 ## Layout
 
@@ -11,15 +15,16 @@ recomputed offline from the files in this directory.
 bench_common.py           shared infra: env, OpenRouter chat/embeddings, Qdrant search, Neo4j exec
 run_baseline.py           campaign runner (dry-run by default; --confirm to call APIs)
 score.py                  deterministic re-scorer (no network, no LLM)
-score_core.py             re-scores the recorded runs on SpectraCQ-Core (560) or its
-                          contract-exact subset (241, the default); no network, no LLM
+score_core.py             re-scores the recorded runs on SpectraCQ-Core (560) or a
+                          contract-exact subset of it (133, the default); no network, no model call
 score_full_record.py      scores the kg_grounded runs on SpectraCQ-Core by whole
                           returned records, from the replay files below; its replay
                           step needs a Neo4j holding the released graph
 protocol_bounds.py        recomputes the paper's protocol-level bounds from recorded
                           artifacts (retrieval coverage at top-k, KG failure accounting,
                           gold cardinality); no network, no LLM
-make_results_figure.py    regenerates the results figure from results/scores.json
+make_results_figure.py    draws a grouped bar chart of the Set F1 values in
+                          results/scores.json, without error bars
 sparql_row_equivalence.py compares the 142 RAN1 SPARQL translations against their
                           Cypher references cell by cell rather than by row count;
                           needs a live Neo4j holding the RAN1 graph for the Cypher
@@ -99,9 +104,10 @@ gunzip -k results/*/*/all.jsonl.gz
 python3 score.py          # rewrites results/scores.json
 ```
 
-`make_results_figure.py` then regenerates the results figure from `scores.json`.
+`make_results_figure.py` then draws a grouped bar chart of the Set F1 values in
+`scores.json`, without the whiskers of the paper's results figure.
 
-### SpectraCQ-Core and the contract-exact subset
+### SpectraCQ-Core and the contract-exact subsets
 
 `score.py` scores the released key: the first returned column of all 624 questions.
 `score_core.py` scores the same recorded outputs on the 560 SpectraCQ-Core items, each
@@ -110,20 +116,35 @@ on its declared answer column, against
 directly and writes nothing unless `--json` is given.
 
 ```bash
-python3 score_core.py                    # the 241 contract-exact items (default)
+python3 score_core.py                    # the 133 contract-exact items that hold as asked whatever a language model decided (default)
+python3 score_core.py --set contract_exact_asked_208   # the 208 contract-exact items that hold as asked
 python3 score_core.py --set core         # all 560 Core items
-python3 score_core.py --set contract_exact_rule_only_149   # the 149 contract-exact items with no language-model verdict
-python3 score_core.py --gold released    # as the default, but the 7 scope-repaired items keep the released query's values
+python3 score_core.py --set contract_exact_241   # superseded: the 241 items with contract_disposition 1
+python3 score_core.py --set contract_exact_rule_only_149   # superseded: the 149 of the 241 with no language-model verdict
+python3 score_core.py --set core --gold released   # all 560 Core items, but the 7 scope-repaired items keep the released query's values
 ```
 
 Every run is scored over the whole set, so a question a run never answered scores zero.
 
+A Core item holds as asked when no contract flag is set in `answer_contract.jsonl` and
+every returned column its question demands (verdict `required` in
+`contract_demand_provenance.jsonl`; both files are under `release_package/cqs/spectra_cq_v2.0/`)
+is the scored answer column. A question may demand no column. Under the recorded verdicts
+208 Core items hold as asked. The 133 are those of the 208 in which every column verdict
+made by a language model falls on the scored answer column and no phrase verdict is
+recorded, so they hold as asked whatever a language model decided. The 241 and 149 are
+superseded: `contract_disposition` 1 means that no contract flag is set, which bounds how
+many returned columns a question demands, not which, and in 33 of the 241 the one demanded
+column is not the scored answer column. They stay selectable so that earlier scores can be
+reproduced. `release_package/cqs/spectra_cq_v2.0/splits/README.md` gives the composition of each set.
+
 ### Full-record scoring
 
 `score_core.py` scores each Core item on one column. `score_full_record.py` scores the
-kg_grounded runs on whole returned records: a record is the sorted tuple of its normalized
-values, and the predicted and gold record sets are compared, so column names, column
-order, row order and duplicate rows do not matter. Exact is 1 when the two sets are equal;
+kg_grounded runs on whole returned records: a record is the tuple of its normalized values
+sorted within the row, so a value is not tied to the column that returned it, and the
+predicted and gold record sets are compared, so column names, column order, row order and
+duplicate rows do not matter. Exact is 1 when the two sets are equal;
 precision, recall and F1 are those of their overlap. Each model is averaged over all 560
 Core items, and an item whose query is missing or does not execute scores zero. The gold
 records are the rows in `release_package/cqs/spectra_cq_v2.0/gold/{WG}_gold.json`; for the
@@ -139,7 +160,7 @@ database:
 ```bash
 python3 score_full_record.py score                   # repaired rows for the 7 items (default)
 python3 score_full_record.py score --gold released   # released rows for the 7 items
-python3 score_full_record.py score --set contract_exact_241 --ci    # the 241 contract-exact items, with intervals
+python3 score_full_record.py score --set contract_exact_script_fixed_133 --ci   # the 133 contract-exact items, with intervals
 python3 score_full_record.py score --answer-type tuple_set,mapping  # Core items whose answer is a tuple set or a mapping
 ```
 
@@ -209,7 +230,7 @@ It sits outside `results/`, so `score.py`, `scores.json` and the results figure 
 it. Score it with the Core scorer:
 
 ```bash
-python3 score_core.py --results relational/runs               # 241 contract-exact items
+python3 score_core.py --results relational/runs               # the 133 contract-exact items (default)
 python3 score_core.py --results relational/runs --set core    # all 560 Core items
 ```
 

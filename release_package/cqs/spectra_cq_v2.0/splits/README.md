@@ -15,27 +15,53 @@ Each split directory holds `train.txt`, `dev.txt`, `test.txt`: one question
 identifier per line, sorted. The three parts of each split partition the
 624-question key exactly.
 
-## Contract-exact subset
+## Contract-exact subsets
 
-`contract_exact_241.txt` lists the 241 SpectraCQ-Core items whose
-`contract_disposition` is 1 in `../answer_contract.jsonl` (the contract holds
-as released), one identifier per line, sorted. It is an evaluation subset of
-Core, not a fifth split: it partitions nothing, and `rebuild_splits.py`
-neither rebuilds nor checks it. By working group it holds RAN1 48, RAN2 47, RAN3 42, RAN4 53 and RAN5 51; by track,
-lookup 77, aggregation 107, relational 44 and multihop 13, against lookup 178, aggregation 179, relational 154 and multihop 49 over all
-560 Core items. `paper/baseline/score_core.py`, at the repository root,
-scores this subset by default and all of Core with `--set core`.
+Four identifier lists here are evaluation subsets of SpectraCQ-Core, not
+splits: they partition nothing, and `rebuild_splits.py` neither rebuilds nor
+checks them; `rebuild_contract_splits.py` does both (see Rebuilding). Each
+holds one identifier per line, sorted.
 
-`contract_exact_rule_only_149.txt` lists the 149 items of
-`contract_exact_241.txt` in which no column or phrase verdict was made by a
-language model (`method` in `../contract_demand_provenance.jsonl`), one
-identifier per line, sorted. Like the 241, it is an evaluation subset that
-`rebuild_splits.py` neither rebuilds nor checks. By working group it holds
-RAN1 24, RAN2 27, RAN3 26, RAN4 37 and RAN5 35; by track, lookup 50,
+A Core item holds as asked when no contract flag is set in
+`../answer_contract.jsonl` and every returned column its question demands
+(verdict `required` in `../contract_demand_provenance.jsonl`) is the scored
+answer column, `answer_columns[0]`. A question may demand no column.
+
+`contract_exact_script_fixed_133.txt` lists the 133 items that hold as asked
+whatever a language model decided: they hold as asked, every column verdict
+made by a language model falls on the scored answer column, and no phrase
+verdict is recorded. By working group it holds RAN1 20, RAN2 23, RAN3 25,
+RAN4 32 and RAN5 33; by track, lookup 47, aggregation 65, relational 13 and
+multihop 8; by answer type, scalar_set 105 and ranked_top_k 28.
+`paper/baseline/score_core.py`, at the repository root, scores this subset by
+default and all of Core with `--set core`.
+
+`contract_exact_asked_208.txt` lists the 208 items that hold as asked under
+the recorded verdicts: 117 demand exactly the scored answer column and 91
+demand no column. By working group it holds RAN1 40, RAN2 41, RAN3 40, RAN4 45
+and RAN5 42; by track, lookup 69, aggregation 90, relational 38 and multihop
+11; by answer type, scalar_set 155 and ranked_top_k 53.
+`python3 paper/baseline/score_core.py --set contract_exact_asked_208` scores
+it.
+
+`contract_exact_241.txt` and `contract_exact_rule_only_149.txt` are
+superseded. The 241 are the Core items whose `contract_disposition` is 1,
+that is, with no contract flag set. A column-demand flag
+(`question_names_extra_columns` or `mapping_answer`) is set exactly when a
+question demands two or more returned columns, so disposition 1 bounds how
+many columns are demanded, not which: in 33 of the 241 the one demanded
+column is not the scored answer column. By working group the 241 hold RAN1
+48, RAN2 47, RAN3 42, RAN4 53 and RAN5 51; by track, lookup 77, aggregation
+107, relational 44 and multihop 13, against lookup 178, aggregation 179,
+relational 154 and multihop 49 over all 560 Core items. The 149 are the items
+of the 241 in which no column or phrase verdict was made by a language model
+(`method` in `../contract_demand_provenance.jsonl`). By working group they
+hold RAN1 24, RAN2 27, RAN3 26, RAN4 37 and RAN5 35; by track, lookup 50,
 aggregation 75, relational 16 and multihop 8; by answer type, scalar_set 115
-and ranked_top_k 34.
-`python3 paper/baseline/score_core.py --set contract_exact_rule_only_149`
-scores it.
+and ranked_top_k 34. Of the 33, 17 are among the 149; the other 132 of the
+149 all lie in the 133. Both lists stay so that earlier scores on them can be
+reproduced with `--set contract_exact_241` and
+`--set contract_exact_rule_only_149`.
 
 ## Composition and audits
 
@@ -62,3 +88,14 @@ python3 rebuild_splits.py --write  # re-derives and rewrites the identifier list
 
 The rebuild reads only `../benchmark.jsonl` and `track_assignment.json`, both
 of which ship here; it needs no database and no network.
+
+`rebuild_contract_splits.py` rebuilds the four contract-exact lists from
+`../answer_contract.jsonl`, `../contract_demand_provenance.jsonl` and
+`../core_answer_gold.jsonl`, checks how those files agree with each other, and
+compares each rebuilt list byte for byte with the shipped one. It needs no
+database and no network:
+
+```bash
+python3 rebuild_contract_splits.py --check   # rebuilds and verifies, exits non-zero on any mismatch
+python3 rebuild_contract_splits.py --write   # rebuilds and rewrites the four lists; writes nothing if the input files disagree
+```
