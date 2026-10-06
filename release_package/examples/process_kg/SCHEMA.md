@@ -7,13 +7,11 @@ omitted.
 ## Files
 
 Triple counts below are **export-time snapshot values (2026-04-29)**.
-Re-parsing the released files with `rdflib` may produce slightly
-larger counts (e.g., `ls_routing.ttl` re-parses to 195,968 triples
-under rdflib 6.x as of 2026-05-11) because some implementation-side
-metadata triples are emitted on parse. The paper Appendix §G ("2.44M
-union triples") cites the rounded sum that is reproducible under
-either reading; reviewers re-parsing should not interpret a small
-delta (≤0.3%) as inconsistency.
+They should not be substituted for a new parser's census of the current
+files. An earlier `rdflib` census recorded 195,968 triples for
+`ls_routing.ttl` (2026-05-11), rather than the 195,434 export-time value
+below. This document does not establish the cause of that difference.
+Use the released files and their hashes when recording a new count.
 
 | File | Coverage | Triples (export-time, 2026-04-29) |
 |------|----------|-------------------:|
@@ -57,12 +55,19 @@ identifiers plus `presentedAt`/`sentTo`/`originatedFrom`;
 
 Not instantiated in this export: the finer-grained provenance
 relations `spectra:references`, `spectra:modifiesSection`,
-`spectra:replyIn`, `spectra:replyTo`, `spectra:relatedToWorkItem` and
+`spectra:replyIn`, `spectra:replyTo`, `spectra:relatedTo`,
+`spectra:relatedToWorkItem` and
 the data properties `spectra:agendaNumber`, `spectra:specVersion` are
 exercised in the per-WG body-text KGs distributed on Zenodo (e.g.,
 RAN1: `references` 19,454, `modifiesSection` 4,769, `replyTo` 427,
 `agendaNumber` 6,439; `specVersion` appears in RAN2-RAN5), not in
 these three metadata-only exports.
+
+The two Work Item predicates serve different subjects in the ontology:
+`relatedTo` links a `Tdoc` to a `WorkItem`; `relatedToWorkItem` links a
+`TechnicalReport` to a `WorkItem`. Neither is populated in this export.
+The Phase-1 TDoc/Work Item query uses `relatedTo` and requires the RAN1
+body-text graph.
 
 ## Verifying release integrity
 

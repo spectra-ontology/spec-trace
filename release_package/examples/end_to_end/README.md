@@ -1,6 +1,6 @@
 # SPECTRA end-to-end example
 
-A small synthetic 4-hop traceability scenario, fully runnable against an in-memory rdflib graph (Python) or any Neo4j instance loaded with the `data.cypher` script. Use this to verify that your toolchain understands the SPECTRA schema before instantiating it against your own data.
+A small synthetic traceability scenario, runnable against an in-memory rdflib graph (Python) or a Neo4j instance loaded with the `data.cypher` script. Use this to verify that your toolchain understands the SPECTRA schema before instantiating it against your own data.
 
 ## Files
 
@@ -8,7 +8,7 @@ A small synthetic 4-hop traceability scenario, fully runnable against an in-memo
 |---|---|
 | `data.ttl` | Synthetic instances expressed in Turtle (extends `examples/instantiation_snippet.ttl` with one full traceability scenario) |
 | `data.cypher` | Same instances as Cypher CREATE statements for Neo4j |
-| `query.cypher` | Multi-hop traceability query that recovers the originating TDoc from a TS section |
+| `query.cypher` | Query returning a referenced TDoc through the synthetic meeting-context and promotion joins |
 | `query.sparql` | Same query in SPARQL |
 | `expected_output.txt` | Result row(s) the query should return when run on `data.ttl` / `data.cypher` |
 
@@ -20,14 +20,20 @@ which is later promoted to an Agreement at RAN1#121. A CR (R1-2599999)
 implementing the agreed change is approved and modifies TS 38.214 §5.1.3.
 
 The end-to-end example records this lifecycle and provides the query that
-recovers the originating TDoc when starting from the affected TS section.
+returns the TDoc referenced by a WorkingAssumption linked to an Agreement
+at the CR's meeting, starting from the affected TS section. The lifecycle
+is fictional; the query joins the Agreement and CR through meeting context,
+not a direct evidence link showing which contribution caused the clause change.
 
 ## Scenario coverage (paper §6.5)
 
 This synthetic example exercises:
 
-- **S1 Multi-hop traceability** — full TDoc → Resolution → CR → Section → Spec spine.
-- **S4 Working Assumption promotion lineage** — `WA_120_PTRS promotedTo Agreement_121_PTRS`.
+- **S1 Multi-hop traceability illustration** — a TDoc/Resolution path
+  associated with the CR/Section path through a shared Meeting.
+- **S4 Working Assumption promotion illustration** —
+  `WA_120_PTRS promotedTo Agreement_121_PTRS` is synthetic. The property
+  is unpopulated in the released and deployed corpus snapshots.
 - **S3 Release-scoped CR analytics** — partial (CR with `targetRelease` and `submittedBy`).
 
 The metadata-only `examples/real_world_mini/` example complements this with **S2 Cross-WG LS** (a Liaison Statement from RAN1 to RAN2). **S5 TR-to-TS impact** is exercised at the schema level (TRImpact class + `hasTRImpact`/`impactsSection` properties declared in `ontology/spectra.ttl`); a runnable TR-impact instantiation is illustrated by the Cypher pattern in `queries/cypher/MULTI_HOP_traceability.cypher`.

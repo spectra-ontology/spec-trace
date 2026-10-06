@@ -10,8 +10,12 @@ A SPECTRA-conformant KG export covering 3GPP RAN1--RAN5 with all body content st
   - LS routing (`ls_routing.ttl`): source WG, target WG, meeting, time
   - CR routing (`cr_routing.ttl`): CR id, target Spec, target Release, status
 - **RAN1 TDoc-level metadata** (`ran1_tdoc_metadata.ttl`):
-  - TDoc number, agenda item, source company, target Release, status
-  - Structural relations: presentedAt, submittedBy, isRevisionOf, references
+  - TDoc number, source company, target Release, status, upload date
+  - Structural relations: `presentedAt`, `submittedBy`, `isRevisionOf`,
+    `targetRelease`
+  - Agenda placement, document references and Work Item links are omitted
+    from this export. They require the per-WG body-text graphs or the
+    small illustrative examples; see [SCHEMA.md](SCHEMA.md).
 - **Source-company names are kept verbatim**, identical to the values
   3GPP publishes per meeting in `TDOC_List.xlsx` and on every TDoc cover
   page; redistribution does not introduce information that is not already
@@ -23,11 +27,17 @@ A SPECTRA-conformant KG export covering 3GPP RAN1--RAN5 with all body content st
 
 Every record passes SHACL validation against `shapes/spectra-core.shacl.ttl`. Schema-level statistics (counts, per-WG class coverage, cross-WG schema diff) are pre-computed in `validation/*.json`.
 
-Run `tests/verify_release.py` to re-derive aggregate statistics independently.
+Run `python3 ../../tests/verify_release.py` from this directory to check the
+released counts and evidence. Checks requiring body-text graphs are skipped
+when those files have not been downloaded.
 
 ## Scope note
 
-This metadata-only export complements the per-WG body-text KGs (`kg/per_wg/`) shipped in the same v1.0.0 release; detailed RAN2--RAN5 TDoc-level metadata analogous to `ran1_tdoc_metadata.ttl` is a planned addition in a subsequent minor release.
+This metadata-only export complements the per-WG body-text KGs deposited
+on Zenodo; the large body files are not bundled in the GitHub checkout.
+Download instructions are in [kg/per_wg/README.md](../../kg/per_wg/README.md).
+Detailed RAN2--RAN5 TDoc-level metadata analogous to
+`ran1_tdoc_metadata.ttl` is a planned addition in a subsequent minor release.
 
 ## Source
 

@@ -287,6 +287,18 @@ deposit (standard library, no database) and compares the result with
 `validation/released_graph_scenario_counts.json`. 17 of the 18 are
 the same; the one that differs is listed under Known data quality issues.
 
+### Process requirements and descriptive use
+The [requirements-to-schema mapping](release_package/examples/PROCESS_REQUIREMENTS.md)
+connects process tasks to declared properties and the queries that exercise them.
+The [scenario guide](release_package/examples/USE_SCENARIOS.md) separates corpus
+measurements, metadata exports, meeting-context joins and synthetic examples.
+The offline [release-overlap analysis](release_package/validation/release_overlap_analysis.json)
+records 31,422 of 73,465 dated formal RAN1–RAN4 CRs targeting a release older
+than that WG/year's feature-CR leader. Its
+[runner](release_package/pipeline/analyse_release_overlap.py) checks the five
+deposited input hashes and two independent parsers. This descriptive statistic
+does not use official freeze dates or establish causal or graph-specific benefits.
+
 ### SpectraCQ scored benchmark
 The scored benchmark — 624 released CQs (of 654 authored; 30 held out) with English question text, executable reference Cypher, and deterministic gold answer sets (`benchmark.jsonl`) — is at `cqs/spectra_cq_v2.0/`. It is independently citable via `cqs/spectra_cq_v2.0/citation.bib` and licensed CC-BY 4.0. Reproducibility evidence (624/624 self-replay on a scratch reload) lives under `validation/cq_replay/`; canonical counts are in `MANIFEST.md`.
 
