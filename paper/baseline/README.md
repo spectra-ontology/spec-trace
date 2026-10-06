@@ -361,6 +361,74 @@ also makes this cohort unrepresentative of Core. It is supplementary to Core and
 133/208, and `score_core.py` keeps the annotation-derived 133 as its
 compatibility default. No question, gold value or original output changed.
 
+### Four-axis question/scoring follow-up
+
+The subsequent [question/scoring review](../../release_package/cqs/spectra_cq_v2.0/question_scoring_scope_review.json)
+stores two fresh isolated Codex AI reviews of all 133 original candidates,
+with separate required-field, scope/role, cardinality/truncation and
+ordering/duplicate judgments. Overall compatibility requires all four axes
+compatible; an incompatible axis excludes the item, as does remaining
+uncertainty. The joint 45-item list was recorded as frozen at
+2026-10-06 22:42:02 UTC before its new scores. It is a subset of the
+earlier 67; that earlier diagnostic and its results above remain available.
+
+Reviewers saw the fixed protocol and question/query/column input, with
+predictions, scores, earlier judgments and demand labels hidden. The
+designers had already seen parent Core/133/208/67 results. This is a
+subsequent AI-assisted diagnostic, with no human or 3GPP expert validation
+or full semantic certification. The exact model snapshot was not recorded;
+the 88 exclusions are not a count of confirmed semantic errors. The
+[subset README](../../release_package/cqs/spectra_cq_v2.0/splits/README.md)
+describes the fixed rule, agreement, composition and source/selection checks.
+
+From this directory:
+
+```bash
+python3 ../../release_package/cqs/spectra_cq_v2.0/splits/rebuild_question_scoring_scope_subset.py --check
+python3 -m unittest discover -s ../../release_package/cqs/spectra_cq_v2.0/splits -p 'test_rebuild_question_scoring_scope_subset.py'
+python3 analyse_contract_subsets.py --ids ../../release_package/cqs/spectra_cq_v2.0/splits/question_scoring_scope_reviewed_ids.txt --ci --n-boot 10000 --seed 0 --json results/question_scoring_scope_subset_analysis.recomputed.json
+```
+
+The checker verifies pinned source/input/protocol hashes, stored raw reviews,
+literal anchors, the four-axis rule and exact IDs; it does not repeat AI
+judgments or establish their truth. The scoring command re-evaluates retained
+outputs, with no new model or query execution, and writes a separate artifact.
+The judgments themselves were AI-assisted. The pinned
+[question_scoring_scope_subset_analysis.json](results/question_scoring_scope_subset_analysis.json)
+records 45 IDs, their input hash, the same 52 input/source hashes and
+10,000 paired seed-0 resamples with best-text reselection over the original
+18 arms.
+
+| Scoring rule | Pooled graph F1 | Best original answer-column text F1 | Models above reselected text, paired CI |
+|---|---:|---:|---:|
+| Answer column | 0.712346 | 0.049708 | 9/9 |
+| Full record S/P/C (same F1 on this cohort) | 0.504993 | 0.049708 | 9/9 under each rule |
+
+Model-rank agreement compares the 45 with Core under the **same scoring
+metric** in each row:
+
+| Metric compared with itself on Core | Spearman correlation | Models changing rank |
+|---|---:|---:|
+| Answer column | 0.850000 | 2/9 |
+| Full record P | 0.583333 | 6/9 |
+| Full record S / C | 0.600000 under each | 6/9 under each |
+
+The P comparison is P45 versus PCore; claude-opus-4.8 stays first. The
+answer-column rank result does not establish full-record rank stability.
+
+The smallest paired lower bounds across graph models are 0.320000 for
+answer-column scoring and 0.195556 for each record rule. Record scoring
+still uses the answer-column text comparator; P checks tuple positions,
+not property names, and all record rules discard row order and multiplicity.
+The 45 contain 14 lookup, 30 aggregation, 1 relational and 0 multihop items,
+with no declared tuple/mapping item. Original type labels are 40 `scalar_set`
+and 5 `ranked_top_k`; this does not establish that returned ranks are correct.
+This composition and source-based selection limit generalization to richer
+answers and other tracks. The result supplements Core, the 133/208 and the
+preserved 67; it does not replace them or change the 133-item compatibility
+default. No question, reference query, key, original prediction or existing
+subset was changed.
+
 ## Relational (NL-to-SQL) arm
 
 A fourth condition, `sql_grounded`, asks the model to answer in SQL over SQLite copies of

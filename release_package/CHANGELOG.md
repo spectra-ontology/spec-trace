@@ -85,6 +85,31 @@ Version numbers follow [SemVer 2.0.0](https://semver.org/spec/v2.0.0.html).
   concentrated in lookup/aggregation. It supplements Core and the 133/208;
   the annotation-derived 133 remains the compatibility default. Questions,
   gold and recorded outputs are unchanged; the field judgments are AI-assisted.
+- **Four-axis question/scoring follow-up** (`cqs/spectra_cq_v2.0/question_scoring_scope_review.json`,
+  `splits/question_scoring_scope_reviewed_ids.txt` and
+  `splits/rebuild_question_scoring_scope_subset.py` beneath that CQ directory):
+  two fresh isolated Codex AI agents reviewed all 133 candidates on required
+  fields, scope/roles, cardinality/truncation and ordering/duplicates.
+  The all-four-compatible intersection has 45 items, fixed before its new
+  scores and contained in the preserved 67. The record includes exact protocol,
+  input and raw review texts with hashes. Designers already knew parent
+  Core/133/208/67 metrics; this is a subsequent diagnostic, not human expert
+  validation or full semantic certification. Its source/selection checker
+  and separate synthetic integrity tests do not certify judgment truth.
+- **Recorded four-axis subset analysis** (`paper/baseline/results/question_scoring_scope_subset_analysis.json`):
+  retained-output `--ids` scoring of those 45 with 10,000 paired seed-0
+  resamples and original 18-arm text reselection. Answer-column pooled F1
+  is 0.712346 versus text 0.049708; full-record S/P/C is 0.504993 under
+  each rule, with 9/9 positive intervals for each comparison. The cohort has
+  14 lookup, 30 aggregation, 1 relational and no multihop or declared
+  tuple/mapping item. Original type labels are 40 scalar sets and 5 ranked
+  top-k; row order remains unscored. This composition limits generalization.
+  Earlier 67 results, Core, the 133/208, original data and the scorer's
+  133 default remain unchanged.
+  Model-rank agreement compares each metric with itself on Core:
+  answer-column Spearman is 0.850000 (2/9 rank changes), P is 0.583333
+  (6/9), and S/C are 0.600000 (6/9 each). Answer-column rank agreement
+  is not evidence of full-record rank stability.
 - **Relational (NL-to-SQL) arm** (under `paper/baseline/`, at the repository
   root): the loader `build_relational_db.py`, which flattens each group's graph
   into SQLite; the schema cards `sql_schema_cards.json` the model is shown; and

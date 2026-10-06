@@ -21,7 +21,7 @@ To accommodate GitHub's 100 MB-per-file limit, this release is split:
 
 A machine-readable DCAT/VoID description of every dataset in both
 channels (triple counts, class partitions, distributions, licenses)
-is provided in [`metadata/dcat_void.ttl`](metadata/dcat_void.ttl).
+is provided in [`metadata/dcat_void.ttl`](https://github.com/spectra-ontology/spec-trace/blob/main/release_package/metadata/dcat_void.ttl).
 
 This follows the academic two-tier distribution pattern of TSpec-LLM and GSMA telecom-kg-rel19. The `verify_release.py` test accepts either layout (Git checkout: body files absent by design; Zenodo download: body files present).
 
@@ -310,6 +310,20 @@ and baseline READMEs. It is not expert validation or a replacement for Core
 or the 133/208; the compatibility scorer default remains the annotation-derived
 133. The selected cohort is mostly lookup/aggregation and has no declared
 tuple/mapping items, limiting generalization to other answer types and tracks.
+A subsequent review separately assessed required fields, scope/roles,
+cardinality/truncation and ordering/duplicates for all 133 candidates. Two
+fresh isolated AI reviews yielded a 45-item intersection, fixed before its
+new scores. The designers had already seen the Core/133/208/67 metrics.
+The stored protocol, judgments, source hashes, membership checker and offline
+analysis are documented in the same READMEs; the earlier 67-item evidence is
+preserved. The 45 have 14 lookup, 30 aggregation and 1 relational item,
+with no multihop or declared tuple/mapping item. The original answer-type
+labels are 40 scalar sets and 5 ranked top-k; set scoring still ignores order.
+This remains a selected AI-assisted diagnostic, without human expert
+validation or full semantic certification; it changes no question, key,
+original output or scorer default.
+Model ranks change more under full-record scoring; the baseline README
+compares each metric's subset ranks with that same metric on Core.
 The baseline bundle also records an all-Core560 retained SQL/Cypher comparison
 with the same repaired answer-column key. The paired difference interval
 includes zero; this adds a reproducible current comparison without recovering

@@ -139,6 +139,56 @@ seed-0 resamples and the original 18 text runs; the
 [baseline README](../../../../paper/baseline/README.md) gives the command and
 the distinct answer-column and record-scoring definitions.
 
+## Four-axis question/scoring diagnostic
+
+The subsequent [review record](../question_scoring_scope_review.json) stores
+the exact protocol, original input, two raw AI-review texts and their hashes
+for all 133 candidates. It separates required fields, scope/roles,
+cardinality/truncation and ordering/duplicates. Each axis is compatible,
+incompatible or unclear; overall compatibility requires all four compatible,
+any incompatible axis makes the item incompatible, and the remainder are
+unclear. The [45 IDs](question_scoring_scope_reviewed_ids.txt) are the fixed
+intersection of two overall-compatible lists, contained in the earlier 67.
+The 67-item judgments, membership and analysis above are preserved.
+
+Two fresh isolated Codex AI agents saw only the protocol and source-visible
+question/query/columns, without predictions, scores, earlier judgments or
+demand annotations. The designers already knew the parent Core/133/208/67
+metrics. The recorded ID freeze is 2026-10-06 22:42:02 UTC, before the
+new 45-item scoring; no score-based adjudication changed that list. These
+fallible AI judgments are not human expert validation or full semantic
+certification; the 88 exclusions include uncertainty and disagreements.
+
+Composition is RAN1 5, RAN2 5, RAN3 8, RAN4 17 and RAN5 10; lookup 14,
+aggregation 30, relational 1 and multihop 0, with no declared tuple/mapping
+item. The original type labels are 40 `scalar_set` and 5 `ranked_top_k`;
+set scoring ignores rank order, while the ordering axis concerns explicit
+question requirements. The selected cohort is not representative of Core
+and does not support broad multi-field or track claims. Original questions,
+keys, outputs, canonical splits and the 133 scorer default are unchanged.
+
+From the repository root:
+
+```bash
+python3 release_package/cqs/spectra_cq_v2.0/splits/rebuild_question_scoring_scope_subset.py --check
+python3 -m unittest discover -s release_package/cqs/spectra_cq_v2.0/splits -p 'test_rebuild_question_scoring_scope_subset.py'
+```
+
+The checker pins the protocol/input hashes, reconstructs source fields from
+the original benchmark and Core key, checks raw-review hashes, literal source
+anchors, four-axis aggregation, status counts and exact intersection bytes.
+It accepts an empty intersection as an empty file. It does not repeat the
+reviews, prove their reasoning true or independently certify freeze chronology.
+Its synthetic integrity tests are separate from baseline scoring checks.
+The [recorded 45-item analysis](../../../../paper/baseline/results/question_scoring_scope_subset_analysis.json)
+uses the same offline `--ids` path, original 18 text arms and paired seed-0
+bootstrap protocol. The [baseline README](../../../../paper/baseline/README.md)
+gives its measured values, comparator limits and reproduction command.
+Its model ranks are compared with Core under the same scorer: answer-column
+Spearman is 0.850000 (2/9 changed positions), full-record P is 0.583333
+(6/9), and S/C are 0.600000 (6/9 each). Answer-column rank agreement does
+not extend to full-record scoring.
+
 The supplementary [structured-access analysis](../../../../paper/baseline/results/structured_access_core_analysis.json)
 uses all 560 Core identifiers, not a success-filtered subset. It re-scores
 retained SQL/Cypher outputs on the same repaired answer-column key and includes

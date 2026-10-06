@@ -357,6 +357,43 @@ The baseline README gives a separate-output reproduction command and the
 field-review limits; the field judgments are AI-assisted, while re-scoring
 executes no model or database query.
 
+The subsequent [question/scoring review](cqs/spectra_cq_v2.0/question_scoring_scope_review.json)
+records **133** items reviewed by two fresh isolated Codex AI agents on four
+axes: required fields, scope/roles, cardinality/truncation and
+ordering/duplicates. Overall compatibility requires all four compatible;
+selection is the fixed intersection of the two compatible lists. Review A
+has compatible/incompatible/unclear counts **51/40/42**, review B **46/38/49**,
+with overall agreement **124/133**. Its **45** IDs are contained in the
+preserved 67, frozen at **2026-10-06 22:42:02 UTC** before new subset scoring.
+Designers had already seen parent Core/133/208/67 metrics. These AI judgments
+are fallible, not human expert validation or complete semantic certification;
+the 88 exclusions are not 88 confirmed semantic errors. Composition is
+**14 lookup, 30 aggregation, 1 relational, 0 multihop**, with original type
+labels **40 scalar_set, 5 ranked_top_k** and no tuple/mapping item. Set scoring
+still ignores returned ranks; this selection limits generalization.
+
+The [question_scoring_scope_subset_analysis.json](../paper/baseline/results/question_scoring_scope_subset_analysis.json)
+records the actual retained-output `--ids` run on those **45** items,
+**52** input/source hashes and **10,000** paired seed-**0** NumPy resamples.
+Answer-column pooled F1 is **0.712346**, versus best original answer-column
+text F1 **0.049708**; full-record S/P/C pooled F1 is **0.504993** under each
+rule. Each comparison has **9/9** positive model-minus-reselected-text
+intervals; record rules retain the answer-column text comparator. The
+baseline README gives separate-output reproduction commands; the
+[membership checker](cqs/spectra_cq_v2.0/splits/rebuild_question_scoring_scope_subset.py)
+verifies sources, recorded judgments and the fixed intersection, without
+certifying judgment truth or independently proving chronology. All earlier
+questions, keys, outputs, subsets and the 133 scorer default remain unchanged.
+Model-rank Spearman agreement with Core under the **same scorer** is
+**0.850000** for answer column (2/9 ranks changed), **0.583333** for P
+(6/9 changed), and **0.600000** for S/C (6/9 each). P compares P45 with
+PCore, with claude-opus-4.8 first in both; answer-column rank agreement
+does not establish full-record rank stability.
+
+- Review record SHA256: `205b4d050ae997b9e76d60a0795989367e7ee26533f18f16249badb3780016c3`.
+- [45-ID file](cqs/spectra_cq_v2.0/splits/question_scoring_scope_reviewed_ids.txt) SHA256: `fe99b088e685e4ab534745a288d6c7dfddc15b2b1eabdd410ab5ef146367d1ac`.
+- Recorded analysis SHA256: `c2ab4c9051c2def86875f95e0ee02a704931b3f31e88e475e6872f5f99f4307a`.
+
 The [structured_access_core_analysis.json](../paper/baseline/results/structured_access_core_analysis.json)
 and `paper/baseline/analyse_structured_access.py` provide a separate retained
 SQL/Cypher comparison for claude-opus-4.8 on all **560** Core IDs and the same

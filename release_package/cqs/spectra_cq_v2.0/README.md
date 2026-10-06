@@ -117,6 +117,13 @@ evidence (scratch-reload self-replay, 624/624 gold match) lives at
 - `splits/field_coverage_reviewed_ids.txt`: the 67 items both AI reviews
   marked `field_aligned`. A supplementary diagnostic subset, with its
   composition and rebuild command in `splits/README.md`.
+- `question_scoring_scope_review.json`: the protocol, original score-blind
+  input and raw texts of two subsequent AI reviews, with four separate
+  question/scoring axes, hashes, judgments and limits for all 133 candidates.
+- `splits/question_scoring_scope_reviewed_ids.txt`: the 45 items both reviews
+  marked `compatible` on all four axes; a supplementary subset of the 67.
+  `splits/rebuild_question_scoring_scope_subset.py` checks the pinned sources,
+  stored reviews and exact membership without certifying judgment truth.
 - `cypher/{WG}_P{phase}_{id}.cypher` — 624 executable Cypher reference
   queries (one per released CQ).
 - `sparql/P{phase}_{id}.rq` — 142 SPARQL translations covering **all
@@ -198,6 +205,52 @@ scores and reproduction commands are in the
 all questions, reference queries, gold and original outputs; it replaces
 neither Core nor the 133/208. The Core scorer default remains the
 annotation-derived 133 for compatibility, without a semantic-validity guarantee.
+
+### Four-axis question/scoring follow-up
+
+The subsequent [question/scoring review](question_scoring_scope_review.json)
+examined every original 133 candidate on four separate axes:
+`required_fields`, `scope_and_roles`, `cardinality_and_truncation` and
+`ordering_and_duplicates`. Its embedded protocol is fixed and each judgment
+has a literal question/query/column anchor. An overall judgment is
+`compatible` only when all four axes are compatible, `incompatible` when
+any axis is incompatible, and `unclear` otherwise. Selection takes the
+intersection of the two overall-compatible lists; no score-based
+adjudication changes it.
+
+Two fresh, mutually isolated Codex AI agents received only that protocol
+and the question, reference query, returned columns and scored column.
+Predictions, scores, earlier judgments and demand labels were hidden from
+the reviewers. The designers had already seen Core/133/208/67 metrics,
+so this is a subsequent diagnostic with those earlier results known.
+The exact AI model snapshot was not recorded. Neither review is a human
+or 3GPP expert assessment, and agreement does not certify domain truth or
+complete question semantics.
+
+Review A recorded 51 compatible, 40 incompatible and 42 unclear items;
+review B recorded 46, 38 and 49. They gave the same overall status on
+124/133. The [45-item intersection](splits/question_scoring_scope_reviewed_ids.txt)
+was recorded as frozen at 2026-10-06 22:42:02 UTC before its new subset
+scores. The remaining 88 include disagreements and uncertainty and are
+not 88 confirmed semantic errors. The 45 are contained in the earlier
+67-item field-coverage intersection, whose judgments and scores remain
+available.
+
+The 45 contain 14 lookup, 30 aggregation, 1 relational and 0 multihop
+items, with no declared tuple/mapping item. Their original answer-type
+labels are 40 `scalar_set` and 5 `ranked_top_k`; scoring remains unordered
+and does not validate returned rank order. The ordering axis assesses the
+question's explicit requirements. Selection and this composition limit
+generalization to Core, richer answer types and all tracks. The
+[subset README](splits/README.md) gives the source/selection checker;
+the [baseline README](../../../paper/baseline/README.md) gives retained-output
+scores and separate-output reproduction commands. This diagnostic changes
+no question, reference query, answer key, original output or existing subset,
+and leaves the annotation-derived 133 scorer default in place.
+The baseline analysis compares model ranks with Core under the same metric:
+answer-column Spearman is 0.850000, full-record P is 0.583333 and S/C
+are 0.600000. Six of nine models change rank under P, so answer-column
+rank agreement does not establish full-record rank stability.
 
 The [baseline README](../../../paper/baseline/README.md) also links a retained
 SQL/Cypher comparison on all 560 Core items using the same repaired
