@@ -1,0 +1,1222 @@
+{
+  "items": [
+    {
+      "id": "RAN5_P1_CQ5-1",
+      "wg": "RAN5",
+      "question": "Report node counts by label across the graph (dataset overview).",
+      "reference_query": "MATCH (n) UNWIND labels(n) AS label RETURN label, count(*) AS cnt ORDER BY cnt DESC, label",
+      "original_scored_field": "label",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "label"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cnt DESC, label",
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "label",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 64,
+          "quote": "Report node counts by label across the graph (dataset overview)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 90,
+          "quote": "MATCH (n) UNWIND labels(n) AS label RETURN label, count(*) AS cnt ORDER BY cnt DESC, label"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 90,
+          "quote": "MATCH (n) UNWIND labels(n) AS label RETURN label, count(*) AS cnt ORDER BY cnt DESC, label"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 9,
+          "quote": "MATCH (n)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 10,
+          "end": 35,
+          "quote": "UNWIND labels(n) AS label"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 36,
+          "end": 65,
+          "quote": "RETURN label, count(*) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 66,
+          "end": 90,
+          "quote": "ORDER BY cnt DESC, label"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 5,
+          "quote": "label"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 132,
+          "quote": "{\"answer_columns\":[\"label\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":\"cnt DESC, label\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 301,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"label\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ5-2",
+      "wg": "RAN5",
+      "question": "Show TDoc counts per meeting, most recent first (coverage check).",
+      "reference_query": "MATCH (m:Meeting) WITH m OPTIONAL MATCH (t:Tdoc)-[:PRESENTED_AT]->(m) WITH m, count(t) AS tdocs RETURN m.canonicalMeetingNumber, tdocs ORDER BY m.meetingNumberInt DESC LIMIT 5",
+      "original_scored_field": "m.canonicalMeetingNumber",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "m.canonicalMeetingNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "m.meetingNumberInt DESC",
+        "cardinality": 5
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "m.canonicalMeetingNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "tdocs",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 65,
+          "quote": "Show TDoc counts per meeting, most recent first (coverage check)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 175,
+          "quote": "MATCH (m:Meeting) WITH m OPTIONAL MATCH (t:Tdoc)-[:PRESENTED_AT]->(m) WITH m, count(t) AS tdocs RETURN m.canonicalMeetingNumber, tdocs ORDER BY m.meetingNumberInt DESC LIMIT 5"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 175,
+          "quote": "MATCH (m:Meeting) WITH m OPTIONAL MATCH (t:Tdoc)-[:PRESENTED_AT]->(m) WITH m, count(t) AS tdocs RETURN m.canonicalMeetingNumber, tdocs ORDER BY m.meetingNumberInt DESC LIMIT 5"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 17,
+          "quote": "MATCH (m:Meeting)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 18,
+          "end": 24,
+          "quote": "WITH m"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 25,
+          "end": 69,
+          "quote": "OPTIONAL MATCH (t:Tdoc)-[:PRESENTED_AT]->(m)"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 70,
+          "end": 95,
+          "quote": "WITH m, count(t) AS tdocs"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 96,
+          "end": 134,
+          "quote": "RETURN m.canonicalMeetingNumber, tdocs"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 135,
+          "end": 167,
+          "quote": "ORDER BY m.meetingNumberInt DESC"
+        },
+        {
+          "span_id": "reference_query:clause007",
+          "source": "reference_query",
+          "start": 168,
+          "end": 175,
+          "quote": "LIMIT 5"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 24,
+          "quote": "m.canonicalMeetingNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 158,
+          "quote": "{\"answer_columns\":[\"m.canonicalMeetingNumber\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":5,\"ordering_key\":\"m.meetingNumberInt DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 322,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"m.canonicalMeetingNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"tdocs\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ5-3",
+      "wg": "RAN5",
+      "question": "How many TDocs have a submitting company recorded? (attribution coverage)",
+      "reference_query": "MATCH (t:Tdoc) OPTIONAL MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN count(t) AS total, count(c) AS withCompany",
+      "original_scored_field": "total",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "total"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "total",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "withCompany",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 73,
+          "quote": "How many TDocs have a submitting company recorded? (attribution coverage)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 112,
+          "quote": "MATCH (t:Tdoc) OPTIONAL MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN count(t) AS total, count(c) AS withCompany"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 112,
+          "quote": "MATCH (t:Tdoc) OPTIONAL MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN count(t) AS total, count(c) AS withCompany"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 14,
+          "quote": "MATCH (t:Tdoc)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 15,
+          "end": 62,
+          "quote": "OPTIONAL MATCH (t)-[:SUBMITTED_BY]->(c:Company)"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 63,
+          "end": 112,
+          "quote": "RETURN count(t) AS total, count(c) AS withCompany"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 5,
+          "quote": "total"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 120,
+          "quote": "{\"answer_columns\":[\"total\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 310,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"total\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"withCompany\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ5-4",
+      "wg": "RAN5",
+      "question": "Break down TDocs by target release (release distribution).",
+      "reference_query": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release) RETURN r.releaseName, count(t) AS cnt ORDER BY cnt DESC LIMIT 10",
+      "original_scored_field": "r.releaseName",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "r.releaseName"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cnt DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "r.releaseName",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 58,
+          "quote": "Break down TDocs by target release (release distribution)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 110,
+          "quote": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release) RETURN r.releaseName, count(t) AS cnt ORDER BY cnt DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 110,
+          "quote": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release) RETURN r.releaseName, count(t) AS cnt ORDER BY cnt DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 45,
+          "quote": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 46,
+          "end": 83,
+          "quote": "RETURN r.releaseName, count(t) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 84,
+          "end": 101,
+          "quote": "ORDER BY cnt DESC"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 102,
+          "end": 110,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "r.releaseName"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 133,
+          "quote": "{\"answer_columns\":[\"r.releaseName\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"cnt DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 309,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"r.releaseName\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ5-5",
+      "wg": "RAN5",
+      "question": "Which ten specs receive the most CRs? (spec churn ranking)",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber, count(cr) AS cnt ORDER BY cnt DESC LIMIT 10",
+      "original_scored_field": "sp.specNumber",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "sp.specNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cnt DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "sp.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 58,
+          "quote": "Which ten specs receive the most CRs? (spec churn ranking)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 102,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber, count(cr) AS cnt ORDER BY cnt DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 102,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber, count(cr) AS cnt ORDER BY cnt DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 36,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 37,
+          "end": 75,
+          "quote": "RETURN sp.specNumber, count(cr) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 76,
+          "end": 93,
+          "quote": "ORDER BY cnt DESC"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 94,
+          "end": 102,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "sp.specNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 133,
+          "quote": "{\"answer_columns\":[\"sp.specNumber\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"cnt DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 309,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"sp.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ6-1",
+      "wg": "RAN5",
+      "question": "How many TDocs were presented at meeting RAN5#109? (meeting volume)",
+      "reference_query": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {canonicalMeetingNumber:'RAN5#109'}) RETURN count(t) AS cnt",
+      "original_scored_field": "cnt",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "cnt"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 67,
+          "quote": "How many TDocs were presented at meeting RAN5#109? (meeting volume)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 102,
+          "quote": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {canonicalMeetingNumber:'RAN5#109'}) RETURN count(t) AS cnt"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 102,
+          "quote": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {canonicalMeetingNumber:'RAN5#109'}) RETURN count(t) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 79,
+          "quote": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {canonicalMeetingNumber:'RAN5#109'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 80,
+          "end": 102,
+          "quote": "RETURN count(t) AS cnt"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 3,
+          "quote": "cnt"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 118,
+          "quote": "{\"answer_columns\":[\"cnt\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 197,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ6-2",
+      "wg": "RAN5",
+      "question": "How many meetings are in the dataset? (corpus size)",
+      "reference_query": "MATCH (m:Meeting) RETURN count(m) AS cnt",
+      "original_scored_field": "cnt",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "cnt"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 51,
+          "quote": "How many meetings are in the dataset? (corpus size)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 40,
+          "quote": "MATCH (m:Meeting) RETURN count(m) AS cnt"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 40,
+          "quote": "MATCH (m:Meeting) RETURN count(m) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 17,
+          "quote": "MATCH (m:Meeting)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 18,
+          "end": 40,
+          "quote": "RETURN count(m) AS cnt"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 3,
+          "quote": "cnt"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 118,
+          "quote": "{\"answer_columns\":[\"cnt\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 197,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ6-3",
+      "wg": "RAN5",
+      "question": "Compare the total TDoc count against the CR count (CR proportion).",
+      "reference_query": "MATCH (t:Tdoc) WITH count(t) AS total MATCH (cr:CR) RETURN total, count(cr) AS crs",
+      "original_scored_field": "total",
+      "declared_answer_contract": {
+        "answer_type": "mapping",
+        "answer_columns": [
+          "total"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "total",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "crs",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 66,
+          "quote": "Compare the total TDoc count against the CR count (CR proportion)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 82,
+          "quote": "MATCH (t:Tdoc) WITH count(t) AS total MATCH (cr:CR) RETURN total, count(cr) AS crs"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 82,
+          "quote": "MATCH (t:Tdoc) WITH count(t) AS total MATCH (cr:CR) RETURN total, count(cr) AS crs"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 14,
+          "quote": "MATCH (t:Tdoc)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 15,
+          "end": 37,
+          "quote": "WITH count(t) AS total"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 38,
+          "end": 51,
+          "quote": "MATCH (cr:CR)"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 52,
+          "end": 82,
+          "quote": "RETURN total, count(cr) AS crs"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 5,
+          "quote": "total"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 117,
+          "quote": "{\"answer_columns\":[\"total\"],\"answer_type\":\"mapping\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 302,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"total\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"crs\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ6-4",
+      "wg": "RAN5",
+      "question": "How many liaison statements (LS) are recorded? (LS count)",
+      "reference_query": "MATCH (ls:LS) RETURN count(ls) AS cnt",
+      "original_scored_field": "cnt",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "cnt"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 57,
+          "quote": "How many liaison statements (LS) are recorded? (LS count)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 37,
+          "quote": "MATCH (ls:LS) RETURN count(ls) AS cnt"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 37,
+          "quote": "MATCH (ls:LS) RETURN count(ls) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 13,
+          "quote": "MATCH (ls:LS)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 14,
+          "end": 37,
+          "quote": "RETURN count(ls) AS cnt"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 3,
+          "quote": "cnt"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 118,
+          "quote": "{\"answer_columns\":[\"cnt\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 197,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P1_CQ6-5",
+      "wg": "RAN5",
+      "question": "How many Contact nodes exist? (contact count)",
+      "reference_query": "MATCH (c:Contact) RETURN count(c) AS cnt",
+      "original_scored_field": "cnt",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "cnt"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 45,
+          "quote": "How many Contact nodes exist? (contact count)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 40,
+          "quote": "MATCH (c:Contact) RETURN count(c) AS cnt"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 40,
+          "quote": "MATCH (c:Contact) RETURN count(c) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 17,
+          "quote": "MATCH (c:Contact)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 18,
+          "end": 40,
+          "quote": "RETURN count(c) AS cnt"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 3,
+          "quote": "cnt"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 118,
+          "quote": "{\"answer_columns\":[\"cnt\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 197,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    }
+  ]
+}

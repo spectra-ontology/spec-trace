@@ -1,0 +1,1324 @@
+{
+  "items": [
+    {
+      "id": "RAN4_P4_CQ4-4",
+      "wg": "RAN4",
+      "question": "List the other specs affected by Samsung's CRs (a company's cross-spec footprint).",
+      "reference_query": "MATCH (c:CR)-[:SUBMITTED_BY]->(comp:Company) WHERE comp.companyName CONTAINS 'Samsung' WITH c MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(s:Spec) RETURN DISTINCT s.specNumber AS spec ORDER BY spec LIMIT 10",
+      "original_scored_field": "spec",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "spec"
+        ],
+        "ordering_required": true,
+        "ordering_key": "spec",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "spec",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 82,
+          "quote": "List the other specs affected by Samsung's CRs (a company's cross-spec footprint)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 228,
+          "quote": "MATCH (c:CR)-[:SUBMITTED_BY]->(comp:Company) WHERE comp.companyName CONTAINS 'Samsung' WITH c MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(s:Spec) RETURN DISTINCT s.specNumber AS spec ORDER BY spec LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 228,
+          "quote": "MATCH (c:CR)-[:SUBMITTED_BY]->(comp:Company) WHERE comp.companyName CONTAINS 'Samsung' WITH c MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(s:Spec) RETURN DISTINCT s.specNumber AS spec ORDER BY spec LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 44,
+          "quote": "MATCH (c:CR)-[:SUBMITTED_BY]->(comp:Company)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 45,
+          "end": 86,
+          "quote": "WHERE comp.companyName CONTAINS 'Samsung'"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 87,
+          "end": 93,
+          "quote": "WITH c"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 94,
+          "end": 168,
+          "quote": "MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(s:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 169,
+          "end": 205,
+          "quote": "RETURN DISTINCT s.specNumber AS spec"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 206,
+          "end": 219,
+          "quote": "ORDER BY spec"
+        },
+        {
+          "span_id": "reference_query:clause007",
+          "source": "reference_query",
+          "start": 220,
+          "end": 228,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 4,
+          "quote": "spec"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 120,
+          "quote": "{\"answer_columns\":[\"spec\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"spec\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 197,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"spec\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P4_CQ4-5",
+      "wg": "RAN4",
+      "question": "List the change summaries of CRs approved at meeting #93 (meeting-scoped change review).",
+      "reference_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumberInt: 93}) WITH a MATCH (a)-[:REFERENCES]->(t:Tdoc) WHERE t.summaryOfChange IS NOT NULL RETURN t.tdocNumber AS tdocNumber, t.summaryOfChange AS summary ORDER BY t.tdocNumber DESC LIMIT 10",
+      "original_scored_field": "tdocNumber",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "tdocNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "t.tdocNumber DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "tdocNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "summary",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 88,
+          "quote": "List the change summaries of CRs approved at meeting #93 (meeting-scoped change review)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 243,
+          "quote": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumberInt: 93}) WITH a MATCH (a)-[:REFERENCES]->(t:Tdoc) WHERE t.summaryOfChange IS NOT NULL RETURN t.tdocNumber AS tdocNumber, t.summaryOfChange AS summary ORDER BY t.tdocNumber DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 243,
+          "quote": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumberInt: 93}) WITH a MATCH (a)-[:REFERENCES]->(t:Tdoc) WHERE t.summaryOfChange IS NOT NULL RETURN t.tdocNumber AS tdocNumber, t.summaryOfChange AS summary ORDER BY t.tdocNumber DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 66,
+          "quote": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumberInt: 93})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 67,
+          "end": 73,
+          "quote": "WITH a"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 74,
+          "end": 107,
+          "quote": "MATCH (a)-[:REFERENCES]->(t:Tdoc)"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 108,
+          "end": 143,
+          "quote": "WHERE t.summaryOfChange IS NOT NULL"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 144,
+          "end": 207,
+          "quote": "RETURN t.tdocNumber AS tdocNumber, t.summaryOfChange AS summary"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 208,
+          "end": 234,
+          "quote": "ORDER BY t.tdocNumber DESC"
+        },
+        {
+          "span_id": "reference_query:clause007",
+          "source": "reference_query",
+          "start": 235,
+          "end": 243,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 10,
+          "quote": "tdocNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 139,
+          "quote": "{\"answer_columns\":[\"tdocNumber\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"t.tdocNumber DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 309,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"tdocNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"summary\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P5_CQ1-1",
+      "wg": "RAN4",
+      "question": "List the completed TRs targeting Rel-17 (release study inventory).",
+      "reference_query": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-17'}) WHERE tr.trStatus = 'Completed' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber",
+      "original_scored_field": "tr.trNumber",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "tr.trNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "tr.trNumber",
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "tr.trNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "tr.trTitle",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 66,
+          "quote": "List the completed TRs targeting Rel-17 (release study inventory)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 165,
+          "quote": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-17'}) WHERE tr.trStatus = 'Completed' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 165,
+          "quote": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-17'}) WHERE tr.trStatus = 'Completed' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 81,
+          "quote": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-17'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 82,
+          "end": 113,
+          "quote": "WHERE tr.trStatus = 'Completed'"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 114,
+          "end": 144,
+          "quote": "RETURN tr.trNumber, tr.trTitle"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 145,
+          "end": 165,
+          "quote": "ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 11,
+          "quote": "tr.trNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 134,
+          "quote": "{\"answer_columns\":[\"tr.trNumber\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":\"tr.trNumber\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 313,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"tr.trNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"tr.trTitle\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P5_CQ1-4",
+      "wg": "RAN4",
+      "question": "List the TRs currently in draft status (ongoing studies).",
+      "reference_query": "MATCH (tr:TechnicalReport) WHERE tr.trStatus = 'Draft' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber",
+      "original_scored_field": "tr.trNumber",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "tr.trNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "tr.trNumber",
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "tr.trNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "tr.trTitle",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 57,
+          "quote": "List the TRs currently in draft status (ongoing studies)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 106,
+          "quote": "MATCH (tr:TechnicalReport) WHERE tr.trStatus = 'Draft' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 106,
+          "quote": "MATCH (tr:TechnicalReport) WHERE tr.trStatus = 'Draft' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 26,
+          "quote": "MATCH (tr:TechnicalReport)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 27,
+          "end": 54,
+          "quote": "WHERE tr.trStatus = 'Draft'"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 55,
+          "end": 85,
+          "quote": "RETURN tr.trNumber, tr.trTitle"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 86,
+          "end": 106,
+          "quote": "ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 11,
+          "quote": "tr.trNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 134,
+          "quote": "{\"answer_columns\":[\"tr.trNumber\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":\"tr.trNumber\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 313,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"tr.trNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"tr.trTitle\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P5_CQ2-1",
+      "wg": "RAN4",
+      "question": "List the specs impacted by TR 38.803 (study-to-spec impact).",
+      "reference_query": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType ORDER BY s.specNumber",
+      "original_scored_field": "s.specNumber",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "s.specNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "s.specNumber",
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "s.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "imp.impactType",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 60,
+          "quote": "List the specs impacted by TR 38.803 (study-to-spec impact)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 164,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType ORDER BY s.specNumber"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 164,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType ORDER BY s.specNumber"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 106,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 107,
+          "end": 142,
+          "quote": "RETURN s.specNumber, imp.impactType"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 143,
+          "end": 164,
+          "quote": "ORDER BY s.specNumber"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 12,
+          "quote": "s.specNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 136,
+          "quote": "{\"answer_columns\":[\"s.specNumber\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":\"s.specNumber\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 318,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"s.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"imp.impactType\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P5_CQ2-2",
+      "wg": "RAN4",
+      "question": "Return the impact types of TR 38.860 (impact classification).",
+      "reference_query": "MATCH (tr:TechnicalReport {trNumber: '38.860'})-[:HAS_TR_IMPACT]->(imp:TRImpact) RETURN imp.impactType, imp.impactDescription",
+      "original_scored_field": "imp.impactType",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "imp.impactType"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "imp.impactType",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "imp.impactDescription",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 61,
+          "quote": "Return the impact types of TR 38.860 (impact classification)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 125,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.860'})-[:HAS_TR_IMPACT]->(imp:TRImpact) RETURN imp.impactType, imp.impactDescription"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 125,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.860'})-[:HAS_TR_IMPACT]->(imp:TRImpact) RETURN imp.impactType, imp.impactDescription"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 80,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.860'})-[:HAS_TR_IMPACT]->(imp:TRImpact)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 81,
+          "end": 125,
+          "quote": "RETURN imp.impactType, imp.impactDescription"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 14,
+          "quote": "imp.impactType"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 129,
+          "quote": "{\"answer_columns\":[\"imp.impactType\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 327,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"imp.impactType\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"imp.impactDescription\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P5_CQ2-3",
+      "wg": "RAN4",
+      "question": "Which TRs led to a new TS? (spinning up new specs).",
+      "reference_query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'NewTS'})-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber, tr.trTitle, s.specNumber ORDER BY tr.trNumber",
+      "original_scored_field": "tr.trNumber",
+      "declared_answer_contract": {
+        "answer_type": "tuple_set",
+        "answer_columns": [
+          "tr.trNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "tr.trNumber",
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "tr.trNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "tr.trTitle",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "s.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 51,
+          "quote": "Which TRs led to a new TS? (spinning up new specs)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 182,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'NewTS'})-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber, tr.trTitle, s.specNumber ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 182,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'NewTS'})-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber, tr.trTitle, s.specNumber ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 107,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'NewTS'})-[:IMPACTS_SPEC]->(s:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 108,
+          "end": 161,
+          "quote": "RETURN DISTINCT tr.trNumber, tr.trTitle, s.specNumber"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 162,
+          "end": 182,
+          "quote": "ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 11,
+          "quote": "tr.trNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 133,
+          "quote": "{\"answer_columns\":[\"tr.trNumber\"],\"answer_type\":\"tuple_set\",\"cardinality\":null,\"ordering_key\":\"tr.trNumber\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 424,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"tr.trNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"tr.trTitle\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"s.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P5_CQ2-4",
+      "wg": "RAN4",
+      "question": "Which TRs extended existing spec sections? (incremental spec impact).",
+      "reference_query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'ExtendSection'})-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber, s.specNumber ORDER BY tr.trNumber LIMIT 20",
+      "original_scored_field": "tr.trNumber",
+      "declared_answer_contract": {
+        "answer_type": "tuple_set",
+        "answer_columns": [
+          "tr.trNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "tr.trNumber",
+        "cardinality": 20
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "tr.trNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "s.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 69,
+          "quote": "Which TRs extended existing spec sections? (incremental spec impact)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 187,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'ExtendSection'})-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber, s.specNumber ORDER BY tr.trNumber LIMIT 20"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 187,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'ExtendSection'})-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber, s.specNumber ORDER BY tr.trNumber LIMIT 20"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 115,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'ExtendSection'})-[:IMPACTS_SPEC]->(s:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 116,
+          "end": 157,
+          "quote": "RETURN DISTINCT tr.trNumber, s.specNumber"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 158,
+          "end": 178,
+          "quote": "ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 179,
+          "end": 187,
+          "quote": "LIMIT 20"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 11,
+          "quote": "tr.trNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 131,
+          "quote": "{\"answer_columns\":[\"tr.trNumber\"],\"answer_type\":\"tuple_set\",\"cardinality\":20,\"ordering_key\":\"tr.trNumber\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 315,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"tr.trNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"s.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P5_CQ2-5",
+      "wg": "RAN4",
+      "question": "List the TRs that impacted spec 38.101-1 (reverse study lookup).",
+      "reference_query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.101-1'}) RETURN DISTINCT tr.trNumber, tr.trTitle, imp.impactType ORDER BY tr.trNumber",
+      "original_scored_field": "tr.trNumber",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "tr.trNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "tr.trNumber",
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "tr.trNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "tr.trTitle",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "imp.impactType",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 64,
+          "quote": "List the TRs that impacted spec 38.101-1 (reverse study lookup)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 187,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.101-1'}) RETURN DISTINCT tr.trNumber, tr.trTitle, imp.impactType ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 187,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.101-1'}) RETURN DISTINCT tr.trNumber, tr.trTitle, imp.impactType ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 110,
+          "quote": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.101-1'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 111,
+          "end": 166,
+          "quote": "RETURN DISTINCT tr.trNumber, tr.trTitle, imp.impactType"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 167,
+          "end": 187,
+          "quote": "ORDER BY tr.trNumber"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 11,
+          "quote": "tr.trNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 134,
+          "quote": "{\"answer_columns\":[\"tr.trNumber\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":\"tr.trNumber\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 426,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"tr.trNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"tr.trTitle\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"imp.impactType\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN4_P5_CQ3-1",
+      "wg": "RAN4",
+      "question": "Which specs did the NR RF study TR 38.803 impact? (study-to-spec impact).",
+      "reference_query": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType, imp.impactDescription ORDER BY s.specNumber",
+      "original_scored_field": "s.specNumber",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "s.specNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "s.specNumber",
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "s.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "imp.impactType",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "imp.impactDescription",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 73,
+          "quote": "Which specs did the NR RF study TR 38.803 impact? (study-to-spec impact)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 187,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType, imp.impactDescription ORDER BY s.specNumber"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 187,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType, imp.impactDescription ORDER BY s.specNumber"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 106,
+          "quote": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 107,
+          "end": 165,
+          "quote": "RETURN s.specNumber, imp.impactType, imp.impactDescription"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 166,
+          "end": 187,
+          "quote": "ORDER BY s.specNumber"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 12,
+          "quote": "s.specNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 136,
+          "quote": "{\"answer_columns\":[\"s.specNumber\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":\"s.specNumber\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 438,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"s.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"imp.impactType\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"imp.impactDescription\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    }
+  ]
+}

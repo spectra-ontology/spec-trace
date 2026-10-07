@@ -1,14 +1,65 @@
-# Explicit task contracts and recorded comparison
+# Strict named-record evaluation
 
-This companion makes requested records explicit while preserving the original
-SpectraCQ release. Start with the [contract and source audit](README_contract_audit.md)
-for the distinction between automatic screening of Core 560, direct comparison
-of 47 original items and new formal task variants. No independent domain expert
-validated question meaning or gold.
+For complete-record comparisons, start with the [recorded comparison](matched_retrieval_measurement/README.md).
+It uses 36 eligible formal task variants selected from a fixed 40-item cohort.
+All three arms receive the same named-field output contracts. Complete-record F1
+and exact output match are primary; partial field credit is secondary.
 
-The [recorded comparison](matched_retrieval_measurement/README.md) uses 36
-eligible variants selected from a fixed 40-item cohort. All three arms receive
-the same output contracts and use strict named complete-record scoring.
+From the repository root, replay the retained outputs without model or database calls:
+
+```bash
+python3 -B release_package/cqs/contract_repair_v1/matched_retrieval_measurement/matched_analysis.py \
+  --require-complete --out /tmp/spectra-strict-record-replay.json
+```
+
+Use a new output filename; the script refuses to overwrite a report.
+
+For comparisons on the original unchanged questions, start with the
+[31-item source-aligned retained-output diagnostic](original_source_aligned/README.md)
+before interpreting full-Core or historical annotation-subset scores. Its admission
+rule was fixed before reading retained predictions: both source-evidenced AI audits
+must judge the full original scoring contract aligned, native reference execution
+must be complete, and the declared released/V1 answer-column sets must agree with
+source outputs. The fixed cohort contains 11 lookup, 13 aggregation and 7 relational
+items, with no multihop item. Native completion concerns the saved reference query;
+its original LIMIT clauses and source gaps remain. It re-scores the unchanged 27 original runs of nine
+models with the legacy canonical-string value-set scorer, without reconstructing
+named records, roles, types, order or multiplicity. V1 is primary; V2 sensitivity
+uses the whole identical cohort. This does not recover the paper's default Core/V2
+headline or replace the strict 36-variant comparison above.
+
+From the repository root, reproduce the recorded diagnostic without model,
+database or retrieval calls and without writing a report:
+
+```bash
+python3 -I -B release_package/cqs/contract_repair_v1/original_source_aligned/score_source_aligned_retained_portable_v1.py \
+  --bundle release_package/cqs/contract_repair_v1/original_source_aligned \
+  --public-root . \
+  --expected-manifest-sha256 ef37ec7f075c7d51d87406d20e6c55f050213ef9942eab6cf53cb27277f29813
+```
+
+The [all-560 audit dispositions](source_alignment_audit_v1/semantic_alignment_audit_report_v1.json)
+and [345-file audit manifest](source_alignment_audit_v1/portable_export_manifest_v1.json)
+preserve every original item and all 112 attempts. Both audit receipts were usable
+for 480 items; 80 retain one or both unavailable raters and are excluded from cohort
+admission, without replacement or performance-based selection. Usable receipts do
+not imply alignment. Three admitted items retain differences in coarse role aliases;
+their diagnostics stay visible and the fixed 31-item cohort is not reselected.
+These are fallible AI judgments, not human/domain-expert validation, a representative
+sample or a repair of all Core questions. Gold is nonempty; missing-information
+abstention remains untested. Historical graph/text evidence access and source cutoffs
+are unequal or unverified. The [offline audit verifier and resource appendix](source_alignment_audit_resources_v1/README.md)
+and its [verifier script](source_alignment_audit_resources_v1/verify_semantic_alignment_audit_export_v1.py)
+explain the public checks and the retained private-capture hash commitments.
+
+The original
+[Core questions](../spectra_cq_v2.0/README.md), their value-set scoring and the
+133-item scorer compatibility default remain [historical analyses](../../../paper/baseline/README.md).
+They are separate from this strict formal-variant comparison.
+
+The [contract and source audit](README_contract_audit.md) distinguishes automatic
+screening of Core 560, direct comparison of 47 original items and formal task
+variants. No independent domain expert validated question meaning or gold.
 
 | Access condition | Mean complete-record F1 | Exact outputs |
 | --- | ---: | ---: |

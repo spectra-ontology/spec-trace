@@ -39,8 +39,9 @@ count, relationship attribute or ordering requirement. By working group it
 holds RAN1 20, RAN2 23, RAN3 25,
 RAN4 32 and RAN5 33; by track, lookup 47, aggregation 65, relational 13 and
 multihop 8; by answer type, scalar_set 105 and ranked_top_k 28.
-`paper/baseline/score_core.py`, at the repository root, scores this subset by
-default and all of Core with `--set core`.
+`paper/baseline/score_core.py`, at the repository root, preserves this subset as
+its historical compatibility default and scores all Core with `--set core`.
+Neither path certifies every requirement of the original natural-language question.
 
 `contract_exact_asked_208.txt` lists the 208 items satisfying the recorded
 conditions above: 117 have exactly the scored answer column marked

@@ -7,6 +7,44 @@ exact-output metrics for all three arms. The original results below remain
 historical analyses of the released questions and their original keys.
 
 
+For comparisons on the original unchanged questions, start with the
+[31-item source-aligned retained-output diagnostic](../../release_package/cqs/contract_repair_v1/original_source_aligned/README.md)
+before interpreting full-Core or historical annotation-subset scores. Its admission
+rule was fixed before reading retained predictions: both source-evidenced AI audits
+must judge the full original scoring contract aligned, native reference execution
+must be complete, and the declared released/V1 answer-column sets must agree with
+source outputs. The fixed cohort contains 11 lookup, 13 aggregation and 7 relational
+items, with no multihop item. Native completion concerns the saved reference query;
+its original LIMIT clauses and source gaps remain. It re-scores the unchanged 27 original runs of nine
+models with the legacy canonical-string value-set scorer, without reconstructing
+named records, roles, types, order or multiplicity. V1 is primary; V2 sensitivity
+uses the whole identical cohort. This does not recover the paper's default Core/V2
+headline or replace the strict 36-variant comparison above.
+
+From the repository root, reproduce the recorded diagnostic without model,
+database or retrieval calls and without writing a report:
+
+```bash
+python3 -I -B release_package/cqs/contract_repair_v1/original_source_aligned/score_source_aligned_retained_portable_v1.py \
+  --bundle release_package/cqs/contract_repair_v1/original_source_aligned \
+  --public-root . \
+  --expected-manifest-sha256 ef37ec7f075c7d51d87406d20e6c55f050213ef9942eab6cf53cb27277f29813
+```
+
+The [all-560 audit dispositions](../../release_package/cqs/contract_repair_v1/source_alignment_audit_v1/semantic_alignment_audit_report_v1.json)
+and [345-file audit manifest](../../release_package/cqs/contract_repair_v1/source_alignment_audit_v1/portable_export_manifest_v1.json)
+preserve every original item and all 112 attempts. Both audit receipts were usable
+for 480 items; 80 retain one or both unavailable raters and are excluded from cohort
+admission, without replacement or performance-based selection. Usable receipts do
+not imply alignment. Three admitted items retain differences in coarse role aliases;
+their diagnostics stay visible and the fixed 31-item cohort is not reselected.
+These are fallible AI judgments, not human/domain-expert validation, a representative
+sample or a repair of all Core questions. Gold is nonempty; missing-information
+abstention remains untested. Historical graph/text evidence access and source cutoffs
+are unequal or unverified. The [offline audit verifier and resource appendix](../../release_package/cqs/contract_repair_v1/source_alignment_audit_resources_v1/README.md)
+and its [verifier script](../../release_package/cqs/contract_repair_v1/source_alignment_audit_resources_v1/verify_semantic_alignment_audit_export_v1.py)
+explain the public checks and the retained private-capture hash commitments.
+
 Complete harness and per-question outputs for the three-condition baseline reported in the
 paper: closed-book, RAG over the released text collections, and knowledge-graph-grounded
 query generation. From the recorded runs in this directory, `score_core.py --set core`
@@ -117,6 +155,13 @@ Per-row records include `raw_text`, parsed `predicted_values`, token `usage`, `c
 
 ## Scoring
 
+Run the scoring commands below from `paper/baseline/`. Starting at the repository
+root, change directory first:
+
+```bash
+cd paper/baseline
+```
+
 `score.py` is fully deterministic and offline. Gold and prediction values are normalized
 (canonicalization, whitespace collapse, casefold) and compared as sets:
 
@@ -146,7 +191,7 @@ the first returned column of the model's query. The scorer compares these value 
 does not verify that the model selected the requested property or relationship role.
 
 ```bash
-python3 score_core.py                    # annotation-derived 133 (default)
+python3 score_core.py --set contract_exact_script_fixed_133  # historical annotation diagnostic
 python3 score_core.py --set contract_exact_asked_208   # annotation-derived 208
 python3 score_core.py --set core         # all 560 Core items
 python3 score_core.py --set contract_exact_241   # superseded: the 241 items with contract_disposition 1
@@ -244,7 +289,7 @@ queries that executed in both, 4,599 return the same first column; of the rest,
 217 differ otherwise.
 
 To replay a working group, load its body TTL into an empty Neo4j 5.26 with the APOC plugin,
-for example with `python3 release_package/tests/verify_benchmark.py --full --wg RAN1`
+for example with `python3 ../../release_package/tests/verify_benchmark.py --full --wg RAN1`
 (plus `--bolt`, `--user` and `--password`), then run
 `python3 score_full_record.py replay --wg RAN1 --ttl ../../release_package/kg/per_wg/RAN1-body.ttl`
 with the same connection options; `--ttl` records the loaded file in the header.
@@ -453,7 +498,7 @@ It sits outside `results/`, so `score.py`, `scores.json` and the results figure 
 it. Score it with the Core scorer:
 
 ```bash
-python3 score_core.py --results relational/runs               # annotation-derived 133 (default)
+python3 score_core.py --results relational/runs --set contract_exact_script_fixed_133  # historical annotation diagnostic
 python3 score_core.py --results relational/runs --set core    # all 560 Core items
 ```
 

@@ -1,0 +1,558 @@
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "original_question_determinacy": {
+            "type": "string",
+            "enum": [
+              "well_specified",
+              "underspecified",
+              "external_semantics_required",
+              "unknown"
+            ]
+          },
+          "reference_query_alignment": {
+            "type": "string",
+            "enum": [
+              "aligned",
+              "misaligned",
+              "ambiguous",
+              "unknown"
+            ]
+          },
+          "original_scored_field_coverage": {
+            "type": "string",
+            "enum": [
+              "full",
+              "partial",
+              "missing",
+              "wrong_field",
+              "unknown"
+            ]
+          },
+          "native_output_support": {
+            "type": "string",
+            "enum": [
+              "not_observed",
+              "supported",
+              "unsupported",
+              "unknown"
+            ]
+          },
+          "contract_signature": {
+            "type": "object",
+            "properties": {
+              "collection_kind": {
+                "type": "string",
+                "enum": [
+                  "set",
+                  "multiset",
+                  "sequence",
+                  "unresolved"
+                ]
+              },
+              "nested_array_kind": {
+                "type": "string",
+                "enum": [
+                  "set",
+                  "multiset",
+                  "sequence",
+                  "not_applicable",
+                  "unresolved"
+                ]
+              },
+              "order_key_columns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 0
+              },
+              "cap_kind": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "explicit_question",
+                  "unasked_query_limit",
+                  "unresolved"
+                ]
+              },
+              "cap_value": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "tie_policy": {
+                "type": "string",
+                "enum": [
+                  "no_cutoff",
+                  "explicit_total_order",
+                  "unresolved"
+                ]
+              },
+              "scope_alignment": {
+                "type": "string",
+                "enum": [
+                  "aligned",
+                  "misaligned",
+                  "unresolved"
+                ]
+              },
+              "source_spans": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "span_id": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string",
+                      "enum": [
+                        "question",
+                        "reference_query",
+                        "original_scored_field",
+                        "declared_answer_contract",
+                        "scoring_semantics",
+                        "source_field_metadata"
+                      ]
+                    },
+                    "quote": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "span_id",
+                    "source",
+                    "quote",
+                    "reason"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "collection_kind",
+              "nested_array_kind",
+              "order_key_columns",
+              "cap_kind",
+              "cap_value",
+              "tie_policy",
+              "scope_alignment",
+              "source_spans"
+            ],
+            "additionalProperties": false
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "entity",
+                    "value",
+                    "aggregation",
+                    "role",
+                    "scope",
+                    "ordering",
+                    "cardinality",
+                    "completeness"
+                  ]
+                },
+                "requirement": {
+                  "type": "string",
+                  "enum": [
+                    "required",
+                    "not_requested",
+                    "ambiguous"
+                  ]
+                },
+                "query_alignment": {
+                  "type": "string",
+                  "enum": [
+                    "aligned",
+                    "misaligned",
+                    "ambiguous",
+                    "unknown",
+                    "not_applicable"
+                  ]
+                },
+                "scored_field_coverage": {
+                  "type": "string",
+                  "enum": [
+                    "covered",
+                    "partial",
+                    "not_covered",
+                    "ambiguous",
+                    "unknown",
+                    "not_applicable"
+                  ]
+                },
+                "explanation": {
+                  "type": "string"
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "span_id": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "question",
+                          "reference_query",
+                          "original_scored_field",
+                          "declared_answer_contract",
+                          "scoring_semantics",
+                          "source_field_metadata"
+                        ]
+                      },
+                      "quote": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "span_id",
+                      "source",
+                      "quote",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "name",
+                "requirement",
+                "query_alignment",
+                "scored_field_coverage",
+                "explanation",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 8,
+            "maxItems": 8
+          },
+          "requested_fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "role_code": {
+                  "type": "string",
+                  "enum": [
+                    "entity_identifier",
+                    "document_identifier",
+                    "meeting_identifier",
+                    "specification_identifier",
+                    "change_request_identifier",
+                    "sender",
+                    "recipient",
+                    "aggregated_count",
+                    "aggregated_value",
+                    "attribute",
+                    "other",
+                    "unknown"
+                  ]
+                },
+                "query_expression": {
+                  "type": "string"
+                },
+                "returned_column_names": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 0
+                },
+                "scored_field_coverage": {
+                  "type": "string",
+                  "enum": [
+                    "covered",
+                    "partial",
+                    "not_covered",
+                    "ambiguous",
+                    "unknown"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "span_id": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "question",
+                          "reference_query",
+                          "original_scored_field",
+                          "declared_answer_contract",
+                          "scoring_semantics",
+                          "source_field_metadata"
+                        ]
+                      },
+                      "quote": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "span_id",
+                      "source",
+                      "quote",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "description",
+                "role",
+                "role_code",
+                "query_expression",
+                "returned_column_names",
+                "scored_field_coverage",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "extra_returned_fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "expression": {
+                  "type": "string"
+                },
+                "question_requires": {
+                  "type": "string",
+                  "enum": [
+                    "no",
+                    "unclear"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "span_id": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "question",
+                          "reference_query",
+                          "original_scored_field",
+                          "declared_answer_contract",
+                          "scoring_semantics",
+                          "source_field_metadata"
+                        ]
+                      },
+                      "quote": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "span_id",
+                      "source",
+                      "quote",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "expression",
+                "question_requires",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "enum": [
+                    "missing_requested_field",
+                    "wrong_scored_field",
+                    "aggregation_unit_mismatch",
+                    "role_mismatch",
+                    "scope_mismatch",
+                    "unstated_limit",
+                    "ordering_ignored",
+                    "tie_policy_unspecified",
+                    "question_underspecified",
+                    "query_ambiguous",
+                    "native_unsupported",
+                    "external_semantics_required",
+                    "unknown"
+                  ]
+                },
+                "explanation": {
+                  "type": "string"
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "span_id": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": [
+                          "question",
+                          "reference_query",
+                          "original_scored_field",
+                          "declared_answer_contract",
+                          "scoring_semantics",
+                          "source_field_metadata"
+                        ]
+                      },
+                      "quote": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "span_id",
+                      "source",
+                      "quote",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "label",
+                "explanation",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "conclusion": {
+            "type": "string"
+          },
+          "conclusion_evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "span_id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string",
+                  "enum": [
+                    "question",
+                    "reference_query",
+                    "original_scored_field",
+                    "declared_answer_contract",
+                    "scoring_semantics",
+                    "source_field_metadata"
+                  ]
+                },
+                "quote": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "span_id",
+                "source",
+                "quote",
+                "reason"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "original_question_determinacy",
+          "reference_query_alignment",
+          "original_scored_field_coverage",
+          "native_output_support",
+          "contract_signature",
+          "dimensions",
+          "requested_fields",
+          "extra_returned_fields",
+          "blockers",
+          "conclusion",
+          "conclusion_evidence"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 10,
+      "maxItems": 10
+    }
+  },
+  "required": [
+    "items"
+  ],
+  "additionalProperties": false
+}

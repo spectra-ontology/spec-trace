@@ -1,0 +1,1407 @@
+{
+  "items": [
+    {
+      "id": "RAN3_P2_CQ2-2",
+      "wg": "RAN3",
+      "question": "List resolutions that reference five or more TDocs (multi-document decisions).",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc) WITH r, collect(t.tdocNumber) AS refs, count(t) AS cnt WHERE cnt >= 5 MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, m.canonicalMeetingNumber, refs[..5] AS top5_refs, cnt ORDER BY m.meetingNumberInt DESC, cnt DESC LIMIT 10",
+      "original_scored_field": "r.resolutionId",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "r.resolutionId"
+        ],
+        "ordering_required": true,
+        "ordering_key": "m.meetingNumberInt DESC, cnt DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "r.resolutionId",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "m.canonicalMeetingNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "top5_refs",
+            "native_types": [
+              "builtins.list"
+            ],
+            "json_types": [
+              "array"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 78,
+          "quote": "List resolutions that reference five or more TDocs (multi-document decisions)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 277,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc) WITH r, collect(t.tdocNumber) AS refs, count(t) AS cnt WHERE cnt >= 5 MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, m.canonicalMeetingNumber, refs[..5] AS top5_refs, cnt ORDER BY m.meetingNumberInt DESC, cnt DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 277,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc) WITH r, collect(t.tdocNumber) AS refs, count(t) AS cnt WHERE cnt >= 5 MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, m.canonicalMeetingNumber, refs[..5] AS top5_refs, cnt ORDER BY m.meetingNumberInt DESC, cnt DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 44,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 45,
+          "end": 99,
+          "quote": "WITH r, collect(t.tdocNumber) AS refs, count(t) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 100,
+          "end": 114,
+          "quote": "WHERE cnt >= 5"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 115,
+          "end": 148,
+          "quote": "MATCH (r)-[:MADE_AT]->(m:Meeting)"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 149,
+          "end": 225,
+          "quote": "RETURN r.resolutionId, m.canonicalMeetingNumber, refs[..5] AS top5_refs, cnt"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 226,
+          "end": 268,
+          "quote": "ORDER BY m.meetingNumberInt DESC, cnt DESC"
+        },
+        {
+          "span_id": "reference_query:clause007",
+          "source": "reference_query",
+          "start": 269,
+          "end": 277,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 14,
+          "quote": "r.resolutionId"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 159,
+          "quote": "{\"answer_columns\":[\"r.resolutionId\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"m.meetingNumberInt DESC, cnt DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 541,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"r.resolutionId\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"m.canonicalMeetingNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"array\"],\"name\":\"top5_refs\",\"native_types\":[\"builtins.list\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ2-3",
+      "wg": "RAN3",
+      "question": "Find resolutions whose text cites R3- TDoc numbers (in-text reference check).",
+      "reference_query": "MATCH (r:Resolution) WHERE r.content IS NOT NULL AND r.content =~ '.*R3-.*' RETURN r.resolutionId, r.content ORDER BY r.resolutionId LIMIT 5",
+      "original_scored_field": "r.resolutionId",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "r.resolutionId"
+        ],
+        "ordering_required": true,
+        "ordering_key": "r.resolutionId",
+        "cardinality": 5
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "r.resolutionId",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "r.content",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 77,
+          "quote": "Find resolutions whose text cites R3- TDoc numbers (in-text reference check)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 140,
+          "quote": "MATCH (r:Resolution) WHERE r.content IS NOT NULL AND r.content =~ '.*R3-.*' RETURN r.resolutionId, r.content ORDER BY r.resolutionId LIMIT 5"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 140,
+          "quote": "MATCH (r:Resolution) WHERE r.content IS NOT NULL AND r.content =~ '.*R3-.*' RETURN r.resolutionId, r.content ORDER BY r.resolutionId LIMIT 5"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 20,
+          "quote": "MATCH (r:Resolution)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 21,
+          "end": 75,
+          "quote": "WHERE r.content IS NOT NULL AND r.content =~ '.*R3-.*'"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 76,
+          "end": 108,
+          "quote": "RETURN r.resolutionId, r.content"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 109,
+          "end": 132,
+          "quote": "ORDER BY r.resolutionId"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 133,
+          "end": 140,
+          "quote": "LIMIT 5"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 14,
+          "quote": "r.resolutionId"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 137,
+          "quote": "{\"answer_columns\":[\"r.resolutionId\"],\"answer_type\":\"scalar_set\",\"cardinality\":5,\"ordering_key\":\"r.resolutionId\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 315,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"r.resolutionId\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"r.content\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ2-4",
+      "wg": "RAN3",
+      "question": "Count resolution-referenced TDocs per spec they modify (spec-change tracing).",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN s.specNumber, count(DISTINCT t) AS tdocCnt ORDER BY tdocCnt DESC LIMIT 10",
+      "original_scored_field": "s.specNumber",
+      "declared_answer_contract": {
+        "answer_type": "mapping",
+        "answer_columns": [
+          "s.specNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "tdocCnt DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "s.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "tdocCnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 77,
+          "quote": "Count resolution-referenced TDocs per spec they modify (spec-change tracing)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 181,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN s.specNumber, count(DISTINCT t) AS tdocCnt ORDER BY tdocCnt DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 181,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN s.specNumber, count(DISTINCT t) AS tdocCnt ORDER BY tdocCnt DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 66,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 67,
+          "end": 100,
+          "quote": "MATCH (r)-[:MADE_AT]->(m:Meeting)"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 101,
+          "end": 150,
+          "quote": "RETURN s.specNumber, count(DISTINCT t) AS tdocCnt"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 151,
+          "end": 172,
+          "quote": "ORDER BY tdocCnt DESC"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 173,
+          "end": 181,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 12,
+          "quote": "s.specNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 131,
+          "quote": "{\"answer_columns\":[\"s.specNumber\"],\"answer_type\":\"mapping\",\"cardinality\":10,\"ordering_key\":\"tdocCnt DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 312,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"s.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"tdocCnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ3-1",
+      "wg": "RAN3",
+      "question": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+      "reference_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'ZTE'}) OPTIONAL MATCH (r:Resolution)-[:REFERENCES]->(t) RETURN count(DISTINCT t) AS totalTdocs, count(DISTINCT r) AS resolutionLinkedTdocs",
+      "original_scored_field": "totalTdocs",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "totalTdocs"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "totalTdocs",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "resolutionLinkedTdocs",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 79,
+          "quote": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 196,
+          "quote": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'ZTE'}) OPTIONAL MATCH (r:Resolution)-[:REFERENCES]->(t) RETURN count(DISTINCT t) AS totalTdocs, count(DISTINCT r) AS resolutionLinkedTdocs"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 196,
+          "quote": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'ZTE'}) OPTIONAL MATCH (r:Resolution)-[:REFERENCES]->(t) RETURN count(DISTINCT t) AS totalTdocs, count(DISTINCT r) AS resolutionLinkedTdocs"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 64,
+          "quote": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'ZTE'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 65,
+          "end": 113,
+          "quote": "OPTIONAL MATCH (r:Resolution)-[:REFERENCES]->(t)"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 114,
+          "end": 196,
+          "quote": "RETURN count(DISTINCT t) AS totalTdocs, count(DISTINCT r) AS resolutionLinkedTdocs"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 10,
+          "quote": "totalTdocs"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 125,
+          "quote": "{\"answer_columns\":[\"totalTdocs\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 325,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"totalTdocs\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"resolutionLinkedTdocs\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ3-2",
+      "wg": "RAN3",
+      "question": "Return the top 10 companies by resolution contribution (influence ranking).",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT r) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10",
+      "original_scored_field": "c.companyName",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "c.companyName"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cnt DESC, c.companyName ASC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "c.companyName",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 75,
+          "quote": "Return the top 10 companies by resolution contribution (influence ranking)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 166,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT r) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 166,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT r) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 73,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 74,
+          "end": 120,
+          "quote": "RETURN c.companyName, count(DISTINCT r) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 121,
+          "end": 157,
+          "quote": "ORDER BY cnt DESC, c.companyName ASC"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 158,
+          "end": 166,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "c.companyName"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 152,
+          "quote": "{\"answer_columns\":[\"c.companyName\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"cnt DESC, c.companyName ASC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 309,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"c.companyName\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ3-3",
+      "wg": "RAN3",
+      "question": "Rank the main contributors to spec 38.423 (spec-ownership analysis).",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec {specNumber: '38.423'}) MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT t) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10",
+      "original_scored_field": "c.companyName",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "c.companyName"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cnt DESC, c.companyName ASC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "c.companyName",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 68,
+          "quote": "Rank the main contributors to spec 38.423 (spec-ownership analysis)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 221,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec {specNumber: '38.423'}) MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT t) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 221,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec {specNumber: '38.423'}) MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT t) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 89,
+          "quote": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec {specNumber: '38.423'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 90,
+          "end": 128,
+          "quote": "MATCH (t)-[:SUBMITTED_BY]->(c:Company)"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 129,
+          "end": 175,
+          "quote": "RETURN c.companyName, count(DISTINCT t) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 176,
+          "end": 212,
+          "quote": "ORDER BY cnt DESC, c.companyName ASC"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 213,
+          "end": 221,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "c.companyName"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 152,
+          "quote": "{\"answer_columns\":[\"c.companyName\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"cnt DESC, c.companyName ASC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 309,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"c.companyName\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ4-1",
+      "wg": "RAN3",
+      "question": "Return which company moderated agenda item 8.1 (rapporteur identification).",
+      "reference_query": "MATCH (s:Summary)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '8.1'}) MATCH (s)-[:MODERATED_BY]->(c:Company) MATCH (s)-[:MADE_AT]->(m:Meeting) RETURN c.companyName, m.canonicalMeetingNumber, count(s) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10",
+      "original_scored_field": "c.companyName",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "c.companyName"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cnt DESC, c.companyName ASC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "c.companyName",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "m.canonicalMeetingNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 75,
+          "quote": "Return which company moderated agenda item 8.1 (rapporteur identification)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 264,
+          "quote": "MATCH (s:Summary)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '8.1'}) MATCH (s)-[:MODERATED_BY]->(c:Company) MATCH (s)-[:MADE_AT]->(m:Meeting) RETURN c.companyName, m.canonicalMeetingNumber, count(s) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 264,
+          "quote": "MATCH (s:Summary)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '8.1'}) MATCH (s)-[:MODERATED_BY]->(c:Company) MATCH (s)-[:MADE_AT]->(m:Meeting) RETURN c.companyName, m.canonicalMeetingNumber, count(s) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 81,
+          "quote": "MATCH (s:Summary)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '8.1'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 82,
+          "end": 120,
+          "quote": "MATCH (s)-[:MODERATED_BY]->(c:Company)"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 121,
+          "end": 154,
+          "quote": "MATCH (s)-[:MADE_AT]->(m:Meeting)"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 155,
+          "end": 218,
+          "quote": "RETURN c.companyName, m.canonicalMeetingNumber, count(s) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 219,
+          "end": 255,
+          "quote": "ORDER BY cnt DESC, c.companyName ASC"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 256,
+          "end": 264,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "c.companyName"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 152,
+          "quote": "{\"answer_columns\":[\"c.companyName\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"cnt DESC, c.companyName ASC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 432,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"c.companyName\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"m.canonicalMeetingNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ4-2",
+      "wg": "RAN3",
+      "question": "List the agenda items ZTE moderated (moderator-role tracking).",
+      "reference_query": "MATCH (s:Summary)-[:MODERATED_BY]->(c:Company {companyName: 'ZTE'}) MATCH (s)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) MATCH (s)-[:MADE_AT]->(m:Meeting) RETURN ai.agendaNumber, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC, ai.agendaNumber, s.summaryId LIMIT 15",
+      "original_scored_field": "ai.agendaNumber",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "ai.agendaNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "m.meetingNumberInt DESC, ai.agendaNumber, s.summaryId",
+        "cardinality": 15
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "ai.agendaNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "m.canonicalMeetingNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 62,
+          "quote": "List the agenda items ZTE moderated (moderator-role tracking)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 274,
+          "quote": "MATCH (s:Summary)-[:MODERATED_BY]->(c:Company {companyName: 'ZTE'}) MATCH (s)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) MATCH (s)-[:MADE_AT]->(m:Meeting) RETURN ai.agendaNumber, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC, ai.agendaNumber, s.summaryId LIMIT 15"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 274,
+          "quote": "MATCH (s:Summary)-[:MODERATED_BY]->(c:Company {companyName: 'ZTE'}) MATCH (s)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) MATCH (s)-[:MADE_AT]->(m:Meeting) RETURN ai.agendaNumber, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC, ai.agendaNumber, s.summaryId LIMIT 15"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 67,
+          "quote": "MATCH (s:Summary)-[:MODERATED_BY]->(c:Company {companyName: 'ZTE'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 68,
+          "end": 119,
+          "quote": "MATCH (s)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem)"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 120,
+          "end": 153,
+          "quote": "MATCH (s)-[:MADE_AT]->(m:Meeting)"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 154,
+          "end": 202,
+          "quote": "RETURN ai.agendaNumber, m.canonicalMeetingNumber"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 203,
+          "end": 265,
+          "quote": "ORDER BY m.meetingNumberInt DESC, ai.agendaNumber, s.summaryId"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 266,
+          "end": 274,
+          "quote": "LIMIT 15"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 15,
+          "quote": "ai.agendaNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 180,
+          "quote": "{\"answer_columns\":[\"ai.agendaNumber\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":15,\"ordering_key\":\"m.meetingNumberInt DESC, ai.agendaNumber, s.summaryId\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 331,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"ai.agendaNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"m.canonicalMeetingNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ4-3",
+      "wg": "RAN3",
+      "question": "Return the top 10 companies by moderator assignments (leadership distribution).",
+      "reference_query": "MATCH (s:Summary)-[:MODERATED_BY]->(c:Company) RETURN c.companyName, count(s) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10",
+      "original_scored_field": "c.companyName",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "c.companyName"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cnt DESC, c.companyName ASC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "c.companyName",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 79,
+          "quote": "Return the top 10 companies by moderator assignments (leadership distribution)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 130,
+          "quote": "MATCH (s:Summary)-[:MODERATED_BY]->(c:Company) RETURN c.companyName, count(s) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 130,
+          "quote": "MATCH (s:Summary)-[:MODERATED_BY]->(c:Company) RETURN c.companyName, count(s) AS cnt ORDER BY cnt DESC, c.companyName ASC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 46,
+          "quote": "MATCH (s:Summary)-[:MODERATED_BY]->(c:Company)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 47,
+          "end": 84,
+          "quote": "RETURN c.companyName, count(s) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 85,
+          "end": 121,
+          "quote": "ORDER BY cnt DESC, c.companyName ASC"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 122,
+          "end": 130,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "c.companyName"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 152,
+          "quote": "{\"answer_columns\":[\"c.companyName\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"cnt DESC, c.companyName ASC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 309,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"c.companyName\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN3_P2_CQ6-1",
+      "wg": "RAN3",
+      "question": "Show the resolution-count trend for agenda item 8.1 over time (topic-activity trend).",
+      "reference_query": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '8.1'}) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber, m.meetingNumberInt AS mNum, count(r) AS cnt ORDER BY mNum ASC",
+      "original_scored_field": "m.canonicalMeetingNumber",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "m.canonicalMeetingNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "mNum ASC",
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "m.canonicalMeetingNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "mNum",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 85,
+          "quote": "Show the resolution-count trend for agenda item 8.1 over time (topic-activity trend)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 213,
+          "quote": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '8.1'}) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber, m.meetingNumberInt AS mNum, count(r) AS cnt ORDER BY mNum ASC"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 213,
+          "quote": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '8.1'}) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber, m.meetingNumberInt AS mNum, count(r) AS cnt ORDER BY mNum ASC"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 84,
+          "quote": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '8.1'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 85,
+          "end": 118,
+          "quote": "MATCH (r)-[:MADE_AT]->(m:Meeting)"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 119,
+          "end": 195,
+          "quote": "RETURN m.canonicalMeetingNumber, m.meetingNumberInt AS mNum, count(r) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 196,
+          "end": 213,
+          "quote": "ORDER BY mNum ASC"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 24,
+          "quote": "m.canonicalMeetingNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 144,
+          "quote": "{\"answer_columns\":[\"m.canonicalMeetingNumber\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":\"mNum ASC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 424,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"m.canonicalMeetingNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"mNum\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    }
+  ]
+}

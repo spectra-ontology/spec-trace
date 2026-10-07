@@ -1,0 +1,1414 @@
+{
+  "items": [
+    {
+      "id": "RAN5_P3_CQ3-3",
+      "wg": "RAN5",
+      "question": "List the CRs that modify TS 38.521-1 (change-request survey).",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10",
+      "original_scored_field": "cr.tdocNumber",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "cr.tdocNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cr.tdocNumber DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "cr.tdocNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cr.title",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 61,
+          "quote": "List the CRs that modify TS 38.521-1 (change-request survey)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 129,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 129,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 61,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 62,
+          "end": 92,
+          "quote": "RETURN cr.tdocNumber, cr.title"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 93,
+          "end": 120,
+          "quote": "ORDER BY cr.tdocNumber DESC"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 121,
+          "end": 129,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "cr.tdocNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 143,
+          "quote": "{\"answer_columns\":[\"cr.tdocNumber\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"cr.tdocNumber DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 313,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"cr.tdocNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"cr.title\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ3-4",
+      "wg": "RAN5",
+      "question": "How many RAN5 CRs record the clauses they affect? (metadata completeness)",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' AND cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' RETURN count(cr) AS crCount",
+      "original_scored_field": "crCount",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "crCount"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "crCount",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 73,
+          "quote": "How many RAN5 CRs record the clauses they affect? (metadata completeness)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 167,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' AND cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' RETURN count(cr) AS crCount"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 167,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' AND cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' RETURN count(cr) AS crCount"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 36,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 37,
+          "end": 63,
+          "quote": "WHERE sp.specNumber STARTS"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 64,
+          "end": 139,
+          "quote": "WITH '38.5' AND cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> ''"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 140,
+          "end": 167,
+          "quote": "RETURN count(cr) AS crCount"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 7,
+          "quote": "crCount"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 122,
+          "quote": "{\"answer_columns\":[\"crCount\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 201,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"crCount\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ3-6",
+      "wg": "RAN5",
+      "question": "Which RAN5 specs does each company modify via CRs? (company spec impact)",
+      "reference_query": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN c.companyName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10",
+      "original_scored_field": "c.companyName",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "c.companyName"
+        ],
+        "ordering_required": true,
+        "ordering_key": "crCount DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "c.companyName",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "sp.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "crCount",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 72,
+          "quote": "Which RAN5 specs does each company modify via CRs? (company spec impact)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 199,
+          "quote": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN c.companyName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 199,
+          "quote": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN c.companyName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 71,
+          "quote": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 72,
+          "end": 98,
+          "quote": "WHERE sp.specNumber STARTS"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 99,
+          "end": 110,
+          "quote": "WITH '38.5'"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 111,
+          "end": 168,
+          "quote": "RETURN c.companyName, sp.specNumber, count(cr) AS crCount"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 169,
+          "end": 190,
+          "quote": "ORDER BY crCount DESC"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 191,
+          "end": 199,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "c.companyName"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 137,
+          "quote": "{\"answer_columns\":[\"c.companyName\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"crCount DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 425,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"c.companyName\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"sp.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"crCount\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ4-1",
+      "wg": "RAN5",
+      "question": "Which RAN5 specs are modified by CRs that conclusions reference? (outcome-to-spec trace)",
+      "reference_query": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN res.resolutionId, t.tdocNumber, sp.specNumber ORDER BY res.resolutionId DESC LIMIT 10",
+      "original_scored_field": "res.resolutionId",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "res.resolutionId"
+        ],
+        "ordering_required": true,
+        "ordering_key": "res.resolutionId DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "res.resolutionId",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "t.tdocNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "sp.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 88,
+          "quote": "Which RAN5 specs are modified by CRs that conclusions reference? (outcome-to-spec trace)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 201,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN res.resolutionId, t.tdocNumber, sp.specNumber ORDER BY res.resolutionId DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 201,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN res.resolutionId, t.tdocNumber, sp.specNumber ORDER BY res.resolutionId DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 69,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 70,
+          "end": 96,
+          "quote": "WHERE sp.specNumber STARTS"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 97,
+          "end": 108,
+          "quote": "WITH '38.5'"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 109,
+          "end": 161,
+          "quote": "RETURN res.resolutionId, t.tdocNumber, sp.specNumber"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 162,
+          "end": 192,
+          "quote": "ORDER BY res.resolutionId DESC"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 193,
+          "end": 201,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 16,
+          "quote": "res.resolutionId"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 149,
+          "quote": "{\"answer_columns\":[\"res.resolutionId\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"res.resolutionId DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 432,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"res.resolutionId\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"t.tdocNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"sp.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ4-2",
+      "wg": "RAN5",
+      "question": "List the conclusions that reference CRs modifying TS 38.521-1 (decision provenance).",
+      "reference_query": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN res.resolutionId, t.tdocNumber ORDER BY res.resolutionId DESC LIMIT 10",
+      "original_scored_field": "res.resolutionId",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "res.resolutionId"
+        ],
+        "ordering_required": true,
+        "ordering_key": "res.resolutionId DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "res.resolutionId",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "t.tdocNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 84,
+          "quote": "List the conclusions that reference CRs modifying TS 38.521-1 (decision provenance)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 172,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN res.resolutionId, t.tdocNumber ORDER BY res.resolutionId DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 172,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN res.resolutionId, t.tdocNumber ORDER BY res.resolutionId DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 94,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 95,
+          "end": 132,
+          "quote": "RETURN res.resolutionId, t.tdocNumber"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 133,
+          "end": 163,
+          "quote": "ORDER BY res.resolutionId DESC"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 164,
+          "end": 172,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 16,
+          "quote": "res.resolutionId"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 147,
+          "quote": "{\"answer_columns\":[\"res.resolutionId\"],\"answer_type\":\"scalar_set\",\"cardinality\":10,\"ordering_key\":\"res.resolutionId DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 320,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"res.resolutionId\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"t.tdocNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ4-3",
+      "wg": "RAN5",
+      "question": "Per meeting, which RAN5 specs do approved CRs modify? (meeting-level spec impact)",
+      "reference_query": "MATCH (res:Conclusion)-[:MADE_AT]->(m:Meeting), (res)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH m.canonicalMeetingNumber AS meeting, sp.specNumber AS spec, count(DISTINCT t) AS crCount RETURN meeting, spec, crCount ORDER BY crCount DESC, meeting, spec LIMIT 10",
+      "original_scored_field": "meeting",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "meeting"
+        ],
+        "ordering_required": true,
+        "ordering_key": "crCount DESC, meeting, spec",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "meeting",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "spec",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "crCount",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 81,
+          "quote": "Per meeting, which RAN5 specs do approved CRs modify? (meeting-level spec impact)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 309,
+          "quote": "MATCH (res:Conclusion)-[:MADE_AT]->(m:Meeting), (res)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH m.canonicalMeetingNumber AS meeting, sp.specNumber AS spec, count(DISTINCT t) AS crCount RETURN meeting, spec, crCount ORDER BY crCount DESC, meeting, spec LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 309,
+          "quote": "MATCH (res:Conclusion)-[:MADE_AT]->(m:Meeting), (res)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH m.canonicalMeetingNumber AS meeting, sp.specNumber AS spec, count(DISTINCT t) AS crCount RETURN meeting, spec, crCount ORDER BY crCount DESC, meeting, spec LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 100,
+          "quote": "MATCH (res:Conclusion)-[:MADE_AT]->(m:Meeting), (res)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 101,
+          "end": 127,
+          "quote": "WHERE sp.specNumber STARTS"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 128,
+          "end": 139,
+          "quote": "WITH '38.5'"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 140,
+          "end": 233,
+          "quote": "WITH m.canonicalMeetingNumber AS meeting, sp.specNumber AS spec, count(DISTINCT t) AS crCount"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 234,
+          "end": 263,
+          "quote": "RETURN meeting, spec, crCount"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 264,
+          "end": 300,
+          "quote": "ORDER BY crCount DESC, meeting, spec"
+        },
+        {
+          "span_id": "reference_query:clause007",
+          "source": "reference_query",
+          "start": 301,
+          "end": 309,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 7,
+          "quote": "meeting"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 146,
+          "quote": "{\"answer_columns\":[\"meeting\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"crCount DESC, meeting, spec\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 410,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"meeting\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"spec\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"crCount\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ4-4",
+      "wg": "RAN5",
+      "question": "How many CRs do conclusions reference? (resolution-to-CR coverage)",
+      "reference_query": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc:CR) RETURN count(DISTINCT res) AS resCount, count(DISTINCT t) AS crCount",
+      "original_scored_field": "resCount",
+      "declared_answer_contract": {
+        "answer_type": "scalar_set",
+        "answer_columns": [
+          "resCount"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": null
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "resCount",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "crCount",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 66,
+          "quote": "How many CRs do conclusions reference? (resolution-to-CR coverage)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 118,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc:CR) RETURN count(DISTINCT res) AS resCount, count(DISTINCT t) AS crCount"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 118,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc:CR) RETURN count(DISTINCT res) AS resCount, count(DISTINCT t) AS crCount"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 49,
+          "quote": "MATCH (res:Conclusion)-[:REFERENCES]->(t:Tdoc:CR)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 50,
+          "end": 118,
+          "quote": "RETURN count(DISTINCT res) AS resCount, count(DISTINCT t) AS crCount"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 8,
+          "quote": "resCount"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 123,
+          "quote": "{\"answer_columns\":[\"resCount\"],\"answer_type\":\"scalar_set\",\"cardinality\":null,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 309,
+          "quote": "{\"columns\":[{\"json_types\":[\"integer\"],\"name\":\"resCount\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"crCount\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ5-1",
+      "wg": "RAN5",
+      "question": "List all CRs changing TS 38.521-1 (comprehensive change survey).",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10",
+      "original_scored_field": "cr.tdocNumber",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "cr.tdocNumber"
+        ],
+        "ordering_required": true,
+        "ordering_key": "cr.tdocNumber DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "cr.tdocNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cr.title",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 64,
+          "quote": "List all CRs changing TS 38.521-1 (comprehensive change survey)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 129,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 129,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 61,
+          "quote": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'})"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 62,
+          "end": 92,
+          "quote": "RETURN cr.tdocNumber, cr.title"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 93,
+          "end": 120,
+          "quote": "ORDER BY cr.tdocNumber DESC"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 121,
+          "end": 129,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 13,
+          "quote": "cr.tdocNumber"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 143,
+          "quote": "{\"answer_columns\":[\"cr.tdocNumber\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"cr.tdocNumber DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 313,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"cr.tdocNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"cr.title\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ5-2",
+      "wg": "RAN5",
+      "question": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+      "reference_query": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH c.companyName AS company, sp.specNumber AS spec, count(cr) AS cnt ORDER BY cnt DESC RETURN company, spec, cnt LIMIT 10",
+      "original_scored_field": "company",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "company"
+        ],
+        "ordering_required": false,
+        "ordering_key": null,
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "company",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "spec",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "cnt",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 73,
+          "quote": "Show each company's CR contributions per RAN5 spec (contribution matrix)."
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 234,
+          "quote": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH c.companyName AS company, sp.specNumber AS spec, count(cr) AS cnt ORDER BY cnt DESC RETURN company, spec, cnt LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 234,
+          "quote": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH c.companyName AS company, sp.specNumber AS spec, count(cr) AS cnt ORDER BY cnt DESC RETURN company, spec, cnt LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 71,
+          "quote": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 72,
+          "end": 98,
+          "quote": "WHERE sp.specNumber STARTS"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 99,
+          "end": 110,
+          "quote": "WITH '38.5'"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 111,
+          "end": 181,
+          "quote": "WITH c.companyName AS company, sp.specNumber AS spec, count(cr) AS cnt"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 182,
+          "end": 199,
+          "quote": "ORDER BY cnt DESC"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 200,
+          "end": 225,
+          "quote": "RETURN company, spec, cnt"
+        },
+        {
+          "span_id": "reference_query:clause007",
+          "source": "reference_query",
+          "start": 226,
+          "end": 234,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 7,
+          "quote": "company"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 122,
+          "quote": "{\"answer_columns\":[\"company\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":null,\"ordering_required\":false}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 406,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"company\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"spec\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"cnt\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    },
+    {
+      "id": "RAN5_P3_CQ5-3",
+      "wg": "RAN5",
+      "question": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "reference_query": "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN rel.releaseName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10",
+      "original_scored_field": "rel.releaseName",
+      "declared_answer_contract": {
+        "answer_type": "ranked_top_k",
+        "answer_columns": [
+          "rel.releaseName"
+        ],
+        "ordering_required": true,
+        "ordering_key": "crCount DESC",
+        "cardinality": 10
+      },
+      "scoring_semantics": {
+        "reference_target": "declared original_scored_field canonical value set",
+        "model_prediction": "first returned column of the generated model query canonical value set",
+        "reference_first_returned_column_is_always_scored_field": false,
+        "ignores_row_order": true,
+        "ignores_duplicate_multiplicity": true,
+        "independently_scores_other_returned_fields": false,
+        "normalization": "canonicalize, collapse whitespace, case-fold"
+      },
+      "source_field_metadata": {
+        "observation": "observed_field_names_and_types_only",
+        "native_support": "supported",
+        "columns": [
+          {
+            "name": "rel.releaseName",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "sp.specNumber",
+            "native_types": [
+              "builtins.str"
+            ],
+            "json_types": [
+              "string"
+            ],
+            "observed_json_supported": true
+          },
+          {
+            "name": "crCount",
+            "native_types": [
+              "builtins.int"
+            ],
+            "json_types": [
+              "integer"
+            ],
+            "observed_json_supported": true
+          }
+        ]
+      },
+      "evidence_spans": [
+        {
+          "span_id": "question:whole",
+          "source": "question",
+          "start": 0,
+          "end": 73,
+          "quote": "Which RAN5 specs were changed in each release? (release-level change map)"
+        },
+        {
+          "span_id": "reference_query:whole",
+          "source": "reference_query",
+          "start": 0,
+          "end": 205,
+          "quote": "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN rel.releaseName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:line001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 205,
+          "quote": "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN rel.releaseName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10"
+        },
+        {
+          "span_id": "reference_query:clause001",
+          "source": "reference_query",
+          "start": 0,
+          "end": 75,
+          "quote": "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release), (cr)-[:MODIFIES]->(sp:Spec)"
+        },
+        {
+          "span_id": "reference_query:clause002",
+          "source": "reference_query",
+          "start": 76,
+          "end": 102,
+          "quote": "WHERE sp.specNumber STARTS"
+        },
+        {
+          "span_id": "reference_query:clause003",
+          "source": "reference_query",
+          "start": 103,
+          "end": 114,
+          "quote": "WITH '38.5'"
+        },
+        {
+          "span_id": "reference_query:clause004",
+          "source": "reference_query",
+          "start": 115,
+          "end": 174,
+          "quote": "RETURN rel.releaseName, sp.specNumber, count(cr) AS crCount"
+        },
+        {
+          "span_id": "reference_query:clause005",
+          "source": "reference_query",
+          "start": 175,
+          "end": 196,
+          "quote": "ORDER BY crCount DESC"
+        },
+        {
+          "span_id": "reference_query:clause006",
+          "source": "reference_query",
+          "start": 197,
+          "end": 205,
+          "quote": "LIMIT 10"
+        },
+        {
+          "span_id": "original_scored_field:whole",
+          "source": "original_scored_field",
+          "start": 0,
+          "end": 15,
+          "quote": "rel.releaseName"
+        },
+        {
+          "span_id": "declared_answer_contract:whole",
+          "source": "declared_answer_contract",
+          "start": 0,
+          "end": 139,
+          "quote": "{\"answer_columns\":[\"rel.releaseName\"],\"answer_type\":\"ranked_top_k\",\"cardinality\":10,\"ordering_key\":\"crCount DESC\",\"ordering_required\":true}"
+        },
+        {
+          "span_id": "scoring_semantics:whole",
+          "source": "scoring_semantics",
+          "start": 0,
+          "end": 405,
+          "quote": "{\"ignores_duplicate_multiplicity\":true,\"ignores_row_order\":true,\"independently_scores_other_returned_fields\":false,\"model_prediction\":\"first returned column of the generated model query canonical value set\",\"normalization\":\"canonicalize, collapse whitespace, case-fold\",\"reference_first_returned_column_is_always_scored_field\":false,\"reference_target\":\"declared original_scored_field canonical value set\"}"
+        },
+        {
+          "span_id": "source_field_metadata:whole",
+          "source": "source_field_metadata",
+          "start": 0,
+          "end": 427,
+          "quote": "{\"columns\":[{\"json_types\":[\"string\"],\"name\":\"rel.releaseName\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"string\"],\"name\":\"sp.specNumber\",\"native_types\":[\"builtins.str\"],\"observed_json_supported\":true},{\"json_types\":[\"integer\"],\"name\":\"crCount\",\"native_types\":[\"builtins.int\"],\"observed_json_supported\":true}],\"native_support\":\"supported\",\"observation\":\"observed_field_names_and_types_only\"}"
+        }
+      ]
+    }
+  ]
+}

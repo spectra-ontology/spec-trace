@@ -59,8 +59,8 @@ release_package/
 │       ├── cypher/                    # 624 executable Cypher reference queries (one per released CQ)
 │       ├── sparql/                    # 142 SPARQL translations (all released RAN1 CQs; see MANIFEST.md §2.1)
 │       ├── gold/                      # stored query-derived answer sets (RAN{1..5}_gold.json, 654 authored + _gold_summary.json)
-│       ├── splits/                    # four canonical splits and contract-exact subsets of Core, with the scripts that rebuild them (Git tree only):
-│       │                              # annotation-derived 208 and 133 (Core scorer default), superseded 241 and 149
+│       ├── splits/                    # four canonical splits and annotation-derived evaluation subsets, with historical compatibility filenames (Git tree only):
+│       │                              # annotation-derived 208 and 133 (historical compatibility default), superseded 241 and 149
 │       └── held/                      # 30 held-out CQs (degenerate/empty gold; excluded from scoring)
 │                                      # contract_held_out.json: 64 released CQs outside Core, with reasons (Git tree only)
 ├── queries/
@@ -206,29 +206,31 @@ The `tests/verify_release.py` anonymization check (Section 7 of the script) targ
 
 ## Quick start
 
+Run the commands below from the repository root.
+
 ### Load with RDFLib (Python)
 ```python
 import rdflib
 g = rdflib.Graph()
-g.parse("ontology/spectra.ttl", format="turtle")
+g.parse("release_package/ontology/spectra.ttl", format="turtle")
 print(f"Triples: {len(g)}")
 ```
 
 ### Open in Protégé
-File → Open → select `ontology/spectra.ttl`.
+File → Open → select `release_package/ontology/spectra.ttl`.
 
 ### Validate an instance with SHACL (pySHACL)
 ```bash
 pip install pyshacl
-pyshacl -s shapes/spectra-core.shacl.ttl examples/instantiation_snippet.ttl
+pyshacl -s release_package/shapes/spectra-core.shacl.ttl release_package/examples/instantiation_snippet.ttl
 # Expected: "Conforms: True"
 ```
 
 ### Browse the HTML documentation
-Open `docs/spectra.html` in any browser (PyLODE-generated; no server required).
+Open `release_package/docs/spectra.html` in any browser (PyLODE-generated; no server required).
 
 ### Run a representative Cypher query
-See `queries/cypher/` for examples executable against any Neo4j instance conforming to the SPECTRA schema.
+See `release_package/queries/cypher/` for examples executable against any Neo4j instance conforming to the SPECTRA schema.
 
 ### Run a representative SPARQL query
 
@@ -238,53 +240,53 @@ No public SPARQL endpoint is operated. To run the bundled queries locally:
 ```python
 import rdflib
 g = rdflib.Graph()
-g.parse('ontology/spectra.ttl', format='turtle')
-g.parse('examples/end_to_end/data.ttl', format='turtle')
-q = open('examples/end_to_end/query.sparql').read()
+g.parse('release_package/ontology/spectra.ttl', format='turtle')
+g.parse('release_package/examples/end_to_end/data.ttl', format='turtle')
+q = open('release_package/examples/end_to_end/query.sparql').read()
 for row in g.query(q): print(row)
 ```
-Or use the bundled wrapper: `python3 tests/test_e2e_sparql.py` (asserts the expected R1-2599998 / RAN1#121 row).
+Or use the bundled wrapper: `python3 release_package/tests/test_e2e_sparql.py` (asserts the expected R1-2599998 / RAN1#121 row).
 
 **Option 2 — Apache Jena Fuseki (local server):**
 ```bash
-fuseki-server --file=ontology/spectra.ttl --file=examples/end_to_end/data.ttl /spectra
+fuseki-server --file=release_package/ontology/spectra.ttl --file=release_package/examples/end_to_end/data.ttl /spectra
 # then in another terminal:
-curl -G --data-urlencode "query=$(cat examples/end_to_end/query.sparql)" \
+curl -G --data-urlencode "query=$(cat release_package/examples/end_to_end/query.sparql)" \
      http://localhost:3030/spectra/sparql
 ```
 
 **Option 3 — load the larger metadata-only process KG (~2.44M triples)** for graph-analytics queries (e.g., LS routing, CR-pack analytics):
 ```bash
-fuseki-server --file=ontology/spectra.ttl \
-              --file=examples/process_kg/ls_routing.ttl \
-              --file=examples/process_kg/cr_routing.ttl \
-              --file=examples/process_kg/ran1_tdoc_metadata.ttl \
+fuseki-server --file=release_package/ontology/spectra.ttl \
+              --file=release_package/examples/process_kg/ls_routing.ttl \
+              --file=release_package/examples/process_kg/cr_routing.ttl \
+              --file=release_package/examples/process_kg/ran1_tdoc_metadata.ttl \
               /spectra-process
 ```
 
-See `queries/sparql/` for additional example queries.
+See `release_package/queries/sparql/` for additional example queries.
 
 ### Reproducibility tests (rdflib + pyshacl)
 ```bash
 pip install rdflib pyshacl
-python3 tests/reproduce_structural_metrics.py   # exit 0 on agreement with validation/structural_metrics.json
-python3 tests/test_e2e_sparql.py                # exit 0 on returning the expected R1-2599998 / RAN1#121 row
-python3 tests/verify_release.py                 # file-level release gate, no arguments, no database
+python3 release_package/tests/reproduce_structural_metrics.py   # exit 0 on agreement with release_package/validation/structural_metrics.json
+python3 release_package/tests/test_e2e_sparql.py                # exit 0 on returning the expected R1-2599998 / RAN1#121 row
+python3 release_package/tests/verify_release.py                 # file-level release gate, no arguments, no database
 ```
 
 ### Release gate
-`tests/verify_benchmark.py` is the one-command gate over the whole
+`release_package/tests/verify_benchmark.py` is the one-command gate over the whole
 release. `--quick` needs no database and runs 52 checks, of which 47
 apply to a Git-only checkout (the other five need the body-text deposit).
 `--full` reloads the released graphs into a scratch store and re-derives
 all 624 published answer sets; it wipes the database it connects to, so
-`--bolt` and `--password` have no defaults. See `tests/README.md`.
+`--bolt` and `--password` have no defaults. See `release_package/tests/README.md`.
 
 ### Cross-WG query counts on the released graphs
-`tests/reproduce_scenario_counts.py` recounts the 18 counts of
-`validation/cross_wg_use_evidence.json` on the body-text graphs of the
+`release_package/tests/reproduce_scenario_counts.py` recounts the 18 counts of
+`release_package/validation/cross_wg_use_evidence.json` on the body-text graphs of the
 deposit (standard library, no database) and compares the result with
-`validation/released_graph_scenario_counts.json`. 17 of the 18 are
+`release_package/validation/released_graph_scenario_counts.json`. 17 of the 18 are
 the same; the one that differs is listed under Known data quality issues.
 
 ### Process requirements and descriptive use
@@ -299,38 +301,83 @@ than that WG/year's feature-CR leader. Its
 deposited input hashes and two independent parsers. This descriptive statistic
 does not use official freeze dates or establish causal or graph-specific benefits.
 
-### SpectraCQ scored benchmark
+### Strict named-record evaluation and historical scores
 
-The [original benchmark](release_package/cqs/spectra_cq_v2.0/README.md) contains
-624 released questions from 654 authored questions, with executable Cypher
-and stored primary-column value sets. The [self-replay records](release_package/validation/cq_replay/)
-check those value sets against a scratch reload. They do not certify question
-meaning or deterministic whole-record ordering. The benchmark is licensed
-CC-BY 4.0 and has its own [citation record](release_package/cqs/spectra_cq_v2.0/citation.bib).
+For complete-record comparisons, start with the [contract companion](release_package/cqs/contract_repair_v1/README.md).
+Its completed comparison uses 36 explicitly defined formal task variants from
+40 IDs fixed before generation. Required named fields, types, roles and collection
+rules determine complete-record F1 and exact output match, the primary metrics;
+partial field credit is secondary. Three references exceeded the row cap and
+one definition remained unresolved; all four dispositions are retained.
 
-For explicit requested records, start with the [contract companion](release_package/cqs/contract_repair_v1/README.md).
-It retains original questions alongside separately labelled formal variants,
-with named typed fields, roles and declared collection semantics. Forty IDs
-were fixed before new model generation; three reference outputs exceeded the
-fixed row cap and one definition remained unresolved. The 36 eligible tasks
-have fresh graph-relative gold from restorations of the deposited TTL files.
-The companion publishes retained predictions, contexts, usage and offline
-scoring for single-pass text, two-round text and generated Cypher.
+Replay the retained outputs from the repository root, without model or database calls:
 
-The original 624 questions and recorded runs remain unchanged. The companion
-is a bounded new measurement, with no independent domain-expert validation
-or completed repair of Core 560. Complete graph access and short retrieved
-passages are different information conditions; their source-cutoff equivalence
-is unverified. Retained-output scoring is reproducible, while the full text
-ranking corpus is not deposited with this companion.
+```bash
+python3 -B release_package/cqs/contract_repair_v1/matched_retrieval_measurement/matched_analysis.py \
+  --require-complete --out /tmp/spectra-strict-record-replay.json
+```
+
+Use a new output filename; the script refuses to overwrite a report. The companion
+publishes contexts, usage and graph-relative gold from deposited-TTL restorations
+for single-pass text, two-round text and generated Cypher. This bounded variant
+measurement does not certify the original questions or repair all Core 560.
+Complete graph access and short text passages are different conditions, their
+source-cutoff equivalence is unverified, and the full text ranking corpus is not
+deposited. Independent domain-expert validation remains absent.
+
+For comparisons on the original unchanged questions, start with the
+[31-item source-aligned retained-output diagnostic](release_package/cqs/contract_repair_v1/original_source_aligned/README.md)
+before interpreting full-Core or historical annotation-subset scores. Its admission
+rule was fixed before reading retained predictions: both source-evidenced AI audits
+must judge the full original scoring contract aligned, native reference execution
+must be complete, and the declared released/V1 answer-column sets must agree with
+source outputs. The fixed cohort contains 11 lookup, 13 aggregation and 7 relational
+items, with no multihop item. Native completion concerns the saved reference query;
+its original LIMIT clauses and source gaps remain. It re-scores the unchanged 27 original runs of nine
+models with the legacy canonical-string value-set scorer, without reconstructing
+named records, roles, types, order or multiplicity. V1 is primary; V2 sensitivity
+uses the whole identical cohort. This does not recover the paper's default Core/V2
+headline or replace the strict 36-variant comparison above.
+
+From the repository root, reproduce the recorded diagnostic without model,
+database or retrieval calls and without writing a report:
+
+```bash
+python3 -I -B release_package/cqs/contract_repair_v1/original_source_aligned/score_source_aligned_retained_portable_v1.py \
+  --bundle release_package/cqs/contract_repair_v1/original_source_aligned \
+  --public-root . \
+  --expected-manifest-sha256 ef37ec7f075c7d51d87406d20e6c55f050213ef9942eab6cf53cb27277f29813
+```
+
+The [all-560 audit dispositions](release_package/cqs/contract_repair_v1/source_alignment_audit_v1/semantic_alignment_audit_report_v1.json)
+and [345-file audit manifest](release_package/cqs/contract_repair_v1/source_alignment_audit_v1/portable_export_manifest_v1.json)
+preserve every original item and all 112 attempts. Both audit receipts were usable
+for 480 items; 80 retain one or both unavailable raters and are excluded from cohort
+admission, without replacement or performance-based selection. Usable receipts do
+not imply alignment. Three admitted items retain differences in coarse role aliases;
+their diagnostics stay visible and the fixed 31-item cohort is not reselected.
+These are fallible AI judgments, not human/domain-expert validation, a representative
+sample or a repair of all Core questions. Gold is nonempty; missing-information
+abstention remains untested. Historical graph/text evidence access and source cutoffs
+are unequal or unverified. The [offline audit verifier and resource appendix](release_package/cqs/contract_repair_v1/source_alignment_audit_resources_v1/README.md)
+and its [verifier script](release_package/cqs/contract_repair_v1/source_alignment_audit_resources_v1/verify_semantic_alignment_audit_export_v1.py)
+explain the public checks and the retained private-capture hash commitments.
+
+For historical value-set evaluation, the [original benchmark](release_package/cqs/spectra_cq_v2.0/README.md)
+retains 624 released questions from 654 authored questions, executable Cypher and
+stored primary-column value sets. Its [self-replay records](release_package/validation/cq_replay/)
+check those sets against a scratch reload, without certifying question meaning
+or deterministic whole-record ordering. The benchmark is licensed CC-BY 4.0
+and has its own [citation record](release_package/cqs/spectra_cq_v2.0/citation.bib).
 
 The [baseline documentation](paper/baseline/README.md) preserves the original nine-model
-Core results, the 133/208 annotation subsets, the later 67/45 AI diagnostics
-and the all-Core retained SQL/Cypher comparison. These diagnostics do not
-provide expert gold. The SQL/Cypher difference interval includes zero and
-does not establish a graph-engine advantage. These Git additions are separate
-from the frozen Zenodo archives; cite the Git commit for the code and outputs
-used in a later analysis.
+Core scores, the 133-item historical compatibility default, the 208 annotation
+subset, the later 67/45 AI diagnostics and retained all-Core SQL/Cypher comparison.
+These value-set analyses are separate from the strict variant measurement and do
+not supply expert gold. The SQL/Cypher difference interval includes zero and
+does not establish a graph-engine advantage. The original questions and runs
+remain unchanged. These Git additions are separate from the frozen Zenodo
+archives; cite the Git commit used for a later analysis.
 
 ## Citation
 

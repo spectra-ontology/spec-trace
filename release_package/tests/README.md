@@ -17,13 +17,14 @@ verifier's `--full` mode additionally needs a scratch Neo4j instance.
 - **`verify_benchmark.py`** — benchmark gate, described below.
 - **`reproduce_scenario_counts.py`**: recount of the cross-WG query counts on the released graphs, described below.
 
-Run:
+Run from the repository root:
+
 ```bash
 pip install rdflib pyshacl
-python3 tests/reproduce_structural_metrics.py
-python3 tests/test_e2e_sparql.py
-python3 tests/verify_release.py
-pyshacl -s shapes/spectra-core.shacl.ttl examples/instantiation_snippet.ttl
+python3 release_package/tests/reproduce_structural_metrics.py
+python3 release_package/tests/test_e2e_sparql.py
+python3 release_package/tests/verify_release.py
+pyshacl -s release_package/shapes/spectra-core.shacl.ttl release_package/examples/instantiation_snippet.ttl
 ```
 
 All four should exit with status 0.
@@ -72,11 +73,11 @@ query counts of `validation/cross_wg_use_evidence.json` (measured on the
 deployed per-WG KGs) and compares the result with
 `validation/released_graph_scenario_counts.json`. Standard library only, no
 database. Put the deposit's RAN1-body.ttl to RAN5-body.ttl files in
-`kg/per_wg/` (see `kg/per_wg/README.md`), or name their directory:
+`release_package/kg/per_wg/` (see `release_package/kg/per_wg/README.md`), or name their directory:
 
 ```bash
-python3 tests/reproduce_scenario_counts.py
-python3 tests/reproduce_scenario_counts.py --ttl-dir /path/to/deposit
+python3 release_package/tests/reproduce_scenario_counts.py
+python3 release_package/tests/reproduce_scenario_counts.py --ttl-dir /path/to/deposit
 ```
 
 Exit status 0 when every field agrees with the shipped JSON, 1 on a

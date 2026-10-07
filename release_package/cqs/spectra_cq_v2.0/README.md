@@ -100,8 +100,9 @@ does not certify or replace all 624 original questions.
   annotation-derived 208 in which every language-model column verdict falls
   on the scored answer column and no phrase verdict is recorded. Membership
   is invariant to those model verdicts with rule verdicts, flags and answer
-  column fixed. One identifier per line. The default set of
-  `paper/baseline/score_core.py` at the repository root.
+  column fixed. One identifier per line. This remains the compatibility default of
+  `paper/baseline/score_core.py` for reproducing historical answer-column scores;
+  it is not a semantically validated primary evaluation.
 - `splits/contract_exact_asked_208.txt`: the 208 Core items with no contract
   flag set and every column marked `required` in
   `contract_demand_provenance.jsonl` equal to the scored answer column

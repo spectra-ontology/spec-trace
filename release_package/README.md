@@ -59,8 +59,8 @@ release_package/
 │       ├── cypher/                    # 624 executable Cypher reference queries (one per released CQ)
 │       ├── sparql/                    # 142 SPARQL translations (all released RAN1 CQs; see MANIFEST.md §2.1)
 │       ├── gold/                      # stored query-derived answer sets (RAN{1..5}_gold.json, 654 authored + _gold_summary.json)
-│       ├── splits/                    # four canonical splits and contract-exact subsets of Core, with the scripts that rebuild them (Git tree only):
-│       │                              # annotation-derived 208 and 133 (Core scorer default), superseded 241 and 149
+│       ├── splits/                    # four canonical splits and annotation-derived evaluation subsets, with historical compatibility filenames (Git tree only):
+│       │                              # annotation-derived 208 and 133 (historical compatibility default), superseded 241 and 149
 │       └── held/                      # 30 held-out CQs (degenerate/empty gold; excluded from scoring)
 │                                      # contract_held_out.json: 64 released CQs outside Core, with reasons (Git tree only)
 ├── queries/
@@ -287,38 +287,83 @@ deposit (standard library, no database) and compares the result with
 `validation/released_graph_scenario_counts.json`. 17 of the 18 are
 the same; the one that differs is listed under Known data quality issues.
 
-### SpectraCQ scored benchmark
+### Strict named-record evaluation and historical scores
 
-The [original benchmark](cqs/spectra_cq_v2.0/README.md) contains
-624 released questions from 654 authored questions, with executable Cypher
-and stored primary-column value sets. The [self-replay records](validation/cq_replay/)
-check those value sets against a scratch reload. They do not certify question
-meaning or deterministic whole-record ordering. The benchmark is licensed
-CC-BY 4.0 and has its own [citation record](cqs/spectra_cq_v2.0/citation.bib).
+For complete-record comparisons, start with the [contract companion](cqs/contract_repair_v1/README.md).
+Its completed comparison uses 36 explicitly defined formal task variants from
+40 IDs fixed before generation. Required named fields, types, roles and collection
+rules determine complete-record F1 and exact output match, the primary metrics;
+partial field credit is secondary. Three references exceeded the row cap and
+one definition remained unresolved; all four dispositions are retained.
 
-For explicit requested records, start with the [contract companion](cqs/contract_repair_v1/README.md).
-It retains original questions alongside separately labelled formal variants,
-with named typed fields, roles and declared collection semantics. Forty IDs
-were fixed before new model generation; three reference outputs exceeded the
-fixed row cap and one definition remained unresolved. The 36 eligible tasks
-have fresh graph-relative gold from restorations of the deposited TTL files.
-The companion publishes retained predictions, contexts, usage and offline
-scoring for single-pass text, two-round text and generated Cypher.
+Replay the retained outputs from the repository root, without model or database calls:
 
-The original 624 questions and recorded runs remain unchanged. The companion
-is a bounded new measurement, with no independent domain-expert validation
-or completed repair of Core 560. Complete graph access and short retrieved
-passages are different information conditions; their source-cutoff equivalence
-is unverified. Retained-output scoring is reproducible, while the full text
-ranking corpus is not deposited with this companion.
+```bash
+python3 -B release_package/cqs/contract_repair_v1/matched_retrieval_measurement/matched_analysis.py \
+  --require-complete --out /tmp/spectra-strict-record-replay.json
+```
+
+Use a new output filename; the script refuses to overwrite a report. The companion
+publishes contexts, usage and graph-relative gold from deposited-TTL restorations
+for single-pass text, two-round text and generated Cypher. This bounded variant
+measurement does not certify the original questions or repair all Core 560.
+Complete graph access and short text passages are different conditions, their
+source-cutoff equivalence is unverified, and the full text ranking corpus is not
+deposited. Independent domain-expert validation remains absent.
+
+For comparisons on the original unchanged questions, start with the
+[31-item source-aligned retained-output diagnostic](cqs/contract_repair_v1/original_source_aligned/README.md)
+before interpreting full-Core or historical annotation-subset scores. Its admission
+rule was fixed before reading retained predictions: both source-evidenced AI audits
+must judge the full original scoring contract aligned, native reference execution
+must be complete, and the declared released/V1 answer-column sets must agree with
+source outputs. The fixed cohort contains 11 lookup, 13 aggregation and 7 relational
+items, with no multihop item. Native completion concerns the saved reference query;
+its original LIMIT clauses and source gaps remain. It re-scores the unchanged 27 original runs of nine
+models with the legacy canonical-string value-set scorer, without reconstructing
+named records, roles, types, order or multiplicity. V1 is primary; V2 sensitivity
+uses the whole identical cohort. This does not recover the paper's default Core/V2
+headline or replace the strict 36-variant comparison above.
+
+From the repository root, reproduce the recorded diagnostic without model,
+database or retrieval calls and without writing a report:
+
+```bash
+python3 -I -B release_package/cqs/contract_repair_v1/original_source_aligned/score_source_aligned_retained_portable_v1.py \
+  --bundle release_package/cqs/contract_repair_v1/original_source_aligned \
+  --public-root . \
+  --expected-manifest-sha256 ef37ec7f075c7d51d87406d20e6c55f050213ef9942eab6cf53cb27277f29813
+```
+
+The [all-560 audit dispositions](cqs/contract_repair_v1/source_alignment_audit_v1/semantic_alignment_audit_report_v1.json)
+and [345-file audit manifest](cqs/contract_repair_v1/source_alignment_audit_v1/portable_export_manifest_v1.json)
+preserve every original item and all 112 attempts. Both audit receipts were usable
+for 480 items; 80 retain one or both unavailable raters and are excluded from cohort
+admission, without replacement or performance-based selection. Usable receipts do
+not imply alignment. Three admitted items retain differences in coarse role aliases;
+their diagnostics stay visible and the fixed 31-item cohort is not reselected.
+These are fallible AI judgments, not human/domain-expert validation, a representative
+sample or a repair of all Core questions. Gold is nonempty; missing-information
+abstention remains untested. Historical graph/text evidence access and source cutoffs
+are unequal or unverified. The [offline audit verifier and resource appendix](cqs/contract_repair_v1/source_alignment_audit_resources_v1/README.md)
+and its [verifier script](cqs/contract_repair_v1/source_alignment_audit_resources_v1/verify_semantic_alignment_audit_export_v1.py)
+explain the public checks and the retained private-capture hash commitments.
+
+For historical value-set evaluation, the [original benchmark](cqs/spectra_cq_v2.0/README.md)
+retains 624 released questions from 654 authored questions, executable Cypher and
+stored primary-column value sets. Its [self-replay records](validation/cq_replay/)
+check those sets against a scratch reload, without certifying question meaning
+or deterministic whole-record ordering. The benchmark is licensed CC-BY 4.0
+and has its own [citation record](cqs/spectra_cq_v2.0/citation.bib).
 
 The [baseline documentation](../paper/baseline/README.md) preserves the original nine-model
-Core results, the 133/208 annotation subsets, the later 67/45 AI diagnostics
-and the all-Core retained SQL/Cypher comparison. These diagnostics do not
-provide expert gold. The SQL/Cypher difference interval includes zero and
-does not establish a graph-engine advantage. These Git additions are separate
-from the frozen Zenodo archives; cite the Git commit for the code and outputs
-used in a later analysis.
+Core scores, the 133-item historical compatibility default, the 208 annotation
+subset, the later 67/45 AI diagnostics and retained all-Core SQL/Cypher comparison.
+These value-set analyses are separate from the strict variant measurement and do
+not supply expert gold. The SQL/Cypher difference interval includes zero and
+does not establish a graph-engine advantage. The original questions and runs
+remain unchanged. These Git additions are separate from the frozen Zenodo
+archives; cite the Git commit used for a later analysis.
 
 ## Citation
 
