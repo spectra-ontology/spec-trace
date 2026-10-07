@@ -1,5 +1,8 @@
 # SpectraCQ Baseline Harness and Recorded Runs
 
+For current 31 / historical 45 / separate 36 / Core 560 scope relationships,
+see the [evaluation scope guide](../../release_package/cqs/contract_repair_v1/README_evaluation_scopes.md).
+
 For explicit named-record task variants and a new matched single-pass/two-round
 text comparison, use the [contract companion](../../release_package/cqs/contract_repair_v1/README.md).
 It records a separate fixed 36-task measurement with complete-record F1 and

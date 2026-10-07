@@ -1,5 +1,8 @@
 # Strict named-record evaluation
 
+For current 31 / historical 45 / separate 36 / Core 560 scope relationships,
+see the [evaluation scope guide](README_evaluation_scopes.md).
+
 For complete-record comparisons, start with the [recorded comparison](matched_retrieval_measurement/README.md).
 It uses 36 eligible formal task variants selected from a fixed 40-item cohort.
 All three arms receive the same named-field output contracts. Complete-record F1

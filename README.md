@@ -1,5 +1,8 @@
 # SPECTRA — A Traceability Ontology for 3GPP RAN Standardization
 
+For current 31 / historical 45 / separate 36 / Core 560 scope relationships,
+see the [evaluation scope guide](release_package/cqs/contract_repair_v1/README_evaluation_scopes.md).
+
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Ontology: OWL 2](https://img.shields.io/badge/Ontology-OWL_2-blue.svg)](https://www.w3.org/TR/owl2-overview/)
 [![Persistent IRI](https://img.shields.io/badge/IRI-w3id.org%2Fspectra-success.svg)](https://w3id.org/spectra)
