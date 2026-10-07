@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "kind": "synthetic execution guard validation; no scientific query replay",
+  "created_utc": "2026-10-07T02:58:02.142438+00:00",
+  "protocol_sha256": "cb23283e4d815ea4aeeb73c10f7b20c81a99e41853fac4e822d4091d025a8db6",
+  "code_pins": {
+    "replay_generated_read_queries.py": "0a710cec92a65d7034e24d47e78abdd7a175947229c675064b65056664cd0e66",
+    "test_replay_generated_read_queries.py": "a83722625c1067807c4e363a2c4bc8ccca1061b6369b5de4db7ceef0bb45df09",
+    "validate_read_query_replay.py": "7a989eb1b73db12e918ff2d78a3f3e1957bf80a7d2dfd133ecba7c53b4c5d743"
+  },
+  "driver_version": "5.28.3",
+  "restored_server_version": "5.26.0",
+  "unit_tests_passed": 7,
+  "synthetic_checks": [
+    {
+      "name": "plain_return",
+      "query": "RETURN 1 AS x",
+      "status": "OK",
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "plan_operators": [
+        "ProduceResults@neo4j",
+        "Projection@neo4j"
+      ],
+      "rollback_requested": true,
+      "result_values_exported": false
+    },
+    {
+      "name": "anonymous_importing_with",
+      "query": "WITH 7 AS x CALL { WITH x RETURN x + 1 AS y } RETURN y",
+      "status": "OK",
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "plan_operators": [
+        "ProduceResults@neo4j",
+        "Projection@neo4j",
+        "Projection@neo4j"
+      ],
+      "rollback_requested": true,
+      "result_values_exported": false
+    },
+    {
+      "name": "anonymous_empty_scope",
+      "query": "CALL () { RETURN 1 AS x } RETURN x",
+      "status": "OK",
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "plan_operators": [
+        "ProduceResults@neo4j",
+        "Projection@neo4j"
+      ],
+      "rollback_requested": true,
+      "result_values_exported": false
+    },
+    {
+      "name": "anonymous_variable_scope",
+      "query": "WITH 7 AS x CALL (x) { RETURN x + 1 AS y } RETURN y",
+      "status": "OK",
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "plan_operators": [
+        "ProduceResults@neo4j",
+        "Projection@neo4j",
+        "Projection@neo4j"
+      ],
+      "rollback_requested": true,
+      "result_values_exported": false
+    },
+    {
+      "name": "source_plan",
+      "query": "MATCH (n:Meeting) RETURN count(n) AS x",
+      "status": "OK",
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "plan_operators": [
+        "ProduceResults@neo4j",
+        "NodeCountFromCountStore@neo4j"
+      ],
+      "rollback_requested": true,
+      "result_values_exported": false
+    },
+    {
+      "name": "literal_keyword",
+      "query": "RETURN 'CREATE CALL dbms' AS x",
+      "status": "OK",
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "plan_operators": [
+        "ProduceResults@neo4j",
+        "Projection@neo4j"
+      ],
+      "rollback_requested": true,
+      "result_values_exported": false
+    },
+    {
+      "name": "mutation",
+      "query": "CREATE (n:_ReadReplaySynthetic) RETURN n",
+      "status": "GUARD_REJECTED",
+      "submitted_to_server": false
+    },
+    {
+      "name": "nested_mutation",
+      "query": "CALL { CREATE (n:_ReadReplaySynthetic) RETURN n } RETURN n",
+      "status": "GUARD_REJECTED",
+      "submitted_to_server": false
+    },
+    {
+      "name": "csv",
+      "query": "LOAD CSV FROM 'file:///never_read.csv' AS x RETURN x",
+      "status": "GUARD_REJECTED",
+      "submitted_to_server": false
+    },
+    {
+      "name": "procedure",
+      "query": "CALL db.labels() YIELD label RETURN label",
+      "status": "GUARD_REJECTED",
+      "submitted_to_server": false
+    },
+    {
+      "name": "apoc",
+      "query": "CALL apoc.help('x')",
+      "status": "GUARD_REJECTED",
+      "submitted_to_server": false
+    },
+    {
+      "name": "dbms",
+      "query": "CALL dbms.components()",
+      "status": "GUARD_REJECTED",
+      "submitted_to_server": false
+    },
+    {
+      "name": "write_plan_only",
+      "query": "CREATE (n:_ReadReplaySynthetic) RETURN n",
+      "plan_query_type": "rw",
+      "plan_operators": [
+        "ProduceResults@neo4j",
+        "Create@neo4j"
+      ],
+      "actual_write_executed": false,
+      "read_gate_rejected": true
+    },
+    {
+      "name": "row_cap",
+      "status": "ROW_CAP",
+      "row_count_retained": 2000,
+      "plan_query_type": "r",
+      "rollback_requested": true,
+      "result_values_exported": false
+    }
+  ],
+  "source_guard_before": {
+    "wg": "RAN3",
+    "import_manifest_sha256": "6a325f06f5c5fe903d6b382635e7096a107c4b620e3a9288cf5a18852e30c0a5",
+    "source": {
+      "sha256": "d9791c08773a0e38b89869b3882d3098d879a37ddd7109630c346200d6776e95",
+      "md5": "ad73158bf9d80b1e3b875edaa9ea7ded",
+      "bytes": 81735967,
+      "published_md5_verified": true
+    },
+    "nodes": 87980,
+    "relationships": 481498,
+    "shipped_loader_sha256": "9499ac120ea4fcf1c2707f6e3151e399530d9b4f43f5aec9d2d93040792d6e25",
+    "restoration_wrapper_sha256": "94ec3c9274ba2c62cd3bafc17e98225d174b9e7fef3f1a4a0bc9270101eae973"
+  },
+  "source_guard_after": {
+    "wg": "RAN3",
+    "import_manifest_sha256": "6a325f06f5c5fe903d6b382635e7096a107c4b620e3a9288cf5a18852e30c0a5",
+    "source": {
+      "sha256": "d9791c08773a0e38b89869b3882d3098d879a37ddd7109630c346200d6776e95",
+      "md5": "ad73158bf9d80b1e3b875edaa9ea7ded",
+      "bytes": 81735967,
+      "published_md5_verified": true
+    },
+    "nodes": 87980,
+    "relationships": 481498,
+    "shipped_loader_sha256": "9499ac120ea4fcf1c2707f6e3151e399530d9b4f43f5aec9d2d93040792d6e25",
+    "restoration_wrapper_sha256": "94ec3c9274ba2c62cd3bafc17e98225d174b9e7fef3f1a4a0bc9270101eae973"
+  },
+  "model_queries_read": 0,
+  "model_calls": 0,
+  "correctness_scores_computed": 0,
+  "human_expert_validation_n": 0,
+  "same_count_external_property_mutations_detected": false,
+  "official_documentation": [
+    {
+      "url": "https://neo4j.com/docs/cypher-manual/5/subqueries/call-subquery/",
+      "verified": "anonymous CALL subqueries are distinct from procedure calls, permit variable-scope/importing-WITH syntax, and may contain writes"
+    },
+    {
+      "url": "https://neo4j.com/docs/python-manual/current/result-summary/",
+      "verified": "EXPLAIN returns the proposed plan without executing the query; PROFILE executes"
+    },
+    {
+      "url": "https://neo4j.com/docs/api/python-driver/current/api.html#neo4j.ResultSummary.query_type",
+      "verified": "query_type r is read-only; rw, w, s and missing type do not satisfy read-only guard",
+      "api_page_version_at_read": "6.4; semantics additionally checked on installed driver 5.28.3 and restored Neo4j 5.26 in synthetic tests"
+    }
+  ]
+}

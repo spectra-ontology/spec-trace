@@ -16,7 +16,7 @@
 
 To accommodate GitHub's 100 MB-per-file limit, this release is split:
 
-- **GitHub repository (this repo)** — ontology, SHACL, SpectraCQ v2.0 (624-CQ scored benchmark), schema-instantiation process-KG TTLs (`examples/process_kg/`, ~89 MB, each file under the 100 MB limit), validation JSONs, scripts, supplement, parsing pipeline. Git-channel total ~94 MB.
+- **GitHub repository (this repo)** — ontology, SHACL, SpectraCQ v2.0 (624-CQ scored benchmark), schema-instantiation process-KG TTLs (`examples/process_kg/`, ~89 MB, each file under the 100 MB limit), validation JSONs, scripts, supplement, parsing pipeline.
 - **Zenodo deposit** — large files: per-WG body-text Knowledge Graphs (`RAN{1..5}-body.ttl`, ~903 MB total). See `kg/per_wg/README.md` for the inventory and the DOI link.
 
 A machine-readable DCAT/VoID description of every dataset in both
@@ -58,7 +58,7 @@ release_package/
 │       ├── contract_demand_provenance.jsonl # column-demand verdicts behind the answer contract, each with what decided it (Git tree only)
 │       ├── cypher/                    # 624 executable Cypher reference queries (one per released CQ)
 │       ├── sparql/                    # 142 SPARQL translations (all released RAN1 CQs; see MANIFEST.md §2.1)
-│       ├── gold/                      # deterministic gold answer sets (RAN{1..5}_gold.json, 654 authored + _gold_summary.json)
+│       ├── gold/                      # stored query-derived answer sets (RAN{1..5}_gold.json, 654 authored + _gold_summary.json)
 │       ├── splits/                    # four canonical splits and contract-exact subsets of Core, with the scripts that rebuild them (Git tree only):
 │       │                              # annotation-derived 208 and 133 (Core scorer default), superseded 241 and 149
 │       └── held/                      # 30 held-out CQs (degenerate/empty gold; excluded from scoring)
@@ -153,7 +153,7 @@ release_package/
 
 The following artifacts are part of the paper's **internal validation evidence** and are *not* redistributed:
 
-- Internal cumulative-regression run logs and per-phase intermediate KG snapshots used during the five-phase development. The scored benchmark (624 released CQs of 654 authored, 30 held out; English text + executable reference Cypher + deterministic gold answer sets) is publicly released at `cqs/spectra_cq_v2.0/`; only the regression run-history is retained internally.
+- Internal cumulative-regression run logs and per-phase intermediate KG snapshots used during the five-phase development. The scored benchmark (624 released CQs of 654 authored, 30 held out; English text + executable reference Cypher + stored query-derived answer sets) is publicly released at `cqs/spectra_cq_v2.0/`; only the regression run-history is retained internally.
 - Neo4j instance dumps (`.dump`) and VectorDB embeddings: regenerable from the released per-WG body-text KGs (`kg/per_wg/`) and sanitized parsing pipeline (`pipeline/`); not bundled because raw dumps exceed the archival package's size budget. Original 3GPP TDocs remain publicly accessible via the 3GPP portal: https://www.3gpp.org
 - Internal operational deployment glue: company-specific monitoring, authentication, and Slack/incident hooks around the parsing pipeline; the deterministic parser logic itself is released at `pipeline/`.
 
@@ -288,46 +288,37 @@ deposit (standard library, no database) and compares the result with
 the same; the one that differs is listed under Known data quality issues.
 
 ### SpectraCQ scored benchmark
-The scored benchmark — 624 released CQs (of 654 authored; 30 held out) with English question text, executable reference Cypher, and deterministic gold answer sets (`benchmark.jsonl`) — is at `cqs/spectra_cq_v2.0/`. It is independently citable via `cqs/spectra_cq_v2.0/citation.bib` and licensed CC-BY 4.0. Reproducibility evidence (624/624 self-replay on a scratch reload) lives under `validation/cq_replay/`; canonical counts are in `MANIFEST.md`.
 
-Self-replay checks the reference queries' stored outputs. The Core answer-column
-gold and the annotation-derived 133/208 subsets do not establish that every
-question requirement is scored: counts, relationship roles and ranking can
-remain ungraded. Their definitions and examples are in the benchmark README
-and `splits/README.md`. The contract data, subset lists and later analysis
-tools are Git additions outside the frozen Zenodo 2.0.0 archives; cite the
-Git commit when using them. An individual Zenodo version DOI pins archival
-bytes, while the concept DOI locates the newest deposit. The baseline README
-states which recorded results can be recomputed and which historical inputs
-or rebuilt outputs were not retained.
-Its offline analysis artifact records 30 populations, their identifiers and
-input/source hashes, with 10,000 paired seed-0 resamples; the baseline README
-provides the reproduction commands and metric definitions.
-An additional AI-assisted field-coverage diagnostic reviewed all 133
-candidates and froze the 67-item intersection before re-scoring. Its protocol,
-stored judgments, identifiers and offline scores are linked from the benchmark
-and baseline READMEs. It is not expert validation or a replacement for Core
-or the 133/208; the compatibility scorer default remains the annotation-derived
-133. The selected cohort is mostly lookup/aggregation and has no declared
-tuple/mapping items, limiting generalization to other answer types and tracks.
-A subsequent review separately assessed required fields, scope/roles,
-cardinality/truncation and ordering/duplicates for all 133 candidates. Two
-fresh isolated AI reviews yielded a 45-item intersection, fixed before its
-new scores. The designers had already seen the Core/133/208/67 metrics.
-The stored protocol, judgments, source hashes, membership checker and offline
-analysis are documented in the same READMEs; the earlier 67-item evidence is
-preserved. The 45 have 14 lookup, 30 aggregation and 1 relational item,
-with no multihop or declared tuple/mapping item. The original answer-type
-labels are 40 scalar sets and 5 ranked top-k; set scoring still ignores order.
-This remains a selected AI-assisted diagnostic, without human expert
-validation or full semantic certification; it changes no question, key,
-original output or scorer default.
-Model ranks change more under full-record scoring; the baseline README
-compares each metric's subset ranks with that same metric on Core.
-The baseline bundle also records an all-Core560 retained SQL/Cypher comparison
-with the same repaired answer-column key. The paired difference interval
-includes zero; this adds a reproducible current comparison without recovering
-the historical SQL cohort or establishing a causal graph-engine advantage.
+The [original benchmark](cqs/spectra_cq_v2.0/README.md) contains
+624 released questions from 654 authored questions, with executable Cypher
+and stored primary-column value sets. The [self-replay records](validation/cq_replay/)
+check those value sets against a scratch reload. They do not certify question
+meaning or deterministic whole-record ordering. The benchmark is licensed
+CC-BY 4.0 and has its own [citation record](cqs/spectra_cq_v2.0/citation.bib).
+
+For explicit requested records, start with the [contract companion](cqs/contract_repair_v1/README.md).
+It retains original questions alongside separately labelled formal variants,
+with named typed fields, roles and declared collection semantics. Forty IDs
+were fixed before new model generation; three reference outputs exceeded the
+fixed row cap and one definition remained unresolved. The 36 eligible tasks
+have fresh graph-relative gold from restorations of the deposited TTL files.
+The companion publishes retained predictions, contexts, usage and offline
+scoring for single-pass text, two-round text and generated Cypher.
+
+The original 624 questions and recorded runs remain unchanged. The companion
+is a bounded new measurement, with no independent domain-expert validation
+or completed repair of Core 560. Complete graph access and short retrieved
+passages are different information conditions; their source-cutoff equivalence
+is unverified. Retained-output scoring is reproducible, while the full text
+ranking corpus is not deposited with this companion.
+
+The [baseline documentation](../paper/baseline/README.md) preserves the original nine-model
+Core results, the 133/208 annotation subsets, the later 67/45 AI diagnostics
+and the all-Core retained SQL/Cypher comparison. These diagnostics do not
+provide expert gold. The SQL/Cypher difference interval includes zero and
+does not establish a graph-engine advantage. These Git additions are separate
+from the frozen Zenodo archives; cite the Git commit for the code and outputs
+used in a later analysis.
 
 ## Citation
 

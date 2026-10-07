@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "source_graph": "isolated checksum-pinned deposited TTL",
+  "source_sha256": "f0997bbfb5fd5844837514cd29cfe943b8cb2d0240f0ea5579c5e69b4e547d6c",
+  "human_expert_validation_n": 0,
+  "meaning": "variant field/source/population QA, not model evaluation or original-question certification",
+  "variant_source_qa": [
+    {
+      "id": "RAN2_P2_CQ2-1",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc) WHERE 'R2-2508373' IN t.tdocNumber MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT r.resolutionId AS resolutionId,m.canonicalMeetingNumber AS meetingNumber",
+      "actual_complete_row_count": 2,
+      "observed_field_types": {
+        "resolutionId": [
+          "str"
+        ],
+        "meetingNumber": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.4319851500040386
+    },
+    {
+      "id": "RAN2_P2_CQ3-3",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi,c,count(DISTINCT r) AS cnt ORDER BY wi.workItemCode,cnt DESC,c.companyName ASC WITH wi,collect({company:c.companyName,count:cnt})[0..5] AS topCompanies RETURN wi.workItemCode AS workItemCode,topCompanies ORDER BY workItemCode LIMIT 5",
+      "actual_complete_row_count": 5,
+      "observed_field_types": {
+        "workItemCode": [
+          "str"
+        ],
+        "topCompanies": [
+          "list"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.697155168018071
+    },
+    {
+      "id": "RAN2_P3_CQ1-1",
+      "reference_query": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber:'38.331'}) RETURN DISTINCT s.sectionId AS sectionId,s.sectionNumber AS sectionNumber,s.sectionTitle AS sectionTitle",
+      "actual_complete_row_count": 5834,
+      "observed_field_types": {
+        "sectionId": [
+          "str"
+        ],
+        "sectionNumber": [
+          "str"
+        ],
+        "sectionTitle": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": true,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.333940916985739
+    },
+    {
+      "id": "RAN2_P3_CQ3-6",
+      "reference_query": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company {companyName:'Huawei'}), (cr)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber,count(DISTINCT cr) AS crs",
+      "actual_complete_row_count": 53,
+      "observed_field_types": {
+        "specNumber": [
+          "str"
+        ],
+        "crs": [
+          "int"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.266581119998591
+    },
+    {
+      "id": "RAN2_P3_CQ5-3",
+      "reference_query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub,count(DISTINCT cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub,crCnt,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC,rk.id ASC WITH hub,crCnt,collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub,crCnt,count(DISTINCT s) AS secCnt WHERE secCnt>0 RETURN hub.specNumber AS specNumber,crCnt,secCnt,round(1.0*crCnt/secCnt,2) AS density",
+      "actual_complete_row_count": 14,
+      "observed_field_types": {
+        "specNumber": [
+          "str"
+        ],
+        "crCnt": [
+          "int"
+        ],
+        "secCnt": [
+          "int"
+        ],
+        "density": [
+          "float"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.4102238559862599
+    },
+    {
+      "id": "RAN2_P3_P3-S8-CQ05",
+      "reference_query": "MATCH (n) UNWIND [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']] AS class RETURN class,coalesce(n.granularity,'<unset>') AS granularity,count(n) AS count",
+      "actual_complete_row_count": 3,
+      "observed_field_types": {
+        "class": [
+          "str"
+        ],
+        "granularity": [
+          "str"
+        ],
+        "count": [
+          "int"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.5998009269824252
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-1",
+      "reference_query": "MATCH (tr:TechnicalReport {trNumber:'38.825'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT s.specNumber AS specNumber,imp.impactType AS impactType",
+      "actual_complete_row_count": 2,
+      "observed_field_types": {
+        "specNumber": [
+          "str"
+        ],
+        "impactType": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.09224029400502332
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-4",
+      "reference_query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact) WHERE imp.impactType='ExtendSection' RETURN DISTINCT tr.trNumber AS trNumber",
+      "actual_complete_row_count": 6,
+      "observed_field_types": {
+        "trNumber": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.025884801987558603
+    }
+  ]
+}

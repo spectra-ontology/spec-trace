@@ -1,0 +1,1498 @@
+{
+  "protocol": {
+    "experiment": "matched_retrieval_v3",
+    "revision": "Before scientific outputs, preserved v1 prefix-cap files and v2 snippet files in separate whole-file archives. v3 deterministically merges two different query windows for a duplicate point within the shared 800-character cap. Existing retained live corpus is reused. Before outcomes, preserved the initial v3 source/protocol in before_json_schema_v3, then added explicitly declared nested JSON structural schemas for two source-audited array fields; no enum, const, examples, descriptions or hidden gold values are permitted.",
+    "artifact_namespace": "_matched_retrieval_v1 is the existing new-only storage namespace; method version is v3.",
+    "state": "method fixed; source-only task selection must be separately frozen before generation",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "arms": [
+      "single",
+      "iterative"
+    ],
+    "maximum_tasks": 40,
+    "call_cap": 180,
+    "overall_call_cap": 220,
+    "component_call_caps": {
+      "retrieval": 180,
+      "kg": 40
+    },
+    "setup_probe": "Root reports one successful CLI setup probe separately; not a scientific task outcome or part of study cap.",
+    "retry_policy": "No automatic trial retries. Failed/time-limited/tool-using trials retained with empty prediction in fixed denominator.",
+    "call_cap_unit": "CLI invocations, reserved durably before launch. CLI internal provider retries are not observable. Retrieval cap 180 plus root's separate KG cap 40 totals <=220 CLI invocations.",
+    "timeout_seconds": 90,
+    "max_concurrent_cli_calls": 2,
+    "max_search_rounds": 2,
+    "helper_queries_per_iterative_task": 1,
+    "retrieval": {
+      "engine": "SQLite FTS5 BM25, unicode61 remove_diacritics 2",
+      "bm25_parameters": {
+        "k1": 1.2,
+        "b": 0.75
+      },
+      "corpus": "all 25 existing WG-scoped Qdrant text collections via payload-only scroll; separate SQLite shard per WG",
+      "whole_text_indexed": true,
+      "query_tokens": "Unicode alphanumeric words length >=2; fixed short English stoplist; unique first 64 terms with OR",
+      "ranking_candidates_per_round": 200,
+      "merge": "Reciprocal rank fusion k=60; source identity (collection, point_id); stable lexical tie breaks",
+      "duplicate_point_passages": "Identical snippets appear once. Two different query windows are kept in retrieval-round order, initially receive equal character budgets (397/398 plus five-character separator), and deterministically reuse the other window's unused budget. Combined text never exceeds 800 characters.",
+      "final_context_chunks": 10,
+      "max_characters_per_chunk": 800,
+      "passage_selection": "SQLite FTS5 snippet of <=64 tokens around query matches, then <=800-character cap; replaces historical leading-prefix truncation before outcomes.",
+      "document_header": "Collection/point/chunk identity plus existing source metadata specNumber/trNumber/tdocNumber/section/sectionNumber. Header is separate from the 800-character text cap and identical for both retrieval arms.",
+      "max_chunks_per_collection": 6,
+      "historical_difference": "New SQLite BM25 tokenizer/index/scoring replaces unavailable historical bm25s/Lucene artifacts. Not a reconstruction of prior BM25 results."
+    },
+    "reader": {
+      "output": "records of named typed fields plus abstain boolean",
+      "shared_between_arms": [
+        "requested model",
+        "reasoning effort",
+        "output contract",
+        "reader instruction",
+        "final context limits",
+        "CLI invocation",
+        "timeout"
+      ],
+      "total_compute": "Iterative arm adds one helper generation; report total usage and helper cost separately. Not total-cost matched.",
+      "temperature_and_token_limits": "CLI does not expose verified historical API temperature=0/max_tokens=1200 equivalence; do not claim that equivalence or exact historical KG reader matching.",
+      "tool_policy": "Tools forbidden in prompt; any actual event describing a tool action invalidates that trial. No gold or reference query is supplied.",
+      "system_prompt_visibility": "The complete built-in CLI system prompt is not exposed in captured output and is unrecorded. Shared invocation between arms does not certify absence of all hidden system context.",
+      "abstain_limit": "Operational empty prediction signal only; not a validated abstention benchmark.",
+      "json_fields": "JSON-typed fields require explicit structural json_schema containing only types, declared properties/items/required/additionalProperties=false and optional explicit array bounds. Nested values are strictly validated; no enum/const/example/description hints."
+    },
+    "resources": {
+      "cpu_threads": 2,
+      "sqlite_threads_per_connection": 1,
+      "sqlite_cache_mib_per_connection": 32,
+      "address_space_gib": 2,
+      "gpu": false,
+      "sqlite_temp_store": "FILE",
+      "cli_slots": "Two flock-protected slots shared across retrieval/KG processes"
+    },
+    "preservation": "New-only namespace. Completed snapshot/task/call/prediction records use exclusive creation. Historical manuscript, closed responses, and public bytes untouched.",
+    "scientific_bounds": [
+      "A bounded two-round follow-up-query adaptation, not full IRCoT or Iter-RetGen reproduction and not a new method claim.",
+      "Task subset selected from source/question/contract criteria before new model outputs; not the full Core 560 run.",
+      "Existing answer-column diagnostic key and AI review do not become expert-validated semantic canonical truth.",
+      "Qdrant scroll is non-atomic. Start/end exact counts detect count changes but not same-count edits; both arms use one retained local corpus.",
+      "Live Qdrant source cutoff is not asserted to match the original DOI TTL graph; cross-representation source equality remains unverified.",
+      "Independent expert validation, broader domains, and historical original-table reconstruction remain separate outstanding issues."
+    ],
+    "primary_sources": [
+      "https://aclanthology.org/2023.acl-long.557/",
+      "https://aclanthology.org/2023.findings-emnlp.620/",
+      "https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf",
+      "https://sqlite.org/fts5.html",
+      "https://learn.chatgpt.com/docs/non-interactive-mode"
+    ]
+  },
+  "protocol_sha256": "9006687948b26ed132c90c62f6ead743fc9bd534f97d303702b3b22d71a179f0",
+  "runner_sha256": "96209e8dba6ea2b03cea86f6ae8cbd361f90eb4ba70661df1c5f463c05134160",
+  "source_manifest_sha256": "c9f65f679a1d2e4a8e2138b19cc1d57f533adbd20e88122c9fd313e25f2d4bfe",
+  "source_manifest_path": "eligible_task_manifest_v1.json",
+  "tasks": [
+    {
+      "id": "RAN1_P1_CQ1-1",
+      "wg": "ran1",
+      "question": "Within the recorded RAN1 graph, list every distinct TDoc identifier presented at RAN1#120 and linked to Work Item NR_eMIMO-Core. Return tdocNumber as an unordered set; no output cap.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "tdocNumber",
+            "type": "string",
+            "role": "TDoc identifier"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN1_P1_CQ1-1",
+      "variant_id": "RAN1_P1_CQ1-1__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the TDocs at meeting RAN1#120 tied to Work Item NR_eMIMO-Core (MIMO meeting preparation)."
+    },
+    {
+      "id": "RAN1_P1_CQ1-3",
+      "wg": "ran1",
+      "question": "Within the recorded RAN1 graph, list every distinct TDoc identifier presented at RAN1#120 and submitted by Huawei. Return tdocNumber as an unordered set; no output cap.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "tdocNumber",
+            "type": "string",
+            "role": "TDoc identifier"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN1_P1_CQ1-3",
+      "variant_id": "RAN1_P1_CQ1-3__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the TDocs submitted by Huawei at meeting RAN1#120 (tracking a competitor's contributions)."
+    },
+    {
+      "id": "RAN1_P2_CQ4-2",
+      "wg": "ran1",
+      "question": "Within the recorded RAN1 graph, list every distinct agendaNumber linked to a TDoc whose summaryType is FL and whose MODERATED_BY company is Huawei. Return agendaNumber as an unordered set; no output cap. This asks recorded moderation and summary fields, without certifying real-world Feature Lead assignments.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "agendaNumber",
+            "type": "string",
+            "role": "agenda item number associated with scoped FL-summary TDocs"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN1_P2_CQ4-2",
+      "variant_id": "RAN1_P2_CQ4-2__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads)."
+    },
+    {
+      "id": "RAN1_P3_CQ014",
+      "wg": "ran1",
+      "question": "Within the recorded RAN1 graph, return at most 20 distinct pairs of Section nodes with reciprocal direct REFERENCES_SECTION links. Use sectionIdA < sectionIdB to choose the endpoint roles, order records lexicographically by (sectionIdA,sectionIdB,sectionA,sectionB), and return sectionIdA, sectionIdB, sectionA and sectionB. sectionA and sectionB are each the endpoint specNumber followed by a hyphen and sectionNumber.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "sectionIdA",
+            "type": "string",
+            "role": "canonical first Section endpoint identity"
+          },
+          {
+            "name": "sectionIdB",
+            "type": "string",
+            "role": "canonical second Section endpoint identity"
+          },
+          {
+            "name": "sectionA",
+            "type": "string",
+            "role": "specNumber-sectionNumber display of first endpoint"
+          },
+          {
+            "name": "sectionB",
+            "type": "string",
+            "role": "specNumber-sectionNumber display of second endpoint"
+          }
+        ],
+        "collection": {
+          "kind": "sequence"
+        }
+      },
+      "original_id": "RAN1_P3_CQ014",
+      "variant_id": "RAN1_P3_CQ014__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Find section pairs that reference each other (checking for circular dependencies)."
+    },
+    {
+      "id": "RAN1_P3_CQ029",
+      "wg": "ran1",
+      "question": "Within the recorded RAN1 graph, list every distinct specNumber belonging to a Section whose sectionTitle contains antenna, case-insensitively. Return specNumber as an unordered set; no output cap.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "TS number with a title-matched Section"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN1_P3_CQ029",
+      "variant_id": "RAN1_P3_CQ029__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Which TSs define antenna-related sections? (locating specs for antenna-port implementation)"
+    },
+    {
+      "id": "RAN1_P4_CQ2-4",
+      "wg": "ran1",
+      "question": "Within the recorded RAN1 graph, return up to 10 CR nodes with the largest number of distinct Spec nodes reached by AFFECTS_CORE_SPEC, AFFECTS_TEST_SPEC or AFFECTS_OM_SPEC. Return crNumber, affectedSpecCount and affectedSpecs. affectedSpecCount counts distinct Spec nodes; affectedSpecs is the lexicographically sorted list of distinct specNumber values. Choose up to the first 10 by affectedSpecCount descending, then crNumber ascending, and return records in that order.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "crNumber",
+            "type": "string",
+            "role": "CR TDoc identifier"
+          },
+          {
+            "name": "affectedSpecCount",
+            "type": "integer",
+            "role": "number of distinct affected Spec nodes"
+          },
+          {
+            "name": "affectedSpecs",
+            "type": "json",
+            "role": "sorted unique affected specNumber list",
+            "json_schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "collection": {
+          "kind": "sequence"
+        }
+      },
+      "original_id": "RAN1_P4_CQ2-4",
+      "variant_id": "RAN1_P4_CQ2-4__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Which 10 CRs have the widest cross-spec reach, and which specs does each affect?"
+    },
+    {
+      "id": "RAN2_P2_CQ2-1",
+      "wg": "ran2",
+      "question": "Within the recorded RAN2 graph, return every distinct (resolutionId, meetingNumber) record where a Resolution has a documentary REFERENCES link to TDoc R2-2508373 and a MADE_AT link to the Meeting. Return an unordered set. A documentary reference does not establish that the TDoc caused the decision.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "resolutionId",
+            "type": "string",
+            "role": "Resolution identifier with reference to the scoped TDoc"
+          },
+          {
+            "name": "meetingNumber",
+            "type": "string",
+            "role": "Meeting of that Resolution"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN2_P2_CQ2-1",
+      "variant_id": "RAN2_P2_CQ2-1__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Which resolutions did TDoc R2-2508373 lead to (contribution-to-decision trace)?"
+    },
+    {
+      "id": "RAN2_P2_CQ3-3",
+      "wg": "ran2",
+      "question": "Within the recorded RAN2 graph, take up to the first five Work Items ordered by workItemCode among those linked to at least one company-submitted TDoc referenced by a Resolution. For each, return workItemCode and topCompanies: an ordered list of at most five objects with company and count. count is the number of distinct Resolution nodes referencing TDocs from that company linked to that Work Item. Order companies by count descending then company ascending; order Work Item records by workItemCode ascending.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "workItemCode",
+            "type": "string",
+            "role": "Work Item identity"
+          },
+          {
+            "name": "topCompanies",
+            "type": "json",
+            "role": "ordered company/count records for the corresponding Work Item",
+            "json_schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "company": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "company",
+                  "count"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "collection": {
+          "kind": "sequence"
+        }
+      },
+      "original_id": "RAN2_P2_CQ3-3",
+      "variant_id": "RAN2_P2_CQ3-3__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Return the top companies by resolution contribution per work item (technology leadership)."
+    },
+    {
+      "id": "RAN2_P3_CQ3-6",
+      "wg": "ran2",
+      "question": "Within the recorded RAN2 graph, return every specNumber with at least one incoming MODIFIES link from a Huawei-submitted CR, with crs equal to the number of distinct such CR nodes. Return (specNumber,crs) as an unordered set; no output cap.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "specification number modified by scoped CRs"
+          },
+          {
+            "name": "crs",
+            "type": "integer",
+            "role": "distinct Huawei CR count for this specification number"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN2_P3_CQ3-6",
+      "variant_id": "RAN2_P3_CQ3-6__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the specs modified by Huawei's CRs (vendor footprint)."
+    },
+    {
+      "id": "RAN2_P3_CQ5-3",
+      "wg": "ran2",
+      "question": "Within the recorded RAN2 graph, for every Spec hub whose specRelease is absent and which has at least one incoming CR MODIFIES link, count its distinct modifying CR nodes as crCnt. Choose its release-specific Spec node with the highest numeric Rel-N; break any equal release by id ascending. Count distinct Section nodes belonging to that release node as secCnt. For hubs with secCnt greater than zero, return specNumber, crCnt, secCnt and density=crCnt/secCnt rounded to two decimal places as an unordered set; no output cap.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "Spec hub number"
+          },
+          {
+            "name": "crCnt",
+            "type": "integer",
+            "role": "distinct CR numerator associated with the Spec hub"
+          },
+          {
+            "name": "secCnt",
+            "type": "integer",
+            "role": "distinct Section denominator of the selected release Spec node"
+          },
+          {
+            "name": "density",
+            "type": "number",
+            "role": "CR numerator divided by Section denominator, rounded to two decimals"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN2_P3_CQ5-3",
+      "variant_id": "RAN2_P3_CQ5-3__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Return CR density (CRs per section) by spec (change-hotspot metric)."
+    },
+    {
+      "id": "RAN2_P3_P3-S8-CQ05",
+      "wg": "ran2",
+      "question": "Within the recorded RAN2 graph, report counts for every present (class,granularity) combination over these node classes: RRCParameter, CapabilityItem, Procedure, PerformanceRequirement and ConformanceTest. A node contributes once for each listed class label it bears. Use <unset> when granularity is missing. Return class, granularity and count as an unordered set. Do not add zero-count combinations that are absent from the records.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "class",
+            "type": "string",
+            "role": "entity class label"
+          },
+          {
+            "name": "granularity",
+            "type": "string",
+            "role": "recorded granularity value or <unset>"
+          },
+          {
+            "name": "count",
+            "type": "integer",
+            "role": "number of nodes for this class/granularity pair"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN2_P3_P3-S8-CQ05",
+      "variant_id": "RAN2_P3_P3-S8-CQ05__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Return the granularity-property distribution across the five entity classes (item-level v3.0 vs section-level legacy)."
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-1",
+      "wg": "ran2",
+      "question": "Within the recorded RAN2 graph, list every distinct (specNumber,impactType) record reached from TechnicalReport 38.825 through HAS_TR_IMPACT and IMPACTS_SPEC. Return an unordered set. The impact type is the recorded TRImpact field, not an independently certified effect.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "specification number associated with the study impact"
+          },
+          {
+            "name": "impactType",
+            "type": "string",
+            "role": "recorded type for the corresponding study/spec impact"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN2_P5_TR-CQ-2-1",
+      "variant_id": "RAN2_P5_TR-CQ-2-1__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the specs impacted by TR 38.825 with their impact type (study-to-spec impact)."
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-4",
+      "wg": "ran2",
+      "question": "Within the recorded RAN2 graph, list every distinct trNumber of a TechnicalReport with a HAS_TR_IMPACT-linked record whose impactType is ExtendSection. Return an unordered set; no output cap.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "trNumber",
+            "type": "string",
+            "role": "TechnicalReport identity with recorded ExtendSection impact type"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN2_P5_TR-CQ-2-4",
+      "variant_id": "RAN2_P5_TR-CQ-2-4__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the TRs that extend existing sections (section-extension studies)."
+    },
+    {
+      "id": "RAN3_P1_CQ1-5",
+      "wg": "ran3",
+      "question": "Within the recorded RAN3 graph, list every distinct tdocNumber presented at Meeting canonicalMeetingNumber RAN3#130 with status agreed. Return an unordered set; no output cap.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "tdocNumber",
+            "type": "string",
+            "role": "TDoc identity with agreed status at the exact scoped Meeting"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN3_P1_CQ1-5",
+      "variant_id": "RAN3_P1_CQ1-5__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the TDocs agreed at meeting RAN3#130 (approved-outcome review)."
+    },
+    {
+      "id": "RAN3_P1_CQ4-1",
+      "wg": "ran3",
+      "question": "Within the recorded RAN3 graph, return every distinct (meetingNumber,tdocNumber) record for a Samsung-submitted TDoc linked to Work Item NR_newRAT-Core and presented at a recorded Meeting. Return an unordered set; no output cap. Recorded meeting associations define scope, without assuming a past/future cutoff or ordered chronology.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "meetingNumber",
+            "type": "string",
+            "role": "recorded Meeting of the contribution"
+          },
+          {
+            "name": "tdocNumber",
+            "type": "string",
+            "role": "Samsung contribution identifier at that Meeting"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN3_P1_CQ4-1",
+      "variant_id": "RAN3_P1_CQ4-1__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List Samsung's past-meeting contributions to Work Item NR_newRAT-Core (historical contribution review)."
+    },
+    {
+      "id": "RAN3_P3_CQ1-2",
+      "wg": "ran3",
+      "question": "Within the recorded RAN3 graph, choose the release-specific Spec node for 38.413 with the highest numeric Rel-N, breaking ties by Spec id ascending. Among its Sections numbered 9.3.1, choose the first by sectionId ascending. List all immediate HAS_SUB_SECTION children of that Section. Return sectionId, sectionNumber and sectionTitle as an unordered set; no child output cap. Retain recorded Section IDs.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "sectionId",
+            "type": "string",
+            "role": "immediate child Section identity"
+          },
+          {
+            "name": "sectionNumber",
+            "type": "string",
+            "role": "child Section number"
+          },
+          {
+            "name": "sectionTitle",
+            "type": "string",
+            "role": "child Section title"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN3_P3_CQ1-2",
+      "variant_id": "RAN3_P3_CQ1-2__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions)."
+    },
+    {
+      "id": "RAN3_P3_CQ3-8",
+      "wg": "ran3",
+      "question": "Within the recorded RAN3 graph, count distinct CR nodes targeting Rel-18 and linked by MODIFIES for each specNumber. Return up to the first five (specNumber,crCnt) records ordered by crCnt descending, then specNumber ascending. crCnt is the distinct-CR count for that specNumber; this deterministic secondary key resolves boundary ties.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "specification number"
+          },
+          {
+            "name": "crCnt",
+            "type": "integer",
+            "role": "distinct Rel-18 CR count associated with that specification number"
+          }
+        ],
+        "collection": {
+          "kind": "sequence"
+        }
+      },
+      "original_id": "RAN3_P3_CQ3-8",
+      "variant_id": "RAN3_P3_CQ3-8__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Return the top 5 specs by Rel-18 CR count (release-scoped change volume)."
+    },
+    {
+      "id": "RAN3_P3_CQ5-5",
+      "wg": "ran3",
+      "question": "Within the recorded RAN3 graph, for every specNumber reached from at least one TSFigure through FIGURE_IN_SECTION then BELONGS_TO_SPEC, count distinct TSFigure nodes. Return specNumber and figCnt as an unordered set; no output cap. Specs with no such recorded TSFigure path are outside this formal task population.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "specification number with recorded figure paths"
+          },
+          {
+            "name": "figCnt",
+            "type": "integer",
+            "role": "number of distinct TSFigure nodes associated with this specification number"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN3_P3_CQ5-5",
+      "variant_id": "RAN3_P3_CQ5-5__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Show the distribution of figure counts per spec (figure-content profile)."
+    },
+    {
+      "id": "RAN3_P4_CQ4-1",
+      "wg": "ran3",
+      "question": "Within the recorded RAN3 graph, return every distinct (tdocNumber,reason) record for a CR linked by MODIFIES_SECTION to a Section numbered 9.4.5 belonging to spec 38.473, across stored release versions. reason is that CR node's reasonForChange value; return null if the property is absent. Return an unordered set; no output cap.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "tdocNumber",
+            "type": "string",
+            "role": "CR identifier for the requested Section association"
+          },
+          {
+            "name": "reason",
+            "type": "string",
+            "role": "recorded reasonForChange of that CR",
+            "nullable": true
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN3_P4_CQ4-1",
+      "variant_id": "RAN3_P4_CQ4-1__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the change reasons of CRs modifying section 9.4.5 of spec 38.473 (section-level change rationale)."
+    },
+    {
+      "id": "RAN3_P5_TR-CQ-4-1",
+      "wg": "ran3",
+      "question": "Within the recorded RAN3 graph, return every distinct (trNumber,specNumber,impactType) record where a TechnicalReport targets Rel-17 and is linked through HAS_TR_IMPACT then IMPACTS_SPEC to a Spec. Return an unordered set. This population includes reports with an actual recorded spec-impact link; no causal or external semantic certification is claimed.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "trNumber",
+            "type": "string",
+            "role": "TechnicalReport identity targeting the scoped release"
+          },
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "Specification associated with this report impact"
+          },
+          {
+            "name": "impactType",
+            "type": "string",
+            "role": "Recorded type of this report/spec impact"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN3_P5_TR-CQ-4-1",
+      "variant_id": "RAN3_P5_TR-CQ-4-1__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Return the Rel-17-targeted TRs with their spec-impact types (release study impact map)."
+    },
+    {
+      "id": "RAN4_P1_CQ5-1",
+      "wg": "ran4",
+      "question": "Within the recorded RAN4 graph, report the number of nodes bearing each node label. Return label and cnt; a node with multiple labels contributes once to each of its labels. Return all labels as an unordered set.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "label",
+            "type": "string",
+            "role": "label"
+          },
+          {
+            "name": "cnt",
+            "type": "integer",
+            "role": "cnt"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN4_P1_CQ5-1",
+      "variant_id": "RAN4_P1_CQ5-1__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Return node counts by label across the graph (dataset statistics)."
+    },
+    {
+      "id": "RAN4_P2_CQ1-5",
+      "wg": "ran4",
+      "question": "List every distinct resolution identifier in the recorded RAN4 graph with a documentary reference to at least one TDoc targeting release Rel-15. Return resolutionId as an unordered set. This asks for recorded references, without asserting causation.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "resolutionId",
+            "type": "string",
+            "role": "resolutionId"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN4_P2_CQ1-5",
+      "variant_id": "RAN4_P2_CQ1-5__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the resolutions tied to Rel-15 TDocs (release-scoped decisions)."
+    },
+    {
+      "id": "RAN4_P2_CQ1-6",
+      "wg": "ran4",
+      "question": "List every distinct resolution identifier in the recorded RAN4 graph that references a TDoc linked as modifying spec 38.133. Return resolutionId as an unordered set. The links are documentary associations, without asserting that a resolution caused a change.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "resolutionId",
+            "type": "string",
+            "role": "resolutionId"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN4_P2_CQ1-6",
+      "variant_id": "RAN4_P2_CQ1-6__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the resolutions that drive changes to spec 38.133 (decisions affecting a spec)."
+    },
+    {
+      "id": "RAN4_P3_CQ1-11",
+      "wg": "ran4",
+      "question": "In the recorded RAN4 graph, list all level-2 sections belonging to spec 38.104 across its stored release versions. Return sectionId, sectionNumber and sectionTitle as an unordered set; Retain the recorded sectionId rather than collapsing records to sectionNumber.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "sectionId",
+            "type": "string",
+            "role": "sectionId"
+          },
+          {
+            "name": "sectionNumber",
+            "type": "string",
+            "role": "sectionNumber"
+          },
+          {
+            "name": "sectionTitle",
+            "type": "string",
+            "role": "sectionTitle"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN4_P3_CQ1-11",
+      "variant_id": "RAN4_P3_CQ1-11__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the level-2 sections of spec 38.104 (base-station spec structure)."
+    },
+    {
+      "id": "RAN4_P3_CQ2-7",
+      "wg": "ran4",
+      "question": "In the recorded RAN4 graph, rank inter-spec reference pairs by the number of matched section reference occurrences. For each section, use its owning spec as fromSpec and its REFERENCES_SPEC target as toSpec, exclude self-spec references, and return fromSpec, toSpec and refCount. Return up to the first 10 pairs ordered by refCount descending, then fromSpec and toSpec ascending to break ties.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "fromSpec",
+            "type": "string",
+            "role": "fromSpec"
+          },
+          {
+            "name": "toSpec",
+            "type": "string",
+            "role": "toSpec"
+          },
+          {
+            "name": "refCount",
+            "type": "integer",
+            "role": "refCount"
+          }
+        ],
+        "collection": {
+          "kind": "sequence"
+        }
+      },
+      "original_id": "RAN4_P3_CQ2-7",
+      "variant_id": "RAN4_P3_CQ2-7__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the top 10 spec-to-spec reference pairs (inter-spec dependency map)."
+    },
+    {
+      "id": "RAN4_P4_CQ4-4",
+      "wg": "ran4",
+      "question": "In the recorded RAN4 graph, list all distinct spec numbers connected to Samsung-submitted CRs by AFFECTS_CORE_SPEC, AFFECTS_TEST_SPEC or AFFECTS_OM_SPEC. Samsung means a Company companyName containing Samsung. Return spec as an unordered set. This task concerns those affected-spec relations rather than each CR primary MODIFIES target.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "spec",
+            "type": "string",
+            "role": "spec"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN4_P4_CQ4-4",
+      "variant_id": "RAN4_P4_CQ4-4__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the other specs affected by Samsung's CRs (a company's cross-spec footprint)."
+    },
+    {
+      "id": "RAN4_P5_CQ2-4",
+      "wg": "ran4",
+      "question": "In the recorded RAN4 graph, list all distinct pairs of technical-report number and spec number linked by an impact record whose impactType is ExtendSection. Return trNumber and specNumber as an unordered set. These are recorded impact annotations rather than an independently verified history of section changes.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "trNumber",
+            "type": "string",
+            "role": "trNumber"
+          },
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "specNumber"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN4_P5_CQ2-4",
+      "variant_id": "RAN4_P5_CQ2-4__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Which TRs extended existing spec sections? (incremental spec impact)."
+    },
+    {
+      "id": "RAN4_P5_CQ5-3",
+      "wg": "ran4",
+      "question": "In the recorded RAN4 graph, return the five most-referenced technical reports, counting incoming REFERENCES_TR edges from TechnicalReport nodes. Return trNumber and refCount in order of refCount descending, then trNumber ascending; return exactly five when at least five qualify.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "trNumber",
+            "type": "string",
+            "role": "trNumber"
+          },
+          {
+            "name": "refCount",
+            "type": "integer",
+            "role": "refCount"
+          }
+        ],
+        "collection": {
+          "kind": "sequence"
+        }
+      },
+      "original_id": "RAN4_P5_CQ5-3",
+      "variant_id": "RAN4_P5_CQ5-3__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the top 5 most-referenced TRs (most-cited studies)."
+    },
+    {
+      "id": "RAN5_P2_CQ3-2",
+      "wg": "ran5",
+      "question": "For every Work Item and company in the recorded RAN5 graph, count distinct Resolution nodes referencing at least one TDoc that is related to that Work Item and submitted by that company. Return wi_id, company and cnt for all positive groups as an unordered set. Counts describe documentary references rather than attribution of causal contribution.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "wi_id",
+            "type": "string",
+            "role": "wi_id"
+          },
+          {
+            "name": "company",
+            "type": "string",
+            "role": "company"
+          },
+          {
+            "name": "cnt",
+            "type": "integer",
+            "role": "cnt"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN5_P2_CQ3-2",
+      "variant_id": "RAN5_P2_CQ3-2__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Show each company's resolution contributions per Work Item (technology contribution breakdown)."
+    },
+    {
+      "id": "RAN5_P2_CQ6-2",
+      "wg": "ran5",
+      "question": "In the recorded RAN5 graph, for each meeting with at least one Resolution referencing a Samsung TDoc, return meeting and cnt, the number of distinct such Resolution nodes made at that meeting. Samsung means companyName exactly Samsung. Order by the numeric meeting index ascending, then meeting identifier ascending for ties. These counts describe recorded documentary references, without inferring causal contributions.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "meeting",
+            "type": "string",
+            "role": "meeting"
+          },
+          {
+            "name": "cnt",
+            "type": "integer",
+            "role": "cnt"
+          }
+        ],
+        "collection": {
+          "kind": "sequence"
+        }
+      },
+      "original_id": "RAN5_P2_CQ6-2",
+      "variant_id": "RAN5_P2_CQ6-2__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Track Samsung's resolution contributions across meetings over time (contribution trend)."
+    },
+    {
+      "id": "RAN5_P3_CQ1-10",
+      "wg": "ran5",
+      "question": "In the recorded RAN5 graph, locate every table whose tableNumber begins with the literal prefix \"6.2.\". Return distinct specNumber, sectionId and tableNumber records, using each table containing section and its owning spec. Include all stored release versions and return an unordered set.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "specNumber"
+          },
+          {
+            "name": "sectionId",
+            "type": "string",
+            "role": "sectionId"
+          },
+          {
+            "name": "tableNumber",
+            "type": "string",
+            "role": "tableNumber"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN5_P3_CQ1-10",
+      "variant_id": "RAN5_P3_CQ1-10__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Locate the spec and section for tables numbered 6.2.x (table-number lookup)."
+    },
+    {
+      "id": "RAN5_P3_CQ1-11",
+      "wg": "ran5",
+      "question": "In the recorded RAN5 graph, list all level-2 sections belonging to spec 38.521-2 across its stored release versions. Return sectionId, sectionNumber and sectionTitle as an unordered set; Retain the recorded sectionId rather than collapsing records to sectionNumber.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "sectionId",
+            "type": "string",
+            "role": "sectionId"
+          },
+          {
+            "name": "sectionNumber",
+            "type": "string",
+            "role": "sectionNumber"
+          },
+          {
+            "name": "sectionTitle",
+            "type": "string",
+            "role": "sectionTitle"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN5_P3_CQ1-11",
+      "variant_id": "RAN5_P3_CQ1-11__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the level-2 sections of TS 38.521-2 (second-level outline)."
+    },
+    {
+      "id": "RAN5_P3_CQ1-16",
+      "wg": "ran5",
+      "question": "In the recorded RAN5 graph, rank specs whose specNumber begins with 38.5 by the number of their incoming BELONGS_TO_SPEC relations from Section nodes, including stored release variants. Return specNumber and sectionCount for up to the first five, ordered by sectionCount descending then specNumber ascending.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "type": "string",
+            "role": "specNumber"
+          },
+          {
+            "name": "sectionCount",
+            "type": "integer",
+            "role": "sectionCount"
+          }
+        ],
+        "collection": {
+          "kind": "sequence"
+        }
+      },
+      "original_id": "RAN5_P3_CQ1-16",
+      "variant_id": "RAN5_P3_CQ1-16__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Which five RAN5 specs have the most sections? (largest specs)"
+    },
+    {
+      "id": "RAN5_P3_P3-S8-CQ02",
+      "wg": "ran5",
+      "question": "For each of RRCParameter, CapabilityItem, Procedure, PerformanceRequirement and ConformanceTest represented by granularity=item nodes in the recorded RAN5 graph, report class, total, linked and link_pct. linked counts such nodes with at least one outgoing definedInSection edge to a Section; link_pct is 100*linked/total rounded to one decimal. Return an unordered set and omit classes with no item nodes. A node contributes once to each of the listed class labels it bears.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "class",
+            "type": "string",
+            "role": "class"
+          },
+          {
+            "name": "total",
+            "type": "integer",
+            "role": "total"
+          },
+          {
+            "name": "linked",
+            "type": "integer",
+            "role": "linked"
+          },
+          {
+            "name": "link_pct",
+            "type": "number",
+            "role": "link_pct"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN5_P3_P3-S8-CQ02",
+      "variant_id": "RAN5_P3_P3-S8-CQ02__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Are all item-level entity nodes linked to a section via definedInSection? (link-coverage check)"
+    },
+    {
+      "id": "RAN5_P5_CQ2-4",
+      "wg": "ran5",
+      "question": "In the recorded RAN5 graph, list all distinct technical-report numbers with an impact annotation whose impactType is NoChange. Return trNumber as an unordered set. A NoChange annotation describes the recorded label rather than proof that a study had no effects.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "trNumber",
+            "type": "string",
+            "role": "trNumber"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN5_P5_CQ2-4",
+      "variant_id": "RAN5_P5_CQ2-4__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "List the study-only TRs marked NoChange (no-spec-change studies)."
+    },
+    {
+      "id": "RAN5_P5_CQ4-3",
+      "wg": "ran5",
+      "question": "In the recorded RAN5 graph, list every distinct technical-report number and impact-type pair for impact records linked to spec 38.533. Return trNumber and impactType as an unordered set. These are recorded annotations, without independently establishing causal impact.",
+      "contract": {
+        "required_fields": [
+          {
+            "name": "trNumber",
+            "type": "string",
+            "role": "trNumber"
+          },
+          {
+            "name": "impactType",
+            "type": "string",
+            "role": "impactType"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        }
+      },
+      "original_id": "RAN5_P5_CQ4-3",
+      "variant_id": "RAN5_P5_CQ4-3__explicit_graph_task",
+      "task_variant": true,
+      "original_question": "Which TRs impacted TS 38.533, with impact type? (spec-impact lookup)"
+    }
+  ],
+  "task_ids": [
+    "RAN1_P1_CQ1-1",
+    "RAN1_P1_CQ1-3",
+    "RAN1_P2_CQ4-2",
+    "RAN1_P3_CQ014",
+    "RAN1_P3_CQ029",
+    "RAN1_P4_CQ2-4",
+    "RAN2_P2_CQ2-1",
+    "RAN2_P2_CQ3-3",
+    "RAN2_P3_CQ3-6",
+    "RAN2_P3_CQ5-3",
+    "RAN2_P3_P3-S8-CQ05",
+    "RAN2_P5_TR-CQ-2-1",
+    "RAN2_P5_TR-CQ-2-4",
+    "RAN3_P1_CQ1-5",
+    "RAN3_P1_CQ4-1",
+    "RAN3_P3_CQ1-2",
+    "RAN3_P3_CQ3-8",
+    "RAN3_P3_CQ5-5",
+    "RAN3_P4_CQ4-1",
+    "RAN3_P5_TR-CQ-4-1",
+    "RAN4_P1_CQ5-1",
+    "RAN4_P2_CQ1-5",
+    "RAN4_P2_CQ1-6",
+    "RAN4_P3_CQ1-11",
+    "RAN4_P3_CQ2-7",
+    "RAN4_P4_CQ4-4",
+    "RAN4_P5_CQ2-4",
+    "RAN4_P5_CQ5-3",
+    "RAN5_P2_CQ3-2",
+    "RAN5_P2_CQ6-2",
+    "RAN5_P3_CQ1-10",
+    "RAN5_P3_CQ1-11",
+    "RAN5_P3_CQ1-16",
+    "RAN5_P3_P3-S8-CQ02",
+    "RAN5_P5_CQ2-4",
+    "RAN5_P5_CQ4-3"
+  ],
+  "snapshot_manifests": [
+    {
+      "path": "ran1_ts_sections.snapshot.json",
+      "sha256": "12b6a90189b71aa8b910d115fc6e98e4478e994cac9fad22646d1f06152b3bb8"
+    },
+    {
+      "path": "ran1_tdoc_chunks.snapshot.json",
+      "sha256": "ae489a9d3397aff94e359754f9ec2b4baf08d16fb89b958a454339f08524628b"
+    },
+    {
+      "path": "ran1_cr_chunks.snapshot.json",
+      "sha256": "9fe08d5d00e7739f243c19f0a958eb8c372e06dd746bb090a3947384410bfa75"
+    },
+    {
+      "path": "ran1_resolution_chunks.snapshot.json",
+      "sha256": "3b67625dd1b8867c0dce6dc0e595a41142f2a277e6bc2bcca1284ab4413dfa22"
+    },
+    {
+      "path": "ran1_tr_sections.snapshot.json",
+      "sha256": "d72e7ae6cbd9d7aeda0e55165aeb10eace8e72fe0a72833803e3098f9ef114a3"
+    },
+    {
+      "path": "ran2_ts_sections.snapshot.json",
+      "sha256": "795e41b83c4f09ebca1d33218fb23472c8e7f28003c2347aa694e5a01cae6c58"
+    },
+    {
+      "path": "ran2_tdoc_chunks.snapshot.json",
+      "sha256": "8f2f80c47ac1e8fd026390f247a3a507ec99ada5e7094a1ba0a25d3ce9b43ce5"
+    },
+    {
+      "path": "ran2_cr_chunks.snapshot.json",
+      "sha256": "d4273a80e5e48da161ae36de83ceb0f59f02aed5102de2d4ef1b853a8f5e0536"
+    },
+    {
+      "path": "ran2_resolution_chunks.snapshot.json",
+      "sha256": "37cbb232f46cb10649af73ee9a802799f86b702d4ae4e8edaa6ab4c148f54ca9"
+    },
+    {
+      "path": "ran2_tr_sections.snapshot.json",
+      "sha256": "0d20cc87329b5a056ece3c9dcf0225a847cfacf9ca0ea976b51436371f872d5a"
+    },
+    {
+      "path": "ran3_ts_sections.snapshot.json",
+      "sha256": "811722849ba89961eaddbc3425f48debe67d4dce75d77e3931754ad9d489c17b"
+    },
+    {
+      "path": "ran3_tdoc_chunks.snapshot.json",
+      "sha256": "cafe67d198509b78ff7a2b182b5856c0c354a63b7ffa12f13b6235b042ccd36d"
+    },
+    {
+      "path": "ran3_cr_chunks.snapshot.json",
+      "sha256": "d2325eb1689ac7e1b4c6ce22bc5a6fd837992dce26ac62df0705a2729fc59829"
+    },
+    {
+      "path": "ran3_resolution_chunks.snapshot.json",
+      "sha256": "91627531548e01b5a120fad741716c895915c960f1edaf38d832150a9891b951"
+    },
+    {
+      "path": "ran3_tr_sections.snapshot.json",
+      "sha256": "5b860ca794655266edf4b056622dd14704172248c1350903fa9c84950f6fb2fa"
+    },
+    {
+      "path": "ran4_ts_sections.snapshot.json",
+      "sha256": "aa5a8966e4327cf5994946a368a07dc646096cfa93147a9c154f01d3e5afca3d"
+    },
+    {
+      "path": "ran4_tdoc_chunks.snapshot.json",
+      "sha256": "8fceade6fcfadda7397b644b664990060718e313aaa583137700b9ad7efd3b44"
+    },
+    {
+      "path": "ran4_cr_chunks.snapshot.json",
+      "sha256": "6ddbd7b9dd4f44ab98b43ece8bb0941b3e0ffd9d38ed2d0fb6ecea96c5666fd5"
+    },
+    {
+      "path": "ran4_resolution_chunks.snapshot.json",
+      "sha256": "25806e744157d4e3af2530f9cd4fa0747a02f316a45681ddd4c0642656f9c22f"
+    },
+    {
+      "path": "ran4_tr_sections.snapshot.json",
+      "sha256": "d71f2a7c16e988522db207e6866885e0f9b3c3ab6e66ede9a973aafcfcbe1c83"
+    },
+    {
+      "path": "ran5_ts_sections.snapshot.json",
+      "sha256": "532d6e7c8d28274698b078961d724efdd26c156715e53cdf7bbbfb3b1258e477"
+    },
+    {
+      "path": "ran5_tdoc_chunks.snapshot.json",
+      "sha256": "ef3a9e0fc701fd29c404ab1ddaf7c686ad9a4d142f2bcb3e2e8b3d54da931082"
+    },
+    {
+      "path": "ran5_cr_chunks.snapshot.json",
+      "sha256": "3437541928ba16c22372c319d3cafe1a165fc0994741a0430184b61d248d0cd4"
+    },
+    {
+      "path": "ran5_resolution_chunks.snapshot.json",
+      "sha256": "23ad6a2d61a3f923c3707d0d02be102ec1f9578f6db473e61aeb11025f67bfac"
+    },
+    {
+      "path": "ran5_tr_sections.snapshot.json",
+      "sha256": "8a808dd420194d5a269a3c034a2317bf3242e01d25b54b167a5cced2487674b6"
+    }
+  ],
+  "database_guards": [
+    {
+      "path": "ran1.sqlite3",
+      "sha256": "6e9888147dfb30482bb7f7c1d8ae0738b69573b42c98d313e4fe3df409477199",
+      "bytes": 4776837120
+    },
+    {
+      "path": "ran2.sqlite3",
+      "sha256": "f678bc44526e7e54f79fd65d56f5fe1c9303b7e25ce65fc712bfec7e1d8bcd3b",
+      "bytes": 6523031552
+    },
+    {
+      "path": "ran3.sqlite3",
+      "sha256": "fed7b107a7bf439a50955f00bc0a7e5b4ac8e966d4b388fb50033da5f699219f",
+      "bytes": 1660665856
+    },
+    {
+      "path": "ran4.sqlite3",
+      "sha256": "f696dedbc69d2c7c981db346df00fd94b90fb71cd9f84049240b8ad473fc0037",
+      "bytes": 5067141120
+    },
+    {
+      "path": "ran5.sqlite3",
+      "sha256": "c917ab5269cac1645892c8123c0a4f59603813d783779e043e4c0a660aea1f06",
+      "bytes": 1752137728
+    }
+  ],
+  "frozen_unix": 1791340987.8501096,
+  "selection": {
+    "kind": "prospective task-coverage selection; no new predictions exist",
+    "created_utc": "2026-10-07T02:12:54.454966+00:00",
+    "rule": "two IDs per nonempty WG x released-track stratum ordered by SHA256(fixed seed + original ID), without replacement; no score, predictions or audit acceptance used to select candidates",
+    "fixed_seed": "2026-10-07/contract-comparison-v1/",
+    "population_n": 560,
+    "selected_n": 40,
+    "selected_ids": [
+      "RAN1_P1_CQ1-1",
+      "RAN1_P1_CQ1-3",
+      "RAN1_P2_CQ3-1",
+      "RAN1_P2_CQ4-2",
+      "RAN1_P3_CQ014",
+      "RAN1_P3_CQ029",
+      "RAN1_P3_P3-S8-CQ04",
+      "RAN1_P4_CQ2-4",
+      "RAN2_P2_CQ2-1",
+      "RAN2_P2_CQ3-3",
+      "RAN2_P3_CQ1-1",
+      "RAN2_P3_CQ3-6",
+      "RAN2_P3_CQ5-3",
+      "RAN2_P3_P3-S8-CQ05",
+      "RAN2_P5_TR-CQ-2-1",
+      "RAN2_P5_TR-CQ-2-4",
+      "RAN3_P1_CQ1-4",
+      "RAN3_P1_CQ1-5",
+      "RAN3_P1_CQ4-1",
+      "RAN3_P3_CQ1-2",
+      "RAN3_P3_CQ3-8",
+      "RAN3_P3_CQ5-5",
+      "RAN3_P4_CQ4-1",
+      "RAN3_P5_TR-CQ-4-1",
+      "RAN4_P1_CQ5-1",
+      "RAN4_P2_CQ1-5",
+      "RAN4_P2_CQ1-6",
+      "RAN4_P3_CQ1-11",
+      "RAN4_P3_CQ2-7",
+      "RAN4_P4_CQ4-4",
+      "RAN4_P5_CQ2-4",
+      "RAN4_P5_CQ5-3",
+      "RAN5_P2_CQ3-2",
+      "RAN5_P2_CQ6-2",
+      "RAN5_P3_CQ1-10",
+      "RAN5_P3_CQ1-11",
+      "RAN5_P3_CQ1-16",
+      "RAN5_P3_P3-S8-CQ02",
+      "RAN5_P5_CQ2-4",
+      "RAN5_P5_CQ4-3"
+    ],
+    "strata": [
+      {
+        "wg": "RAN1",
+        "track": "aggregation",
+        "population_n": 31,
+        "selected_ids": [
+          "RAN1_P4_CQ2-4",
+          "RAN1_P2_CQ4-2"
+        ]
+      },
+      {
+        "wg": "RAN1",
+        "track": "lookup",
+        "population_n": 44,
+        "selected_ids": [
+          "RAN1_P3_P3-S8-CQ04",
+          "RAN1_P3_CQ029"
+        ]
+      },
+      {
+        "wg": "RAN1",
+        "track": "multihop",
+        "population_n": 18,
+        "selected_ids": [
+          "RAN1_P2_CQ3-1",
+          "RAN1_P3_CQ014"
+        ]
+      },
+      {
+        "wg": "RAN1",
+        "track": "relational",
+        "population_n": 31,
+        "selected_ids": [
+          "RAN1_P1_CQ1-3",
+          "RAN1_P1_CQ1-1"
+        ]
+      },
+      {
+        "wg": "RAN2",
+        "track": "aggregation",
+        "population_n": 32,
+        "selected_ids": [
+          "RAN2_P3_CQ3-6",
+          "RAN2_P3_P3-S8-CQ05"
+        ]
+      },
+      {
+        "wg": "RAN2",
+        "track": "lookup",
+        "population_n": 34,
+        "selected_ids": [
+          "RAN2_P3_CQ1-1",
+          "RAN2_P5_TR-CQ-2-4"
+        ]
+      },
+      {
+        "wg": "RAN2",
+        "track": "multihop",
+        "population_n": 16,
+        "selected_ids": [
+          "RAN2_P3_CQ5-3",
+          "RAN2_P2_CQ3-3"
+        ]
+      },
+      {
+        "wg": "RAN2",
+        "track": "relational",
+        "population_n": 32,
+        "selected_ids": [
+          "RAN2_P5_TR-CQ-2-1",
+          "RAN2_P2_CQ2-1"
+        ]
+      },
+      {
+        "wg": "RAN3",
+        "track": "aggregation",
+        "population_n": 38,
+        "selected_ids": [
+          "RAN3_P3_CQ5-5",
+          "RAN3_P3_CQ3-8"
+        ]
+      },
+      {
+        "wg": "RAN3",
+        "track": "lookup",
+        "population_n": 32,
+        "selected_ids": [
+          "RAN3_P1_CQ1-4",
+          "RAN3_P1_CQ1-5"
+        ]
+      },
+      {
+        "wg": "RAN3",
+        "track": "multihop",
+        "population_n": 9,
+        "selected_ids": [
+          "RAN3_P1_CQ4-1",
+          "RAN3_P5_TR-CQ-4-1"
+        ]
+      },
+      {
+        "wg": "RAN3",
+        "track": "relational",
+        "population_n": 33,
+        "selected_ids": [
+          "RAN3_P3_CQ1-2",
+          "RAN3_P4_CQ4-1"
+        ]
+      },
+      {
+        "wg": "RAN4",
+        "track": "aggregation",
+        "population_n": 43,
+        "selected_ids": [
+          "RAN4_P1_CQ5-1",
+          "RAN4_P3_CQ2-7"
+        ]
+      },
+      {
+        "wg": "RAN4",
+        "track": "lookup",
+        "population_n": 32,
+        "selected_ids": [
+          "RAN4_P3_CQ1-11",
+          "RAN4_P5_CQ5-3"
+        ]
+      },
+      {
+        "wg": "RAN4",
+        "track": "multihop",
+        "population_n": 2,
+        "selected_ids": [
+          "RAN4_P2_CQ1-6",
+          "RAN4_P2_CQ1-5"
+        ]
+      },
+      {
+        "wg": "RAN4",
+        "track": "relational",
+        "population_n": 30,
+        "selected_ids": [
+          "RAN4_P5_CQ2-4",
+          "RAN4_P4_CQ4-4"
+        ]
+      },
+      {
+        "wg": "RAN5",
+        "track": "aggregation",
+        "population_n": 35,
+        "selected_ids": [
+          "RAN5_P3_P3-S8-CQ02",
+          "RAN5_P3_CQ1-16"
+        ]
+      },
+      {
+        "wg": "RAN5",
+        "track": "lookup",
+        "population_n": 36,
+        "selected_ids": [
+          "RAN5_P3_CQ1-11",
+          "RAN5_P5_CQ2-4"
+        ]
+      },
+      {
+        "wg": "RAN5",
+        "track": "multihop",
+        "population_n": 4,
+        "selected_ids": [
+          "RAN5_P2_CQ6-2",
+          "RAN5_P2_CQ3-2"
+        ]
+      },
+      {
+        "wg": "RAN5",
+        "track": "relational",
+        "population_n": 28,
+        "selected_ids": [
+          "RAN5_P3_CQ1-10",
+          "RAN5_P5_CQ4-3"
+        ]
+      }
+    ],
+    "prior_aggregate_results_known": true,
+    "limitations": [
+      "balanced task-coverage cohort, not a population-weighted Core estimate",
+      "released track labels do not certify measured traversal depth",
+      "source-contract eligibility determined and pinned before new model calls; unresolved candidates retained in disposition table, no outcome-based replacement",
+      "no human or independent 3GPP expert validation"
+    ],
+    "inputs_sha256": {
+      "release_package/cqs/spectra_cq_v2.0/benchmark.jsonl": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef",
+      "release_package/cqs/spectra_cq_v2.0/core_answer_gold.jsonl": "08343761af10311c4da4c1f1ab4b31a0010a2a718180624dc6b5284f00c6d201",
+      "release_package/cqs/spectra_cq_v2.0/splits/track_assignment.json": "e7f588cd66b85e3f82ebe10f0bb20e312a2cb48f2ceb7e407179afb203e3228e"
+    }
+  },
+  "gold_exposed_to_reader": false,
+  "original_manifest_sha256": "6faabc9edd8a39dfa8728bed182d9df0cdd23f3cbbfd8429d5b32d94385d3d09",
+  "export_transformation": "Filesystem provenance paths reduced to filenames; scientific wording/contracts/flags/guards unchanged"
+}

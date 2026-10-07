@@ -1,0 +1,26 @@
+{
+  "id": "RAN2_P2_CQ3-3",
+  "original_id": "RAN2_P2_CQ3-3",
+  "variant_id": "RAN2_P2_CQ3-3__explicit_graph_task",
+  "wg": "ran2",
+  "arm": "structured",
+  "call_number": 8,
+  "generated_query": "MATCH (w:WorkItem)<-[:RELATED_TO]-(t:Tdoc)<-[:REFERENCES]-(r:Resolution), (t)-[:SUBMITTED_BY]->(c:Company)\nWHERE w.workItemCode IS NOT NULL AND c.companyName IS NOT NULL\nWITH DISTINCT w\nORDER BY w.workItemCode ASC\nLIMIT 5\nCALL {\n  WITH w\n  MATCH (w)<-[:RELATED_TO]-(t:Tdoc)<-[:REFERENCES]-(r:Resolution), (t)-[:SUBMITTED_BY]->(c:Company)\n  WHERE c.companyName IS NOT NULL\n  WITH c.companyName AS company, count(DISTINCT r) AS count\n  ORDER BY count DESC, company ASC\n  LIMIT 5\n  RETURN collect({company: company, count: count}) AS topCompanies\n}\nRETURN w.workItemCode AS workItemCode, topCompanies AS topCompanies\nORDER BY workItemCode ASC",
+  "generation_abstain": false,
+  "prediction": {
+    "records": [],
+    "abstain": true
+  },
+  "error_category": "query_execution",
+  "execution": {
+    "status": "ERROR",
+    "error_class": "ValueError",
+    "rows": [],
+    "columns": [],
+    "row_count_retained": 0,
+    "truncated": false,
+    "started_utc": "2026-10-07T02:45:19.987020+00:00",
+    "finished_utc": "2026-10-07T02:45:19.987062+00:00",
+    "elapsed_s": 0.0
+  }
+}

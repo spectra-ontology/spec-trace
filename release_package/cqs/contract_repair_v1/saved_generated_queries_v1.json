@@ -1,0 +1,184 @@
+{
+  "items": [
+    {
+      "id": "RAN1_P1_CQ1-1",
+      "wg": "RAN1",
+      "query": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting), (t)-[:RELATED_TO]->(w:WorkItem)\nWHERE m.meetingNumber = 'RAN1#120' AND w.workItemCode = 'NR_eMIMO-Core'\nRETURN DISTINCT t.tdocNumber AS tdocNumber"
+    },
+    {
+      "id": "RAN1_P1_CQ1-3",
+      "wg": "RAN1",
+      "query": "MATCH (d)-[:PRESENTED_AT]->(m:Meeting), (d)-[:SUBMITTED_BY]->(c:Company)\nWHERE (d:Tdoc OR d:CR OR d:LS OR d:SessionNotes OR d:Summary)\n  AND m.workingGroup = 'RAN1'\n  AND (m.meetingNumber = 'RAN1#120' OR m.canonicalMeetingNumber = 'RAN1#120')\n  AND c.companyName = 'Huawei'\n  AND d.tdocNumber IS NOT NULL\nRETURN DISTINCT d.tdocNumber AS tdocNumber"
+    },
+    {
+      "id": "RAN1_P2_CQ4-2",
+      "wg": "RAN1",
+      "query": "MATCH (t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem), (t)-[:MODERATED_BY]->(c:Company), (t)-[:PRESENTED_AT]->(m:Meeting) WHERE t.summaryType = 'FL' AND c.companyName = 'Huawei' AND m.workingGroup = 'RAN1' RETURN DISTINCT a.agendaNumber AS agendaNumber"
+    },
+    {
+      "id": "RAN1_P3_CQ014",
+      "wg": "RAN1",
+      "query": "MATCH (a:Section)-[:REFERENCES_SECTION]->(b:Section), (b)-[:REFERENCES_SECTION]->(a), (a)-[:BELONGS_TO_SPEC]->(sa:Spec), (b)-[:BELONGS_TO_SPEC]->(sb:Spec)\nWHERE a.sectionId < b.sectionId\nRETURN DISTINCT a.sectionId AS sectionIdA, b.sectionId AS sectionIdB, sa.specNumber + '-' + a.sectionNumber AS sectionA, sb.specNumber + '-' + b.sectionNumber AS sectionB\nORDER BY sectionIdA, sectionIdB, sectionA, sectionB\nLIMIT 20"
+    },
+    {
+      "id": "RAN1_P3_CQ029",
+      "wg": "RAN1",
+      "query": "MATCH (section:Section)-[:BELONGS_TO_SPEC]->(spec:Spec)\nWHERE toLower(section.sectionTitle) CONTAINS 'antenna'\nRETURN DISTINCT spec.specNumber AS specNumber"
+    },
+    {
+      "id": "RAN1_P4_CQ2-4",
+      "wg": "RAN1",
+      "query": "MATCH (cr:CR)\nOPTIONAL MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(spec:Spec)\nWITH cr, count(DISTINCT spec) AS affectedSpecCount\nORDER BY affectedSpecCount DESC, cr.crNumber ASC\nLIMIT 10\nCALL {\n  WITH cr\n  OPTIONAL MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(spec:Spec)\n  WITH DISTINCT spec.specNumber AS specNumber\n  ORDER BY specNumber ASC\n  RETURN collect(specNumber) AS affectedSpecs\n}\nRETURN cr.crNumber AS crNumber, affectedSpecCount, affectedSpecs\nORDER BY affectedSpecCount DESC, crNumber ASC"
+    },
+    {
+      "id": "RAN2_P2_CQ2-1",
+      "wg": "RAN2",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc {tdocNumber: 'R2-2508373'}), (r)-[:MADE_AT]->(m:Meeting)\nRETURN DISTINCT r.resolutionId AS resolutionId, m.meetingNumber AS meetingNumber"
+    },
+    {
+      "id": "RAN2_P2_CQ3-3",
+      "wg": "RAN2",
+      "query": "MATCH (w:WorkItem)<-[:RELATED_TO]-(t:Tdoc)<-[:REFERENCES]-(r:Resolution), (t)-[:SUBMITTED_BY]->(c:Company)\nWHERE w.workItemCode IS NOT NULL AND c.companyName IS NOT NULL\nWITH DISTINCT w\nORDER BY w.workItemCode ASC\nLIMIT 5\nCALL {\n  WITH w\n  MATCH (w)<-[:RELATED_TO]-(t:Tdoc)<-[:REFERENCES]-(r:Resolution), (t)-[:SUBMITTED_BY]->(c:Company)\n  WHERE c.companyName IS NOT NULL\n  WITH c.companyName AS company, count(DISTINCT r) AS count\n  ORDER BY count DESC, company ASC\n  LIMIT 5\n  RETURN collect({company: company, count: count}) AS topCompanies\n}\nRETURN w.workItemCode AS workItemCode, topCompanies AS topCompanies\nORDER BY workItemCode ASC"
+    },
+    {
+      "id": "RAN2_P3_CQ3-6",
+      "wg": "RAN2",
+      "query": "MATCH (cr:CR)-[:SUBMITTED_BY]->(:Company {companyName: 'Huawei'})\nMATCH (cr)-[:MODIFIES]->(spec:Spec)\nWHERE spec.specNumber IS NOT NULL\nRETURN spec.specNumber AS specNumber, count(DISTINCT cr) AS crs"
+    },
+    {
+      "id": "RAN2_P3_CQ5-3",
+      "wg": "RAN2",
+      "query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec)\nWHERE hub.specRelease IS NULL\nWITH hub, count(DISTINCT cr) AS crCnt\nCALL {\n  WITH hub\n  MATCH (releaseSpec:Spec)-[:IN_RELEASE_OF]->(hub)\n  WHERE releaseSpec.specRelease =~ '^Rel-[0-9]+$'\n  WITH releaseSpec\n  ORDER BY toInteger(substring(releaseSpec.specRelease, 4)) DESC, releaseSpec.id ASC\n  LIMIT 1\n  RETURN releaseSpec\n}\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(releaseSpec)\nWITH hub, crCnt, count(DISTINCT sec) AS secCnt\nWHERE secCnt > 0\nRETURN DISTINCT hub.specNumber AS specNumber, crCnt AS crCnt, secCnt AS secCnt, round(100.0 * crCnt / secCnt) / 100.0 AS density"
+    },
+    {
+      "id": "RAN2_P3_P3-S8-CQ05",
+      "wg": "RAN2",
+      "query": "MATCH (n)\nUNWIND labels(n) AS class\nWITH n, class\nWHERE class IN ['RRCParameter', 'CapabilityItem', 'Procedure', 'PerformanceRequirement', 'ConformanceTest']\nRETURN class AS class, coalesce(n.granularity, '<unset>') AS granularity, count(DISTINCT n) AS count"
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-1",
+      "wg": "RAN2",
+      "query": "MATCH (tr:TechnicalReport {trNumber: '38.825'})-[:HAS_TR_IMPACT]->(impact:TRImpact)-[:IMPACTS_SPEC]->(spec:Spec)\nRETURN DISTINCT spec.specNumber AS specNumber, impact.impactType AS impactType"
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-4",
+      "wg": "RAN2",
+      "query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(impact:TRImpact)\nWHERE impact.impactType = 'ExtendSection'\nRETURN DISTINCT tr.trNumber AS trNumber"
+    },
+    {
+      "id": "RAN3_P1_CQ1-5",
+      "wg": "RAN3",
+      "query": "MATCH (d)-[:PRESENTED_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN3#130'}) WHERE (d:Tdoc OR d:CR OR d:LS) AND d.status = 'agreed' AND d.tdocNumber IS NOT NULL RETURN DISTINCT d.tdocNumber AS tdocNumber"
+    },
+    {
+      "id": "RAN3_P1_CQ4-1",
+      "wg": "RAN3",
+      "query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company), (t)-[:RELATED_TO]->(w:WorkItem), (t)-[:PRESENTED_AT]->(m:Meeting)\nWHERE c.companyName = 'Samsung'\n  AND w.workItemCode = 'NR_newRAT-Core'\n  AND m.workingGroup = 'RAN3'\nRETURN DISTINCT m.meetingNumber AS meetingNumber, t.tdocNumber AS tdocNumber"
+    },
+    {
+      "id": "RAN3_P3_CQ1-2",
+      "wg": "RAN3",
+      "query": "MATCH (spec:Spec {specNumber: '38.413'})\nWHERE spec.specRelease =~ 'Rel-[0-9]+'\nWITH spec, toInteger(substring(spec.specRelease, 4)) AS releaseNumber\nORDER BY releaseNumber DESC, spec.id ASC\nLIMIT 1\nMATCH (spec)-[:HAS_SECTION]->(section:Section {sectionNumber: '9.3.1'})\nWITH DISTINCT section\nORDER BY section.sectionId ASC\nLIMIT 1\nMATCH (section)-[:HAS_SUB_SECTION]->(child:Section)\nRETURN DISTINCT child.sectionId AS sectionId, child.sectionNumber AS sectionNumber, child.sectionTitle AS sectionTitle"
+    },
+    {
+      "id": "RAN3_P3_CQ3-8",
+      "wg": "RAN3",
+      "query": "MATCH (cr:CR)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-18'}), (cr)-[:MODIFIES]->(spec:Spec)\nWHERE spec.specNumber IS NOT NULL\nRETURN spec.specNumber AS specNumber, count(DISTINCT cr) AS crCnt\nORDER BY crCnt DESC, specNumber ASC\nLIMIT 5"
+    },
+    {
+      "id": "RAN3_P3_CQ5-5",
+      "wg": "RAN3",
+      "query": "MATCH (f:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(s:Spec)\nRETURN s.specNumber AS specNumber, count(DISTINCT f) AS figCnt"
+    },
+    {
+      "id": "RAN3_P4_CQ4-1",
+      "wg": "RAN3",
+      "query": "MATCH (cr:CR)-[:MODIFIES_SECTION]->(section:Section)-[:BELONGS_TO_SPEC]->(spec:Spec)\nWHERE section.sectionNumber = '9.4.5' AND spec.specNumber = '38.473'\nRETURN DISTINCT cr.tdocNumber AS tdocNumber, cr.reasonForChange AS reason"
+    },
+    {
+      "id": "RAN3_P5_TR-CQ-4-1",
+      "wg": "RAN3",
+      "query": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release), (tr)-[:HAS_TR_IMPACT]->(impact:TRImpact)-[:IMPACTS_SPEC]->(spec:Spec)\nWHERE r.releaseName = 'Rel-17'\nRETURN DISTINCT tr.trNumber AS trNumber, spec.specNumber AS specNumber, impact.impactType AS impactType"
+    },
+    {
+      "id": "RAN4_P1_CQ5-1",
+      "wg": "RAN4",
+      "query": "MATCH (n)\nUNWIND labels(n) AS label\nRETURN label AS label, count(DISTINCT n) AS cnt"
+    },
+    {
+      "id": "RAN4_P2_CQ1-5",
+      "wg": "RAN4",
+      "query": "MATCH (r)-[:MADE_AT]->(m:Meeting), (r)-[:REFERENCES]->(t:Tdoc)-[:TARGET_RELEASE]->(release:Release)\nWHERE (r:Resolution OR r:Agreement OR r:Conclusion OR r:WorkingAssumption)\n  AND m.workingGroup = 'RAN4'\n  AND release.releaseName = 'Rel-15'\n  AND r.resolutionId IS NOT NULL\nRETURN DISTINCT r.resolutionId AS resolutionId"
+    },
+    {
+      "id": "RAN4_P2_CQ1-6",
+      "wg": "RAN4",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec)\nWHERE s.specNumber = '38.133' AND r.resolutionId IS NOT NULL\nRETURN DISTINCT r.resolutionId AS resolutionId"
+    },
+    {
+      "id": "RAN4_P3_CQ1-11",
+      "wg": "RAN4",
+      "query": "MATCH (section:Section)-[:BELONGS_TO_SPEC]->(spec:Spec)\nWHERE spec.specNumber = '38.104' AND section.level = 2\nRETURN DISTINCT section.sectionId AS sectionId, section.sectionNumber AS sectionNumber, section.sectionTitle AS sectionTitle"
+    },
+    {
+      "id": "RAN4_P3_CQ2-7",
+      "wg": "RAN4",
+      "query": "MATCH (section:Section)-[:BELONGS_TO_SPEC]->(source:Spec), (section)-[reference:REFERENCES_SPEC]->(target:Spec)\nWHERE source.specNumber <> target.specNumber\nRETURN source.specNumber AS fromSpec, target.specNumber AS toSpec, count(reference) AS refCount\nORDER BY refCount DESC, fromSpec ASC, toSpec ASC\nLIMIT 10"
+    },
+    {
+      "id": "RAN4_P4_CQ4-4",
+      "wg": "RAN4",
+      "query": ""
+    },
+    {
+      "id": "RAN4_P5_CQ2-4",
+      "wg": "RAN4",
+      "query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(impact:TRImpact)-[:IMPACTS_SPEC]->(spec:Spec)\nWHERE impact.impactType = 'ExtendSection'\nRETURN DISTINCT tr.trNumber AS trNumber, spec.specNumber AS specNumber"
+    },
+    {
+      "id": "RAN4_P5_CQ5-3",
+      "wg": "RAN4",
+      "query": "MATCH (:TechnicalReport)-[r:REFERENCES_TR]->(tr:TechnicalReport)\nWITH tr, count(r) AS refCount\nRETURN tr.trNumber AS trNumber, refCount AS refCount\nORDER BY refCount DESC, trNumber ASC\nLIMIT 5"
+    },
+    {
+      "id": "RAN5_P2_CQ3-2",
+      "wg": "RAN5",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company)\nRETURN wi.id AS wi_id, c.companyName AS company, count(DISTINCT r) AS cnt"
+    },
+    {
+      "id": "RAN5_P2_CQ6-2",
+      "wg": "RAN5",
+      "query": "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting), (r)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company)\nWHERE m.workingGroup = 'RAN5' AND c.companyName = 'Samsung'\nWITH m, count(DISTINCT r) AS cnt\nRETURN m.meetingNumber AS meeting, cnt AS cnt\nORDER BY m.meetingNumberInt ASC, meeting ASC"
+    },
+    {
+      "id": "RAN5_P3_CQ1-10",
+      "wg": "RAN5",
+      "query": "MATCH (t:TSTable)-[:TABLE_IN_SECTION|CONTAINS_TABLE]-(s)-[:BELONGS_TO_SPEC|HAS_SECTION]-(spec:Spec)\nWHERE t.tableNumber STARTS WITH '6.2.'\n  AND (s:Section OR s:ConformanceTest)\nRETURN DISTINCT spec.specNumber AS specNumber, s.sectionId AS sectionId, t.tableNumber AS tableNumber"
+    },
+    {
+      "id": "RAN5_P3_CQ1-11",
+      "wg": "RAN5",
+      "query": "MATCH (spec:Spec), (section)\nWHERE spec.specNumber = '38.521-2'\n  AND (section:Section OR section:ConformanceTest)\n  AND section.level = 2\n  AND (EXISTS { MATCH (spec)-[:HAS_SECTION]->(section) }\n       OR EXISTS { MATCH (section)-[:BELONGS_TO_SPEC]->(spec) })\nRETURN DISTINCT section.sectionId AS sectionId,\n                section.sectionNumber AS sectionNumber,\n                section.sectionTitle AS sectionTitle"
+    },
+    {
+      "id": "RAN5_P3_CQ1-16",
+      "wg": "RAN5",
+      "query": "MATCH (spec:Spec)\nWHERE spec.specNumber STARTS WITH '38.5'\nOPTIONAL MATCH (:Section)-[rel:BELONGS_TO_SPEC]->(spec)\nRETURN spec.specNumber AS specNumber, count(rel) AS sectionCount\nORDER BY sectionCount DESC, specNumber ASC\nLIMIT 5"
+    },
+    {
+      "id": "RAN5_P3_P3-S8-CQ02",
+      "wg": "RAN5",
+      "query": ""
+    },
+    {
+      "id": "RAN5_P5_CQ2-4",
+      "wg": "RAN5",
+      "query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(impact:TRImpact)\nWHERE impact.impactType = 'NoChange' AND tr.trNumber IS NOT NULL\nRETURN DISTINCT tr.trNumber AS trNumber"
+    },
+    {
+      "id": "RAN5_P5_CQ4-3",
+      "wg": "RAN5",
+      "query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT|IMPACT_OF_TR]-(impact:TRImpact)-[:IMPACTS_SPEC|SPEC_IMPACTED_BY]-(spec:Spec {specNumber: '38.533'}) RETURN DISTINCT tr.trNumber AS trNumber, impact.impactType AS impactType"
+    }
+  ]
+}

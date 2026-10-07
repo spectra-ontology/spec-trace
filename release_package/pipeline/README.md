@@ -32,8 +32,10 @@ in the paper §7.
 4. **SHACL validation** — every JSON-LD record is validated against
    `shapes/spectra-core.shacl.ttl` before loading; failures are logged
    without aborting the load to support data-quality auditing.
-5. **Bulk load** — parallel Cypher `CREATE` statements populate Neo4j;
-   duplicates are detected via SPECTRA functional-property declarations.
+5. **JSON-LD load** — the generic loader dispatches per-record Cypher
+   `MERGE` operations through a thread pool. It supports a subset of the
+   vocabulary and does not implement OWL functional-property validation;
+   see its stage README for edge-order and type limits.
 
 ## Per-stage scripts
 
@@ -50,6 +52,8 @@ hard-coded paths or credentials):
   (`--strict` to fail on first violation)
 - `pipeline/05_neo4j_load/load_neo4j.py` — parallel `MERGE` loader
   (`NEO4J_URI`/`NEO4J_USER`/`NEO4J_PASSWORD` env vars)
+- `pipeline/load_released_kg.py` — separate faithful loader for the
+  deposited per-WG TTL graphs; use this path for released-gold replay.
 
 Top-level `requirements.txt` lists the Python dependencies common to
 the stages. Reusers supply 3GPP source documents from
@@ -61,6 +65,13 @@ The deterministic verification of release-shipped artifacts is provided by
 `tests/verify_release.py` at the release root (does not require this
 pipeline). Reusers wanting to re-instantiate SPECTRA on new 3GPP TDocs need
 this pipeline plus user-supplied 3GPP documents.
+
+The deposited graphs can be restored without re-running document parsing.
+The [restoration guide](../cqs/contract_repair_v1/README_frozen_ttl_import.md)
+uses the released TTL loader in isolated instances and checks source
+checksums, node counts and every label/relationship-type count. Those
+checks verify restoration, rather than certifying all source semantics or
+the generic JSON-LD pipeline.
 
 ## Contact
 

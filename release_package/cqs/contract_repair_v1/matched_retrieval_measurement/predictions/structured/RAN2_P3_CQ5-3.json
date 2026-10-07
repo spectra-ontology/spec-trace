@@ -1,0 +1,26 @@
+{
+  "id": "RAN2_P3_CQ5-3",
+  "original_id": "RAN2_P3_CQ5-3",
+  "variant_id": "RAN2_P3_CQ5-3__explicit_graph_task",
+  "wg": "ran2",
+  "arm": "structured",
+  "call_number": 12,
+  "generated_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec)\nWHERE hub.specRelease IS NULL\nWITH hub, count(DISTINCT cr) AS crCnt\nCALL {\n  WITH hub\n  MATCH (releaseSpec:Spec)-[:IN_RELEASE_OF]->(hub)\n  WHERE releaseSpec.specRelease =~ '^Rel-[0-9]+$'\n  WITH releaseSpec\n  ORDER BY toInteger(substring(releaseSpec.specRelease, 4)) DESC, releaseSpec.id ASC\n  LIMIT 1\n  RETURN releaseSpec\n}\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(releaseSpec)\nWITH hub, crCnt, count(DISTINCT sec) AS secCnt\nWHERE secCnt > 0\nRETURN DISTINCT hub.specNumber AS specNumber, crCnt AS crCnt, secCnt AS secCnt, round(100.0 * crCnt / secCnt) / 100.0 AS density",
+  "generation_abstain": false,
+  "prediction": {
+    "records": [],
+    "abstain": true
+  },
+  "error_category": "query_execution",
+  "execution": {
+    "status": "ERROR",
+    "error_class": "ValueError",
+    "rows": [],
+    "columns": [],
+    "row_count_retained": 0,
+    "truncated": false,
+    "started_utc": "2026-10-07T02:45:41.048980+00:00",
+    "finished_utc": "2026-10-07T02:45:41.049030+00:00",
+    "elapsed_s": 0.0
+  }
+}

@@ -42,10 +42,18 @@ status.
 
 Each released CQ's gold is the **set of values in the first RETURN column**
 obtained by executing its reference Cypher against the released graph, plus a
-row count. Reference queries whose ranking is truncated by `LIMIT` carry a
-data-intrinsic tie-break so the top-k set is reload-stable. Reproducibility
-evidence (scratch-reload self-replay, 624/624 gold match) lives at
+row count. The original reference queries retain their released ordering
+and `LIMIT` clauses. Stored answer-set self-replay does not certify stable
+whole-record ordering: equal sort keys at a cutoff and unordered `collect`
+can change which richer records are returned. Reproducibility evidence
+(scratch-reload self-replay, 624/624 primary-value-set gold match) lives at
 `../../validation/cq_replay/ran{1..5}_replay_results.json`.
+
+For explicit named records, use the separate [contract sidecar](../contract_repair_v1/README_contract_audit.md).
+It provides a typed scorer and source-defined task variants with declared
+collection semantics and deterministic ranking rules. Original questions,
+queries, gold, splits and recorded scores remain available; this addition
+does not certify or replace all 624 original questions.
 
 ## Distribution
 

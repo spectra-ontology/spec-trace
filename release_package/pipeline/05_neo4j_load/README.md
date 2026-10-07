@@ -1,7 +1,11 @@
-# Stage 05 — Neo4j Bulk Load
+# Stage 05 — JSON-LD Loader
 
-Loads SPECTRA JSON-LD records (Stage 02/03 output, post Stage 04 SHACL
-validation) into a Neo4j knowledge graph via parallel Cypher `CREATE`.
+Loads supported SPECTRA JSON-LD records using per-record Cypher `MERGE`
+operations dispatched by a thread pool. To restore the deposited body-text
+graphs for benchmark replay, use [load_released_kg.py](../load_released_kg.py).
+That separate TTL loader preserves the deposited node IRIs, multiple labels,
+literal properties and escaped relationship types. Its use is described in
+the [isolated restoration guide](../../cqs/contract_repair_v1/README_frozen_ttl_import.md).
 
 | Script | Inputs | Output |
 | --- | --- | --- |
@@ -10,14 +14,18 @@ validation) into a Neo4j knowledge graph via parallel Cypher `CREATE`.
 ## Behaviour
 
 * Reads SPECTRA JSON-LD records from one or more files.
-* Maps each `@type` (e.g., `spectra:Tdoc`, `spectra:CR`, `spectra:Resolution`,
-  `spectra:Section`, `spectra:TRImpact`) to a Neo4j label.
+* Maps the single expanded `@type` values listed in `TYPE_TO_LABEL` to
+  labels. Unknown types are skipped. The generic `Resolution` type is not
+  in that map; Agreement, Conclusion and WorkingAssumption are supported.
 * Maps SPECTRA object properties (e.g., `spectra:submittedBy`,
   `spectra:references`, `spectra:modifiesSection`) to Neo4j relationship
-  types (camelCase preserved for ontology↔Cypher correspondence —
-  see paper Table 8 caption).
-* Bulk loads via parallel UNWIND batches; respects SPECTRA functional
-  property declarations to detect ingest-time uniqueness violations.
+  types in upper snake case.
+* `--batch-size` bounds the buffer of submitted record jobs. The script
+  does not use `UNWIND` batches or implement an OWL functional-property
+  violation detector.
+* Attempts edges when each source record is loaded. A target that is not
+  yet present can therefore leave an edge unmatched. This script has not
+  been certified to reconstruct the deposited benchmark graph.
 
 ## Sanitization scope
 
@@ -25,7 +33,7 @@ validation) into a Neo4j knowledge graph via parallel Cypher `CREATE`.
   hard-coded credentials are removed. Connection params are taken from
   CLI arguments or environment variables (`NEO4J_URI`, `NEO4J_USER`,
   `NEO4J_PASSWORD`).
-* Parallel-load mechanism preserved.
+* Worker count is controlled by `--workers`.
 
 ## Usage
 
@@ -41,9 +49,9 @@ python load_neo4j.py \
     --workers 4
 ```
 
-The script does **not** drop the database; it idempotently `MERGE`s nodes
-on the SPECTRA functional properties (e.g., `spectra:tdocNumber` for
-`Tdoc`) so re-runs are safe.
+The script does not drop the database. Node `MERGE` keys include the IRI
+and, for some labels, a property value; changed values can therefore
+create a different match. Test new source ingestion in a separate store.
 
 ## Dependencies
 

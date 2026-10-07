@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "source_graph": "isolated checksum-pinned deposited TTL",
+  "source_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+  "human_expert_validation_n": 0,
+  "meaning": "variant field/source/population QA, not model evaluation or original-question certification",
+  "variant_source_qa": [
+    {
+      "id": "RAN1_P1_CQ1-1",
+      "reference_query": "MATCH (m:Meeting {meetingNumber:'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem {workItemCode:'NR_eMIMO-Core'}) RETURN DISTINCT t.tdocNumber AS tdocNumber",
+      "actual_complete_row_count": 2,
+      "observed_field_types": {
+        "tdocNumber": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.32396652799798176
+    },
+    {
+      "id": "RAN1_P1_CQ1-3",
+      "reference_query": "MATCH (m:Meeting {meetingNumber:'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName:'Huawei'}) RETURN DISTINCT t.tdocNumber AS tdocNumber",
+      "actual_complete_row_count": 110,
+      "observed_field_types": {
+        "tdocNumber": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.16382328100735322
+    },
+    {
+      "id": "RAN1_P2_CQ3-1",
+      "reference_query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName:'Huawei'}), (a)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT t.tdocNumber AS tdocNumber,a.resolutionId AS resolutionId,m.meetingNumber AS meetingNumber",
+      "actual_complete_row_count": 2483,
+      "observed_field_types": {
+        "tdocNumber": [
+          "str"
+        ],
+        "resolutionId": [
+          "str"
+        ],
+        "meetingNumber": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": true,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.2984466050111223
+    },
+    {
+      "id": "RAN1_P2_CQ4-2",
+      "reference_query": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem), (t)-[:MODERATED_BY]->(c:Company {companyName:'Huawei'}) WHERE t.summaryType='FL' RETURN DISTINCT ai.agendaNumber AS agendaNumber",
+      "actual_complete_row_count": 37,
+      "observed_field_types": {
+        "agendaNumber": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.10121745799551718
+    },
+    {
+      "id": "RAN1_P3_CQ014",
+      "reference_query": "MATCH (a:Section)-[:REFERENCES_SECTION]->(b:Section)-[:REFERENCES_SECTION]->(a) WHERE a.sectionId<b.sectionId MATCH (a)-[:BELONGS_TO_SPEC]->(sp1:Spec) MATCH (b)-[:BELONGS_TO_SPEC]->(sp2:Spec) RETURN DISTINCT a.sectionId AS sectionIdA,b.sectionId AS sectionIdB,sp1.specNumber+'-'+a.sectionNumber AS sectionA,sp2.specNumber+'-'+b.sectionNumber AS sectionB ORDER BY sectionIdA,sectionIdB LIMIT 20",
+      "actual_complete_row_count": 20,
+      "observed_field_types": {
+        "sectionIdA": [
+          "str"
+        ],
+        "sectionIdB": [
+          "str"
+        ],
+        "sectionA": [
+          "str"
+        ],
+        "sectionB": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.5207251719839405
+    },
+    {
+      "id": "RAN1_P3_CQ029",
+      "reference_query": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*antenna.*' RETURN DISTINCT sp.specNumber AS specNumber",
+      "actual_complete_row_count": 3,
+      "observed_field_types": {
+        "specNumber": [
+          "str"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.11608785801217891
+    },
+    {
+      "id": "RAN1_P3_P3-S8-CQ04",
+      "status": "unresolved_original_feature_catalog_semantics",
+      "reference_query": null
+    },
+    {
+      "id": "RAN1_P4_CQ2-4",
+      "reference_query": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) WITH cr,count(DISTINCT sp) AS affectedSpecCount,collect(DISTINCT sp.specNumber) AS specs UNWIND specs AS specNumber WITH cr,affectedSpecCount,specNumber ORDER BY specNumber WITH cr,affectedSpecCount,collect(specNumber) AS affectedSpecs RETURN cr.tdocNumber AS crNumber,affectedSpecCount,affectedSpecs ORDER BY affectedSpecCount DESC,crNumber ASC LIMIT 10",
+      "actual_complete_row_count": 10,
+      "observed_field_types": {
+        "crNumber": [
+          "str"
+        ],
+        "affectedSpecCount": [
+          "int"
+        ],
+        "affectedSpecs": [
+          "list"
+        ]
+      },
+      "null_counts": {},
+      "exceeds_2000_record_generation_budget": false,
+      "missing_nonnullable_fields": {},
+      "elapsed_seconds": 0.3620494479837362
+    }
+  ]
+}

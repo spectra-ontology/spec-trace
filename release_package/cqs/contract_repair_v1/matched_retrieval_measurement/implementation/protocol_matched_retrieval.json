@@ -1,0 +1,88 @@
+{
+  "experiment": "matched_retrieval_v3",
+  "revision": "Before scientific outputs, preserved v1 prefix-cap files and v2 snippet files in separate whole-file archives. v3 deterministically merges two different query windows for a duplicate point within the shared 800-character cap. Existing retained live corpus is reused. Before outcomes, preserved the initial v3 source/protocol in before_json_schema_v3, then added explicitly declared nested JSON structural schemas for two source-audited array fields; no enum, const, examples, descriptions or hidden gold values are permitted.",
+  "artifact_namespace": "_matched_retrieval_v1 is the existing new-only storage namespace; method version is v3.",
+  "state": "method fixed; source-only task selection must be separately frozen before generation",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "arms": [
+    "single",
+    "iterative"
+  ],
+  "maximum_tasks": 40,
+  "call_cap": 180,
+  "overall_call_cap": 220,
+  "component_call_caps": {
+    "retrieval": 180,
+    "kg": 40
+  },
+  "setup_probe": "Root reports one successful CLI setup probe separately; not a scientific task outcome or part of study cap.",
+  "retry_policy": "No automatic trial retries. Failed/time-limited/tool-using trials retained with empty prediction in fixed denominator.",
+  "call_cap_unit": "CLI invocations, reserved durably before launch. CLI internal provider retries are not observable. Retrieval cap 180 plus root's separate KG cap 40 totals <=220 CLI invocations.",
+  "timeout_seconds": 90,
+  "max_concurrent_cli_calls": 2,
+  "max_search_rounds": 2,
+  "helper_queries_per_iterative_task": 1,
+  "retrieval": {
+    "engine": "SQLite FTS5 BM25, unicode61 remove_diacritics 2",
+    "bm25_parameters": {
+      "k1": 1.2,
+      "b": 0.75
+    },
+    "corpus": "all 25 existing WG-scoped Qdrant text collections via payload-only scroll; separate SQLite shard per WG",
+    "whole_text_indexed": true,
+    "query_tokens": "Unicode alphanumeric words length >=2; fixed short English stoplist; unique first 64 terms with OR",
+    "ranking_candidates_per_round": 200,
+    "merge": "Reciprocal rank fusion k=60; source identity (collection, point_id); stable lexical tie breaks",
+    "duplicate_point_passages": "Identical snippets appear once. Two different query windows are kept in retrieval-round order, initially receive equal character budgets (397/398 plus five-character separator), and deterministically reuse the other window's unused budget. Combined text never exceeds 800 characters.",
+    "final_context_chunks": 10,
+    "max_characters_per_chunk": 800,
+    "passage_selection": "SQLite FTS5 snippet of <=64 tokens around query matches, then <=800-character cap; replaces historical leading-prefix truncation before outcomes.",
+    "document_header": "Collection/point/chunk identity plus existing source metadata specNumber/trNumber/tdocNumber/section/sectionNumber. Header is separate from the 800-character text cap and identical for both retrieval arms.",
+    "max_chunks_per_collection": 6,
+    "historical_difference": "New SQLite BM25 tokenizer/index/scoring replaces unavailable historical bm25s/Lucene artifacts. Not a reconstruction of prior BM25 results."
+  },
+  "reader": {
+    "output": "records of named typed fields plus abstain boolean",
+    "shared_between_arms": [
+      "requested model",
+      "reasoning effort",
+      "output contract",
+      "reader instruction",
+      "final context limits",
+      "CLI invocation",
+      "timeout"
+    ],
+    "total_compute": "Iterative arm adds one helper generation; report total usage and helper cost separately. Not total-cost matched.",
+    "temperature_and_token_limits": "CLI does not expose verified historical API temperature=0/max_tokens=1200 equivalence; do not claim that equivalence or exact historical KG reader matching.",
+    "tool_policy": "Tools forbidden in prompt; any actual event describing a tool action invalidates that trial. No gold or reference query is supplied.",
+    "system_prompt_visibility": "The complete built-in CLI system prompt is not exposed in captured output and is unrecorded. Shared invocation between arms does not certify absence of all hidden system context.",
+    "abstain_limit": "Operational empty prediction signal only; not a validated abstention benchmark.",
+    "json_fields": "JSON-typed fields require explicit structural json_schema containing only types, declared properties/items/required/additionalProperties=false and optional explicit array bounds. Nested values are strictly validated; no enum/const/example/description hints."
+  },
+  "resources": {
+    "cpu_threads": 2,
+    "sqlite_threads_per_connection": 1,
+    "sqlite_cache_mib_per_connection": 32,
+    "address_space_gib": 2,
+    "gpu": false,
+    "sqlite_temp_store": "FILE",
+    "cli_slots": "Two flock-protected slots shared across retrieval/KG processes"
+  },
+  "preservation": "New-only namespace. Completed snapshot/task/call/prediction records use exclusive creation. Historical manuscript, closed responses, and public bytes untouched.",
+  "scientific_bounds": [
+    "A bounded two-round follow-up-query adaptation, not full IRCoT or Iter-RetGen reproduction and not a new method claim.",
+    "Task subset selected from source/question/contract criteria before new model outputs; not the full Core 560 run.",
+    "Existing answer-column diagnostic key and AI review do not become expert-validated semantic canonical truth.",
+    "Qdrant scroll is non-atomic. Start/end exact counts detect count changes but not same-count edits; both arms use one retained local corpus.",
+    "Live Qdrant source cutoff is not asserted to match the original DOI TTL graph; cross-representation source equality remains unverified.",
+    "Independent expert validation, broader domains, and historical original-table reconstruction remain separate outstanding issues."
+  ],
+  "primary_sources": [
+    "https://aclanthology.org/2023.acl-long.557/",
+    "https://aclanthology.org/2023.findings-emnlp.620/",
+    "https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf",
+    "https://sqlite.org/fts5.html",
+    "https://learn.chatgpt.com/docs/non-interactive-mode"
+  ]
+}

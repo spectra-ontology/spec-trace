@@ -1,5 +1,12 @@
 # SpectraCQ Baseline Harness and Recorded Runs
 
+For explicit named-record task variants and a new matched single-pass/two-round
+text comparison, use the [contract companion](../../release_package/cqs/contract_repair_v1/README.md).
+It records a separate fixed 36-task measurement with complete-record F1 and
+exact-output metrics for all three arms. The original results below remain
+historical analyses of the released questions and their original keys.
+
+
 Complete harness and per-question outputs for the three-condition baseline reported in the
 paper: closed-book, RAG over the released text collections, and knowledge-graph-grounded
 query generation. From the recorded runs in this directory, `score_core.py --set core`

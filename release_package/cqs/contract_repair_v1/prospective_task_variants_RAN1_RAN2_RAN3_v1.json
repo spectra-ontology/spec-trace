@@ -1,0 +1,830 @@
+{
+  "version": 1,
+  "created_utc": "2026-10-07T02:21:50.362956+00:00",
+  "kind": "prospective clarified task definitions, not repaired original-question model results",
+  "selection_sha256": "279439364181d3470ab823da25f10cb87452fe4a99cd2df8ae1d35a7bfb2e53e",
+  "benchmark_sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef",
+  "note": "All original questions and queries are retained. Variants explicitly define graph querying tasks, not externally certified domain truth or causal effects. No scores/predictions were inspected. Unresolved original consistency task is retained without forced eligibility. Fresh gold and per-item operational eligibility must be frozen before generation.",
+  "items": [
+    {
+      "id": "RAN1_P1_CQ1-1",
+      "variant_id": "RAN1_P1_CQ1-1__explicit_graph_task",
+      "wg": "RAN1",
+      "original_question": "List the TDocs at meeting RAN1#120 tied to Work Item NR_eMIMO-Core (MIMO meeting preparation).",
+      "original_reference_query": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_eMIMO-Core'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10",
+      "task_question": "Within the recorded RAN1 graph, list every distinct TDoc identifier presented at RAN1#120 and linked to Work Item NR_eMIMO-Core. Return tdocNumber as an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (m:Meeting {meetingNumber:'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem {workItemCode:'NR_eMIMO-Core'}) RETURN DISTINCT t.tdocNumber AS tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "role": "TDoc identifier"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original bare list has an unstated LIMIT10. Variant explicitly requests all distinct matching TDocs and removes cap.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN1_P1_CQ1-3",
+      "variant_id": "RAN1_P1_CQ1-3__explicit_graph_task",
+      "wg": "RAN1",
+      "original_question": "List the TDocs submitted by Huawei at meeting RAN1#120 (tracking a competitor's contributions).",
+      "original_reference_query": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10",
+      "task_question": "Within the recorded RAN1 graph, list every distinct TDoc identifier presented at RAN1#120 and submitted by Huawei. Return tdocNumber as an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (m:Meeting {meetingNumber:'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName:'Huawei'}) RETURN DISTINCT t.tdocNumber AS tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "role": "TDoc identifier"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Huawei is a scope filter. Remove the unstated LIMIT10 and do not require unasked title/type/status.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN1_P2_CQ3-1",
+      "variant_id": "RAN1_P2_CQ3-1__explicit_graph_task",
+      "wg": "RAN1",
+      "original_question": "List Huawei's TDocs that led to an agreement (tracing a company's contributions to the standard).",
+      "original_reference_query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, a.resolutionId, m.meetingNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber, a.resolutionId LIMIT 15",
+      "task_question": "Within the recorded RAN1 graph, return every distinct (tdocNumber, resolutionId, meetingNumber) record where an Agreement references a Huawei-submitted TDoc and the Agreement is linked to a Meeting. These are documentary reference and meeting associations; no causal claim is made. Return an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName:'Huawei'}), (a)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT t.tdocNumber AS tdocNumber,a.resolutionId AS resolutionId,m.meetingNumber AS meetingNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "role": "referenced TDoc identifier"
+        },
+        {
+          "name": "resolutionId",
+          "type": "string",
+          "role": "Agreement identifier referencing that TDoc"
+        },
+        {
+          "name": "meetingNumber",
+          "type": "string",
+          "role": "Meeting associated with that Agreement"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original led to is causal, whereas REFERENCES and MADE_AT supply documentary links. Variant states that boundary and preserves complete TDoc/Agreement/Meeting tuples; original LIMIT15 removed.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN1_P2_CQ4-2",
+      "variant_id": "RAN1_P2_CQ4-2__explicit_graph_task",
+      "wg": "RAN1",
+      "original_question": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+      "original_reference_query": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem), (t)-[:MODERATED_BY]->(c:Company {companyName: 'Huawei'})\nWHERE t.summaryType = 'FL'\nRETURN DISTINCT ai.agendaNumber, count(t) AS flCount ORDER BY flCount DESC, ai.agendaNumber LIMIT 15",
+      "task_question": "Within the recorded RAN1 graph, list every distinct agendaNumber linked to a TDoc whose summaryType is FL and whose MODERATED_BY company is Huawei. Return agendaNumber as an unordered set; no output cap. This asks recorded moderation and summary fields, without certifying real-world Feature Lead assignments.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem), (t)-[:MODERATED_BY]->(c:Company {companyName:'Huawei'}) WHERE t.summaryType='FL' RETURN DISTINCT ai.agendaNumber AS agendaNumber",
+      "required_fields": [
+        {
+          "name": "agendaNumber",
+          "type": "string",
+          "role": "agenda item number associated with scoped FL-summary TDocs"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original Feature Lead terminology is not independently certified by MODERATED_BY. Make the formal graph predicate explicit and remove unstated count ranking/cap15.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN1_P3_CQ014",
+      "variant_id": "RAN1_P3_CQ014__explicit_graph_task",
+      "wg": "RAN1",
+      "original_question": "Find section pairs that reference each other (checking for circular dependencies).",
+      "original_reference_query": "MATCH (a:Section)-[:REFERENCES_SECTION]->(b:Section)-[:REFERENCES_SECTION]->(a) WHERE a.sectionId < b.sectionId MATCH (a)-[:BELONGS_TO_SPEC]->(sp1:Spec) MATCH (b)-[:BELONGS_TO_SPEC]->(sp2:Spec) RETURN sp1.specNumber + '-' + a.sectionNumber AS sectionA, sp2.specNumber + '-' + b.sectionNumber AS sectionB ORDER BY a.sectionId, b.sectionId LIMIT 20",
+      "task_question": "Within the recorded RAN1 graph, return at most 20 distinct pairs of Section nodes with reciprocal direct REFERENCES_SECTION links. Use sectionIdA < sectionIdB to choose the endpoint roles, order pairs lexicographically by (sectionIdA,sectionIdB), and return sectionIdA, sectionIdB, sectionA and sectionB. sectionA and sectionB are each the endpoint specNumber followed by a hyphen and sectionNumber.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (a:Section)-[:REFERENCES_SECTION]->(b:Section)-[:REFERENCES_SECTION]->(a) WHERE a.sectionId<b.sectionId MATCH (a)-[:BELONGS_TO_SPEC]->(sp1:Spec) MATCH (b)-[:BELONGS_TO_SPEC]->(sp2:Spec) RETURN DISTINCT a.sectionId AS sectionIdA,b.sectionId AS sectionIdB,sp1.specNumber+'-'+a.sectionNumber AS sectionA,sp2.specNumber+'-'+b.sectionNumber AS sectionB ORDER BY sectionIdA,sectionIdB LIMIT 20",
+      "required_fields": [
+        {
+          "name": "sectionIdA",
+          "type": "string",
+          "role": "canonical first Section endpoint identity"
+        },
+        {
+          "name": "sectionIdB",
+          "type": "string",
+          "role": "canonical second Section endpoint identity"
+        },
+        {
+          "name": "sectionA",
+          "type": "string",
+          "role": "specNumber-sectionNumber display of first endpoint"
+        },
+        {
+          "name": "sectionB",
+          "type": "string",
+          "role": "specNumber-sectionNumber display of second endpoint"
+        }
+      ],
+      "collection_kind": "sequence",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original asks section pairs but grades endpointA only and hides cap20. Variant explicitly defines finite extent, endpoint orientation and ordering; IDs distinguish stored release versions.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN1_P3_CQ029",
+      "variant_id": "RAN1_P3_CQ029__explicit_graph_task",
+      "wg": "RAN1",
+      "original_question": "Which TSs define antenna-related sections? (locating specs for antenna-port implementation)",
+      "original_reference_query": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*antenna.*' RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle, sec.level ORDER BY sp.specNumber, sec.sectionNumber",
+      "task_question": "Within the recorded RAN1 graph, list every distinct specNumber belonging to a Section whose sectionTitle contains antenna, case-insensitively. Return specNumber as an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*antenna.*' RETURN DISTINCT sp.specNumber AS specNumber",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "role": "TS number with a title-matched Section"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Antenna-related is broader than a title substring. Define the actual observable title predicate; the original condition does not request section titles or levels as outputs.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN1_P3_P3-S8-CQ04",
+      "variant_id": null,
+      "wg": "RAN1",
+      "original_question": "Do the disjointWith relations between Features (LTM, CHO, CPC, CPAC, etc.) match the feature catalog's disjoint groups? (consistency check)",
+      "original_reference_query": "MATCH (a:Feature)-[:disjointWith]->(b:Feature) WHERE a.name < b.name RETURN a.name AS a, b.name AS b ORDER BY a, b",
+      "task_question": null,
+      "task_variant": false,
+      "original_question_disposition": "unresolved",
+      "reference_query": null,
+      "required_fields": [],
+      "collection_kind": null,
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original asks whether graph relations match external feature-catalog disjoint groups. Reference only lists graph disjoint edges, with no supplied independently compared catalog or Boolean agreement test. Listing edges is a different task, not a repair of this original consistency question. Preserve unresolved; no forced variant.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false
+      }
+    },
+    {
+      "id": "RAN1_P4_CQ2-4",
+      "variant_id": "RAN1_P4_CQ2-4__explicit_graph_task",
+      "wg": "RAN1",
+      "original_question": "Which 10 CRs have the widest cross-spec reach, and which specs does each affect?",
+      "original_reference_query": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) RETURN cr.tdocNumber, count(DISTINCT sp) AS affectedSpecCount, collect(DISTINCT sp.specNumber) AS affectedSpecs ORDER BY affectedSpecCount DESC, cr.tdocNumber ASC LIMIT 10",
+      "task_question": "Within the recorded RAN1 graph, return the 10 CR nodes with the largest number of distinct Spec nodes reached by AFFECTS_CORE_SPEC, AFFECTS_TEST_SPEC or AFFECTS_OM_SPEC. Return crNumber, affectedSpecCount and affectedSpecs. affectedSpecCount counts distinct Spec nodes; affectedSpecs is the lexicographically sorted list of distinct specNumber values. Choose exactly the first 10 by affectedSpecCount descending, then crNumber ascending, and return records in that order.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) WITH cr,count(DISTINCT sp) AS affectedSpecCount,collect(DISTINCT sp.specNumber) AS specs UNWIND specs AS specNumber WITH cr,affectedSpecCount,specNumber ORDER BY specNumber WITH cr,affectedSpecCount,collect(specNumber) AS affectedSpecs RETURN cr.tdocNumber AS crNumber,affectedSpecCount,affectedSpecs ORDER BY affectedSpecCount DESC,crNumber ASC LIMIT 10",
+      "required_fields": [
+        {
+          "name": "crNumber",
+          "type": "string",
+          "role": "CR TDoc identifier"
+        },
+        {
+          "name": "affectedSpecCount",
+          "type": "integer",
+          "role": "number of distinct affected Spec nodes"
+        },
+        {
+          "name": "affectedSpecs",
+          "type": "json",
+          "role": "sorted unique affected specNumber list"
+        }
+      ],
+      "collection_kind": "sequence",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original explicitly requests CR/spec mapping but key grades only CR ID. Define node-count versus spec-number distinction, exact10 boundary policy, ordering and canonical spec list; no graph-engine or causal effect claimed.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN2_P2_CQ2-1",
+      "variant_id": "RAN2_P2_CQ2-1__explicit_graph_task",
+      "wg": "RAN2",
+      "original_question": "Which resolutions did TDoc R2-2508373 lead to (contribution-to-decision trace)?",
+      "original_reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc) WHERE 'R2-2508373' IN t.tdocNumber MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, r.resolutionId, labels(r) AS type, m.canonicalMeetingNumber, r.content",
+      "task_question": "Within the recorded RAN2 graph, return every distinct (resolutionId, meetingNumber) record where a Resolution has a documentary REFERENCES link to TDoc R2-2508373 and a MADE_AT link to the Meeting. Return an unordered set. A documentary reference does not establish that the TDoc caused the decision.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc) WHERE 'R2-2508373' IN t.tdocNumber MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT r.resolutionId AS resolutionId,m.canonicalMeetingNumber AS meetingNumber",
+      "required_fields": [
+        {
+          "name": "resolutionId",
+          "type": "string",
+          "role": "Resolution identifier with reference to the scoped TDoc"
+        },
+        {
+          "name": "meetingNumber",
+          "type": "string",
+          "role": "Meeting of that Resolution"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original led to implies causation. Explicit documentary-reference variant preserves resolution/meeting relation; resolution content/type are not mandatory new outputs.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN2_P2_CQ3-3",
+      "variant_id": "RAN2_P2_CQ3-3__explicit_graph_task",
+      "wg": "RAN2",
+      "original_question": "Return the top companies by resolution contribution per work item (technology leadership).",
+      "original_reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi, c, count(DISTINCT r) AS cnt ORDER BY cnt DESC WITH wi, collect({company: c.companyName, count: cnt})[0..5] AS topCompanies RETURN wi.workItemCode, topCompanies ORDER BY wi.workItemCode LIMIT 5",
+      "task_question": "Within the recorded RAN2 graph, take the first five Work Items ordered by workItemCode among those linked to at least one TDoc referenced by a Resolution. For each, return workItemCode and topCompanies: an ordered list of at most five objects with company and count. count is the number of distinct Resolution nodes referencing TDocs from that company linked to that Work Item. Order companies by count descending then company ascending; order Work Item records by workItemCode ascending.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi,c,count(DISTINCT r) AS cnt ORDER BY wi.workItemCode,cnt DESC,c.companyName ASC WITH wi,collect({company:c.companyName,count:cnt})[0..5] AS topCompanies RETURN wi.workItemCode AS workItemCode,topCompanies ORDER BY workItemCode LIMIT 5",
+      "required_fields": [
+        {
+          "name": "workItemCode",
+          "type": "string",
+          "role": "Work Item identity"
+        },
+        {
+          "name": "topCompanies",
+          "type": "json",
+          "role": "ordered company/count records for the corresponding Work Item"
+        }
+      ],
+      "collection_kind": "sequence",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original lacks both company k and Work Item extent, while reference slices5 companies and caps5 Work Items. Variant makes both limits, count unit and ties explicit; key Work Item ID alone cannot grade the requested map.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN2_P3_CQ1-1",
+      "variant_id": "RAN2_P3_CQ1-1__explicit_graph_task",
+      "wg": "RAN2",
+      "original_question": "List all sections of spec 38.331 (RRC structure overview).",
+      "original_reference_query": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.331'}) RETURN s.sectionId, s.sectionNumber, s.sectionTitle, s.level ORDER BY s.sectionNumber LIMIT 25",
+      "task_question": "Within the recorded RAN2 graph, list all Section nodes belonging to spec 38.331 across stored release versions. Return sectionId, sectionNumber and sectionTitle as an unordered set; sectionId distinguishes release versions. No output cap.",
+      "task_variant": true,
+      "original_question_disposition": "resolved_original_extent_with_explicit_record_variant",
+      "reference_query": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber:'38.331'}) RETURN DISTINCT s.sectionId AS sectionId,s.sectionNumber AS sectionNumber,s.sectionTitle AS sectionTitle",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "role": "release-specific Section identity"
+        },
+        {
+          "name": "sectionNumber",
+          "type": "string",
+          "role": "Section number"
+        },
+        {
+          "name": "sectionTitle",
+          "type": "string",
+          "role": "Section title"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original explicitly says all, conflicting with LIMIT25. Removing cap repairs the declared extent; variant additionally specifies named Section records and all stored versions. Fresh gold required.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN2_P3_CQ3-6",
+      "variant_id": "RAN2_P3_CQ3-6__explicit_graph_task",
+      "wg": "RAN2",
+      "original_question": "List the specs modified by Huawei's CRs (vendor footprint).",
+      "original_reference_query": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (cr)-[:MODIFIES]->(sp:Spec) RETURN DISTINCT sp.specNumber, count(cr) AS crs ORDER BY crs DESC LIMIT 10",
+      "task_question": "Within the recorded RAN2 graph, return every specNumber with at least one incoming MODIFIES link from a Huawei-submitted CR, with crs equal to the number of distinct such CR nodes. Return (specNumber,crs) as an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company {companyName:'Huawei'}), (cr)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber,count(DISTINCT cr) AS crs",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "role": "specification number modified by scoped CRs"
+        },
+        {
+          "name": "crs",
+          "type": "integer",
+          "role": "distinct Huawei CR count for this specification number"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original asks spec IDs and has an unstated cap10; old mapping annotation alone does not make counts an original required output. Variant explicitly adds per-spec distinct-CR counts and removes cap.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN2_P3_CQ5-3",
+      "variant_id": "RAN2_P3_CQ5-3__explicit_graph_task",
+      "wg": "RAN2",
+      "original_question": "Return CR density (CRs per section) by spec (change-hotspot metric).",
+      "original_reference_query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCnt, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCnt, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub, crCnt, count(s) AS secCnt RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density ORDER BY density DESC LIMIT 5",
+      "task_question": "Within the recorded RAN2 graph, for every Spec hub whose specRelease is absent and which has at least one incoming CR MODIFIES link, count its distinct modifying CR nodes as crCnt. Choose its release-specific Spec node with the highest numeric Rel-N; break any equal release by id ascending. Count distinct Section nodes belonging to that release node as secCnt. For hubs with secCnt greater than zero, return specNumber, crCnt, secCnt and density=crCnt/secCnt rounded to two decimal places as an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub,count(DISTINCT cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub,crCnt,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC,rk.id ASC WITH hub,crCnt,collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub,crCnt,count(DISTINCT s) AS secCnt WHERE secCnt>0 RETURN hub.specNumber AS specNumber,crCnt,secCnt,round(1.0*crCnt/secCnt,2) AS density",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "role": "Spec hub number"
+        },
+        {
+          "name": "crCnt",
+          "type": "integer",
+          "role": "distinct CR numerator associated with the Spec hub"
+        },
+        {
+          "name": "secCnt",
+          "type": "integer",
+          "role": "distinct Section denominator of the selected release Spec node"
+        },
+        {
+          "name": "density",
+          "type": "number",
+          "role": "CR numerator divided by Section denominator, rounded to two decimals"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original density leaves temporal population and denominator release unspecified. Variant states the source-defined numerator/denominator, deterministic release selection and no hidden cap5. Read-only probe found no multiple release nodes per hub/release in the current RAN2 graph, but this is not external source-truth certification.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN2_P3_P3-S8-CQ05",
+      "variant_id": "RAN2_P3_P3-S8-CQ05__explicit_graph_task",
+      "wg": "RAN2",
+      "original_question": "Return the granularity-property distribution across the five entity classes (item-level v3.0 vs section-level legacy).",
+      "original_reference_query": "MATCH (n) WHERE any(l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']) RETURN [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']][0] AS class,        coalesce(n.granularity, '<unset>') AS granularity,        count(n) AS c ORDER BY class, granularity",
+      "task_question": "Within the recorded RAN2 graph, report counts for every present (class,granularity) combination over these node classes: RRCParameter, CapabilityItem, Procedure, PerformanceRequirement and ConformanceTest. A node contributes once for each listed class label it bears. Use <unset> when granularity is missing. Return class, granularity and count as an unordered set. Do not add zero-count combinations that are absent from the records.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (n) UNWIND [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']] AS class RETURN class,coalesce(n.granularity,'<unset>') AS granularity,count(n) AS count",
+      "required_fields": [
+        {
+          "name": "class",
+          "type": "string",
+          "role": "entity class label"
+        },
+        {
+          "name": "granularity",
+          "type": "string",
+          "role": "recorded granularity value or <unset>"
+        },
+        {
+          "name": "count",
+          "type": "integer",
+          "role": "number of nodes for this class/granularity pair"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original asks distribution; the key grades class alone and ignores granularity/count. The variant defines all five labels, missing-property treatment and per-class contribution instead of the original first-label selection.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-1",
+      "variant_id": "RAN2_P5_TR-CQ-2-1__explicit_graph_task",
+      "wg": "RAN2",
+      "original_question": "List the specs impacted by TR 38.825 with their impact type (study-to-spec impact).",
+      "original_reference_query": "MATCH (tr:TechnicalReport {trNumber: '38.825'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec)\n                  RETURN s.specNumber, imp.impactType",
+      "task_question": "Within the recorded RAN2 graph, list every distinct (specNumber,impactType) record reached from TechnicalReport 38.825 through HAS_TR_IMPACT and IMPACTS_SPEC. Return an unordered set. The impact type is the recorded TRImpact field, not an independently certified effect.",
+      "task_variant": true,
+      "original_question_disposition": "resolved_original_output_with_explicit_graph_boundary",
+      "reference_query": "MATCH (tr:TechnicalReport {trNumber:'38.825'})-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT s.specNumber AS specNumber,imp.impactType AS impactType",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "role": "specification number associated with the study impact"
+        },
+        {
+          "name": "impactType",
+          "type": "string",
+          "role": "recorded type for the corresponding study/spec impact"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original explicitly requests spec/impact-type pairs; scalar spec key omits impact type. Pair projection/set semantics preserve both requested roles, with no hidden cap.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-4",
+      "variant_id": "RAN2_P5_TR-CQ-2-4__explicit_graph_task",
+      "wg": "RAN2",
+      "original_question": "List the TRs that extend existing sections (section-extension studies).",
+      "original_reference_query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact)\n                  WHERE imp.impactType = 'ExtendSection'\n                  RETURN DISTINCT tr.trNumber, tr.trTitle",
+      "task_question": "Within the recorded RAN2 graph, list every distinct trNumber of a TechnicalReport with a HAS_TR_IMPACT-linked record whose impactType is ExtendSection. Return an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "resolved_original_output_with_explicit_graph_boundary",
+      "reference_query": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact) WHERE imp.impactType='ExtendSection' RETURN DISTINCT tr.trNumber AS trNumber",
+      "required_fields": [
+        {
+          "name": "trNumber",
+          "type": "string",
+          "role": "TechnicalReport identity with recorded ExtendSection impact type"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original TR identity output and unbounded query agree structurally. Variant makes the graph impact-type predicate explicit and does not require the unasked title.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN3_P1_CQ1-4",
+      "variant_id": "RAN3_P1_CQ1-4__explicit_graph_task",
+      "wg": "RAN3",
+      "original_question": "List the TDocs discussed under Rel-19 (release-scoped document survey).",
+      "original_reference_query": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-19'}) RETURN t.tdocNumber, t.title, t.type ORDER BY t.tdocNumber DESC LIMIT 10",
+      "task_question": "Within the recorded RAN3 graph, list every distinct tdocNumber of a TDoc with a TARGET_RELEASE link to Rel-19. Return an unordered set; no output cap. This checks target-release links, without independently certifying discussion events.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release {releaseName:'Rel-19'}) RETURN DISTINCT t.tdocNumber AS tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "role": "TDoc identity with the scoped target-release link"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original discussed under is broader than target-release metadata and has an unstated cap10. State the observable link and remove cap.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN3_P1_CQ1-5",
+      "variant_id": "RAN3_P1_CQ1-5__explicit_graph_task",
+      "wg": "RAN3",
+      "original_question": "List the TDocs agreed at meeting RAN3#130 (approved-outcome review).",
+      "original_reference_query": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}) WHERE t.status = 'agreed' RETURN t.tdocNumber, t.title ORDER BY t.tdocNumber LIMIT 10",
+      "task_question": "Within the recorded RAN3 graph, list every distinct tdocNumber presented at Meeting canonicalMeetingNumber RAN3#130 with status agreed. Return an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {canonicalMeetingNumber:'RAN3#130'}) WHERE t.status='agreed' RETURN DISTINCT t.tdocNumber AS tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "role": "TDoc identity with agreed status at the exact scoped Meeting"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Use explicit canonical Meeting identity rather than numberInt alone and remove unstated cap10. Live read-only probe observed one meetingNumberInt130 node, canonical RAN3#130, in this loaded graph.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN3_P1_CQ4-1",
+      "variant_id": "RAN3_P1_CQ4-1__explicit_graph_task",
+      "wg": "RAN3",
+      "original_question": "List Samsung's past-meeting contributions to Work Item NR_newRAT-Core (historical contribution review).",
+      "original_reference_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}), (t)-[:RELATED_TO]->(w:WorkItem {workItemCode: 'NR_newRAT-Core'}), (t)-[:PRESENTED_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber, t.tdocNumber, t.title, t.status ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "task_question": "Within the recorded RAN3 graph, return every distinct (meetingNumber,tdocNumber) record for a Samsung-submitted TDoc linked to Work Item NR_newRAT-Core and presented at a recorded Meeting. Return an unordered set; no output cap. Recorded meeting associations define scope, without assuming a past/future cutoff or ordered chronology.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName:'Samsung'}), (t)-[:RELATED_TO]->(w:WorkItem {workItemCode:'NR_newRAT-Core'}), (t)-[:PRESENTED_AT]->(m:Meeting) RETURN DISTINCT m.canonicalMeetingNumber AS meetingNumber,t.tdocNumber AS tdocNumber",
+      "required_fields": [
+        {
+          "name": "meetingNumber",
+          "type": "string",
+          "role": "recorded Meeting of the contribution"
+        },
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "role": "Samsung contribution identifier at that Meeting"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original key grades only Meeting IDs and misses contribution IDs; unstated cap10 and past-time cutoff are unresolved. Variant preserves requested contribution/meeting mapping over recorded Meetings without inventing a cutoff.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN3_P3_CQ1-2",
+      "variant_id": "RAN3_P3_CQ1-2__explicit_graph_task",
+      "wg": "RAN3",
+      "original_question": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "original_reference_query": "MATCH (rk:Spec {specNumber:'38.413'})<-[:BELONGS_TO_SPEC]-(p:Section {sectionNumber:'9.3.1'}) WHERE rk.specRelease IS NOT NULL WITH p,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (p)-[:HAS_SUB_SECTION]->(c:Section) RETURN c.sectionId, c.sectionNumber, c.sectionTitle ORDER BY c.sectionNumber LIMIT 15",
+      "task_question": "Within the recorded RAN3 graph, choose the release-specific Spec node for 38.413 with the highest numeric Rel-N, breaking ties by Spec id ascending. Under its Section numbered 9.3.1, list all immediate HAS_SUB_SECTION children. Return sectionId,sectionNumber,sectionTitle as an unordered set; no child output cap. Section IDs distinguish stored versions.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (rk:Spec {specNumber:'38.413'})<-[:BELONGS_TO_SPEC]-(p:Section {sectionNumber:'9.3.1'}) WHERE rk.specRelease IS NOT NULL WITH p,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC,rk.id ASC,p.sectionId ASC LIMIT 1 MATCH (p)-[:HAS_SUB_SECTION]->(c:Section) RETURN DISTINCT c.sectionId AS sectionId,c.sectionNumber AS sectionNumber,c.sectionTitle AS sectionTitle",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "role": "immediate child Section identity"
+        },
+        {
+          "name": "sectionNumber",
+          "type": "string",
+          "role": "child Section number"
+        },
+        {
+          "name": "sectionTitle",
+          "type": "string",
+          "role": "child Section title"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original lacks release scope and immediate-vs-transitive definition, while reference chooses latest release and caps15 children. Variant states both and removes child cap; live probe showed one Spec node each for Rel15..19 in the current graph.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN3_P3_CQ3-8",
+      "variant_id": "RAN3_P3_CQ3-8__explicit_graph_task",
+      "wg": "RAN3",
+      "original_question": "Return the top 5 specs by Rel-18 CR count (release-scoped change volume).",
+      "original_reference_query": "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release {releaseName: 'Rel-18'}), (cr)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber, count(cr) AS crCnt ORDER BY crCnt DESC LIMIT 5",
+      "task_question": "Within the recorded RAN3 graph, count distinct CR nodes targeting Rel-18 and linked by MODIFIES for each specNumber. Return exactly the first five (specNumber,crCnt) records ordered by crCnt descending, then specNumber ascending. crCnt is the distinct-CR count for that specNumber; this deterministic secondary key resolves boundary ties.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release {releaseName:'Rel-18'}), (cr)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber,count(DISTINCT cr) AS crCnt ORDER BY crCnt DESC,specNumber ASC LIMIT 5",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "role": "specification number"
+        },
+        {
+          "name": "crCnt",
+          "type": "integer",
+          "role": "distinct Rel-18 CR count associated with that specification number"
+        }
+      ],
+      "collection_kind": "sequence",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original top5 explicitly sets extent but leaves boundary ties unstated, and scalar key cannot grade counts. Variant states count unit, both output roles and deterministic exact5 ordering.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN3_P3_CQ5-5",
+      "variant_id": "RAN3_P3_CQ5-5__explicit_graph_task",
+      "wg": "RAN3",
+      "original_question": "Show the distribution of figure counts per spec (figure-content profile).",
+      "original_reference_query": "MATCH (f:TSFigure)-[:FIGURE_IN_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) RETURN sp.specNumber, count(f) AS figCnt ORDER BY figCnt DESC LIMIT 5",
+      "task_question": "Within the recorded RAN3 graph, for every specNumber reached from at least one TSFigure through FIGURE_IN_SECTION then BELONGS_TO_SPEC, count distinct TSFigure nodes. Return specNumber and figCnt as an unordered set; no output cap. Specs with no such recorded TSFigure path are outside this formal task population.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (f:TSFigure)-[:FIGURE_IN_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) RETURN sp.specNumber AS specNumber,count(DISTINCT f) AS figCnt",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "role": "specification number with recorded figure paths"
+        },
+        {
+          "name": "figCnt",
+          "type": "integer",
+          "role": "number of distinct TSFigure nodes associated with this specification number"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original distribution has unstated cap5 and grades spec IDs alone. Variant restores count output, states observed-path population and avoids inventing zero counts for unrepresented specs.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN3_P4_CQ4-1",
+      "variant_id": "RAN3_P4_CQ4-1__explicit_graph_task",
+      "wg": "RAN3",
+      "original_question": "List the change reasons of CRs modifying section 9.4.5 of spec 38.473 (section-level change rationale).",
+      "original_reference_query": "MATCH (sec:Section {sectionNumber: '9.4.5'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.473'}) MATCH (sec)<-[:MODIFIES_SECTION]-(c:CR) RETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason ORDER BY toInteger(replace(sp.specRelease,'Rel-','')) DESC, c.tdocNumber DESC LIMIT 10",
+      "task_question": "Within the recorded RAN3 graph, return every distinct (tdocNumber,reason) record for a CR linked by MODIFIES_SECTION to a Section numbered 9.4.5 belonging to spec 38.473, across stored release versions. reason is that CR node's reasonForChange value; return null if the property is absent. Return an unordered set; no output cap.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (sec:Section {sectionNumber:'9.4.5'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber:'38.473'}) MATCH (sec)<-[:MODIFIES_SECTION]-(c:CR) RETURN DISTINCT c.tdocNumber AS tdocNumber,c.reasonForChange AS reason",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "role": "CR identifier for the requested Section association"
+        },
+        {
+          "name": "reason",
+          "type": "string",
+          "role": "recorded reasonForChange of that CR",
+          "nullable": true
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original asks change reasons but key grades CR identifiers only. Variant explicitly defines CR/reason pairs, all stored versions, null absence treatment and no hidden cap10.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    },
+    {
+      "id": "RAN3_P5_TR-CQ-4-1",
+      "variant_id": "RAN3_P5_TR-CQ-4-1__explicit_graph_task",
+      "wg": "RAN3",
+      "original_question": "Return the Rel-17-targeted TRs with their spec-impact types (release study impact map).",
+      "original_reference_query": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-17'})\n                  OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec)\n                  RETURN tr.trNumber, tr.trTitle, collect({spec: s.specNumber, type: imp.impactType}) AS impacts",
+      "task_question": "Within the recorded RAN3 graph, return every distinct (trNumber,specNumber,impactType) record where a TechnicalReport targets Rel-17 and is linked through HAS_TR_IMPACT then IMPACTS_SPEC to a Spec. Return an unordered set. This population includes reports with an actual recorded spec-impact link; no causal or external semantic certification is claimed.",
+      "task_variant": true,
+      "original_question_disposition": "clarified_task_variant",
+      "reference_query": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName:'Rel-17'}), (tr)-[:HAS_TR_IMPACT]->(imp:TRImpact)-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber AS trNumber,s.specNumber AS specNumber,imp.impactType AS impactType",
+      "required_fields": [
+        {
+          "name": "trNumber",
+          "type": "string",
+          "role": "TechnicalReport identity targeting the scoped release"
+        },
+        {
+          "name": "specNumber",
+          "type": "string",
+          "role": "Specification associated with this report impact"
+        },
+        {
+          "name": "impactType",
+          "type": "string",
+          "role": "Recorded type of this report/spec impact"
+        }
+      ],
+      "collection_kind": "set",
+      "source_audit": {
+        "type": "author-side AI source comparison",
+        "question_reference_and_saved_rows_inspected": true,
+        "scores_or_predictions_read": false,
+        "reason": "Original requires TR/spec-impact mapping while key grades TR ID only. Flatten the stored repeated impact objects into distinct named triples; the variant explicitly excludes reports without a spec-impact edge instead of silently certifying optional-null semantics.",
+        "gold_not_yet_reexecuted": true,
+        "human_expert_validation": false,
+        "external_semantic_certification": false,
+        "scope": "explicit queryable records and documentary associations in the currently recorded WG graph; no causal or domain-expert truth claim"
+      }
+    }
+  ]
+}

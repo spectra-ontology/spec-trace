@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Named output contract sidecar",
+  "description": "A source-anchored output contract, not certification of source truth or expert gold. Original questions and reference queries remain separate and unchanged.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "item_id", "status", "required_fields", "collection", "constraints", "unresolved_reasons"],
+  "definitions": {
+    "source_anchor": {"oneOf": [
+      {"type": "string", "minLength": 1},
+      {"type": "object", "required": ["question", "query"],
+       "properties": {"question": {"type": "string", "minLength": 1}, "query": {"type": "string", "minLength": 1}}}
+    ]}
+  },
+  "properties": {
+    "version": {"const": 1},
+    "item_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["ready", "unresolved"]},
+    "required_fields": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["name", "type", "role", "source_anchor"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "type": {"enum": ["string", "integer", "number", "boolean", "null", "json"]},
+          "role": {"type": "string", "minLength": 1},
+          "source_anchor": {"$ref": "#/definitions/source_anchor"},
+          "nullable": {"type": "boolean"}
+        }
+      }
+    },
+    "collection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {"enum": ["set", "multiset", "sequence", "ordered_ties"]},
+        "order_keys": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["field", "direction"],
+            "properties": {
+              "field": {"type": "string", "minLength": 1},
+              "direction": {"enum": ["asc", "desc"]}
+            }
+          }
+        },
+        "tie_policy": {"const": "any_order_within_equal_keys"}
+      },
+      "allOf": [{
+        "if": {"properties": {"kind": {"const": "ordered_ties"}}},
+        "then": {"required": ["order_keys", "tie_policy"]},
+        "else": {"not": {"anyOf": [{"required": ["order_keys"]}, {"required": ["tie_policy"]}]}}
+      }]
+    },
+    "constraints": {
+      "type": "array",
+      "items": {"oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "field", "value", "verification", "source_anchor"],
+          "properties": {
+            "kind": {"const": "scope"},
+            "field": {"type": "string", "minLength": 1},
+            "value": {},
+            "verification": {"enum": ["record_field", "reference_query", "unresolved"]},
+            "source_anchor": {"$ref": "#/definitions/source_anchor"}
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "mode", "verification", "source_anchor"],
+          "properties": {
+            "kind": {"const": "cardinality"},
+            "mode": {"enum": ["exact", "at_most", "all", "top_k", "unresolved"]},
+            "value": {"type": "integer", "minimum": 0},
+            "tie_policy": {"enum": ["exact_k", "include_cutoff_ties"]},
+            "verification": {"enum": ["gold_records", "unresolved"]},
+            "source_anchor": {"$ref": "#/definitions/source_anchor"}
+          },
+          "allOf": [{
+            "if": {"properties": {"mode": {"enum": ["exact", "at_most", "top_k"]}}},
+            "then": {"required": ["value"]}
+          }, {
+            "if": {"properties": {"mode": {"const": "top_k"}, "verification": {"const": "gold_records"}}},
+            "then": {"required": ["tie_policy"]}
+          }]
+        }
+      ]}
+    },
+    "unresolved_reasons": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}
