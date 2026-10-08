@@ -68,13 +68,12 @@ GitHub push will not attempt to upload the large body files.
 
 ### Day 2 — Tue 2026-05-05: GitHub push + w3id PR (≈1 h, fully reversible)
 
-1. Commit the staged release artifacts and push to the public mirror:
-   ```bash
-   bash scripts/paper/sync_to_public.sh
-   ```
-   The sync script copies `release_package/` to a clean checkout of the
-   public mirror, commits, and pushes. Body TTLs are excluded by
-   `.gitignore`.
+1. Historical internal sync step. The original release instructions used
+   `sync_to_public.sh` to copy curated artifacts into the public checkout.
+   That tool has been retired. Current maintenance makes targeted edits in
+   the public checkout, checks the changed files and release tests, then
+   commits and pushes the reviewed changes. The dated steps below describe
+   the original release process.
 
 2. Verify the public state:
    ```bash
