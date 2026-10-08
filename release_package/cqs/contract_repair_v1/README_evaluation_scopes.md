@@ -16,8 +16,17 @@ original-question IDs with the 36 variants. The
 [scope relationship record](evaluation_scope_alignment_v1.json) pins the input
 files and set comparisons. Do not combine their scores into a validation rate.
 
+The all-560 AI diagnostic examines the original released positional scoring target,
+which differs from the repaired Core answer column for 59 items. None of those
+59 is in the selected 31; the V1 and V2 keys agree on the selected cohort. This
+diagnostic does not validate every repaired Core answer-column contract.
+
 Table 14's original full-row F1 of 0.1637, versus answer-column F1 of 0.3519,
-remains evidence about the original predictions. The separate variant F1 of
+is the historical value reported in the submitted paper. Full-row scoring
+compares normalized returned-row values, which can include projected fields
+beyond what a question requests; the aggregate drop measures reduced
+returned-row agreement.
+The separate named-field, typed variant F1 of
 0.7834 does not improve or repair it. On 26 multi-field variants, Cypher F1 is
 0.7385 with 18/26 exact outputs, retaining all three original query failures.
 
@@ -31,13 +40,15 @@ Iterative retrieval was not evaluated in the historical rebuilt Core stacks.
 The completed two-round comparator is on the separate 36 variants: F1 0.0112,
 zero exact outputs. These results do not establish that the text arms received
 all information needed. Contexts are retained, but the full ranking corpus is
-not deposited. Whole-graph access versus capped text and unverified source
+not deposited. In the 36-variant comparison, the 800-character cap applies to
+each passage's text body; source identifiers and document metadata are supplied
+alongside it. Whole-graph access versus capped text and unverified source
 cutoffs do not isolate a causal graph-storage effect.
 
 Independent practitioner questions and expert validation remain future work
 beyond the camera-ready. No expert-validation or deployment result is reported.
-All gold is nonempty; missing-information abstention and outside-RAN transfer
-remain untested. The complete canonical Core contract remains unfinished.
+All scored gold outputs are nonempty; missing-information abstention and
+outside-RAN transfer remain untested. The complete canonical Core contract remains unfinished.
 
 Specification-clause prose and graph Section records are separate evidence
 layers. In the checksum-pinned [graph schema](source_schema_frozen_v1.json),
@@ -52,6 +63,10 @@ not supported as a description of these public evidence layers.
 Start with the [31-item replay](original_source_aligned/README.md),
 [36-variant measurement](matched_retrieval_measurement/README.md), and
 [historical analyses](../../../paper/baseline/README.md).
+The liaison count of 3,644 is scoped to LS records in the RAN1 graph with
+RAN2 as a recipient. It does not filter origin to RAN1: the count includes
+3,131 LS out and 513 LS in records. Graph membership and recorded sender
+are separate dimensions.
 The [scenario provenance](../../validation/validation_manifest.md) records
 Table 15's deployed270/released1249 discrepancy and its unknown cause.
 The existing [traceability query](../../queries/cypher/MULTI_HOP_traceability.cypher)
