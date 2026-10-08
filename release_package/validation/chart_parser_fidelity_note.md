@@ -59,9 +59,11 @@ case the parser found across 60 RAN1 Final Reports.
    collapsing them. Removing the count would hide that capability.
 2. **Schema completeness.** `spectra:Chart` is a first-class auxiliary-content
    class in the SPECTRA ontology; per-class counts are reported as observed.
-3. **Reproducibility.** Reviewers can re-derive the count by re-running
-   `chart_extractor.py` over the released DOCX corpus and the bundled chart
-   XML.
+3. **Verification scope.** The published count and its ontology class can
+   be inspected in the release files listed below. The extractor, source
+   DOCX corpus and chart XML referenced above are internal build artifacts,
+   not bundled in this public package. This note records their provenance;
+   it does not provide a public rerun of the chart extraction.
 
 ## Where the count appears
 

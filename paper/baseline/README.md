@@ -560,9 +560,10 @@ Re-scoring needs nothing but Python. Re-running the model calls needs:
   route through OpenRouter);
 - for `rag` with a cold cache: a Qdrant instance at `localhost:6333` loaded with the
   released collections (with a warm `_rag_cache/`, retrieval is replayed from disk);
-- for `kg_grounded` execution: Neo4j graphs at ports 7687-7691 (RAN1-RAN5). The released
-  RAN1 snapshot can be rebuilt from the repository's release package; RAN2-RAN5
-  cardinalities in the paper come from the deployed instances.
+- for `kg_grounded` execution: Neo4j graphs at ports 7687-7691 (RAN1-RAN5).
+  All five released snapshots can be restored from the body-TTL deposit.
+  The original campaign used deployed instances; equivalence of every historical
+  execution snapshot to an archival restore is not established.
 
 `run_baseline.py` is dry-run by default and prints what it would call; pass `--confirm`
 to spend API credit. Runs are resumable: existing rows in `all.jsonl` are skipped.

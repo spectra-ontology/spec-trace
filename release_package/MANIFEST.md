@@ -114,8 +114,12 @@ first RETURN column obtained by executing its reference Cypher against the
 graph, plus a row count. Gold-value extraction is automated query execution;
 reference-query authorship and column-demand annotations have separate
 provenance. This does not independently validate the question's semantics.
-Reference queries whose ranking is truncated by `LIMIT` carry a data-intrinsic
-tie-break so the top-k set is reload-stable.
+Reference queries retain their released `ORDER BY` and `LIMIT` clauses.
+Primary-column self-replay does not certify stable complete rows at a tied
+cutoff. For example, `RAN3_P1_CQ4-1` orders only by meeting number; the
+[source replay diagnostic](cqs/contract_repair_v1/frozen_source_qa_RAN3_v1.json)
+records different tied rows after restoration, with both sets present in the
+untruncated population. See the benchmark README for the scoring boundary.
 
 ### 2.1 Query artifacts
 
