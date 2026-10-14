@@ -9,6 +9,7 @@ for the per-group totals and the distinction between graph replay and question v
 
 ## Start here
 
+- [Original-question-preserving repairs](release_package/cqs/original_core_repair/REVIEW_GUIDE.md): 300 of 560 original questions, with two separate AI semantic reviews, captured native references and requested-field scoring; 260 originals remain unresolved.
 - [Revised canonical Core contracts and itemized changes](release_package/cqs/canonical_core/REVIEW_GUIDE.md): 560 explicit revised definitions and native gold; 177 substantive variants, author/expert review pending; no new model results.
 - [Evaluation scopes and evidence](release_package/cqs/contract_repair_v1/README_evaluation_scopes.md): how the current analyses relate to the original benchmark.
 - [Release package](release_package/README.md): ontology, schema, examples, pipeline and known data-quality issues.
@@ -19,10 +20,19 @@ for the per-group totals and the distinction between graph replay and question v
 
 | Analysis | What it evaluates | Scope |
 | --- | --- | --- |
+| [Original-question repairs](release_package/cqs/original_core_repair/README.md) | 300 repaired contracts retaining the exact original English questions; 118 keep the original query and 182 repair it | AI-assisted semantic checks, 236,314 captured native rows and 2,487 scorer controls; no new model results; 257 pending and 3 blocked originals |
 | [Revised Core contracts](release_package/cqs/canonical_core/README.md) | 560 revised definitions with complete native reference outputs and requested-field scoring | 383 proposed clarifications; 177 substantive variants; author semantic review pending; no new model results |
 | [31 original questions](release_package/cqs/contract_repair_v1/original_source_aligned/README.md) | Retained predictions on unchanged questions admitted by two AI contract checks and complete saved reference execution | Nine models, legacy answer-column scoring; no multihop item or independent expert validation |
 | [36 formal task variants](release_package/cqs/contract_repair_v1/matched_retrieval_measurement/README.md) | Explicit named-field, typed complete-record scoring of single-pass text, two-round text and generated Cypher | Separate tasks; unequal graph/text access and unverified source-cutoff equivalence |
 | [Core 560 and historical subsets](paper/baseline/README.md) | Original scores, whole-row sensitivity and retained SQL/Cypher reanalysis | The complete original question/scoring contract remains unfinished |
+
+The [original-question repair bundle](release_package/cqs/original_core_repair/README.md)
+is the task set for a new requested-field evaluation; use its itemized comparison
+and full 560-ID disposition ledger when reviewing changes. Its 300 items include
+all 31 historical diagnostic IDs and 269 others, but use repaired scoring
+contracts. Earlier model scores remain under their original scopes and cannot be
+transferred to these contracts. Two AI judgments are required per admitted repair;
+human and independent domain-expert validation have not been completed.
 
 The historical 45-question diagnostic and the current 31-question diagnostic use
 different criteria; they overlap on 15 IDs and neither contains the other. The
