@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 402 have passed the stated repair checks,
-and 158 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 404 have passed the stated repair checks,
+and 156 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 402 unchanged original questions.
+included in these 404 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -42,30 +42,6 @@ file membership are in [manifest.json](manifest.json) and
 [archive_inventory.json](archive_inventory.json). The byte-identical duplicate
 paths are restored as independent regular files by the supplied verifier.
 
-`index_manifest.json` records the current 402-item index. `manifest.json`
-describes the preserved 400-item download only. The separate
-[latest additions manifest](latest_additions_manifest.json) pins the current
-index and both new one-question repair/evaluation packages. Its
-[inventory](latest_additions_inventory.json) and
-[download](latest_additions.tar.gz) preserve their exact evidence bytes.
-`verify_latest_additions.py` downloads that pinned release anonymously and
-replays the two new contracts, two evaluations, current index and blank
-human-review inputs. Older model experiments are outside this download's
-replay scope.
-
-```sh
-python3 -B -S release_package/cqs/current_core/verify_latest_additions.py \
-  --commit EXACT_40_CHARACTER_RELEASE_COMMIT \
-  --manifest-sha256 EXACT_SHA256_OF_LATEST_ADDITIONS_MANIFEST \
-  --out-dir /your/fresh/latest-additions
-```
-
-The named-agreement task retains an `admitted: false` proposal-stage field.
-Completed admission is recorded by its `validation_status: validated`,
-pinned reviews, native capture, scorer checks and bundle manifest. The
-current index uses those verified completion records; frozen proposal
-metadata is retained rather than rewritten after evaluation.
-
 ```sh
 python3 -B -S release_package/cqs/current_core/verify_download.py \
   --commit e89d2769de3e1740f50411fe2333d33341b77873 \
@@ -76,3 +52,39 @@ python3 -B -S release_package/cqs/current_core/verify_download.py \
 This replays saved evidence without model calls or database execution. It
 does not repeat the complete historical 371-item model experiment or count
 prepared forms as completed expert reviews.
+
+The preserved [Core402 additions manifest](latest_additions_manifest.json) and
+[archive](latest_additions.tar.gz) retain the earlier 402-item index snapshot
+and its two measured one-item cohorts. Their verifier replays that snapshot;
+it does not certify the current 404-item index.
+
+The [observed-trend manifest](observed_trend_manifest.json) and
+[download](observed_trend.tar.gz) preserve the current 404-item index, all 560
+blank source-first review forms, and the disjoint two-item
+[repair bundle](../original_core_observed_trend_repair/README.md). The compact
+archive uses the byte-preserved Core402 download as a pinned dependency.
+Its verifier checks the full 58 source Meeting nodes per WG, exact agenda
+Resolution-node counts, native membership, requested fields, ordinal ties,
+and all 30 scorer controls. Source ordinal order and graph-observed zero
+counts do not establish real-world inactivity, calendar chronology, stable
+agenda descriptions, or complete raw-archive coverage. Independent human
+and expert reviews remain incomplete; completed reviews number zero.
+
+```sh
+python3 -B -S release_package/cqs/current_core/verify_observed_trend_download.py \
+  --commit EXACT_40_CHARACTER_RELEASE_COMMIT \
+  --manifest-sha256 EXACT_SHA256_OF_OBSERVED_TREND_MANIFEST \
+  --out-dir /your/fresh/observed-trend
+```
+
+The named-agreement task retains an `admitted: false` proposal-stage field.
+Completed admission is recorded by its `validation_status: validated`,
+pinned reviews, native capture, scorer checks and bundle manifest. The
+current index uses those verified completion records; frozen proposal
+metadata is retained rather than rewritten after evaluation.
+
+Local preparation, offline replay, public upload, and fresh anonymous
+download verification are separate states. Model predictions for these two
+new contracts have a separate frozen evaluation when actually completed;
+prior scores are not transferred. The compact archive verifier does not
+repeat older model experiments.
