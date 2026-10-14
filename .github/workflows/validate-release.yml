@@ -104,3 +104,32 @@ jobs:
           else
             echo "Audit script not in repo (kept private)."
           fi
+
+      - name: Verify current original Core index
+        run: python3 -B -S release_package/cqs/current_core/verify_index.py
+      - name: Verify complete SQL interface evidence
+        run: python3 -B -S release_package/cqs/original_core_sql_interface_evaluation/verify_archive.py
+      - name: Verify saved source-access evidence
+        run: python3 -B -S release_package/cqs/source_access_diagnostic/verify_saved.py
+      - name: Verify top-k replacements
+        run: >-
+          python3 -B -S release_package/cqs/original_core_topk_replacements/verify_replacements.py
+          --bundle release_package/cqs/original_core_topk_replacements
+          --parent release_package/cqs/original_core_repair
+          --out /tmp/spectra-topk-replacements.json
+      - name: Replay later original-question cohorts
+        run: |
+          for cohort in followup source natural final; do
+            python3 -B -S release_package/cqs/original_core_${cohort}_evaluation/runtime/verify_additional_evaluation.py \
+              --evidence release_package/cqs/original_core_${cohort}_evaluation \
+              --bundle release_package/cqs/original_core_${cohort}_repairs \
+              --parent release_package/cqs/original_core_repair \
+              --out /tmp/spectra-${cohort}-verification.json
+          done
+      - name: Replay current top-k contract evaluation
+        run: >-
+          python3 -B -S release_package/cqs/original_core_topk_evaluation/runtime/verify_topk_evaluation.py
+          --evidence release_package/cqs/original_core_topk_evaluation
+          --bundle release_package/cqs/original_core_topk_replacements
+          --parent release_package/cqs/original_core_repair
+          --out /tmp/spectra-current-topk-evaluation.json

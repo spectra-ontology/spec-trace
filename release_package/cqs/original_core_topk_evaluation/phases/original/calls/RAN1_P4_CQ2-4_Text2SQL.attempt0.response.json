@@ -1,0 +1,53 @@
+{
+  "request_id": "RAN1_P4_CQ2-4_Text2SQL",
+  "attempt": 0,
+  "http_status": 200,
+  "elapsed_seconds": 5.801255359998322,
+  "received_utc": "2026-10-14T09:46:52.996227+00:00",
+  "response": {
+    "id": "gen-1791971154-yPpuLl0DSaZ47hyBZAyM",
+    "object": "chat.completion",
+    "created": 1791971154,
+    "model": "anthropic/claude-opus-4.8",
+    "provider": "Anthropic",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "end_turn",
+        "message": {
+          "role": "assistant",
+          "content": "{\"query\":\"WITH cr_spec AS (SELECT src_id AS cr_id, dst_id AS spec_id FROM rel_AFFECTS_CORE_SPEC UNION SELECT src_id, dst_id FROM rel_AFFECTS_OM_SPEC UNION SELECT src_id, dst_id FROM rel_AFFECTS_TEST_SPEC), cr_only AS (SELECT cr_id, spec_id FROM cr_spec WHERE cr_id IN (SELECT node_id FROM CR)), reach AS (SELECT cr_id, COUNT(DISTINCT spec_id) AS n FROM cr_only GROUP BY cr_id) SELECT c.\\\"tdocNumber\\\" AS \\\"cr.tdocNumber\\\", (SELECT json_group_array(sn) FROM (SELECT DISTINCT s.\\\"specNumber\\\" AS sn FROM cr_only co JOIN Spec s ON s.node_id=co.spec_id WHERE co.cr_id=r.cr_id)) AS affectedSpecs FROM reach r JOIN CR c ON c.node_id=r.cr_id WHERE r.n >= (SELECT MIN(n) FROM (SELECT n FROM reach ORDER BY n DESC LIMIT 10))\",\"abstain\":false}",
+          "refusal": null,
+          "reasoning": null
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 12293,
+      "completion_tokens": 456,
+      "total_tokens": 12749,
+      "cost": 0.072865,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.072865,
+        "upstream_inference_prompt_cost": 0.061465,
+        "upstream_inference_completions_cost": 0.0114
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  }
+}
