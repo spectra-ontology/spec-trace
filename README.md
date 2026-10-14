@@ -9,8 +9,9 @@ for the per-group totals and the distinction between graph replay and question v
 
 ## Start here
 
-- [Original-question-preserving repairs](release_package/cqs/original_core_repair/REVIEW_GUIDE.md): 371 of 560 original questions, with two separate AI semantic reviews, captured native references and requested-field scoring; 189 originals remain unresolved.
+- [Preserved 371 original-question repairs](release_package/cqs/original_core_repair/REVIEW_GUIDE.md): two separate AI semantic reviews, captured native references and requested-field scoring; the frozen cohort ledger retains its original 189 pending IDs.
 - [New four-method evaluation](release_package/cqs/original_core_evaluation/README.md): new predictions on all 371 admitted contracts with one model, complete denominators, raw attempt records, execution failures and offline score replay.
+- [Seven additional original-question repairs](release_package/cqs/original_core_additions/README.md) and their [new four-method predictions](release_package/cqs/original_core_additional_evaluation/README.md): a separate, disjoint cohort expands the published repair union to 378/560; 182 remain pending in this additive ledger. The earlier 371 contracts and results are preserved.
 - [Revised canonical Core contracts and itemized changes](release_package/cqs/canonical_core/REVIEW_GUIDE.md): 560 explicit revised definitions and native gold; 177 substantive variants, author/expert review pending; no new model results.
 - [Evaluation scopes and evidence](release_package/cqs/contract_repair_v1/README_evaluation_scopes.md): how the current analyses relate to the original benchmark.
 - [Release package](release_package/README.md): ontology, schema, examples, pipeline and known data-quality issues.
@@ -21,8 +22,9 @@ for the per-group totals and the distinction between graph replay and question v
 
 | Analysis | What it evaluates | Scope |
 | --- | --- | --- |
-| [Original-question repairs](release_package/cqs/original_core_repair/README.md) | 371 repaired contracts retaining the exact original English questions; 119 keep the original query and 252 repair it | AI-assisted semantic checks, 776,873 captured native rows and 3,130 scorer controls; reference evidence and scorer checks; 189 pending and 0 blocked originals |
+| [Preserved original-question repairs](release_package/cqs/original_core_repair/README.md) | 371 repaired contracts retaining the exact original English questions; 119 keep the original query and 252 repair it | AI-assisted semantic checks, 776,873 captured native rows and 3,130 scorer controls; reference evidence and scorer checks; its frozen ledger has 189 pending and 0 blocked originals |
 | [New original-question evaluation](release_package/cqs/original_core_evaluation/README.md) | Generated Cypher, generated SQL, single retrieval and two-round retrieval on the disjoint frozen 350+21 cohorts | One model; all 371 IDs per method; failures retained, paired uncertainty, and separate original-attempt/transport-recovery records; SQL generation and text-access limitations apply |
+| [Additional original-question evaluation](release_package/cqs/original_core_additional_evaluation/README.md) | Seven further original questions with separately fixed repairs and newly generated four-method predictions | 378 unique repaired IDs in the published union; all seven additional IDs per method; original SQL interface retained; AI-assisted checks, no completed human/expert validation |
 | [Revised Core contracts](release_package/cqs/canonical_core/README.md) | 560 revised definitions with complete native reference outputs and requested-field scoring | 383 proposed clarifications; 177 substantive variants; author semantic review pending; no new model results |
 | [31 original questions](release_package/cqs/contract_repair_v1/original_source_aligned/README.md) | Retained predictions on unchanged questions admitted by two AI contract checks and complete saved reference execution | Nine models, legacy answer-column scoring; no multihop item or independent expert validation |
 | [36 formal task variants](release_package/cqs/contract_repair_v1/matched_retrieval_measurement/README.md) | Explicit named-field, typed complete-record scoring of single-pass text, two-round text and generated Cypher | Separate tasks; unequal graph/text access and unverified source-cutoff equivalence |
