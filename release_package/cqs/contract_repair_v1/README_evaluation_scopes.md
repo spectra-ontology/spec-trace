@@ -4,6 +4,12 @@ Use the **31 original-question diagnostic** for qualified comparisons on unchang
 questions and the **36 formal variants** for explicit complete-record evaluation.
 The historical 45-item diagnostic and Core 560 remain separate analyses.
 
+The [revised Core contract bundle](../canonical_core/README.md) now supplies explicit
+revised definitions and complete captured reference outputs for all 560 original
+IDs. Its 383 proposed clarifications and 177 substantive variants have passed
+technical contract checks; author semantic review and new model evaluation remain
+pending. This addition does not expand the 31-item original-question diagnostic.
+
 | Scope | Evidence | Limits |
 | --- | --- | --- |
 | Current 31 original questions | Two AI contract checks and complete saved native execution; 27 retained runs of nine models rescored with released/V1 key | No multihop item; legacy answer-column scoring; no expert certification |
@@ -47,8 +53,10 @@ cutoffs do not isolate a causal graph-storage effect.
 
 Independent practitioner questions and expert validation remain future work
 beyond the camera-ready. No expert-validation or deployment result is reported.
-All scored gold outputs are nonempty; missing-information abstention and
-outside-RAN transfer remain untested. The complete canonical Core contract remains unfinished.
+Gold outputs in the historical scored analyses are nonempty; missing-information
+abstention and outside-RAN transfer remain untested. Two revised contracts have
+formal empty reference results, which do not establish model abstention ability.
+The complete original question/scoring contract is not yet semantically confirmed.
 
 Specification-clause prose and graph Section records are separate evidence
 layers. In the checksum-pinned [graph schema](source_schema_frozen_v1.json),

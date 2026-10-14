@@ -9,6 +9,7 @@ for the per-group totals and the distinction between graph replay and question v
 
 ## Start here
 
+- [Revised canonical Core contracts and itemized changes](release_package/cqs/canonical_core/REVIEW_GUIDE.md): 560 explicit revised definitions and native gold; 177 substantive variants, author/expert review pending; no new model results.
 - [Evaluation scopes and evidence](release_package/cqs/contract_repair_v1/README_evaluation_scopes.md): how the current analyses relate to the original benchmark.
 - [Release package](release_package/README.md): ontology, schema, examples, pipeline and known data-quality issues.
 - [Historical benchmark and scoring](release_package/cqs/spectra_cq_v2.0/README.md) and [baseline records](paper/baseline/README.md).
@@ -18,6 +19,7 @@ for the per-group totals and the distinction between graph replay and question v
 
 | Analysis | What it evaluates | Scope |
 | --- | --- | --- |
+| [Revised Core contracts](release_package/cqs/canonical_core/README.md) | 560 revised definitions with complete native reference outputs and requested-field scoring | 383 proposed clarifications; 177 substantive variants; author semantic review pending; no new model results |
 | [31 original questions](release_package/cqs/contract_repair_v1/original_source_aligned/README.md) | Retained predictions on unchanged questions admitted by two AI contract checks and complete saved reference execution | Nine models, legacy answer-column scoring; no multihop item or independent expert validation |
 | [36 formal task variants](release_package/cqs/contract_repair_v1/matched_retrieval_measurement/README.md) | Explicit named-field, typed complete-record scoring of single-pass text, two-round text and generated Cypher | Separate tasks; unequal graph/text access and unverified source-cutoff equivalence |
 | [Core 560 and historical subsets](paper/baseline/README.md) | Original scores, whole-row sensitivity and retained SQL/Cypher reanalysis | The complete original question/scoring contract remains unfinished |
