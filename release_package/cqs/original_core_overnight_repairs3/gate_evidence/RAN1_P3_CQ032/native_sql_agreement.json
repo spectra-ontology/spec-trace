@@ -1,0 +1,75 @@
+{
+  "id": "RAN1_P3_CQ032",
+  "independent_native_sql_fullpool_equal": true,
+  "rows": 53,
+  "source_sql": "WITH selected AS (\n SELECT s.node_id, s.sectionId FROM Section s\n WHERE (lower(s.sectionTitle) LIKE '%pdcch%') AND EXISTS (\n  SELECT 1 FROM Spec sp JOIN edge b ON b.dst_id=sp.node_id\n  WHERE b.src_id=s.node_id AND b.rel_type='BELONGS_TO_SPEC'))\nSELECT sectionId, (SELECT json_group_array(tableId) FROM (\n SELECT DISTINCT t.tableId FROM TSTable t\n WHERE t.tableId IS NOT NULL AND EXISTS (\n  SELECT 1 FROM edge r JOIN selected own ON own.node_id=r.src_id\n  WHERE r.dst_id=t.node_id AND r.rel_type='CONTAINS_TABLE'\n    AND own.sectionId=domain.sectionId)\n ORDER BY t.tableId)) AS tableIds\nFROM (SELECT DISTINCT sectionId FROM selected) domain ORDER BY sectionId\n",
+  "parameters": [],
+  "root_independent_SQL_case": {
+    "id": "RAN1_P3_CQ032",
+    "status": "full_native_SQL_multiset_equal",
+    "sql": "WITH selected AS (\n SELECT s.node_id, s.sectionId FROM Section s\n WHERE (lower(s.sectionTitle) LIKE '%pdcch%') AND EXISTS (\n  SELECT 1 FROM Spec sp JOIN edge b ON b.dst_id=sp.node_id\n  WHERE b.src_id=s.node_id AND b.rel_type='BELONGS_TO_SPEC'))\nSELECT sectionId, (SELECT json_group_array(tableId) FROM (\n SELECT DISTINCT t.tableId FROM TSTable t\n WHERE t.tableId IS NOT NULL AND EXISTS (\n  SELECT 1 FROM edge r JOIN selected own ON own.node_id=r.src_id\n  WHERE r.dst_id=t.node_id AND r.rel_type='CONTAINS_TABLE'\n    AND own.sectionId=domain.sectionId)\n ORDER BY t.tableId)) AS tableIds\nFROM (SELECT DISTINCT sectionId FROM selected) domain ORDER BY sectionId\n",
+    "parameters": [],
+    "columns": [
+      "sectionId",
+      "tableIds"
+    ],
+    "rows": 53,
+    "all_return_fields_compared": true,
+    "uncapped_SQL": true,
+    "independent_records": "root_evidence/independent_sql_recheck_records/RAN1_P3_CQ032.jsonl",
+    "independent_records_sha256": "dcb341dcaae32b1c150e9e126551401a61a9f339441be60b61a8348021a265eb",
+    "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/native_RAN1_title_direct_tables3/reference_outputs/RAN1_P3_CQ032/4ef8e5f0c05ed77744aa7d1626dd833bf1cbf70cb93ed5cbfb96672e36a8341e.json",
+    "native_receipt_sha256": "0e591f0bb5ee062018af21ae741820cead9985a025d91f023ec7893950e080c5",
+    "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/native_RAN1_title_direct_tables3/reference_outputs/RAN1_P3_CQ032/4ef8e5f0c05ed77744aa7d1626dd833bf1cbf70cb93ed5cbfb96672e36a8341e.jsonl",
+    "native_rows_sha256": "5b6e18f70e6dd09cf24bf6c0a95470e7b965cbdba7ea7f69b9d5185e255e1412",
+    "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+    "db_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+    "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+    "relational_manifest_sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8",
+    "snapshot_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+    "SQL_query_pin": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_prepared_RAN1_title_direct_tables3/RAN1_P3_CQ032.sql",
+      "sha256": "a78c32db72358aed1f02d987b0e0067e9d015105580a6d17ba041d943ae6f03e"
+    },
+    "reader_pin": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/audit_frozen_required_records_against_native_v3_declared_JSON.py",
+      "sha256": "149b5d7d794c4d1ca77d0dd3f6db074e321c2e818a0a7e78273bdbf58f85d38c"
+    },
+    "full_record_comparison_policy": "Declared typed fields and nested array semantics",
+    "declared_field_definitions": [
+      {
+        "name": "sectionId",
+        "nullable": false,
+        "source_column_or_expression": "sectionId",
+        "type": "string"
+      },
+      {
+        "json_schema": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "name": "tableIds",
+        "nested_array_semantics": {
+          "$": "set"
+        },
+        "nested_collection_definition": {
+          "duplicates": "ignored",
+          "element_type": "string",
+          "kind": "set"
+        },
+        "nullable": false,
+        "source_column_or_expression": "tableIds",
+        "type": "json"
+      }
+    ],
+    "typed_kernel_pin": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/typed_values.py",
+      "sha256": "d7eee66cce2dabe3ef48c173e84fac47192266bdd3e8ce78214f8361df5161ba"
+    }
+  },
+  "checked_utc": "2026-10-14T23:40:50.395227+00:00",
+  "new_model_API_calls": 0,
+  "expert_validation_n": 0
+}

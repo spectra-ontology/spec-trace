@@ -1,0 +1,70 @@
+{
+  "id": "RAN1_P3_CQ033",
+  "status": "full_native_SQL_multiset_equal",
+  "sql": "WITH selected AS (\n SELECT s.node_id, s.sectionId FROM Section s\n WHERE (lower(s.sectionTitle) LIKE '%pusch%') AND EXISTS (\n  SELECT 1 FROM Spec sp JOIN edge b ON b.dst_id=sp.node_id\n  WHERE b.src_id=s.node_id AND b.rel_type='BELONGS_TO_SPEC'))\nSELECT sectionId, (SELECT json_group_array(tableId) FROM (\n SELECT DISTINCT t.tableId FROM TSTable t\n WHERE t.tableId IS NOT NULL AND EXISTS (\n  SELECT 1 FROM edge r JOIN selected own ON own.node_id=r.src_id\n  WHERE r.dst_id=t.node_id AND r.rel_type='CONTAINS_TABLE'\n    AND own.sectionId=domain.sectionId)\n ORDER BY t.tableId)) AS tableIds\nFROM (SELECT DISTINCT sectionId FROM selected) domain ORDER BY sectionId\n",
+  "parameters": [],
+  "columns": [
+    "sectionId",
+    "tableIds"
+  ],
+  "rows": 107,
+  "all_return_fields_compared": true,
+  "uncapped_SQL": true,
+  "independent_records": "root_evidence/independent_sql_recheck_records/RAN1_P3_CQ033.jsonl",
+  "independent_records_sha256": "c76610cc2688eee7487d9eceed533cdc597dbfc0afc14ecfa0a884cc4c4d4898",
+  "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/native_RAN1_title_direct_tables3/reference_outputs/RAN1_P3_CQ033/6ea905d8a3eab79c4d9fabdb8afb7cee60612abc5fdf69a9cee90044469ecf9e.json",
+  "native_receipt_sha256": "46229dacdadb8fe9d3b4b90e22681355f7cd3b0128b0142c6d12dd5b6b5e8e9f",
+  "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/native_RAN1_title_direct_tables3/reference_outputs/RAN1_P3_CQ033/6ea905d8a3eab79c4d9fabdb8afb7cee60612abc5fdf69a9cee90044469ecf9e.jsonl",
+  "native_rows_sha256": "8957b3f8dd1583e69809fa54ab60750da20f12eeaa3cdab1d76a67b238402bda",
+  "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+  "db_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+  "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+  "relational_manifest_sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8",
+  "snapshot_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+  "SQL_query_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_prepared_RAN1_title_direct_tables3/RAN1_P3_CQ033.sql",
+    "sha256": "2803dfb463fa4b6396386c9d3baa32fdda5bd1fabd73040b07b073b5328ee5c4"
+  },
+  "reader_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/audit_frozen_required_records_against_native_v3_declared_JSON.py",
+    "sha256": "149b5d7d794c4d1ca77d0dd3f6db074e321c2e818a0a7e78273bdbf58f85d38c"
+  },
+  "full_record_comparison_policy": "Declared typed fields and nested array semantics",
+  "declared_field_definitions": [
+    {
+      "name": "sectionId",
+      "nullable": false,
+      "source_column_or_expression": "sectionId",
+      "type": "string"
+    },
+    {
+      "json_schema": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "name": "tableIds",
+      "nested_array_semantics": {
+        "$": "set"
+      },
+      "nested_collection_definition": {
+        "duplicates": "ignored",
+        "element_type": "string",
+        "kind": "set"
+      },
+      "nullable": false,
+      "source_column_or_expression": "tableIds",
+      "type": "json"
+    }
+  ],
+  "typed_kernel_pin": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/typed_values.py",
+    "sha256": "d7eee66cce2dabe3ef48c173e84fac47192266bdd3e8ce78214f8361df5161ba"
+  },
+  "portable_independent_records": {
+    "file": "independent_SQL/RAN1_P3_CQ033.jsonl",
+    "sha256": "c76610cc2688eee7487d9eceed533cdc597dbfc0afc14ecfa0a884cc4c4d4898",
+    "bytes": 6914
+  }
+}
