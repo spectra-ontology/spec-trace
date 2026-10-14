@@ -1,0 +1,180 @@
+{
+  "id": "RAN4_P3_CQ3-4",
+  "status": "pass",
+  "repair_sha256": "439d0285f45b953b793d24e7574abd4cd8cc57946f4241397601cc54e648f0b1",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "a1b8c0dabdc906e9d0981a0a131efd694e40443e22fbd01a4167aec535d383d2",
+  "reference_query_sha256": "62d7bef9b0d8863a455cae51f061ab81a7c322729f5f3718c1a857d20f058d74",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})",
+        "WHERE hub.specRelease IS NULL",
+        "  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "WITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField",
+        "WITH cr, declaredField,",
+        "     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |",
+        "       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange",
+        "WHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'",
+        "   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'",
+        "       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4",
+        "       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber",
+        "ORDER BY tdocNumber"
+      ],
+      "finding": "The unchanged English asks a complete CR document list for fixed38.133 touching clause4.2; requiredtdocNumber is its sourceTdoc identity. It asks no count, CRnumber, change text, approvalstatus or Sectionlist. Requiredrole remains string/nonnullable identity only, complete unorderedset."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})",
+        "WHERE hub.specRelease IS NULL",
+        "  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "WITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField",
+        "WITH cr, declaredField,",
+        "     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |",
+        "       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange",
+        "WHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'",
+        "   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'",
+        "       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4",
+        "       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber",
+        "ORDER BY tdocNumber"
+      ],
+      "finding": "Original WG/Phase3 graph-process source context explicitly bases this CQ on recorded nonempty CR.clausesAffected metadata. Touch denotes proper clause scope, supported by actual rawHeading hierarchy and author forms. The labelled declared whole-chapter intervalSection1~6 is a scope expression within that same original field, not an external replacement population or authored-source-only prerequisite."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})",
+        "WHERE hub.specRelease IS NULL",
+        "  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "WITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField",
+        "WITH cr, declaredField,",
+        "     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |",
+        "       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange",
+        "WHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'",
+        "   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'",
+        "       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4",
+        "       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber",
+        "ORDER BY tdocNumber"
+      ],
+      "finding": "Exact4.2 and properly subordinate4.2.* clauses belong to the requested scope;4.2A/B/C/D same-level siblings and9.12.4.2 remain excluded. A labelled whole integer chapter interval whose endpoints include chapter4 declares the whole chapter scope including its proper4.2 subtree. The only actual matching labelled chapter range is independently source-authoredSection1~6, with real4.2 tracked text substitutions; simply showing an unchanged pasted heading was not enough. The query handles this grammar generically by numeric endpoints, not hardcodedTdocID or exactSection1~6 string."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})",
+        "WHERE hub.specRelease IS NULL",
+        "  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "WITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField",
+        "WITH cr, declaredField,",
+        "     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |",
+        "       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange",
+        "WHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'",
+        "   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'",
+        "       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4",
+        "       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber",
+        "ORDER BY tdocNumber"
+      ],
+      "finding": "One returned member is one distincttdocNumber regardless of the number of branch/range/path witnesses. A CR mixing proper4.2 with siblings qualifies once. CR→MODIFIES logicalSpec hub is documentary target role; range matching is a declaredscope qualifier, not proof of approval, TSG enactment or causality. No numericCRnumber/latestRelease/CurrentVersion/status/meeting/date filter appears."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})",
+        "WHERE hub.specRelease IS NULL",
+        "  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "WITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField",
+        "WITH cr, declaredField,",
+        "     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |",
+        "       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange",
+        "WHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'",
+        "   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'",
+        "       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4",
+        "       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber",
+        "ORDER BY tdocNumber"
+      ],
+      "finding": "The prior literal59 identity was incomplete and its two semantic passes withdrawn after actual counterexample. This new definition examines the entire frozen field population and includes bounded literal clauses plus explicit labelled chapter intervals. Complete1059 unique/2055 nonempty grammar census shows no other chapter interval, all/whole/entire declaration, relevant cross-parent4.1–4.3 range or4.1,2,3 shorthand requiring a missing rule. The isolated4 comma typo is body-confirmed sibling4.2D, not an authored ancestor4 declaration. Other ranges/dashedAnnex entries are independently actual-source recorded outside4.2; they do not add targetscope. No answer set or native result validates these semantics by itself."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})",
+        "WHERE hub.specRelease IS NULL",
+        "  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "WITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField",
+        "WITH cr, declaredField,",
+        "     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |",
+        "       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange",
+        "WHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'",
+        "   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'",
+        "       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4",
+        "       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber",
+        "ORDER BY tdocNumber"
+      ],
+      "finding": "No output order or top-k is requested. RETURNDISTINCTtdocNumber implements the complete unorderedset; ORDERBY only reproducible display. Repeat of an existing set member is harmless, whereas omitted/extra/duplicatedisplacement identity, requiredfield/type corruption must fail. No LIMIT10 or forcedchronology is imported from oldquery."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})",
+        "WHERE hub.specRelease IS NULL",
+        "  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "WITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField",
+        "WITH cr, declaredField,",
+        "     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |",
+        "       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange",
+        "WHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'",
+        "   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'",
+        "       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4",
+        "       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber",
+        "ORDER BY tdocNumber"
+      ],
+      "finding": "This fresh primary uses unchangedEnglish/KO/design/raw hierarchy and actual-source grammar controls after preserving both former pass artifacts and explicit withdrawal events. It is nonblind AI development diagnosis with expert0; no gold/modelprediction supplies authority. Generic absent/future grammar and physical omitted-source changes are not certified. Independent exactsecondary, full native, independent wholeSQL and requestedidentity/source-specificnegativecontrols remain necessary before admission. No new60gold, graphmetadata overwrite or publicupdate occurs here."
+    }
+  ],
+  "exact_source_only_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_clause42_declared_range_aware_v2/canonical_source_only_definition.json",
+    "sha256": "b0ffd5af6be09dafa9830125d5728e57d021e0eecee4457d365a32a0a3fb6a4c"
+  },
+  "source_only_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_clause42_declared_range_aware_v2/original_and_actual_declaration_source_only_packet.json",
+    "sha256": "c6f64e628b793569aa7e0a8e1f07bf14dde9b30a532f72ad6bd08941b8f4bc6a"
+  },
+  "full_declaration_census_and_source_witness_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_clause42_frozen_metadata_branch/complete_declaration_census_and_actual_source_grammar_witnesses_v2.json",
+    "sha256": "23e4348baee3c433f4529f4f61e15dbbb3b353b61cc16a9020c98d03fca30f90"
+  },
+  "prior_primary_withdrawal_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_clause42_frozen_metadata_branch/later_primary_semantic_pass_withdrawal_event.json",
+    "sha256": "b6a0e4a456437e8e453dd0aeda9bae3e5a8324b6192e4be90a5d82eb0b51d99e"
+  },
+  "reviewer_kind": "Fresh range-aware source-derived primary /root/reaudit_ran3_ran4",
+  "exposure": "OriginalEnglish/KO/source/current frozen fields, prior oldprimary/secondarypass messages and separate sourcecounterexample challenges visible. No new secondary/gold/native/predictions. Nonblind diagnostic source judgment, expert0.",
+  "admitted": false,
+  "native_completed": false,
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "external_model_APIcalls": 0
+}

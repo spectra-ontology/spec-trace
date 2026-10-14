@@ -1,0 +1,87 @@
+{
+  "id": "RAN3_P3_CQ1-2",
+  "kind": "Read-only full recorded edition/relationship domain, not native/gold",
+  "database_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN3.sqlite",
+    "sha256": "ff55fe57ee9435c25b59e1d90c5ee09ee0ff167696c4afeb05f21e367f4c6a29"
+  },
+  "SQL": "SELECT DISTINCT obj.sectionId AS sectionId,obj.sectionNumber AS sectionNumber,obj.sectionTitle AS sectionTitle\n            FROM Spec hub JOIN rel_IN_RELEASE_OF ir ON ir.dst_id=hub.node_id\n            JOIN Spec edition ON edition.node_id=ir.src_id\n            JOIN rel_BELONGS_TO_SPEC bs ON bs.dst_id=edition.node_id\n            JOIN Section anchor ON anchor.node_id=bs.src_id\n            JOIN rel_HAS_SUB_SECTION edge ON edge.src_id=anchor.node_id\n            JOIN Section obj ON obj.node_id=edge.dst_id\n            WHERE hub.specNumber=? AND hub.specRelease IS NULL AND anchor.sectionNumber=?\n            ORDER BY obj.sectionId",
+  "parameters": [
+    "38.413",
+    "9.3.1"
+  ],
+  "anchor_census_SQL": "SELECT edition.node_id AS editionNode,edition.specRelease,edition.specVersion,\n            anchor.node_id AS anchorNode,anchor.sectionId AS anchorId,anchor.sectionTitle AS anchorTitle\n            FROM Spec hub JOIN rel_IN_RELEASE_OF ir ON ir.dst_id=hub.node_id\n            JOIN Spec edition ON edition.node_id=ir.src_id\n            LEFT JOIN (SELECT s.* ,b.dst_id AS ownerSpec FROM Section s JOIN rel_BELONGS_TO_SPEC b ON b.src_id=s.node_id WHERE s.sectionNumber=?) anchor\n            ON anchor.ownerSpec=edition.node_id\n            WHERE hub.specNumber=? AND hub.specRelease IS NULL\n            ORDER BY edition.specRelease,anchor.node_id",
+  "anchor_census_parameters": [
+    "9.3.1",
+    "38.413"
+  ],
+  "all_edition_anchor_records": [
+    {
+      "editionNode": 87837,
+      "specRelease": "Rel-15",
+      "specVersion": "15.13.0",
+      "anchorNode": 87580,
+      "anchorId": "38.413-Rel-15-9.3.1",
+      "anchorTitle": "Radio Network Layer Related IEs"
+    },
+    {
+      "editionNode": 87870,
+      "specRelease": "Rel-16",
+      "specVersion": "16.18.0",
+      "anchorNode": 87678,
+      "anchorId": "38.413-Rel-16-9.3.1",
+      "anchorTitle": "Radio Network Layer Related IEs"
+    },
+    {
+      "editionNode": 87893,
+      "specRelease": "Rel-17",
+      "specVersion": "17.15.0",
+      "anchorNode": 87726,
+      "anchorId": "38.413-Rel-17-9.3.1",
+      "anchorTitle": "Radio Network Layer Related IEs"
+    },
+    {
+      "editionNode": 87904,
+      "specRelease": "Rel-18",
+      "specVersion": "18.9.0",
+      "anchorNode": 87747,
+      "anchorId": "38.413-Rel-18-9.3.1",
+      "anchorTitle": "Radio Network Layer Related IEs"
+    },
+    {
+      "editionNode": 87914,
+      "specRelease": "Rel-19",
+      "specVersion": "19.2.0",
+      "anchorNode": 87760,
+      "anchorId": "38.413-Rel-19-9.3.1",
+      "anchorTitle": "Radio Network Layer Related IEs"
+    }
+  ],
+  "full_requested_object_n": 1119,
+  "all_fields_records_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN3_P3_CQ1-2_independent_SQL_all_fields.jsonl",
+    "sha256": "375aeda65bdd86cc4e0b1dd6428d519fe595a0b61e7a7b417ead2fa0428ef799"
+  },
+  "source_schema_pin": {
+    "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+    "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+  },
+  "source_design_pin": {
+    "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN3/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+    "sha256": "d99ed8c793e5e378dd430b9e97bca80a78ea477c007523396c1c983481580391"
+  },
+  "original_KO_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN3/phase-3/cq_test_dataset.json",
+    "sha256": "70ee891e7b9a2def331d4bf7d322707bbb0e3fc32edb128cbfb6e054030d00f5"
+  },
+  "original_KO_record": {
+    "id": "CQ1-2",
+    "category": "CQ1_TS구조탐색",
+    "question": "38.413-9.3.1의 하위 Section 목록은?",
+    "cypher": "MATCH (rk:Spec {specNumber:'38.413'})<-[:BELONGS_TO_SPEC]-(p:Section {sectionNumber:'9.3.1'}) WHERE rk.specRelease IS NOT NULL WITH p,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (p)-[:HAS_SUB_SECTION]->(c:Section) RETURN c.sectionId, c.sectionNumber, c.sectionTitle ORDER BY c.sectionNumber LIMIT 15",
+    "expected_min_rows": 10
+  },
+  "diagnostic_counts_are_not_semantic_proof": true,
+  "native_called": false,
+  "admitted": false
+}

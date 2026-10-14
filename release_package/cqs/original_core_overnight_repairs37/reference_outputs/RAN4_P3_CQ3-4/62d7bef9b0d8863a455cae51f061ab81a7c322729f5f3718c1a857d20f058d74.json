@@ -1,0 +1,29 @@
+{
+  "id": "RAN4_P3_CQ3-4",
+  "wg": "RAN4",
+  "query_sha256": "62d7bef9b0d8863a455cae51f061ab81a7c322729f5f3718c1a857d20f058d74",
+  "query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\n  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nWITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField\nWITH cr, declaredField,\n     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |\n       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange\nWHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'\n   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'\n       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4\n       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber",
+  "started_utc": "2026-10-14T21:13:44.262767+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN4_P3_CQ3-4/62d7bef9b0d8863a455cae51f061ab81a7c322729f5f3718c1a857d20f058d74.jsonl",
+  "columns": [
+    "tdocNumber"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 60,
+  "bytes_retained": 900,
+  "rows_sha256": "0712fc0dd25dc3ca47a2d468f814d3cd95c31f4d1cdfd425e78d093bf20879b2",
+  "finished_utc": "2026-10-14T21:13:48.045361+00:00",
+  "elapsed_s": 3.7826,
+  "full_rows_available": true
+}

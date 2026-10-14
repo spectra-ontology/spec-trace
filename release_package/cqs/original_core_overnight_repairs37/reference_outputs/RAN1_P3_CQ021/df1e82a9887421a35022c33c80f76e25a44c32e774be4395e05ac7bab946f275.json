@@ -1,0 +1,29 @@
+{
+  "id": "RAN1_P3_CQ021",
+  "wg": "RAN1",
+  "query_sha256": "df1e82a9887421a35022c33c80f76e25a44c32e774be4395e05ac7bab946f275",
+  "query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL\nWITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |\n clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'\n              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean\nWITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens\nUNWIND tokens AS token\nWITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal\nWITH cr, count(DISTINCT ordinal) AS affectedCount\nWHERE affectedCount >= 5\nRETURN DISTINCT cr.tdocNumber AS tdocNumber",
+  "started_utc": "2026-10-14T21:42:43.415569+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN1_P3_CQ021/df1e82a9887421a35022c33c80f76e25a44c32e774be4395e05ac7bab946f275.jsonl",
+  "columns": [
+    "tdocNumber"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 34,
+  "bytes_retained": 510,
+  "rows_sha256": "3c13fe25a2b648d03fcb3fc7b4dffc871a16db1b75f75a35042a157e13cd3593",
+  "finished_utc": "2026-10-14T21:42:45.193688+00:00",
+  "elapsed_s": 1.7781,
+  "full_rows_available": true
+}

@@ -1,0 +1,31 @@
+{
+  "id": "RAN4_P3_CQ3-4",
+  "question_en": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.133'}) WHERE cr.clausesAffected CONTAINS '4.2' RETURN cr.tdocNumber, cr.clausesAffected ORDER BY cr.tdocNumber DESC LIMIT 10",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\n  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nWITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField\nWITH cr, declaredField,\n     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |\n       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange\nWHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'\n   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'\n       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4\n       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber",
+  "repair_sha256": "439d0285f45b953b793d24e7574abd4cd8cc57946f4241397601cc54e648f0b1",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "a1b8c0dabdc906e9d0981a0a131efd694e40443e22fbd01a4167aec535d383d2",
+  "original_query_sha256": "2b03d507f13ba9e6470117a958ec12aa3c39a2dbee72eb153ca25b73bcfa98d2",
+  "reference_query_sha256": "62d7bef9b0d8863a455cae51f061ab81a7c322729f5f3718c1a857d20f058d74",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_clause42_declared_range_aware_v2/original_and_actual_declaration_source_only_packet.json",
+    "sha256": "c6f64e628b793569aa7e0a8e1f07bf14dde9b30a532f72ad6bd08941b8f4bc6a"
+  }
+}

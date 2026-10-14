@@ -1,0 +1,158 @@
+{
+  "admitted": false,
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "collection": {
+    "kind": "set"
+  },
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "human_expert_validation_n": 0,
+  "id": "RAN3_P3_CQ3-2",
+  "native_execution_completed": false,
+  "new_external_model_calls": 0,
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.423'}) WHERE hub.specRelease IS NULL WITH DISTINCT hub MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (rk)<-[:BELONGS_TO_SPEC]-(s:Section {level:1}) RETURN s.sectionNumber, s.sectionTitle ORDER BY s.sectionNumber LIMIT 10",
+  "original_query_sha256": "794fcd32d516da9c5c2914034864b757ae17613a78b7ad9f7217732942efa235",
+  "original_question_preserved": true,
+  "original_question_sha256": "3bcb9f694fc1587a8126659d77716323022bf3e55b38076b99a3ea5f8ea7cbd8",
+  "preserved_previous_definition_sha256": "129c254b00ff07bfc6d09937ea0aeaaadee16b66dc54d0e3f98814cc09578c12",
+  "primary_review": {
+    "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+    "expert_validation_n": 0,
+    "human_author_review_completed": false,
+    "id": "RAN3_P3_CQ3-2",
+    "original_question_sha256": "3bcb9f694fc1587a8126659d77716323022bf3e55b38076b99a3ea5f8ea7cbd8",
+    "repair_sha256": "a732704a986cea2dd8fa7da7e47eb76101a2378584b76ccaee3cf117b2c77f4c",
+    "reviewer_kind": "Direct primary AI original-English and raw-heading reassessment /root/reaudit_ran3_ran4",
+    "semantic_evidence": [
+      {
+        "finding": "The original asks to show a level-1 section structure as an overview. A section number identifies a top-level position; its heading states what that position contains. Together they express the requested section structure, while numbers alone reduce the answer to an unlabeled identity list. The raw specification uses numbered textual headings. This judgment follows the original overview request and source heading role, not the old query's RETURN list. The earlier number-only proposal remains preserved.",
+        "original_quote": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+        "query_clauses": [
+          "MATCH (hub:Spec {specNumber: '38.423'})",
+          "WHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }",
+          "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+          "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+          "WHERE s.level = 1",
+          "RETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle"
+        ],
+        "status": "pass",
+        "unit": "requested answer roles and fields"
+      },
+      {
+        "finding": "The modifier 'targeted by CRs' attaches to the explicit spec38.423 whose level-1 structure is asked for as change context. Preserve that named spec and its complete top-level section overview. Do not assert that every displayed section is individually modified.",
+        "original_quote": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+        "query_clauses": [
+          "MATCH (hub:Spec {specNumber: '38.423'})",
+          "WHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }",
+          "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+          "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+          "WHERE s.level = 1",
+          "RETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle"
+        ],
+        "status": "pass",
+        "unit": "population and source context"
+      },
+      {
+        "finding": "Preserve CR.MODIFIES to the abstract named-spec hub, IN_RELEASE_OF to every actual release parent, BELONGS_TO_SPEC and Section.level=1. The exact source relation chain filters the requested context without substituting parsed clauses, descendants, approval status, or a guessed latest edition.",
+        "original_quote": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+        "query_clauses": [
+          "MATCH (hub:Spec {specNumber: '38.423'})",
+          "WHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }",
+          "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+          "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+          "WHERE s.level = 1",
+          "RETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle"
+        ],
+        "status": "pass",
+        "unit": "filters and relationship meaning"
+      },
+      {
+        "finding": "This requests a structural set of (sectionNumber, sectionTitle) pairs, not a CR count. EXISTS tests that the named hub is targeted without multiplying structure through CR paths. DISTINCT removes only identical repeated pairs; the full source witness proves all five release-parent pair sets coincide.",
+        "original_quote": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+        "query_clauses": [
+          "MATCH (hub:Spec {specNumber: '38.423'})",
+          "WHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }",
+          "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+          "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+          "WHERE s.level = 1",
+          "RETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle"
+        ],
+        "status": "pass",
+        "unit": "counting unit and join multiplicity"
+      },
+      {
+        "finding": "All five release parents contain the same11 non-null number/title pairs, including annexA. Return the complete invariant set and remove the unasked LIMIT10. The unchanged English supplies no edition selection, so all actual parents are inspected rather than choosing one; pair-set equality resolves edition identity for this specific answer.",
+        "original_quote": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+        "query_clauses": [
+          "MATCH (hub:Spec {specNumber: '38.423'})",
+          "WHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }",
+          "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+          "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+          "WHERE s.level = 1",
+          "RETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle"
+        ],
+        "status": "pass",
+        "unit": "cardinality and completeness"
+      },
+      {
+        "finding": "The English requests no rank or chronological order. Use an unordered set of paired numbers and headings. Number10 versus2 lexical order and release-qualified identifiers are not compulsory answer rules. Equal titles and numbers across all actual parents establish the exact source-relative output.",
+        "original_quote": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+        "query_clauses": [
+          "MATCH (hub:Spec {specNumber: '38.423'})",
+          "WHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }",
+          "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+          "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+          "WHERE s.level = 1",
+          "RETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle"
+        ],
+        "status": "pass",
+        "unit": "ordering and ties when requested"
+      },
+      {
+        "finding": "This is a revised primary semantic interpretation of the same preserved question, not an attempt to change measurements. The previous proposal remains byte-preserved; the new field contract has a separately hashed identity. Exact native query receipt may establish execution only; a second review bound to this new identity and matching scorer controls remain required before admission. No expert or model-benchmark claim is made.",
+        "original_quote": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+        "query_clauses": [
+          "MATCH (hub:Spec {specNumber: '38.423'})",
+          "WHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }",
+          "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+          "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+          "WHERE s.level = 1",
+          "RETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle"
+        ],
+        "status": "pass",
+        "unit": "unverified additional inputs or external interpretation"
+      }
+    ],
+    "status": "pass"
+  },
+  "primary_semantic_status": "pass",
+  "question_en": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+  "reference_query": "MATCH (hub:Spec {specNumber: '38.423'})\nWHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE s.level = 1\nRETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle",
+  "reference_query_sha256": "694a9dc474d8a260d6c4a54f2952c6e4896275b4ff8e3913391c90f9147ce180",
+  "repair_class": "query_and_scorer",
+  "repair_sha256": "a732704a986cea2dd8fa7da7e47eb76101a2378584b76ccaee3cf117b2c77f4c",
+  "required_fields": [
+    {
+      "name": "sectionNumber",
+      "nullable": false,
+      "source_column_or_expression": "sectionNumber",
+      "type": "string"
+    },
+    {
+      "name": "sectionTitle",
+      "nullable": false,
+      "source_column_or_expression": "sectionTitle",
+      "type": "string"
+    }
+  ],
+  "role_source": {
+    "path": "empirical/overnight_reaudit/RAN3_RAN4/level1_structure_role_source.json",
+    "sha256": "0692d3a0d5d0216cadbc5948bf67865466c860cf64d07ddb53974f0a05e4e0b7"
+  },
+  "scorer_controls_completed": false,
+  "source_witness": {
+    "path": "empirical/overnight_reaudit/RAN3_RAN4/level1_structure_witness.json",
+    "sha256": "9145501ba9f7f93a4898a35e305619b560906a9000d082d5cde6e142cb5a59e7"
+  }
+}

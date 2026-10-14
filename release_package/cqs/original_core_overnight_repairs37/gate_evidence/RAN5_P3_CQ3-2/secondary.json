@@ -1,0 +1,134 @@
+{
+  "id": "RAN5_P3_CQ3-2",
+  "status": "pass",
+  "repair_sha256": "b6100c629dac74429cf4b2b04baf4bbabb488c6eba9b46cb32623fbee15f0f61",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "0b79525b36614230a9430c2d0d7e7867bacfde8fc31ce2780fd976afbaec9f56",
+  "reference_query_sha256": "28116dcf113e1d8fcc68776a6a3fd5ec8cca98fa5c725f871ecbc48c71e8809e",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH count(DISTINCT cr.tdocNumber) AS crCount",
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})",
+        "RETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount"
+      ],
+      "finding": "English explicitly asks CR count alongside Section total for the supplied fixed numericTS38.521-1. Both crCount and sectionCount are mandatory integer/nonnullable answer roles. Already supplied specNumber and lists of CR or Section identities are auxiliary. Original KO says broader Section structure, but it cannot replace the unchanged English count pair."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH count(DISTINCT cr.tdocNumber) AS crCount",
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})",
+        "RETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount"
+      ],
+      "finding": "Original WG/Phase3 graph-relative context, release-aware Section.sectionId and functional owning Spec establish retained inventory counts. The schema explicitly calls hub-to-release-variant-to-Section traversal release-blind aggregation. Staged design Appendix A.1.3 independently names Section total as the sum across spec-release. This source meaning precedes this candidate's aggregation and is not merely inferred from its RETURN. No English release/current/latest edition is supplied and no singular TOC artifact is requested. Counts do not certify complete physical authored sections. The retained fixedTS has recorded CR inputs and Section inputs, so this exact frozen reference produces the requested single pair. No arbitrary latest or same-release-only denominator is introduced."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH count(DISTINCT cr.tdocNumber) AS crCount",
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})",
+        "RETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount"
+      ],
+      "finding": "MODIFIES from CR to the logical Spec hub is the original recorded modification target; this request does not say approved, enacted, at a meeting or through an Agreement. Original Phase1 explicitly includes CR, draftCR and pCR as Tdoc subclasses. No status, numericcrNumber, company, TARGET_RELEASE, date or authored-body availability filter is warranted."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH count(DISTINCT cr.tdocNumber) AS crCount",
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})",
+        "RETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount"
+      ],
+      "finding": "One CR count member is a distinct source Tdoc tdocNumber; one Section count member is a distinct release-qualified sectionId belonging to the fixed logical Spec family. WITH collapses the CR aggregate before Section expansion, avoiding a CR-by-Section Cartesian product. Source identity checks confirm all supplied CR tdocNumber values unique and all Section IDs release-qualified and unique. Logical CRnumber/version conflation and DISTINCT printed Sectionnumber would change the requested record unit."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH count(DISTINCT cr.tdocNumber) AS crCount",
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})",
+        "RETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount"
+      ],
+      "finding": "The result is exactly one complete count pair for the fixed retained population, with every recorded modification-target CR and every Section belonging to any retained fixedTS release variant. No sample/top-k/positivity/status or latest-edition restriction appears. Actual source population has the requisite fixedTS Section records; lack of other physical sources does not remove metadata records from this question."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH count(DISTINCT cr.tdocNumber) AS crCount",
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})",
+        "RETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount"
+      ],
+      "finding": "English asks no rank or chronology. The count pair is a singleton set, not a sequence of per-release rows. The supplied collection=set and exact cardinality1 implement that role; there is no tie decision to invent. Scorer controls must fail a wrong value in either scalar, missing field, noninteger, null, swapped role or multiple differing pairs, while allowing auxiliary already-known identity fields."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH count(DISTINCT cr.tdocNumber) AS crCount",
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})",
+        "RETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount"
+      ],
+      "finding": "This independent nonblind AI development judgment reads original English/KO, exact source-only candidate, authentic original role/schema clauses and literal identity inputs before any proposer aggregate answer or primary. Proposer primary, SQL, gold, native and predictions remain unread. It claims recorded inventory counts, not enacted standard changes, full authored coverage, expert endorsement or model performance. Full native plus independent fullSQL and negative scorer controls remain necessary before admission."
+    }
+  ],
+  "exact_source_only_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/RAN5_P3_CQ3-2_canonical_source_only_definition.json",
+    "sha256": "db08f1879bb77b2926de7fdff4fb5a402665e7be112aecdb528ac92399016f61"
+  },
+  "original_source_only_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/RAN5_P3_CQ3-2_original_source_only_packet.json",
+    "sha256": "090f7b6c6ade68f62da7344d1d070cdaa6fdeccc6a686e105a573256c25d057e"
+  },
+  "source_identity_input_pins": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/all_original_frozen_Section_identity_and_owner_source_only.jsonl",
+      "sha256": "8b1ee95f4d08c36ff688b47c0dbbf06eeb136458fa70c0118fe1d3666daa6266"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/all_original_38521_1_CR_identity_source_only.jsonl",
+      "sha256": "f388902b503a2364df468e4e3768e432e5154c27cd074d2c0e995ddbf21f4631"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/additional_original_CR_record_identity_source_context.json",
+      "sha256": "db4a3655b348b36556658c3b3379a82cef042350d3aaa75da4fb7ef66f85844a"
+    }
+  ],
+  "reviewer_kind": "Independent original recorded-count AI semantic review /root/reaudit_ran3_ran4",
+  "exposure": "Clean original/definition/schema/staged source excerpts and literal record identities only; source inventory cardinality visible, no derived family ranking or proposed answer values. Own analogous RAN4 source interpretation already exists. Proposer primary/newSQL/aggregate answers/native/gold/predictions not opened. Nonblind development diagnosis, not model/human benchmark.",
+  "admitted": false,
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "external_model_APIcalls": 0,
+  "script_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/review_RAN5_recorded_count_original_context.py",
+    "sha256": "7636c1eb5f5e475c436959164b602c9345e41a2f8a8632f88a3e519285cd4b72"
+  },
+  "check_pass_schema_result": "pass"
+}

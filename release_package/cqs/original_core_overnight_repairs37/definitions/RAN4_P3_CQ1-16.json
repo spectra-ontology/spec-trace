@@ -1,0 +1,54 @@
+{
+  "id": "RAN4_P3_CQ1-16",
+  "question_en": "List the top 5 RAN4 specs by section count (largest specs).",
+  "original_query": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) RETURN sp.specNumber, count(s) AS sectionCount ORDER BY sectionCount DESC LIMIT 5",
+  "reference_query": "MATCH (sp:Spec)\nWHERE sp.specNumber IS NOT NULL\nWITH DISTINCT sp.specNumber AS specNumber\nOPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)\nWHERE owner.specNumber = specNumber\nRETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount\nORDER BY sectionCount DESC, specNumber ASC",
+  "required_fields": [
+    {
+      "name": "specNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "specNumber"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "direction": "desc",
+        "source_column": "sectionCount"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "value": 5,
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "tie_policy": "any_subset_at_boundary",
+    "value": 5
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "2e0df78e2f1e3c016acc05d5725e0d97b84993b5b8a3b14f5221c599d9f3a6c0",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "51dfeb658a3382669a37fe9152b914f9e15c5404f96e1d20086f9e367028bc64",
+  "original_query_sha256": "7a1217e03fe64e9957e4a4563d939efd3633bd2b05bd51afd3d639aba8a1c47f",
+  "reference_query_sha256": "fe00b3decc0629247f825973c4e4199577bfbc565d3cc260254da3c85b4a6561",
+  "primary_review_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_top5_recorded_section_count/primary_review.json",
+    "sha256": "c39ada0813af8df551e943e5ac5473e674be8d3f86a42119ae6c8fb1b047901d"
+  },
+  "full_SQL_witness_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_top5_recorded_section_count/independent_SQL_full_population_witness.json",
+    "sha256": "dcb185b81b5f6f6e2ee444983679f217de93ae4c0d633cbd9f5bbee14a561475"
+  },
+  "admitted": false,
+  "native_execution_completed": false,
+  "expert_validation_n": 0,
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_top5_recorded_section_count/original_source_only_packet.json",
+    "sha256": "564c85356368717f0e1363a5bf4b3ef1da1dc0b775b16348c04abbece867bac3"
+  }
+}

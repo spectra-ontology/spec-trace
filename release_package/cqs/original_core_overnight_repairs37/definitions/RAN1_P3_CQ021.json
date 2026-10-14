@@ -1,0 +1,35 @@
+{
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "collection": {
+    "kind": "set"
+  },
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "id": "RAN1_P3_CQ021",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.214'}) WHERE cr.clausesAffected IS NOT NULL AND size(split(cr.clausesAffected, ',')) >= 5 RETURN cr.tdocNumber, cr.title, cr.clausesAffected, size(split(cr.clausesAffected, ',')) AS affectedCount ORDER BY affectedCount DESC, cr.tdocNumber LIMIT 20",
+  "original_query_sha256": "4a36cc9c8efaea398f2a1b41ede587f78f4e767679181bb667d77ca689a67880",
+  "original_question_preserved": true,
+  "original_question_sha256": "21768ed0d72df413f9fb8b7883899d706704a05cdde8a003526aacb432e70733",
+  "question_en": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL\nWITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |\n clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'\n              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean\nWITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens\nUNWIND tokens AS token\nWITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal\nWITH cr, count(DISTINCT ordinal) AS affectedCount\nWHERE affectedCount >= 5\nRETURN DISTINCT cr.tdocNumber AS tdocNumber",
+  "reference_query_sha256": "df1e82a9887421a35022c33c80f76e25a44c32e774be4395e05ac7bab946f275",
+  "repair_class": "query_and_scorer",
+  "repair_sha256": "6ff1bffd1e84b992393cee28c17098ab105b16d6a75a026cf4b0397c36325bbf",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "nullable": false,
+      "source_column_or_expression": "cr.tdocNumber",
+      "type": "string"
+    }
+  ],
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_count_unit_challenge/manifest.json",
+    "sha256": "ffe0eea978b5f4dfed9aed4e73f16c9b950f620e01c6d7857c109e1c351d5035"
+  },
+  "source_control_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_CQ021_root_original_declared_count_scope_v2/manifest.json",
+    "sha256": "fbffc4dcf55b3830a1ce5fb1c2f1b01547c9faae16d086d7ac34bcb9848bb49f"
+  }
+}

@@ -1,0 +1,442 @@
+{
+  "metadata": {
+    "version": "3.1",
+    "neo4j_version": "5.x",
+    "design_cqs": 29,
+    "total_cqs": 45,
+    "active_cqs": 45,
+    "defer_cqs": 0,
+    "description": "+ Step 8 entity layer CQ 8개 (v3.0, 2026-05-22)",
+    "updated": "2026-05-22",
+    "release_aware_note": "Section-scoped CQs (CQ002/003/009/010/012/015) use latest-release default (§5.1 DESC) over release-keyed Sections post release-aware migration (2026-06-10). Same competency, schema-adapted.",
+    "cq013_count_note": "CQ013 은 OPTIONAL MATCH 뒤에서 참조 수를 count(src) 로 센다. count(*) 는 참조가 하나도 없는 TS 에서도 null 한 행을 세어 1 을 돌려준다(38.201 은 참조 0건인데 1건으로 나왔다). sectionId 는 '{spec}-{Rel-NN}-{절}' 꼴이라 접두 비교에 '-' 를 붙여 TS 번호가 다른 TS 번호의 앞부분일 때 섞이지 않게 한다."
+  },
+  "questions": [
+    {
+      "id": "CQ001",
+      "category": "TS_구조탐색",
+      "persona": "HW/SW엔지니어",
+      "question": "38.214 전체 목차가 어떻게 구성되어 있어? DL scheduling 관련 내용이 어디에 있는지 파악하고 싶어",
+      "cypher": "MATCH (sp:Spec {specNumber: '38.214'})-[:HAS_SECTION]->(sec:Section) RETURN sec.sectionNumber, sec.sectionTitle ORDER BY sec.sectionNumber",
+      "original_id": "CQ001"
+    },
+    {
+      "id": "CQ002",
+      "category": "TS_구조탐색",
+      "persona": "HW/SW엔지니어",
+      "question": "PDSCH 관련 절차를 구현해야 하는데, 38.214 Section 5.1 하위 구조가 어떻게 되어 있어?",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.214'})<-[:BELONGS_TO_SPEC]-(root:Section {sectionNumber:'5.1'}) WHERE rk.specRelease IS NOT NULL WITH root, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (root)-[:HAS_SUB_SECTION]->(sub:Section) RETURN sub.sectionNumber, sub.sectionTitle ORDER BY sub.sectionNumber",
+      "original_id": "CQ003"
+    },
+    {
+      "id": "CQ003",
+      "category": "TS_구조탐색",
+      "persona": "HW/SW엔지니어",
+      "question": "38.214 Section 5.1.3.2가 TS 전체 구조에서 어디에 위치하는지 breadcrumb을 보여줘",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.214'})<-[:BELONGS_TO_SPEC]-(target:Section {sectionNumber:'5.1.3.2'}) WHERE rk.specRelease IS NOT NULL WITH target, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH path = (target)-[:PARENT_SECTION*0..10]->(root:Section) WHERE NOT (root)-[:PARENT_SECTION]->(:Section) UNWIND nodes(path) AS n RETURN n.sectionNumber, n.sectionTitle ORDER BY n.level",
+      "original_id": "CQ005"
+    },
+    {
+      "id": "CQ004",
+      "category": "TS_구조탐색",
+      "persona": "표준화엔지니어",
+      "question": "38.213의 구조 깊이와 복잡도를 파악하고 싶어. level별 Section 수를 보여줘",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.213'}) RETURN sec.level, count(sec) AS sectionCount ORDER BY sec.level",
+      "original_id": "CQ007"
+    },
+    {
+      "id": "CQ005",
+      "category": "TS_구조탐색",
+      "persona": "HW/SW엔지니어",
+      "question": "38.213에서 Table이 가장 많이 포함된 Section은? 파라미터 정의가 밀집된 구현 포인트를 찾고 싶어",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.213'}) MATCH (sec)-[:CONTAINS_TABLE]->(tbl:TSTable) RETURN sec.sectionNumber, sec.sectionTitle, count(tbl) AS tableCount ORDER BY tableCount DESC LIMIT 15",
+      "original_id": "CQ010"
+    },
+    {
+      "id": "CQ006",
+      "category": "TS_구조탐색",
+      "persona": "HW/SW엔지니어",
+      "question": "38.214에 정의된 Table 전체 목록을 보여줘. 구현 시 참조해야 할 파라미터 테이블이 뭐가 있는지 파악하고 싶어",
+      "cypher": "MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.214'}) RETURN tbl.tableNumber, tbl.tableCaption, sec.sectionNumber ORDER BY tbl.tableNumber",
+      "original_id": "CQ013"
+    },
+    {
+      "id": "CQ007",
+      "category": "TS_구조탐색",
+      "persona": "HW/SW엔지니어",
+      "question": "PDSCH 관련 Section이 어떤 TS에 있는지 찾고 싶어. 제목에 'PDSCH'가 포함된 Section을 보여줘",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*PDSCH.*' RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle, sec.level ORDER BY sp.specNumber, sec.sectionNumber",
+      "original_id": "CQ015"
+    },
+    {
+      "id": "CQ008",
+      "category": "TS_구조탐색",
+      "persona": "표준화엔지니어",
+      "question": "8개 TS별로 Section, Table, Figure가 각각 몇 개인지 비교해줘. 어떤 TS가 가장 복잡한지 보고 싶어",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WITH sp.specNumber AS ts, count(sec) AS secCnt OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(sp2:Spec) WHERE sp2.specNumber = ts WITH ts, secCnt, count(DISTINCT tbl) AS tblCnt OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(sp3:Spec) WHERE sp3.specNumber = ts RETURN ts, secCnt, tblCnt, count(DISTINCT fig) AS figCnt ORDER BY secCnt DESC",
+      "original_id": "CQ018"
+    },
+    {
+      "id": "CQ009",
+      "category": "TS_참조분석",
+      "persona": "HW/SW엔지니어",
+      "question": "38.214 Section 5.1을 구현할 때 다른 Section도 함께 읽어야 해? 참조 관계를 보여줘",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.214'})<-[:BELONGS_TO_SPEC]-(src:Section {sectionNumber:'5.1'}) WHERE rk.specRelease IS NOT NULL WITH src, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (src)-[:REFERENCES_SECTION]->(tgt:Section) RETURN tgt.sectionNumber, tgt.sectionTitle ORDER BY tgt.sectionNumber",
+      "original_id": "CQ021"
+    },
+    {
+      "id": "CQ010",
+      "category": "TS_참조분석",
+      "persona": "HW/SW엔지니어",
+      "question": "38.211 Section 5.2.1(Pseudo-random sequence)은 다른 Section들이 많이 참조하던데, 이 기반 알고리즘을 사용하는 곳을 보여줘",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.211'})<-[:BELONGS_TO_SPEC]-(tgt:Section {sectionNumber:'5.2.1'}) WHERE rk.specRelease IS NOT NULL WITH tgt, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (tgt)<-[:REFERENCES_SECTION]-(src:Section) RETURN src.sectionNumber, src.sectionTitle ORDER BY src.sectionNumber LIMIT 30",
+      "original_id": "CQ022"
+    },
+    {
+      "id": "CQ011",
+      "category": "TS_참조분석",
+      "persona": "표준화엔지니어",
+      "question": "8개 TS 전체에서 가장 핵심적인 Section Top 15를 참조 빈도 기준으로 알려줘",
+      "cypher": "MATCH (tgt:Section)<-[:REFERENCES_SECTION]-(src:Section) WITH tgt, count(src) AS refByCnt MATCH (tgt)-[:BELONGS_TO_SPEC]->(sp:Spec) RETURN sp.specNumber, tgt.sectionNumber, tgt.sectionTitle, refByCnt ORDER BY refByCnt DESC LIMIT 15",
+      "original_id": "CQ024"
+    },
+    {
+      "id": "CQ012",
+      "category": "TS_참조분석",
+      "persona": "HW/SW엔지니어",
+      "question": "38.213에서 서로 상호 참조하는 Section 쌍이 있어? 밀접하게 연관된 절차를 파악하고 싶어",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.213'}) WHERE rk.specRelease IS NOT NULL WITH rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (a:Section)-[:BELONGS_TO_SPEC]->(rk) MATCH (a)-[:REFERENCES_SECTION]->(b:Section)-[:REFERENCES_SECTION]->(a) MATCH (b)-[:BELONGS_TO_SPEC]->(rk) WHERE a.sectionId < b.sectionId RETURN rk.specRelease AS release, a.sectionNumber AS sectionA, a.sectionTitle AS titleA, b.sectionNumber AS sectionB, b.sectionTitle AS titleB ORDER BY sectionA, sectionB LIMIT 20",
+      "original_id": "CQ025"
+    },
+    {
+      "id": "CQ013",
+      "category": "TS_참조분석",
+      "persona": "표준화엔지니어",
+      "question": "TS별로 Section 간 참조가 얼마나 밀접한지 참조 밀도를 비교해줘",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WITH sp.specNumber AS ts, count(sec) AS secCnt OPTIONAL MATCH (src:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber: ts}) OPTIONAL MATCH (src)-[:REFERENCES_SECTION]->(tgt:Section) WITH ts, secCnt, count(tgt) AS refCnt RETURN ts AS ts, secCnt AS secCnt, refCnt AS refCnt, round(toFloat(refCnt) / secCnt * 100) / 100 AS refDensity ORDER BY refDensity DESC",
+      "original_id": "CQ028"
+    },
+    {
+      "id": "CQ014",
+      "category": "TS_참조분석",
+      "persona": "표준화엔지니어",
+      "question": "양방향으로 서로 참조하는 Section 쌍이 있어? 순환 의존성을 확인하고 싶어",
+      "cypher": "MATCH (a:Section)-[:REFERENCES_SECTION]->(b:Section)-[:REFERENCES_SECTION]->(a) WHERE id(a) < id(b) MATCH (a)-[:BELONGS_TO_SPEC]->(sp1:Spec) MATCH (b)-[:BELONGS_TO_SPEC]->(sp2:Spec) RETURN sp1.specNumber + '-' + a.sectionNumber AS sectionA, sp2.specNumber + '-' + b.sectionNumber AS sectionB LIMIT 20",
+      "original_id": "CQ030"
+    },
+    {
+      "id": "CQ015",
+      "category": "TS_참조분석",
+      "persona": "표준화엔지니어",
+      "question": "38.214 Section 5.1이 참조하는 Section이 다시 참조하는 Section은? 2-hop 의존성이 궁금해",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.214'})<-[:BELONGS_TO_SPEC]-(start:Section {sectionNumber:'5.1'}) WHERE rk.specRelease IS NOT NULL WITH start, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (start)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section) MATCH (mid)-[:BELONGS_TO_SPEC]->(sp1:Spec) MATCH (end)-[:BELONGS_TO_SPEC]->(sp2:Spec) RETURN sp1.specNumber + '-' + mid.sectionNumber AS via, sp2.specNumber + '-' + end.sectionNumber AS target, end.sectionTitle LIMIT 20",
+      "original_id": "CQ032"
+    },
+    {
+      "id": "CQ016",
+      "category": "CR_TS_변경추적",
+      "persona": "표준화엔지니어",
+      "question": "38.214에 대한 CR이 총 몇 건 발생했어? 이 TS가 얼마나 활발하게 개정되고 있는지 파악하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.214'}) RETURN count(cr) AS totalCR",
+      "original_id": "CQ036"
+    },
+    {
+      "id": "CQ017",
+      "category": "CR_TS_변경추적",
+      "persona": "표준화엔지니어",
+      "question": "38.213을 수정한 최근 CR 20건을 보여줘. 최근 어떤 변경이 있었는지 파악하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'}) MATCH (cr)-[:PRESENTED_AT]->(m:Meeting) MATCH (cr)-[:SUBMITTED_BY]->(co:Company) RETURN cr.tdocNumber, cr.title, co.companyName, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 20",
+      "original_id": "CQ037"
+    },
+    {
+      "id": "CQ018",
+      "category": "CR_TS_변경추적",
+      "persona": "HW/SW엔지니어",
+      "question": "내가 구현한 38.214 Section 5.1에 영향 줄 수 있는 CR이 있어? clausesAffected에 5.1이 포함된 CR을 보여줘",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.214'}) WHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected CONTAINS '5.1' MATCH (cr)-[:SUBMITTED_BY]->(co:Company) MATCH (cr)-[:PRESENTED_AT]->(m:Meeting) RETURN cr.tdocNumber, cr.title, cr.clausesAffected, co.companyName, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 15",
+      "original_id": "CQ038"
+    },
+    {
+      "id": "CQ019",
+      "category": "CR_TS_변경추적",
+      "persona": "전략기획",
+      "question": "8개 TS별로 CR이 얼마나 발생했는지 비교해줘. 표준화 활동이 가장 집중된 TS를 파악하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] RETURN sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC",
+      "original_id": "CQ039"
+    },
+    {
+      "id": "CQ020",
+      "category": "CR_TS_변경추적",
+      "persona": "HW/SW엔지니어",
+      "question": "Qualcomm이 38.214에 제출한 CR은 뭐가 있어? 어떤 기술 영역에 기여했는지 확인하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.214'}) MATCH (cr)-[:SUBMITTED_BY]->(co:Company) WHERE co.companyName CONTAINS 'Qualcomm' MATCH (cr)-[:PRESENTED_AT]->(m:Meeting) RETURN cr.tdocNumber, cr.title, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 20",
+      "original_id": "CQ041"
+    },
+    {
+      "id": "CQ021",
+      "category": "CR_TS_변경추적",
+      "persona": "표준화엔지니어",
+      "question": "한 번에 많은 절을 수정한 대규모 CR은 어떤 거야? clausesAffected에 5개 이상 Section이 포함된 CR을 보여줘",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.214'}) WHERE cr.clausesAffected IS NOT NULL AND size(split(cr.clausesAffected, ',')) >= 5 RETURN cr.tdocNumber, cr.title, cr.clausesAffected, size(split(cr.clausesAffected, ',')) AS affectedCount ORDER BY affectedCount DESC LIMIT 20",
+      "original_id": "CQ045"
+    },
+    {
+      "id": "CQ022",
+      "category": "CR_TS_변경추적",
+      "persona": "전략기획",
+      "question": "미팅별 38.213 CR 제출 건수 추이를 보여줘. 표준화 활동의 변화 트렌드를 파악하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'}) MATCH (cr)-[:PRESENTED_AT]->(m:Meeting) WITH m.meetingNumber AS meeting, m.meetingNumberInt AS meetingInt, count(cr) AS crCount RETURN meeting, crCount ORDER BY meetingInt",
+      "original_id": "CQ048"
+    },
+    {
+      "id": "CQ023",
+      "category": "Resolution_TS_의사결정",
+      "persona": "표준화엔지니어",
+      "question": "38.214를 수정하는 CR을 승인한 Agreement는 몇 건이야? 의사결정이 활발한 영역인지 파악하고 싶어",
+      "cypher": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.214'}) RETURN count(DISTINCT agr) AS agrCount",
+      "original_id": "CQ056"
+    },
+    {
+      "id": "CQ024",
+      "category": "Resolution_TS_의사결정",
+      "persona": "표준화엔지니어",
+      "question": "38.213에 영향을 미치는 최근 Agreement 10건을 보여줘. 최근 합의 내용을 확인하고 싶어",
+      "cypher": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'}) MATCH (agr)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT agr.resolutionId, COALESCE(agr.contentWithEquations, agr.content) AS content, m.meetingNumber, m.meetingNumberInt ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "original_id": "CQ057"
+    },
+    {
+      "id": "CQ025",
+      "category": "Resolution_TS_의사결정",
+      "persona": "표준화엔지니어",
+      "question": "TS별로 관련된 Agreement 수를 요약해줘. 합의가 가장 많이 이루어진 TS가 어디인지 파악하고 싶어",
+      "cypher": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] RETURN sp.specNumber, count(DISTINCT agr) AS agrCount ORDER BY agrCount DESC",
+      "original_id": "CQ060"
+    },
+    {
+      "id": "CQ026",
+      "category": "Resolution_TS_의사결정",
+      "persona": "IP특허",
+      "question": "38.213 관련 Agreement에서 TBD(미결정)가 남아있는 것은? 아직 완전히 결정되지 않은 기술 이슈를 파악하고 싶어",
+      "cypher": "MATCH (agr:Agreement) WHERE agr.hasTBD = true AND COALESCE(agr.contentWithEquations, agr.content, '') =~ '(?s).*(?<![0-9.])38\\.213(?![0-9]).*' MATCH (agr)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT agr.resolutionId, COALESCE(agr.contentWithEquations, agr.content) AS content, m.meetingNumber, m.meetingNumberInt ORDER BY m.meetingNumberInt DESC, agr.resolutionId ASC LIMIT 10",
+      "original_id": "CQ063"
+    },
+    {
+      "id": "CQ027",
+      "category": "Resolution_TS_의사결정",
+      "persona": "표준화엔지니어",
+      "question": "하나의 Agreement가 여러 TS의 CR을 동시에 참조하는 경우가 있어? cross-TS 합의 사례를 확인하고 싶어",
+      "cypher": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.211','38.212','38.213','38.214','38.215'] WITH agr, collect(DISTINCT sp.specNumber) AS specs WHERE size(specs) > 1 MATCH (agr)-[:MADE_AT]->(m:Meeting) RETURN agr.resolutionId, specs, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "original_id": "CQ064"
+    },
+    {
+      "id": "CQ028",
+      "category": "Resolution_TS_의사결정",
+      "persona": "표준화엔지니어",
+      "question": "38.213 관련 Resolution 중 HARQ 키워드가 포함된 것은? HARQ 관련 의사결정을 추적하고 싶어",
+      "cypher": "MATCH (res:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'}) WHERE COALESCE(res.contentWithEquations, res.content, '') =~ '(?i).*HARQ.*' MATCH (res)-[:MADE_AT]->(m:Meeting) RETURN labels(res) AS type, res.resolutionId, COALESCE(res.contentWithEquations, res.content) AS content, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "original_id": "CQ066"
+    },
+    {
+      "id": "CQ029",
+      "category": "기술_키워드검색",
+      "persona": "HW/SW엔지니어",
+      "question": "안테나 포트 구현에 필요한 스펙 위치를 찾고 싶어. antenna 관련 Section은 어떤 TS에 정의되어 있어?",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*antenna.*' RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle, sec.level ORDER BY sp.specNumber, sec.sectionNumber",
+      "original_id": "CQ071"
+    },
+    {
+      "id": "CQ030",
+      "category": "기술_키워드검색",
+      "persona": "HW/SW엔지니어",
+      "question": "CSI 보고 구현에 필요한 파라미터 테이블을 찾고 있어. CSI 관련 Table은 어떤 것들이 있어?",
+      "cypher": "MATCH (tbl:TSTable) WHERE tbl.tableCaption =~ '(?i).*CSI.*' MATCH (tbl)-[:TABLE_IN_SECTION]->(sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) RETURN sp.specNumber, tbl.tableNumber, tbl.tableCaption, sec.sectionNumber ORDER BY sp.specNumber, tbl.tableNumber LIMIT 20",
+      "original_id": "CQ072"
+    },
+    {
+      "id": "CQ031",
+      "category": "기술_키워드검색",
+      "persona": "HW/SW엔지니어",
+      "question": "HARQ 프로세스 구현 범위를 파악하고 싶어. HARQ 관련 Section은 어떤 TS에 분포되어 있어?",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*HARQ.*' RETURN sp.specNumber, count(sec) AS sectionCount, collect(sec.sectionNumber) AS sections ORDER BY sectionCount DESC",
+      "original_id": "CQ074"
+    },
+    {
+      "id": "CQ032",
+      "category": "기술_키워드검색",
+      "persona": "HW/SW엔지니어",
+      "question": "제어채널 구현에 필요한 전체 스펙 범위를 확인하고 싶어. PDCCH 관련 Section과 Table을 보여줘",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*PDCCH.*' OPTIONAL MATCH (sec)-[:CONTAINS_TABLE]->(tbl:TSTable) RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle, sec.level, collect(tbl.tableNumber) AS tables ORDER BY sp.specNumber, sec.sectionNumber",
+      "original_id": "CQ077"
+    },
+    {
+      "id": "CQ033",
+      "category": "기술_키워드검색",
+      "persona": "HW/SW엔지니어",
+      "question": "상향링크 데이터 채널 구현 범위를 확인하고 싶어. PUSCH 관련 Section과 Table을 보여줘",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*PUSCH.*' OPTIONAL MATCH (sec)-[:CONTAINS_TABLE]->(tbl:TSTable) RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle, collect(tbl.tableNumber) AS tables ORDER BY sp.specNumber, sec.sectionNumber",
+      "original_id": "CQ079"
+    },
+    {
+      "id": "CQ034",
+      "category": "기술_키워드검색",
+      "persona": "HW/SW엔지니어",
+      "question": "SRS(Sounding Reference Signal) 구현 관련 스펙을 찾고 싶어. SRS 관련 Section과 Table을 보여줘",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*SRS.*' OR sec.sectionTitle =~ '(?i).*sounding.*' OPTIONAL MATCH (sec)-[:CONTAINS_TABLE]->(tbl:TSTable) RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle, collect(tbl.tableNumber) AS tables ORDER BY sp.specNumber, sec.sectionNumber",
+      "original_id": "CQ082"
+    },
+    {
+      "id": "CQ035",
+      "category": "기술_키워드검색",
+      "persona": "HW/SW엔지니어",
+      "question": "측정 보고 관련 구현 범위를 파악하고 싶어. measurement 또는 reporting 키워드가 포함된 Section은?",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sec.sectionTitle =~ '(?i).*(measurement|reporting).*' RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle ORDER BY sp.specNumber, sec.sectionNumber LIMIT 20",
+      "original_id": "CQ085"
+    },
+    {
+      "id": "CQ036",
+      "category": "통합분석",
+      "persona": "전략기획",
+      "question": "CR이 가장 많이 발생한 TS Top 5와 각 TS의 Section 수를 비교해줘. 복잡도와 변경 빈도의 상관관계를 보고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] WITH sp.specNumber AS ts, count(cr) AS crCount ORDER BY crCount DESC LIMIT 5 MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp2:Spec {specNumber: ts}) RETURN ts, crCount, count(sec) AS sectionCount ORDER BY crCount DESC",
+      "original_id": "CQ086"
+    },
+    {
+      "id": "CQ037",
+      "category": "통합분석",
+      "persona": "전략기획",
+      "question": "회사별로 8개 TS에 제출한 전체 CR 건수를 보여줘. 주요 플레이어가 누구인지 파악하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.211','38.212','38.213','38.214','38.215','38.201','38.202','38.291'] MATCH (cr)-[:SUBMITTED_BY]->(co:Company) RETURN co.companyName, count(cr) AS crCount ORDER BY crCount DESC LIMIT 15",
+      "original_id": "CQ087"
+    },
+    {
+      "id": "CQ038",
+      "category": "통합분석",
+      "persona": "표준화엔지니어",
+      "question": "가장 많이 참조되는 Section Top 10과 해당 Section을 수정한 CR 수는? 핵심 Section의 안정성을 평가하고 싶어",
+      "cypher": "MATCH (tgt:Section)<-[:REFERENCES_SECTION]-(src:Section) WITH tgt, count(src) AS refCount ORDER BY refCount DESC LIMIT 10 MATCH (tgt)-[:BELONGS_TO_SPEC]->(sp:Spec) OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(sp) WHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected CONTAINS tgt.sectionNumber RETURN sp.specNumber, tgt.sectionNumber, tgt.sectionTitle, refCount, count(cr) AS crCount ORDER BY refCount DESC",
+      "original_id": "CQ089"
+    },
+    {
+      "id": "CQ039",
+      "category": "통합분석",
+      "persona": "IP특허",
+      "question": "38.214를 수정한 CR을 가장 많이 제출한 회사 Top 10은? 이 TS에서 기술적 리더십을 가진 회사를 파악하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.214'}) MATCH (cr)-[:SUBMITTED_BY]->(co:Company) RETURN co.companyName, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10",
+      "original_id": "CQ091"
+    },
+    {
+      "id": "CQ040",
+      "category": "통합분석",
+      "persona": "전략기획",
+      "question": "TS별 CR 건수와 Agreement 건수를 비교해줘. 어떤 TS가 합의 대비 변경이 많은지 보고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.211','38.212','38.213','38.214','38.215'] WITH sp.specNumber AS ts, count(cr) AS crCnt OPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(sp2:Spec) WHERE sp2.specNumber = ts RETURN ts, crCnt, count(DISTINCT agr) AS agrCnt ORDER BY crCnt DESC",
+      "original_id": "CQ092"
+    },
+    {
+      "id": "CQ041",
+      "category": "통합분석",
+      "persona": "표준화엔지니어",
+      "question": "Table이 5개 이상 포함된 Section은? 파라미터 정의가 밀집된 구현 포인트를 찾고 싶어",
+      "cypher": "MATCH (sec:Section)-[:CONTAINS_TABLE]->(tbl:TSTable) WITH sec, count(tbl) AS tableCount WHERE tableCount >= 5 MATCH (sec)-[:BELONGS_TO_SPEC]->(sp:Spec) RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle, tableCount ORDER BY tableCount DESC LIMIT 15",
+      "original_id": "CQ093"
+    },
+    {
+      "id": "CQ042",
+      "category": "통합분석",
+      "persona": "HW/SW엔지니어",
+      "question": "Section과 Table이 모두 많은 복잡한 영역 Top 10은? 구현 난이도가 높은 영역을 식별하고 싶어",
+      "cypher": "MATCH (sec:Section)-[:CONTAINS_TABLE]->(tbl:TSTable) WITH sec, count(tbl) AS tableCount WHERE tableCount >= 3 MATCH (sec)-[:BELONGS_TO_SPEC]->(sp:Spec) OPTIONAL MATCH (sec)-[:HAS_SUB_SECTION]->(sub:Section) RETURN sp.specNumber, sec.sectionNumber, sec.sectionTitle, tableCount, count(sub) AS subSectionCount ORDER BY tableCount DESC LIMIT 10",
+      "original_id": "CQ097"
+    },
+    {
+      "id": "CQ043",
+      "category": "통합분석",
+      "persona": "표준화엔지니어",
+      "question": "전체 Neo4j 그래프 현황 요약을 보여줘. 노드/관계 유형별 건수로 그래프 전체 규모를 파악하고 싶어",
+      "cypher": "CALL { MATCH (n:Section) RETURN 'Section' AS label, count(n) AS cnt UNION ALL MATCH (n:TSTable) RETURN 'TSTable' AS label, count(n) AS cnt UNION ALL MATCH (n:TSFigure) RETURN 'TSFigure' AS label, count(n) AS cnt UNION ALL MATCH (n:Spec) RETURN 'Spec' AS label, count(n) AS cnt UNION ALL MATCH (n:CR) RETURN 'CR' AS label, count(n) AS cnt UNION ALL MATCH (n:Meeting) RETURN 'Meeting' AS label, count(n) AS cnt UNION ALL MATCH (n:Company) RETURN 'Company' AS label, count(n) AS cnt UNION ALL MATCH (n:Resolution) RETURN 'Resolution' AS label, count(n) AS cnt } RETURN label, cnt ORDER BY cnt DESC",
+      "original_id": "CQ100"
+    },
+    {
+      "id": "CQ044",
+      "category": "CR_TS_변경추적",
+      "persona": "전략기획",
+      "question": "NR_newRAT-Core Work Item 관련 CR들이 수정한 TS 목록을 보여줘. 이 Work Item이 어떤 표준 문서에 영향을 미쳤는지 포트폴리오 분석이 필요해",
+      "cypher": "MATCH (w:WorkItem {workItemCode: 'NR_newRAT-Core'})<-[:RELATED_TO]-(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS spec, count(cr) AS crCount ORDER BY crCount DESC",
+      "original_id": "CQ101"
+    },
+    {
+      "id": "CQ045",
+      "category": "Resolution_TS_의사결정",
+      "persona": "표준화엔지니어",
+      "question": "NR_FeMIMO-Core Work Item의 CR에 대한 Resolution이 어떤 TS에 반영되었는지 보여줘. 이 Work Item의 기술 결정이 표준에 어떻게 녹아들었는지 추적하고 싶어",
+      "cypher": "MATCH (w:WorkItem {workItemCode: 'NR_FeMIMO-Core'})<-[:RELATED_TO]-(cr:CR)-[:MODIFIES]->(sp:Spec) MATCH (res:Resolution)-[:REFERENCES]->(cr) RETURN sp.specNumber AS spec, count(DISTINCT res) AS resolutionCount, count(DISTINCT cr) AS crCount ORDER BY resolutionCount DESC",
+      "original_id": "CQ102"
+    },
+    {
+      "id": "P3-S8-CQ01",
+      "category": "CQ_Step8_EntityCount",
+      "question": "Phase-3 v3.0 entity 5 클래스 (RRCParameter / CapabilityItem / Procedure / PerformanceRequirement / ConformanceTest) 의 item-level 노드 카운트는?",
+      "cypher": "MATCH (n) WHERE any(l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest'])   AND n.granularity = 'item' RETURN [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']][0] AS class,        count(n) AS items ORDER BY items DESC"
+    },
+    {
+      "id": "P3-S8-CQ02",
+      "category": "CQ_Step8_DefinedInSection",
+      "question": "모든 item-level entity 노드가 :definedInSection 관계로 Section과 연결되어 있는가?",
+      "cypher": "MATCH (n) WHERE any(l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest'])   AND n.granularity = 'item' WITH n, exists((n)-[:definedInSection]->(:Section)) AS linked RETURN [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']][0] AS class,        count(n) AS total,        sum(CASE WHEN linked THEN 1 ELSE 0 END) AS linked,        round(100.0 * sum(CASE WHEN linked THEN 1 ELSE 0 END) / count(n), 1) AS link_pct"
+    },
+    {
+      "id": "P3-S8-CQ03",
+      "category": "CQ_Step8_FeatureRelations",
+      "question": "Feature → RRCParameter/CapabilityItem/Procedure 관계 (usesIE / hasCapability / hasProcedure) 가 적재되어 있는가?",
+      "cypher": "MATCH (f:Feature) OPTIONAL MATCH (f)-[r1:usesIE]->(:RRCParameter) OPTIONAL MATCH (f)-[r2:hasCapability]->(:CapabilityItem) OPTIONAL MATCH (f)-[r3:hasProcedure]->(:Procedure) WITH f, count(DISTINCT r1) AS ie_links, count(DISTINCT r2) AS cap_links, count(DISTINCT r3) AS proc_links RETURN f.name AS feature, ie_links, cap_links, proc_links ORDER BY ie_links + cap_links + proc_links DESC LIMIT 22",
+      "absent_by_design": [
+        "label:RRCParameter",
+        "label:CapabilityItem",
+        "relationship:usesIE",
+        "relationship:hasCapability",
+        "relationship:hasProcedure"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md §5 entity-loader 배치표: RRCParameter 는 RAN2/3, CapabilityItem 은 RAN2 만 실 적재하므로 RAN1 에는 usesIE · hasCapability 의 끝점이 없다. hasProcedure 는 P3-S8-V05 가 feature_catalog 의 procedure 참조와 1:1 매칭을 요구하는데 ontology/config/feature_catalog.yaml 에 procedure 참조 키가 없어 매칭 대상이 0건이다."
+    },
+    {
+      "id": "P3-S8-CQ04",
+      "category": "CQ_Step8_FeatureDisjoint",
+      "question": "Feature 사이의 disjointWith 관계 (LTM ⊥ CHO ⊥ CPC ⊥ CPAC 등) 가 feature_catalog.disjoint_feature_groups 와 정합한가?",
+      "cypher": "MATCH (a:Feature)-[:disjointWith]->(b:Feature) WHERE a.name < b.name RETURN a.name AS a, b.name AS b ORDER BY a, b"
+    },
+    {
+      "id": "P3-S8-CQ05",
+      "category": "CQ_Step8_GranularityDump",
+      "question": "Entity 5 클래스의 granularity property 분포는? (item-level v3.0 신규 vs section-level legacy)",
+      "cypher": "MATCH (n) WHERE any(l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']) RETURN [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']][0] AS class,        coalesce(n.granularity, '<unset>') AS granularity,        count(n) AS c ORDER BY class, granularity"
+    },
+    {
+      "id": "P3-S8-CQ06",
+      "category": "CQ_Step8_CoreIE_Baseline",
+      "question": "Cross-cycle baseline IE (CodebookConfig-r16, LTM-Config-r18, BeamFailureRecoveryConfig, TCI-State) 가 :RRCParameter 노드로 존재하는가?",
+      "cypher": "UNWIND ['CodebookConfig-r16','LTM-Config-r18','BeamFailureRecoveryConfig','TCI-State','TCI-UL-State-r17','RadioLinkMonitoringConfig'] AS expected OPTIONAL MATCH (ie:RRCParameter {ieName: expected}) RETURN expected, ie IS NOT NULL AS found, ie.specNumber AS spec, ie.release AS release",
+      "absent_by_design": [
+        "label:RRCParameter",
+        "property:ieName"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md §5 entity-loader 배치표: 01_load_rrc_parameters.py 는 RAN1/4/5 에서 0건, RAN2/3 에서만 실 적재."
+    },
+    {
+      "id": "P3-S8-CQ07",
+      "category": "CQ_Step8_LTM_Capabilities",
+      "question": "Cycle-02 D-B baseline — 28 LTM capability items 이 :CapabilityItem 노드로 적재되어 있는가?",
+      "cypher": "MATCH (cap:CapabilityItem) WHERE cap.capabilityItemName STARTS WITH 'ltm-' AND cap.granularity = 'item' RETURN count(cap) AS ltm_cap_count, collect(cap.capabilityItemName)[..10] AS sample",
+      "absent_by_design": [
+        "label:CapabilityItem",
+        "property:capabilityItemName"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md §5 entity-loader 배치표: 02_load_capability_items.py 는 RAN2 만 실 적재."
+    },
+    {
+      "id": "P3-S8-CQ08",
+      "category": "CQ_Step8_FeatureCatalogParity",
+      "question": "feature_catalog.yaml 22 features 가 모두 :Feature 노드로 적재되어 있는가?",
+      "cypher": "MATCH (f:Feature) RETURN count(f) AS feature_count, collect(f.name)[..30] AS feature_names ORDER BY feature_count DESC"
+    }
+  ]
+}

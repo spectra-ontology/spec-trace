@@ -1,0 +1,2475 @@
+{
+  "purpose": "New answerable original questions prepared for review; no external model API call",
+  "baseline_public404_unchanged": true,
+  "new_local_frozen_original_repair_n": 37,
+  "local_original_frozen_union_n": 441,
+  "local_original_frozen_pending_n": 119,
+  "separate_prior_source_enriched_n": 1,
+  "deadline": "2026-10-15T10:00:00+09:00",
+  "cards": [
+    {
+      "id": "RAN2_P3_CQ4-4",
+      "original_question": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+      "question_sha256": "88e962d790e3ee1eb42cac7e5e7a12244b1147fd77cd8b9ada5c55f71fbcb915",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "f92b7fae4173f90096d667e55138161e219560bb88864fa54587ecc9ca4390d2",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "nullable": false,
+          "source_column_or_expression": "specNumber",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "top_k_boundary_ties",
+        "require_rank_order": false,
+        "source_order_keys": [
+          {
+            "direction": "desc",
+            "source_column": "crCount"
+          }
+        ],
+        "tie_policy": "any_subset_at_boundary",
+        "value": 5,
+        "within_tie_order": "any"
+      },
+      "cardinality_policy": {
+        "mode": "top_k",
+        "tie_policy": "any_subset_at_boundary",
+        "value": 5
+      },
+      "native_full_population_n": 34,
+      "answer_n": 5,
+      "answer_preview": [
+        {
+          "specNumber": "38.331"
+        },
+        {
+          "specNumber": "36.331"
+        },
+        {
+          "specNumber": "38.321"
+        },
+        {
+          "specNumber": "38.306"
+        },
+        {
+          "specNumber": "38.300"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": true,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_decision_rank/projected_native_records.jsonl",
+        "sha256": "0e72516ad09bc874fbc05b525aaec57ca910b09766f9625b125ff4e985fa812a"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-4_definition.json",
+      "interpretation_and_limits": "Count distinct CR identities per spec along the stated Resolution→CR→Spec path; existing resolution-row counts are a different unit. Top five are selected from the complete34-spec population.",
+      "source_witnesses": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_decision_path_rank_full_pool.json",
+          "sha256": "ab33153f064be89fce3189d8b684ea1107e05603622f20a968ea621d6c79ac3f"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-4_identity_witness.json",
+          "sha256": "1b1c22fe3e3b0f904eadf01471570c92fc8d65f5fc0dbf1f7ed5bb2cf6533aa9"
+        }
+      ],
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P3_CQ3-2",
+      "original_question": "Show the level-1 section structure of spec 38.423 targeted by CRs (change-context overview).",
+      "question_sha256": "3bcb9f694fc1587a8126659d77716323022bf3e55b38076b99a3ea5f8ea7cbd8",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "a732704a986cea2dd8fa7da7e47eb76101a2378584b76ccaee3cf117b2c77f4c",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.423'})\nWHERE hub.specRelease IS NULL AND EXISTS { MATCH (:CR)-[:MODIFIES]->(hub) }\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE s.level = 1\nRETURN DISTINCT s.sectionNumber AS sectionNumber, s.sectionTitle AS sectionTitle",
+      "required_fields": [
+        {
+          "name": "sectionNumber",
+          "nullable": false,
+          "source_column_or_expression": "sectionNumber",
+          "type": "string"
+        },
+        {
+          "name": "sectionTitle",
+          "nullable": false,
+          "source_column_or_expression": "sectionTitle",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 11,
+      "answer_n": 11,
+      "answer_preview": [
+        {
+          "sectionNumber": "10",
+          "sectionTitle": "Handling of unknown, unforeseen and erroneous protocol data"
+        },
+        {
+          "sectionNumber": "A",
+          "sectionTitle": "Change history"
+        },
+        {
+          "sectionNumber": "6",
+          "sectionTitle": "Services expected from signalling transport"
+        },
+        {
+          "sectionNumber": "4",
+          "sectionTitle": "General"
+        },
+        {
+          "sectionNumber": "5",
+          "sectionTitle": "XnAP services"
+        },
+        {
+          "sectionNumber": "7",
+          "sectionTitle": "Functions of XnAP"
+        },
+        {
+          "sectionNumber": "1",
+          "sectionTitle": "Scope"
+        },
+        {
+          "sectionNumber": "8",
+          "sectionTitle": "XnAP procedures"
+        },
+        {
+          "sectionNumber": "9",
+          "sectionTitle": "Elements for XnAP Communication"
+        },
+        {
+          "sectionNumber": "3",
+          "sectionTitle": "Definitions, symbols and abbreviations"
+        },
+        {
+          "sectionNumber": "2",
+          "sectionTitle": "References"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_level1_structure/projected_native_records.jsonl",
+        "sha256": "99fa92dcffb8c8e0ee74ae543a44fb684998f92e548dccb445a633be61f86404"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_execution/RAN3_level1_structure_definition.json",
+      "interpretation_and_limits": "Return section numbers and headings. All five retained editions give the same eleven requested level1 pairs; no newest-edition default is imposed.",
+      "source_witnesses": {
+        "path": "empirical/overnight_reaudit/RAN3_RAN4/level1_structure_witness.json",
+        "sha256": "9145501ba9f7f93a4898a35e305619b560906a9000d082d5cde6e142cb5a59e7"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P2_CQ6-3",
+      "original_question": "Show ZTE's moderator-role trend over time (leadership trajectory).",
+      "question_sha256": "600d2a8a5cc97bc6a02f2c5f4f6855094d31452e67db36a033588586b26f1cf8",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "939c0bad9f6dbd333a28037bfabd7db17e507e9878cad466f5fe6d6e155c81ca",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (m:Meeting)\nOPTIONAL MATCH (unit:Summary)-[:MADE_AT]->(m)\nWHERE EXISTS { MATCH (unit)-[:MODERATED_BY]->(:Company {companyName: 'ZTE'}) }\nWITH m, count(DISTINCT unit) AS moderatorSummaryCount\nRETURN m.canonicalMeetingNumber AS meetingNumber, m.meetingNumberInt AS meetingOrdinal, moderatorSummaryCount\nORDER BY meetingOrdinal ASC",
+      "required_fields": [
+        {
+          "name": "meetingNumber",
+          "nullable": false,
+          "source_column_or_expression": "meetingNumber",
+          "type": "string"
+        },
+        {
+          "name": "moderatorSummaryCount",
+          "nullable": false,
+          "source_column_or_expression": "moderatorSummaryCount",
+          "type": "integer"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 58,
+      "answer_n": 58,
+      "answer_preview": [
+        {
+          "meetingNumber": "RAN3#91",
+          "moderatorSummaryCount": 0
+        },
+        {
+          "meetingNumber": "RAN3#91bis",
+          "moderatorSummaryCount": 0
+        },
+        {
+          "meetingNumber": "RAN3#92",
+          "moderatorSummaryCount": 0
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_moderator_temporal_set/projected_native_records.jsonl",
+        "sha256": "a2eb900053a4cd9dd69e996a7d95500ac2d0154d062028e24188d6f0850ec454"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_execution/RAN3_moderator_temporal_set_definition.json",
+      "interpretation_and_limits": "Return all58 labelled meeting counts, including44 recorded zeros. Ascending/descending answer order is permitted; count-to-meeting associations remain exact. This is graph-recorded moderator-role history.",
+      "source_witnesses": {
+        "path": "empirical/overnight_reaudit/RAN3_RAN4/trend_source_witness.json",
+        "sha256": "b556e541e3c846d584cebd183016984f5dd3e68600974295500d9e0b3c581cdc"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P1_CQ1-6",
+      "original_question": "What is the final status of TDoc R1-2501234? (single-document status lookup)",
+      "question_sha256": "032f564414466419ac380d3ec869c5b600588d904550fcd3a88fad97ac46bdac",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "4813c595e60a7e7307b1adeaab560e731f93238b69607d6dee7fdd98db5f001a",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (t:Tdoc {tdocNumber: 'R1-2501234'}) RETURN t.tdocNumber, t.title, t.status LIMIT 1",
+      "required_fields": [
+        {
+          "name": "status",
+          "nullable": false,
+          "source_column_or_expression": "t.status",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 1,
+      "answer_n": 1,
+      "answer_preview": [
+        {
+          "status": "revised"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_named_6/projected_native_records.jsonl",
+        "sha256": "a9c68e1815572deb905f6127b7f3ebad32ceb3d0e30d1ea0407a463f33e98245"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN1_P1_CQ1-6_definition.json",
+      "interpretation_and_limits": "The named original TDoc is revised. Its agreed successor is a different document ID and cannot replace the named answer.",
+      "source_witnesses": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/purpose_status_direct_source.json",
+          "sha256": "f3feabe03a873cdf34218928dda6eb13eff40a9c8d4994dab61293b6f5463a47"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/sql_named_tdoc_revision.json",
+          "sha256": "067fcbd914c7ae3ca92e4b7af8f3170465b192731e2b52563bd48bb15c2d5586"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/named_status_final_report.json",
+          "sha256": "37555511577c9a3f5846ecb0c301a79bfbba5b72b2ebdc1f8c94100c3835c838"
+        }
+      ],
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P1_CQ1-7",
+      "original_question": "What is the intended purpose (For) of TDoc R1-2501234 — Discussion, Approval, or Agreement?",
+      "question_sha256": "96cfc1452f633f7ff6b2c7a12d298867a3fa7a9c2bfd9c96116523b596e46305",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "83ba5712ee7ed0540592533227c15411d52fccb62afb4d825b6319c4b755cdcf",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (t:Tdoc {tdocNumber: 'R1-2501234'}) RETURN t.tdocNumber, t.title, t.for LIMIT 1",
+      "required_fields": [
+        {
+          "name": "purpose",
+          "nullable": false,
+          "source_column_or_expression": "t.for",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 1,
+      "answer_n": 1,
+      "answer_preview": [
+        {
+          "purpose": "Decision"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_named_7/projected_native_records.jsonl",
+        "sha256": "6fb2c35328b08416431cf5b5f126b45fa152503fdd36d7da86b987b90fab7b42"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN1_P1_CQ1-7_definition.json",
+      "interpretation_and_limits": "The source For field is Decision, outside the three offered labels. This source-field answer explicitly rejects the false option premise; it does not claim that the three-way classifier is well formed.",
+      "source_witnesses": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/purpose_status_direct_source.json",
+          "sha256": "f3feabe03a873cdf34218928dda6eb13eff40a9c8d4994dab61293b6f5463a47"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/sql_named_tdoc_revision.json",
+          "sha256": "067fcbd914c7ae3ca92e4b7af8f3170465b192731e2b52563bd48bb15c2d5586"
+        }
+      ],
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P1_CQ4-1",
+      "original_question": "List Samsung's past-meeting contributions to Work Item NR_newRAT-Core (historical contribution review).",
+      "question_sha256": "fdf5e39bfd449fae6fb7c39e495a163a1684bb4154ad352b5c8e8fe97b1efb68",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "13d2910cbba2d6d95348d8208bb533348aa6be54a5db7acc680b16fd7733cb07",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})\nMATCH (t)-[:RELATED_TO]->(:WorkItem {workItemCode: 'NR_newRAT-Core'})\nMATCH (t)-[:PRESENTED_AT]->(:Meeting)\nRETURN DISTINCT t.tdocNumber AS tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "nullable": false,
+          "source_column_or_expression": "tdocNumber",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 498,
+      "answer_n": 498,
+      "answer_preview": [
+        {
+          "tdocNumber": "R3-181006"
+        },
+        {
+          "tdocNumber": "R3-184505"
+        },
+        {
+          "tdocNumber": "R3-230863"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_historical_contributions/projected_native_records.jsonl",
+        "sha256": "eb012eef68df9f3616a681c865ffe92925dc41381f156e78830de0364101f511"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_execution/RAN3_historical_definition.json",
+      "interpretation_and_limits": "All498 distinct Samsung TDoc identities in the named WorkItem population are retained from34 completed historical meeting reports; no unasked ten-row truncation or current-meeting exclusion.",
+      "source_witnesses": {
+        "path": "empirical/overnight_reaudit/RAN3_RAN4/historical_and_premise_witness.json",
+        "sha256": "d61f25d06534824e93b406349c63e7b37832ec2ae320cfb8407ef56a1ad297e4"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P4_CQ2-4",
+      "original_question": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+      "question_sha256": "04b0fee63ca9ab198d6d997e1e849ae0533629a8c3aee04cde324b13417156e7",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "4a661e38b38f4a4d5fdae2dcad0504b3dfc0c5ded7f179ba38d1ac956f1922cf",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (c:CR)\nOPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)\nWITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount\nRETURN tdocNumber, impactCount\nORDER BY impactCount DESC, tdocNumber ASC",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "tdocNumber"
+        }
+      ],
+      "collection": {
+        "kind": "top_k_boundary_ties",
+        "require_rank_order": false,
+        "source_order_keys": [
+          {
+            "direction": "desc",
+            "source_column": "impactCount"
+          }
+        ],
+        "tie_policy": "any_subset_at_boundary",
+        "value": 10,
+        "within_tie_order": "any"
+      },
+      "cardinality_policy": {
+        "mode": "top_k",
+        "tie_policy": "any_subset_at_boundary",
+        "value": 10
+      },
+      "native_full_population_n": 19974,
+      "answer_n": 10,
+      "answer_preview": [
+        {
+          "tdocNumber": "R3-204425"
+        },
+        {
+          "tdocNumber": "R3-204481"
+        },
+        {
+          "tdocNumber": "R3-204483"
+        },
+        {
+          "tdocNumber": "R3-204485"
+        },
+        {
+          "tdocNumber": "R3-204421"
+        },
+        {
+          "tdocNumber": "R3-204426"
+        },
+        {
+          "tdocNumber": "R3-204496"
+        },
+        {
+          "tdocNumber": "R3-232631"
+        },
+        {
+          "tdocNumber": "R3-232632"
+        },
+        {
+          "tdocNumber": "R3-232633"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": true,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_distinct_impact/projected_native_records.jsonl",
+        "sha256": "9af5f2ada48b228a01910c678539a149d60ea8a7ca48d25418cb141acabce736"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P4_CQ2-4_definition.json",
+      "interpretation_and_limits": "Source-declared breadth counts distinct logical specification targets, not repeated role edges. All4 eleven-target leaders and any6 of17 nine-target ties form a valid answer in any order. R3-232630 reaches8 distinct specs despite9 role declarations. This does not measure enacted causal impact.",
+      "source_witnesses": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_cross_spec_cover_meaning_witness.json",
+          "sha256": "98c3b58e277c70cbb6556276acdf0772ed549fe29943c22aa58c7cc89228fa3c"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN3_distinct_cross_spec_metric.json",
+          "sha256": "f208ec4b0b64e308295d132772944efcf2c7f6dcbe056a9fe85d43e2cbbcdf86"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN3_distinct_cross_spec_full_pool.jsonl",
+          "sha256": "c6b48eeb07fea3c99626c7a594ba56d180c1899600def9f790f1c4abe60d7b5c"
+        }
+      ],
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P3_CQ3-7",
+      "original_question": "List CRs whose affected clauses match actual sections of spec 38.423 (clause-to-section validation).",
+      "question_sha256": "a980ca0a2ee2fd151f8a8f52b559a79adc7cdca18b4e1388fcf9cb9285560369",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "bd9f252176e983eae9c7aa73a462144577267d8c57601ddcfd0174f5a835a69a",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.423'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\n  AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9.])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*')\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "tdocNumber"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 596,
+      "answer_n": 596,
+      "answer_preview": [
+        {
+          "tdocNumber": "R3-230059"
+        },
+        {
+          "tdocNumber": "R3-230066"
+        },
+        {
+          "tdocNumber": "R3-230070"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_frozen_field_matching/projected_native_records.jsonl",
+        "sha256": "f9e08b7e2a736f4615d00be4e0e1df0d22a9f42ade37f9b8eb96ea6042058266"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P3_CQ3-7_frozen_same_target_release_definition.json",
+      "interpretation_and_limits": "Existential matching of recorded affected-clause identifiers to the same target Release retained Sections. All596 CR identities match full native/independent SQL and scorer controls. Two original Rel15 source headings are absent in the frozen graph but neither occurs in any same-Release recorded CR declaration. No all-clause validity, approval or authored-source completeness is claimed.",
+      "source_witnesses": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P3_CQ3-7_frozen_identifier_grammar_full_population.json",
+          "sha256": "192844c6da4f58eafb5ced44f60d678707ab50fdcf466763cfa1e3d178022b3c"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P3_CQ3-7_frozen_identifier_grammar_full_population.jsonl",
+          "sha256": "3e032e34002ce9b4e3777444144792edaec4c8f9fe69dd719064e43ffea621c1"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P3_CQ3-7_frozen_all358_nonempty_field_values.jsonl",
+          "sha256": "2bb1407c53ab93c0e420c3ad29117894b50ae7d0bb6fe002b999c98cdac3af90"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P3_CQ3-7_partial_numeric_and_annotation_source_controls.json",
+          "sha256": "e9bfdde2560eab8fc0eadcb2551b1531fc48fedb51ce8263eb7863bd80bf3846"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_38423_retained_register_and_target_release_scope.json",
+          "sha256": "923be8d669c251f692cf67c39c0daf00d20647f4768f9cc544d90cecf89a8d66"
+        }
+      ],
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ035",
+      "original_question": "Which sections mention measurement or reporting? (scope for measurement-reporting implementation)",
+      "question_sha256": "4ff947184fd1ea7a3f32794be56991ceb03d82816cb4a24a2e0b2d15398e1228",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "792d9d85ac22ac0a52be679e986fbede25109c1ffd0a3289b1045a5a3d9b1b13",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec) WHERE sec.sectionTitle =~ '(?i).*(measurement|reporting).*' RETURN DISTINCT sec.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "nullable": false,
+          "source_column_or_expression": "sectionId",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 182,
+      "answer_n": 182,
+      "answer_preview": [
+        {
+          "sectionId": "38.202-Rel-15-7.1"
+        },
+        {
+          "sectionId": "38.202-Rel-15-7"
+        },
+        {
+          "sectionId": "38.201-Rel-15-4.2.5"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_CQ035_title/projected_native_records.jsonl",
+        "sha256": "6c4b59e37440754f1f6384c91c8ce7d9a50cbf9fa561f2b2beb1887ba2a3727b"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/RAN1_P3_CQ035_title_design_context_definition.json",
+      "interpretation_and_limits": "The exact original 기술_키워드검색 category and explicit phase design principles specify Section title keyword search. All182 matching retained Section identities have raw source heading witnesses and full native/SQL/scorer agreement, without LIMIT20. Whole-body and subtree alternatives differ and remain preserved; staging alone does not prove source creation time.",
+      "source_witnesses": {
+        "all36_sources": {
+          "bytes": 140113,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/all36_source_identity_and_population_closure.json",
+          "sha256": "52fbfd60112a8182c806189215ac0a58bd1c7b2bb8363bd96ef7b6638eed1668"
+        },
+        "all3942_Section_source_records": {
+          "bytes": 10059157,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/all3942_frozen_Sections_source_heading_direct_and_hierarchy_status.jsonl",
+          "sha256": "67535cf2037045a69021c514282935eef787e94e529f615c95927150856362a3"
+        },
+        "all_actual_keyword_blocks": {
+          "bytes": 3387232,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/all_keyword_source_block_witnesses.jsonl",
+          "sha256": "27c7fd4ef9002aec859528357db77d568d34030957072f52d894a98f560f4150"
+        },
+        "criteria": {
+          "bytes": 3382,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+          "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+        },
+        "independent_original_DOC5_conversions": {
+          "bytes": 28857,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/manifest.json",
+          "sha256": "ec131e5da671693c3f23aac17c0b60e528b1b36c2088e45f8fd0fb4cccf472a1"
+        },
+        "original_English_sha256": "4ff947184fd1ea7a3f32794be56991ceb03d82816cb4a24a2e0b2d15398e1228",
+        "original_Korean_record_file": {
+          "bytes": 33191,
+          "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN1/phase-3/cq_test_dataset.json",
+          "sha256": "a746bc5ae143c64f286246bfd8184b54a2c52b54a5d95ced9ca240bb2f4c3b3e"
+        },
+        "original_design": {
+          "bytes": 91818,
+          "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+          "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+        },
+        "original_packet": {
+          "bytes": 530056,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1_pending.jsonl",
+          "sha256": "228d50e60edeb76e60ba38d27a0669d408ad09638cb72679818bfd5b251874b3"
+        },
+        "original_query_sha256": "16c5064f88f66259e5085fd4966d9198b08c62fcb68395d6689fadf360387038",
+        "source_census": {
+          "bytes": 5430,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/manifest.json",
+          "sha256": "ccec6f4fcd9bc0f0880a01a0a5afd5925b3014ab3c3edccc2e7ee00a1160bf06"
+        }
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": {
+        "bytes": 6856,
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/original_keyword_context/exact_CQ035_category_to_declared_title_keyword_design_context.json",
+        "sha256": "01a1b161d330f4ff0320e6c023b99e38cbd23c53a6debab82d31213282f63aa2"
+      },
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN2_P3_CQ3-7",
+      "original_question": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+      "question_sha256": "8078a4e026f1e0a2f714b31d26a601ae156d7078e6f0a3998a7dfa5b5a799f94",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "25e8189012762ca68345a618086f370d444599540b1fca3afe409382c7be1157",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "tdocNumber"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 1452,
+      "answer_n": 1452,
+      "answer_preview": [
+        {
+          "tdocNumber": "R2-2300168"
+        },
+        {
+          "tdocNumber": "R2-2300169"
+        },
+        {
+          "tdocNumber": "R2-2300170"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_frozen_field_prefilter/projected_native_records.jsonl",
+        "sha256": "5088f79b9da665bd8d00f8f9572692a70fd5c058e738722625a3d07c4fb2e0c9"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_target_release_prefilter_canonical_definition.json",
+      "interpretation_and_limits": "All1452 CR identities have at least one literal affected-clause identifier resolving to the same target Release retained Section domain, including original named ASN/Annex identities. The original query timeout is preserved; equivalent literal prefiltering passes the unchanged20-second native gate. Approval/latest/all-clause validity are unasked filters; no normative-incorporation or authored-source completeness is claimed.",
+      "source_witnesses": {
+        "population": "All original graph CR nodes modifying the unversioned38.331 Spec hub; no status, officialCRnumber, date, company or meeting cutoff.",
+        "recorded_input": "Original CR.clausesAffected metadata property, not every physical authored-form clause declaration. OriginalPhase1 sourceScope and KO explicitly identify this property.",
+        "Section_domain": "OriginalPhase3 selected final input edition for the CR recorded TARGET_RELEASE. Exact rk.specRelease = target.releaseName; no CurrentVersion/latest/fallback edition choice.",
+        "predicate": "A CR qualifies if at least one concrete declared identifier in its recorded affected-clause field resolves literally to an actual same-target-release Section.sectionNumber of38.331.",
+        "quantifier": "existential; unresolved other declarations do not erase an actual independent match and do not become certified",
+        "identifier_kinds": "Numeric clauses with alphabetic/alphanumeric suffixes, Annex identifiers, and explicit original ASN definition-name Section identities; no semantic title/code similarity.",
+        "absent_recorded_field": "No recorded matching witness in this process, not proof of no substantive authored CR changes."
+      },
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_frozen_metadata_same_target_release_definition.json",
+          "bytes": 8189,
+          "sha256": "85b2aa1d719b38437d2511999ec90e54fa4cad8dc58041e56f9f20254061e081"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_actual_partial_and_identifier_source_controls.json",
+          "bytes": 119572,
+          "sha256": "72e2b3845d6d2cbf25d4a6de83c9684135ce9a7a258172e4ddf2e7e1d23459ba"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_original_metadata_input10599_source_only.jsonl",
+          "bytes": 18169064,
+          "sha256": "cb5fe768c9a1d1b1fb6d3f1966b0fc81a12174b9a9b12944e90d6a62dad9bd80"
+        },
+        [
+          {
+            "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_38331_original_five_final_release_source_inventory_v4/all_literal_numeric_Annex_heading_records.jsonl",
+            "bytes": 3028401,
+            "sha256": "5808e59c156ca0ec32137c2f8dd8ee0ed8287e5156ecc0c964a4bcf824391f23"
+          },
+          {
+            "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_38331_original_five_final_release_source_inventory_v4/separate_original_ASN1_named_heading_records.jsonl",
+            "bytes": 3693150,
+            "sha256": "b9fee31715eba0d9eb01d2432fb4167be1ce4c4a9f30d13dfa259259b597ae23"
+          }
+        ]
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P3_CQ1-2",
+      "original_question": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "question_sha256": "e860dd4d5a307fc8c0287f119748c58aca8ba5e3359fe385f7a3e4c274a2adfd",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "e3b4a59726422b7bff7438941d4bea8701ca95922017965f015a80c03fcd25b0",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.413'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: '9.3.1'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (anchor)-[:HAS_SUB_SECTION]->(obj:Section)\nRETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle\nORDER BY sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 1119,
+      "answer_n": 1119,
+      "answer_preview": [
+        {
+          "sectionId": "38.413-Rel-15-9.3.1.1"
+        },
+        {
+          "sectionId": "38.413-Rel-15-9.3.1.10"
+        },
+        {
+          "sectionId": "38.413-Rel-15-9.3.1.100"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/structural8/RAN3_P3_CQ1-2/projected_native_records.jsonl",
+        "sha256": "9007a4117eb53874490d3e03b566b5163eb7f76de168efb96b80d1b3f84fb4fe"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN3_P3_CQ1-2_definition.json",
+      "interpretation_and_limits": "Direct child Section identities under9.3.1 of38.413. Original schema explicitly supports release-blind traversal through all retained release-final Spec nodes. All release-aware object identities are kept, without latest/LIMIT or a new version-invariance requirement. Identity is required; returned numbers/titles/captions are auxiliary. This is complete recorded-graph output, not a source-extraction completeness claim.",
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN3_P3_CQ1-2_full_recorded_scope_SQL_witness.json",
+        "sha256": "beb00833065299b53830a87a2af4bcbf4086f69c0ddb07935cfe12bc9781b429"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P3_CQ1-6",
+      "original_question": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+      "question_sha256": "ec178adb53b61eef5e3e6a9ec5858d6e760ef9217fb42ca1b3ed4bf2a63c709e",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "8afa67a83479d05a4506f4544c1577e0f166add942cce36c11e2b3afe6f6a407",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.413'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: '8.7.5.2'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (anchor)-[:CONTAINS_FIGURE]->(obj:TSFigure)\nRETURN DISTINCT obj.figureId AS figureId, obj.figureNumber AS figureNumber, obj.figureCaption AS figureCaption\nORDER BY figureId",
+      "required_fields": [
+        {
+          "name": "figureId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "figureId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 12,
+      "answer_n": 12,
+      "answer_preview": [
+        {
+          "figureId": "38.413-Rel-15-F8.7.5.2-1"
+        },
+        {
+          "figureId": "38.413-Rel-15-F8.7.5.2-2"
+        },
+        {
+          "figureId": "38.413-Rel-16-F8.7.5.2-1"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/structural8/RAN3_P3_CQ1-6/projected_native_records.jsonl",
+        "sha256": "a294e194b68e5de5d765c80f6b06fd361d2186733170b282318923b9cd60ca4e"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN3_P3_CQ1-6_definition.json",
+      "interpretation_and_limits": "Directly owned figure identities in8.7.5.2 of38.413. Original schema explicitly supports release-blind traversal through all retained release-final Spec nodes. All release-aware object identities are kept, without latest/LIMIT or a new version-invariance requirement. Identity is required; returned numbers/titles/captions are auxiliary. This is complete recorded-graph output, not a source-extraction completeness claim.",
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN3_P3_CQ1-6_full_recorded_scope_SQL_witness.json",
+        "sha256": "a0e0e9c68605f48895f3ebed4966acbffc67625eca556969a04b7407da792b8e"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ1-2",
+      "original_question": "List the sub-sections of section 10.1 in spec 38.133 (drilling into a clause).",
+      "question_sha256": "3e0e5148ec65ecc7876879d5520d5ab3f124a31053e34c5132ecc8083556d478",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "363acf6b19214786ba6c41a8718ed14a44a317e3eec6346a0d76056d92fc0b56",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: '10.1'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (anchor)-[:HAS_SUB_SECTION]->(obj:Section)\nRETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle\nORDER BY sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 282,
+      "answer_n": 282,
+      "answer_preview": [
+        {
+          "sectionId": "38.133-Rel-15-10.1.1"
+        },
+        {
+          "sectionId": "38.133-Rel-15-10.1.10"
+        },
+        {
+          "sectionId": "38.133-Rel-15-10.1.11"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/structural8/RAN4_P3_CQ1-2/projected_native_records.jsonl",
+        "sha256": "63007687e266d309a90fb9c653cf89e5683a2e77ec05e5b0b83cd75fc84a550c"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-2_definition.json",
+      "interpretation_and_limits": "Direct child Section identities under10.1 of38.133. Original schema explicitly supports release-blind traversal through all retained release-final Spec nodes. All release-aware object identities are kept, without latest/LIMIT or a new version-invariance requirement. Identity is required; returned numbers/titles/captions are auxiliary. This is complete recorded-graph output, not a source-extraction completeness claim.",
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-2_full_recorded_scope_SQL_witness.json",
+        "sha256": "d2ca9a1fe2d45bd361db9857c55c73f3c162977b3c3fadb319012dcfcef450fe"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ1-12",
+      "original_question": "List the sub-sections of section 6 in spec 38.101-1 (drilling into a clause).",
+      "question_sha256": "c3601565ab3fe34f897e59a36f52cc2c0187fc5ae68e07961d03da48769aa45c",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "5a3b6d15761c5b261b81bc2c2d0abcc8faa2689bd2e5cdd0180d5eac2694b208",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.101-1'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: '6'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (anchor)-[:HAS_SUB_SECTION]->(obj:Section)\nRETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle\nORDER BY sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 211,
+      "answer_n": 211,
+      "answer_preview": [
+        {
+          "sectionId": "38.101-1-Rel-15-6.1"
+        },
+        {
+          "sectionId": "38.101-1-Rel-15-6.2"
+        },
+        {
+          "sectionId": "38.101-1-Rel-15-6.2A"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/structural8/RAN4_P3_CQ1-12/projected_native_records.jsonl",
+        "sha256": "379c9beb6f8d7fce2fe0ffa11f379484afb0d6ddbfecc8a59cfad3e5c6d81477"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-12_definition.json",
+      "interpretation_and_limits": "Direct child Section identities under6 of38.101-1. Original schema explicitly supports release-blind traversal through all retained release-final Spec nodes. All release-aware object identities are kept, without latest/LIMIT or a new version-invariance requirement. Identity is required; returned numbers/titles/captions are auxiliary. This is complete recorded-graph output, not a source-extraction completeness claim.",
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-12_full_recorded_scope_SQL_witness.json",
+        "sha256": "6d0aefd5d22d067d051010c0e5be75bff8cbf8d97b9e53044bbefbe3e5e8467a"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ1-5",
+      "original_question": "List the tables in section 9.2.5.1 of spec 38.133 (locating requirement tables).",
+      "question_sha256": "d3ec28e0a0e48832c6d0ebcdb538c40c0df53e6be54ba27c48c5ecf301468362",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "744ce6953876189275a1c8b00263570b35d1fa59ee06685f3df79a2ea5cecff2",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: '9.2.5.1'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (anchor)-[:CONTAINS_TABLE]->(obj:TSTable)\nRETURN DISTINCT obj.tableId AS tableId, obj.tableNumber AS tableNumber, obj.tableCaption AS tableCaption\nORDER BY tableId",
+      "required_fields": [
+        {
+          "name": "tableId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "tableId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 70,
+      "answer_n": 70,
+      "answer_preview": [
+        {
+          "tableId": "38.133-Rel-15-T9.2.5.1-7"
+        },
+        {
+          "tableId": "38.133-Rel-15-T9.2.5.1-8"
+        },
+        {
+          "tableId": "38.133-Rel-16-T9.2.5.1-1"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/structural8/RAN4_P3_CQ1-5/projected_native_records.jsonl",
+        "sha256": "7db080f065f4d9a2a12ddba5748720b8811249822722013e23401e022dcfb9be"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-5_definition.json",
+      "interpretation_and_limits": "Directly owned recorded table identities in9.2.5.1 of38.133. Frozen70 is not called actual-source80: ten physical source omissions are separately preserved. Original schema explicitly supports release-blind traversal through all retained release-final Spec nodes. All release-aware object identities are kept, without latest/LIMIT or a new version-invariance requirement. Identity is required; returned numbers/titles/captions are auxiliary. This is complete recorded-graph output, not a source-extraction completeness claim.",
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-5_full_recorded_scope_SQL_witness.json",
+        "sha256": "df05393c41788afdfee019d15e7bca40969aed1e2aaf966318a9e4e515ec8da1"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ1-6",
+      "original_question": "List the figures in section J.3 of spec 38.141-2 (locating test-setup figures).",
+      "question_sha256": "4fb647ec38f0837c4aa56956b392127b5db567867b9c9d83a892afb3451edc11",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "faae1092150e4deac53a738d86ba6a47159083dfbf9f7c337e4fb41cb5978fa0",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.141-2'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: 'J.3'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (anchor)-[:CONTAINS_FIGURE]->(obj:TSFigure)\nRETURN DISTINCT obj.figureId AS figureId, obj.figureNumber AS figureNumber, obj.figureCaption AS figureCaption\nORDER BY figureId",
+      "required_fields": [
+        {
+          "name": "figureId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "figureId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 35,
+      "answer_n": 35,
+      "answer_preview": [
+        {
+          "figureId": "38.141-2-Rel-16-FJ.3-1"
+        },
+        {
+          "figureId": "38.141-2-Rel-16-FJ.3-2"
+        },
+        {
+          "figureId": "38.141-2-Rel-16-FJ.3-3"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/structural8/RAN4_P3_CQ1-6/projected_native_records.jsonl",
+        "sha256": "967f47563d13f849b13ec46b4f18a848ff77254e6ab8c7bd548a552e9b71a3b5"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-6_definition.json",
+      "interpretation_and_limits": "Directly owned figure identities inJ.3 of38.141-2. Original schema explicitly supports release-blind traversal through all retained release-final Spec nodes. All release-aware object identities are kept, without latest/LIMIT or a new version-invariance requirement. Identity is required; returned numbers/titles/captions are auxiliary. This is complete recorded-graph output, not a source-extraction completeness claim.",
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-6_full_recorded_scope_SQL_witness.json",
+        "sha256": "d7d53f013e3bcc5c697b7a8158ccffdf8665ebe03ee96ec7517308d1286278dd"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ2-1",
+      "original_question": "List the sections referenced by section 3.2 of spec 38.101-1 (outbound cross-references).",
+      "question_sha256": "2b95a95719433d29c72f9ba1a91f5a3a03bf11661baa1c289556a522bbbce316",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "5f801cfbb64f59e685e4c836c5b9a060cbafed171160584f88f14cc72965dbfd",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.101-1'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: '3.2'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (anchor)-[:REFERENCES_SECTION]->(obj:Section)\nRETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle\nORDER BY sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 19,
+      "answer_n": 19,
+      "answer_preview": [
+        {
+          "sectionId": "38.101-1-Rel-15-5.3"
+        },
+        {
+          "sectionId": "38.101-1-Rel-15-5.3.3"
+        },
+        {
+          "sectionId": "38.101-1-Rel-15-5.4.2.2"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/structural8/RAN4_P3_CQ2-1/projected_native_records.jsonl",
+        "sha256": "197ba8887f07dd87bad16f5e6eaec94bbc2ee7b38a4796c609bc97b24f79d5c7"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ2-1_definition.json",
+      "interpretation_and_limits": "Outbound referenced Section identities from3.2 of38.101-1. Original English is preserved; the KO other-TS restriction is not silently added. Original schema explicitly supports release-blind traversal through all retained release-final Spec nodes. All release-aware object identities are kept, without latest/LIMIT or a new version-invariance requirement. Identity is required; returned numbers/titles/captions are auxiliary. This is complete recorded-graph output, not a source-extraction completeness claim.",
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ2-1_full_recorded_scope_SQL_witness.json",
+        "sha256": "e2da67a14fa74092ae5ec5afd0156a556f1254b25b117957aa7acffa9daa5cf6"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ2-2",
+      "original_question": "List the sections that reference section 4.2 of spec 38.133 (inbound cross-references).",
+      "question_sha256": "6bebbfc843ed0b6adb8650661bbd65aa3ef46fa26ba208895d53d68880607907",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "1c471daff4cacd64e5c763958015099e88adb4523a861cda2a83ced4f4066dba",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: '4.2'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (obj:Section)-[:REFERENCES_SECTION]->(anchor)\nRETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle\nORDER BY sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 619,
+      "answer_n": 619,
+      "answer_preview": [
+        {
+          "sectionId": "38.133-Rel-15-3.2"
+        },
+        {
+          "sectionId": "38.133-Rel-15-4.2.1"
+        },
+        {
+          "sectionId": "38.133-Rel-15-7.3.2.1"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/structural8/RAN4_P3_CQ2-2/projected_native_records.jsonl",
+        "sha256": "739ee3f9562f9ec068efb65d81cf00cdefb51f90b6072bde019c595379319d19"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ2-2_definition.json",
+      "interpretation_and_limits": "Inbound referencing Section identities toward4.2 of38.133. Original English4.2 is preserved; conflicting KO7.1.2 is explicitly disclosed. Original schema explicitly supports release-blind traversal through all retained release-final Spec nodes. All release-aware object identities are kept, without latest/LIMIT or a new version-invariance requirement. Identity is required; returned numbers/titles/captions are auxiliary. This is complete recorded-graph output, not a source-extraction completeness claim.",
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ2-2_full_recorded_scope_SQL_witness.json",
+        "sha256": "c5dda52b65e8a19aae9392c1842e4fce7fd85addbff035655262334ba0347725"
+      },
+      "additional_explicit_source_pins": [],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ029",
+      "original_question": "Which TSs define antenna-related sections? (locating specs for antenna-port implementation)",
+      "question_sha256": "8493948d70afa21aed1602457501efa7675798e92f58c4618e98c73b6ffe502d",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "d99d6b6df7c08672d0efedd6c016f346bd5807dec3d8920ca04b21de264abf65",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE sec.sectionTitle =~ '(?i).*antenna.*'\nRETURN DISTINCT sp.specNumber AS specNumber",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "specNumber"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 3,
+      "answer_n": 3,
+      "answer_preview": [
+        {
+          "specNumber": "38.215"
+        },
+        {
+          "specNumber": "38.214"
+        },
+        {
+          "specNumber": "38.211"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_title_family/RAN1_P3_CQ029/projected_native_records.jsonl",
+        "sha256": "31d0d0cde27b48227c23c5e7ff349a3a2a7c7c08aa699676b7f532d64da45519"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_title_family_independent_SQL/RAN1_P3_CQ029_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original 기술_키워드검색 category explicitly uses Section titles. All retained antenna-title Section owners yield three requested TS identities; Section numbers/titles are auxiliary. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ029_CQ031_original_title_keyword_context/source_only_independent_review/exact_two_original_category_to_title_search_context.json",
+          "sha256": "e2de509930dc8c16e7073ab12159ead673fe5c5e9ee03620e11db6225828155a"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ031",
+      "original_question": "How are HARQ-related sections distributed across the TSs? (scope of HARQ implementation)",
+      "question_sha256": "0a823601f1e173067819764e9502d0994a6e3e8bdb8f983b299da2823c4f724e",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "09b98227b57fbef75f97482c7341bb6240586e9ebae45a1636081b14e75e4246",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (population:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)\nWITH DISTINCT owner.specNumber AS specNumber\nOPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: specNumber})\nWHERE sec.sectionTitle =~ '(?i).*HARQ.*'\nRETURN specNumber, count(DISTINCT sec.sectionId) AS sectionCount\nORDER BY specNumber",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "specNumber"
+        },
+        {
+          "name": "sectionCount",
+          "type": "integer",
+          "nullable": false,
+          "source_column_or_expression": "sectionCount"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 8,
+      "answer_n": 8,
+      "answer_preview": [
+        {
+          "sectionCount": 0,
+          "specNumber": "38.201"
+        },
+        {
+          "sectionCount": 0,
+          "specNumber": "38.202"
+        },
+        {
+          "sectionCount": 0,
+          "specNumber": "38.211"
+        },
+        {
+          "sectionCount": 37,
+          "specNumber": "38.212"
+        },
+        {
+          "sectionCount": 107,
+          "specNumber": "38.213"
+        },
+        {
+          "sectionCount": 0,
+          "specNumber": "38.214"
+        },
+        {
+          "sectionCount": 0,
+          "specNumber": "38.215"
+        },
+        {
+          "sectionCount": 0,
+          "specNumber": "38.291"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_title_family/RAN1_P3_CQ031/projected_native_records.jsonl",
+        "sha256": "43f5432e2c0ef2b70b7d7611d60a2694f86962afe9678e2bc0428afb59a871b5"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_title_family_independent_SQL/RAN1_P3_CQ031_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original title-keyword category and eight-TS source domain define the HARQ distribution. Both TS identity and distinct release-aware Section count are required; all eight families, including recorded zero matches, are retained. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ029_CQ031_original_title_keyword_context/source_only_independent_review/exact_two_original_category_to_title_search_context.json",
+          "sha256": "e2de509930dc8c16e7073ab12159ead673fe5c5e9ee03620e11db6225828155a"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ1-16",
+      "original_question": "List the top 5 RAN4 specs by section count (largest specs).",
+      "question_sha256": "51dfeb658a3382669a37fe9152b914f9e15c5404f96e1d20086f9e367028bc64",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "2e0df78e2f1e3c016acc05d5725e0d97b84993b5b8a3b14f5221c599d9f3a6c0",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (sp:Spec)\nWHERE sp.specNumber IS NOT NULL\nWITH DISTINCT sp.specNumber AS specNumber\nOPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)\nWHERE owner.specNumber = specNumber\nRETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount\nORDER BY sectionCount DESC, specNumber ASC",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "specNumber"
+        }
+      ],
+      "collection": {
+        "kind": "top_k_boundary_ties",
+        "require_rank_order": false,
+        "source_order_keys": [
+          {
+            "direction": "desc",
+            "source_column": "sectionCount"
+          }
+        ],
+        "tie_policy": "any_subset_at_boundary",
+        "value": 5,
+        "within_tie_order": "any"
+      },
+      "cardinality_policy": {
+        "mode": "top_k",
+        "tie_policy": "any_subset_at_boundary",
+        "value": 5
+      },
+      "native_full_population_n": 357,
+      "answer_n": 5,
+      "answer_preview": [
+        {
+          "specNumber": "38.133"
+        },
+        {
+          "specNumber": "38.101-1"
+        },
+        {
+          "specNumber": "38.141-2"
+        },
+        {
+          "specNumber": "38.174"
+        },
+        {
+          "specNumber": "38.141-1"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": true,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN4_top5_recorded_Section/RAN4_P3_CQ1-16/projected_native_records.jsonl",
+        "sha256": "2df6b26b8c0c2453133b65cf34fe96301fbaab0541359d7cff39c4f2e7f705cc"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN4_top5_independent_SQL/RAN4_P3_CQ1-16_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original schema supports release-blind aggregation of retained Section identities. The complete recorded logical-Spec pool includes zero-Section families; five highest-ranked Spec identities are required, while sectionCount is ranking evidence and any boundary-tie subset is valid. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_top5_recorded_section_count/original_source_only_packet.json",
+          "sha256": "564c85356368717f0e1363a5bf4b3ef1da1dc0b775b16348c04abbece867bac3"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN5_P3_CQ1-16",
+      "original_question": "Which five RAN5 specs have the most sections? (largest specs)",
+      "question_sha256": "617deb1ad25196bd1df415c073262b811140ce95bdde544bb655574733d90f31",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "89c0ac66d524d567cfbab1e021fdcdb3922901eadc3e4495914381523f11ecf2",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (population:Spec)\nWHERE population.specNumber STARTS WITH '38.5'\nWITH DISTINCT population.specNumber AS specNumber\nOPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: specNumber})\nRETURN specNumber, count(DISTINCT sec.sectionId) AS sectionCount\nORDER BY sectionCount DESC, specNumber",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "specNumber"
+        }
+      ],
+      "collection": {
+        "kind": "top_k_boundary_ties",
+        "value": 5,
+        "tie_policy": "any_subset_at_boundary",
+        "source_order_keys": [
+          {
+            "source_column": "sectionCount",
+            "direction": "desc"
+          }
+        ],
+        "require_rank_order": false,
+        "within_tie_order": "any"
+      },
+      "cardinality_policy": {
+        "mode": "top_k",
+        "value": 5,
+        "tie_policy": "any_subset_at_boundary"
+      },
+      "native_full_population_n": 23,
+      "answer_n": 5,
+      "answer_preview": [
+        {
+          "specNumber": "38.533"
+        },
+        {
+          "specNumber": "38.523-1"
+        },
+        {
+          "specNumber": "38.521-1"
+        },
+        {
+          "specNumber": "38.521-3"
+        },
+        {
+          "specNumber": "38.521-4"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": true,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN5_recorded_count/RAN5_P3_CQ1-16/projected_native_records.jsonl",
+        "sha256": "9ab239e4e1a4dcc906c142b78144f5cf3060150999d61d75795dbfc0974e77ea"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN5_recorded_count_independent_SQL/RAN5_P3_CQ1-16_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original all-RAN5 top-five context and staged appendix explicitly sum across retained spec-release Section identities. All 23 recorded 38.5 Spec families, including eight recorded zeros, form the rank pool. Required output is five Spec identities with any boundary-tie subset. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/RAN5_P3_CQ1-16_full23_original_source_only_packet.json",
+          "sha256": "6ee9e5213ab892b11b2afef2c8d30c3cad7f530fe1e76156f6012c3cc5db827e"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN5_P3_CQ3-2",
+      "original_question": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+      "question_sha256": "0b79525b36614230a9430c2d0d7e7867bacfde8fc31ce2780fd976afbaec9f56",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "b6100c629dac74429cf4b2b04baf4bbabb488c6eba9b46cb32623fbee15f0f61",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})\nWHERE hub.specRelease IS NULL\nWITH count(DISTINCT cr.tdocNumber) AS crCount\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})\nRETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+      "required_fields": [
+        {
+          "name": "crCount",
+          "type": "integer",
+          "nullable": false,
+          "source_column_or_expression": "crCount"
+        },
+        {
+          "name": "sectionCount",
+          "type": "integer",
+          "nullable": false,
+          "source_column_or_expression": "sectionCount"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "exact",
+        "value": 1
+      },
+      "native_full_population_n": 1,
+      "answer_n": 1,
+      "answer_preview": [
+        {
+          "crCount": 4934,
+          "sectionCount": 8718
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN5_recorded_count/RAN5_P3_CQ3-2/projected_native_records.jsonl",
+        "sha256": "cacb140745d6c5a6fd5dc6f3971817e3d40f8cb783a69ddc0b94115446e0bb8e"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN5_recorded_count_independent_SQL/RAN5_P3_CQ3-2_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original English requests the CR-count/Section-total pair for 38.521-1. CR count uses distinct CR Tdoc identities and Section total uses all retained release-aware Section identities; both integer fields are required, without an unasked latest/status filter. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/RAN5_P3_CQ3-2_original_source_only_packet.json",
+          "sha256": "090f7b6c6ade68f62da7344d1d070cdaa6fdeccc6a686e105a573256c25d057e"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ3-2",
+      "original_question": "How many CRs modify spec 38.133, and how many sections does it have? (change load vs spec size).",
+      "question_sha256": "a232fc4fcb178717a5c248b528e2734410c23411057be6efb25a25915e9377dd",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "39ccbcae6ef5a64e08d2a4842c3f6bd40eddf8c700fefed569c9c7635b3a0626",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\nWITH count(DISTINCT cr.tdocNumber) AS crCount\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.133'})\nRETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+      "required_fields": [
+        {
+          "name": "crCount",
+          "type": "integer",
+          "nullable": false,
+          "source_column_or_expression": "crCount"
+        },
+        {
+          "name": "sectionCount",
+          "type": "integer",
+          "nullable": false,
+          "source_column_or_expression": "sectionCount"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "exact",
+        "value": 1
+      },
+      "native_full_population_n": 1,
+      "answer_n": 1,
+      "answer_preview": [
+        {
+          "crCount": 16017,
+          "sectionCount": 32888
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN4_recorded_count/RAN4_P3_CQ3-2/projected_native_records.jsonl",
+        "sha256": "b59ef9081245d684f62adf22021b850000bfae8b646e2ce47b1f2b53b2bb5a8c"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN4_recorded_count_independent_SQL/RAN4_P3_CQ3-2_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original English requests the CR-count/Section-total pair for 38.133. Distinct CR Tdoc identities and all retained release-aware Section identities produce the two required integer fields; approval/status/latest filters are not requested. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recorded_CR_and_Section_count/original_source_only_packet.json",
+          "sha256": "df542ba35c1dc6dcb70b6ea4609e0081882e3de17bf791af446203aeb5b7b830"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ009",
+      "original_question": "Which sections does TS 38.214 Section 5.1 reference? (companion reading for implementation)",
+      "question_sha256": "99c549bb15b6d7b810f3809d2af6c5f489fcdde3e35aa719f9577f9371d4265b",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "88d8cfa01d9be9b9a57575a090a608f19e7b4793bc99b10373f11a40c15a5b46",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber:'38.214'})\nWHERE hub.specRelease IS NULL\nMATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)\nMATCH (src)-[:REFERENCES_SECTION]->(tgt:Section)\nRETURN DISTINCT tgt.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "nullable": false,
+          "source_column_or_expression": "sectionId",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 20,
+      "answer_n": 20,
+      "answer_preview": [
+        {
+          "sectionId": "38.214-Rel-17-5.1.2.3"
+        },
+        {
+          "sectionId": "38.214-Rel-17-5.1.2.1"
+        },
+        {
+          "sectionId": "38.214-Rel-17-5.1.5"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_recorded_Section_references/RAN1_P3_CQ009/projected_native_records.jsonl",
+        "sha256": "e6f0a96e79d25397343ebd7205c26b914c998cd00a8474dbd70a3e939278f54f"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_recorded_Section_references_independent_SQL/RAN1_P3_CQ009_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original directed REFERENCES_SECTION lookup from 38.214 clause5.1 retains all release-aware endpoint identities, under the explicit recorded aggregation schema. A latest-edition selection or complete implementation-reading claim is not introduced. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ009_CQ010_CQ015_recorded_section_references/source_only_independent_review/RAN1_P3_CQ009_original_source_packet.json",
+          "sha256": "ec7e66977628a4030049006aabc8923d8743a0bd4945b095bbc834621f05c7a8"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ010",
+      "original_question": "Which sections reference TS 38.211 Section 5.2.1 (Pseudo-random sequence)? (finding users of this base algorithm)",
+      "question_sha256": "13e5f8927d8720e9af5675737a4739028c379e5061f1bb90e25bed4cf133cefb",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "23fd84d1f75a4c0ab384ce2686c8ef2a3f219737904fd5fc2f06ff6dd05ae383",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber:'38.211'})\nWHERE hub.specRelease IS NULL\nMATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (tgt:Section {sectionNumber:'5.2.1'})-[:BELONGS_TO_SPEC]->(sp)\nMATCH (src:Section)-[:REFERENCES_SECTION]->(tgt)\nRETURN DISTINCT src.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "nullable": false,
+          "source_column_or_expression": "sectionId",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 115,
+      "answer_n": 115,
+      "answer_preview": [
+        {
+          "sectionId": "38.211-Rel-15-6.3.2.2.2"
+        },
+        {
+          "sectionId": "38.211-Rel-15-6.3.2.2.1"
+        },
+        {
+          "sectionId": "38.211-Rel-15-6.4.1.4.2"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_recorded_Section_references/RAN1_P3_CQ010/projected_native_records.jsonl",
+        "sha256": "149a9b7b044131c57dce87101aaeadb01d3ad7e2a5ab7718ad375e8ab4665414"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_recorded_Section_references_independent_SQL/RAN1_P3_CQ010_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original inbound REFERENCES_SECTION lookup to 38.211 clause5.2.1 requires the referencing Section identities across retained editions. The recorded-edge answer remains separate from physical citation-extraction completeness. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ009_CQ010_CQ015_recorded_section_references/source_only_independent_review/RAN1_P3_CQ010_original_source_packet.json",
+          "sha256": "3fe8b4a5c21962c365c3ab8f5798eff2ce531e26bae2bac6a8e3fbb498cc119a"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ015",
+      "original_question": "What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)",
+      "question_sha256": "70e4da38530beb7b583bd8dd8c9b8571d43f7df1c6450e691357d58c7e1a3fd0",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "49ebc72ced67f2b3b48b5948623a806a7b94b75a86c17d9b8ca23895f075694b",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber:'38.214'})\nWHERE hub.specRelease IS NULL\nMATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)\nMATCH (src)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section)\nRETURN DISTINCT end.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "nullable": false,
+          "source_column_or_expression": "sectionId",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 23,
+      "answer_n": 23,
+      "answer_preview": [
+        {
+          "sectionId": "38.214-Rel-17-5.1.2.2.1"
+        },
+        {
+          "sectionId": "38.214-Rel-17-5.1.2.1.1"
+        },
+        {
+          "sectionId": "38.214-Rel-17-5.3.1"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_recorded_Section_references/RAN1_P3_CQ015/projected_native_records.jsonl",
+        "sha256": "618d613735eda0411ecbbdee456c6734853bf4ffddf93e8587b1823d38ebd4db"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_recorded_Section_references_independent_SQL/RAN1_P3_CQ015_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original exact two-hop directed REFERENCES_SECTION reachability from 38.214 clause5.1 requires endpoint Section identities. Genuine two-edge cycles remain valid; at-most-two paths, arbitrary transitive closure and printed-number-only identities do not replace the question. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ009_CQ010_CQ015_recorded_section_references/source_only_independent_review/RAN1_P3_CQ015_original_source_packet.json",
+          "sha256": "30e3f36e98e976278c7bf8edfb4e3a206cb007533195112811033684eb2ac6f4"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN2_P1_CQ2-6",
+      "original_question": "List the TDocs postponed to a later meeting at RAN2#131 (deferred-item tracking).",
+      "question_sha256": "2939aedf93c000df6b60466e2e2a8423cef9a9c284bec534665f2c5fdb45d1ca",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "2426a5836c41ebca6d1df03313ec875889a33f8d082564a3b6682e2e098c0bae",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#131'})<-[:PRESENTED_AT]-(t:Tdoc)\nWHERE t.status = 'postponed'\nRETURN DISTINCT t.tdocNumber AS tdocNumber, t.title AS sourceTitle, t.type AS sourceType\nORDER BY tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "tdocNumber"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 9,
+      "answer_n": 9,
+      "answer_preview": [
+        {
+          "tdocNumber": "R2-2505408"
+        },
+        {
+          "tdocNumber": "R2-2505747"
+        },
+        {
+          "tdocNumber": "R2-2505885"
+        },
+        {
+          "tdocNumber": "R2-2506054"
+        },
+        {
+          "tdocNumber": "R2-2506175"
+        },
+        {
+          "tdocNumber": "R2-2506190"
+        },
+        {
+          "tdocNumber": "R2-2506310"
+        },
+        {
+          "tdocNumber": "R2-2506450"
+        },
+        {
+          "tdocNumber": "R2-2506503"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_postponed_recorded_status/RAN2_P1_CQ2-6/projected_native_records.jsonl",
+        "sha256": "415d2bb38db5a80835abadaf696c38573041c3ab325cb5ae5625db74386733f7"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_postponed_recorded_status_independent_SQL/RAN2_P1_CQ2-6_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original Phase1 design maps this exact CQ to the source-register postponed status. All nine recorded Tdoc identities are returned without LIMIT10. The extra null-status source stub and a conflicting later report outcome remain unknown or discrepant; future meeting attendance is not inferred. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_postponed_recorded_original_context/source_only_independent_review/RAN2_P1_CQ2-6_recorded_status_original_source_only_packet.json",
+          "sha256": "3ec7a82495caa7ff9db21a870fd5a9f1f953b0f932a5f8f9825a2e53ec85e98e"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN4_P3_CQ3-4",
+      "original_question": "List CRs on spec 38.133 that touch clause 4.2 (clause-level change filter).",
+      "question_sha256": "a1b8c0dabdc906e9d0981a0a131efd694e40443e22fbd01a4167aec535d383d2",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "439d0285f45b953b793d24e7574abd4cd8cc57946f4241397601cc54e648f0b1",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\n  AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nWITH DISTINCT cr, trim(cr.clausesAffected) AS declaredField\nWITH cr, declaredField,\n     reduce(normalized = toLower(declaredField), token IN ['sections', 'section', 'clauses', 'clause', 'through', 'to', '~', '–', '—'] |\n       replace(normalized, token, CASE WHEN token IN ['through', 'to', '~', '–', '—'] THEN '-' ELSE '' END)) AS chapterRange\nWHERE declaredField =~ '(?s).*(?<![A-Za-z0-9.])4\\\\.2(?:\\\\.[A-Za-z0-9]+)*(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'\n   OR (declaredField =~ '(?is)\\\\s*(?:sections?|clauses?)\\\\s+[0-9]+\\\\s*(?:~|-|–|—|to|through)\\\\s*[0-9]+\\\\s*'\n       AND toInteger(trim(split(chapterRange, '-')[0])) <= 4\n       AND toInteger(trim(split(chapterRange, '-')[1])) >= 4)\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "tdocNumber"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 60,
+      "answer_n": 60,
+      "answer_preview": [
+        {
+          "tdocNumber": "R4-2301839"
+        },
+        {
+          "tdocNumber": "R4-2301841"
+        },
+        {
+          "tdocNumber": "R4-2302135"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN4_clause42_range_aware/projected_native_records.jsonl",
+        "sha256": "cf4a29aa1f6b8b758990085cf281d895ae88370d5fa37bfc37f2b4fa708a0a21"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN4_clause42_range_aware_independent_SQL/RAN4_P3_CQ3-4_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original Phase3 design restricts the CQ to available affected-clause declarations. Proper clause4.2 descendants and an author-labelled whole-chapter interval covering4 are included, with suffixed siblings excluded. The old literal-only candidate was withdrawn after a real Section1~6 source counterexample; all1059 unique declarations were rechecked and new exact reviews precede this repair. Missing declarations, approval and enactment remain unknown. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_clause42_declared_range_aware_v2/original_and_actual_declaration_source_only_packet.json",
+          "sha256": "c6f64e628b793569aa7e0a8e1f07bf14dde9b30a532f72ad6bd08941b8f4bc6a"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN2_P3_CQ2-1",
+      "original_question": "List the sections referenced by section 5.4.4 of spec 38.321 (outgoing references).",
+      "question_sha256": "76d76c807e323caac50d4ffd7dc853a0bf1880cab4e406c4770e7d068d4ce800",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "ae9dd34d4c0beffd0c80f7151f96b0fb9008ec7dedc67eda77041e5e72f7aed4",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (anchor:Section {sectionNumber: '5.4.4'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.321'})\nMATCH (anchor)-[:REFERENCES_SECTION]->(ref:Section)\nRETURN DISTINCT ref.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 65,
+      "answer_n": 65,
+      "answer_preview": [
+        {
+          "sectionId": "38.321-Rel-15-5.1"
+        },
+        {
+          "sectionId": "38.321-Rel-15-5.4.5"
+        },
+        {
+          "sectionId": "38.321-Rel-16-5.21"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_recorded_Section_references/RAN2_P3_CQ2-1/projected_native_records.jsonl",
+        "sha256": "166abf20b2872b6a4724c5fc7c5d51dc7a541142e543f21acf83b51a1ece3709"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_recorded_Section_references_independent_SQL/RAN2_P3_CQ2-1_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original outgoing REFERENCES_SECTION lookup from 38.321 clause5.4.4 requires all retained release-aware endpoint identities. Recorded directed edges define this graph-relative answer; a single edition, latest filter or complete physical citation extraction is not silently assumed. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_two_recorded_Section_references_original_context/source_only_independent_review/RAN2_P3_CQ2-1_original_source_only_packet.json",
+          "sha256": "85de89244675ef8426608b5a373c137d60d30cfe7f7383f0402bff23ced75d3a"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN2_P3_CQ2-2",
+      "original_question": "List the sections that reference section 5.4.3.1 of spec 38.321 (incoming references).",
+      "question_sha256": "6d681c8180f65406e7c2944efb1805710f9299a2ce382b08d41e8ec283dfd5eb",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "81984a203ab102ca9054fba4cb16e3dd36614c093c885c8035a5d2c369aa5057",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (anchor:Section {sectionNumber: '5.4.3.1'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.321'})\nMATCH (ref:Section)-[:REFERENCES_SECTION]->(anchor)\nRETURN DISTINCT ref.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 54,
+      "answer_n": 54,
+      "answer_preview": [
+        {
+          "sectionId": "38.321-Rel-15-5.18.10"
+        },
+        {
+          "sectionId": "38.321-Rel-15-5.4.3.1.3"
+        },
+        {
+          "sectionId": "38.321-Rel-15-5.4.6"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_recorded_Section_references/RAN2_P3_CQ2-2/projected_native_records.jsonl",
+        "sha256": "a3c9ccb9347a095b05d7c857ff7474b2da5025b16a4118fa19a957f13828ae78"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_recorded_Section_references_independent_SQL/RAN2_P3_CQ2-2_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original incoming REFERENCES_SECTION lookup to 38.321 clause5.4.3.1 requires referencing Section identities across all retained editions. Source citation-invariance failures remain preserved separately; they do not become a new version selection rule. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_two_recorded_Section_references_original_context/source_only_independent_review/RAN2_P3_CQ2-2_original_source_only_packet.json",
+          "sha256": "5852042bcc69bd58fc4ab0f6f30543b0cb84508f3bd78600412d2c7ecdb0e564"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ002",
+      "original_question": "Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).",
+      "question_sha256": "2438e3303e1e9b24fd8846d95219fc4441961eb52b94302e2cd2d8d127608314",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "c60060f7efa64b25087be66240e1fba7e827bcf3886bd2ced9b2d31960af7187",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (hub:Spec {specNumber:'38.214'})\nWHERE hub.specRelease IS NULL\nMATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (parent:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)\nMATCH (parent)-[:HAS_SUB_SECTION]->(child:Section)\nRETURN DISTINCT child.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "nullable": false,
+          "source_column_or_expression": "sectionId",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 35,
+      "answer_n": 35,
+      "answer_preview": [
+        {
+          "sectionId": "38.214-Rel-17-5.1.6"
+        },
+        {
+          "sectionId": "38.214-Rel-17-5.1.2"
+        },
+        {
+          "sectionId": "38.214-Rel-17-5.1.4"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_direct_child_structure/RAN1_P3_CQ002/projected_native_records.jsonl",
+        "sha256": "5a48d1290ae1a13fd0f30f832b4771c7b534ca14de82a292e232a3d198e6530e"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_direct_child_structure_independent_SQL/RAN1_P3_CQ002_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original CQ1-2 category specifies direct, nontransitive HAS_SUB_SECTION structure under 38.214 clause5.1. Required direct-child Section identities preserve every retained edition; recursive descendants, the parent itself or printed-number-only identities change the question. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ002_CQ018_original_source_routes/source_only_independent_review/RAN1_P3_CQ002_original_source_packet.json",
+          "sha256": "7ad49ae13fc7fbc6a4b27c47ab6e9bd33acec1f6df794e35845d2de07b7d2c79"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ018",
+      "original_question": "Which CRs affect TS 38.214 Section 5.1? List CRs whose affected clauses include 5.1 (impact on my implementation).",
+      "question_sha256": "80c2da08f510e9670ca058cf291062518f84b99232f0dd0bdd203ac94ebf096b",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "214abc4612fa714a31de0f7cc01effce8311843aaba50b4819df59f79d0f42c9",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})\nWHERE hub.specRelease IS NULL\n  AND cr.clausesAffected IS NOT NULL\n  AND cr.clausesAffected =~ '(?s).*(?<![0-9A-Za-z.])5[.]1(?![0-9A-Za-z]|[.][0-9A-Za-z]).*'\nRETURN DISTINCT cr.tdocNumber AS tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "nullable": false,
+          "source_column_or_expression": "cr.tdocNumber",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 25,
+      "answer_n": 25,
+      "answer_preview": [
+        {
+          "tdocNumber": "R1-2508166"
+        },
+        {
+          "tdocNumber": "R1-2401817"
+        },
+        {
+          "tdocNumber": "R1-2401876"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_exact_declared_ordinal/projected_native_records.jsonl",
+        "sha256": "1da26dd0cdb4033e7b3f952b0467f8b98859c53adae21f250c593628427f14d9"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_exact_declared_ordinal_independent_SQL/RAN1_P3_CQ018_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original English explicitly requests CRs whose affected clauses include5.1, and original design restricts the query to available clausesAffected fields. Exact maximal declared ordinal5.1 is required; proper descendants and embedded5.2.1.5.1 substrings are excluded. All204 available fields and98 distinct declarations were checked, while2219 missing declarations and source-register conflicts remain unknown. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ018_exact_declared_ordinal/source_only_independent_review/RAN1_P3_CQ018_original_source_packet.json",
+          "sha256": "c991f64654064b3c55f052c7d97318f692fe21a0584009062d540e1520118956"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN2_P3_CQ1-2",
+      "original_question": "List the subsections under section 5 of spec 38.321 (MAC structure drill-down).",
+      "question_sha256": "979645db2dfd9d56658aa948b3436330e558a5b158ae1717e07d5e59dcd624bb",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "c0c659f99dd86fafd18b8391dc020211234db0346aa402ba57cf61c06a7cb9e7",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (anchor:Section {sectionNumber: '5'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.321'})\nMATCH (anchor)-[:HAS_SUB_SECTION]->(item:Section)\nRETURN DISTINCT item.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 155,
+      "answer_n": 155,
+      "answer_preview": [
+        {
+          "sectionId": "38.321-Rel-15-5.19"
+        },
+        {
+          "sectionId": "38.321-Rel-15-5.4"
+        },
+        {
+          "sectionId": "38.321-Rel-15-5.11"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_direct_recorded_object/RAN2_P3_CQ1-2/projected_native_records.jsonl",
+        "sha256": "386d5edd2db85a24c166eaf90796dc9a803a58081c3d30a61f9fcb56dc3de313"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_direct_recorded_object_independent_SQL/RAN2_P3_CQ1-2_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original CQ mapping requests direct, nontransitive child Section identities under 38.321 clause5. All retained release-aware identities are required. Prior differences between physical editions remain preserved and do not imply a latest-edition rule or complete authored-source extraction. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_three_recorded_object_lookups_original_context/source_only_independent_review/RAN2_P3_CQ1-2_original_source_only_packet.json",
+          "sha256": "e99af49e6694e5c786a3f5fcb71c99827c82d456d0e923c9a4f92744d79972c5"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN2_P3_CQ1-5",
+      "original_question": "List the tables in section 6.2.1 of spec 38.321 (table lookup).",
+      "question_sha256": "40798dcb49efce2e7339ccac2903a33f184126acfe2334e88f12c55ffac2b05f",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "89e7b98fd53e903ac391473d60f44716afebf58238e3f572974a2366bf28206b",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (anchor:Section {sectionNumber: '6.2.1'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.321'})\nMATCH (anchor)-[:CONTAINS_TABLE]->(item:TSTable)\nRETURN DISTINCT item.tableId AS tableId",
+      "required_fields": [
+        {
+          "name": "tableId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "tableId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 31,
+      "answer_n": 31,
+      "answer_preview": [
+        {
+          "tableId": "38.321-Rel-15-T6.2.1-1"
+        },
+        {
+          "tableId": "38.321-Rel-15-T6.2.1-2"
+        },
+        {
+          "tableId": "38.321-Rel-16-T6.2.1-1a"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_direct_recorded_object/RAN2_P3_CQ1-5/projected_native_records.jsonl",
+        "sha256": "582ef7d0107f7ab93e56ff5e9987ec2584b4f4fd4fdb102245c185fafd5de06a"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_direct_recorded_object_independent_SQL/RAN2_P3_CQ1-5_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original table lookup requires recorded TSTable identities directly owned by 38.321 clause6.2.1 across retained editions. Independently read inverse ownership edges corroborate the forward query; captions and printed table numbers are auxiliary, and physical edition differences are preserved. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_three_recorded_object_lookups_original_context/source_only_independent_review/RAN2_P3_CQ1-5_original_source_only_packet.json",
+          "sha256": "ed91bf77a31edc10239fb985f72fb5792e2936eb4e4c49ab8ee1e0aee4c342df"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN2_P3_CQ1-6",
+      "original_question": "List the figures in section 6.1.3.1 of spec 38.321 (figure lookup).",
+      "question_sha256": "d733cab8c1a707e7b3c67678ed5ed2d00300691f8d50b03272a24e141e2df534",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "6f6faeb4314a14344bbc4c27adb9aaacb7c8ebe0d9332b403b8edd592c853167",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (anchor:Section {sectionNumber: '6.1.3.1'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.321'})\nMATCH (anchor)-[:CONTAINS_FIGURE]->(item:TSFigure)\nRETURN DISTINCT item.figureId AS figureId",
+      "required_fields": [
+        {
+          "name": "figureId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "figureId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 18,
+      "answer_n": 18,
+      "answer_preview": [
+        {
+          "figureId": "38.321-Rel-15-F6.1.3.1-1"
+        },
+        {
+          "figureId": "38.321-Rel-15-F6.1.3.1-2"
+        },
+        {
+          "figureId": "38.321-Rel-16-F6.1.3.1-1"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_direct_recorded_object/RAN2_P3_CQ1-6/projected_native_records.jsonl",
+        "sha256": "6be39ae900f6ff4bdc89776356b3ba9ea8963fbc9e67a10aa6eb26c845cbab02"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_direct_recorded_object_independent_SQL/RAN2_P3_CQ1-6_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original figure lookup requires recorded TSFigure identities directly owned by 38.321 clause6.1.3.1 across retained editions. Complete inverse ownership SQL is compared with the actual forward native query. No version-invariance or full source-capture claim is introduced. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_three_recorded_object_lookups_original_context/source_only_independent_review/RAN2_P3_CQ1-6_original_source_only_packet.json",
+          "sha256": "b83eb33f9878379629e21be328875a9858b26eb06866a02d9cc3ce644fa81d52"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN1_P3_CQ021",
+      "original_question": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+      "question_sha256": "21768ed0d72df413f9fb8b7883899d706704a05cdde8a003526aacb432e70733",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "6ff1bffd1e84b992393cee28c17098ab105b16d6a75a026cf4b0397c36325bbf",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL\nWITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |\n clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'\n              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean\nWITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens\nUNWIND tokens AS token\nWITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal\nWITH cr, count(DISTINCT ordinal) AS affectedCount\nWHERE affectedCount >= 5\nRETURN DISTINCT cr.tdocNumber AS tdocNumber",
+      "required_fields": [
+        {
+          "name": "tdocNumber",
+          "nullable": false,
+          "source_column_or_expression": "cr.tdocNumber",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 34,
+      "answer_n": 34,
+      "answer_preview": [
+        {
+          "tdocNumber": "R1-2504997"
+        },
+        {
+          "tdocNumber": "R1-2308716"
+        },
+        {
+          "tdocNumber": "R1-2401876"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_declared_section_threshold/projected_native_records.jsonl",
+        "sha256": "00a805b9e95a7d3cb979f05c0972756720571a497d5bf5406fec858651bdc676"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_declared_section_threshold_independent_SQL/RAN1_P3_CQ021_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original Korean context explicitly counts Sections declared in the available clausesAffected field. Distinct declared identifiers across all204 available fields determine the five-or-more condition, without LIMIT20 or a retained-Section resolver requirement. Two real CRs declare five addresses although the retained resolver finds four; actual source bodies confirm the missing address. Source/register/body ordinal conflicts remain preserved,2219 missing declarations remain unknown, and the declared count is not physical enacted-change completeness. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_count_unit_challenge/manifest.json",
+          "sha256": "ffe0eea978b5f4dfed9aed4e73f16c9b950f620e01c6d7857c109e1c351d5035"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_CQ021_root_original_declared_count_scope_v2/manifest.json",
+          "sha256": "fbffc4dcf55b3830a1ce5fb1c2f1b01547c9faae16d086d7ac34bcb9848bb49f"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    }
+  ],
+  "separate_TR_enrichment": {
+    "status": "source_graph_and_SQL_built_and_full_native_query_matched; original_false_topic_premises_pending",
+    "questions": [
+      "RAN1_P5_CQ5-1",
+      "RAN1_P5_CQ5-2"
+    ],
+    "new_question_admissions": 0,
+    "source_bibliography_pairs": 121,
+    "conditional_number_38_859_outbound": 13,
+    "conditional_number_38_802_incoming": 5,
+    "evidence": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/source_enriched/RAN1_TR_bibliography/native_queries/full_queries.json"
+  },
+  "limits": "These source-first development reference records are not blind Codex predictions, past API benchmark results, new measured model performance, or expert certification. All external model calls remain waiting.",
+  "new_local_source_enriched_repairs_n": 1,
+  "new_source_cards": [
+    {
+      "id": "RAN1_P2_CQ1-2",
+      "original_question": "What was agreed on UL Tx switching (Agenda 5.1) at meeting RAN1#100? (UL switching decisions)",
+      "status": "separate_source_graph_validated; frozen_question_pending; external_model_evaluation_waiting",
+      "question_sha256": "c457946bfcbc8319fc66dace3d37dee26c4920dcd64405e4cb4de439aa8d9817",
+      "repair_sha256": "7903f18f960a1da17e4e67aebbab4e0d6575d65a8f6718073a0ed6f6272301f9",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '5.1'}), (a)-[:MADE_AT]->(m:Meeting {meetingNumber: 'RAN1#100'}) RETURN DISTINCT a.formalSourceContentWithTables AS content",
+      "required_fields": [
+        {
+          "name": "content",
+          "nullable": false,
+          "source_column_or_expression": "a.formalSourceContentWithTables",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "answer_n": 6,
+      "answer_preview": [
+        {
+          "content": "For standalone SUL, if UL switching period is configured by RRC\nThe switching period is not always applicable on the carrier configured with switching period.\nThe switching period is only applicable when the scheduled UL transmissions are switched between 1Tx carrier 1 and 2Tx carrier 2.\nFor each UL transmission occasion on a carrier, the existence of the switching period is determined one time every occasion.\nNote: 2Tx carrier 2 refers to an UL carrier capable of 2 Tx chains and both 1-port and 2-port UL transmissions."
+        },
+        {
+          "content": "For SUL, if uplink Tx switching is configured, the state of Tx chains of last UL transmission is assumed in case of no UL transmission.\nWork assumption: For inter-band UL CA, if uplink Tx switching is configured, the state of Tx chains of last UL transmission is assumed in case of no UL transmission. It can be revisited in RAN1#100bis."
+        },
+        {
+          "content": "If uplink Tx switching is triggered, the length of the additional time for PUSCH preparation procedure equals to the length of UL switching period."
+        },
+        {
+          "content": "For inter-band UL CA, if uplink Tx switching is configured, UE is not expected to be scheduled or configured with UL transmissions that result in simultaneous 1Tx transmission on carrier 1 and 2Tx transmission on carrier 2."
+        },
+        {
+          "content": "For inter-band UL CA, UE is not expected to [be scheduled or configured to] transmit on any of the two carriers in the switching period.\nFFS: Whether to handle the case when switching period cannot be ensured by gNB."
+        },
+        {
+          "content": "Case 1 | 1 Tx on carrier 1 and 1 Tx on carrier 2\nCase 2 | 0 Tx on carrier 1 and 2 Tx on carrier 2\nFor inter-band UL CA, if UL switching period is configured by RRC\nThe switching period is not always applicable on the carrier configured with switching period.\nThe switching period is at least applicable between 1-port transmission in carrier 1 and 2-port transmission in carrier 2."
+        }
+      ],
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_UL_formal_source_v2/projected_native_records.jsonl",
+        "sha256": "20e5742ab1f9ed31f8c9d58e00e7bd416ad6c028a58dfde02a74539752b45329"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN1_P2_CQ1-2_formal_source_enriched_v2_candidate.json",
+      "source_graph": "source_enriched/RAN1_UL_formal_v2",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/UL_source_temporal_context.json",
+          "sha256": "ad4705d407370bafd164e50d9e122cbba692575f1cd1416a9e1ec06dd4e5c37c"
+        },
+        {
+          "path": "RAN1/UL_online_meeting_period_independent_check.json",
+          "sha256": "68d2d23d6f12ff933ad1a1320b30db4e8db32ba77ad71a81dae41a3ba514c6bb"
+        }
+      ],
+      "interpretation_and_limits": [
+        "Separate graph, not frozen-original repair.",
+        "Two AI development judgments with source/results exposure, expert0.",
+        "Exact literal content scorer does not certify paraphrases or optional-prose semantics.",
+        "Retained source authentication only; no historical raw report ZIP provenance claim."
+      ],
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    }
+  ],
+  "withheld_source_candidates_n": 2,
+  "withheld_source_candidates": [
+    {
+      "id": "RAN2_P4_CQ4-5",
+      "original_question": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+      "status": "pending_original_English_temporal_scope_after_source_counterexample",
+      "question_admissions_n": 0,
+      "source_scope": "conditional final meeting-associated agreed population; original temporal scope unresolved",
+      "records_are_original_question_gold": false,
+      "repair_sha256": "057f0b7ae82e3815fe4bf4f09d870fcc84664d1abb4b6bfa997e6a2eb85bea0e",
+      "conditional_reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber",
+      "conditional_full_records_n": 240,
+      "conditional_full_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_132_CR_summary_v2/projected_native_records.jsonl",
+        "sha256": "8ca2d765621cdbf41b9daa5c9b5a7f2e0f3e327cd83c2a8ad3117fc3a60e932e"
+      },
+      "historical_execution_and_scorer_controls": "root_controls/RAN2_132_CR_summary_v2/controls.json",
+      "historical_controls_sha256": "829b623b326bac46f3b6821ba6d42e56bd8076e21c3eb731477266d938f50446",
+      "temporal_challenge": "RAN2_RAN5/RAN2_132_postmeeting_temporal_scope_source.json",
+      "temporal_challenge_sha256": "f44499255097075cfc8453fc38b64e95ae15affdbd4f2bc9fddb95e7a6784750",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/RAN2_132_postmeeting_source_context.json",
+          "sha256": "6112e6aaa8f266e96ef9776412512f2daf7a8f35c146c8ed905f19404291049f"
+        },
+        {
+          "path": "RAN2_RAN5/RAN2_132_postmeeting_revision_closure37.json",
+          "sha256": "32590076f95bcf72b60527d08353d9a8a2016e4f6d72a805e1c9c713cd359e7c"
+        }
+      ],
+      "reason": "Final meeting-associated agreed population contains post-meeting outcomes; approved at meeting does not unambiguously certify this temporal population.",
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P4_CQ4-5",
+      "original_question": "List the change summaries of CRs approved at meeting RAN3#123 (meeting-outcome review).",
+      "status": "pending_original_English_temporal_scope_after_source_counterexample",
+      "question_admissions_n": 0,
+      "source_scope": "conditional final meeting-associated agreed population; original temporal scope unresolved",
+      "records_are_original_question_gold": false,
+      "repair_sha256": "85e1c89b27e8c408adbe4e80859178161b080ad8fc19e224bf058f23a935212b",
+      "conditional_reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting)\nWHERE m.canonicalMeetingNumber = 'RAN3#123'\n  AND c.type = 'CR' AND c.status = 'agreed'\nRETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary\nORDER BY sourceTdocNumber ASC",
+      "conditional_full_records_n": 202,
+      "conditional_full_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_123_CR_summary_v2/projected_native_records.jsonl",
+        "sha256": "96a0bbf74a9c5e3762a9351d3d8fb5aecaae377b056f347f514f37103b3d7aa8"
+      },
+      "historical_execution_and_scorer_controls": "root_controls/RAN3_123_CR_summary_v2/controls.json",
+      "historical_controls_sha256": "d43c69098e9287c95379d67f90484f5aaa306f25e1c2639823a92060839e2abd",
+      "temporal_challenge": "RAN3_RAN4/RAN3_123_postmeeting7_source_pairs.json",
+      "temporal_challenge_sha256": "7bb5dbc2e5cb3b20447f54cdd1250fcd5ed498d88a1eba6d960c80b5bc5e69ab",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/RAN3_123_postmeeting_source_pairs.json",
+          "sha256": "d29a9eb6c972729492227cca71a375e1ba7e6b04d346d22fc34abdb1ea2fa296"
+        }
+      ],
+      "reason": "Final meeting-associated agreed population contains post-meeting outcomes; approved at meeting does not unambiguously certify this temporal population.",
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    }
+  ]
+}

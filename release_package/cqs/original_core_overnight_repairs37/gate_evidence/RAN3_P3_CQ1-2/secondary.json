@@ -1,0 +1,175 @@
+{
+  "id": "RAN3_P3_CQ1-2",
+  "kind": "Independent source-first exact-definition AI semantic judgment",
+  "reviewer": "/root/verify_prepared_replies",
+  "status": "pass",
+  "repair_sha256": "e3b4a59726422b7bff7438941d4bea8701ca95922017965f015a80c03fcd25b0",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "question_en": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+  "original_question_sha256": "e860dd4d5a307fc8c0287f119748c58aca8ba5e3359fe385f7a3e4c274a2adfd",
+  "original_query_sha256": "63837270a84b1e2beeaa78f88fe3eada1f9d4a313564e42ac056f308584f80ea",
+  "reference_query_sha256": "ac0649ddb372a137582fe0b14ad7798ec9ccc2806487f73cb55a9be5cda98acd",
+  "definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/source_only_independent_review/RAN3_P3_CQ1-2_canonical_source_only_definition.json",
+    "sha256": "4762836ed3c954f961a2fd59574a4efb0d4873b0eda103a611a9d3410941791c"
+  },
+  "original_source_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/source_only_independent_review/RAN3_P3_CQ1-2_original_source_packet.json",
+    "sha256": "2da9b08d5fac07e9749100ef64ef8719b434e191984c7a4b5d926b6f3afb6a22"
+  },
+  "original_pending_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_pending.jsonl",
+    "sha256": "32af347959e0a8b29627b751274e1df64c4c19c3fad2f6cea6d791377f368bdd"
+  },
+  "original_only_identity": {
+    "id": "RAN3_P3_CQ1-2",
+    "original_question": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+    "original_query": "MATCH (rk:Spec {specNumber:'38.413'})<-[:BELONGS_TO_SPEC]-(p:Section {sectionNumber:'9.3.1'}) WHERE rk.specRelease IS NOT NULL WITH p,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (p)-[:HAS_SUB_SECTION]->(c:Section) RETURN c.sectionId, c.sectionNumber, c.sectionTitle ORDER BY c.sectionNumber LIMIT 15",
+    "original_question_sha256": "e860dd4d5a307fc8c0287f119748c58aca8ba5e3359fe385f7a3e4c274a2adfd",
+    "original_query_sha256": "63837270a84b1e2beeaa78f88fe3eada1f9d4a313564e42ac056f308584f80ea"
+  },
+  "source_clause_receipt": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/crossreviews_structural8/independently_read_original_schema_design_clauses.json",
+    "sha256": "3945f470c4fdec982c7456bb05a7486b7f3ca92558ce3446b8ecafe754e36b6c"
+  },
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "original_quote": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "status": "pass",
+      "finding": "List the subsections/sub-sections asks for Section identities, rather than a reconstructed single TOC, a count, or a full document. sectionId is the declared per-family/per-release/per-section identity; sectionNumber alone conflates retained objects. Number/title projections may aid display but are not additional required answer roles.",
+      "query_clauses": [
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle"
+      ],
+      "source_references": [
+        "schema_hybrid_identity",
+        "schema_release_blind_aggregation",
+        "RAN3_population",
+        "RAN3_CQ_operation_mapping",
+        "schema_direct_hierarchy",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "original_quote": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "status": "pass",
+      "finding": "The original WG/phase is a graph-relative structural object lookup. The original design scope records separate final-per-release Spec/Section objects and excludes intra-release history. Schema v4.1 defines an unversioned hub for the named specNumber, every retained release variant, and explicitly defines release-blind aggregation CQs by hub ← inReleaseOf ← release-keyed → Section. This source-context rule supplies the population without selecting latest by fiat. The exact anchor number is matched in each retained variant; objects retain complete identity coordinates and are returned as a plural set. This does not synthesize the singular TOC/structure of one unnamed edition, nor claim all authored editions or source-world completeness. Distinct edition object differences do not require output invariance, and no new version field is forced into the scored answer.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.413'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '9.3.1'})-[:BELONGS_TO_SPEC]->(edition)"
+      ],
+      "source_references": [
+        "schema_hybrid_identity",
+        "schema_release_blind_aggregation",
+        "RAN3_population",
+        "RAN3_CQ_operation_mapping"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "original_quote": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "status": "pass",
+      "finding": "The requested subsections are immediate child Section objects in the preserved CQ1-2 operation. Schema line480 explicitly says Direct child; RAN3 design line1266 says NOT Transitive, direct children only, grandchildren by chains. The RAN4/RAN3 category mapping binds this exact operation to hasSubSection. A descendant-inclusive ordinary-language reading exists without that context, but is not the declared original structural operation; no body/topic test is substituted.",
+      "query_clauses": [
+        "MATCH (anchor:Section {sectionNumber: '9.3.1'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:HAS_SUB_SECTION]->(obj:Section)"
+      ],
+      "source_references": [
+        "schema_direct_hierarchy",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "original_quote": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "status": "pass",
+      "finding": "The answer unit is one distinct sectionId object, not number of release variants, paths or duplicate reference/containment edges. RETURN DISTINCT on the declared identity makes repeated paths the same list member while different release-bearing identities remain different objects. Optional number/title/caption projections belong to the same object; this is a list question, so no count aggregate is required.",
+      "query_clauses": [
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle"
+      ],
+      "source_references": [
+        "RAN3_population",
+        "schema_direct_hierarchy",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "original_quote": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "status": "pass",
+      "finding": "List requests all matching recorded objects. All retained variants and the literal original anchor are traversed with no latest selection and no arbitrary original LIMIT10/15. The set/all contract checks complete identity membership, not a top-k display sample. Completeness is bounded to the frozen recorded WG graph and operation; no claim is made that every source-authored caption, human semantic mention or future edition has been extracted.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.413'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '9.3.1'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:HAS_SUB_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle"
+      ],
+      "source_references": [
+        "schema_hybrid_identity",
+        "schema_release_blind_aggregation",
+        "RAN3_population",
+        "RAN3_CQ_operation_mapping",
+        "schema_direct_hierarchy",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "original_quote": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "status": "pass",
+      "finding": "English requests no rank, number order, top-k or tie-break policy. ORDER BY the identity is deterministic serialization only; set scoring permits any order and repeated existing member. No original LIMIT or numeric release sort is treated as an unstated answer request.",
+      "query_clauses": [
+        "ORDER BY sectionId"
+      ],
+      "source_references": []
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "original_quote": "List the subsections of section 9.3.1 in spec 38.413 (navigating IE definitions).",
+      "status": "pass",
+      "finding": "Named specNumber and section number plus the preserved ontology/CQ category are sufficient for this recorded identity lookup. No newest release, body classifier, approval/date/default version, expert judgment or external causal explanation is added. Role identities encode existing release provenance without adding unasked required fields. Source-context clauses, not native counts or old query/gold, justify the operation. This is one AI development judgment; no human/expert review, benchmark model result or admission is asserted.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.413'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '9.3.1'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:HAS_SUB_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle"
+      ],
+      "source_references": [
+        "schema_hybrid_identity",
+        "schema_release_blind_aggregation",
+        "RAN3_population",
+        "RAN3_CQ_operation_mapping",
+        "schema_direct_hierarchy",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    }
+  ],
+  "English_Korean_source_discrepancies": [],
+  "exposure": {
+    "proposer_primary_read": false,
+    "proposer_SQL_or_count_results_read": false,
+    "native_output_read": false,
+    "gold_or_predictions_read": false,
+    "canonical_candidate_visible": true,
+    "source_packet_original_query_and_expected_min_rows_visible": true,
+    "unrelated_prior_pending_rows_briefly_visible": true,
+    "derivation_basis": "Original English/category, literal schema and original design clauses. Visible expected_min_rows and unrelated prior pending judgments were not used as semantic authority. Not a blind experiment."
+  },
+  "limits": [
+    "The verdict validates original graph-relative list meaning, not source-authoring extraction recall or source ontology truth.",
+    "All applicable native full-output, independent whole-SQL and scorer controls remain root gates; this record alone adds no admission.",
+    "Current preserved source-context byte identity is pinned; no source edit or authenticated historical writing time is inferred."
+  ],
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "native_runs_by_this_reviewer": 0,
+  "new_admissions_by_this_reviewer": 0,
+  "reviewer_kind": "Independent original-only source judgment /root/verify_prepared_replies"
+}

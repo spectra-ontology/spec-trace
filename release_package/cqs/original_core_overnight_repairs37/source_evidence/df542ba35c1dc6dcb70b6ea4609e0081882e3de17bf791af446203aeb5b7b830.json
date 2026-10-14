@@ -1,0 +1,603 @@
+{
+  "id": "RAN4_P3_CQ3-2",
+  "original_English": "How many CRs modify spec 38.133, and how many sections does it have? (change load vs spec size).",
+  "original_English_sha256": "a232fc4fcb178717a5c248b528e2734410c23411057be6efb25a25915e9377dd",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.133'}) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCount MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCount, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCount, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) RETURN hub.specNumber, crCount, count(s) AS sectionCount",
+  "original_Korean": {
+    "id": "CQ3-2",
+    "category": "CQ3_CR연결",
+    "question": "38.133을 수정한 CR이 소속된 TS Section 구조(Section 수)?",
+    "cypher": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.133'}) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCount MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCount, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCount, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) RETURN hub.specNumber, crCount, count(s) AS sectionCount",
+    "expected_min_rows": 1
+  },
+  "original_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN4_pending.jsonl",
+    "sha256": "6f4da5437e6cd7da06777dda9c2796b405e46a1bae9fc9ba6abbd91f75e85402"
+  },
+  "original_Korean_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN4/phase-3/cq_test_dataset.json",
+    "sha256": "4db3ead72b67d5d0916133c92b064ef8d141a0f10b19761422392e903b375a5a"
+  },
+  "criteria_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  },
+  "canonical_source_only_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recorded_CR_and_Section_count/canonical_source_only_definition.json",
+    "sha256": "46263189e855b0c0212cacc72fb86f45094bac4dbb96ed956beda07753c66c17"
+  },
+  "source_excerpts": [
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 151,
+          "text": "tdoc:Spec a owl:Class ;"
+        },
+        {
+          "line_1based": 152,
+          "text": "    rdfs:label \"Specification\"@en ;"
+        },
+        {
+          "line_1based": 153,
+          "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 291,
+          "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 292,
+          "text": "    rdfs:label \"in release of\"@en ;"
+        },
+        {
+          "line_1based": 293,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+        },
+        {
+          "line_1based": 294,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 295,
+          "text": "    rdfs:range tdoc:Spec ."
+        },
+        {
+          "line_1based": 296,
+          "text": ""
+        },
+        {
+          "line_1based": 297,
+          "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 298,
+          "text": "    rdfs:label \"has release variant\"@en ;"
+        },
+        {
+          "line_1based": 299,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "line_1based": 300,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 301,
+          "text": "    rdfs:range tdoc:Spec ;"
+        },
+        {
+          "line_1based": 302,
+          "text": "    owl:inverseOf tdoc:inReleaseOf ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 471,
+          "text": "tdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 472,
+          "text": "    rdfs:label \"belongs to spec\"@en ;"
+        },
+        {
+          "line_1based": 473,
+          "text": "    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;"
+        },
+        {
+          "line_1based": 474,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 475,
+          "text": "    rdfs:range tdoc:Spec ;"
+        },
+        {
+          "line_1based": 476,
+          "text": "    owl:inverseOf tdoc:hasSection ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 1227,
+          "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1228,
+          "text": "    rdfs:label \"section ID\"@en ;"
+        },
+        {
+          "line_1based": 1229,
+          "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+        },
+        {
+          "line_1based": 1230,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 1231,
+          "text": "    rdfs:range xsd:string ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+        "sha256": "7c2b2da181ac50a981ba62b2e22baab90664c16ce10327cc9ce612199cff2d4c"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 598,
+          "text": "    "
+        },
+        {
+          "line_1based": 599,
+          "text": "    ### 5.1 CR (Change Request)"
+        },
+        {
+          "line_1based": 600,
+          "text": "    "
+        },
+        {
+          "line_1based": 601,
+          "text": "    | 기준 | 충족 여부 | 내용 |"
+        },
+        {
+          "line_1based": 602,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 603,
+          "text": "    | 추가 속성 | ✅ | crNumber, crCategory, crRevision, clausesAffected, tsgCRPack, affectsUICC, affectsME, affectsRAN, affectsCN |"
+        },
+        {
+          "line_1based": 604,
+          "text": "    | 다른 관계 | ✅ | modifies → Spec |"
+        },
+        {
+          "line_1based": 605,
+          "text": "    | 해당 Type | - | 'CR', 'draftCR', 'pCR' |"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+        "sha256": "7c2b2da181ac50a981ba62b2e22baab90664c16ce10327cc9ce612199cff2d4c"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 718,
+          "text": "    | 속성명 | Range | 데이터 소스 | 설명 |"
+        },
+        {
+          "line_1based": 719,
+          "text": "    | --- | --- | --- | --- |"
+        },
+        {
+          "line_1based": 720,
+          "text": "    | modifies | Spec | Spec | CR이 변경을 요청하는 대상 기술 규격 (예: 38.101-1) |"
+        },
+        {
+          "line_1based": 721,
+          "text": "    "
+        },
+        {
+          "line_1based": 722,
+          "text": "    ### 4.2 추가 Data Property"
+        },
+        {
+          "line_1based": 723,
+          "text": "    "
+        },
+        {
+          "line_1based": 724,
+          "text": "    | 속성명 | Type | 데이터 소스 | 설명 |"
+        },
+        {
+          "line_1based": 725,
+          "text": "    | --- | --- | --- | --- |"
+        },
+        {
+          "line_1based": 726,
+          "text": "    | crNumber | String | CR | CR의 공식 번호. draftCR/pCR은 이 값이 없음 |"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+        "sha256": "7c2b2da181ac50a981ba62b2e22baab90664c16ce10327cc9ce612199cff2d4c"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 1278,
+          "text": "    | 클래스 | ID 속성 | 패턴 | 예시 |"
+        },
+        {
+          "line_1based": 1279,
+          "text": "    | --- | --- | --- | --- |"
+        },
+        {
+          "line_1based": 1280,
+          "text": "    | Tdoc | tdocNumber | `R4-NNNNNNN` | R4-2520000 |"
+        },
+        {
+          "line_1based": 1281,
+          "text": "    | CR | tdocNumber | `R4-NNNNNNN` | R4-2522758 |"
+        },
+        {
+          "line_1based": 1282,
+          "text": "    | LS | tdocNumber | `R4-NNNNNNN` | R4-2521699 |"
+        },
+        {
+          "line_1based": 1283,
+          "text": "    | Meeting | meetingNumber | `RAN4#NNN[bis]` | RAN4#130 |"
+        },
+        {
+          "line_1based": 1284,
+          "text": "    | Company | companyName | (정규화된 이름) | Samsung |"
+        },
+        {
+          "line_1based": 1285,
+          "text": "    | Contact | contactId | (3GPP ID) | 12345 |"
+        },
+        {
+          "line_1based": 1286,
+          "text": "    | WorkItem | workItemCode | (코드) | NR_RF_FR2_req_Ph3 |"
+        },
+        {
+          "line_1based": 1287,
+          "text": "    | AgendaItem | meetingNumber + agendaNumber | (복합키) | 98bis-8.3.3.1.1 |"
+        },
+        {
+          "line_1based": 1288,
+          "text": "    | Release | releaseName | `Rel-NN` | Rel-19 |"
+        },
+        {
+          "line_1based": 1289,
+          "text": "    | Spec | specNumber | `NN.NNN` | 38.101-1 |"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "7efa72c60eb6738a9f0e6d1906279b8ca4a0dcc433e8e00c6e4ab4aab141b390"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 75,
+          "text": "    ## 2. Scope 정의"
+        },
+        {
+          "line_1based": 76,
+          "text": "    "
+        },
+        {
+          "line_1based": 77,
+          "text": "    ### 2.1 포함 (In Scope)"
+        },
+        {
+          "line_1based": 78,
+          "text": "    "
+        },
+        {
+          "line_1based": 79,
+          "text": "    | 구분 | 포함 대상 |"
+        },
+        {
+          "line_1based": 80,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 81,
+          "text": "    | **TS 문서** | 38.101-1~5, 38.104, 38.106, 38.108, 38.113, 38.114, 38.115-1/2, 38.124, 38.133, 38.141-1/2, 38.151, 38.161, 38.171, 38.174, 38.175, 38.176-1/2, 38.181, 38.191, 38.194, 38.195, 38.307 (**28 spec**) — release별 데이터 보유 spec도 동일 28 (38.173은 TR이라 제외, §2.2) |"
+        },
+        {
+          "line_1based": 82,
+          "text": "    | **Release 차원 (release-aware)** | 각 TS의 **release별 final 버전** (Rel-15/16/17/18/19). 동일 spec번호라도 release마다 **별개 Spec 노드**이며, sectionId·Spec IRI가 release 키를 포함한다 (예: `38.133-Rel-15-...` ≠ `38.133-Rel-18-...`; 하이픈 spec `38.101-1-Rel-15-...`). spec×release = spec-release 단위로 적재 (모든 spec이 모든 release에 존재하지는 않음 — 다수 RF spec은 Rel-17+ 신규; baseline 수치는 Appendix A.1.3) |"
+        },
+        {
+          "line_1based": 83,
+          "text": "    | **Section 구조** | 본문 + Annex, 9레벨까지 (Heading 8 = Annex) |"
+        },
+        {
+          "line_1based": 84,
+          "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+        },
+        {
+          "line_1based": 85,
+          "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+        },
+        {
+          "line_1based": 86,
+          "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+        },
+        {
+          "line_1based": 87,
+          "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+        },
+        {
+          "line_1based": 88,
+          "text": "    "
+        },
+        {
+          "line_1based": 89,
+          "text": "    ### 2.2 제외 (Out of Scope)"
+        },
+        {
+          "line_1based": 90,
+          "text": "    "
+        },
+        {
+          "line_1based": 91,
+          "text": "    | 제외 대상 | 이유 |"
+        },
+        {
+          "line_1based": 92,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 93,
+          "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+        },
+        {
+          "line_1based": 94,
+          "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+        },
+        {
+          "line_1based": 95,
+          "text": "    | 수식 내용 | Vector DB 영역 |"
+        },
+        {
+          "line_1based": 96,
+          "text": "    | **38.173** (TR38.173 Skeleton) | **TR이므로 Phase-3 (TS) 범위 밖. Phase-5 TR에서 처리** — `source`에 per-release TS 데이터도 없음(legacy `.doc` skeleton만, Phase-0 수집 공백). release-aware는 28 spec 기준 |"
+        },
+        {
+          "line_1based": 97,
+          "text": "    | TS **intra-release** 버전 히스토리 (한 release 내 모든 draft/중간 버전) | 복잡도 증가, 향후 확장. release별 **final 버전 1개**만 적재 (release-aware). 각 release final의 버전값은 Spec 확장의 specVersion에 기록 (Step 5 §4 참조) |"
+        },
+        {
+          "line_1based": 98,
+          "text": "    | **38.195 Presentation** | RP-260419 Presentation 파일. 본문 아님 |"
+        },
+        {
+          "line_1based": 99,
+          "text": "    | **38.195 _cm 파일** | _cl과 동일 내용. _cl 하나만 사용 |"
+        },
+        {
+          "line_1based": 100,
+          "text": "    | **Cover 파일** | 38.101-1/3/4, 38.133 cover 파일. Section 0건 |"
+        },
+        {
+          "line_1based": 101,
+          "text": "    | TS 버전 히스토리 | 복잡도 증가. 단일 버전만 기록 |"
+        },
+        {
+          "line_1based": 102,
+          "text": "    | RAN4 Scope 외 TS | Scope 한정 |"
+        },
+        {
+          "line_1based": 103,
+          "text": "    "
+        },
+        {
+          "line_1based": 104,
+          "text": "    ### 2.3 Graph DB vs Vector DB 경계"
+        },
+        {
+          "line_1based": 105,
+          "text": "    "
+        },
+        {
+          "line_1based": 106,
+          "text": "    | Graph DB (Phase-3) | Vector DB |"
+        },
+        {
+          "line_1based": 107,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 108,
+          "text": "    | Section ID, 번호, 제목, 레벨 | Section 본문 텍스트 |"
+        },
+        {
+          "line_1based": 109,
+          "text": "    | Section 계층 관계 | 본문 임베딩 |"
+        },
+        {
+          "line_1based": 110,
+          "text": "    | Table/Figure 메타데이터 | Table 셀 데이터 |"
+        },
+        {
+          "line_1based": 111,
+          "text": "    | TS 간 참조 관계 | 수식 내용 |"
+        },
+        {
+          "line_1based": 112,
+          "text": "    | CR/Resolution 연결 | |"
+        },
+        {
+          "line_1based": 113,
+          "text": "    "
+        },
+        {
+          "line_1based": 114,
+          "text": "    **연결 키**: sectionId (release-aware 예: `38.133-Rel-18-9.2.1`, 하이픈 spec `38.101-1-Rel-15-6.2.4`)"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "7efa72c60eb6738a9f0e6d1906279b8ca4a0dcc433e8e00c6e4ab4aab141b390"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 873,
+          "text": "    ## 1. Section Data Property Facet"
+        },
+        {
+          "line_1based": 874,
+          "text": "    "
+        },
+        {
+          "line_1based": 875,
+          "text": "    | Property | Type | Cardinality | Required | 제약 | Description |"
+        },
+        {
+          "line_1based": 876,
+          "text": "    | --- | --- | --- | --- | --- | --- |"
+        },
+        {
+          "line_1based": 877,
+          "text": "    | sectionId | String | 1 | ✅ | PK | 패턴: `{specNumber}-{release}-{sectionNumber}` (release 토큰 `-Rel-NN-`. 예 `38.133-Rel-18-9.2.1`, 하이픈 spec `38.101-1-Rel-15-6.2.4`) |"
+        },
+        {
+          "line_1based": 878,
+          "text": "    | sectionNumber | String | 1 | ✅ | 패턴 | 5 WG 공통 문법 = `scripts/tsg/RAN/formal/common/ts_section_number.py` (본문 · Annex · 밑줄 변형 `6.2.1.1_1` · 끝 대문자 `9.A` · Annex 대시 꼬리 `A.3.3.2-1`; 받는 모양 전부와 이유는 그 모듈 docstring) |"
+        },
+        {
+          "line_1based": 879,
+          "text": "    | sectionTitle | String | 1 | ✅ | - | Section 제목 |"
+        },
+        {
+          "line_1based": 880,
+          "text": "    | level | Integer | 1 | ✅ | 범위 | min=1, max=9 (Heading 8 → level 1) |"
+        },
+        {
+          "line_1based": 881,
+          "text": "    | isVoid | Boolean | 1 | ✅ | default | default: false |"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "7efa72c60eb6738a9f0e6d1906279b8ca4a0dcc433e8e00c6e4ab4aab141b390"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 1499,
+          "text": "    ### A.1.3 release-aware 파서 baseline (Stage 4 실측 — Neo4j 적재 전)"
+        },
+        {
+          "line_1based": 1500,
+          "text": "    "
+        },
+        {
+          "line_1based": 1501,
+          "text": "    > 출처: `scripts/tsg/RAN/formal/RAN4/phase-3/ts-parser/parse_ts_docx.py` 실행 산출 `ontology/output/tsg/RAN/formal/parsed_ts/RAN4/parse_summary_release.json` + `ts_*_Rel-*.json` 직접 집계, 무결성은 `validate_release_integrity.py`. RAN4는 중간 JSON-LD가 없어 파서 JSON이 SSoT이다. Neo4j/Qdrant 재적재(Stage 5+) 후 A.1.1을 이 값으로 교체."
+        },
+        {
+          "line_1based": 1502,
+          "text": "    "
+        },
+        {
+          "line_1based": 1503,
+          "text": "    | ID | 항목 | 기준값 | 비고 |"
+        },
+        {
+          "line_1based": 1504,
+          "text": "    | --- | --- | --- | --- |"
+        },
+        {
+          "line_1based": 1505,
+          "text": "    | P3-R01 | spec-release 수 | 106 | 28 distinct spec 참여. release별 spec 수: Rel-15=12, Rel-16=16, Rel-17=25, Rel-18=25, Rel-19=28 (모든 spec이 모든 release에 존재하지는 않음 — 다수 RF spec은 Rel-17+ 신규) |"
+        },
+        {
+          "line_1based": 1506,
+          "text": "    | P3-R02 | distinct spec 수 | 28 | scope 29 spec 디렉토리 중 **38.173 제외** — 실제로는 TR이며 `source`에 per-release TS 데이터 없음(legacy `.doc` skeleton만, Phase-0 데이터 수집 공백) |"
+        },
+        {
+          "line_1based": 1507,
+          "text": "    | P3-R03 | Section 총 수 | 77,895 | 106 spec-release 합산 (release별 Section 노드 분리) |"
+        },
+        {
+          "line_1based": 1508,
+          "text": "    | P3-R04 | TSTable 총 수 | 45,389 | 106 spec-release 합산 |"
+        },
+        {
+          "line_1based": 1509,
+          "text": "    | P3-R05 | TSFigure 총 수 | 3,042 | 106 spec-release 합산 |"
+        },
+        {
+          "line_1based": 1510,
+          "text": "    | P3-R06 | Void Section 수 | 2,077 | isVoid=true 합산 |"
+        },
+        {
+          "line_1based": 1511,
+          "text": "    | P3-R07 | referencesSection (Section→Section) | 40,164 | 동일 release 내 해소 (cross-release 누출 0, validate R4) |"
+        },
+        {
+          "line_1based": 1512,
+          "text": "    | P3-R08 | referencesSpec (Section→Spec, TS-only) | 6,482 | 동일 release Spec 노드로 매핑 (RAN4 referencesSpec 보유, validate R6; cross-spec 24건 전부 동일-release 해소) |"
+        },
+        {
+          "line_1based": 1513,
+          "text": "    | P3-R09 | Spec 노드 수 | 106 | (specNumber, release) 단위, specInRelease/specRelease 부착 |"
+        },
+        {
+          "line_1based": 1514,
+          "text": "    | P3-R10 | Release Integrity (R1~R6) | PASS | `validate_release_integrity.py` 전수 PASS (파서 JSON), cross-release 누출 0, 참조 누수 0 |"
+        },
+        {
+          "line_1based": 1515,
+          "text": "    | P3-R11 | 38.133 per-release Section | Rel-15 1,691 / Rel-16 3,960 / Rel-17 6,930 / Rel-18 9,371 / Rel-19 10,936 | Rel-18·Rel-19 각각 21 body docx 파트(+cover) 병합, ID 충돌 0 |"
+        }
+      ]
+    }
+  ],
+  "scope_challenges": [
+    "Derive whole recorded inventory counts versus arbitrary latest edition from original English/schema context.",
+    "English explicitly asks both counts; original KO structure language must not replace the requested pair.",
+    "CR is a source Tdoc class including draftCR/pCR; distinguish documentary modification targets from approved or enacted changes.",
+    "Distinct Tdoc identity and release-aware Section identity avoid cross-product/multiplicity and printed-ordinal collapse."
+  ],
+  "proposer_primary_SQL_aggregate_answer_gold_native_predictions_included": false,
+  "expert_validation_n": 0
+}

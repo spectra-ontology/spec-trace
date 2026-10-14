@@ -1,0 +1,794 @@
+{
+  "actual_source_excerpts": [
+    {
+      "actual_lines": [
+        {
+          "line_1based": 150,
+          "text": ""
+        },
+        {
+          "line_1based": 151,
+          "text": "tdoc:Spec a owl:Class ;"
+        },
+        {
+          "line_1based": 152,
+          "text": "    rdfs:label \"Specification\"@en ;"
+        },
+        {
+          "line_1based": 153,
+          "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        },
+        {
+          "line_1based": 154,
+          "text": ""
+        },
+        {
+          "line_1based": 284,
+          "text": ""
+        },
+        {
+          "line_1based": 285,
+          "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 286,
+          "text": "    rdfs:label \"spec in release\"@en ;"
+        },
+        {
+          "line_1based": 287,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+        },
+        {
+          "line_1based": 288,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 289,
+          "text": "    rdfs:range tdoc:Release ."
+        },
+        {
+          "line_1based": 290,
+          "text": ""
+        },
+        {
+          "line_1based": 291,
+          "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 292,
+          "text": "    rdfs:label \"in release of\"@en ;"
+        },
+        {
+          "line_1based": 293,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+        },
+        {
+          "line_1based": 294,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 295,
+          "text": "    rdfs:range tdoc:Spec ."
+        },
+        {
+          "line_1based": 296,
+          "text": ""
+        },
+        {
+          "line_1based": 297,
+          "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 298,
+          "text": "    rdfs:label \"has release variant\"@en ;"
+        },
+        {
+          "line_1based": 299,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "line_1based": 300,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 301,
+          "text": "    rdfs:range tdoc:Spec ;"
+        },
+        {
+          "line_1based": 468,
+          "text": "    rdfs:range tdoc:Section ;"
+        },
+        {
+          "line_1based": 469,
+          "text": "    owl:inverseOf tdoc:belongsToSpec ."
+        },
+        {
+          "line_1based": 470,
+          "text": ""
+        },
+        {
+          "line_1based": 471,
+          "text": "tdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 472,
+          "text": "    rdfs:label \"belongs to spec\"@en ;"
+        },
+        {
+          "line_1based": 473,
+          "text": "    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;"
+        },
+        {
+          "line_1based": 474,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 475,
+          "text": "    rdfs:range tdoc:Spec ;"
+        },
+        {
+          "line_1based": 476,
+          "text": "    owl:inverseOf tdoc:hasSection ."
+        },
+        {
+          "line_1based": 477,
+          "text": ""
+        },
+        {
+          "line_1based": 478,
+          "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+        },
+        {
+          "line_1based": 479,
+          "text": "    rdfs:label \"has sub-section\"@en ;"
+        },
+        {
+          "line_1based": 480,
+          "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+        },
+        {
+          "line_1based": 481,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 482,
+          "text": "    rdfs:range tdoc:Section ;"
+        },
+        {
+          "line_1based": 483,
+          "text": "    owl:inverseOf tdoc:parentSection ."
+        },
+        {
+          "line_1based": 484,
+          "text": ""
+        },
+        {
+          "line_1based": 485,
+          "text": "tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+        },
+        {
+          "line_1based": 486,
+          "text": "    rdfs:label \"parent section\"@en ;"
+        },
+        {
+          "line_1based": 487,
+          "text": "    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;"
+        },
+        {
+          "line_1based": 488,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 489,
+          "text": "    rdfs:range tdoc:Section ;"
+        },
+        {
+          "line_1based": 490,
+          "text": "    owl:inverseOf tdoc:hasSubSection ."
+        },
+        {
+          "line_1based": 491,
+          "text": ""
+        },
+        {
+          "line_1based": 492,
+          "text": "tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+        },
+        {
+          "line_1based": 493,
+          "text": "    rdfs:label \"references section\"@en ;"
+        },
+        {
+          "line_1based": 1227,
+          "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1228,
+          "text": "    rdfs:label \"section ID\"@en ;"
+        },
+        {
+          "line_1based": 1229,
+          "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+        },
+        {
+          "line_1based": 1230,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 1231,
+          "text": "    rdfs:range xsd:string ."
+        },
+        {
+          "line_1based": 1232,
+          "text": ""
+        },
+        {
+          "line_1based": 1233,
+          "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1234,
+          "text": "    rdfs:label \"section number\"@en ;"
+        },
+        {
+          "line_1based": 1235,
+          "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+        },
+        {
+          "line_1based": 1236,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 1237,
+          "text": "    rdfs:range xsd:string ."
+        },
+        {
+          "line_1based": 1238,
+          "text": ""
+        },
+        {
+          "line_1based": 1239,
+          "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1240,
+          "text": "    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "line_1based": 1241,
+          "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+        },
+        {
+          "line_1based": 1242,
+          "text": "    rdfs:domain tdoc:Section ;"
+        }
+      ],
+      "source_pin": {
+        "bytes": 71963,
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      }
+    },
+    {
+      "actual_lines": [
+        {
+          "line_1based": 118,
+          "text": "    "
+        },
+        {
+          "line_1based": 119,
+          "text": "    ### CQ1. TS 구조 탐색"
+        },
+        {
+          "line_1based": 120,
+          "text": "    "
+        },
+        {
+          "line_1based": 121,
+          "text": "    | # | Competency Question |"
+        },
+        {
+          "line_1based": 122,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 123,
+          "text": "    | 1-1 | 특정 TS의 전체 Section 목록은? |"
+        },
+        {
+          "line_1based": 124,
+          "text": "    | 1-2 | 특정 Section의 하위 Section 목록은? |"
+        },
+        {
+          "line_1based": 125,
+          "text": "    | 1-3 | 특정 Section의 상위 계층 경로는? (breadcrumb) |"
+        },
+        {
+          "line_1based": 126,
+          "text": "    | 1-4 | 특정 TS에서 레벨 N인 Section 목록은? |"
+        },
+        {
+          "line_1based": 127,
+          "text": "    | 1-5 | 특정 Section에 포함된 Table 목록은? |"
+        },
+        {
+          "line_1based": 128,
+          "text": "    | 1-6 | 특정 Section에 포함된 Figure 목록은? |"
+        },
+        {
+          "line_1based": 129,
+          "text": "    | 1-7 | 특정 Table이 속한 Section은? |"
+        },
+        {
+          "line_1based": 130,
+          "text": "    | 1-8 | 특정 TS의 Table 전체 목록은? |"
+        },
+        {
+          "line_1based": 131,
+          "text": "    | 1-9 | 특정 키워드가 제목에 포함된 Section 목록은? |"
+        },
+        {
+          "line_1based": 132,
+          "text": "    | 1-10 | 특정 Table 번호로 TS와 Section 찾기 |"
+        },
+        {
+          "line_1based": 551,
+          "text": "    | **figureNumber** | Figure 번호 | 캡션 파싱 (예: 5-1) | CQ1 |"
+        },
+        {
+          "line_1based": 552,
+          "text": "    | **figureCaption** | Figure 캡션 | 캡션 파싱 | CQ1 |"
+        },
+        {
+          "line_1based": 553,
+          "text": "    "
+        },
+        {
+          "line_1based": 554,
+          "text": "    ### 3.5 관계 관련 (Phase-3 신규)"
+        },
+        {
+          "line_1based": 555,
+          "text": "    "
+        },
+        {
+          "line_1based": 556,
+          "text": "    | 용어 | 설명 | 관련 CQ |"
+        },
+        {
+          "line_1based": 557,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 558,
+          "text": "    | **hasSection** | Spec → Section (최상위) | CQ1 |"
+        },
+        {
+          "line_1based": 559,
+          "text": "    | **hasSubSection** | Section → Section (부모-자식) | CQ1-2, CQ1-3 |"
+        },
+        {
+          "line_1based": 560,
+          "text": "    | **containsTable** | Section → TSTable | CQ1-5, CQ1-7 |"
+        },
+        {
+          "line_1based": 561,
+          "text": "    | **containsFigure** | Section → TSFigure | CQ1-6 |"
+        },
+        {
+          "line_1based": 562,
+          "text": "    | **referencesSection** | Section → Section (TS 간 참조) | CQ2 |"
+        },
+        {
+          "line_1based": 563,
+          "text": "    | **referencesSpec** | Section → Spec (TS-only 참조, clause 없이 TS 번호만) | CQ2 |"
+        },
+        {
+          "line_1based": 564,
+          "text": "    "
+        },
+        {
+          "line_1based": 565,
+          "text": "    ### 3.6 기존 연결 관련 (Phase-1~2 재사용)"
+        },
+        {
+          "line_1based": 578,
+          "text": "    "
+        },
+        {
+          "line_1based": 579,
+          "text": "    | CQ | 필요 용어 |"
+        },
+        {
+          "line_1based": 580,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 581,
+          "text": "    | 1-1 | Spec, Section, hasSection |"
+        },
+        {
+          "line_1based": 582,
+          "text": "    | 1-2 | Section, hasSubSection |"
+        },
+        {
+          "line_1based": 583,
+          "text": "    | 1-3 | Section, hasSubSection (역방향) |"
+        },
+        {
+          "line_1based": 584,
+          "text": "    | 1-4 | Section, level |"
+        },
+        {
+          "line_1based": 585,
+          "text": "    | 1-5 | Section, TSTable, containsTable |"
+        },
+        {
+          "line_1based": 586,
+          "text": "    | 1-6 | Section, TSFigure, containsFigure |"
+        },
+        {
+          "line_1based": 587,
+          "text": "    | 1-7 | TSTable, containsTable (역방향) |"
+        },
+        {
+          "line_1based": 1207,
+          "text": "    "
+        },
+        {
+          "line_1based": 1208,
+          "text": "    | Property | Domain | Range | Cardinality | Functional | Inverse | 특성 |"
+        },
+        {
+          "line_1based": 1209,
+          "text": "    | --- | --- | --- | --- | --- | --- | --- |"
+        },
+        {
+          "line_1based": 1210,
+          "text": "    | belongsToSpec | Section | Spec | 1 | ✅ | hasSection | — |"
+        },
+        {
+          "line_1based": 1211,
+          "text": "    | hasSubSection | Section | Section | 0..* | ❌ | parentSection | Irreflexive, Asymmetric |"
+        },
+        {
+          "line_1based": 1212,
+          "text": "    | parentSection | Section | Section | 0..1 | ✅ | hasSubSection | Irreflexive, Asymmetric |"
+        },
+        {
+          "line_1based": 1213,
+          "text": "    | referencesSection | Section | Section | 0..* | ❌ | referencedBySection | Irreflexive |"
+        },
+        {
+          "line_1based": 1214,
+          "text": "    | referencedBySection | Section | Section | 0..* | ❌ | referencesSection | Irreflexive |"
+        },
+        {
+          "line_1based": 1215,
+          "text": "    | referencesSpec | Section | Spec | 0..* | ❌ | — | — |"
+        },
+        {
+          "line_1based": 1216,
+          "text": "    | containsTable | Section | TSTable | 0..* | ❌ | tableInSection | — |"
+        },
+        {
+          "line_1based": 1217,
+          "text": "    | containsFigure | Section | TSFigure | 0..* | ❌ | figureInSection | — |"
+        },
+        {
+          "line_1based": 1218,
+          "text": "    "
+        },
+        {
+          "line_1based": 1219,
+          "text": "    ### 특성 설명"
+        },
+        {
+          "line_1based": 1220,
+          "text": "    "
+        },
+        {
+          "line_1based": 1221,
+          "text": "    | Property | 특성 | 이유 |"
+        },
+        {
+          "line_1based": 1222,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 1223,
+          "text": "    | hasSubSection | Irreflexive | Section이 자기 자신의 하위가 될 수 없음 |"
+        },
+        {
+          "line_1based": 1224,
+          "text": "    | hasSubSection | Asymmetric | A가 B의 부모면 B는 A의 부모가 아님 |"
+        },
+        {
+          "line_1based": 1225,
+          "text": "    | parentSection | Irreflexive | Section이 자기 자신의 상위가 될 수 없음 |"
+        },
+        {
+          "line_1based": 1226,
+          "text": "    | parentSection | Asymmetric | A가 B의 자식이면 B는 A의 자식이 아님 |"
+        },
+        {
+          "line_1based": 1227,
+          "text": "    | referencesSection | Irreflexive | Section이 자기 자신을 참조하는 것은 무의미 |"
+        },
+        {
+          "line_1based": 1228,
+          "text": "    | referencesSection | NOT Asymmetric | 두 Section이 서로 참조 가능 (상호 참조) |"
+        },
+        {
+          "line_1based": 1229,
+          "text": "    | hasSubSection | NOT Transitive | 직접 하위만 연결 (손자는 체인으로) |"
+        },
+        {
+          "line_1based": 1230,
+          "text": "    "
+        },
+        {
+          "line_1based": 1486,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 1487,
+          "text": "    | Heading 1~5 | 1~5 | 표준 |"
+        },
+        {
+          "line_1based": 1488,
+          "text": "    | H6 (커스텀), Heading 6 | 6 | TS별 상이 |"
+        },
+        {
+          "line_1based": 1489,
+          "text": "    | Heading 8, Heading 9 | 1 | Annex 대제목 |"
+        },
+        {
+          "line_1based": 1490,
+          "text": "    "
+        },
+        {
+          "line_1based": 1491,
+          "text": "    **Section 관계 매핑**"
+        },
+        {
+          "line_1based": 1492,
+          "text": "    "
+        },
+        {
+          "line_1based": 1493,
+          "text": "    | 관계 | 소스 | 변환 규칙 |"
+        },
+        {
+          "line_1based": 1494,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 1495,
+          "text": "    | belongsToSpec → Spec | 디렉토리 | specNumber + release 추출 → (specNumber, release) Spec 노드 매칭 (release-aware) |"
+        },
+        {
+          "line_1based": 1496,
+          "text": "    | hasSubSection → Section | 헤딩 계층 | 다음 레벨 헤딩들 연결 |"
+        },
+        {
+          "line_1based": 1497,
+          "text": "    | parentSection → Section | 헤딩 계층 | 이전 레벨 헤딩 연결 |"
+        },
+        {
+          "line_1based": 1498,
+          "text": "    | referencesSection → Section | 본문 패턴 | 참조 패턴 추출 (섹션 4.4 참조) |"
+        },
+        {
+          "line_1based": 1499,
+          "text": "    | referencesSpec → Spec | 본문 패턴 | TS-only 참조 추출 (섹션 4.4 참조) |"
+        },
+        {
+          "line_1based": 1500,
+          "text": "    "
+        }
+      ],
+      "source_pin": {
+        "bytes": 91818,
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+      }
+    }
+  ],
+  "complete_parent_anchor_metadata": [
+    {
+      "sectionId": "38.214-Rel-15-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-15",
+      "specVersion": "15.16.0"
+    },
+    {
+      "sectionId": "38.214-Rel-16-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-16",
+      "specVersion": "16.17.0"
+    },
+    {
+      "sectionId": "38.214-Rel-17-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-17",
+      "specVersion": "17.16.0"
+    },
+    {
+      "sectionId": "38.214-Rel-18-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-18",
+      "specVersion": "18.9.0"
+    },
+    {
+      "sectionId": "38.214-Rel-19-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-19",
+      "specVersion": "19.3.0"
+    }
+  ],
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "exact_definition_pin": {
+    "bytes": 1582,
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ002_CQ018_original_source_routes/source_only_independent_review/RAN1_P3_CQ002_canonical_source_only_definition.json",
+    "sha256": "f09173530831777ed6231ab19c96f37a7638410a30165b57942c08ebb1561804"
+  },
+  "expert_validation_n": 0,
+  "exposure": "Only clean source-only packet, original language/schema/design and fresh parent metadata were read. Adjacent primary/newSQL/answercounts/gold/predictions/native not opened. Related prior source reviews are known; no blind/human/expert evaluation claim.",
+  "external_model_APIcalls": 0,
+  "human_author_review_completed": false,
+  "id": "RAN1_P3_CQ002",
+  "inputs_after": [
+    {
+      "bytes": 503873536,
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af"
+    },
+    {
+      "bytes": 35150,
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8"
+    }
+  ],
+  "inputs_before": [
+    {
+      "bytes": 503873536,
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af"
+    },
+    {
+      "bytes": 35150,
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8"
+    }
+  ],
+  "metadata_normalization": {
+    "fields_explicitly_set": [
+      "human_author_review_completed",
+      "expert_validation_n"
+    ],
+    "original_review": {
+      "bytes": 31257,
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/crossreview_RAN1_P3_CQ002_original_direct_child_recorded_context.json",
+      "sha256": "bef7aa8c40ae6e4ce3818da713b57f98f3834e5080a65d2bc855ddb9ee0ffeb7"
+    },
+    "reason": "Root integrator requires explicit human_author_review_completed; both actual reviewers are AI and no human/expert endorsement exists.",
+    "semantic_evidence_and_identity_and_reviewer_kind_unchanged": true
+  },
+  "new_admissions": 0,
+  "new_gold": false,
+  "original_question_sha256": "2438e3303e1e9b24fd8846d95219fc4441961eb52b94302e2cd2d8d127608314",
+  "repair_sha256": "c60060f7efa64b25087be66240e1fba7e827bcf3886bd2ced9b2d31960af7187",
+  "reviewer_kind": "Independent secondary direct Codex original source-context diagnosis /root/reaudit_ran2_ran5",
+  "semantic_evidence": [
+    {
+      "finding": "Show the sub-structure under the named Section in original TS_구조탐색 category is operationally mapped by original CQ1-2 to a list of subordinate Section records. A unique child sectionId retains family/release/number and identifies each requested direct child; parent5.1 is already supplied and recoverable from original relation. English does not independently request title, an edge object, count, page, or a separate release scalar. Identity list sufficiently supplies the original finite child-record roles, while explanatory metadata may be added.",
+      "original_quote": "Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (parent:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (parent)-[:HAS_SUB_SECTION]->(child:Section)",
+        "RETURN DISTINCT child.sectionId AS sectionId"
+      ],
+      "status": "pass",
+      "unit": "requested answer roles and fields"
+    },
+    {
+      "finding": "Original release-aware schema stores distinct final-edition Section identities per family/release; release-blind aggregation traverses hub to release-keyed parents and Sections. For this named parent-child object lookup the unqualified family/clause selects every retained matching recorded parent. The candidate preserves child identities including release, rather than synthesizing a single physical edition layout or claiming all editions invariant. Fresh full parent metadata verifies5.1 has the same conceptual UE-PDSCH procedure heading across five retained variants. Original latest-only selector is not a natural-language edition instruction.",
+      "original_quote": "Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (parent:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (parent)-[:HAS_SUB_SECTION]->(child:Section)",
+        "RETURN DISTINCT child.sectionId AS sectionId"
+      ],
+      "status": "pass",
+      "unit": "population and source context"
+    },
+    {
+      "finding": "Original design explicitly links CQ1-2 to hasSubSection and defines that relation as direct-child, NOT Transitive: grandchildren require chains. Thus original operational sub-structure lookup is one HAS_SUB_SECTION edge under exact38.2145.1; neither recursive full subtree nor reversed breadcrumb is silently substituted. PDSCH implementation is the named-clause motivation rather than an unverified practical implementation completeness requirement. Same release-aware parent identity and one-direction child relationship are preserved.",
+      "original_quote": "Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (parent:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (parent)-[:HAS_SUB_SECTION]->(child:Section)",
+        "RETURN DISTINCT child.sectionId AS sectionId"
+      ],
+      "status": "pass",
+      "unit": "filters and relationship meaning"
+    },
+    {
+      "finding": "Each distinct child Section identity is one answer member, regardless of parallel paths or parent variants. DISTINCT child.sectionId deduplicates endpoint witnesses while preserving different release records. Titles or bare clause numbers alone could merge separate recorded children; they are not substituted for unique record identity. Unrequested hierarchical grandchildren and ancestor records are excluded by the original direct-child relation contract.",
+      "original_quote": "Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (parent:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (parent)-[:HAS_SUB_SECTION]->(child:Section)",
+        "RETURN DISTINCT child.sectionId AS sectionId"
+      ],
+      "status": "pass",
+      "unit": "counting unit and join multiplicity"
+    },
+    {
+      "finding": "All direct children of all matching original recorded parent anchors are required. No LIMIT, top-k, latest-only, number-prefix descendant expansion or arbitrarytitle cutoff is inserted. Complete recorded child membership differs from reconstructing every source-authored document section or exporting one chosen physical TOC. Missing or null source data remains a graph coverage limitation, not an asserted worldwide absence.",
+      "original_quote": "Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (parent:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (parent)-[:HAS_SUB_SECTION]->(child:Section)",
+        "RETURN DISTINCT child.sectionId AS sectionId"
+      ],
+      "status": "pass",
+      "unit": "cardinality and completeness"
+    },
+    {
+      "finding": "No display order, chronology or ranking is requested. Set membership accepts permutations and repeated copies of an existing member; duplicate displacement losing another required child is incorrect. The candidate has no source-edition ranking or ordering requirement, and the old ORDER BY sectionNumber is optional display.",
+      "original_quote": "Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (parent:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (parent)-[:HAS_SUB_SECTION]->(child:Section)",
+        "RETURN DISTINCT child.sectionId AS sectionId"
+      ],
+      "status": "pass",
+      "unit": "ordering and ties when requested"
+    },
+    {
+      "finding": "The direct relation and scope derive actual original category/design/schema and unchanged English, not proposer answer counts or native success. Prior source/edition concerns and analogous recorded relation judgments are known; this is direct nonblind source diagnosis. New candidate SQL, primary reviews, gold, predictions and native were not opened. Actual local source bytes are pinned, but historical writing-time authenticity is not certified. Exact second review/native/full SQL/negative controls remain necessary before admission.",
+      "original_quote": "Show the sub-structure under TS 38.214 Section 5.1 (implementing PDSCH procedures).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (parent:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (parent)-[:HAS_SUB_SECTION]->(child:Section)",
+        "RETURN DISTINCT child.sectionId AS sectionId"
+      ],
+      "status": "pass",
+      "unit": "unverified additional inputs or external interpretation"
+    }
+  ],
+  "source_context_pin": {
+    "bytes": 21423,
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ002_CQ018_original_source_routes/source_only_independent_review/CQ002_original_direct_child_structure_context.json",
+    "sha256": "a94033afbbb9c176859e56d7de2ecba0c41d7ab4d7c797ec405da90c8f454b23"
+  },
+  "source_packet_pin": {
+    "bytes": 2293,
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ002_CQ018_original_source_routes/source_only_independent_review/RAN1_P3_CQ002_original_source_packet.json",
+    "sha256": "7ad49ae13fc7fbc6a4b27c47ab6e9bd33acec1f6df794e35845d2de07b7d2c79"
+  },
+  "status": "pass"
+}

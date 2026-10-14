@@ -1,0 +1,248 @@
+{
+  "id": "RAN2_P3_CQ3-7",
+  "question_en": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+  "original_query": "MATCH (rk:Spec {specNumber:'38.331'})-[:IN_RELEASE_OF]->(hub:Spec {specNumber:'38.331'}) WHERE hub.specRelease IS NULL WITH rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (cr:CR)-[:MODIFIES]->(hub2:Spec {specNumber:'38.331'}) WHERE hub2.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' UNWIND split(cr.clausesAffected, ',') AS clause WITH cr, rk, trim(clause) AS clause MATCH (s:Section {sectionNumber: clause})-[:BELONGS_TO_SPEC]->(rk) RETURN cr.tdocNumber, clause, s.sectionId ORDER BY cr.tdocNumber, clause, s.sectionId LIMIT 10",
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "original_question_sha256": "8078a4e026f1e0a2f714b31d26a601ae156d7078e6f0a3998a7dfa5b5a799f94",
+  "original_query_sha256": "4e8ba1bc0f815b76c3e5c1e350551a4994d8594fcd0f2a5b06aceb6a0692b12f",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_context": {
+    "population": "All original graph CR nodes modifying the unversioned38.331 Spec hub; no status, officialCRnumber, date, company or meeting cutoff.",
+    "recorded_input": "Original CR.clausesAffected metadata property, not every physical authored-form clause declaration. OriginalPhase1 sourceScope and KO explicitly identify this property.",
+    "Section_domain": "OriginalPhase3 selected final input edition for the CR recorded TARGET_RELEASE. Exact rk.specRelease = target.releaseName; no CurrentVersion/latest/fallback edition choice.",
+    "predicate": "A CR qualifies if at least one concrete declared identifier in its recorded affected-clause field resolves literally to an actual same-target-release Section.sectionNumber of38.331.",
+    "quantifier": "existential; unresolved other declarations do not erase an actual independent match and do not become certified",
+    "identifier_kinds": "Numeric clauses with alphabetic/alphanumeric suffixes, Annex identifiers, and explicit original ASN definition-name Section identities; no semantic title/code similarity.",
+    "absent_recorded_field": "No recorded matching witness in this process, not proof of no substantive authored CR changes."
+  },
+  "field_resolution_rules": {
+    "strong_literal_identifier": "Search the full literal field for the exact quoted actual Section identifier at complete boundaries; no case folding, punctuation deletion, prefix-parent fallback or guessed missing delimiters.",
+    "weak_top_level_and_Annex": "A single integer or Annex letter must occupy a comma/semicolon/newline/ampersand/and-separated item, optionally preceded by clause/section/Annex and followed by final period or parenthesis qualifier.",
+    "ASN_named_identifier": "Exact named Section must be the whole list item, or the terminal explicit name following a numeric identifier and dash/colon/parenthesis/slash. A name inside unrelated explanatory title prose is not enough.",
+    "suffix": "Retain exact suffixes including5.3.5.13b1; placeholders such as5.5.4.XX cannot resolve to5.5.4.",
+    "range_or_shorthand": "Only explicitly complete independent identifiers are witnesses. Do not expand a shorthand tail or range into unrecorded Section identifiers.",
+    "order": "No requested order; ORDERBY is reproducible display only.",
+    "multiplicity": "Any number of matching clauses/Section rows/source observations yields one tdocNumber. Do not collapse distinct Tdocs sharing CRnumber/revision/spec."
+  },
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_frozen_metadata_same_target_release_definition.json",
+    "bytes": 8189,
+    "sha256": "85b2aa1d719b38437d2511999ec90e54fa4cad8dc58041e56f9f20254061e081"
+  },
+  "source_primary_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_frozen_metadata_same_target_release_primary_review.json",
+    "bytes": 17409,
+    "sha256": "1c9860737a4119a36328b8757ac57418fb89f369d2cacc1cced39c96b6ea4dda"
+  },
+  "source_control_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_actual_partial_and_identifier_source_controls.json",
+    "bytes": 119572,
+    "sha256": "72e2b3845d6d2cbf25d4a6de83c9684135ce9a7a258172e4ddf2e7e1d23459ba"
+  },
+  "source_input_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_original_metadata_input10599_source_only.jsonl",
+    "bytes": 18169064,
+    "sha256": "cb5fe768c9a1d1b1fb6d3f1966b0fc81a12174b9a9b12944e90d6a62dad9bd80"
+  },
+  "original_final_Section_input_pins": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_38331_original_five_final_release_source_inventory_v4/all_literal_numeric_Annex_heading_records.jsonl",
+      "bytes": 3028401,
+      "sha256": "5808e59c156ca0ec32137c2f8dd8ee0ed8287e5156ecc0c964a4bcf824391f23"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_38331_original_five_final_release_source_inventory_v4/separate_original_ASN1_named_heading_records.jsonl",
+      "bytes": 3693150,
+      "sha256": "b9fee31715eba0d9eb01d2432fb4167be1ce4c4a9f30d13dfa259259b597ae23"
+    }
+  ],
+  "limits": [
+    "Python inverse lookup is a read-only diagnostic, not a nativegraph execution.",
+    "Actual Java regex string escaping and query full output require root-owned native capture.",
+    "Source field completeness is distinct from authored archive enrichment completeness and normative approval/incorporation.",
+    "No candidate result count is a semantic justification; this file contains no gold answer records."
+  ],
+  "native_execution_completed": false,
+  "admitted": false,
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "external_model_APIcalls": 0,
+  "repair_sha256": "25e8189012762ca68345a618086f370d444599540b1fca3afe409382c7be1157",
+  "reference_query_sha256": "a6650f851506fe677315b190d327d793f7fd3fe423522491148ad294314cf9f8",
+  "prior_canonical_definition_preserved_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_frozen_metadata_same_target_release_canonical_definition_v2.json",
+    "bytes": 21639,
+    "sha256": "780e0943d5a0094777d3507afd68f7c2f9f4097577346ff742218569e8b74ce7"
+  },
+  "prior_native_timeout_preserved_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/native_RAN2_frozen_field_matching/reference_outputs/RAN2_P3_CQ3-7/174662fdf51efbae2260e4e851f0f6dda8cc337e1f3a8e66e1b3ad965c6e426e.json",
+    "bytes": 2388,
+    "sha256": "5a897b0ea057eae9e0d8471343539403bc5d5babc718d8a41169e7b040632aae"
+  },
+  "query_optimization_equivalence": {
+    "population_unchanged": "Same CR MODIFIES38.331 unversioned hub and same recorded nonempty field; no cap/status/time/source field replacement.",
+    "join_unchanged": "Bind the release-keyed Spec to the CR exact target Release before expanding its Sections; same graph path predicates.",
+    "distinct_intermediate": "WITH DISTINCT cr,rk only removes duplicate graph path witnesses; final required distinct CR identity set is unchanged.",
+    "entailed_prefilter": "Every old identifier branch matches the exact literal s.sectionNumber between Java\\Q and\\E, so an old branch match entails cr.clausesAffected CONTAINS s.sectionNumber. Missing/null Section identifiers did not satisfy old branch-kind predicates. No normalization or inferred delimiter is added.",
+    "boundary_grammar_unchanged": "All three exact weak/numeric-dottedAnnex/ASN regex branches and final required-field projection are byte-identical.",
+    "purpose": "Reduce release expansion and dynamic regex evaluation before the fixed20sec native deadline; timeout is not increased."
+  },
+  "primary_review": {
+    "id": "RAN2_P3_CQ3-7",
+    "repair_sha256": "25e8189012762ca68345a618086f370d444599540b1fca3afe409382c7be1157",
+    "original_question_sha256": "8078a4e026f1e0a2f714b31d26a601ae156d7078e6f0a3998a7dfa5b5a799f94",
+    "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+    "reviewer_kind": "Direct primary Codex exact original/source-context review /root/reaudit_ran2_ran5; new query-order and entailed-prefilter equivalence review",
+    "semantic_evidence": [
+      {
+        "unit": "requested answer roles and fields",
+        "status": "pass",
+        "original_quote": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+        "query_clauses": [
+          "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber"
+        ],
+        "finding": "List the CRs directly requests CR document identities. OriginalPhase1 defines tdocNumber as the unique Tdoc identifier. A complete distinct tdocNumber set supplies that requested role. Individual clause strings, sectionIds or provenance are witnesses, not independently requested mandatory fields. A count alone is insufficient.",
+        "source_evidence": [
+          "Original English",
+          "KO clausesAffected로 실제 Section과 매칭되는 CR 목록은?",
+          "OriginalPhase1§3.2 tdocNumber uniqueidentifier"
+        ]
+      },
+      {
+        "unit": "population and source context",
+        "status": "pass",
+        "original_quote": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+        "query_clauses": [
+          "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber"
+        ],
+        "finding": "Original WG/phase/schema process context binds this CQ to the recorded clausesAffected field and same-target-release Section domain. Phase3§7.2 explicitly parses Phase1 CR.clausesAffected and CR targetRelease; §2 selects final input editions perRel15–19 and excludes intermediate version history. The population retains every original38.331-modifying CR node; nonempty field is necessary input to the specified matching process, rather than a new status/date/company/official-number filter. Actual source rows cover all10599 document identities and every recorded Release; all1467 nonempty inputs have source Spec38.331. Authored physical cover archive unknowns remain source-enrichment limitations, not automatically mandatory inputs to this field question. Matching target-release Spec before Section expansion preserves exactly the same original final edition domain.",
+        "source_evidence": [
+          "Criteria source_context literal",
+          "Phase-1 CR의 clausesAffected 속성을 파싱하여 Section 식별",
+          "Phase3§2.1/§2.2/§7.2",
+          "Phase1 clausesAffected source role",
+          "All10599 actualTdocList input receipt"
+        ]
+      },
+      {
+        "unit": "filters and relationship meaning",
+        "status": "pass",
+        "original_quote": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+        "query_clauses": [
+          "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber"
+        ],
+        "finding": "The KO asks for CRs actually matched via clausesAffected, while original§7.2 creates independent links per extracted clause. One concrete declared identifier resolving to an actual same-target-release Section is therefore enough; requiring every declared clause to resolve adds a universal validity condition. Actual R2-2308646 declares5.3.5.13.1 and5.3.5.1.3.4; only the first is an actualRel17 selected-final Section. R2-2313714 has unmatched5.5.2.4.2/3/5 but actual6.3.2. The query preserves these genuine partial matches without asserting unresolved remainders are valid. Literal annotations and separators are identifier syntax, supported by original10.4C(new). Numeric/dottedAnnex identifiers must match complete boundaries. Weak integers/letters must stand in list items. Explicit named ASN Section identifiers are originalSection identities per§4.1 and must occupy a standalone item or explicit terminal identifier position; name similarity in explanatory prose is insufficient. R2-2400794 and2400910 explicitly declare6.6.2–RRCReconfigurationSidelink in both actual metadata and actual authored Clausesaffected row; the namedSection exists in their target-final source. No approval/incorporation/causal claim is added. The extra literal CONTAINS prefilter is already entailed by every exact quoted-identifier regex match; it changes no eligibility or boundary interpretation.",
+        "source_evidence": [
+          "OriginalPhase3§4.1 ASNdefinitionname Section role",
+          "OriginalPhase3§7.2 examples+same-release",
+          "Actual source controls20+all446 literals"
+        ]
+      },
+      {
+        "unit": "counting unit and join multiplicity",
+        "status": "pass",
+        "original_quote": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+        "query_clauses": [
+          "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber"
+        ],
+        "finding": "The unit is an original CR/Tdoc document identity. Matching multiple source Sections, multiple clauses, observations or joins yields one distinct tdocNumber. Distinct Tdoc documents sharing CRnumber/revision/spec remain distinct; no finalrevision/legalentity/approved-only inference is made. Source targetRelease binds one original final Section identity domain, preventing version hub multiplicity. DISTINCT cr,rk before Section expansion only removes repeated path witnesses and leaves the requested distinct CR identity set unchanged.",
+        "source_evidence": [
+          "OriginalPhase1 uniqueTdoc identity",
+          "OriginalPhase3 release-aware SectionId contract"
+        ]
+      },
+      {
+        "unit": "cardinality and completeness",
+        "status": "pass",
+        "original_quote": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+        "query_clauses": [
+          "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber"
+        ],
+        "finding": "List requires all eligible recorded CR identities, so no LIMIT10/latest-only restriction remains. Actual all10599 recorded input closure and all5834 original final numeric/Annex/ASN Section identity closure support the entire original process population. All446 unique nonempty observed literal strings were inspected: comma/semicolon/and/slash separators, parenthesis qualifiers, exact suffixes, Annex labels and explicit named identifiers have concrete literal witnesses or remain unresolvable; no missing authored-form value is silently substituted. Missing source columns/empty recorded fields lack recorded witnesses without implying no real-world change. All15 no-witness fields are preserved as actual inputs, including TBD/xx/placeholders/glued malformed identifiers and absent exact Section IDs. The independent inverse diagnostic and pinned existing purefield reader agree on CR membership for all1467 nonempty inputs. Their one extra auxiliary ASNidentifier for6.3.2/PhysicalCellGroupConfig changes no requested CR identity. This is semantic completeness of recorded-field matching; actual native query output and scorer gates remain required technical work.",
+        "source_evidence": [
+          "All10599 source metadata input",
+          "All5834 actualfinal Section identities",
+          "All446 actualliteral inputs",
+          "Separatefull1467 inverse diagnostic"
+        ]
+      },
+      {
+        "unit": "ordering and ties when requested",
+        "status": "pass",
+        "original_quote": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+        "query_clauses": [
+          "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber"
+        ],
+        "finding": "No rank, top-k or display order is requested. The collection is an unordered set of distinct CR document identities. Lexical ORDERBY only makes serialization reproducible; every correct permutation must pass. Repeated serialization of the same member does not alter this set. Missing, extra or wrong identities alter the set and are errors; replacing a required distinct member with a duplicate loses that member and fails.",
+        "source_evidence": [
+          "Original English has no order/top-k"
+        ]
+      },
+      {
+        "unit": "unverified additional inputs or external interpretation",
+        "status": "pass",
+        "original_quote": "List the CRs whose affected clauses resolve to actual sections of spec 38.331 (clause-to-section matching).",
+        "query_clauses": [
+          "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber"
+        ],
+        "finding": "The candidate uses only original recorded fields and original release-final source identities. It adds no CurrentVersion/latest/fallback/date/approval/numericCRnumber rule and requires no authored-source normative validation. Literal suffixes remain unchanged; placeholder parents, shorthand tails, guessed concatenation repairs and title/code semantic similarity are not witnesses. All original input and source pins remain preserved. The earlier CurrentVersion proposal and authored-all-source pending review are retained as challenged history rather than overwritten. Two independent exact-identity semantic judgments, nativefullreceipt and actual scorer controls remain outstanding admission requirements; no source diagnostic/nativepreview automatically becomes benchmark gold. The previous native run timed out without a complete answer. This new definition changes execution order and an entailed prefilter only; it does not claim a successful native execution or increase the deadline.",
+        "source_evidence": [
+          "Criteria query_repair/source_context",
+          "OriginalPhase3§2/§4.1/§7.2",
+          "No API/public/source alteration receipts"
+        ]
+      }
+    ],
+    "expert_validation_n": 0,
+    "human_author_review_completed": false,
+    "source_primary_preserved_pin": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_frozen_metadata_same_target_release_primary_review.json",
+      "bytes": 17409,
+      "sha256": "1c9860737a4119a36328b8757ac57418fb89f369d2cacc1cced39c96b6ea4dda"
+    },
+    "mechanical_binding_note": "Original question/query/referencequery byte-identical. requiredfields[string] becomes same single nonnull string field schema; set/all unchanged. New canonical structure adds no semantic rule or mandatory auxiliary field.",
+    "status": "pass",
+    "admission_state": "New exact definition awaits independent secondary/native/scorer gates; prior timeout preserved",
+    "correction": {
+      "old_review_preserved_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_frozen_metadata_same_target_release_canonical_primary_review_v2.json",
+        "bytes": 13426,
+        "sha256": "cbcf17b24e1fc453590489a334a578aa026f46367eaa2ecc04d4dd5766ce3980"
+      },
+      "old_wording": "No rank, top-k or display order is requested. The collection is an unordered set of distinct CR document identities. Lexical ORDERBY only makes serialization reproducible; every correct permutation must pass. Duplicates/missing/extra/wrong identities are actual collection errors.",
+      "reason": "The declared answer collection is a set: repetition alone is not a membership error. Duplicate displacement is an error because a required distinct member is missing.",
+      "definition_unchanged": true,
+      "semantic_verdict_unchanged": true,
+      "new_scorer_or_gold": false
+    },
+    "new_query_equivalence": {
+      "population_unchanged": "Same CR MODIFIES38.331 unversioned hub and same recorded nonempty field; no cap/status/time/source field replacement.",
+      "join_unchanged": "Bind the release-keyed Spec to the CR exact target Release before expanding its Sections; same graph path predicates.",
+      "distinct_intermediate": "WITH DISTINCT cr,rk only removes duplicate graph path witnesses; final required distinct CR identity set is unchanged.",
+      "entailed_prefilter": "Every old identifier branch matches the exact literal s.sectionNumber between Java\\Q and\\E, so an old branch match entails cr.clausesAffected CONTAINS s.sectionNumber. Missing/null Section identifiers did not satisfy old branch-kind predicates. No normalization or inferred delimiter is added.",
+      "boundary_grammar_unchanged": "All three exact weak/numeric-dottedAnnex/ASN regex branches and final required-field projection are byte-identical.",
+      "purpose": "Reduce release expansion and dynamic regex evaluation before the fixed20sec native deadline; timeout is not increased."
+    },
+    "previous_exact_primary_preserved_pin": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ3-7_frozen_metadata_same_target_release_canonical_primary_review_v3_set_correction.json",
+      "bytes": 14555,
+      "sha256": "23377fd95827d336667be1434ee6075835d2b501192483f1ad74de79112f08e9"
+    }
+  }
+}

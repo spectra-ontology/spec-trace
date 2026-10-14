@@ -1,0 +1,219 @@
+{
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "definition_pin": {
+    "bytes": 1992,
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_canonical_source_only_definition.json",
+    "sha256": "a279d992da7d21e56fa90ccb1a4358afdcf1c0eab15d39bb7792f47d57bc74ff"
+  },
+  "expert_validation_n": 0,
+  "external_model_API_calls_n": 0,
+  "human_author_review_completed": false,
+  "id": "RAN1_P3_CQ021",
+  "metadata_normalization": {
+    "original_review": {
+      "bytes": 15514,
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/RAN1_P3_CQ021_primary_exact_original_source_review.json",
+      "sha256": "c291e0cf3c9f5aebaafa383d577c1c98d21ceb6cab4c89db7c6f44636a94b1fc"
+    },
+    "seven_units_repair_identity_reviewer_kind_status_unchanged": true
+  },
+  "native_execution_n": 0,
+  "new_admissions_n": 0,
+  "original_query_sha256": "4a36cc9c8efaea398f2a1b41ede587f78f4e767679181bb667d77ca689a67880",
+  "original_question_sha256": "21768ed0d72df413f9fb8b7883899d706704a05cdde8a003526aacb432e70733",
+  "question_en": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+  "reference_query_sha256": "df1e82a9887421a35022c33c80f76e25a44c32e774be4395e05ac7bab946f275",
+  "repair_sha256": "6ff1bffd1e84b992393cee28c17098ab105b16d6a75a026cf4b0397c36325bbf",
+  "reviewer_kind": "Primary original-source judgment /root/verify_prepared_replies",
+  "scorer_execution_n": 0,
+  "semantic_evidence": [
+    {
+      "finding": "The question asks to list CR documents meeting a numeric threshold, so tdocNumber is the required document-identity role. It does not ask to report each affectedCount, clause list, title, source company, status or actual edition. Those may be optional evidence rather than extra required fields.",
+      "original_quote": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL",
+        "WITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |",
+        " clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'",
+        "              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean",
+        "WITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens",
+        "UNWIND tokens AS token",
+        "WITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal",
+        "WITH cr, count(DISTINCT ordinal) AS affectedCount",
+        "WHERE affectedCount >= 5",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber"
+      ],
+      "source_references": [
+        {
+          "bytes": 24422,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_original_source_packet.json",
+          "sha256": "b1c3d8082b013f1916582f605725a168102c1bbba5fc20695c1d0e5d8eaf7c94"
+        }
+      ],
+      "status": "pass",
+      "unit": "requested answer roles and fields"
+    },
+    {
+      "finding": "The original category CR_TS_변경추적 and explicit Korean clausesAffected field wording map to CQ3-4. Original design specifies that only CRs with available clausesAffected enter this operation. Use all recorded CR/draftCR/pCR MODIFIES38.214 hub documents with that field. Null/physically unreadable authored source declarations remain unknown, never assertedNo. No approval, latest, release or arbitrary corpus-readable-only filter is added.",
+      "original_quote": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL",
+        "WITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |",
+        " clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'",
+        "              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean",
+        "WITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens",
+        "UNWIND tokens AS token",
+        "WITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal",
+        "WITH cr, count(DISTINCT ordinal) AS affectedCount",
+        "WHERE affectedCount >= 5",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber"
+      ],
+      "source_references": [
+        {
+          "bytes": 24422,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_original_source_packet.json",
+          "sha256": "b1c3d8082b013f1916582f605725a168102c1bbba5fc20695c1d0e5d8eaf7c94"
+        }
+      ],
+      "status": "pass",
+      "unit": "population and source context"
+    },
+    {
+      "finding": "The specific instruction fiveormoresections and original Korean clausesAffected에5개이상Section settle the threshold as at least five distinct declared affected Section identifiers. The source schema defines clausesAffected as affected clause-number list. Counting comma-separated chunks is not the semantic unit: actual whitespace lists and period punctuation demonstrate that a separator is not an identifier. Count maximal numeric/dotted identifiers with optional letter suffix and exclude inline qualifier words. A declared identifier remains a declared ordinal even if an original cover typo is absent from retained Section ontology; no unasked physical-node-existence join rewrites the recorded field task.",
+      "original_quote": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL",
+        "WITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |",
+        " clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'",
+        "              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean",
+        "WITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens",
+        "UNWIND tokens AS token",
+        "WITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal",
+        "WITH cr, count(DISTINCT ordinal) AS affectedCount",
+        "WHERE affectedCount >= 5",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber"
+      ],
+      "source_references": [
+        {
+          "bytes": 24422,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_original_source_packet.json",
+          "sha256": "b1c3d8082b013f1916582f605725a168102c1bbba5fc20695c1d0e5d8eaf7c94"
+        }
+      ],
+      "status": "pass",
+      "unit": "filters and relationship meaning"
+    },
+    {
+      "finding": "First count DISTINCT declared ordinal labels per CR, so repeated labels or join paths do not inflate the threshold. Then return each DISTINCTtdoc document identity once. CR-number families, revision-chain outcomes, source words/new/change ordinals and physical table rows are not Section units. The current whole98literal grammar has no broad range requiring implicit expansion; a future unsupported range is outside this verified actual-population grammar.",
+      "original_quote": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL",
+        "WITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |",
+        " clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'",
+        "              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean",
+        "WITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens",
+        "UNWIND tokens AS token",
+        "WITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal",
+        "WITH cr, count(DISTINCT ordinal) AS affectedCount",
+        "WHERE affectedCount >= 5",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber"
+      ],
+      "source_references": [
+        {
+          "bytes": 24422,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_original_source_packet.json",
+          "sha256": "b1c3d8082b013f1916582f605725a168102c1bbba5fc20695c1d0e5d8eaf7c94"
+        }
+      ],
+      "status": "pass",
+      "unit": "counting unit and join multiplicity"
+    },
+    {
+      "finding": "ListCRs requires every matching document in the original recorded available-field population. Use collectionset/cardinalityall and remove oldLIMIT20. The full204 available inputs are supplied for independent review, and2219 missing declarations remain unknown for separate authored-source work. The question filter is not a top-k request and large is explicitly defined by≥5 rather than a new relative-size cutoff.",
+      "original_quote": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL",
+        "WITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |",
+        " clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'",
+        "              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean",
+        "WITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens",
+        "UNWIND tokens AS token",
+        "WITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal",
+        "WITH cr, count(DISTINCT ordinal) AS affectedCount",
+        "WHERE affectedCount >= 5",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber"
+      ],
+      "source_references": [
+        {
+          "bytes": 24422,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_original_source_packet.json",
+          "sha256": "b1c3d8082b013f1916582f605725a168102c1bbba5fc20695c1d0e5d8eaf7c94"
+        }
+      ],
+      "status": "pass",
+      "unit": "cardinality and completeness"
+    },
+    {
+      "finding": "No ranked sequence or most-recent qualifier is asked. Document set membership is the answer; optional affected-count descending display does not affect the complete set. The scalar threshold count need not become a required predicted field. No date/default-list/CR-ascending tie-break controls membership.",
+      "original_quote": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL",
+        "WITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |",
+        " clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'",
+        "              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean",
+        "WITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens",
+        "UNWIND tokens AS token",
+        "WITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal",
+        "WITH cr, count(DISTINCT ordinal) AS affectedCount",
+        "WHERE affectedCount >= 5",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber"
+      ],
+      "source_references": [
+        {
+          "bytes": 24422,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_original_source_packet.json",
+          "sha256": "b1c3d8082b013f1916582f605725a168102c1bbba5fc20695c1d0e5d8eaf7c94"
+        }
+      ],
+      "status": "pass",
+      "unit": "ordering and ties when requested"
+    },
+    {
+      "finding": "Exact unchanged English, Korean field/threshold wording, category→available-field original contract, all98literal grammar and raw cover observations ground this interpretation. The authentic register-versus-cover discrepancy is preserved rather than reconciled; its identifier count differs40versus41 but both exceed5, so it does not decide threshold membership. All physical source unknowns and other semantic questions remain pending. No prior gold, oldcommaquery result, approval causality, claimed human expert judgment or new model performance supplies authority. This AI primary requires a separate exact seven-unit review and root native/fullSQL/actual scorer gates.",
+      "original_quote": "Which are the large CRs touching many clauses? List CRs affecting five or more sections of TS 38.214.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL",
+        "WITH cr, reduce(clean='', i IN range(0,size(cr.clausesAffected)-1) |",
+        " clean + CASE WHEN substring(cr.clausesAffected,i,1) =~ '[0-9A-Za-z.]'",
+        "              THEN substring(cr.clausesAffected,i,1) ELSE ' ' END) AS clean",
+        "WITH cr, [token IN split(clean,' ') WHERE token =~ '[0-9]+([.][0-9]+)*[A-Za-z]?[.]?'] AS tokens",
+        "UNWIND tokens AS token",
+        "WITH cr, CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END AS ordinal",
+        "WITH cr, count(DISTINCT ordinal) AS affectedCount",
+        "WHERE affectedCount >= 5",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber"
+      ],
+      "source_references": [
+        {
+          "bytes": 24422,
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_original_source_packet.json",
+          "sha256": "b1c3d8082b013f1916582f605725a168102c1bbba5fc20695c1d0e5d8eaf7c94"
+        }
+      ],
+      "status": "pass",
+      "unit": "unverified additional inputs or external interpretation"
+    }
+  ],
+  "source_packet_pin": {
+    "bytes": 24422,
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ021_distinct_declared_section_threshold/source_only_independent_review/RAN1_P3_CQ021_original_source_packet.json",
+    "sha256": "b1c3d8082b013f1916582f605725a168102c1bbba5fc20695c1d0e5d8eaf7c94"
+  },
+  "status": "pass"
+}

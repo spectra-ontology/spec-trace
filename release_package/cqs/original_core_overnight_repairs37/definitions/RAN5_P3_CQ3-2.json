@@ -1,0 +1,38 @@
+{
+  "id": "RAN5_P3_CQ3-2",
+  "question_en": "For TS 38.521-1, report its CR count alongside its section total (change-and-structure summary).",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.521-1'}) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCount MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCount, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCount, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) RETURN hub.specNumber AS specNumber, crCount, count(s) AS sectionCount",
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.521-1'})\nWHERE hub.specRelease IS NULL\nWITH count(DISTINCT cr.tdocNumber) AS crCount\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'})\nRETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+  "required_fields": [
+    {
+      "name": "crCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "crCount"
+    },
+    {
+      "name": "sectionCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "sectionCount"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 1
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "original_question_sha256": "0b79525b36614230a9430c2d0d7e7867bacfde8fc31ce2780fd976afbaec9f56",
+  "original_query_sha256": "d7901a5042f819e08be68908751f723c955110119ecf04cf10fbed70ee241d96",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "b6100c629dac74429cf4b2b04baf4bbabb488c6eba9b46cb32623fbee15f0f61",
+  "reference_query_sha256": "28116dcf113e1d8fcc68776a6a3fd5ec8cca98fa5c725f871ecbc48c71e8809e",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/RAN5_P3_CQ3-2_original_source_only_packet.json",
+    "sha256": "090f7b6c6ade68f62da7344d1d070cdaa6fdeccc6a686e105a573256c25d057e"
+  }
+}

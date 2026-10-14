@@ -1,0 +1,4900 @@
+{
+  "id": "RAN1_P3_CQ015",
+  "repair_sha256": "49ebc72ced67f2b3b48b5948623a806a7b94b75a86c17d9b8ca23895f075694b",
+  "original_question_sha256": "70e4da38530beb7b583bd8dd8c9b8571d43f7df1c6450e691357d58c7e1a3fd0",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Independent secondary direct Codex source-context diagnosis /root/reaudit_ran2_ran5",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)",
+      "finding": "What does TS38.214Section5.1 reach two hops out via references asks reached Section endpoints. The exact original English2-hop dependencies and KO2단계 모두 identify a graph traversal. It does not request every intermediate route, viaSection identity, title or separate version. end.sectionId is the complete unique endpoint role; original via/target projection is auxiliary evidence.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (src)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section)",
+        "RETURN DISTINCT end.sectionId AS sectionId"
+      ],
+      "source_excerpts": [
+        {
+          "actual_lines": [
+            {
+              "line_1based": 150,
+              "text": ""
+            },
+            {
+              "line_1based": 151,
+              "text": "tdoc:Spec a owl:Class ;"
+            },
+            {
+              "line_1based": 152,
+              "text": "    rdfs:label \"Specification\"@en ;"
+            },
+            {
+              "line_1based": 153,
+              "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+            },
+            {
+              "line_1based": 154,
+              "text": ""
+            },
+            {
+              "line_1based": 284,
+              "text": ""
+            },
+            {
+              "line_1based": 285,
+              "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 286,
+              "text": "    rdfs:label \"spec in release\"@en ;"
+            },
+            {
+              "line_1based": 287,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+            },
+            {
+              "line_1based": 288,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 289,
+              "text": "    rdfs:range tdoc:Release ."
+            },
+            {
+              "line_1based": 290,
+              "text": ""
+            },
+            {
+              "line_1based": 291,
+              "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 292,
+              "text": "    rdfs:label \"in release of\"@en ;"
+            },
+            {
+              "line_1based": 293,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+            },
+            {
+              "line_1based": 294,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 295,
+              "text": "    rdfs:range tdoc:Spec ."
+            },
+            {
+              "line_1based": 296,
+              "text": ""
+            },
+            {
+              "line_1based": 297,
+              "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+            },
+            {
+              "line_1based": 298,
+              "text": "    rdfs:label \"has release variant\"@en ;"
+            },
+            {
+              "line_1based": 299,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+            },
+            {
+              "line_1based": 300,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 301,
+              "text": "    rdfs:range tdoc:Spec ;"
+            },
+            {
+              "line_1based": 477,
+              "text": ""
+            },
+            {
+              "line_1based": 478,
+              "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 479,
+              "text": "    rdfs:label \"has sub-section\"@en ;"
+            },
+            {
+              "line_1based": 480,
+              "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+            },
+            {
+              "line_1based": 481,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 482,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 483,
+              "text": "    owl:inverseOf tdoc:parentSection ."
+            },
+            {
+              "line_1based": 484,
+              "text": ""
+            },
+            {
+              "line_1based": 485,
+              "text": "tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 486,
+              "text": "    rdfs:label \"parent section\"@en ;"
+            },
+            {
+              "line_1based": 487,
+              "text": "    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;"
+            },
+            {
+              "line_1based": 488,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 489,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 490,
+              "text": "    owl:inverseOf tdoc:hasSubSection ."
+            },
+            {
+              "line_1based": 491,
+              "text": ""
+            },
+            {
+              "line_1based": 492,
+              "text": "tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 493,
+              "text": "    rdfs:label \"references section\"@en ;"
+            },
+            {
+              "line_1based": 494,
+              "text": "    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;"
+            },
+            {
+              "line_1based": 495,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 496,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 497,
+              "text": "    owl:inverseOf tdoc:referencedBySection ."
+            },
+            {
+              "line_1based": 498,
+              "text": ""
+            },
+            {
+              "line_1based": 499,
+              "text": "tdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 500,
+              "text": "    rdfs:label \"referenced by section\"@en ;"
+            },
+            {
+              "line_1based": 501,
+              "text": "    rdfs:comment \"Section(s) that reference this Section\"@en ;"
+            },
+            {
+              "line_1based": 502,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 503,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 504,
+              "text": "    owl:inverseOf tdoc:referencesSection ."
+            },
+            {
+              "line_1based": 505,
+              "text": ""
+            },
+            {
+              "line_1based": 1227,
+              "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    rdfs:label \"section ID\"@en ;"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1231,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1232,
+              "text": ""
+            },
+            {
+              "line_1based": 1233,
+              "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1234,
+              "text": "    rdfs:label \"section number\"@en ;"
+            },
+            {
+              "line_1based": 1235,
+              "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+            },
+            {
+              "line_1based": 1236,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1237,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1238,
+              "text": ""
+            },
+            {
+              "line_1based": 1239,
+              "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1240,
+              "text": "    rdfs:label \"section title\"@en ;"
+            },
+            {
+              "line_1based": 1241,
+              "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+            },
+            {
+              "line_1based": 1242,
+              "text": "    rdfs:domain tdoc:Section ;"
+            }
+          ],
+          "source_pin": {
+            "bytes": 71963,
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+          }
+        },
+        {
+          "actual_lines": [
+            {
+              "line_1based": 57,
+              "text": "    ## 2. Scope 정의"
+            },
+            {
+              "line_1based": 58,
+              "text": "    "
+            },
+            {
+              "line_1based": 59,
+              "text": "    ### 2.1 포함 (In Scope)"
+            },
+            {
+              "line_1based": 60,
+              "text": "    "
+            },
+            {
+              "line_1based": 61,
+              "text": "    | 구분 | 포함 대상 |"
+            },
+            {
+              "line_1based": 62,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 63,
+              "text": "    | **TS 문서** | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |"
+            },
+            {
+              "line_1based": 64,
+              "text": "    | **Section 구조** | 본문 + Annex, 6레벨까지 |"
+            },
+            {
+              "line_1based": 65,
+              "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 66,
+              "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 67,
+              "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+            },
+            {
+              "line_1based": 68,
+              "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+            },
+            {
+              "line_1based": 69,
+              "text": "    "
+            },
+            {
+              "line_1based": 70,
+              "text": "    ### 2.2 제외 (Out of Scope)"
+            },
+            {
+              "line_1based": 71,
+              "text": "    "
+            },
+            {
+              "line_1based": 72,
+              "text": "    | 제외 대상 | 이유 |"
+            },
+            {
+              "line_1based": 73,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 74,
+              "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 75,
+              "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 136,
+              "text": "    | # | Competency Question |"
+            },
+            {
+              "line_1based": 137,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 138,
+              "text": "    | 2-1 | 특정 Section이 참조하는 다른 TS Section 목록은? |"
+            },
+            {
+              "line_1based": 139,
+              "text": "    | 2-2 | 특정 Section을 참조하는 다른 TS Section 목록은? (역참조) |"
+            },
+            {
+              "line_1based": 140,
+              "text": "    | 2-3 | 특정 TS가 가장 많이 참조하는 다른 TS는? |"
+            },
+            {
+              "line_1based": 141,
+              "text": "    | 2-4 | 가장 많이 참조되는 Section Top N은? |"
+            },
+            {
+              "line_1based": 142,
+              "text": "    | 2-5 | 두 TS 간 참조 관계 요약은? |"
+            },
+            {
+              "line_1based": 143,
+              "text": "    "
+            },
+            {
+              "line_1based": 144,
+              "text": "    ### CQ3. CR → TS 연결"
+            },
+            {
+              "line_1based": 590,
+              "text": "    | 1-10 | TSTable, tableNumber, Section |"
+            },
+            {
+              "line_1based": 591,
+              "text": "    "
+            },
+            {
+              "line_1based": 592,
+              "text": "    ### CQ2: TS 간 참조 분석"
+            },
+            {
+              "line_1based": 593,
+              "text": "    "
+            },
+            {
+              "line_1based": 594,
+              "text": "    | CQ | 필요 용어 |"
+            },
+            {
+              "line_1based": 595,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 596,
+              "text": "    | 2-1 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 597,
+              "text": "    | 2-2 | Section, referencesSection (역방향) |"
+            },
+            {
+              "line_1based": 598,
+              "text": "    | 2-3 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 599,
+              "text": "    | 2-4 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 600,
+              "text": "    | 2-5 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 601,
+              "text": "    "
+            },
+            {
+              "line_1based": 1209,
+              "text": "    | --- | --- | --- | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1210,
+              "text": "    | belongsToSpec | Section | Spec | 1 | ✅ | hasSection | — |"
+            },
+            {
+              "line_1based": 1211,
+              "text": "    | hasSubSection | Section | Section | 0..* | ❌ | parentSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1212,
+              "text": "    | parentSection | Section | Section | 0..1 | ✅ | hasSubSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1213,
+              "text": "    | referencesSection | Section | Section | 0..* | ❌ | referencedBySection | Irreflexive |"
+            },
+            {
+              "line_1based": 1214,
+              "text": "    | referencedBySection | Section | Section | 0..* | ❌ | referencesSection | Irreflexive |"
+            },
+            {
+              "line_1based": 1215,
+              "text": "    | referencesSpec | Section | Spec | 0..* | ❌ | — | — |"
+            },
+            {
+              "line_1based": 1216,
+              "text": "    | containsTable | Section | TSTable | 0..* | ❌ | tableInSection | — |"
+            },
+            {
+              "line_1based": 1217,
+              "text": "    | containsFigure | Section | TSFigure | 0..* | ❌ | figureInSection | — |"
+            },
+            {
+              "line_1based": 1218,
+              "text": "    "
+            },
+            {
+              "line_1based": 1219,
+              "text": "    ### 특성 설명"
+            },
+            {
+              "line_1based": 1220,
+              "text": "    "
+            },
+            {
+              "line_1based": 1221,
+              "text": "    | Property | 특성 | 이유 |"
+            },
+            {
+              "line_1based": 1222,
+              "text": "    | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1223,
+              "text": "    | hasSubSection | Irreflexive | Section이 자기 자신의 하위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1224,
+              "text": "    | hasSubSection | Asymmetric | A가 B의 부모면 B는 A의 부모가 아님 |"
+            },
+            {
+              "line_1based": 1225,
+              "text": "    | parentSection | Irreflexive | Section이 자기 자신의 상위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1226,
+              "text": "    | parentSection | Asymmetric | A가 B의 자식이면 B는 A의 자식이 아님 |"
+            },
+            {
+              "line_1based": 1227,
+              "text": "    | referencesSection | Irreflexive | Section이 자기 자신을 참조하는 것은 무의미 |"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    | referencesSection | NOT Asymmetric | 두 Section이 서로 참조 가능 (상호 참조) |"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    | hasSubSection | NOT Transitive | 직접 하위만 연결 (손자는 체인으로) |"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    "
+            },
+            {
+              "line_1based": 1231,
+              "text": "    ---"
+            },
+            {
+              "line_1based": 1232,
+              "text": "    "
+            },
+            {
+              "line_1based": 1532,
+              "text": "    "
+            },
+            {
+              "line_1based": 1533,
+              "text": "    ### 4.4 참조 패턴 (referencesSection, referencesSpec)"
+            },
+            {
+              "line_1based": 1534,
+              "text": "    "
+            },
+            {
+              "line_1based": 1535,
+              "text": "    **본문 패턴**:"
+            },
+            {
+              "line_1based": 1536,
+              "text": "    "
+            },
+            {
+              "line_1based": 1537,
+              "text": "    | 패턴 | 정규식 | 예시 | 추출 결과 |"
+            },
+            {
+              "line_1based": 1538,
+              "text": "    | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1539,
+              "text": "    | clause X.X.X | `clause\\s+(\\d+(?:\\.\\d+)*)` | \"clause 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1540,
+              "text": "    | subclause X.X.X | `subclause\\s+(\\d+(?:\\.\\d+)*)` | \"subclause 7.4.1.1\" | 7.4.1.1 |"
+            },
+            {
+              "line_1based": 1541,
+              "text": "    | Section X.X.X | `Section\\s+(\\d+(?:\\.\\d+)*)` | \"Section 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1542,
+              "text": "    | Annex X | `Annex\\s+([A-Z](?:\\.\\d+)*)` | \"Annex A.1\" | A.1 |"
+            },
+            {
+              "line_1based": 1543,
+              "text": "    | TS 38.XXX clause X.X | `TS\\s+38\\.(\\d{3})\\s+clause\\s+(\\d+(?:\\.\\d+)*)` | \"TS 38.211 clause 6.3.2\" | 38.211-{release}-6.3.2 (source와 동일 release) |"
+            },
+            {
+              "line_1based": 1544,
+              "text": "    | TS [38.XXX](http://38.xxx/) (TS-only) | `TS\\\\s+38\\\\.(\\\\d{3})` (clause 없음) | \"TS 38.214” | → referencesSpec (Section→Spec) |"
+            },
+            {
+              "line_1based": 1545,
+              "text": "    "
+            },
+            {
+              "line_1based": 1546,
+              "text": "    **참조 대상 결정**:"
+            },
+            {
+              "line_1based": 1547,
+              "text": "    "
+            },
+            {
+              "line_1based": 1548,
+              "text": "    | 참조 유형 | 대상 결정 |"
+            },
+            {
+              "line_1based": 1549,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1550,
+              "text": "    | 같은 TS 내 | 현재 specNumber + **source release** + 추출된 sectionNumber |"
+            },
+            {
+              "line_1based": 1551,
+              "text": "    | 다른 TS | 추출된 specNumber + **source release** + 추출된 sectionNumber (cross-release 참조 누수 0 = R4) |"
+            },
+            {
+              "line_1based": 1552,
+              "text": "    | 다른 TS (clause 없음, TS-only) | 추출된 specNumber + **source release** → (specNumber, release) Spec 노드와 referencesSpec 관계 생성. 자기 TS 제외, Scope 내 TS만 대상 |"
+            },
+            {
+              "line_1based": 1553,
+              "text": ""
+            },
+            {
+              "line_1based": 1554,
+              "text": "    > release-aware cross-release 정책: 참조 대상 sectionId/Spec은 항상 **source Section과 동일 release**로 결정한다(Rel-15 본문의 참조는 Rel-15 대상으로만 연결). 이는 검증 R4(cross-release reference leak 0)로 강제된다."
+            },
+            {
+              "line_1based": 1555,
+              "text": "    "
+            },
+            {
+              "line_1based": 1556,
+              "text": "    **참조 생성 시 주의사항**:"
+            },
+            {
+              "line_1based": 1557,
+              "text": "    "
+            },
+            {
+              "line_1based": 1558,
+              "text": "    | 주의사항 | 처리 |"
+            },
+            {
+              "line_1based": 1559,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1560,
+              "text": "    | 대상 Section 없음 | 관계 생성 안 함 (로그 기록) |"
+            },
+            {
+              "line_1based": 1561,
+              "text": "    | 자기 자신 참조 | 무시 (Irreflexive) |"
+            },
+            {
+              "line_1based": 1562,
+              "text": "    | Scope 외 TS 참조 | 관계 생성 안 함 (Scope 내 TS만 대상) |"
+            },
+            {
+              "line_1based": 1563,
+              "text": "    | TS-only 참조 | referencesSpec 관계 생성 (Section→Spec). referencesSection과 별개 |"
+            }
+          ],
+          "source_pin": {
+            "bytes": 91818,
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+          }
+        }
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)",
+      "finding": "The original benchmarkPhase3/schema is explicitly release-aware: one Sectionidentity per family/release/clause and original references bind targets to the sourceSectionrelease. Its schema states release-blind aggregation CQs traverse abstracthub←IN_RELEASE_OF←release-keyed→Section. These plural recorded relation lookups name a family/clause without requesting an edition. The query preserves all matching release-aware anchors and returns uniquely identified endpoints, rather than pretending an edition-dependent union is a singleedition layout. Fresh anchor metadata independently confirms the namedclause has the same supplied conceptualheading in allfive retainedvariants. Citation results are not claimed invariant acrosseditions; the original source domain is all recordedrelations, and no unasked latest/baseedition choice is made.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (src)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section)",
+        "RETURN DISTINCT end.sectionId AS sectionId"
+      ],
+      "source_excerpts": [
+        {
+          "actual_lines": [
+            {
+              "line_1based": 150,
+              "text": ""
+            },
+            {
+              "line_1based": 151,
+              "text": "tdoc:Spec a owl:Class ;"
+            },
+            {
+              "line_1based": 152,
+              "text": "    rdfs:label \"Specification\"@en ;"
+            },
+            {
+              "line_1based": 153,
+              "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+            },
+            {
+              "line_1based": 154,
+              "text": ""
+            },
+            {
+              "line_1based": 284,
+              "text": ""
+            },
+            {
+              "line_1based": 285,
+              "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 286,
+              "text": "    rdfs:label \"spec in release\"@en ;"
+            },
+            {
+              "line_1based": 287,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+            },
+            {
+              "line_1based": 288,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 289,
+              "text": "    rdfs:range tdoc:Release ."
+            },
+            {
+              "line_1based": 290,
+              "text": ""
+            },
+            {
+              "line_1based": 291,
+              "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 292,
+              "text": "    rdfs:label \"in release of\"@en ;"
+            },
+            {
+              "line_1based": 293,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+            },
+            {
+              "line_1based": 294,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 295,
+              "text": "    rdfs:range tdoc:Spec ."
+            },
+            {
+              "line_1based": 296,
+              "text": ""
+            },
+            {
+              "line_1based": 297,
+              "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+            },
+            {
+              "line_1based": 298,
+              "text": "    rdfs:label \"has release variant\"@en ;"
+            },
+            {
+              "line_1based": 299,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+            },
+            {
+              "line_1based": 300,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 301,
+              "text": "    rdfs:range tdoc:Spec ;"
+            },
+            {
+              "line_1based": 477,
+              "text": ""
+            },
+            {
+              "line_1based": 478,
+              "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 479,
+              "text": "    rdfs:label \"has sub-section\"@en ;"
+            },
+            {
+              "line_1based": 480,
+              "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+            },
+            {
+              "line_1based": 481,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 482,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 483,
+              "text": "    owl:inverseOf tdoc:parentSection ."
+            },
+            {
+              "line_1based": 484,
+              "text": ""
+            },
+            {
+              "line_1based": 485,
+              "text": "tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 486,
+              "text": "    rdfs:label \"parent section\"@en ;"
+            },
+            {
+              "line_1based": 487,
+              "text": "    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;"
+            },
+            {
+              "line_1based": 488,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 489,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 490,
+              "text": "    owl:inverseOf tdoc:hasSubSection ."
+            },
+            {
+              "line_1based": 491,
+              "text": ""
+            },
+            {
+              "line_1based": 492,
+              "text": "tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 493,
+              "text": "    rdfs:label \"references section\"@en ;"
+            },
+            {
+              "line_1based": 494,
+              "text": "    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;"
+            },
+            {
+              "line_1based": 495,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 496,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 497,
+              "text": "    owl:inverseOf tdoc:referencedBySection ."
+            },
+            {
+              "line_1based": 498,
+              "text": ""
+            },
+            {
+              "line_1based": 499,
+              "text": "tdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 500,
+              "text": "    rdfs:label \"referenced by section\"@en ;"
+            },
+            {
+              "line_1based": 501,
+              "text": "    rdfs:comment \"Section(s) that reference this Section\"@en ;"
+            },
+            {
+              "line_1based": 502,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 503,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 504,
+              "text": "    owl:inverseOf tdoc:referencesSection ."
+            },
+            {
+              "line_1based": 505,
+              "text": ""
+            },
+            {
+              "line_1based": 1227,
+              "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    rdfs:label \"section ID\"@en ;"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1231,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1232,
+              "text": ""
+            },
+            {
+              "line_1based": 1233,
+              "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1234,
+              "text": "    rdfs:label \"section number\"@en ;"
+            },
+            {
+              "line_1based": 1235,
+              "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+            },
+            {
+              "line_1based": 1236,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1237,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1238,
+              "text": ""
+            },
+            {
+              "line_1based": 1239,
+              "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1240,
+              "text": "    rdfs:label \"section title\"@en ;"
+            },
+            {
+              "line_1based": 1241,
+              "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+            },
+            {
+              "line_1based": 1242,
+              "text": "    rdfs:domain tdoc:Section ;"
+            }
+          ],
+          "source_pin": {
+            "bytes": 71963,
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+          }
+        },
+        {
+          "actual_lines": [
+            {
+              "line_1based": 57,
+              "text": "    ## 2. Scope 정의"
+            },
+            {
+              "line_1based": 58,
+              "text": "    "
+            },
+            {
+              "line_1based": 59,
+              "text": "    ### 2.1 포함 (In Scope)"
+            },
+            {
+              "line_1based": 60,
+              "text": "    "
+            },
+            {
+              "line_1based": 61,
+              "text": "    | 구분 | 포함 대상 |"
+            },
+            {
+              "line_1based": 62,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 63,
+              "text": "    | **TS 문서** | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |"
+            },
+            {
+              "line_1based": 64,
+              "text": "    | **Section 구조** | 본문 + Annex, 6레벨까지 |"
+            },
+            {
+              "line_1based": 65,
+              "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 66,
+              "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 67,
+              "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+            },
+            {
+              "line_1based": 68,
+              "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+            },
+            {
+              "line_1based": 69,
+              "text": "    "
+            },
+            {
+              "line_1based": 70,
+              "text": "    ### 2.2 제외 (Out of Scope)"
+            },
+            {
+              "line_1based": 71,
+              "text": "    "
+            },
+            {
+              "line_1based": 72,
+              "text": "    | 제외 대상 | 이유 |"
+            },
+            {
+              "line_1based": 73,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 74,
+              "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 75,
+              "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 136,
+              "text": "    | # | Competency Question |"
+            },
+            {
+              "line_1based": 137,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 138,
+              "text": "    | 2-1 | 특정 Section이 참조하는 다른 TS Section 목록은? |"
+            },
+            {
+              "line_1based": 139,
+              "text": "    | 2-2 | 특정 Section을 참조하는 다른 TS Section 목록은? (역참조) |"
+            },
+            {
+              "line_1based": 140,
+              "text": "    | 2-3 | 특정 TS가 가장 많이 참조하는 다른 TS는? |"
+            },
+            {
+              "line_1based": 141,
+              "text": "    | 2-4 | 가장 많이 참조되는 Section Top N은? |"
+            },
+            {
+              "line_1based": 142,
+              "text": "    | 2-5 | 두 TS 간 참조 관계 요약은? |"
+            },
+            {
+              "line_1based": 143,
+              "text": "    "
+            },
+            {
+              "line_1based": 144,
+              "text": "    ### CQ3. CR → TS 연결"
+            },
+            {
+              "line_1based": 590,
+              "text": "    | 1-10 | TSTable, tableNumber, Section |"
+            },
+            {
+              "line_1based": 591,
+              "text": "    "
+            },
+            {
+              "line_1based": 592,
+              "text": "    ### CQ2: TS 간 참조 분석"
+            },
+            {
+              "line_1based": 593,
+              "text": "    "
+            },
+            {
+              "line_1based": 594,
+              "text": "    | CQ | 필요 용어 |"
+            },
+            {
+              "line_1based": 595,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 596,
+              "text": "    | 2-1 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 597,
+              "text": "    | 2-2 | Section, referencesSection (역방향) |"
+            },
+            {
+              "line_1based": 598,
+              "text": "    | 2-3 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 599,
+              "text": "    | 2-4 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 600,
+              "text": "    | 2-5 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 601,
+              "text": "    "
+            },
+            {
+              "line_1based": 1209,
+              "text": "    | --- | --- | --- | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1210,
+              "text": "    | belongsToSpec | Section | Spec | 1 | ✅ | hasSection | — |"
+            },
+            {
+              "line_1based": 1211,
+              "text": "    | hasSubSection | Section | Section | 0..* | ❌ | parentSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1212,
+              "text": "    | parentSection | Section | Section | 0..1 | ✅ | hasSubSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1213,
+              "text": "    | referencesSection | Section | Section | 0..* | ❌ | referencedBySection | Irreflexive |"
+            },
+            {
+              "line_1based": 1214,
+              "text": "    | referencedBySection | Section | Section | 0..* | ❌ | referencesSection | Irreflexive |"
+            },
+            {
+              "line_1based": 1215,
+              "text": "    | referencesSpec | Section | Spec | 0..* | ❌ | — | — |"
+            },
+            {
+              "line_1based": 1216,
+              "text": "    | containsTable | Section | TSTable | 0..* | ❌ | tableInSection | — |"
+            },
+            {
+              "line_1based": 1217,
+              "text": "    | containsFigure | Section | TSFigure | 0..* | ❌ | figureInSection | — |"
+            },
+            {
+              "line_1based": 1218,
+              "text": "    "
+            },
+            {
+              "line_1based": 1219,
+              "text": "    ### 특성 설명"
+            },
+            {
+              "line_1based": 1220,
+              "text": "    "
+            },
+            {
+              "line_1based": 1221,
+              "text": "    | Property | 특성 | 이유 |"
+            },
+            {
+              "line_1based": 1222,
+              "text": "    | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1223,
+              "text": "    | hasSubSection | Irreflexive | Section이 자기 자신의 하위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1224,
+              "text": "    | hasSubSection | Asymmetric | A가 B의 부모면 B는 A의 부모가 아님 |"
+            },
+            {
+              "line_1based": 1225,
+              "text": "    | parentSection | Irreflexive | Section이 자기 자신의 상위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1226,
+              "text": "    | parentSection | Asymmetric | A가 B의 자식이면 B는 A의 자식이 아님 |"
+            },
+            {
+              "line_1based": 1227,
+              "text": "    | referencesSection | Irreflexive | Section이 자기 자신을 참조하는 것은 무의미 |"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    | referencesSection | NOT Asymmetric | 두 Section이 서로 참조 가능 (상호 참조) |"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    | hasSubSection | NOT Transitive | 직접 하위만 연결 (손자는 체인으로) |"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    "
+            },
+            {
+              "line_1based": 1231,
+              "text": "    ---"
+            },
+            {
+              "line_1based": 1232,
+              "text": "    "
+            },
+            {
+              "line_1based": 1532,
+              "text": "    "
+            },
+            {
+              "line_1based": 1533,
+              "text": "    ### 4.4 참조 패턴 (referencesSection, referencesSpec)"
+            },
+            {
+              "line_1based": 1534,
+              "text": "    "
+            },
+            {
+              "line_1based": 1535,
+              "text": "    **본문 패턴**:"
+            },
+            {
+              "line_1based": 1536,
+              "text": "    "
+            },
+            {
+              "line_1based": 1537,
+              "text": "    | 패턴 | 정규식 | 예시 | 추출 결과 |"
+            },
+            {
+              "line_1based": 1538,
+              "text": "    | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1539,
+              "text": "    | clause X.X.X | `clause\\s+(\\d+(?:\\.\\d+)*)` | \"clause 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1540,
+              "text": "    | subclause X.X.X | `subclause\\s+(\\d+(?:\\.\\d+)*)` | \"subclause 7.4.1.1\" | 7.4.1.1 |"
+            },
+            {
+              "line_1based": 1541,
+              "text": "    | Section X.X.X | `Section\\s+(\\d+(?:\\.\\d+)*)` | \"Section 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1542,
+              "text": "    | Annex X | `Annex\\s+([A-Z](?:\\.\\d+)*)` | \"Annex A.1\" | A.1 |"
+            },
+            {
+              "line_1based": 1543,
+              "text": "    | TS 38.XXX clause X.X | `TS\\s+38\\.(\\d{3})\\s+clause\\s+(\\d+(?:\\.\\d+)*)` | \"TS 38.211 clause 6.3.2\" | 38.211-{release}-6.3.2 (source와 동일 release) |"
+            },
+            {
+              "line_1based": 1544,
+              "text": "    | TS [38.XXX](http://38.xxx/) (TS-only) | `TS\\\\s+38\\\\.(\\\\d{3})` (clause 없음) | \"TS 38.214” | → referencesSpec (Section→Spec) |"
+            },
+            {
+              "line_1based": 1545,
+              "text": "    "
+            },
+            {
+              "line_1based": 1546,
+              "text": "    **참조 대상 결정**:"
+            },
+            {
+              "line_1based": 1547,
+              "text": "    "
+            },
+            {
+              "line_1based": 1548,
+              "text": "    | 참조 유형 | 대상 결정 |"
+            },
+            {
+              "line_1based": 1549,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1550,
+              "text": "    | 같은 TS 내 | 현재 specNumber + **source release** + 추출된 sectionNumber |"
+            },
+            {
+              "line_1based": 1551,
+              "text": "    | 다른 TS | 추출된 specNumber + **source release** + 추출된 sectionNumber (cross-release 참조 누수 0 = R4) |"
+            },
+            {
+              "line_1based": 1552,
+              "text": "    | 다른 TS (clause 없음, TS-only) | 추출된 specNumber + **source release** → (specNumber, release) Spec 노드와 referencesSpec 관계 생성. 자기 TS 제외, Scope 내 TS만 대상 |"
+            },
+            {
+              "line_1based": 1553,
+              "text": ""
+            },
+            {
+              "line_1based": 1554,
+              "text": "    > release-aware cross-release 정책: 참조 대상 sectionId/Spec은 항상 **source Section과 동일 release**로 결정한다(Rel-15 본문의 참조는 Rel-15 대상으로만 연결). 이는 검증 R4(cross-release reference leak 0)로 강제된다."
+            },
+            {
+              "line_1based": 1555,
+              "text": "    "
+            },
+            {
+              "line_1based": 1556,
+              "text": "    **참조 생성 시 주의사항**:"
+            },
+            {
+              "line_1based": 1557,
+              "text": "    "
+            },
+            {
+              "line_1based": 1558,
+              "text": "    | 주의사항 | 처리 |"
+            },
+            {
+              "line_1based": 1559,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1560,
+              "text": "    | 대상 Section 없음 | 관계 생성 안 함 (로그 기록) |"
+            },
+            {
+              "line_1based": 1561,
+              "text": "    | 자기 자신 참조 | 무시 (Irreflexive) |"
+            },
+            {
+              "line_1based": 1562,
+              "text": "    | Scope 외 TS 참조 | 관계 생성 안 함 (Scope 내 TS만 대상) |"
+            },
+            {
+              "line_1based": 1563,
+              "text": "    | TS-only 참조 | referencesSpec 관계 생성 (Section→Spec). referencesSection과 별개 |"
+            }
+          ],
+          "source_pin": {
+            "bytes": 91818,
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+          }
+        }
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)",
+      "finding": "From named38.214exactclause5.1, src→REFERENCES_SECTION→mid→REFERENCES_SECTION→end gives exactlytwo directedreference hops. At-mosttwo or reversed incoming edges change the requested relation. Original design explicitly says referencesSection is not asymmetric because mutualreferences may occur; an endpoint reached by a genuine two-edge cycle remainseligible, including the startingSection if recorded. No arbitrary acyclic/end≠start filter is added, and hierarchy/TS-only relations are not substituted.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (src)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section)",
+        "RETURN DISTINCT end.sectionId AS sectionId"
+      ],
+      "source_excerpts": [
+        {
+          "actual_lines": [
+            {
+              "line_1based": 150,
+              "text": ""
+            },
+            {
+              "line_1based": 151,
+              "text": "tdoc:Spec a owl:Class ;"
+            },
+            {
+              "line_1based": 152,
+              "text": "    rdfs:label \"Specification\"@en ;"
+            },
+            {
+              "line_1based": 153,
+              "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+            },
+            {
+              "line_1based": 154,
+              "text": ""
+            },
+            {
+              "line_1based": 284,
+              "text": ""
+            },
+            {
+              "line_1based": 285,
+              "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 286,
+              "text": "    rdfs:label \"spec in release\"@en ;"
+            },
+            {
+              "line_1based": 287,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+            },
+            {
+              "line_1based": 288,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 289,
+              "text": "    rdfs:range tdoc:Release ."
+            },
+            {
+              "line_1based": 290,
+              "text": ""
+            },
+            {
+              "line_1based": 291,
+              "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 292,
+              "text": "    rdfs:label \"in release of\"@en ;"
+            },
+            {
+              "line_1based": 293,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+            },
+            {
+              "line_1based": 294,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 295,
+              "text": "    rdfs:range tdoc:Spec ."
+            },
+            {
+              "line_1based": 296,
+              "text": ""
+            },
+            {
+              "line_1based": 297,
+              "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+            },
+            {
+              "line_1based": 298,
+              "text": "    rdfs:label \"has release variant\"@en ;"
+            },
+            {
+              "line_1based": 299,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+            },
+            {
+              "line_1based": 300,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 301,
+              "text": "    rdfs:range tdoc:Spec ;"
+            },
+            {
+              "line_1based": 477,
+              "text": ""
+            },
+            {
+              "line_1based": 478,
+              "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 479,
+              "text": "    rdfs:label \"has sub-section\"@en ;"
+            },
+            {
+              "line_1based": 480,
+              "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+            },
+            {
+              "line_1based": 481,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 482,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 483,
+              "text": "    owl:inverseOf tdoc:parentSection ."
+            },
+            {
+              "line_1based": 484,
+              "text": ""
+            },
+            {
+              "line_1based": 485,
+              "text": "tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 486,
+              "text": "    rdfs:label \"parent section\"@en ;"
+            },
+            {
+              "line_1based": 487,
+              "text": "    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;"
+            },
+            {
+              "line_1based": 488,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 489,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 490,
+              "text": "    owl:inverseOf tdoc:hasSubSection ."
+            },
+            {
+              "line_1based": 491,
+              "text": ""
+            },
+            {
+              "line_1based": 492,
+              "text": "tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 493,
+              "text": "    rdfs:label \"references section\"@en ;"
+            },
+            {
+              "line_1based": 494,
+              "text": "    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;"
+            },
+            {
+              "line_1based": 495,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 496,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 497,
+              "text": "    owl:inverseOf tdoc:referencedBySection ."
+            },
+            {
+              "line_1based": 498,
+              "text": ""
+            },
+            {
+              "line_1based": 499,
+              "text": "tdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 500,
+              "text": "    rdfs:label \"referenced by section\"@en ;"
+            },
+            {
+              "line_1based": 501,
+              "text": "    rdfs:comment \"Section(s) that reference this Section\"@en ;"
+            },
+            {
+              "line_1based": 502,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 503,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 504,
+              "text": "    owl:inverseOf tdoc:referencesSection ."
+            },
+            {
+              "line_1based": 505,
+              "text": ""
+            },
+            {
+              "line_1based": 1227,
+              "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    rdfs:label \"section ID\"@en ;"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1231,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1232,
+              "text": ""
+            },
+            {
+              "line_1based": 1233,
+              "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1234,
+              "text": "    rdfs:label \"section number\"@en ;"
+            },
+            {
+              "line_1based": 1235,
+              "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+            },
+            {
+              "line_1based": 1236,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1237,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1238,
+              "text": ""
+            },
+            {
+              "line_1based": 1239,
+              "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1240,
+              "text": "    rdfs:label \"section title\"@en ;"
+            },
+            {
+              "line_1based": 1241,
+              "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+            },
+            {
+              "line_1based": 1242,
+              "text": "    rdfs:domain tdoc:Section ;"
+            }
+          ],
+          "source_pin": {
+            "bytes": 71963,
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+          }
+        },
+        {
+          "actual_lines": [
+            {
+              "line_1based": 57,
+              "text": "    ## 2. Scope 정의"
+            },
+            {
+              "line_1based": 58,
+              "text": "    "
+            },
+            {
+              "line_1based": 59,
+              "text": "    ### 2.1 포함 (In Scope)"
+            },
+            {
+              "line_1based": 60,
+              "text": "    "
+            },
+            {
+              "line_1based": 61,
+              "text": "    | 구분 | 포함 대상 |"
+            },
+            {
+              "line_1based": 62,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 63,
+              "text": "    | **TS 문서** | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |"
+            },
+            {
+              "line_1based": 64,
+              "text": "    | **Section 구조** | 본문 + Annex, 6레벨까지 |"
+            },
+            {
+              "line_1based": 65,
+              "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 66,
+              "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 67,
+              "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+            },
+            {
+              "line_1based": 68,
+              "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+            },
+            {
+              "line_1based": 69,
+              "text": "    "
+            },
+            {
+              "line_1based": 70,
+              "text": "    ### 2.2 제외 (Out of Scope)"
+            },
+            {
+              "line_1based": 71,
+              "text": "    "
+            },
+            {
+              "line_1based": 72,
+              "text": "    | 제외 대상 | 이유 |"
+            },
+            {
+              "line_1based": 73,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 74,
+              "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 75,
+              "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 136,
+              "text": "    | # | Competency Question |"
+            },
+            {
+              "line_1based": 137,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 138,
+              "text": "    | 2-1 | 특정 Section이 참조하는 다른 TS Section 목록은? |"
+            },
+            {
+              "line_1based": 139,
+              "text": "    | 2-2 | 특정 Section을 참조하는 다른 TS Section 목록은? (역참조) |"
+            },
+            {
+              "line_1based": 140,
+              "text": "    | 2-3 | 특정 TS가 가장 많이 참조하는 다른 TS는? |"
+            },
+            {
+              "line_1based": 141,
+              "text": "    | 2-4 | 가장 많이 참조되는 Section Top N은? |"
+            },
+            {
+              "line_1based": 142,
+              "text": "    | 2-5 | 두 TS 간 참조 관계 요약은? |"
+            },
+            {
+              "line_1based": 143,
+              "text": "    "
+            },
+            {
+              "line_1based": 144,
+              "text": "    ### CQ3. CR → TS 연결"
+            },
+            {
+              "line_1based": 590,
+              "text": "    | 1-10 | TSTable, tableNumber, Section |"
+            },
+            {
+              "line_1based": 591,
+              "text": "    "
+            },
+            {
+              "line_1based": 592,
+              "text": "    ### CQ2: TS 간 참조 분석"
+            },
+            {
+              "line_1based": 593,
+              "text": "    "
+            },
+            {
+              "line_1based": 594,
+              "text": "    | CQ | 필요 용어 |"
+            },
+            {
+              "line_1based": 595,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 596,
+              "text": "    | 2-1 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 597,
+              "text": "    | 2-2 | Section, referencesSection (역방향) |"
+            },
+            {
+              "line_1based": 598,
+              "text": "    | 2-3 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 599,
+              "text": "    | 2-4 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 600,
+              "text": "    | 2-5 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 601,
+              "text": "    "
+            },
+            {
+              "line_1based": 1209,
+              "text": "    | --- | --- | --- | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1210,
+              "text": "    | belongsToSpec | Section | Spec | 1 | ✅ | hasSection | — |"
+            },
+            {
+              "line_1based": 1211,
+              "text": "    | hasSubSection | Section | Section | 0..* | ❌ | parentSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1212,
+              "text": "    | parentSection | Section | Section | 0..1 | ✅ | hasSubSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1213,
+              "text": "    | referencesSection | Section | Section | 0..* | ❌ | referencedBySection | Irreflexive |"
+            },
+            {
+              "line_1based": 1214,
+              "text": "    | referencedBySection | Section | Section | 0..* | ❌ | referencesSection | Irreflexive |"
+            },
+            {
+              "line_1based": 1215,
+              "text": "    | referencesSpec | Section | Spec | 0..* | ❌ | — | — |"
+            },
+            {
+              "line_1based": 1216,
+              "text": "    | containsTable | Section | TSTable | 0..* | ❌ | tableInSection | — |"
+            },
+            {
+              "line_1based": 1217,
+              "text": "    | containsFigure | Section | TSFigure | 0..* | ❌ | figureInSection | — |"
+            },
+            {
+              "line_1based": 1218,
+              "text": "    "
+            },
+            {
+              "line_1based": 1219,
+              "text": "    ### 특성 설명"
+            },
+            {
+              "line_1based": 1220,
+              "text": "    "
+            },
+            {
+              "line_1based": 1221,
+              "text": "    | Property | 특성 | 이유 |"
+            },
+            {
+              "line_1based": 1222,
+              "text": "    | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1223,
+              "text": "    | hasSubSection | Irreflexive | Section이 자기 자신의 하위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1224,
+              "text": "    | hasSubSection | Asymmetric | A가 B의 부모면 B는 A의 부모가 아님 |"
+            },
+            {
+              "line_1based": 1225,
+              "text": "    | parentSection | Irreflexive | Section이 자기 자신의 상위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1226,
+              "text": "    | parentSection | Asymmetric | A가 B의 자식이면 B는 A의 자식이 아님 |"
+            },
+            {
+              "line_1based": 1227,
+              "text": "    | referencesSection | Irreflexive | Section이 자기 자신을 참조하는 것은 무의미 |"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    | referencesSection | NOT Asymmetric | 두 Section이 서로 참조 가능 (상호 참조) |"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    | hasSubSection | NOT Transitive | 직접 하위만 연결 (손자는 체인으로) |"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    "
+            },
+            {
+              "line_1based": 1231,
+              "text": "    ---"
+            },
+            {
+              "line_1based": 1232,
+              "text": "    "
+            },
+            {
+              "line_1based": 1532,
+              "text": "    "
+            },
+            {
+              "line_1based": 1533,
+              "text": "    ### 4.4 참조 패턴 (referencesSection, referencesSpec)"
+            },
+            {
+              "line_1based": 1534,
+              "text": "    "
+            },
+            {
+              "line_1based": 1535,
+              "text": "    **본문 패턴**:"
+            },
+            {
+              "line_1based": 1536,
+              "text": "    "
+            },
+            {
+              "line_1based": 1537,
+              "text": "    | 패턴 | 정규식 | 예시 | 추출 결과 |"
+            },
+            {
+              "line_1based": 1538,
+              "text": "    | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1539,
+              "text": "    | clause X.X.X | `clause\\s+(\\d+(?:\\.\\d+)*)` | \"clause 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1540,
+              "text": "    | subclause X.X.X | `subclause\\s+(\\d+(?:\\.\\d+)*)` | \"subclause 7.4.1.1\" | 7.4.1.1 |"
+            },
+            {
+              "line_1based": 1541,
+              "text": "    | Section X.X.X | `Section\\s+(\\d+(?:\\.\\d+)*)` | \"Section 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1542,
+              "text": "    | Annex X | `Annex\\s+([A-Z](?:\\.\\d+)*)` | \"Annex A.1\" | A.1 |"
+            },
+            {
+              "line_1based": 1543,
+              "text": "    | TS 38.XXX clause X.X | `TS\\s+38\\.(\\d{3})\\s+clause\\s+(\\d+(?:\\.\\d+)*)` | \"TS 38.211 clause 6.3.2\" | 38.211-{release}-6.3.2 (source와 동일 release) |"
+            },
+            {
+              "line_1based": 1544,
+              "text": "    | TS [38.XXX](http://38.xxx/) (TS-only) | `TS\\\\s+38\\\\.(\\\\d{3})` (clause 없음) | \"TS 38.214” | → referencesSpec (Section→Spec) |"
+            },
+            {
+              "line_1based": 1545,
+              "text": "    "
+            },
+            {
+              "line_1based": 1546,
+              "text": "    **참조 대상 결정**:"
+            },
+            {
+              "line_1based": 1547,
+              "text": "    "
+            },
+            {
+              "line_1based": 1548,
+              "text": "    | 참조 유형 | 대상 결정 |"
+            },
+            {
+              "line_1based": 1549,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1550,
+              "text": "    | 같은 TS 내 | 현재 specNumber + **source release** + 추출된 sectionNumber |"
+            },
+            {
+              "line_1based": 1551,
+              "text": "    | 다른 TS | 추출된 specNumber + **source release** + 추출된 sectionNumber (cross-release 참조 누수 0 = R4) |"
+            },
+            {
+              "line_1based": 1552,
+              "text": "    | 다른 TS (clause 없음, TS-only) | 추출된 specNumber + **source release** → (specNumber, release) Spec 노드와 referencesSpec 관계 생성. 자기 TS 제외, Scope 내 TS만 대상 |"
+            },
+            {
+              "line_1based": 1553,
+              "text": ""
+            },
+            {
+              "line_1based": 1554,
+              "text": "    > release-aware cross-release 정책: 참조 대상 sectionId/Spec은 항상 **source Section과 동일 release**로 결정한다(Rel-15 본문의 참조는 Rel-15 대상으로만 연결). 이는 검증 R4(cross-release reference leak 0)로 강제된다."
+            },
+            {
+              "line_1based": 1555,
+              "text": "    "
+            },
+            {
+              "line_1based": 1556,
+              "text": "    **참조 생성 시 주의사항**:"
+            },
+            {
+              "line_1based": 1557,
+              "text": "    "
+            },
+            {
+              "line_1based": 1558,
+              "text": "    | 주의사항 | 처리 |"
+            },
+            {
+              "line_1based": 1559,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1560,
+              "text": "    | 대상 Section 없음 | 관계 생성 안 함 (로그 기록) |"
+            },
+            {
+              "line_1based": 1561,
+              "text": "    | 자기 자신 참조 | 무시 (Irreflexive) |"
+            },
+            {
+              "line_1based": 1562,
+              "text": "    | Scope 외 TS 참조 | 관계 생성 안 함 (Scope 내 TS만 대상) |"
+            },
+            {
+              "line_1based": 1563,
+              "text": "    | TS-only 참조 | referencesSpec 관계 생성 (Section→Spec). referencesSection과 별개 |"
+            }
+          ],
+          "source_pin": {
+            "bytes": 91818,
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+          }
+        }
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)",
+      "finding": "One distinct reached endSection identity is one member. Multiple intermediate witnesses or source-anchor releases can reach it and are deduplicated by DISTINCTend.sectionId. MidSection remainsprovenance, not an additional requiredanswer role. Source irreflexive references prohibit self-edge semantics; two distinct directededges forming a mutualcycle are compatible with the original graph definition.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (src)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section)",
+        "RETURN DISTINCT end.sectionId AS sectionId"
+      ],
+      "source_excerpts": [
+        {
+          "actual_lines": [
+            {
+              "line_1based": 150,
+              "text": ""
+            },
+            {
+              "line_1based": 151,
+              "text": "tdoc:Spec a owl:Class ;"
+            },
+            {
+              "line_1based": 152,
+              "text": "    rdfs:label \"Specification\"@en ;"
+            },
+            {
+              "line_1based": 153,
+              "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+            },
+            {
+              "line_1based": 154,
+              "text": ""
+            },
+            {
+              "line_1based": 284,
+              "text": ""
+            },
+            {
+              "line_1based": 285,
+              "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 286,
+              "text": "    rdfs:label \"spec in release\"@en ;"
+            },
+            {
+              "line_1based": 287,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+            },
+            {
+              "line_1based": 288,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 289,
+              "text": "    rdfs:range tdoc:Release ."
+            },
+            {
+              "line_1based": 290,
+              "text": ""
+            },
+            {
+              "line_1based": 291,
+              "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 292,
+              "text": "    rdfs:label \"in release of\"@en ;"
+            },
+            {
+              "line_1based": 293,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+            },
+            {
+              "line_1based": 294,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 295,
+              "text": "    rdfs:range tdoc:Spec ."
+            },
+            {
+              "line_1based": 296,
+              "text": ""
+            },
+            {
+              "line_1based": 297,
+              "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+            },
+            {
+              "line_1based": 298,
+              "text": "    rdfs:label \"has release variant\"@en ;"
+            },
+            {
+              "line_1based": 299,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+            },
+            {
+              "line_1based": 300,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 301,
+              "text": "    rdfs:range tdoc:Spec ;"
+            },
+            {
+              "line_1based": 477,
+              "text": ""
+            },
+            {
+              "line_1based": 478,
+              "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 479,
+              "text": "    rdfs:label \"has sub-section\"@en ;"
+            },
+            {
+              "line_1based": 480,
+              "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+            },
+            {
+              "line_1based": 481,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 482,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 483,
+              "text": "    owl:inverseOf tdoc:parentSection ."
+            },
+            {
+              "line_1based": 484,
+              "text": ""
+            },
+            {
+              "line_1based": 485,
+              "text": "tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 486,
+              "text": "    rdfs:label \"parent section\"@en ;"
+            },
+            {
+              "line_1based": 487,
+              "text": "    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;"
+            },
+            {
+              "line_1based": 488,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 489,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 490,
+              "text": "    owl:inverseOf tdoc:hasSubSection ."
+            },
+            {
+              "line_1based": 491,
+              "text": ""
+            },
+            {
+              "line_1based": 492,
+              "text": "tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 493,
+              "text": "    rdfs:label \"references section\"@en ;"
+            },
+            {
+              "line_1based": 494,
+              "text": "    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;"
+            },
+            {
+              "line_1based": 495,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 496,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 497,
+              "text": "    owl:inverseOf tdoc:referencedBySection ."
+            },
+            {
+              "line_1based": 498,
+              "text": ""
+            },
+            {
+              "line_1based": 499,
+              "text": "tdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 500,
+              "text": "    rdfs:label \"referenced by section\"@en ;"
+            },
+            {
+              "line_1based": 501,
+              "text": "    rdfs:comment \"Section(s) that reference this Section\"@en ;"
+            },
+            {
+              "line_1based": 502,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 503,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 504,
+              "text": "    owl:inverseOf tdoc:referencesSection ."
+            },
+            {
+              "line_1based": 505,
+              "text": ""
+            },
+            {
+              "line_1based": 1227,
+              "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    rdfs:label \"section ID\"@en ;"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1231,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1232,
+              "text": ""
+            },
+            {
+              "line_1based": 1233,
+              "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1234,
+              "text": "    rdfs:label \"section number\"@en ;"
+            },
+            {
+              "line_1based": 1235,
+              "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+            },
+            {
+              "line_1based": 1236,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1237,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1238,
+              "text": ""
+            },
+            {
+              "line_1based": 1239,
+              "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1240,
+              "text": "    rdfs:label \"section title\"@en ;"
+            },
+            {
+              "line_1based": 1241,
+              "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+            },
+            {
+              "line_1based": 1242,
+              "text": "    rdfs:domain tdoc:Section ;"
+            }
+          ],
+          "source_pin": {
+            "bytes": 71963,
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+          }
+        },
+        {
+          "actual_lines": [
+            {
+              "line_1based": 57,
+              "text": "    ## 2. Scope 정의"
+            },
+            {
+              "line_1based": 58,
+              "text": "    "
+            },
+            {
+              "line_1based": 59,
+              "text": "    ### 2.1 포함 (In Scope)"
+            },
+            {
+              "line_1based": 60,
+              "text": "    "
+            },
+            {
+              "line_1based": 61,
+              "text": "    | 구분 | 포함 대상 |"
+            },
+            {
+              "line_1based": 62,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 63,
+              "text": "    | **TS 문서** | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |"
+            },
+            {
+              "line_1based": 64,
+              "text": "    | **Section 구조** | 본문 + Annex, 6레벨까지 |"
+            },
+            {
+              "line_1based": 65,
+              "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 66,
+              "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 67,
+              "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+            },
+            {
+              "line_1based": 68,
+              "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+            },
+            {
+              "line_1based": 69,
+              "text": "    "
+            },
+            {
+              "line_1based": 70,
+              "text": "    ### 2.2 제외 (Out of Scope)"
+            },
+            {
+              "line_1based": 71,
+              "text": "    "
+            },
+            {
+              "line_1based": 72,
+              "text": "    | 제외 대상 | 이유 |"
+            },
+            {
+              "line_1based": 73,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 74,
+              "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 75,
+              "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 136,
+              "text": "    | # | Competency Question |"
+            },
+            {
+              "line_1based": 137,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 138,
+              "text": "    | 2-1 | 특정 Section이 참조하는 다른 TS Section 목록은? |"
+            },
+            {
+              "line_1based": 139,
+              "text": "    | 2-2 | 특정 Section을 참조하는 다른 TS Section 목록은? (역참조) |"
+            },
+            {
+              "line_1based": 140,
+              "text": "    | 2-3 | 특정 TS가 가장 많이 참조하는 다른 TS는? |"
+            },
+            {
+              "line_1based": 141,
+              "text": "    | 2-4 | 가장 많이 참조되는 Section Top N은? |"
+            },
+            {
+              "line_1based": 142,
+              "text": "    | 2-5 | 두 TS 간 참조 관계 요약은? |"
+            },
+            {
+              "line_1based": 143,
+              "text": "    "
+            },
+            {
+              "line_1based": 144,
+              "text": "    ### CQ3. CR → TS 연결"
+            },
+            {
+              "line_1based": 590,
+              "text": "    | 1-10 | TSTable, tableNumber, Section |"
+            },
+            {
+              "line_1based": 591,
+              "text": "    "
+            },
+            {
+              "line_1based": 592,
+              "text": "    ### CQ2: TS 간 참조 분석"
+            },
+            {
+              "line_1based": 593,
+              "text": "    "
+            },
+            {
+              "line_1based": 594,
+              "text": "    | CQ | 필요 용어 |"
+            },
+            {
+              "line_1based": 595,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 596,
+              "text": "    | 2-1 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 597,
+              "text": "    | 2-2 | Section, referencesSection (역방향) |"
+            },
+            {
+              "line_1based": 598,
+              "text": "    | 2-3 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 599,
+              "text": "    | 2-4 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 600,
+              "text": "    | 2-5 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 601,
+              "text": "    "
+            },
+            {
+              "line_1based": 1209,
+              "text": "    | --- | --- | --- | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1210,
+              "text": "    | belongsToSpec | Section | Spec | 1 | ✅ | hasSection | — |"
+            },
+            {
+              "line_1based": 1211,
+              "text": "    | hasSubSection | Section | Section | 0..* | ❌ | parentSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1212,
+              "text": "    | parentSection | Section | Section | 0..1 | ✅ | hasSubSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1213,
+              "text": "    | referencesSection | Section | Section | 0..* | ❌ | referencedBySection | Irreflexive |"
+            },
+            {
+              "line_1based": 1214,
+              "text": "    | referencedBySection | Section | Section | 0..* | ❌ | referencesSection | Irreflexive |"
+            },
+            {
+              "line_1based": 1215,
+              "text": "    | referencesSpec | Section | Spec | 0..* | ❌ | — | — |"
+            },
+            {
+              "line_1based": 1216,
+              "text": "    | containsTable | Section | TSTable | 0..* | ❌ | tableInSection | — |"
+            },
+            {
+              "line_1based": 1217,
+              "text": "    | containsFigure | Section | TSFigure | 0..* | ❌ | figureInSection | — |"
+            },
+            {
+              "line_1based": 1218,
+              "text": "    "
+            },
+            {
+              "line_1based": 1219,
+              "text": "    ### 특성 설명"
+            },
+            {
+              "line_1based": 1220,
+              "text": "    "
+            },
+            {
+              "line_1based": 1221,
+              "text": "    | Property | 특성 | 이유 |"
+            },
+            {
+              "line_1based": 1222,
+              "text": "    | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1223,
+              "text": "    | hasSubSection | Irreflexive | Section이 자기 자신의 하위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1224,
+              "text": "    | hasSubSection | Asymmetric | A가 B의 부모면 B는 A의 부모가 아님 |"
+            },
+            {
+              "line_1based": 1225,
+              "text": "    | parentSection | Irreflexive | Section이 자기 자신의 상위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1226,
+              "text": "    | parentSection | Asymmetric | A가 B의 자식이면 B는 A의 자식이 아님 |"
+            },
+            {
+              "line_1based": 1227,
+              "text": "    | referencesSection | Irreflexive | Section이 자기 자신을 참조하는 것은 무의미 |"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    | referencesSection | NOT Asymmetric | 두 Section이 서로 참조 가능 (상호 참조) |"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    | hasSubSection | NOT Transitive | 직접 하위만 연결 (손자는 체인으로) |"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    "
+            },
+            {
+              "line_1based": 1231,
+              "text": "    ---"
+            },
+            {
+              "line_1based": 1232,
+              "text": "    "
+            },
+            {
+              "line_1based": 1532,
+              "text": "    "
+            },
+            {
+              "line_1based": 1533,
+              "text": "    ### 4.4 참조 패턴 (referencesSection, referencesSpec)"
+            },
+            {
+              "line_1based": 1534,
+              "text": "    "
+            },
+            {
+              "line_1based": 1535,
+              "text": "    **본문 패턴**:"
+            },
+            {
+              "line_1based": 1536,
+              "text": "    "
+            },
+            {
+              "line_1based": 1537,
+              "text": "    | 패턴 | 정규식 | 예시 | 추출 결과 |"
+            },
+            {
+              "line_1based": 1538,
+              "text": "    | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1539,
+              "text": "    | clause X.X.X | `clause\\s+(\\d+(?:\\.\\d+)*)` | \"clause 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1540,
+              "text": "    | subclause X.X.X | `subclause\\s+(\\d+(?:\\.\\d+)*)` | \"subclause 7.4.1.1\" | 7.4.1.1 |"
+            },
+            {
+              "line_1based": 1541,
+              "text": "    | Section X.X.X | `Section\\s+(\\d+(?:\\.\\d+)*)` | \"Section 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1542,
+              "text": "    | Annex X | `Annex\\s+([A-Z](?:\\.\\d+)*)` | \"Annex A.1\" | A.1 |"
+            },
+            {
+              "line_1based": 1543,
+              "text": "    | TS 38.XXX clause X.X | `TS\\s+38\\.(\\d{3})\\s+clause\\s+(\\d+(?:\\.\\d+)*)` | \"TS 38.211 clause 6.3.2\" | 38.211-{release}-6.3.2 (source와 동일 release) |"
+            },
+            {
+              "line_1based": 1544,
+              "text": "    | TS [38.XXX](http://38.xxx/) (TS-only) | `TS\\\\s+38\\\\.(\\\\d{3})` (clause 없음) | \"TS 38.214” | → referencesSpec (Section→Spec) |"
+            },
+            {
+              "line_1based": 1545,
+              "text": "    "
+            },
+            {
+              "line_1based": 1546,
+              "text": "    **참조 대상 결정**:"
+            },
+            {
+              "line_1based": 1547,
+              "text": "    "
+            },
+            {
+              "line_1based": 1548,
+              "text": "    | 참조 유형 | 대상 결정 |"
+            },
+            {
+              "line_1based": 1549,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1550,
+              "text": "    | 같은 TS 내 | 현재 specNumber + **source release** + 추출된 sectionNumber |"
+            },
+            {
+              "line_1based": 1551,
+              "text": "    | 다른 TS | 추출된 specNumber + **source release** + 추출된 sectionNumber (cross-release 참조 누수 0 = R4) |"
+            },
+            {
+              "line_1based": 1552,
+              "text": "    | 다른 TS (clause 없음, TS-only) | 추출된 specNumber + **source release** → (specNumber, release) Spec 노드와 referencesSpec 관계 생성. 자기 TS 제외, Scope 내 TS만 대상 |"
+            },
+            {
+              "line_1based": 1553,
+              "text": ""
+            },
+            {
+              "line_1based": 1554,
+              "text": "    > release-aware cross-release 정책: 참조 대상 sectionId/Spec은 항상 **source Section과 동일 release**로 결정한다(Rel-15 본문의 참조는 Rel-15 대상으로만 연결). 이는 검증 R4(cross-release reference leak 0)로 강제된다."
+            },
+            {
+              "line_1based": 1555,
+              "text": "    "
+            },
+            {
+              "line_1based": 1556,
+              "text": "    **참조 생성 시 주의사항**:"
+            },
+            {
+              "line_1based": 1557,
+              "text": "    "
+            },
+            {
+              "line_1based": 1558,
+              "text": "    | 주의사항 | 처리 |"
+            },
+            {
+              "line_1based": 1559,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1560,
+              "text": "    | 대상 Section 없음 | 관계 생성 안 함 (로그 기록) |"
+            },
+            {
+              "line_1based": 1561,
+              "text": "    | 자기 자신 참조 | 무시 (Irreflexive) |"
+            },
+            {
+              "line_1based": 1562,
+              "text": "    | Scope 외 TS 참조 | 관계 생성 안 함 (Scope 내 TS만 대상) |"
+            },
+            {
+              "line_1based": 1563,
+              "text": "    | TS-only 참조 | referencesSpec 관계 생성 (Section→Spec). referencesSection과 별개 |"
+            }
+          ],
+          "source_pin": {
+            "bytes": 91818,
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+          }
+        }
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)",
+      "finding": "All recorded endpoints reached along exactlytwo referenceedges from all matching retained38.2145.1anchors are required, without LIMIT20/latest or unasked maximalclosure. A one-hop-only endpoint is not eligible merely for being closer; an endpoint with bothone-hop and two-hop witnesses iseligible because a requestedtwo-hop witness exists. This is recorded graph reachability rather than causal/technicalimplementation completeness.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (src)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section)",
+        "RETURN DISTINCT end.sectionId AS sectionId"
+      ],
+      "source_excerpts": [
+        {
+          "actual_lines": [
+            {
+              "line_1based": 150,
+              "text": ""
+            },
+            {
+              "line_1based": 151,
+              "text": "tdoc:Spec a owl:Class ;"
+            },
+            {
+              "line_1based": 152,
+              "text": "    rdfs:label \"Specification\"@en ;"
+            },
+            {
+              "line_1based": 153,
+              "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+            },
+            {
+              "line_1based": 154,
+              "text": ""
+            },
+            {
+              "line_1based": 284,
+              "text": ""
+            },
+            {
+              "line_1based": 285,
+              "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 286,
+              "text": "    rdfs:label \"spec in release\"@en ;"
+            },
+            {
+              "line_1based": 287,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+            },
+            {
+              "line_1based": 288,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 289,
+              "text": "    rdfs:range tdoc:Release ."
+            },
+            {
+              "line_1based": 290,
+              "text": ""
+            },
+            {
+              "line_1based": 291,
+              "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 292,
+              "text": "    rdfs:label \"in release of\"@en ;"
+            },
+            {
+              "line_1based": 293,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+            },
+            {
+              "line_1based": 294,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 295,
+              "text": "    rdfs:range tdoc:Spec ."
+            },
+            {
+              "line_1based": 296,
+              "text": ""
+            },
+            {
+              "line_1based": 297,
+              "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+            },
+            {
+              "line_1based": 298,
+              "text": "    rdfs:label \"has release variant\"@en ;"
+            },
+            {
+              "line_1based": 299,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+            },
+            {
+              "line_1based": 300,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 301,
+              "text": "    rdfs:range tdoc:Spec ;"
+            },
+            {
+              "line_1based": 477,
+              "text": ""
+            },
+            {
+              "line_1based": 478,
+              "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 479,
+              "text": "    rdfs:label \"has sub-section\"@en ;"
+            },
+            {
+              "line_1based": 480,
+              "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+            },
+            {
+              "line_1based": 481,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 482,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 483,
+              "text": "    owl:inverseOf tdoc:parentSection ."
+            },
+            {
+              "line_1based": 484,
+              "text": ""
+            },
+            {
+              "line_1based": 485,
+              "text": "tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 486,
+              "text": "    rdfs:label \"parent section\"@en ;"
+            },
+            {
+              "line_1based": 487,
+              "text": "    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;"
+            },
+            {
+              "line_1based": 488,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 489,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 490,
+              "text": "    owl:inverseOf tdoc:hasSubSection ."
+            },
+            {
+              "line_1based": 491,
+              "text": ""
+            },
+            {
+              "line_1based": 492,
+              "text": "tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 493,
+              "text": "    rdfs:label \"references section\"@en ;"
+            },
+            {
+              "line_1based": 494,
+              "text": "    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;"
+            },
+            {
+              "line_1based": 495,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 496,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 497,
+              "text": "    owl:inverseOf tdoc:referencedBySection ."
+            },
+            {
+              "line_1based": 498,
+              "text": ""
+            },
+            {
+              "line_1based": 499,
+              "text": "tdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 500,
+              "text": "    rdfs:label \"referenced by section\"@en ;"
+            },
+            {
+              "line_1based": 501,
+              "text": "    rdfs:comment \"Section(s) that reference this Section\"@en ;"
+            },
+            {
+              "line_1based": 502,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 503,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 504,
+              "text": "    owl:inverseOf tdoc:referencesSection ."
+            },
+            {
+              "line_1based": 505,
+              "text": ""
+            },
+            {
+              "line_1based": 1227,
+              "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    rdfs:label \"section ID\"@en ;"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1231,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1232,
+              "text": ""
+            },
+            {
+              "line_1based": 1233,
+              "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1234,
+              "text": "    rdfs:label \"section number\"@en ;"
+            },
+            {
+              "line_1based": 1235,
+              "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+            },
+            {
+              "line_1based": 1236,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1237,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1238,
+              "text": ""
+            },
+            {
+              "line_1based": 1239,
+              "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1240,
+              "text": "    rdfs:label \"section title\"@en ;"
+            },
+            {
+              "line_1based": 1241,
+              "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+            },
+            {
+              "line_1based": 1242,
+              "text": "    rdfs:domain tdoc:Section ;"
+            }
+          ],
+          "source_pin": {
+            "bytes": 71963,
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+          }
+        },
+        {
+          "actual_lines": [
+            {
+              "line_1based": 57,
+              "text": "    ## 2. Scope 정의"
+            },
+            {
+              "line_1based": 58,
+              "text": "    "
+            },
+            {
+              "line_1based": 59,
+              "text": "    ### 2.1 포함 (In Scope)"
+            },
+            {
+              "line_1based": 60,
+              "text": "    "
+            },
+            {
+              "line_1based": 61,
+              "text": "    | 구분 | 포함 대상 |"
+            },
+            {
+              "line_1based": 62,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 63,
+              "text": "    | **TS 문서** | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |"
+            },
+            {
+              "line_1based": 64,
+              "text": "    | **Section 구조** | 본문 + Annex, 6레벨까지 |"
+            },
+            {
+              "line_1based": 65,
+              "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 66,
+              "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 67,
+              "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+            },
+            {
+              "line_1based": 68,
+              "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+            },
+            {
+              "line_1based": 69,
+              "text": "    "
+            },
+            {
+              "line_1based": 70,
+              "text": "    ### 2.2 제외 (Out of Scope)"
+            },
+            {
+              "line_1based": 71,
+              "text": "    "
+            },
+            {
+              "line_1based": 72,
+              "text": "    | 제외 대상 | 이유 |"
+            },
+            {
+              "line_1based": 73,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 74,
+              "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 75,
+              "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 136,
+              "text": "    | # | Competency Question |"
+            },
+            {
+              "line_1based": 137,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 138,
+              "text": "    | 2-1 | 특정 Section이 참조하는 다른 TS Section 목록은? |"
+            },
+            {
+              "line_1based": 139,
+              "text": "    | 2-2 | 특정 Section을 참조하는 다른 TS Section 목록은? (역참조) |"
+            },
+            {
+              "line_1based": 140,
+              "text": "    | 2-3 | 특정 TS가 가장 많이 참조하는 다른 TS는? |"
+            },
+            {
+              "line_1based": 141,
+              "text": "    | 2-4 | 가장 많이 참조되는 Section Top N은? |"
+            },
+            {
+              "line_1based": 142,
+              "text": "    | 2-5 | 두 TS 간 참조 관계 요약은? |"
+            },
+            {
+              "line_1based": 143,
+              "text": "    "
+            },
+            {
+              "line_1based": 144,
+              "text": "    ### CQ3. CR → TS 연결"
+            },
+            {
+              "line_1based": 590,
+              "text": "    | 1-10 | TSTable, tableNumber, Section |"
+            },
+            {
+              "line_1based": 591,
+              "text": "    "
+            },
+            {
+              "line_1based": 592,
+              "text": "    ### CQ2: TS 간 참조 분석"
+            },
+            {
+              "line_1based": 593,
+              "text": "    "
+            },
+            {
+              "line_1based": 594,
+              "text": "    | CQ | 필요 용어 |"
+            },
+            {
+              "line_1based": 595,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 596,
+              "text": "    | 2-1 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 597,
+              "text": "    | 2-2 | Section, referencesSection (역방향) |"
+            },
+            {
+              "line_1based": 598,
+              "text": "    | 2-3 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 599,
+              "text": "    | 2-4 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 600,
+              "text": "    | 2-5 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 601,
+              "text": "    "
+            },
+            {
+              "line_1based": 1209,
+              "text": "    | --- | --- | --- | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1210,
+              "text": "    | belongsToSpec | Section | Spec | 1 | ✅ | hasSection | — |"
+            },
+            {
+              "line_1based": 1211,
+              "text": "    | hasSubSection | Section | Section | 0..* | ❌ | parentSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1212,
+              "text": "    | parentSection | Section | Section | 0..1 | ✅ | hasSubSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1213,
+              "text": "    | referencesSection | Section | Section | 0..* | ❌ | referencedBySection | Irreflexive |"
+            },
+            {
+              "line_1based": 1214,
+              "text": "    | referencedBySection | Section | Section | 0..* | ❌ | referencesSection | Irreflexive |"
+            },
+            {
+              "line_1based": 1215,
+              "text": "    | referencesSpec | Section | Spec | 0..* | ❌ | — | — |"
+            },
+            {
+              "line_1based": 1216,
+              "text": "    | containsTable | Section | TSTable | 0..* | ❌ | tableInSection | — |"
+            },
+            {
+              "line_1based": 1217,
+              "text": "    | containsFigure | Section | TSFigure | 0..* | ❌ | figureInSection | — |"
+            },
+            {
+              "line_1based": 1218,
+              "text": "    "
+            },
+            {
+              "line_1based": 1219,
+              "text": "    ### 특성 설명"
+            },
+            {
+              "line_1based": 1220,
+              "text": "    "
+            },
+            {
+              "line_1based": 1221,
+              "text": "    | Property | 특성 | 이유 |"
+            },
+            {
+              "line_1based": 1222,
+              "text": "    | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1223,
+              "text": "    | hasSubSection | Irreflexive | Section이 자기 자신의 하위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1224,
+              "text": "    | hasSubSection | Asymmetric | A가 B의 부모면 B는 A의 부모가 아님 |"
+            },
+            {
+              "line_1based": 1225,
+              "text": "    | parentSection | Irreflexive | Section이 자기 자신의 상위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1226,
+              "text": "    | parentSection | Asymmetric | A가 B의 자식이면 B는 A의 자식이 아님 |"
+            },
+            {
+              "line_1based": 1227,
+              "text": "    | referencesSection | Irreflexive | Section이 자기 자신을 참조하는 것은 무의미 |"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    | referencesSection | NOT Asymmetric | 두 Section이 서로 참조 가능 (상호 참조) |"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    | hasSubSection | NOT Transitive | 직접 하위만 연결 (손자는 체인으로) |"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    "
+            },
+            {
+              "line_1based": 1231,
+              "text": "    ---"
+            },
+            {
+              "line_1based": 1232,
+              "text": "    "
+            },
+            {
+              "line_1based": 1532,
+              "text": "    "
+            },
+            {
+              "line_1based": 1533,
+              "text": "    ### 4.4 참조 패턴 (referencesSection, referencesSpec)"
+            },
+            {
+              "line_1based": 1534,
+              "text": "    "
+            },
+            {
+              "line_1based": 1535,
+              "text": "    **본문 패턴**:"
+            },
+            {
+              "line_1based": 1536,
+              "text": "    "
+            },
+            {
+              "line_1based": 1537,
+              "text": "    | 패턴 | 정규식 | 예시 | 추출 결과 |"
+            },
+            {
+              "line_1based": 1538,
+              "text": "    | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1539,
+              "text": "    | clause X.X.X | `clause\\s+(\\d+(?:\\.\\d+)*)` | \"clause 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1540,
+              "text": "    | subclause X.X.X | `subclause\\s+(\\d+(?:\\.\\d+)*)` | \"subclause 7.4.1.1\" | 7.4.1.1 |"
+            },
+            {
+              "line_1based": 1541,
+              "text": "    | Section X.X.X | `Section\\s+(\\d+(?:\\.\\d+)*)` | \"Section 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1542,
+              "text": "    | Annex X | `Annex\\s+([A-Z](?:\\.\\d+)*)` | \"Annex A.1\" | A.1 |"
+            },
+            {
+              "line_1based": 1543,
+              "text": "    | TS 38.XXX clause X.X | `TS\\s+38\\.(\\d{3})\\s+clause\\s+(\\d+(?:\\.\\d+)*)` | \"TS 38.211 clause 6.3.2\" | 38.211-{release}-6.3.2 (source와 동일 release) |"
+            },
+            {
+              "line_1based": 1544,
+              "text": "    | TS [38.XXX](http://38.xxx/) (TS-only) | `TS\\\\s+38\\\\.(\\\\d{3})` (clause 없음) | \"TS 38.214” | → referencesSpec (Section→Spec) |"
+            },
+            {
+              "line_1based": 1545,
+              "text": "    "
+            },
+            {
+              "line_1based": 1546,
+              "text": "    **참조 대상 결정**:"
+            },
+            {
+              "line_1based": 1547,
+              "text": "    "
+            },
+            {
+              "line_1based": 1548,
+              "text": "    | 참조 유형 | 대상 결정 |"
+            },
+            {
+              "line_1based": 1549,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1550,
+              "text": "    | 같은 TS 내 | 현재 specNumber + **source release** + 추출된 sectionNumber |"
+            },
+            {
+              "line_1based": 1551,
+              "text": "    | 다른 TS | 추출된 specNumber + **source release** + 추출된 sectionNumber (cross-release 참조 누수 0 = R4) |"
+            },
+            {
+              "line_1based": 1552,
+              "text": "    | 다른 TS (clause 없음, TS-only) | 추출된 specNumber + **source release** → (specNumber, release) Spec 노드와 referencesSpec 관계 생성. 자기 TS 제외, Scope 내 TS만 대상 |"
+            },
+            {
+              "line_1based": 1553,
+              "text": ""
+            },
+            {
+              "line_1based": 1554,
+              "text": "    > release-aware cross-release 정책: 참조 대상 sectionId/Spec은 항상 **source Section과 동일 release**로 결정한다(Rel-15 본문의 참조는 Rel-15 대상으로만 연결). 이는 검증 R4(cross-release reference leak 0)로 강제된다."
+            },
+            {
+              "line_1based": 1555,
+              "text": "    "
+            },
+            {
+              "line_1based": 1556,
+              "text": "    **참조 생성 시 주의사항**:"
+            },
+            {
+              "line_1based": 1557,
+              "text": "    "
+            },
+            {
+              "line_1based": 1558,
+              "text": "    | 주의사항 | 처리 |"
+            },
+            {
+              "line_1based": 1559,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1560,
+              "text": "    | 대상 Section 없음 | 관계 생성 안 함 (로그 기록) |"
+            },
+            {
+              "line_1based": 1561,
+              "text": "    | 자기 자신 참조 | 무시 (Irreflexive) |"
+            },
+            {
+              "line_1based": 1562,
+              "text": "    | Scope 외 TS 참조 | 관계 생성 안 함 (Scope 내 TS만 대상) |"
+            },
+            {
+              "line_1based": 1563,
+              "text": "    | TS-only 참조 | referencesSpec 관계 생성 (Section→Spec). referencesSection과 별개 |"
+            }
+          ],
+          "source_pin": {
+            "bytes": 91818,
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+          }
+        }
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)",
+      "finding": "Neither this originalEnglish nor its reference direction/hop qualifier requests a display order, ranking or chronology. Complete endpoint membership is a set; permutations or repetition of an existing member remain equivalent, while repeatedmember displacement losing another requiredendpoint is incorrect. No lexical ordering attribute or arbitrary countfield becomesmandatory.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (src)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section)",
+        "RETURN DISTINCT end.sectionId AS sectionId"
+      ],
+      "source_excerpts": [
+        {
+          "actual_lines": [
+            {
+              "line_1based": 150,
+              "text": ""
+            },
+            {
+              "line_1based": 151,
+              "text": "tdoc:Spec a owl:Class ;"
+            },
+            {
+              "line_1based": 152,
+              "text": "    rdfs:label \"Specification\"@en ;"
+            },
+            {
+              "line_1based": 153,
+              "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+            },
+            {
+              "line_1based": 154,
+              "text": ""
+            },
+            {
+              "line_1based": 284,
+              "text": ""
+            },
+            {
+              "line_1based": 285,
+              "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 286,
+              "text": "    rdfs:label \"spec in release\"@en ;"
+            },
+            {
+              "line_1based": 287,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+            },
+            {
+              "line_1based": 288,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 289,
+              "text": "    rdfs:range tdoc:Release ."
+            },
+            {
+              "line_1based": 290,
+              "text": ""
+            },
+            {
+              "line_1based": 291,
+              "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 292,
+              "text": "    rdfs:label \"in release of\"@en ;"
+            },
+            {
+              "line_1based": 293,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+            },
+            {
+              "line_1based": 294,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 295,
+              "text": "    rdfs:range tdoc:Spec ."
+            },
+            {
+              "line_1based": 296,
+              "text": ""
+            },
+            {
+              "line_1based": 297,
+              "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+            },
+            {
+              "line_1based": 298,
+              "text": "    rdfs:label \"has release variant\"@en ;"
+            },
+            {
+              "line_1based": 299,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+            },
+            {
+              "line_1based": 300,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 301,
+              "text": "    rdfs:range tdoc:Spec ;"
+            },
+            {
+              "line_1based": 477,
+              "text": ""
+            },
+            {
+              "line_1based": 478,
+              "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 479,
+              "text": "    rdfs:label \"has sub-section\"@en ;"
+            },
+            {
+              "line_1based": 480,
+              "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+            },
+            {
+              "line_1based": 481,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 482,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 483,
+              "text": "    owl:inverseOf tdoc:parentSection ."
+            },
+            {
+              "line_1based": 484,
+              "text": ""
+            },
+            {
+              "line_1based": 485,
+              "text": "tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 486,
+              "text": "    rdfs:label \"parent section\"@en ;"
+            },
+            {
+              "line_1based": 487,
+              "text": "    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;"
+            },
+            {
+              "line_1based": 488,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 489,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 490,
+              "text": "    owl:inverseOf tdoc:hasSubSection ."
+            },
+            {
+              "line_1based": 491,
+              "text": ""
+            },
+            {
+              "line_1based": 492,
+              "text": "tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 493,
+              "text": "    rdfs:label \"references section\"@en ;"
+            },
+            {
+              "line_1based": 494,
+              "text": "    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;"
+            },
+            {
+              "line_1based": 495,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 496,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 497,
+              "text": "    owl:inverseOf tdoc:referencedBySection ."
+            },
+            {
+              "line_1based": 498,
+              "text": ""
+            },
+            {
+              "line_1based": 499,
+              "text": "tdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 500,
+              "text": "    rdfs:label \"referenced by section\"@en ;"
+            },
+            {
+              "line_1based": 501,
+              "text": "    rdfs:comment \"Section(s) that reference this Section\"@en ;"
+            },
+            {
+              "line_1based": 502,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 503,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 504,
+              "text": "    owl:inverseOf tdoc:referencesSection ."
+            },
+            {
+              "line_1based": 505,
+              "text": ""
+            },
+            {
+              "line_1based": 1227,
+              "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    rdfs:label \"section ID\"@en ;"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1231,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1232,
+              "text": ""
+            },
+            {
+              "line_1based": 1233,
+              "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1234,
+              "text": "    rdfs:label \"section number\"@en ;"
+            },
+            {
+              "line_1based": 1235,
+              "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+            },
+            {
+              "line_1based": 1236,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1237,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1238,
+              "text": ""
+            },
+            {
+              "line_1based": 1239,
+              "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1240,
+              "text": "    rdfs:label \"section title\"@en ;"
+            },
+            {
+              "line_1based": 1241,
+              "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+            },
+            {
+              "line_1based": 1242,
+              "text": "    rdfs:domain tdoc:Section ;"
+            }
+          ],
+          "source_pin": {
+            "bytes": 71963,
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+          }
+        },
+        {
+          "actual_lines": [
+            {
+              "line_1based": 57,
+              "text": "    ## 2. Scope 정의"
+            },
+            {
+              "line_1based": 58,
+              "text": "    "
+            },
+            {
+              "line_1based": 59,
+              "text": "    ### 2.1 포함 (In Scope)"
+            },
+            {
+              "line_1based": 60,
+              "text": "    "
+            },
+            {
+              "line_1based": 61,
+              "text": "    | 구분 | 포함 대상 |"
+            },
+            {
+              "line_1based": 62,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 63,
+              "text": "    | **TS 문서** | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |"
+            },
+            {
+              "line_1based": 64,
+              "text": "    | **Section 구조** | 본문 + Annex, 6레벨까지 |"
+            },
+            {
+              "line_1based": 65,
+              "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 66,
+              "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 67,
+              "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+            },
+            {
+              "line_1based": 68,
+              "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+            },
+            {
+              "line_1based": 69,
+              "text": "    "
+            },
+            {
+              "line_1based": 70,
+              "text": "    ### 2.2 제외 (Out of Scope)"
+            },
+            {
+              "line_1based": 71,
+              "text": "    "
+            },
+            {
+              "line_1based": 72,
+              "text": "    | 제외 대상 | 이유 |"
+            },
+            {
+              "line_1based": 73,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 74,
+              "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 75,
+              "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 136,
+              "text": "    | # | Competency Question |"
+            },
+            {
+              "line_1based": 137,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 138,
+              "text": "    | 2-1 | 특정 Section이 참조하는 다른 TS Section 목록은? |"
+            },
+            {
+              "line_1based": 139,
+              "text": "    | 2-2 | 특정 Section을 참조하는 다른 TS Section 목록은? (역참조) |"
+            },
+            {
+              "line_1based": 140,
+              "text": "    | 2-3 | 특정 TS가 가장 많이 참조하는 다른 TS는? |"
+            },
+            {
+              "line_1based": 141,
+              "text": "    | 2-4 | 가장 많이 참조되는 Section Top N은? |"
+            },
+            {
+              "line_1based": 142,
+              "text": "    | 2-5 | 두 TS 간 참조 관계 요약은? |"
+            },
+            {
+              "line_1based": 143,
+              "text": "    "
+            },
+            {
+              "line_1based": 144,
+              "text": "    ### CQ3. CR → TS 연결"
+            },
+            {
+              "line_1based": 590,
+              "text": "    | 1-10 | TSTable, tableNumber, Section |"
+            },
+            {
+              "line_1based": 591,
+              "text": "    "
+            },
+            {
+              "line_1based": 592,
+              "text": "    ### CQ2: TS 간 참조 분석"
+            },
+            {
+              "line_1based": 593,
+              "text": "    "
+            },
+            {
+              "line_1based": 594,
+              "text": "    | CQ | 필요 용어 |"
+            },
+            {
+              "line_1based": 595,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 596,
+              "text": "    | 2-1 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 597,
+              "text": "    | 2-2 | Section, referencesSection (역방향) |"
+            },
+            {
+              "line_1based": 598,
+              "text": "    | 2-3 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 599,
+              "text": "    | 2-4 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 600,
+              "text": "    | 2-5 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 601,
+              "text": "    "
+            },
+            {
+              "line_1based": 1209,
+              "text": "    | --- | --- | --- | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1210,
+              "text": "    | belongsToSpec | Section | Spec | 1 | ✅ | hasSection | — |"
+            },
+            {
+              "line_1based": 1211,
+              "text": "    | hasSubSection | Section | Section | 0..* | ❌ | parentSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1212,
+              "text": "    | parentSection | Section | Section | 0..1 | ✅ | hasSubSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1213,
+              "text": "    | referencesSection | Section | Section | 0..* | ❌ | referencedBySection | Irreflexive |"
+            },
+            {
+              "line_1based": 1214,
+              "text": "    | referencedBySection | Section | Section | 0..* | ❌ | referencesSection | Irreflexive |"
+            },
+            {
+              "line_1based": 1215,
+              "text": "    | referencesSpec | Section | Spec | 0..* | ❌ | — | — |"
+            },
+            {
+              "line_1based": 1216,
+              "text": "    | containsTable | Section | TSTable | 0..* | ❌ | tableInSection | — |"
+            },
+            {
+              "line_1based": 1217,
+              "text": "    | containsFigure | Section | TSFigure | 0..* | ❌ | figureInSection | — |"
+            },
+            {
+              "line_1based": 1218,
+              "text": "    "
+            },
+            {
+              "line_1based": 1219,
+              "text": "    ### 특성 설명"
+            },
+            {
+              "line_1based": 1220,
+              "text": "    "
+            },
+            {
+              "line_1based": 1221,
+              "text": "    | Property | 특성 | 이유 |"
+            },
+            {
+              "line_1based": 1222,
+              "text": "    | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1223,
+              "text": "    | hasSubSection | Irreflexive | Section이 자기 자신의 하위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1224,
+              "text": "    | hasSubSection | Asymmetric | A가 B의 부모면 B는 A의 부모가 아님 |"
+            },
+            {
+              "line_1based": 1225,
+              "text": "    | parentSection | Irreflexive | Section이 자기 자신의 상위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1226,
+              "text": "    | parentSection | Asymmetric | A가 B의 자식이면 B는 A의 자식이 아님 |"
+            },
+            {
+              "line_1based": 1227,
+              "text": "    | referencesSection | Irreflexive | Section이 자기 자신을 참조하는 것은 무의미 |"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    | referencesSection | NOT Asymmetric | 두 Section이 서로 참조 가능 (상호 참조) |"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    | hasSubSection | NOT Transitive | 직접 하위만 연결 (손자는 체인으로) |"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    "
+            },
+            {
+              "line_1based": 1231,
+              "text": "    ---"
+            },
+            {
+              "line_1based": 1232,
+              "text": "    "
+            },
+            {
+              "line_1based": 1532,
+              "text": "    "
+            },
+            {
+              "line_1based": 1533,
+              "text": "    ### 4.4 참조 패턴 (referencesSection, referencesSpec)"
+            },
+            {
+              "line_1based": 1534,
+              "text": "    "
+            },
+            {
+              "line_1based": 1535,
+              "text": "    **본문 패턴**:"
+            },
+            {
+              "line_1based": 1536,
+              "text": "    "
+            },
+            {
+              "line_1based": 1537,
+              "text": "    | 패턴 | 정규식 | 예시 | 추출 결과 |"
+            },
+            {
+              "line_1based": 1538,
+              "text": "    | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1539,
+              "text": "    | clause X.X.X | `clause\\s+(\\d+(?:\\.\\d+)*)` | \"clause 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1540,
+              "text": "    | subclause X.X.X | `subclause\\s+(\\d+(?:\\.\\d+)*)` | \"subclause 7.4.1.1\" | 7.4.1.1 |"
+            },
+            {
+              "line_1based": 1541,
+              "text": "    | Section X.X.X | `Section\\s+(\\d+(?:\\.\\d+)*)` | \"Section 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1542,
+              "text": "    | Annex X | `Annex\\s+([A-Z](?:\\.\\d+)*)` | \"Annex A.1\" | A.1 |"
+            },
+            {
+              "line_1based": 1543,
+              "text": "    | TS 38.XXX clause X.X | `TS\\s+38\\.(\\d{3})\\s+clause\\s+(\\d+(?:\\.\\d+)*)` | \"TS 38.211 clause 6.3.2\" | 38.211-{release}-6.3.2 (source와 동일 release) |"
+            },
+            {
+              "line_1based": 1544,
+              "text": "    | TS [38.XXX](http://38.xxx/) (TS-only) | `TS\\\\s+38\\\\.(\\\\d{3})` (clause 없음) | \"TS 38.214” | → referencesSpec (Section→Spec) |"
+            },
+            {
+              "line_1based": 1545,
+              "text": "    "
+            },
+            {
+              "line_1based": 1546,
+              "text": "    **참조 대상 결정**:"
+            },
+            {
+              "line_1based": 1547,
+              "text": "    "
+            },
+            {
+              "line_1based": 1548,
+              "text": "    | 참조 유형 | 대상 결정 |"
+            },
+            {
+              "line_1based": 1549,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1550,
+              "text": "    | 같은 TS 내 | 현재 specNumber + **source release** + 추출된 sectionNumber |"
+            },
+            {
+              "line_1based": 1551,
+              "text": "    | 다른 TS | 추출된 specNumber + **source release** + 추출된 sectionNumber (cross-release 참조 누수 0 = R4) |"
+            },
+            {
+              "line_1based": 1552,
+              "text": "    | 다른 TS (clause 없음, TS-only) | 추출된 specNumber + **source release** → (specNumber, release) Spec 노드와 referencesSpec 관계 생성. 자기 TS 제외, Scope 내 TS만 대상 |"
+            },
+            {
+              "line_1based": 1553,
+              "text": ""
+            },
+            {
+              "line_1based": 1554,
+              "text": "    > release-aware cross-release 정책: 참조 대상 sectionId/Spec은 항상 **source Section과 동일 release**로 결정한다(Rel-15 본문의 참조는 Rel-15 대상으로만 연결). 이는 검증 R4(cross-release reference leak 0)로 강제된다."
+            },
+            {
+              "line_1based": 1555,
+              "text": "    "
+            },
+            {
+              "line_1based": 1556,
+              "text": "    **참조 생성 시 주의사항**:"
+            },
+            {
+              "line_1based": 1557,
+              "text": "    "
+            },
+            {
+              "line_1based": 1558,
+              "text": "    | 주의사항 | 처리 |"
+            },
+            {
+              "line_1based": 1559,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1560,
+              "text": "    | 대상 Section 없음 | 관계 생성 안 함 (로그 기록) |"
+            },
+            {
+              "line_1based": 1561,
+              "text": "    | 자기 자신 참조 | 무시 (Irreflexive) |"
+            },
+            {
+              "line_1based": 1562,
+              "text": "    | Scope 외 TS 참조 | 관계 생성 안 함 (Scope 내 TS만 대상) |"
+            },
+            {
+              "line_1based": 1563,
+              "text": "    | TS-only 참조 | referencesSpec 관계 생성 (Section→Spec). referencesSection과 별개 |"
+            }
+          ],
+          "source_pin": {
+            "bytes": 91818,
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+          }
+        }
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "What does TS 38.214 Section 5.1 reach two hops out via references? (2-hop dependencies)",
+      "finding": "The relation meaning, direction and release-aware identity are derived from actual originalschema/design/KO plus unchangedEnglish, not new answercounts, the oldlatest query or proposer success. Original source defines separateSectionreferences versusSpecreferences and directhierarchy, preventing unverified subtree/TS-only expansion. Companionreading/basealgorithmusers/dependencies are motivation for the recordedrelation lookup, not a fabricated guarantee of practicalcitation/implementation completeness. Actual local sourcebytes are pinned but historical writing-time authorship is not certified. No expert/modelperformance/admission claim is made; exact native/fullindependentSQL and wrongendpoint/direction/hop/type controls remainrequired.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber:'38.214'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (sp:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (src:Section {sectionNumber:'5.1'})-[:BELONGS_TO_SPEC]->(sp)",
+        "MATCH (src)-[:REFERENCES_SECTION]->(mid:Section)-[:REFERENCES_SECTION]->(end:Section)",
+        "RETURN DISTINCT end.sectionId AS sectionId"
+      ],
+      "source_excerpts": [
+        {
+          "actual_lines": [
+            {
+              "line_1based": 150,
+              "text": ""
+            },
+            {
+              "line_1based": 151,
+              "text": "tdoc:Spec a owl:Class ;"
+            },
+            {
+              "line_1based": 152,
+              "text": "    rdfs:label \"Specification\"@en ;"
+            },
+            {
+              "line_1based": 153,
+              "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+            },
+            {
+              "line_1based": 154,
+              "text": ""
+            },
+            {
+              "line_1based": 284,
+              "text": ""
+            },
+            {
+              "line_1based": 285,
+              "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 286,
+              "text": "    rdfs:label \"spec in release\"@en ;"
+            },
+            {
+              "line_1based": 287,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+            },
+            {
+              "line_1based": 288,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 289,
+              "text": "    rdfs:range tdoc:Release ."
+            },
+            {
+              "line_1based": 290,
+              "text": ""
+            },
+            {
+              "line_1based": 291,
+              "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+            },
+            {
+              "line_1based": 292,
+              "text": "    rdfs:label \"in release of\"@en ;"
+            },
+            {
+              "line_1based": 293,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+            },
+            {
+              "line_1based": 294,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 295,
+              "text": "    rdfs:range tdoc:Spec ."
+            },
+            {
+              "line_1based": 296,
+              "text": ""
+            },
+            {
+              "line_1based": 297,
+              "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+            },
+            {
+              "line_1based": 298,
+              "text": "    rdfs:label \"has release variant\"@en ;"
+            },
+            {
+              "line_1based": 299,
+              "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+            },
+            {
+              "line_1based": 300,
+              "text": "    rdfs:domain tdoc:Spec ;"
+            },
+            {
+              "line_1based": 301,
+              "text": "    rdfs:range tdoc:Spec ;"
+            },
+            {
+              "line_1based": 477,
+              "text": ""
+            },
+            {
+              "line_1based": 478,
+              "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 479,
+              "text": "    rdfs:label \"has sub-section\"@en ;"
+            },
+            {
+              "line_1based": 480,
+              "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+            },
+            {
+              "line_1based": 481,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 482,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 483,
+              "text": "    owl:inverseOf tdoc:parentSection ."
+            },
+            {
+              "line_1based": 484,
+              "text": ""
+            },
+            {
+              "line_1based": 485,
+              "text": "tdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+            },
+            {
+              "line_1based": 486,
+              "text": "    rdfs:label \"parent section\"@en ;"
+            },
+            {
+              "line_1based": 487,
+              "text": "    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;"
+            },
+            {
+              "line_1based": 488,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 489,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 490,
+              "text": "    owl:inverseOf tdoc:hasSubSection ."
+            },
+            {
+              "line_1based": 491,
+              "text": ""
+            },
+            {
+              "line_1based": 492,
+              "text": "tdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 493,
+              "text": "    rdfs:label \"references section\"@en ;"
+            },
+            {
+              "line_1based": 494,
+              "text": "    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;"
+            },
+            {
+              "line_1based": 495,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 496,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 497,
+              "text": "    owl:inverseOf tdoc:referencedBySection ."
+            },
+            {
+              "line_1based": 498,
+              "text": ""
+            },
+            {
+              "line_1based": 499,
+              "text": "tdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;"
+            },
+            {
+              "line_1based": 500,
+              "text": "    rdfs:label \"referenced by section\"@en ;"
+            },
+            {
+              "line_1based": 501,
+              "text": "    rdfs:comment \"Section(s) that reference this Section\"@en ;"
+            },
+            {
+              "line_1based": 502,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 503,
+              "text": "    rdfs:range tdoc:Section ;"
+            },
+            {
+              "line_1based": 504,
+              "text": "    owl:inverseOf tdoc:referencesSection ."
+            },
+            {
+              "line_1based": 505,
+              "text": ""
+            },
+            {
+              "line_1based": 1227,
+              "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    rdfs:label \"section ID\"@en ;"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1231,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1232,
+              "text": ""
+            },
+            {
+              "line_1based": 1233,
+              "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1234,
+              "text": "    rdfs:label \"section number\"@en ;"
+            },
+            {
+              "line_1based": 1235,
+              "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+            },
+            {
+              "line_1based": 1236,
+              "text": "    rdfs:domain tdoc:Section ;"
+            },
+            {
+              "line_1based": 1237,
+              "text": "    rdfs:range xsd:string ."
+            },
+            {
+              "line_1based": 1238,
+              "text": ""
+            },
+            {
+              "line_1based": 1239,
+              "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+            },
+            {
+              "line_1based": 1240,
+              "text": "    rdfs:label \"section title\"@en ;"
+            },
+            {
+              "line_1based": 1241,
+              "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+            },
+            {
+              "line_1based": 1242,
+              "text": "    rdfs:domain tdoc:Section ;"
+            }
+          ],
+          "source_pin": {
+            "bytes": 71963,
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+          }
+        },
+        {
+          "actual_lines": [
+            {
+              "line_1based": 57,
+              "text": "    ## 2. Scope 정의"
+            },
+            {
+              "line_1based": 58,
+              "text": "    "
+            },
+            {
+              "line_1based": 59,
+              "text": "    ### 2.1 포함 (In Scope)"
+            },
+            {
+              "line_1based": 60,
+              "text": "    "
+            },
+            {
+              "line_1based": 61,
+              "text": "    | 구분 | 포함 대상 |"
+            },
+            {
+              "line_1based": 62,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 63,
+              "text": "    | **TS 문서** | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |"
+            },
+            {
+              "line_1based": 64,
+              "text": "    | **Section 구조** | 본문 + Annex, 6레벨까지 |"
+            },
+            {
+              "line_1based": 65,
+              "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 66,
+              "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+            },
+            {
+              "line_1based": 67,
+              "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+            },
+            {
+              "line_1based": 68,
+              "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+            },
+            {
+              "line_1based": 69,
+              "text": "    "
+            },
+            {
+              "line_1based": 70,
+              "text": "    ### 2.2 제외 (Out of Scope)"
+            },
+            {
+              "line_1based": 71,
+              "text": "    "
+            },
+            {
+              "line_1based": 72,
+              "text": "    | 제외 대상 | 이유 |"
+            },
+            {
+              "line_1based": 73,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 74,
+              "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 75,
+              "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+            },
+            {
+              "line_1based": 136,
+              "text": "    | # | Competency Question |"
+            },
+            {
+              "line_1based": 137,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 138,
+              "text": "    | 2-1 | 특정 Section이 참조하는 다른 TS Section 목록은? |"
+            },
+            {
+              "line_1based": 139,
+              "text": "    | 2-2 | 특정 Section을 참조하는 다른 TS Section 목록은? (역참조) |"
+            },
+            {
+              "line_1based": 140,
+              "text": "    | 2-3 | 특정 TS가 가장 많이 참조하는 다른 TS는? |"
+            },
+            {
+              "line_1based": 141,
+              "text": "    | 2-4 | 가장 많이 참조되는 Section Top N은? |"
+            },
+            {
+              "line_1based": 142,
+              "text": "    | 2-5 | 두 TS 간 참조 관계 요약은? |"
+            },
+            {
+              "line_1based": 143,
+              "text": "    "
+            },
+            {
+              "line_1based": 144,
+              "text": "    ### CQ3. CR → TS 연결"
+            },
+            {
+              "line_1based": 590,
+              "text": "    | 1-10 | TSTable, tableNumber, Section |"
+            },
+            {
+              "line_1based": 591,
+              "text": "    "
+            },
+            {
+              "line_1based": 592,
+              "text": "    ### CQ2: TS 간 참조 분석"
+            },
+            {
+              "line_1based": 593,
+              "text": "    "
+            },
+            {
+              "line_1based": 594,
+              "text": "    | CQ | 필요 용어 |"
+            },
+            {
+              "line_1based": 595,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 596,
+              "text": "    | 2-1 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 597,
+              "text": "    | 2-2 | Section, referencesSection (역방향) |"
+            },
+            {
+              "line_1based": 598,
+              "text": "    | 2-3 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 599,
+              "text": "    | 2-4 | Section, referencesSection |"
+            },
+            {
+              "line_1based": 600,
+              "text": "    | 2-5 | Spec, referencesSection, referencesSpec |"
+            },
+            {
+              "line_1based": 601,
+              "text": "    "
+            },
+            {
+              "line_1based": 1209,
+              "text": "    | --- | --- | --- | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1210,
+              "text": "    | belongsToSpec | Section | Spec | 1 | ✅ | hasSection | — |"
+            },
+            {
+              "line_1based": 1211,
+              "text": "    | hasSubSection | Section | Section | 0..* | ❌ | parentSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1212,
+              "text": "    | parentSection | Section | Section | 0..1 | ✅ | hasSubSection | Irreflexive, Asymmetric |"
+            },
+            {
+              "line_1based": 1213,
+              "text": "    | referencesSection | Section | Section | 0..* | ❌ | referencedBySection | Irreflexive |"
+            },
+            {
+              "line_1based": 1214,
+              "text": "    | referencedBySection | Section | Section | 0..* | ❌ | referencesSection | Irreflexive |"
+            },
+            {
+              "line_1based": 1215,
+              "text": "    | referencesSpec | Section | Spec | 0..* | ❌ | — | — |"
+            },
+            {
+              "line_1based": 1216,
+              "text": "    | containsTable | Section | TSTable | 0..* | ❌ | tableInSection | — |"
+            },
+            {
+              "line_1based": 1217,
+              "text": "    | containsFigure | Section | TSFigure | 0..* | ❌ | figureInSection | — |"
+            },
+            {
+              "line_1based": 1218,
+              "text": "    "
+            },
+            {
+              "line_1based": 1219,
+              "text": "    ### 특성 설명"
+            },
+            {
+              "line_1based": 1220,
+              "text": "    "
+            },
+            {
+              "line_1based": 1221,
+              "text": "    | Property | 특성 | 이유 |"
+            },
+            {
+              "line_1based": 1222,
+              "text": "    | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1223,
+              "text": "    | hasSubSection | Irreflexive | Section이 자기 자신의 하위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1224,
+              "text": "    | hasSubSection | Asymmetric | A가 B의 부모면 B는 A의 부모가 아님 |"
+            },
+            {
+              "line_1based": 1225,
+              "text": "    | parentSection | Irreflexive | Section이 자기 자신의 상위가 될 수 없음 |"
+            },
+            {
+              "line_1based": 1226,
+              "text": "    | parentSection | Asymmetric | A가 B의 자식이면 B는 A의 자식이 아님 |"
+            },
+            {
+              "line_1based": 1227,
+              "text": "    | referencesSection | Irreflexive | Section이 자기 자신을 참조하는 것은 무의미 |"
+            },
+            {
+              "line_1based": 1228,
+              "text": "    | referencesSection | NOT Asymmetric | 두 Section이 서로 참조 가능 (상호 참조) |"
+            },
+            {
+              "line_1based": 1229,
+              "text": "    | hasSubSection | NOT Transitive | 직접 하위만 연결 (손자는 체인으로) |"
+            },
+            {
+              "line_1based": 1230,
+              "text": "    "
+            },
+            {
+              "line_1based": 1231,
+              "text": "    ---"
+            },
+            {
+              "line_1based": 1232,
+              "text": "    "
+            },
+            {
+              "line_1based": 1532,
+              "text": "    "
+            },
+            {
+              "line_1based": 1533,
+              "text": "    ### 4.4 참조 패턴 (referencesSection, referencesSpec)"
+            },
+            {
+              "line_1based": 1534,
+              "text": "    "
+            },
+            {
+              "line_1based": 1535,
+              "text": "    **본문 패턴**:"
+            },
+            {
+              "line_1based": 1536,
+              "text": "    "
+            },
+            {
+              "line_1based": 1537,
+              "text": "    | 패턴 | 정규식 | 예시 | 추출 결과 |"
+            },
+            {
+              "line_1based": 1538,
+              "text": "    | --- | --- | --- | --- |"
+            },
+            {
+              "line_1based": 1539,
+              "text": "    | clause X.X.X | `clause\\s+(\\d+(?:\\.\\d+)*)` | \"clause 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1540,
+              "text": "    | subclause X.X.X | `subclause\\s+(\\d+(?:\\.\\d+)*)` | \"subclause 7.4.1.1\" | 7.4.1.1 |"
+            },
+            {
+              "line_1based": 1541,
+              "text": "    | Section X.X.X | `Section\\s+(\\d+(?:\\.\\d+)*)` | \"Section 5.1.3\" | 5.1.3 |"
+            },
+            {
+              "line_1based": 1542,
+              "text": "    | Annex X | `Annex\\s+([A-Z](?:\\.\\d+)*)` | \"Annex A.1\" | A.1 |"
+            },
+            {
+              "line_1based": 1543,
+              "text": "    | TS 38.XXX clause X.X | `TS\\s+38\\.(\\d{3})\\s+clause\\s+(\\d+(?:\\.\\d+)*)` | \"TS 38.211 clause 6.3.2\" | 38.211-{release}-6.3.2 (source와 동일 release) |"
+            },
+            {
+              "line_1based": 1544,
+              "text": "    | TS [38.XXX](http://38.xxx/) (TS-only) | `TS\\\\s+38\\\\.(\\\\d{3})` (clause 없음) | \"TS 38.214” | → referencesSpec (Section→Spec) |"
+            },
+            {
+              "line_1based": 1545,
+              "text": "    "
+            },
+            {
+              "line_1based": 1546,
+              "text": "    **참조 대상 결정**:"
+            },
+            {
+              "line_1based": 1547,
+              "text": "    "
+            },
+            {
+              "line_1based": 1548,
+              "text": "    | 참조 유형 | 대상 결정 |"
+            },
+            {
+              "line_1based": 1549,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1550,
+              "text": "    | 같은 TS 내 | 현재 specNumber + **source release** + 추출된 sectionNumber |"
+            },
+            {
+              "line_1based": 1551,
+              "text": "    | 다른 TS | 추출된 specNumber + **source release** + 추출된 sectionNumber (cross-release 참조 누수 0 = R4) |"
+            },
+            {
+              "line_1based": 1552,
+              "text": "    | 다른 TS (clause 없음, TS-only) | 추출된 specNumber + **source release** → (specNumber, release) Spec 노드와 referencesSpec 관계 생성. 자기 TS 제외, Scope 내 TS만 대상 |"
+            },
+            {
+              "line_1based": 1553,
+              "text": ""
+            },
+            {
+              "line_1based": 1554,
+              "text": "    > release-aware cross-release 정책: 참조 대상 sectionId/Spec은 항상 **source Section과 동일 release**로 결정한다(Rel-15 본문의 참조는 Rel-15 대상으로만 연결). 이는 검증 R4(cross-release reference leak 0)로 강제된다."
+            },
+            {
+              "line_1based": 1555,
+              "text": "    "
+            },
+            {
+              "line_1based": 1556,
+              "text": "    **참조 생성 시 주의사항**:"
+            },
+            {
+              "line_1based": 1557,
+              "text": "    "
+            },
+            {
+              "line_1based": 1558,
+              "text": "    | 주의사항 | 처리 |"
+            },
+            {
+              "line_1based": 1559,
+              "text": "    | --- | --- |"
+            },
+            {
+              "line_1based": 1560,
+              "text": "    | 대상 Section 없음 | 관계 생성 안 함 (로그 기록) |"
+            },
+            {
+              "line_1based": 1561,
+              "text": "    | 자기 자신 참조 | 무시 (Irreflexive) |"
+            },
+            {
+              "line_1based": 1562,
+              "text": "    | Scope 외 TS 참조 | 관계 생성 안 함 (Scope 내 TS만 대상) |"
+            },
+            {
+              "line_1based": 1563,
+              "text": "    | TS-only 참조 | referencesSpec 관계 생성 (Section→Spec). referencesSection과 별개 |"
+            }
+          ],
+          "source_pin": {
+            "bytes": 91818,
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+          }
+        }
+      ]
+    }
+  ],
+  "exact_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ009_CQ010_CQ015_recorded_section_references/source_only_independent_review/RAN1_P3_CQ015_canonical_source_only_definition.json",
+    "bytes": 1809,
+    "sha256": "2d8b0e0fcf2270a22f62e38cf296bdfb6f811c35135f90cba298581ba95ca16d"
+  },
+  "original_source_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ009_CQ010_CQ015_recorded_section_references/source_only_independent_review/RAN1_P3_CQ015_original_source_packet.json",
+    "bytes": 3904,
+    "sha256": "30e3f36e98e976278c7bf8edfb4e3a206cb007533195112811033684eb2ac6f4"
+  },
+  "source_context_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ009_CQ010_CQ015_recorded_section_references/source_only_independent_review/exact_original_Section_reference_identity_direction_context.json",
+    "bytes": 24613,
+    "sha256": "98e7002bf46d5504861cc7a3ba7a7b7d3e207b7d202468c6ba5287387a1c43e2"
+  },
+  "independently_read_complete_anchor_metadata": [
+    {
+      "sectionId": "38.214-Rel-15-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-15",
+      "specVersion": "15.16.0"
+    },
+    {
+      "sectionId": "38.214-Rel-16-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-16",
+      "specVersion": "16.17.0"
+    },
+    {
+      "sectionId": "38.214-Rel-17-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-17",
+      "specVersion": "17.16.0"
+    },
+    {
+      "sectionId": "38.214-Rel-18-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-18",
+      "specVersion": "18.9.0"
+    },
+    {
+      "sectionId": "38.214-Rel-19-5.1",
+      "sectionTitle": "UE procedure for receiving the physical downlink shared channel",
+      "specRelease": "Rel-19",
+      "specVersion": "19.3.0"
+    }
+  ],
+  "exposure": "Read only clean source-only exact candidate/original English/KO/schema/design and independently executed read-only anchor metadata lookup. Proposer primary/newSQL/counts/gold/native/predictions were not opened. Earlier related source-task reviews and parent reports of other tasks are known; this is nonblind direct source diagnosis, not an expert or model evaluation.",
+  "limits": [
+    "All retained release-aware recorded endpoint identities are preserved, not presented as a singleedition clause or a sourcecitation invariant.",
+    "No claim all authored citations or practical implementation dependencies are stored.",
+    "Scope/direction derives original operational ontology; an unrecorded citation is not a real-world negative.",
+    "Actual local source bytes do not prove historical writing-time source authorship."
+  ],
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "new_gold": false,
+  "new_admissions": 0,
+  "external_model_APIcalls": 0,
+  "native_execution_completed": false
+}

@@ -1,0 +1,110 @@
+{
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "id": "RAN3_P2_CQ6-3",
+  "original_question_sha256": "600d2a8a5cc97bc6a02f2c5f4f6855094d31452e67db36a033588586b26f1cf8",
+  "repair_sha256": "939c0bad9f6dbd333a28037bfabd7db17e507e9878cad466f5fe6d6e155c81ca",
+  "reviewer_kind": "Direct primary AI English-derived moderator-order reassessment /root/reaudit_ran3_ran4",
+  "semantic_evidence": [
+    {
+      "finding": "The original asks for ZTE's moderator role over time. Each canonical meeting identifies a temporal observation and moderatorSummaryCount supplies the recorded moderator occurrences. 'Leadership trajectory' describes the requested moderator-role series; no causal influence, actual leadership quality or extra company/title field is inferred.",
+      "original_quote": "Show ZTE's moderator-role trend over time (leadership trajectory).",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "OPTIONAL MATCH (unit:Summary)-[:MADE_AT]->(m)",
+        "WHERE EXISTS { MATCH (unit)-[:MODERATED_BY]->(:Company {companyName: 'ZTE'}) }",
+        "WITH m, count(DISTINCT unit) AS moderatorSummaryCount",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber, m.meetingNumberInt AS meetingOrdinal, moderatorSummaryCount",
+        "ORDER BY meetingOrdinal ASC"
+      ],
+      "status": "pass",
+      "unit": "requested answer roles and fields"
+    },
+    {
+      "finding": "Use the complete frozen RAN3 meeting population as source-relative time coordinates, retaining each canonical meeting separately. All58 observations are present, including44 zero observed counts; source-relative zero means no recorded matching moderator Summary, not externally verified real-world inactivity.",
+      "original_quote": "Show ZTE's moderator-role trend over time (leadership trajectory).",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "OPTIONAL MATCH (unit:Summary)-[:MADE_AT]->(m)",
+        "WHERE EXISTS { MATCH (unit)-[:MODERATED_BY]->(:Company {companyName: 'ZTE'}) }",
+        "WITH m, count(DISTINCT unit) AS moderatorSummaryCount",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber, m.meetingNumberInt AS meetingOrdinal, moderatorSummaryCount",
+        "ORDER BY meetingOrdinal ASC"
+      ],
+      "status": "pass",
+      "unit": "population and source context"
+    },
+    {
+      "finding": "MODERATED_BY to the exact named ZTE Company supplies the requested role, and MADE_AT binds each Summary to its source Meeting. EXISTS checks moderator membership without multiplying paths. These directly encoded role/time relations implement the original request without borrowing resolution contribution or inferred leadership outcomes.",
+      "original_quote": "Show ZTE's moderator-role trend over time (leadership trajectory).",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "OPTIONAL MATCH (unit:Summary)-[:MADE_AT]->(m)",
+        "WHERE EXISTS { MATCH (unit)-[:MODERATED_BY]->(:Company {companyName: 'ZTE'}) }",
+        "WITH m, count(DISTINCT unit) AS moderatorSummaryCount",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber, m.meetingNumberInt AS meetingOrdinal, moderatorSummaryCount",
+        "ORDER BY meetingOrdinal ASC"
+      ],
+      "status": "pass",
+      "unit": "filters and relationship meaning"
+    },
+    {
+      "finding": "Count distinct Summary entities per Meeting, not Company paths or TDocs. There are49 distinct matching Summary entities across the full source series. Repeated role paths cannot count one moderator Summary twice; each distinct canonical meeting yields one labeled observation, with exact integer counts.",
+      "original_quote": "Show ZTE's moderator-role trend over time (leadership trajectory).",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "OPTIONAL MATCH (unit:Summary)-[:MADE_AT]->(m)",
+        "WHERE EXISTS { MATCH (unit)-[:MODERATED_BY]->(:Company {companyName: 'ZTE'}) }",
+        "WITH m, count(DISTINCT unit) AS moderatorSummaryCount",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber, m.meetingNumberInt AS meetingOrdinal, moderatorSummaryCount",
+        "ORDER BY meetingOrdinal ASC"
+      ],
+      "status": "pass",
+      "unit": "counting unit and join multiplicity"
+    },
+    {
+      "finding": "Return every source meeting and its integer count, retaining zero observations through OPTIONAL MATCH. No hidden10 cap, arbitrary recent window or missing-count filter is added. Set semantics apply to the complete uniquely meeting-labeled observations, not to unlabeled count values.",
+      "original_quote": "Show ZTE's moderator-role trend over time (leadership trajectory).",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "OPTIONAL MATCH (unit:Summary)-[:MADE_AT]->(m)",
+        "WHERE EXISTS { MATCH (unit)-[:MODERATED_BY]->(:Company {companyName: 'ZTE'}) }",
+        "WITH m, count(DISTINCT unit) AS moderatorSummaryCount",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber, m.meetingNumberInt AS meetingOrdinal, moderatorSummaryCount",
+        "ORDER BY meetingOrdinal ASC"
+      ],
+      "status": "pass",
+      "unit": "cardinality and completeness"
+    },
+    {
+      "finding": "The original requests observations over time but states neither chronological nor reverse-chronological display order. Exact canonical meeting labels preserve the time-count association regardless of array order. Ascending and descending presentations describe the same source-relative trend. ORDER BY meetingOrdinal ASC remains a reference-query presentation choice; it is not a compulsory answer rule. The former unit6 used the old query's direction as authority and is withdrawn. Unordered labeled-observation scoring avoids importing an unstated direction, including an artificial bis/e order for equal source ordinals.",
+      "original_quote": "Show ZTE's moderator-role trend over time (leadership trajectory).",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "OPTIONAL MATCH (unit:Summary)-[:MADE_AT]->(m)",
+        "WHERE EXISTS { MATCH (unit)-[:MODERATED_BY]->(:Company {companyName: 'ZTE'}) }",
+        "WITH m, count(DISTINCT unit) AS moderatorSummaryCount",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber, m.meetingNumberInt AS meetingOrdinal, moderatorSummaryCount",
+        "ORDER BY meetingOrdinal ASC"
+      ],
+      "status": "pass",
+      "unit": "ordering and ties when requested"
+    },
+    {
+      "finding": "This is an exposed primary reassessment prompted by a concrete ordering challenge. Original English and native query bytes remain unchanged; prior proposal and review are preserved with their prior identity. A new collection definition has a new hash, requires a separately bound independent seven-unit review and matching controls, and must replace rather than double-count the old definition if admitted. No human, expert or blind model evaluation is claimed.",
+      "original_quote": "Show ZTE's moderator-role trend over time (leadership trajectory).",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "OPTIONAL MATCH (unit:Summary)-[:MADE_AT]->(m)",
+        "WHERE EXISTS { MATCH (unit)-[:MODERATED_BY]->(:Company {companyName: 'ZTE'}) }",
+        "WITH m, count(DISTINCT unit) AS moderatorSummaryCount",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber, m.meetingNumberInt AS meetingOrdinal, moderatorSummaryCount",
+        "ORDER BY meetingOrdinal ASC"
+      ],
+      "status": "pass",
+      "unit": "unverified additional inputs or external interpretation"
+    }
+  ],
+  "status": "pass"
+}

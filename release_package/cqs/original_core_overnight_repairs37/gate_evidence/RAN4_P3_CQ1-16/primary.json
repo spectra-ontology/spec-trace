@@ -1,0 +1,122 @@
+{
+  "id": "RAN4_P3_CQ1-16",
+  "status": "pass",
+  "repair_sha256": "2e0df78e2f1e3c016acc05d5725e0d97b84993b5b8a3b14f5221c599d9f3a6c0",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "51dfeb658a3382669a37fe9152b914f9e15c5404f96e1d20086f9e367028bc64",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "List the top 5 RAN4 specs by section count (largest specs).",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IS NOT NULL",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount",
+        "ORDER BY sectionCount DESC, specNumber ASC"
+      ],
+      "finding": "The grammatical requested objects are five RAN4 specifications. specNumber is their logical identity. By section count specifies the ranking criterion; it does not separately request returning each scalar count, caption, version or Section list. sectionCount remains captured auxiliary ranking evidence so full source-order groups can be verified, and is not required merely because the old RETURN projected it."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "List the top 5 RAN4 specs by section count (largest specs).",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IS NOT NULL",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount",
+        "ORDER BY sectionCount DESC, specNumber ASC"
+      ],
+      "finding": "Original WG/Phase3 graph-relative context and Korean whole-Spec Section-count Top5 describe inventory ranking in this RAN4 process. Original source design selects final input per retained Release and defines separate release-aware Section identities. Group all recorded Spec instances by their original logical specNumber and count all their recorded Section identities. English chooses no release/current/latest edition and asks no singular document artifact or practical physical-page size. No arbitrary latest or version-invariance gate is introduced; this is recorded inventory size, not authored complete standard coverage."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "List the top 5 RAN4 specs by section count (largest specs).",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IS NOT NULL",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount",
+        "ORDER BY sectionCount DESC, specNumber ASC"
+      ],
+      "finding": "BELONGS_TO_SPEC is the original functional Section-to-owning-Spec relation, not CONTAINS_TABLE, references, approvals, CR modifications or causal influence. All stored Spec natural numbers form the full WG graph domain, with OPTIONAL MATCH preserving those lacking Section records at zero. Phase1 externally referenced Spec hubs with no selected Section edition are still recorded Spec identities and cannot acquire invented sections; they do not change any positive Section membership."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "List the top 5 RAN4 specs by section count (largest specs).",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IS NOT NULL",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount",
+        "ORDER BY sectionCount DESC, specNumber ASC"
+      ],
+      "finding": "The rank unit is one distinct logical specNumber and the metric unit is one distinct release-qualified Section.sectionId. A repeated path or owner node cannot inflate count. Equal Section ordinals in different recorded releases identify distinct Section instances and are counted separately under the original release-aware process. Do not replace the unit by raw relationships, unversioned display ordinals, number of editions, captions or latest-only size. This metric counts all Section nodes including recorded Void sections because English and original whole-Spec scope add no isVoid filter."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "List the top 5 RAN4 specs by section count (largest specs).",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IS NOT NULL",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount",
+        "ORDER BY sectionCount DESC, specNumber ASC"
+      ],
+      "finding": "English explicitly specifies5. Capture the entire uncapped Spec/sectionCount pool, including zero rows, before selecting any top5 answer. The scorer must require five distinct logical Spec identities unless the whole domain is smaller, all ranks strictly above the fifth-item cutoff, and an allowed subset at its full boundary. A technical unique boundary observation cannot justify assuming there can never be ties. There is no positivity cap, source-folder ownership override or source version chosen after viewing the ranking."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List the top 5 RAN4 specs by section count (largest specs).",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IS NOT NULL",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount",
+        "ORDER BY sectionCount DESC, specNumber ASC"
+      ],
+      "finding": "Top5 requests membership by sectionCount, not descending display order or lexical tiebreak among equal counts. Use top_k_boundary_ties k5, require_rank_order=false, with only descending sectionCount in source_order_keys. Reference specNumberASC makes capture reproducible but cannot decide a tied eligible identity. Unlike an unrestricted set inventory, repeating a top-k member is an invalid fifth answer and displaces a required unique slot."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "List the top 5 RAN4 specs by section count (largest specs).",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IS NOT NULL",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (s:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, count(DISTINCT s.sectionId) AS sectionCount",
+        "ORDER BY sectionCount DESC, specNumber ASC"
+      ],
+      "finding": "This source-first primary is a direct development semantic interpretation of the unchanged English with original KO/schema/design and fixed criterion; no stored gold or model predictions supply answer authority. Counts here describe retained graph inventory, not physical authored completeness, normative scope, expert validation or a new model measurement. Two independent exact7-unit judgments, full native output, independent full SQL and ranking/identity corruption controls are required before root admission. Prior latest/edition ambiguity diagnosis remains preserved for challenge rather than silently overwritten."
+    }
+  ],
+  "original_source_only_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_top5_recorded_section_count/original_source_only_packet.json",
+    "sha256": "564c85356368717f0e1363a5bf4b3ef1da1dc0b775b16348c04abbece867bac3"
+  },
+  "reviewer_kind": "Source-first primary original recorded-Section ranking /root/reaudit_ran3_ran4",
+  "exposure": "Original English/KO/design/schema and prior diagnoses/preliminary metadata metrics visible; no native/gold/predictions/secondary review. Nonblind AI development judgment, not model benchmark.",
+  "expert_validation_n": 0,
+  "human_author_review_completed": false
+}

@@ -1,0 +1,137 @@
+{
+  "id": "RAN4_P3_CQ2-1",
+  "status": "pass",
+  "repair_sha256": "5f801cfbb64f59e685e4c836c5b9a060cbafed171160584f88f14cc72965dbfd",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "2b95a95719433d29c72f9ba1a91f5a3a03bf11661baa1c289556a522bbbce316",
+  "reviewer_kind": "Source-first primary original plural graph-relative structural interpretation /root/reaudit_ran3_ran4",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "List the sections referenced by section 3.2 of spec 38.101-1 (outbound cross-references).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.101-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '3.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:REFERENCES_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle",
+        "ORDER BY sectionId"
+      ],
+      "finding": "The grammatical object is a plural inventory of Section objects. Each is identified by its original release-qualified sectionId; the parent Spec/Section is already named. The original schema defines sectionId as a unique identity, allowing each recorded edition member to be represented without collapsing equal ordinals across versions. sectionNumber and sectionTitle provide useful display/navigation context but are auxiliary: English does not separately request titles/captions/body content and an old RETURN projection is not field authority. This is a list of objects, not the singular 'theTOC' artifact or a requested semantic overview whose content titles might form part of the requested answer."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "List the sections referenced by section 3.2 of spec 38.101-1 (outbound cross-references).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.101-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '3.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:REFERENCES_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle",
+        "ORDER BY sectionId"
+      ],
+      "finding": "Fixed criteria.source_context preserves the original WG/Phase3 graph process. Its source design defines one selected-final Spec instance per retained Release and distinct release-aware Section/Table/Figure identities. The English names logical spec38.101-1 and section3.2 without choosing a Release/latest edition. A plural inventory can therefore include every recorded edition-qualified matching object; no arbitrary latest default, source-edition invariance requirement or logical-number collapse is added. IN_RELEASE_OF binds all actual edition parents to the named unversioned hub. Intermediate historical versions are not invented, nor are authored-source objects absent from the frozen graph silently materialized."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "List the sections referenced by section 3.2 of spec 38.101-1 (outbound cross-references).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.101-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '3.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:REFERENCES_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle",
+        "ORDER BY sectionId"
+      ],
+      "finding": "Referenced by specifies outgoing REFERENCES_SECTION edges from exact Section3.2 in spec38.101-1. Original schema defines Section references in content, not normative approval, causality or only external TS dependencies. The Korean original's other-TS wording is more restrictive than the unchanged English; English precedence means no external-spec-only filter is added. Internal and external target Sections qualify if actually recorded by this role."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "List the sections referenced by section 3.2 of spec 38.101-1 (outbound cross-references).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.101-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '3.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:REFERENCES_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle",
+        "ORDER BY sectionId"
+      ],
+      "finding": "The answer unit is a unique release-qualified sectionId, not relationship/path/parent-row count. RETURN DISTINCT over object identity and auxiliary properties removes repeated paths only. The independent full frozen SQL detects unique actual identities; the same ordinal in two releases remains two objects with two different IDs. There is no count or metric here. Missing anchor or empty relation population in an edition contributes no matching object, not an invented null object."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "List the sections referenced by section 3.2 of spec 38.101-1 (outbound cross-references).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.101-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '3.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:REFERENCES_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle",
+        "ORDER BY sectionId"
+      ],
+      "finding": "List requests the whole recorded matching set. Remove the old hidden latest-selection and LIMIT truncation; enumerate every matching edition parent and direct relationship without a cap. The full LEFT JOIN anchor census separately records every retained edition, including empty/missing anchors, and the full independent SQL keeps all projected fields. Edition populations can differ, as prior raw-source observations explicitly show; that difference does not make an unqualified plural graph inventory impossible. Native full query, requested-field scorer negatives, and independent exact-definition semantic review remain outstanding. Known source parsing omissions remain honest separate source-defect diagnostics rather than evidence that their absent objects are already in this frozen answer."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List the sections referenced by section 3.2 of spec 38.101-1 (outbound cross-references).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.101-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '3.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:REFERENCES_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle",
+        "ORDER BY sectionId"
+      ],
+      "finding": "The English does not request a rank, top-k, chronological sequence or display direction. Use an unordered set of original sectionId identities; reference ORDERBY is deterministic serialization. Exact permutations and repeated presentation of an existing member leave the answer set unchanged. Missing/extra/wrong IDs, ill-typed required fields and duplicates that displace a different required member change membership and must fail."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "List the sections referenced by section 3.2 of spec 38.101-1 (outbound cross-references).",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.101-1'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '3.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:REFERENCES_SECTION]->(obj:Section)",
+        "RETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle",
+        "ORDER BY sectionId"
+      ],
+      "finding": "This independent primary reconsideration is grounded in unchanged original English, original KO mismatches explicitly exposed, source Phase3 release-aware role definitions and fixed graph-relative criterion. It does not infer an enacted change, authored completeness, expert/human validation or a model performance result. Prior edition-invariance/latest-ambiguity holds remain in preserved bytes and are revised only for this plural recorded-identity interpretation; singular artifact, semantic content or temporal/approval questions require their own judgment. SQL counts and successful query execution are not the semantic justification. A second exact-definition semantic judgment, uncapped native/full SQL agreement and actual requested-field corruption controls precede admission."
+    }
+  ],
+  "source_schema_pin": {
+    "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+    "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+  },
+  "source_design_pin": {
+    "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+    "sha256": "7efa72c60eb6738a9f0e6d1906279b8ca4a0dcc433e8e00c6e4ab4aab141b390"
+  },
+  "original_KO_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN4/phase-3/cq_test_dataset.json",
+    "sha256": "4db3ead72b67d5d0916133c92b064ef8d141a0f10b19761422392e903b375a5a"
+  },
+  "original_KO_record": {
+    "id": "CQ2-1",
+    "category": "CQ2_TS간참조",
+    "question": "38.101-1-3.2가 참조하는 다른 TS Section 목록은?",
+    "cypher": "MATCH (rk:Spec {specNumber:'38.101-1'})<-[:BELONGS_TO_SPEC]-(a:Section {sectionNumber:'3.2'}) WHERE rk.specRelease IS NOT NULL WITH a,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (a)-[:REFERENCES_SECTION]->(b:Section) RETURN b.sectionId, b.sectionTitle ORDER BY b.sectionNumber LIMIT 25",
+    "expected_min_rows": 1
+  },
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "exposure": "Original/query/source roles and prior diagnoses visible; separate primary reconsideration before root native, second semantic review or scorer gates. No benchmark gold or model predictions used."
+}

@@ -1,0 +1,45 @@
+{
+  "id": "RAN4_P3_CQ2-2",
+  "question_en": "List the sections that reference section 4.2 of spec 38.133 (inbound cross-references).",
+  "original_query": "MATCH (rk:Spec {specNumber:'38.133'})<-[:BELONGS_TO_SPEC]-(b:Section {sectionNumber:'4.2'}) WHERE rk.specRelease IS NOT NULL WITH b,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (a:Section)-[:REFERENCES_SECTION]->(b) RETURN a.sectionId ORDER BY a.sectionId LIMIT 25",
+  "reference_query": "MATCH (hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\nMATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (anchor:Section {sectionNumber: '4.2'})-[:BELONGS_TO_SPEC]->(edition)\nMATCH (obj:Section)-[:REFERENCES_SECTION]->(anchor)\nRETURN DISTINCT obj.sectionId AS sectionId, obj.sectionNumber AS sectionNumber, obj.sectionTitle AS sectionTitle\nORDER BY sectionId",
+  "required_fields": [
+    {
+      "name": "sectionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "sectionId"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "1c471daff4cacd64e5c763958015099e88adb4523a861cda2a83ced4f4066dba",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "6bebbfc843ed0b6adb8650661bbd65aa3ef46fa26ba208895d53d68880607907",
+  "original_query_sha256": "4fafe5f317ccc5f903bfb86ac22ea3ed5788148e1adb143e78efc61f6ef78adf",
+  "reference_query_sha256": "835754570e8156ddf69b3821150721e1f6dbbb7a82121801d429f58121d481b3",
+  "primary_review_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ2-2_primary_review.json",
+    "sha256": "35d68eb512b2b90d5daeb54c4d00ef885c197acae9f60dde25415f5b0b95779f"
+  },
+  "full_source_scope_witness_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ2-2_full_recorded_scope_SQL_witness.json",
+    "sha256": "c5dda52b65e8a19aae9392c1842e4fce7fd85addbff035655262334ba0347725"
+  },
+  "admitted": false,
+  "native_execution_completed": false,
+  "scorer_controls_completed": false,
+  "prior_round6_ledger_preserved_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/all_44_item_diagnoses.jsonl",
+    "sha256": "a90baba54bf09b24a0333ecea4fb2ad2e79557962a98356338ad66525aaecc12"
+  },
+  "external_model_calls": 0,
+  "expert_validation_n": 0,
+  "human_author_review_completed": false
+}

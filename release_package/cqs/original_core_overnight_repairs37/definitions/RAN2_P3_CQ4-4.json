@@ -1,0 +1,130 @@
+{
+  "id": "RAN2_P3_CQ4-4",
+  "question_en": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber, count(DISTINCT r) AS resolutions, count(DISTINCT cr) AS crs ORDER BY resolutions DESC LIMIT 5",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC",
+  "required_fields": [
+    {
+      "name": "specNumber",
+      "nullable": false,
+      "source_column_or_expression": "specNumber",
+      "type": "string"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "direction": "desc",
+        "source_column": "crCount"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "value": 5,
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "tie_policy": "any_subset_at_boundary",
+    "value": 5
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "f92b7fae4173f90096d667e55138161e219560bb88864fa54587ecc9ca4390d2",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "88e962d790e3ee1eb42cac7e5e7a12244b1147fd77cd8b9ada5c55f71fbcb915",
+  "original_query_sha256": "7cb63966a1fb5244a4e4162e8cb1486a55b009bf87c2ca0b10afaa4708b16041",
+  "reference_query_sha256": "30dd35f05a387b9a151de342ebc14e6df24e9a4af71bba0946fded26f4ef55bf",
+  "primary_review": {
+    "id": "RAN2_P3_CQ4-4",
+    "status": "pass",
+    "repair_sha256": "f92b7fae4173f90096d667e55138161e219560bb88864fa54587ecc9ca4390d2",
+    "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+    "original_question_sha256": "88e962d790e3ee1eb42cac7e5e7a12244b1147fd77cd8b9ada5c55f71fbcb915",
+    "reviewer_kind": "Independent primary Codex original-question-derived semantic judgment; development diagnosis, not blind/human/expert review",
+    "human_author_review_completed": false,
+    "expert_validation_n": 0,
+    "semantic_evidence": [
+      {
+        "unit": "requested answer roles and fields",
+        "status": "pass",
+        "original_quote": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+        "query_clauses": [
+          "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC"
+        ],
+        "finding": "The original top5 specs request asks five distinct specification identities. specNumber is the required answer; crCount is a selection witness only, not an unasked score field."
+      },
+      {
+        "unit": "population and source context",
+        "status": "pass",
+        "original_quote": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+        "query_clauses": [
+          "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC"
+        ],
+        "finding": "The English explicitly confines the task to the resolution→CR→spec path. Keep all frozen Resolution-REFERENCES-CR-MODIFIES-Spec occurrences, without unasked company, meeting, release, ownership prefix or approval filters. Group identical requested specNumber values across graph Spec nodes; an edition hub is not another specification identity."
+      },
+      {
+        "unit": "filters and relationship meaning",
+        "status": "pass",
+        "original_quote": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+        "query_clauses": [
+          "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC"
+        ],
+        "finding": "Traverse REFERENCES as the recorded resolution-to-CR path, never as approval or causality. MODIFIES identifies the CR-target specification in the frozen graph; the task makes a path-volume ranking and does not establish actual normative incorporation or external technical impact."
+      },
+      {
+        "unit": "counting unit and join multiplicity",
+        "status": "pass",
+        "original_quote": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+        "query_clauses": [
+          "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC"
+        ],
+        "finding": "Before viewing candidate outputs I independently derived most modified in a CR path as the number of distinct CR changes reaching each requested specNumber. The same CR mentioned by multiple resolutions is one change, and two same-number Spec nodes do not make it two changes. COUNT(DISTINCT cr) implements that unit. The later full SQL source witness confirms CR node/tdocNumber/id counts agree in all34 groups, while raw path multiplication occurs (38.300 has99 CRs,198 paths across2 Spec nodes)."
+      },
+      {
+        "unit": "cardinality and completeness",
+        "status": "pass",
+        "original_quote": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+        "query_clauses": [
+          "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC"
+        ],
+        "finding": "The explicit5 is an answer cardinality, not a native-query cap. The repaired reference query has no LIMIT and retains all34 eligible positive-change spec groups. Five requested identities must include every group above the numeric fifth boundary and any required equal-boundary subset; missing/extra/lower-ranked identities fail. Current offline fifth count99 versus sixth90 is diagnostic, to be reconfirmed natively. Graph specs with zero eligible path changes cannot reach this positive boundary."
+      },
+      {
+        "unit": "ordering and ties when requested",
+        "status": "pass",
+        "original_quote": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+        "query_clauses": [
+          "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC"
+        ],
+        "finding": "The task requests top5 membership, not display order or lexical tie choice. Descending crCount establishes numeric eligibility; source_order_keys excludes auxiliary lexical specNumber. Any eligible boundary subset and display order is accepted. The observed untied fifth boundary makes the present eligible top5 unique but no deterministic lexical gold convention is introduced."
+      },
+      {
+        "unit": "unverified additional inputs or external interpretation",
+        "status": "pass",
+        "original_quote": "Return the top 5 specs most modified along the resolution to CR to spec path (decision-impact ranking).",
+        "query_clauses": [
+          "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber AS specNumber, count(DISTINCT cr) AS crCount ORDER BY crCount DESC, specNumber ASC"
+        ],
+        "finding": "No additional input, external model call, new graph or current Phase3 metadata default is required to define this query. The source witness reads only the exact pinned frozen SQLite representation and pins before/after DB hashes. Native complete query receipt, second independent semantic judgment and scorer negative controls remain technical admission gates; no existing prediction performance transfers and no human/expert review is asserted."
+      }
+    ]
+  },
+  "source_witnesses": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_decision_path_rank_full_pool.json",
+      "sha256": "ab33153f064be89fce3189d8b684ea1107e05603622f20a968ea621d6c79ac3f"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-4_identity_witness.json",
+      "sha256": "1b1c22fe3e3b0f904eadf01471570c92fc8d65f5fc0dbf1f7ed5bb2cf6533aa9"
+    }
+  ],
+  "admitted": false,
+  "new_unique_core_id": true,
+  "repair_reason": "Original requested change-volume top5 uses distinct CR changes per specification; uncapped full pool supports complete requested-field boundary selection.",
+  "native_execution_completed": false,
+  "model_calls_n": 0,
+  "expert_validation_n": 0
+}

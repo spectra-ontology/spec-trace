@@ -1,0 +1,43 @@
+{
+  "id": "RAN5_P3_CQ1-16",
+  "question_en": "Which five RAN5 specs have the most sections? (largest specs)",
+  "original_query": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN sp.specNumber, count(s) AS sectionCount ORDER BY sectionCount DESC LIMIT 5",
+  "reference_query": "MATCH (population:Spec)\nWHERE population.specNumber STARTS WITH '38.5'\nWITH DISTINCT population.specNumber AS specNumber\nOPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: specNumber})\nRETURN specNumber, count(DISTINCT sec.sectionId) AS sectionCount\nORDER BY sectionCount DESC, specNumber",
+  "required_fields": [
+    {
+      "name": "specNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "specNumber"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 5,
+    "tie_policy": "any_subset_at_boundary",
+    "source_order_keys": [
+      {
+        "source_column": "sectionCount",
+        "direction": "desc"
+      }
+    ],
+    "require_rank_order": false,
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 5,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "original_question_sha256": "617deb1ad25196bd1df415c073262b811140ce95bdde544bb655574733d90f31",
+  "original_query_sha256": "b54ab471072d05661273bda4ed3a08ee1b8403da4a767ec5ad357d364bfbe37c",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "89c0ac66d524d567cfbab1e021fdcdb3922901eadc3e4495914381523f11ecf2",
+  "reference_query_sha256": "9947154700e989e39afd1cfab37f06dcbd296887ed10e66aeac90d20c6da3939",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_recorded_Section_count_original_context/source_only_independent_review/RAN5_P3_CQ1-16_full23_original_source_only_packet.json",
+    "sha256": "6ee9e5213ab892b11b2afef2c8d30c3cad7f530fe1e76156f6012c3cc5db827e"
+  }
+}

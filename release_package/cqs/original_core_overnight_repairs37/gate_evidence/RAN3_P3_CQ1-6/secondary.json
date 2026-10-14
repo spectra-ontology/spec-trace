@@ -1,0 +1,190 @@
+{
+  "id": "RAN3_P3_CQ1-6",
+  "kind": "Independent source-first exact-definition AI semantic judgment",
+  "reviewer": "/root/verify_prepared_replies",
+  "status": "pass",
+  "repair_sha256": "8afa67a83479d05a4506f4544c1577e0f166add942cce36c11e2b3afe6f6a407",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "question_en": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+  "original_question_sha256": "ec178adb53b61eef5e3e6a9ec5858d6e760ef9217fb42ca1b3ed4bf2a63c709e",
+  "original_query_sha256": "5ce9531f7fcb2c9b41709cf038fdb311cacf3102e829165d0e9b7ad09b4bd074",
+  "reference_query_sha256": "8b75015982055f818fe8a6f1db8750cfa1cf59d041cdd2a63890a2de41a94e1a",
+  "definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/source_only_independent_review/RAN3_P3_CQ1-6_canonical_source_only_definition.json",
+    "sha256": "be1e1f52e3e6acc03b9ff525580a96c6d934c24facc9ecacd0268f56a6b08aaf"
+  },
+  "original_source_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/source_only_independent_review/RAN3_P3_CQ1-6_original_source_packet.json",
+    "sha256": "39365898f2bc66e286710b07f3e5f114a1dedf55ce23a6730ceef61141d2f1e8"
+  },
+  "original_pending_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_pending.jsonl",
+    "sha256": "32af347959e0a8b29627b751274e1df64c4c19c3fad2f6cea6d791377f368bdd"
+  },
+  "original_only_identity": {
+    "id": "RAN3_P3_CQ1-6",
+    "original_question": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+    "original_query": "MATCH (rk:Spec {specNumber:'38.413'})<-[:BELONGS_TO_SPEC]-(sec:Section {sectionNumber:'8.7.5.2'}) WHERE rk.specRelease IS NOT NULL WITH sec,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (sec)-[:CONTAINS_FIGURE]->(f:TSFigure) RETURN f.figureId, f.figureNumber, f.figureCaption",
+    "original_question_sha256": "ec178adb53b61eef5e3e6a9ec5858d6e760ef9217fb42ca1b3ed4bf2a63c709e",
+    "original_query_sha256": "5ce9531f7fcb2c9b41709cf038fdb311cacf3102e829165d0e9b7ad09b4bd074"
+  },
+  "source_clause_receipt": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/crossreviews_structural8/independently_read_original_schema_design_clauses.json",
+    "sha256": "3945f470c4fdec982c7456bb05a7486b7f3ca92558ce3446b8ecafe754e36b6c"
+  },
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "original_quote": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+      "status": "pass",
+      "finding": "List the figures asks for Figure object identities. The original facets define figureId as family/release/object-number identity. Caption is optional in the ontology and not requested by this list question; neither caption, release, version, table-cell values nor graphical interpretation is forced as an additional scored field.",
+      "query_clauses": [
+        "RETURN DISTINCT obj.figureId AS figureId, obj.figureNumber AS figureNumber, obj.figureCaption AS figureCaption"
+      ],
+      "source_references": [
+        "schema_hybrid_identity",
+        "schema_release_blind_aggregation",
+        "RAN3_population",
+        "RAN3_CQ_operation_mapping",
+        "schema_single_owner_containment",
+        "RAN3_CQ_operation_mapping",
+        "RAN3_unique_owner",
+        "RAN3_owner_number_mapping",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "original_quote": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+      "status": "pass",
+      "finding": "The original WG/phase is a graph-relative structural object lookup. The original design scope records separate final-per-release Spec/Section objects and excludes intra-release history. Schema v4.1 defines an unversioned hub for the named specNumber, every retained release variant, and explicitly defines release-blind aggregation CQs by hub ← inReleaseOf ← release-keyed → Section. This source-context rule supplies the population without selecting latest by fiat. The exact anchor number is matched in each retained variant; objects retain complete identity coordinates and are returned as a plural set. This does not synthesize the singular TOC/structure of one unnamed edition, nor claim all authored editions or source-world completeness. Distinct edition object differences do not require output invariance, and no new version field is forced into the scored answer.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.413'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '8.7.5.2'})-[:BELONGS_TO_SPEC]->(edition)"
+      ],
+      "source_references": [
+        "schema_hybrid_identity",
+        "schema_release_blind_aggregation",
+        "RAN3_population",
+        "RAN3_CQ_operation_mapping"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "original_quote": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+      "status": "pass",
+      "finding": "The original CQ1-5/CQ1-6 operation is Section → Figure, inverse of the functional single-owner figureInSection relation. Schema says exactly one owner, and the design maps caption number to one section by removing its final -N, falling back to an existing ancestor only when that number has no Section. This is recorded owner containment, not transitive geometric containment of every descendant clause. The candidate therefore uses the declared direct inverse relation. The schema contains* label alone would not settle this; the single-owner facet and original CQ-specific mapping are needed. The locating-requirement/test-setup/diagram parenthetical states a use, not an independent content-classifier predicate.",
+      "query_clauses": [
+        "MATCH (anchor:Section {sectionNumber: '8.7.5.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:CONTAINS_FIGURE]->(obj:TSFigure)"
+      ],
+      "source_references": [
+        "schema_single_owner_containment",
+        "RAN3_CQ_operation_mapping",
+        "RAN3_unique_owner",
+        "RAN3_owner_number_mapping",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "original_quote": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+      "status": "pass",
+      "finding": "The answer unit is one distinct figureId object, not number of release variants, paths or duplicate reference/containment edges. RETURN DISTINCT on the declared identity makes repeated paths the same list member while different release-bearing identities remain different objects. Optional number/title/caption projections belong to the same object; this is a list question, so no count aggregate is required.",
+      "query_clauses": [
+        "RETURN DISTINCT obj.figureId AS figureId, obj.figureNumber AS figureNumber, obj.figureCaption AS figureCaption"
+      ],
+      "source_references": [
+        "RAN3_population",
+        "schema_single_owner_containment",
+        "RAN3_CQ_operation_mapping",
+        "RAN3_unique_owner",
+        "RAN3_owner_number_mapping",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "original_quote": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+      "status": "pass",
+      "finding": "List requests all matching recorded objects. All retained variants and the literal original anchor are traversed with no latest selection and no arbitrary original LIMIT10/15. The set/all contract checks complete identity membership, not a top-k display sample. Completeness is bounded to the frozen recorded WG graph and operation; no claim is made that every source-authored caption, human semantic mention or future edition has been extracted.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.413'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '8.7.5.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:CONTAINS_FIGURE]->(obj:TSFigure)",
+        "RETURN DISTINCT obj.figureId AS figureId, obj.figureNumber AS figureNumber, obj.figureCaption AS figureCaption"
+      ],
+      "source_references": [
+        "schema_hybrid_identity",
+        "schema_release_blind_aggregation",
+        "RAN3_population",
+        "RAN3_CQ_operation_mapping",
+        "schema_single_owner_containment",
+        "RAN3_CQ_operation_mapping",
+        "RAN3_unique_owner",
+        "RAN3_owner_number_mapping",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "original_quote": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+      "status": "pass",
+      "finding": "English requests no rank, number order, top-k or tie-break policy. ORDER BY the identity is deterministic serialization only; set scoring permits any order and repeated existing member. No original LIMIT or numeric release sort is treated as an unstated answer request.",
+      "query_clauses": [
+        "ORDER BY figureId"
+      ],
+      "source_references": []
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "original_quote": "List the figures in section 8.7.5.2 of spec 38.413 (locating diagrams).",
+      "status": "pass",
+      "finding": "Named specNumber and section number plus the preserved ontology/CQ category are sufficient for this recorded identity lookup. No newest release, body classifier, approval/date/default version, expert judgment or external causal explanation is added. Role identities encode existing release provenance without adding unasked required fields. Source-context clauses, not native counts or old query/gold, justify the operation. This is one AI development judgment; no human/expert review, benchmark model result or admission is asserted.",
+      "query_clauses": [
+        "MATCH (hub:Spec {specNumber: '38.413'})",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (edition:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (anchor:Section {sectionNumber: '8.7.5.2'})-[:BELONGS_TO_SPEC]->(edition)",
+        "MATCH (anchor)-[:CONTAINS_FIGURE]->(obj:TSFigure)",
+        "RETURN DISTINCT obj.figureId AS figureId, obj.figureNumber AS figureNumber, obj.figureCaption AS figureCaption"
+      ],
+      "source_references": [
+        "schema_hybrid_identity",
+        "schema_release_blind_aggregation",
+        "RAN3_population",
+        "RAN3_CQ_operation_mapping",
+        "schema_single_owner_containment",
+        "RAN3_CQ_operation_mapping",
+        "RAN3_unique_owner",
+        "RAN3_owner_number_mapping",
+        "RAN3_exact_identity_and_direct_hierarchy"
+      ]
+    }
+  ],
+  "English_Korean_source_discrepancies": [],
+  "exposure": {
+    "proposer_primary_read": false,
+    "proposer_SQL_or_count_results_read": false,
+    "native_output_read": false,
+    "gold_or_predictions_read": false,
+    "canonical_candidate_visible": true,
+    "source_packet_original_query_and_expected_min_rows_visible": true,
+    "unrelated_prior_pending_rows_briefly_visible": true,
+    "derivation_basis": "Original English/category, literal schema and original design clauses. Visible expected_min_rows and unrelated prior pending judgments were not used as semantic authority. Not a blind experiment."
+  },
+  "limits": [
+    "The verdict validates original graph-relative list meaning, not source-authoring extraction recall or source ontology truth.",
+    "All applicable native full-output, independent whole-SQL and scorer controls remain root gates; this record alone adds no admission.",
+    "Current preserved source-context byte identity is pinned; no source edit or authenticated historical writing time is inferred."
+  ],
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "native_runs_by_this_reviewer": 0,
+  "new_admissions_by_this_reviewer": 0,
+  "reviewer_kind": "Independent original-only source judgment /root/verify_prepared_replies"
+}

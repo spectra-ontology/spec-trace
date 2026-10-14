@@ -1,0 +1,29 @@
+{
+  "id": "RAN2_P3_CQ3-7",
+  "wg": "RAN2",
+  "query_sha256": "a6650f851506fe677315b190d327d793f7fd3fe423522491148ad294314cf9f8",
+  "query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.331'})\nWHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT cr, rk\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE cr.clausesAffected CONTAINS s.sectionNumber\nWITH cr, s\nWHERE (\n    (s.sectionNumber =~ '[0-9]+|[A-Z]' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&]|\\\\band\\\\b)\\\\s*(?:(?i:sub-?clauses?|clauses?|sections?|annex(?:es)?)\\\\s+)?\\\\Q' + s.sectionNumber + '\\\\E\\\\.?\\\\s*(?:\\\\([^)]*\\\\)\\\\s*)?(?:$|[,;\\\\n&]|\\\\band\\\\b).*'))\n    OR\n    (s.sectionNumber =~ '([0-9].*|[A-Z]\\\\..*)' AND NOT s.sectionNumber =~ '[0-9]+'\n      AND cr.clausesAffected =~ ('(?s).*(?<![A-Za-z0-9._/#:~\\\\-])\\\\Q' + s.sectionNumber + '\\\\E(?![A-Za-z0-9_]|\\\\.[A-Za-z0-9]).*'))\n    OR\n    (s.sectionNumber =~ '[A-Z][A-Za-z0-9-]+' AND cr.clausesAffected =~ ('(?s).*(?:^|[,;\\\\n&])\\\\s*(?:[0-9][A-Za-z0-9.]*\\\\s*[–\\\\-:(/]\\\\s*)?\\\\Q' + s.sectionNumber + '\\\\E\\\\s*\\\\)?\\\\s*(?:$|[,;\\\\n&]).*'))\n  )\nRETURN DISTINCT cr.tdocNumber AS tdocNumber\nORDER BY tdocNumber",
+  "started_utc": "2026-10-14T20:19:05.534972+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN2_P3_CQ3-7/a6650f851506fe677315b190d327d793f7fd3fe423522491148ad294314cf9f8.jsonl",
+  "columns": [
+    "tdocNumber"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 1452,
+  "bytes_retained": 21780,
+  "rows_sha256": "2d37c955c91af3b6eedc8e8d7d716b8e930603c99b7e451ab29d30517410eec1",
+  "finished_utc": "2026-10-14T20:19:10.221328+00:00",
+  "elapsed_s": 4.6864,
+  "full_rows_available": true
+}

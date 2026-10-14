@@ -1,0 +1,87 @@
+{
+  "id": "RAN4_P3_CQ2-2",
+  "kind": "Read-only full recorded edition/relationship domain, not native/gold",
+  "database_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN4.sqlite",
+    "sha256": "24b8d938d456472ad7005178a65acb105857eebc3b96bd9ed8027703b8158c0a"
+  },
+  "SQL": "SELECT DISTINCT obj.sectionId AS sectionId,obj.sectionNumber AS sectionNumber,obj.sectionTitle AS sectionTitle\n            FROM Spec hub JOIN rel_IN_RELEASE_OF ir ON ir.dst_id=hub.node_id\n            JOIN Spec edition ON edition.node_id=ir.src_id\n            JOIN rel_BELONGS_TO_SPEC bs ON bs.dst_id=edition.node_id\n            JOIN Section anchor ON anchor.node_id=bs.src_id\n            JOIN rel_REFERENCES_SECTION edge ON edge.dst_id=anchor.node_id\n            JOIN Section obj ON obj.node_id=edge.src_id\n            WHERE hub.specNumber=? AND hub.specRelease IS NULL AND anchor.sectionNumber=?\n            ORDER BY obj.sectionId",
+  "parameters": [
+    "38.133",
+    "4.2"
+  ],
+  "anchor_census_SQL": "SELECT edition.node_id AS editionNode,edition.specRelease,edition.specVersion,\n            anchor.node_id AS anchorNode,anchor.sectionId AS anchorId,anchor.sectionTitle AS anchorTitle\n            FROM Spec hub JOIN rel_IN_RELEASE_OF ir ON ir.dst_id=hub.node_id\n            JOIN Spec edition ON edition.node_id=ir.src_id\n            LEFT JOIN (SELECT s.* ,b.dst_id AS ownerSpec FROM Section s JOIN rel_BELONGS_TO_SPEC b ON b.src_id=s.node_id WHERE s.sectionNumber=?) anchor\n            ON anchor.ownerSpec=edition.node_id\n            WHERE hub.specNumber=? AND hub.specRelease IS NULL\n            ORDER BY edition.specRelease,anchor.node_id",
+  "anchor_census_parameters": [
+    "4.2",
+    "38.133"
+  ],
+  "all_edition_anchor_records": [
+    {
+      "editionNode": 342039,
+      "specRelease": "Rel-15",
+      "specVersion": "15.33.0",
+      "anchorNode": 334628,
+      "anchorId": "38.133-Rel-15-4.2",
+      "anchorTitle": "Cell Re-selection"
+    },
+    {
+      "editionNode": 342120,
+      "specRelease": "Rel-16",
+      "specVersion": "16.27.0",
+      "anchorNode": 340233,
+      "anchorId": "38.133-Rel-16-4.2",
+      "anchorTitle": "Cell Re-selection"
+    },
+    {
+      "editionNode": 342142,
+      "specRelease": "Rel-17",
+      "specVersion": "17.21.0",
+      "anchorNode": 341429,
+      "anchorId": "38.133-Rel-17-4.2",
+      "anchorTitle": "Cell Re-selection"
+    },
+    {
+      "editionNode": 342145,
+      "specRelease": "Rel-18",
+      "specVersion": "18.13.0",
+      "anchorNode": 341521,
+      "anchorId": "38.133-Rel-18-4.2",
+      "anchorTitle": "Cell Re-selection"
+    },
+    {
+      "editionNode": 342149,
+      "specRelease": "Rel-19",
+      "specVersion": "19.4.0",
+      "anchorNode": 341590,
+      "anchorId": "38.133-Rel-19-4.2",
+      "anchorTitle": "Cell Re-selection"
+    }
+  ],
+  "full_requested_object_n": 619,
+  "all_fields_records_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ2-2_independent_SQL_all_fields.jsonl",
+    "sha256": "f506939a1c58a5763603773597ffe43b10f84b215c617b1487003f0cb42c9be0"
+  },
+  "source_schema_pin": {
+    "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+    "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+  },
+  "source_design_pin": {
+    "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+    "sha256": "7efa72c60eb6738a9f0e6d1906279b8ca4a0dcc433e8e00c6e4ab4aab141b390"
+  },
+  "original_KO_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN4/phase-3/cq_test_dataset.json",
+    "sha256": "4db3ead72b67d5d0916133c92b064ef8d141a0f10b19761422392e903b375a5a"
+  },
+  "original_KO_record": {
+    "id": "CQ2-2",
+    "category": "CQ2_TS간참조",
+    "question": "38.133-7.1.2를 참조하는 Section 목록은?",
+    "cypher": "MATCH (rk:Spec {specNumber:'38.133'})<-[:BELONGS_TO_SPEC]-(b:Section {sectionNumber:'7.1.2'}) WHERE rk.specRelease IS NOT NULL WITH b,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (a:Section)-[:REFERENCES_SECTION]->(b) RETURN a.sectionId ORDER BY a.sectionId LIMIT 25",
+    "expected_min_rows": 10
+  },
+  "diagnostic_counts_are_not_semantic_proof": true,
+  "native_called": false,
+  "admitted": false
+}

@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 404 have passed the stated repair checks,
-and 156 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 441 have passed the stated repair checks,
+and 119 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 404 unchanged original questions.
+included in these 441 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -56,10 +56,10 @@ prepared forms as completed expert reviews.
 The preserved [Core402 additions manifest](latest_additions_manifest.json) and
 [archive](latest_additions.tar.gz) retain the earlier 402-item index snapshot
 and its two measured one-item cohorts. Their verifier replays that snapshot;
-it does not certify the current 404-item index.
+it does not certify the later current index.
 
 The [observed-trend manifest](observed_trend_manifest.json) and
-[download](observed_trend.tar.gz) preserve the current 404-item index, all 560
+[download](observed_trend.tar.gz) preserve the earlier 404-item index, all 560
 blank source-first review forms, and the disjoint two-item
 [repair bundle](../original_core_observed_trend_repair/README.md). The compact
 archive uses the byte-preserved Core402 download as a pinned dependency.
@@ -94,3 +94,5 @@ download verification are separate states. Model predictions for these two
 new contracts have a separate frozen evaluation when actually completed;
 prior scores are not transferred. The compact archive verifier does not
 repeat older model experiments.
+
+The [additional37 bundle](../original_core_overnight_repairs37/README.md) preserves the exact cohort authorized before fresh model evaluation. Its 37 unchanged original questions add to the preserved404 index: 441 of560 now pass and119 remain pending in this snapshot. All37 have two separate nonblind AI semantic judgments,26,211 complete native rows, full-field independent SQL agreement and283 replayable scorer controls. Source-fidelity limitations remain explicit. Human/expert reviews and complete physical archive validation are not claimed. The repair bundle has no predictions. Its [fresh four-method evaluation](../original_core_overnight_evaluation37/README.md) uses separately frozen inputs and all 37 IDs per method; raw responses, costs, failures and offline scoring replay are retained.

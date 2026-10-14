@@ -1,0 +1,87 @@
+{
+  "id": "RAN4_P3_CQ1-6",
+  "kind": "Read-only full recorded edition/relationship domain, not native/gold",
+  "database_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN4.sqlite",
+    "sha256": "24b8d938d456472ad7005178a65acb105857eebc3b96bd9ed8027703b8158c0a"
+  },
+  "SQL": "SELECT DISTINCT obj.figureId AS figureId,obj.figureNumber AS figureNumber,obj.figureCaption AS figureCaption\n            FROM Spec hub JOIN rel_IN_RELEASE_OF ir ON ir.dst_id=hub.node_id\n            JOIN Spec edition ON edition.node_id=ir.src_id\n            JOIN rel_BELONGS_TO_SPEC bs ON bs.dst_id=edition.node_id\n            JOIN Section anchor ON anchor.node_id=bs.src_id\n            JOIN rel_CONTAINS_FIGURE edge ON edge.src_id=anchor.node_id\n            JOIN TSFigure obj ON obj.node_id=edge.dst_id\n            WHERE hub.specNumber=? AND hub.specRelease IS NULL AND anchor.sectionNumber=?\n            ORDER BY obj.figureId",
+  "parameters": [
+    "38.141-2",
+    "J.3"
+  ],
+  "anchor_census_SQL": "SELECT edition.node_id AS editionNode,edition.specRelease,edition.specVersion,\n            anchor.node_id AS anchorNode,anchor.sectionId AS anchorId,anchor.sectionTitle AS anchorTitle\n            FROM Spec hub JOIN rel_IN_RELEASE_OF ir ON ir.dst_id=hub.node_id\n            JOIN Spec edition ON edition.node_id=ir.src_id\n            LEFT JOIN (SELECT s.* ,b.dst_id AS ownerSpec FROM Section s JOIN rel_BELONGS_TO_SPEC b ON b.src_id=s.node_id WHERE s.sectionNumber=?) anchor\n            ON anchor.ownerSpec=edition.node_id\n            WHERE hub.specNumber=? AND hub.specRelease IS NULL\n            ORDER BY edition.specRelease,anchor.node_id",
+  "anchor_census_parameters": [
+    "J.3",
+    "38.141-2"
+  ],
+  "all_edition_anchor_records": [
+    {
+      "editionNode": 341895,
+      "specRelease": "Rel-15",
+      "specVersion": "15.22.0",
+      "anchorNode": null,
+      "anchorId": null,
+      "anchorTitle": null
+    },
+    {
+      "editionNode": 341951,
+      "specRelease": "Rel-16",
+      "specVersion": "16.22.0",
+      "anchorNode": 334772,
+      "anchorId": "38.141-2-Rel-16-J.3",
+      "anchorTitle": "High speed train condition"
+    },
+    {
+      "editionNode": 341972,
+      "specRelease": "Rel-17",
+      "specVersion": "17.21.0",
+      "anchorNode": 336108,
+      "anchorId": "38.141-2-Rel-17-J.3",
+      "anchorTitle": "High speed train condition"
+    },
+    {
+      "editionNode": 341983,
+      "specRelease": "Rel-18",
+      "specVersion": "18.13.0",
+      "anchorNode": 335498,
+      "anchorId": "38.141-2-Rel-18-J.3",
+      "anchorTitle": "High speed train condition"
+    },
+    {
+      "editionNode": 342014,
+      "specRelease": "Rel-19",
+      "specVersion": "19.4.0",
+      "anchorNode": 333925,
+      "anchorId": "38.141-2-Rel-19-J.3",
+      "anchorTitle": "High speed train condition"
+    }
+  ],
+  "full_requested_object_n": 35,
+  "all_fields_records_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/graph_relative_structural_reopening8/RAN4_P3_CQ1-6_independent_SQL_all_fields.jsonl",
+    "sha256": "f8af1d0f024083fd55a625c4b846a3aa9ba5c6667372eee208861be52375fdae"
+  },
+  "source_schema_pin": {
+    "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+    "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+  },
+  "source_design_pin": {
+    "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN4/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+    "sha256": "7efa72c60eb6738a9f0e6d1906279b8ca4a0dcc433e8e00c6e4ab4aab141b390"
+  },
+  "original_KO_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN4/phase-3/cq_test_dataset.json",
+    "sha256": "4db3ead72b67d5d0916133c92b064ef8d141a0f10b19761422392e903b375a5a"
+  },
+  "original_KO_record": {
+    "id": "CQ1-6",
+    "category": "CQ1_TS구조탐색",
+    "question": "38.141-2-J.3 포함 Figure 목록은?",
+    "cypher": "MATCH (rk:Spec {specNumber:'38.141-2'})<-[:BELONGS_TO_SPEC]-(sec:Section {sectionNumber:'J.3'}) WHERE rk.specRelease IS NOT NULL WITH sec,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (sec)-[:CONTAINS_FIGURE]->(f:TSFigure) RETURN f.figureId, f.figureNumber, f.figureCaption ORDER BY f.figureNumber LIMIT 15",
+    "expected_min_rows": 5
+  },
+  "diagnostic_counts_are_not_semantic_proof": true,
+  "native_called": false,
+  "admitted": false
+}

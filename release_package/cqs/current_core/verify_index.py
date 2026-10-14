@@ -19,9 +19,9 @@ def main():
     assert sha(parent/'all_core_dispositions.jsonl')==parent_manifest['files']['all_core_dispositions.jsonl']
     assert manifest['source_snapshot']==parent_manifest['graph_sources']
     tasks=rows(here/'current_tasks.jsonl');ledger=rows(here/'all_core_dispositions.jsonl')
-    assert len(ledger)==560 and len(tasks)==manifest['repaired_n']==404
+    assert len(ledger)==560 and len(tasks)==manifest['repaired_n']
     assert {r['id'] for r in ledger} <= set(originals)
-    assert len({r['id'] for r in ledger})==560 and len({r['id'] for r in tasks})==404
+    assert len({r['id'] for r in ledger})==560 and len({r['id'] for r in tasks})==manifest['repaired_n']
     assert {r['id'] for r in ledger}=={r['id'] for r in parent_ledger}
     frozen={};gold={}
     for scope,digest in manifest['cohort_manifest_pins'].items():
@@ -60,7 +60,7 @@ def main():
     assert dict(Counter(r['repair_class'] for r in tasks))==manifest['repair_classes']
     assert sum('supersedes_repair_sha256' in r for r in tasks)==manifest['replacement_ids_n']==10
     assert sum(r['status']=='pass' for r in ledger)==manifest['repaired_n']
-    assert sum(r['status']=='pending' for r in ledger)==manifest['pending_n']==156
-    print(json.dumps({'status':'PASS','original_n':560,'repaired_n':404,'pending_n':156,
+    assert sum(r['status']=='pending' for r in ledger)==manifest['pending_n']
+    print(json.dumps({'status':'PASS','original_n':560,'repaired_n':manifest['repaired_n'],'pending_n':manifest['pending_n'],
                       'replacement_n':10,'new_API_calls':0,'new_database_executions':0}))
 if __name__=='__main__':main()

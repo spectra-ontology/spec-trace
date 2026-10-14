@@ -1,0 +1,38 @@
+{
+  "id": "RAN4_P3_CQ3-2",
+  "question_en": "How many CRs modify spec 38.133, and how many sections does it have? (change load vs spec size).",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.133'}) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCount MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCount, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCount, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) RETURN hub.specNumber, crCount, count(s) AS sectionCount",
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber: '38.133'})\nWHERE hub.specRelease IS NULL\nWITH count(DISTINCT cr.tdocNumber) AS crCount\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.133'})\nRETURN crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+  "required_fields": [
+    {
+      "name": "crCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "crCount"
+    },
+    {
+      "name": "sectionCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "sectionCount"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 1
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "39ccbcae6ef5a64e08d2a4842c3f6bd40eddf8c700fefed569c9c7635b3a0626",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reference_query_sha256": "51ea5522b807b4d842981913ca6a5d93b7be0e4ec7a05bf5ba42f9e88d6f696c",
+  "original_question_sha256": "a232fc4fcb178717a5c248b528e2734410c23411057be6efb25a25915e9377dd",
+  "original_query_sha256": "a78ea2f5c894b62f08fdc86a50376d9042f7cc3f05e892ff23aaf7dc9f078216",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recorded_CR_and_Section_count/original_source_only_packet.json",
+    "sha256": "df542ba35c1dc6dcb70b6ea4609e0081882e3de17bf791af446203aeb5b7b830"
+  }
+}

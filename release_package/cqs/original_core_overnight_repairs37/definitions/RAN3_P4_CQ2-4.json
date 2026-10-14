@@ -1,0 +1,166 @@
+{
+  "id": "RAN3_P4_CQ2-4",
+  "question_en": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+  "original_query": "MATCH (c:CR)-[r:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->() WITH c, count(r) AS cnt ORDER BY cnt DESC, c.tdocNumber LIMIT 10 RETURN c.tdocNumber AS tdocNumber, cnt",
+  "reference_query": "MATCH (c:CR)\nOPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)\nWITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount\nRETURN tdocNumber, impactCount\nORDER BY impactCount DESC, tdocNumber ASC",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "direction": "desc",
+        "source_column": "impactCount"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "value": 10,
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "tie_policy": "any_subset_at_boundary",
+    "value": 10
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "4a661e38b38f4a4d5fdae2dcad0504b3dfc0c5ded7f179ba38d1ac956f1922cf",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "04b0fee63ca9ab198d6d997e1e849ae0533629a8c3aee04cde324b13417156e7",
+  "original_query_sha256": "62d79acd4d54dde2891839d25cbe565651f8f96448f443ae5f5c1e28b1d15689",
+  "reference_query_sha256": "da4b7642f06228072e5566ed80ffe962644f9b115c97bb4ff96aed2565154687",
+  "primary_review": {
+    "id": "RAN3_P4_CQ2-4",
+    "status": "pass",
+    "repair_sha256": "4a661e38b38f4a4d5fdae2dcad0504b3dfc0c5ded7f179ba38d1ac956f1922cf",
+    "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+    "original_question_sha256": "04b0fee63ca9ab198d6d997e1e849ae0533629a8c3aee04cde324b13417156e7",
+    "reviewer_kind": "Direct primary original-English/source-grounded Codex judgment /root/reaudit_ran3_ran4",
+    "human_author_review_completed": false,
+    "expert_validation_n": 0,
+    "semantic_evidence": [
+      {
+        "unit": "requested answer roles and fields",
+        "status": "pass",
+        "original_quote": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+        "query_clauses": [
+          "MATCH (c:CR)",
+          "OPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)",
+          "WITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount",
+          "RETURN tdocNumber, impactCount",
+          "ORDER BY impactCount DESC, tdocNumber ASC"
+        ],
+        "finding": "The grammatical object of Return is the top10 CRs. The requested answer role is ten distinct CR identities, supplied by tdocNumber. The by-cross-spec-impact-count phrase specifies selection, not a separately requested count-return field. impactCount is retained in the full reference output as the numeric ranking witness and may be supplied as explanatory context by an answer, but it is not made compulsory because the English does not separately request each scalar count. This role conclusion was derived directly from the English before binding to the exact proposal, rather than copied from the original RETURN."
+      },
+      {
+        "unit": "population and source context",
+        "status": "pass",
+        "original_quote": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+        "query_clauses": [
+          "MATCH (c:CR)",
+          "OPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)",
+          "WITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount",
+          "RETURN tdocNumber, impactCount",
+          "ORDER BY impactCount DESC, tdocNumber ASC"
+        ],
+        "finding": "Use all CR identities in the frozen RAN3 source graph, with no added meeting, release, company, approval, CR-type or positive-impact restriction. OPTIONAL MATCH retains CRs with no recorded other-spec targets as zero recorded declarations. The root's full source artifact retains19974 CRs and19161 zeros; the source database has no duplicate natural TDoc numbers or missing target specNumber values. The query groups c.tdocNumber, matching the requested logical CR identity."
+      },
+      {
+        "unit": "filters and relationship meaning",
+        "status": "pass",
+        "original_quote": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+        "query_clauses": [
+          "MATCH (c:CR)",
+          "OPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)",
+          "WITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount",
+          "RETURN tdocNumber, impactCount",
+          "ORDER BY impactCount DESC, tdocNumber ASC"
+        ],
+        "finding": "The three AFFECTS_CORE_SPEC, AFFECTS_TEST_SPEC and AFFECTS_OM_SPEC families encode the retained CR form's Other specs affected (show related CRs) declarations. All five directly read original cover samples exactly match their frozen role/spec target pairs, including the sole role-overlap counterexample. Traverse those role families together to measure declared cross-spec breadth. No MODIFIES primary target is silently added, and no referenced Resolution, CR approval, normative enactment or causal impact is inferred."
+      },
+      {
+        "unit": "counting unit and join multiplicity",
+        "status": "pass",
+        "original_quote": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+        "query_clauses": [
+          "MATCH (c:CR)",
+          "OPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)",
+          "WITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount",
+          "RETURN tdocNumber, impactCount",
+          "ORDER BY impactCount DESC, tdocNumber ASC"
+        ],
+        "finding": "The widest-reaching parenthetical selects breadth across distinct logical specifications. Repeated declarations of the same specNumber in different core/test/O&M roles do not reach another specification. COUNT(DISTINCT sp.specNumber) counts one logical target across all three role families and also prevents edition-node duplication from inflating breadth. The original R3-232630 cover declares38.423 once as Other core CR1016 and again as O&M CR1739: nine role/spec declarations but eight distinct specification numbers. Different related CR numbers do not make38.423 two specifications. Four independently read top-pool covers each declare eleven distinct targets and match their eleven frozen target pairs."
+      },
+      {
+        "unit": "cardinality and completeness",
+        "status": "pass",
+        "original_quote": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+        "query_clauses": [
+          "MATCH (c:CR)",
+          "OPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)",
+          "WITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount",
+          "RETURN tdocNumber, impactCount",
+          "ORDER BY impactCount DESC, tdocNumber ASC"
+        ],
+        "finding": "The explicit10 defines requested answer cardinality. The reference query is uncapped and retains all eligible CRs, including zeros, so scorer selection has the whole boundary pool. The full root SQL artifact has four CRs strictly above cutoff9 and seventeen at cutoff9; a valid ten-item answer includes those four plus any six of the seventeen tied identities. Missing, extra, repeated or lower-ranked CR identities fail. In particular R3-232630 now has eight distinct targets and cannot displace a cutoff-nine CR. Those numerical observations are artifact diagnostics, not the authority for the semantic counting unit; the native full receipt is still required."
+      },
+      {
+        "unit": "ordering and ties when requested",
+        "status": "pass",
+        "original_quote": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+        "query_clauses": [
+          "MATCH (c:CR)",
+          "OPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)",
+          "WITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount",
+          "RETURN tdocNumber, impactCount",
+          "ORDER BY impactCount DESC, tdocNumber ASC"
+        ],
+        "finding": "Top10 requests membership by the numeric breadth criterion; the English does not require descending display order or a lexical tie-break among equally reaching CRs. Use top_k_boundary_ties with k10 and require_rank_order=false. The reference ORDER BY impactCount DESC establishes numeric pool ordering for technical selection; auxiliary tdocNumber ASC is a reproducible display convention only and is omitted from source_order_keys. Any eligible six-of-seventeen boundary subset and any correct answer display order are accepted."
+      },
+      {
+        "unit": "unverified additional inputs or external interpretation",
+        "status": "pass",
+        "original_quote": "Return the top 10 CRs by cross-spec impact count (widest-reaching changes).",
+        "query_clauses": [
+          "MATCH (c:CR)",
+          "OPTIONAL MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec)",
+          "WITH c.tdocNumber AS tdocNumber, count(DISTINCT sp.specNumber) AS impactCount",
+          "RETURN tdocNumber, impactCount",
+          "ORDER BY impactCount DESC, tdocNumber ASC"
+        ],
+        "finding": "This is a graph-relative ranking of source-declared cross-spec targets, not a measurement of actual enacted or causal technical effect. No extra input, chosen current edition, new graph or external model API is required. Current parser/JSON-LD/loader code pins support the recorded role meanings, while actual original source covers plus frozen target-pair equality are the direct evidence. The prior ambiguous role-count diagnosis is retained. This primary AI judgment is not blinded or human/expert validation; root must independently judge the exact identity, execute the full new native target-count query, compare the whole source pool and run scorer negative controls before admission."
+      }
+    ]
+  },
+  "primary_semantic_status": "pass",
+  "source_witnesses": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_cross_spec_cover_meaning_witness.json",
+      "sha256": "98c3b58e277c70cbb6556276acdf0772ed549fe29943c22aa58c7cc89228fa3c"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN3_distinct_cross_spec_metric.json",
+      "sha256": "f208ec4b0b64e308295d132772944efcf2c7f6dcbe056a9fe85d43e2cbbcdf86"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN3_distinct_cross_spec_full_pool.jsonl",
+      "sha256": "c6b48eeb07fea3c99626c7a594ba56d180c1899600def9f790f1c4abe60d7b5c"
+    }
+  ],
+  "preserved_prior_ambiguous_diagnosis": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/all_44_item_diagnoses_round1.jsonl",
+    "sha256": "1757d593efb34391cc51add8f1fc9760f71e4543cbe86a0aa82207e6d8fceca8"
+  },
+  "admitted": false,
+  "native_execution_completed": false,
+  "scorer_controls_completed": false,
+  "external_model_calls": 0,
+  "human_expert_validation_n": 0
+}
