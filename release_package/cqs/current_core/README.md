@@ -42,6 +42,30 @@ file membership are in [manifest.json](manifest.json) and
 [archive_inventory.json](archive_inventory.json). The byte-identical duplicate
 paths are restored as independent regular files by the supplied verifier.
 
+`index_manifest.json` records the current 402-item index. `manifest.json`
+describes the preserved 400-item download only. The separate
+[latest additions manifest](latest_additions_manifest.json) pins the current
+index and both new one-question repair/evaluation packages. Its
+[inventory](latest_additions_inventory.json) and
+[download](latest_additions.tar.gz) preserve their exact evidence bytes.
+`verify_latest_additions.py` downloads that pinned release anonymously and
+replays the two new contracts, two evaluations, current index and blank
+human-review inputs. Older model experiments are outside this download's
+replay scope.
+
+```sh
+python3 -B -S release_package/cqs/current_core/verify_latest_additions.py \
+  --commit EXACT_40_CHARACTER_RELEASE_COMMIT \
+  --manifest-sha256 EXACT_SHA256_OF_LATEST_ADDITIONS_MANIFEST \
+  --out-dir /your/fresh/latest-additions
+```
+
+The named-agreement task retains an `admitted: false` proposal-stage field.
+Completed admission is recorded by its `validation_status: validated`,
+pinned reviews, native capture, scorer checks and bundle manifest. The
+current index uses those verified completion records; frozen proposal
+metadata is retained rather than rewritten after evaluation.
+
 ```sh
 python3 -B -S release_package/cqs/current_core/verify_download.py \
   --commit e89d2769de3e1740f50411fe2333d33341b77873 \
