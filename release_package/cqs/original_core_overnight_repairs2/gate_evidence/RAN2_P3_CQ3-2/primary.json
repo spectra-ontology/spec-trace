@@ -1,0 +1,1695 @@
+{
+  "id": "RAN2_P3_CQ3-2",
+  "repair_sha256": "ee0cebd96bb789ec8749a4dd3c215bfb78da0d48b021e5c1efca8e32ca51b0d2",
+  "original_question_sha256": "d1d78027c30a58a5028c8f1af674e5cf733a09af83999390f63f94ab719e8b2a",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Primary direct Codex original source-context diagnosis /root/reaudit_ran2_ran5",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+      "finding": "Return the top-level sections requests uniquely identified Section objects, not CR IDs or merely a Spec family. The originalschema sectionId is a unique release-aware object key, while sectionNumber/title are optional explanatory fields; English does not explicitly require those projections. SectionID includes namedSpec/release/ordinal and distinguishes genuinely different source records, rather than synthesizing a single unqualified number/title union.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH DISTINCT hub",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)",
+        "RETURN DISTINCT s.sectionId AS sectionId"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+      "finding": "Original Phase3 stores all final release-aware Spec/Section identities for Rel15–19, with hybrid hub/release-keyed mapping and release-blind family aggregation. The given named38.331 is family-level and the query returns all retained top-level recordobjects under its release-keyed Specs. No single physicaledition, WordTOC, sourceinvariance, targetCurrentVersion or one latest-release choice is claimed. The original object metadata5834 and complete namedSpecCRrelation input are independently read, without answer extraction.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH DISTINCT hub",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)",
+        "RETURN DISTINCT s.sectionId AS sectionId"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+      "finding": "The exact original CQ3-2 sentence asks the Sectionstructure of a TS modified by a CR, mapping CR→Spec→Section and exact termsetCR/modifies/Spec/hasSection/Section. CQ3-4 separately requests clausesAffected-based Section modification. Thus English spec38.331 thatCRsmodify is read as targetSpec layout, not a claim that every listed top-level Section is individually edited by each CR. The reference verifies a recordedCR MODIFIES namedabstracthub, follows actual IN_RELEASE_OF and BELONGS_TO_SPEC to recordedlevel1 Sectionobjects; no target-clause approximation or normativechange proof is substituted.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH DISTINCT hub",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)",
+        "RETURN DISTINCT s.sectionId AS sectionId"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+      "finding": "One distinct eligible SectionID is one requested member. CR witness multiplicity collapses at WITH DISTINCThub and RETURN DISTINCTSectionID; same top-level ordinal in different releases remains a different source object. CRcounts, affectedclausecounts or a number/title projection dedup are not the requested counting unit. No unrequested per-CR matrix or join to source approval/company/meeting suppresses eligible records.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH DISTINCT hub",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)",
+        "RETURN DISTINCT s.sectionId AS sectionId"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+      "finding": "All top-level recorded Sectionobjects of the namedCRtarget family are required. No LIMIT10, firstCR witnessselection, latestrelease, numeric-only Annex exclusion, clause-prefix or same-release eligibility filter is added. Source priorAnnexC/E/title differences remain risks for a physicalTOC/invariance assertion but do not prevent a complete distinct recordedobject inventory. AuthoredCR source gaps and287sourceRelease disagreements are separate fidelity risks, not new membership conditions in this existing graph operational task.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH DISTINCT hub",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)",
+        "RETURN DISTINCT s.sectionId AS sectionId"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+      "finding": "English requests neither rank, chronological order, physicalpage ordering nor a topk cutoff. Set semantics accept permutation and repetition of a present member, while duplicate displacement omitting a different SectionID fails. Optional sortedobjectdisplay does not make source ordinal/title order mandatory. The query does not conflate recorded objectinventory with one physically ordered layout artifact.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH DISTINCT hub",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)",
+        "RETURN DISTINCT s.sectionId AS sectionId"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+      "finding": "The exact original English/KO and the original CQ3-2-versusCQ3-4 operation mapping independently disambiguate the targetSpec-level operation before eligibleanswerSQL/native/gold/prediction access. Source metadata and actual stagedsource bytes are pinned, not a historicalauthorship timestamp assertion. Generic directobject references from prior task repairs are known but are not a blanket source-authority substitute; no human/expert/blindbenchmark claim is made. Second exactjudgment plus fullnative/independentSQL/actualwronglevel/latest/role/cardinality controls are required for admission.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})",
+        "WHERE hub.specRelease IS NULL",
+        "WITH DISTINCT hub",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)",
+        "RETURN DISTINCT s.sectionId AS sectionId"
+      ]
+    }
+  ],
+  "exact_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/two_original_recorded_CR_Spec_operations/source_only_independent_review/RAN2_P3_CQ3-2_canonical_source_only_definition.json",
+    "bytes": 1593,
+    "sha256": "7018502015937c5ba25c9d6437622fe073daca21f79c1fc9938c7dd80eec88d7"
+  },
+  "source_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/two_original_recorded_CR_Spec_operations/source_only_independent_review/RAN2_P3_CQ3-2_original_source_only_packet.json",
+    "bytes": 53885,
+    "sha256": "ea269db5caad0c8f446aee1082f63da61e665bf734eae621af89397ba938b86f"
+  },
+  "complete_source_inputs_read": [
+    {
+      "source": {
+        "kind": "Complete original Section identity metadata, unfiltered level",
+        "records": 5834,
+        "pin": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/two_original_recorded_CR_Spec_operations/source_only_independent_review/all_original_38331_Section_identity_metadata_source_only.jsonl",
+          "bytes": 2542449,
+          "sha256": "4d1e541b3953c1dffc80aded0069a150e5cccc2f180336d024b5a4fad023ed51"
+        }
+      },
+      "all_lines_read": 5834
+    },
+    {
+      "source": {
+        "kind": "Complete original CR→namedSpec stored relation identities, no Section filtering or status filter",
+        "records": 10599,
+        "pin": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/two_original_recorded_CR_Spec_operations/source_only_independent_review/all_original_38331_recorded_CR_MODIFIES_identity_source_only.jsonl",
+          "bytes": 2263082,
+          "sha256": "22bb68948743f8b260bb1b5893a3344add768fb700f950ec4f4c494192522f0d"
+        }
+      },
+      "all_lines_read": 10599
+    }
+  ],
+  "source_excerpts": [
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_two_recorded_Section_references_original_context/original_design_git_index_snapshot.md",
+        "bytes": 96135,
+        "sha256": "50b36effff81952779b8ae8e577d9f297390ab377541606b89ffecfee3fafe62"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 42,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 43,
+          "text": "    | Phase-1 | Tdoc_list (Excel) | ✅ 구축 완료 |"
+        },
+        {
+          "line_1based": 44,
+          "text": "    | Phase-2 | Final Report (Word) | ✅ 구축 완료 |"
+        },
+        {
+          "line_1based": 45,
+          "text": "    | **Phase-3** | **TS 문서 (Word)** | 🔶 신규 |"
+        },
+        {
+          "line_1based": 46,
+          "text": "    "
+        },
+        {
+          "line_1based": 47,
+          "text": "    ### 1.5 전제 조건"
+        },
+        {
+          "line_1based": 48,
+          "text": "    "
+        },
+        {
+          "line_1based": 49,
+          "text": "    > 본 온톨로지는 Phase-1~2 온톨로지의 확장이다."
+        },
+        {
+          "line_1based": 50,
+          "text": "    >"
+        },
+        {
+          "line_1based": 51,
+          "text": "    >"
+        },
+        {
+          "line_1based": 52,
+          "text": "    > Phase-1~2에서 정의된 모든 클래스, 관계, 인스턴스를 사용할 수 있으며, Phase-3는 TS 구조를 추가하고 기존 데이터와 연결한다."
+        },
+        {
+          "line_1based": 53,
+          "text": "    >"
+        },
+        {
+          "line_1based": 54,
+          "text": "    "
+        },
+        {
+          "line_1based": 55,
+          "text": "    ### 1.6 RAN2 데이터 특성"
+        },
+        {
+          "line_1based": 56,
+          "text": "    "
+        },
+        {
+          "line_1based": 57,
+          "text": "    | 항목 | RAN2 | 비고 |"
+        },
+        {
+          "line_1based": 58,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 59,
+          "text": "    | TS 범위 | 38.3xx + 37.324 | L2/L3 프로토콜 시리즈 |"
+        },
+        {
+          "line_1based": 60,
+          "text": "    | 총 Section | [P3-V01] | Heading 1~8 |"
+        },
+        {
+          "line_1based": 61,
+          "text": "    | 최대 TS | 38.331 (RRC 프로토콜) | 섹션 수 최다 |"
+        },
+        {
+          "line_1based": 62,
+          "text": "    | Heading depth | 1~8 | Heading 7/8 사용 |"
+        },
+        {
+          "line_1based": 63,
+          "text": "    | TSTable | [P3-V02] | |"
+        },
+        {
+          "line_1based": 64,
+          "text": "    | TSFigure | [P3-V03] | |"
+        },
+        {
+          "line_1based": 65,
+          "text": "    | Void Section | Appendix A (§2.5 분류 정의 참조) | |"
+        },
+        {
+          "line_1based": 66,
+          "text": "    | ASN.1 | 38.331 중심 | |"
+        },
+        {
+          "line_1based": 67,
+          "text": "    | 제외 스타일 | TH, NO, ZA/ZB/ZT/ZU | 커스텀 스타일 포함 |"
+        },
+        {
+          "line_1based": 68,
+          "text": "    "
+        },
+        {
+          "line_1based": 69,
+          "text": "    ---"
+        },
+        {
+          "line_1based": 70,
+          "text": "    "
+        },
+        {
+          "line_1based": 71,
+          "text": "    ## 2. Scope 정의"
+        },
+        {
+          "line_1based": 72,
+          "text": "    "
+        },
+        {
+          "line_1based": 73,
+          "text": "    ### 2.1 포함 (In Scope)"
+        },
+        {
+          "line_1based": 74,
+          "text": "    "
+        },
+        {
+          "line_1based": 75,
+          "text": "    | 구분 | 포함 대상 |"
+        },
+        {
+          "line_1based": 76,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 77,
+          "text": "    | **TS 문서** | 37.324, 38.300, 38.304, 38.305, 38.306, 38.314, 38.321, 38.322, 38.323, 38.331, 38.340, 38.351, 38.355, 38.391 |"
+        },
+        {
+          "line_1based": 78,
+          "text": "    | **Release 차원 (release-aware)** | 각 TS의 **release별 final 버전** (Rel-15/16/17/18/19). 동일 spec번호라도 release마다 **별개 Spec 노드**이며, sectionId·Spec IRI가 release 키를 포함한다 (예: `38.331-Rel-15-...` ≠ `38.331-Rel-17-...`). spec×release = spec-release 단위로 적재 |"
+        },
+        {
+          "line_1based": 79,
+          "text": "    | **Section 구조** | 본문 + Annex, 8레벨까지 |"
+        },
+        {
+          "line_1based": 80,
+          "text": "    | **Table 메타데이터** | ID, 캡션, 번호, 위치 |"
+        },
+        {
+          "line_1based": 81,
+          "text": "    | **Figure 메타데이터** | ID, 캡션, 번호, 위치 |"
+        },
+        {
+          "line_1based": 82,
+          "text": "    | **TS 간 참조** | Section 간 내부/외부 참조 |"
+        },
+        {
+          "line_1based": 83,
+          "text": "    | **기존 연결** | Spec(Phase-1) ↔ TS(Phase-3) 매핑 |"
+        },
+        {
+          "line_1based": 84,
+          "text": "    "
+        },
+        {
+          "line_1based": 85,
+          "text": "    ### 2.2 제외 (Out of Scope)"
+        },
+        {
+          "line_1based": 86,
+          "text": "    "
+        },
+        {
+          "line_1based": 87,
+          "text": "    | 제외 대상 | 이유 |"
+        },
+        {
+          "line_1based": 88,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 89,
+          "text": "    | Section 본문 텍스트 | Vector DB 영역 |"
+        },
+        {
+          "line_1based": 90,
+          "text": "    | Table 셀 데이터 | Vector DB 영역 |"
+        },
+        {
+          "line_1based": 91,
+          "text": "    | 수식 내용 | Vector DB 영역 (LaTeX) |"
+        },
+        {
+          "line_1based": 92,
+          "text": "    | **ASN.1 본문 텍스트** | Vector DB 영역. Section 노드(sectionId, sectionNumber, title, level)는 포함하되, ASN.1 코드 본문은 Graph DB에 저장하지 않음 |"
+        },
+        {
+          "line_1based": 93,
+          "text": "    | TS **intra-release** 버전 히스토리 (한 release 내 모든 draft/중간 버전) | 복잡도 증가, 향후 확장. release별 **final 버전 1개**만 적재 (release-aware). 각 release final의 버전값은 Spec 확장의 specVersion에 기록 (Step 4 §6 참조) |"
+        },
+        {
+          "line_1based": 94,
+          "text": "    | RAN2 외 TS (36.xxx 등) | Scope 한정 |"
+        },
+        {
+          "line_1based": 95,
+          "text": "    "
+        },
+        {
+          "line_1based": 96,
+          "text": "    ### 2.3 Graph DB vs Vector DB 경계"
+        },
+        {
+          "line_1based": 97,
+          "text": "    "
+        },
+        {
+          "line_1based": 98,
+          "text": "    | Graph DB (Phase-3) | Vector DB |"
+        },
+        {
+          "line_1based": 99,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 100,
+          "text": "    | Section ID, 번호, 제목, 레벨 | Section 본문 텍스트 |"
+        },
+        {
+          "line_1based": 101,
+          "text": "    | Section 계층 관계 | 본문 임베딩 |"
+        },
+        {
+          "line_1based": 102,
+          "text": "    | Table/Figure 메타데이터 | Table 셀 데이터 |"
+        },
+        {
+          "line_1based": 103,
+          "text": "    | TS 간 참조 관계 | 수식 내용 |"
+        },
+        {
+          "line_1based": 104,
+          "text": "    | CR/Resolution 연결 | **ASN.1 본문 텍스트** |"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_two_recorded_Section_references_original_context/original_design_git_index_snapshot.md",
+        "bytes": 96135,
+        "sha256": "50b36effff81952779b8ae8e577d9f297390ab377541606b89ffecfee3fafe62"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 155,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 156,
+          "text": "    | 2-1 | 특정 Section이 참조하는 다른 TS Section 목록은? |"
+        },
+        {
+          "line_1based": 157,
+          "text": "    | 2-2 | 특정 Section을 참조하는 다른 TS Section 목록은? (역참조) |"
+        },
+        {
+          "line_1based": 158,
+          "text": "    | 2-3 | 특정 TS가 가장 많이 참조하는 다른 TS는? |"
+        },
+        {
+          "line_1based": 159,
+          "text": "    | 2-4 | 가장 많이 참조되는 Section Top N은? |"
+        },
+        {
+          "line_1based": 160,
+          "text": "    | 2-5 | 두 TS 간 참조 관계 요약은? |"
+        },
+        {
+          "line_1based": 161,
+          "text": "    "
+        },
+        {
+          "line_1based": 162,
+          "text": "    ### CQ3. CR → TS 연결"
+        },
+        {
+          "line_1based": 163,
+          "text": "    "
+        },
+        {
+          "line_1based": 164,
+          "text": "    | # | Competency Question | 경로 |"
+        },
+        {
+          "line_1based": 165,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 166,
+          "text": "    | 3-1 | 특정 CR이 수정한 TS는? | CR → Spec |"
+        },
+        {
+          "line_1based": 167,
+          "text": "    | 3-2 | 특정 CR이 수정한 TS의 Section 구조는? | CR → Spec → Section |"
+        },
+        {
+          "line_1based": 168,
+          "text": "    | 3-3 | 특정 TS를 수정한 CR 목록은? | Spec ← CR |"
+        },
+        {
+          "line_1based": 169,
+          "text": "    | 3-4 | 특정 Section을 수정한 CR 목록은? | clausesAffected 기반 * |"
+        },
+        {
+          "line_1based": 170,
+          "text": "    | 3-5 | 특정 Work Item 관련 CR이 수정한 TS 목록은? | WorkItem → CR → Spec |"
+        },
+        {
+          "line_1based": 171,
+          "text": "    | 3-6 | 특정 회사가 수정한 TS 목록은? | Company → CR → Spec |"
+        },
+        {
+          "line_1based": 172,
+          "text": "    "
+        },
+        {
+          "line_1based": 173,
+          "text": "    *CQ 3-4 제약사항: clausesAffected 있는 CR만 (Appendix A [P3-V05] 참조)*"
+        },
+        {
+          "line_1based": 174,
+          "text": "    "
+        },
+        {
+          "line_1based": 175,
+          "text": "    ### CQ4. Resolution → TS 연결"
+        },
+        {
+          "line_1based": 176,
+          "text": "    "
+        },
+        {
+          "line_1based": 177,
+          "text": "    | # | Competency Question | 경로 |"
+        },
+        {
+          "line_1based": 178,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 179,
+          "text": "    | 4-1 | 특정 Resolution이 승인한 CR이 수정한 TS는? | Resolution → CR → Spec |"
+        },
+        {
+          "line_1based": 180,
+          "text": "    | 4-2 | 특정 TS를 수정한 CR을 승인한 Resolution 목록은? | Spec ← CR ← Resolution |"
+        },
+        {
+          "line_1based": 181,
+          "text": "    | 4-3 | 특정 회의에서 승인된 CR이 수정한 TS 목록은? | Meeting → Resolution → CR → Spec |"
+        },
+        {
+          "line_1based": 182,
+          "text": "    | 4-4 | 특정 Work Item의 Resolution이 반영된 TS 목록은? | WorkItem → CR ← Resolution, CR → Spec |"
+        },
+        {
+          "line_1based": 183,
+          "text": "    "
+        },
+        {
+          "line_1based": 184,
+          "text": "    *CQ4 제약사항: Resolution이 CR을 references하는 경우만 (Appendix A [P3-V06] 참조)*"
+        },
+        {
+          "line_1based": 185,
+          "text": "    "
+        },
+        {
+          "line_1based": 186,
+          "text": "    ### CQ5. 통합 분석"
+        },
+        {
+          "line_1based": 187,
+          "text": "    "
+        },
+        {
+          "line_1based": 188,
+          "text": "    | # | Competency Question |"
+        },
+        {
+          "line_1based": 189,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 190,
+          "text": "    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |"
+        },
+        {
+          "line_1based": 191,
+          "text": "    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |"
+        },
+        {
+          "line_1based": 192,
+          "text": "    | 5-3 | 특정 Release에서 변경된 TS 목록은? |"
+        },
+        {
+          "line_1based": 193,
+          "text": "    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |"
+        },
+        {
+          "line_1based": 194,
+          "text": "    "
+        },
+        {
+          "line_1based": 195,
+          "text": "    ---"
+        },
+        {
+          "line_1based": 196,
+          "text": "    "
+        },
+        {
+          "line_1based": 197,
+          "text": "    ## 5. CQ 결과 규칙"
+        },
+        {
+          "line_1based": 198,
+          "text": "    "
+        },
+        {
+          "line_1based": 199,
+          "text": "    ### 5.1 정렬 기준 (Default Sort Order)"
+        },
+        {
+          "line_1based": 200,
+          "text": "    "
+        },
+        {
+          "line_1based": 201,
+          "text": "    | CQ 그룹 | Primary Sort | Secondary Sort |"
+        },
+        {
+          "line_1based": 202,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 203,
+          "text": "    | CQ1. 구조 탐색 | Section 번호 ASC | - |"
+        },
+        {
+          "line_1based": 204,
+          "text": "    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |"
+        },
+        {
+          "line_1based": 205,
+          "text": "    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_two_recorded_Section_references_original_context/original_design_git_index_snapshot.md",
+        "bytes": 96135,
+        "sha256": "50b36effff81952779b8ae8e577d9f297390ab377541606b89ffecfee3fafe62"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 330,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 331,
+          "text": "    | **Resolution** | ✅ CQ4 |  |"
+        },
+        {
+          "line_1based": 332,
+          "text": "    | Agreement | ⚪ (Resolution 하위) | 간접 사용 |"
+        },
+        {
+          "line_1based": 333,
+          "text": "    | Conclusion | ⚪ (Resolution 하위) | 간접 사용 |"
+        },
+        {
+          "line_1based": 334,
+          "text": "    | WorkingAssumption | ⚪ (Resolution 하위) | 간접 사용 |"
+        },
+        {
+          "line_1based": 335,
+          "text": "    | Table | ⚪ | 기존 유지 (Phase-3와 별개) |"
+        },
+        {
+          "line_1based": 336,
+          "text": "    "
+        },
+        {
+          "line_1based": 337,
+          "text": "    *참고: RAN2 Phase-2에는 Summary, SessionNotes, Figure, Chart 클래스가 없음*"
+        },
+        {
+          "line_1based": 338,
+          "text": "    "
+        },
+        {
+          "line_1based": 339,
+          "text": "    ---"
+        },
+        {
+          "line_1based": 340,
+          "text": "    "
+        },
+        {
+          "line_1based": 341,
+          "text": "    ## 3. Phase-3 CQ 기반 관계 사용 분석"
+        },
+        {
+          "line_1based": 342,
+          "text": "    "
+        },
+        {
+          "line_1based": 343,
+          "text": "    ### 3.1 Phase-1 관계 - 전체 유지"
+        },
+        {
+          "line_1based": 344,
+          "text": "    "
+        },
+        {
+          "line_1based": 345,
+          "text": "    | 관계 | Domain → Range | Phase-3 CQ 사용 | 비고 |"
+        },
+        {
+          "line_1based": 346,
+          "text": "    | --- | --- | --- | --- |"
+        },
+        {
+          "line_1based": 347,
+          "text": "    | **modifies** | CR → Spec | ✅ CQ3, CQ4 | 핵심 경로 |"
+        },
+        {
+          "line_1based": 348,
+          "text": "    | **submittedBy** | Tdoc → Company | ✅ CQ3, CQ5 |  |"
+        },
+        {
+          "line_1based": 349,
+          "text": "    | **relatedTo** | Tdoc → WorkItem | ✅ CQ3, CQ5 |  |"
+        },
+        {
+          "line_1based": 350,
+          "text": "    | **presentedAt** | Tdoc → Meeting | ✅ CQ3, CQ4 |  |"
+        },
+        {
+          "line_1based": 351,
+          "text": "    | **targetRelease** | Tdoc → Release | ✅ CQ5 |  |"
+        },
+        {
+          "line_1based": 352,
+          "text": "    | belongsTo | Tdoc → AgendaItem | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 353,
+          "text": "    | hasContact | Tdoc → Contact | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 354,
+          "text": "    | isRevisionOf | Tdoc → Tdoc | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 355,
+          "text": "    | revisedTo | Tdoc → Tdoc | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 356,
+          "text": "    | replyTo | Tdoc → Tdoc | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 357,
+          "text": "    | replyIn | Tdoc → Tdoc | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 358,
+          "text": "    | sentTo | LS → WorkingGroup | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 359,
+          "text": "    | ccTo | LS → WorkingGroup | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 360,
+          "text": "    | originalLS | LS → Tdoc | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 361,
+          "text": "    | originatedFrom | LS → WorkingGroup | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 362,
+          "text": "    "
+        },
+        {
+          "line_1based": 363,
+          "text": "    ### 3.2 Phase-2 관계 - 전체 유지"
+        },
+        {
+          "line_1based": 364,
+          "text": "    "
+        },
+        {
+          "line_1based": 365,
+          "text": "    | 관계 | Domain → Range | Phase-3 CQ 사용 | 비고 |"
+        },
+        {
+          "line_1based": 366,
+          "text": "    | --- | --- | --- | --- |"
+        },
+        {
+          "line_1based": 367,
+          "text": "    | **references** | Resolution → Tdoc | ✅ CQ4 | 핵심 경로 |"
+        },
+        {
+          "line_1based": 368,
+          "text": "    | **madeAt** | Resolution → Meeting | ✅ CQ4 |  |"
+        },
+        {
+          "line_1based": 369,
+          "text": "    | resolutionBelongsTo | Resolution → AgendaItem | ⚪ | 기존 유지 |"
+        },
+        {
+          "line_1based": 370,
+          "text": "    | hasResolutions | AgendaItem → Resolution | ⚪ | 기존 유지 |"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_two_recorded_Section_references_original_context/original_design_git_index_snapshot.md",
+        "bytes": 96135,
+        "sha256": "50b36effff81952779b8ae8e577d9f297390ab377541606b89ffecfee3fafe62"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 400,
+          "text": "    ---"
+        },
+        {
+          "line_1based": 401,
+          "text": "    "
+        },
+        {
+          "line_1based": 402,
+          "text": "    ## 5. 핵심 연결 경로"
+        },
+        {
+          "line_1based": 403,
+          "text": "    "
+        },
+        {
+          "line_1based": 404,
+          "text": "    Phase-3 CQ를 답변하기 위한 핵심 경로:"
+        },
+        {
+          "line_1based": 405,
+          "text": "    "
+        },
+        {
+          "line_1based": 406,
+          "text": "    ```"
+        },
+        {
+          "line_1based": 407,
+          "text": "    [CQ3 경로: CR → TS → Section]"
+        },
+        {
+          "line_1based": 408,
+          "text": "    CR -[modifies]-> Spec -[hasSection]-> Section"
+        },
+        {
+          "line_1based": 409,
+          "text": "          ↑            ↑                     ↑"
+        },
+        {
+          "line_1based": 410,
+          "text": "       Phase-1        Phase-1               Phase-3 신규"
+        },
+        {
+          "line_1based": 411,
+          "text": "    "
+        },
+        {
+          "line_1based": 412,
+          "text": "    [CQ4 경로: Resolution → CR → TS → Section]"
+        },
+        {
+          "line_1based": 413,
+          "text": "    Resolution -[references]-> CR -[modifies]-> Spec -[hasSection]-> Section"
+        },
+        {
+          "line_1based": 414,
+          "text": "         ↑              ↑           ↑             ↑                     ↑"
+        },
+        {
+          "line_1based": 415,
+          "text": "      Phase-2          Phase-2       Phase-1         Phase-1            Phase-3 신규"
+        },
+        {
+          "line_1based": 416,
+          "text": "    "
+        },
+        {
+          "line_1based": 417,
+          "text": "    ```"
+        },
+        {
+          "line_1based": 418,
+          "text": "    "
+        },
+        {
+          "line_1based": 419,
+          "text": "    ---"
+        },
+        {
+          "line_1based": 420,
+          "text": "    "
+        },
+        {
+          "line_1based": 421,
+          "text": "    ## 6. Spec ↔ TS 연결"
+        },
+        {
+          "line_1based": 422,
+          "text": "    "
+        },
+        {
+          "line_1based": 423,
+          "text": "    ### 6.1 분석"
+        },
+        {
+          "line_1based": 424,
+          "text": "    "
+        },
+        {
+          "line_1based": 425,
+          "text": "    - Phase-1 `Spec` 클래스: specNumber = \"38.331\""
+        },
+        {
+          "line_1based": 426,
+          "text": "    - Phase-3 TS 데이터: 38.331 문서 파싱"
+        },
+        {
+          "line_1based": 427,
+          "text": "    "
+        },
+        {
+          "line_1based": 428,
+          "text": "    **같은 것을 가리킴.**"
+        },
+        {
+          "line_1based": 429,
+          "text": "    "
+        },
+        {
+          "line_1based": 430,
+          "text": "    ### 6.2 결정"
+        },
+        {
+          "line_1based": 431,
+          "text": "    "
+        },
+        {
+          "line_1based": 432,
+          "text": "    | 옵션 | 설명 | 결정 |"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_two_recorded_Section_references_original_context/original_design_git_index_snapshot.md",
+        "bytes": 96135,
+        "sha256": "50b36effff81952779b8ae8e577d9f297390ab377541606b89ffecfee3fafe62"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 600,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 601,
+          "text": "    | 1-1 | Spec, Section, hasSection |"
+        },
+        {
+          "line_1based": 602,
+          "text": "    | 1-2 | Section, hasSubSection |"
+        },
+        {
+          "line_1based": 603,
+          "text": "    | 1-3 | Section, hasSubSection (역방향) |"
+        },
+        {
+          "line_1based": 604,
+          "text": "    | 1-4 | Section, level |"
+        },
+        {
+          "line_1based": 605,
+          "text": "    | 1-5 | Section, TSTable, containsTable |"
+        },
+        {
+          "line_1based": 606,
+          "text": "    | 1-6 | Section, TSFigure, containsFigure |"
+        },
+        {
+          "line_1based": 607,
+          "text": "    | 1-7 | TSTable, containsTable (역방향) |"
+        },
+        {
+          "line_1based": 608,
+          "text": "    | 1-8 | Spec, TSTable |"
+        },
+        {
+          "line_1based": 609,
+          "text": "    | 1-9 | Section, sectionTitle |"
+        },
+        {
+          "line_1based": 610,
+          "text": "    | 1-10 | TSTable, tableNumber, Section |"
+        },
+        {
+          "line_1based": 611,
+          "text": "    "
+        },
+        {
+          "line_1based": 612,
+          "text": "    ### CQ2: TS 간 참조 분석"
+        },
+        {
+          "line_1based": 613,
+          "text": "    "
+        },
+        {
+          "line_1based": 614,
+          "text": "    | CQ | 필요 용어 |"
+        },
+        {
+          "line_1based": 615,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 616,
+          "text": "    | 2-1 | Section, referencesSection |"
+        },
+        {
+          "line_1based": 617,
+          "text": "    | 2-2 | Section, referencesSection (역방향) |"
+        },
+        {
+          "line_1based": 618,
+          "text": "    | 2-3 | Spec, referencesSection |"
+        },
+        {
+          "line_1based": 619,
+          "text": "    | 2-4 | Section, referencesSection |"
+        },
+        {
+          "line_1based": 620,
+          "text": "    | 2-5 | Spec, referencesSection |"
+        },
+        {
+          "line_1based": 621,
+          "text": "    "
+        },
+        {
+          "line_1based": 622,
+          "text": "    ### CQ3: CR → TS 연결"
+        },
+        {
+          "line_1based": 623,
+          "text": "    "
+        },
+        {
+          "line_1based": 624,
+          "text": "    | CQ | 필요 용어 |"
+        },
+        {
+          "line_1based": 625,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 626,
+          "text": "    | 3-1 | CR, modifies, Spec |"
+        },
+        {
+          "line_1based": 627,
+          "text": "    | 3-2 | CR, modifies, Spec, hasSection, Section |"
+        },
+        {
+          "line_1based": 628,
+          "text": "    | 3-3 | Spec, modifies (역방향), CR |"
+        },
+        {
+          "line_1based": 629,
+          "text": "    | 3-4 | Section, clausesAffected, CR |"
+        },
+        {
+          "line_1based": 630,
+          "text": "    | 3-5 | WorkItem, CR, modifies, Spec |"
+        },
+        {
+          "line_1based": 631,
+          "text": "    | 3-6 | Company, CR, modifies, Spec |"
+        },
+        {
+          "line_1based": 632,
+          "text": "    "
+        },
+        {
+          "line_1based": 633,
+          "text": "    ### CQ4: Resolution → TS 연결"
+        },
+        {
+          "line_1based": 634,
+          "text": "    "
+        },
+        {
+          "line_1based": 635,
+          "text": "    | CQ | 필요 용어 |"
+        },
+        {
+          "line_1based": 636,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 637,
+          "text": "    | 4-1 | Resolution, references, CR, modifies, Spec |"
+        },
+        {
+          "line_1based": 638,
+          "text": "    | 4-2 | Spec, modifies, CR, references, Resolution |"
+        },
+        {
+          "line_1based": 639,
+          "text": "    | 4-3 | Meeting, Resolution, references, CR, modifies, Spec |"
+        },
+        {
+          "line_1based": 640,
+          "text": "    | 4-4 | WorkItem, CR, references, Resolution, modifies, Spec |"
+        },
+        {
+          "line_1based": 641,
+          "text": "    "
+        },
+        {
+          "line_1based": 642,
+          "text": "    ### CQ5: 통합 분석"
+        },
+        {
+          "line_1based": 643,
+          "text": "    "
+        },
+        {
+          "line_1based": 644,
+          "text": "    | CQ | 필요 용어 |"
+        },
+        {
+          "line_1based": 645,
+          "text": "    | --- | --- |"
+        },
+        {
+          "line_1based": 646,
+          "text": "    | 5-1 | Spec, CR, modifies |"
+        },
+        {
+          "line_1based": 647,
+          "text": "    | 5-2 | Company, CR, modifies, Spec |"
+        },
+        {
+          "line_1based": 648,
+          "text": "    | 5-3 | Release, CR, modifies, Spec |"
+        },
+        {
+          "line_1based": 649,
+          "text": "    | 5-4 | Spec, CR, modifies |"
+        },
+        {
+          "line_1based": 650,
+          "text": "    "
+        },
+        {
+          "line_1based": 651,
+          "text": "    ---"
+        },
+        {
+          "line_1based": 652,
+          "text": "    "
+        },
+        {
+          "line_1based": 653,
+          "text": "    ## 5. 요약"
+        },
+        {
+          "line_1based": 654,
+          "text": "    "
+        },
+        {
+          "line_1based": 655,
+          "text": "    ### 5.1 용어 목록"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 74,
+          "text": "tdoc:Tdoc a owl:Class ;"
+        },
+        {
+          "line_1based": 75,
+          "text": "    rdfs:label \"TDoc\"@en ;"
+        },
+        {
+          "line_1based": 76,
+          "text": "    rdfs:comment \"3GPP Technical Document - base class for all meeting documents\"@en ."
+        },
+        {
+          "line_1based": 77,
+          "text": ""
+        },
+        {
+          "line_1based": 78,
+          "text": "tdoc:CR a owl:Class ;"
+        },
+        {
+          "line_1based": 79,
+          "text": "    rdfs:subClassOf tdoc:Tdoc ;"
+        },
+        {
+          "line_1based": 80,
+          "text": "    rdfs:label \"Change Request\"@en ;"
+        },
+        {
+          "line_1based": 81,
+          "text": "    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 151,
+          "text": "tdoc:Spec a owl:Class ;"
+        },
+        {
+          "line_1based": 152,
+          "text": "    rdfs:label \"Specification\"@en ;"
+        },
+        {
+          "line_1based": 153,
+          "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 291,
+          "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 292,
+          "text": "    rdfs:label \"in release of\"@en ;"
+        },
+        {
+          "line_1based": 293,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+        },
+        {
+          "line_1based": 294,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 295,
+          "text": "    rdfs:range tdoc:Spec ."
+        },
+        {
+          "line_1based": 296,
+          "text": ""
+        },
+        {
+          "line_1based": 297,
+          "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 298,
+          "text": "    rdfs:label \"has release variant\"@en ;"
+        },
+        {
+          "line_1based": 299,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "line_1based": 300,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 301,
+          "text": "    rdfs:range tdoc:Spec ;"
+        },
+        {
+          "line_1based": 302,
+          "text": "    owl:inverseOf tdoc:inReleaseOf ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 1227,
+          "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1228,
+          "text": "    rdfs:label \"section ID\"@en ;"
+        },
+        {
+          "line_1based": 1229,
+          "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+        },
+        {
+          "line_1based": 1230,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 1231,
+          "text": "    rdfs:range xsd:string ."
+        },
+        {
+          "line_1based": 1232,
+          "text": ""
+        },
+        {
+          "line_1based": 1233,
+          "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1234,
+          "text": "    rdfs:label \"section number\"@en ;"
+        },
+        {
+          "line_1based": 1235,
+          "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+        },
+        {
+          "line_1based": 1236,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 1237,
+          "text": "    rdfs:range xsd:string ."
+        },
+        {
+          "line_1based": 1238,
+          "text": ""
+        },
+        {
+          "line_1based": 1239,
+          "text": "tdoc:sectionTitle a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1240,
+          "text": "    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "line_1based": 1241,
+          "text": "    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;"
+        },
+        {
+          "line_1based": 1242,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 1243,
+          "text": "    rdfs:range xsd:string ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 342,
+          "text": "tdoc:modifies a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 343,
+          "text": "    rdfs:label \"modifies\"@en ;"
+        },
+        {
+          "line_1based": 344,
+          "text": "    rdfs:comment \"Specification(s) that this CR modifies. Cardinality 1..*: a single CR may amend more than one Spec (e.g., paired stage-2 and stage-3 updates).\"@en ;"
+        },
+        {
+          "line_1based": 345,
+          "text": "    rdfs:domain tdoc:CR ;"
+        },
+        {
+          "line_1based": 346,
+          "text": "    rdfs:range tdoc:Spec ."
+        },
+        {
+          "line_1based": 347,
+          "text": ""
+        },
+        {
+          "line_1based": 348,
+          "text": "# -----------------------------------------------------------------------------"
+        },
+        {
+          "line_1based": 349,
+          "text": "# LS-specific Object Properties (4)"
+        },
+        {
+          "line_1based": 350,
+          "text": "# -----------------------------------------------------------------------------"
+        },
+        {
+          "line_1based": 351,
+          "text": ""
+        },
+        {
+          "line_1based": 352,
+          "text": "tdoc:sentTo a owl:ObjectProperty ;"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 279,
+          "text": "tdoc:targetRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 280,
+          "text": "    rdfs:label \"target release\"@en ;"
+        },
+        {
+          "line_1based": 281,
+          "text": "    rdfs:comment \"Target 3GPP Release version for this TDoc or TechnicalReport\"@en ;"
+        },
+        {
+          "line_1based": 282,
+          "text": "    rdfs:domain [ a owl:Class ; owl:unionOf (tdoc:Tdoc tdoc:TechnicalReport) ] ;"
+        },
+        {
+          "line_1based": 283,
+          "text": "    rdfs:range tdoc:Release ."
+        },
+        {
+          "line_1based": 284,
+          "text": ""
+        },
+        {
+          "line_1based": 285,
+          "text": "tdoc:specInRelease a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 286,
+          "text": "    rdfs:label \"spec in release\"@en ;"
+        },
+        {
+          "line_1based": 287,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;"
+        },
+        {
+          "line_1based": 288,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 289,
+          "text": "    rdfs:range tdoc:Release ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 471,
+          "text": "tdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 472,
+          "text": "    rdfs:label \"belongs to spec\"@en ;"
+        },
+        {
+          "line_1based": 473,
+          "text": "    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;"
+        },
+        {
+          "line_1based": 474,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 475,
+          "text": "    rdfs:range tdoc:Spec ;"
+        },
+        {
+          "line_1based": 476,
+          "text": "    owl:inverseOf tdoc:hasSection ."
+        },
+        {
+          "line_1based": 477,
+          "text": ""
+        },
+        {
+          "line_1based": 478,
+          "text": "tdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;"
+        },
+        {
+          "line_1based": 479,
+          "text": "    rdfs:label \"has sub-section\"@en ;"
+        },
+        {
+          "line_1based": 480,
+          "text": "    rdfs:comment \"Direct child Section(s) of this Section\"@en ;"
+        },
+        {
+          "line_1based": 481,
+          "text": "    rdfs:domain tdoc:Section ;"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 464,
+          "text": "tdoc:hasSection a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 465,
+          "text": "    rdfs:label \"has section\"@en ;"
+        },
+        {
+          "line_1based": 466,
+          "text": "    rdfs:comment \"Top-level Section(s) contained in this Spec\"@en ;"
+        },
+        {
+          "line_1based": 467,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 468,
+          "text": "    rdfs:range tdoc:Section ;"
+        },
+        {
+          "line_1based": 469,
+          "text": "    owl:inverseOf tdoc:belongsToSpec ."
+        },
+        {
+          "line_1based": 470,
+          "text": ""
+        },
+        {
+          "line_1based": 471,
+          "text": "tdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 472,
+          "text": "    rdfs:label \"belongs to spec\"@en ;"
+        },
+        {
+          "line_1based": 473,
+          "text": "    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;"
+        },
+        {
+          "line_1based": 474,
+          "text": "    rdfs:domain tdoc:Section ;"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 291,
+          "text": "tdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+        },
+        {
+          "line_1based": 292,
+          "text": "    rdfs:label \"in release of\"@en ;"
+        },
+        {
+          "line_1based": 293,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;"
+        },
+        {
+          "line_1based": 294,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 295,
+          "text": "    rdfs:range tdoc:Spec ."
+        },
+        {
+          "line_1based": 296,
+          "text": ""
+        },
+        {
+          "line_1based": 297,
+          "text": "tdoc:hasReleaseVariant a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 298,
+          "text": "    rdfs:label \"has release variant\"@en ;"
+        },
+        {
+          "line_1based": 299,
+          "text": "    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "line_1based": 300,
+          "text": "    rdfs:domain tdoc:Spec ;"
+        },
+        {
+          "line_1based": 301,
+          "text": "    rdfs:range tdoc:Spec ;"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "bytes": 71963,
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 1227,
+          "text": "tdoc:sectionId a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1228,
+          "text": "    rdfs:label \"section ID\"@en ;"
+        },
+        {
+          "line_1based": 1229,
+          "text": "    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;"
+        },
+        {
+          "line_1based": 1230,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 1231,
+          "text": "    rdfs:range xsd:string ."
+        },
+        {
+          "line_1based": 1232,
+          "text": ""
+        },
+        {
+          "line_1based": 1233,
+          "text": "tdoc:sectionNumber a owl:DatatypeProperty ;"
+        },
+        {
+          "line_1based": 1234,
+          "text": "    rdfs:label \"section number\"@en ;"
+        },
+        {
+          "line_1based": 1235,
+          "text": "    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;"
+        },
+        {
+          "line_1based": 1236,
+          "text": "    rdfs:domain tdoc:Section ;"
+        },
+        {
+          "line_1based": 1237,
+          "text": "    rdfs:range xsd:string ."
+        }
+      ]
+    }
+  ],
+  "source_coordinate_correction": null,
+  "exposure": "Source-only exact candidates/complete unfiltered input metadata read; no eligibleanswerSQL/counts/gold/native/predictions. Prior related development source findings exposed.",
+  "new_admissions": 0,
+  "new_gold": false,
+  "expert_validation_n": 0,
+  "external_model_APIcalls": 0,
+  "human_author_review_completed": false,
+  "AI_only_metadata_normalization": {
+    "original_primary_pin": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/two_original_recorded_CR_Spec_operations/RAN2_P3_CQ3-2_original_recorded_operation_primary_review.json",
+      "sha256": "030831d9e77c0ec10782712a453bf3e098040f0f6a30a49d500730d0026ab879"
+    },
+    "interpretation": "Only explicit AI-only metadata added; semantic judgments and definition identity unchanged."
+  }
+}

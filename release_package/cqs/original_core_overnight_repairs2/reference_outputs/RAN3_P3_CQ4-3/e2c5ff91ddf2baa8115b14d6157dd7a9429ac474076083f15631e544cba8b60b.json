@@ -1,0 +1,31 @@
+{
+  "id": "RAN3_P3_CQ4-3",
+  "wg": "RAN3",
+  "query_sha256": "e2c5ff91ddf2baa8115b14d6157dd7a9429ac474076083f15631e544cba8b60b",
+  "query": "MATCH (res:Resolution)-[:REFERENCES]->(cr:CR)\nWHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:MODIFIES]->(hub:Spec)\nWHERE hub.specRelease IS NULL\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nWITH DISTINCT res, cr, hub, target,\n  [raw IN split(replace(cr.clausesAffected, ';', ','), ',')\n   WHERE trim(raw) =~ '(?:[0-9]+\\\\.)+[A-Za-z]*[0-9]+\\\\s*-\\\\s*[0-9]+(?:\\\\s*\\\\([Nn][Ee][Ww]\\\\))?\\\\s*\\\\.?'] AS rawRanges\nWITH res, cr, hub, target, rawRanges,\n  [raw IN rawRanges | {\n    lowerAddress: split(replace(trim(split(raw, '(')[0]), ' ', ''), '-')[0],\n    upper: toInteger(replace(split(replace(trim(split(raw, '(')[0]), ' ', ''), '-')[1], '.', ''))\n  }] AS rangeParts\nWITH res, cr, hub, target, rawRanges,\n  [part IN rangeParts | {\n    lowerAddress: part.lowerAddress, upper: part.upper,\n    digits: reduce(out = '', ch IN split(last(split(part.lowerAddress, '.')), '') |\n      out + CASE WHEN ch =~ '[0-9]' THEN ch ELSE '' END)\n  }] AS digitParts\nWITH res, cr, hub, target,\n  reduce(cleaned = cr.clausesAffected, raw IN rawRanges | replace(cleaned, raw, '')) AS literalField,\n  reduce(ids = [], part IN digitParts |\n    ids + [ordinal IN range(toInteger(part.digits), part.upper) |\n      substring(part.lowerAddress, 0, size(part.lowerAddress) - size(part.digits)) + toString(ordinal)]) AS rangeIdentifiers\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\n  AND ((literalField CONTAINS sec.sectionNumber AND\n        literalField =~ ('(?s).*(?<![A-Za-z0-9.])\\\\Q' + sec.sectionNumber + '\\\\E(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'))\n       OR sec.sectionNumber IN rangeIdentifiers)\nRETURN DISTINCT res.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, sec.sectionId AS sectionId\nORDER BY resolutionId, tdocNumber, sectionId",
+  "started_utc": "2026-10-14T22:05:41.329460+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN3_P3_CQ4-3/e2c5ff91ddf2baa8115b14d6157dd7a9429ac474076083f15631e544cba8b60b.jsonl",
+  "columns": [
+    "resolutionId",
+    "tdocNumber",
+    "sectionId"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 1232,
+  "bytes_retained": 71707,
+  "rows_sha256": "369d626dfac82b0a4761eacf717db937c15d1d57e1b022a330af88a6a201b2d5",
+  "finished_utc": "2026-10-14T22:05:45.036578+00:00",
+  "elapsed_s": 3.7071,
+  "full_rows_available": true
+}

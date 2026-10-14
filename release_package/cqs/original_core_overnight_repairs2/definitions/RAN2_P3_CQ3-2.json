@@ -1,0 +1,31 @@
+{
+  "id": "RAN2_P3_CQ3-2",
+  "question_en": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'}) WHERE hub.specRelease IS NULL WITH hub LIMIT 1 MATCH (rk:Spec {specNumber:'38.331'})-[:IN_RELEASE_OF]->(hub) WITH rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (rk)<-[:BELONGS_TO_SPEC]-(s:Section {level: 1}) RETURN s.sectionNumber, s.sectionTitle ORDER BY s.sectionNumber LIMIT 10",
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})\nWHERE hub.specRelease IS NULL\nWITH DISTINCT hub\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)\nRETURN DISTINCT s.sectionId AS sectionId",
+  "required_fields": [
+    {
+      "name": "sectionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "s.sectionId"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "original_question_sha256": "d1d78027c30a58a5028c8f1af674e5cf733a09af83999390f63f94ab719e8b2a",
+  "original_query_sha256": "f33dc47d9201313755bbcb62c260f0aac01b4ac403d10d17ed989f435bddad09",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "ee0cebd96bb789ec8749a4dd3c215bfb78da0d48b021e5c1efca8e32ca51b0d2",
+  "reference_query_sha256": "4c6f252125c487691046d85dce86a821bd8373737bf13c5724eaf6d861c0bfc7",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/two_original_recorded_CR_Spec_operations/source_only_independent_review/RAN2_P3_CQ3-2_original_source_only_packet.json",
+    "sha256": "ea269db5caad0c8f446aee1082f63da61e665bf734eae621af89397ba938b86f"
+  }
+}

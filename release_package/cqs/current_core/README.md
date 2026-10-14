@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 441 have passed the stated repair checks,
-and 119 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 443 have passed the stated repair checks,
+and 117 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 441 unchanged original questions.
+included in these 443 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -96,3 +96,7 @@ prior scores are not transferred. The compact archive verifier does not
 repeat older model experiments.
 
 The [additional37 bundle](../original_core_overnight_repairs37/README.md) preserves the exact cohort authorized before fresh model evaluation. Its 37 unchanged original questions add to the preserved404 index: 441 of560 now pass and119 remain pending in this snapshot. All37 have two separate nonblind AI semantic judgments,26,211 complete native rows, full-field independent SQL agreement and283 replayable scorer controls. Source-fidelity limitations remain explicit. Human/expert reviews and complete physical archive validation are not claimed. The repair bundle has no predictions. Its [fresh four-method evaluation](../original_core_overnight_evaluation37/README.md) uses separately frozen inputs and all 37 IDs per method; raw responses, costs, failures and offline scoring replay are retained.
+
+The [two later original-question repairs](../original_core_overnight_repairs2/README.md) add the complete recorded Resolution-to-Section trace and CR-target layout. This separate cohort raises the current index to 443/560, with 117 pending; its [fresh four-method evaluation](../original_core_overnight_evaluation2/README.md) retains both IDs per method. The earlier 37-item cohort and all its predictions remain unchanged.
+
+Runtime provenance clarification: the eight evaluation programs listed in each pre-call protocol retain their exact registered bytes. Additional scheduling helpers, packaging code and saved-output replay code have separate copy receipts or package hashes. The earlier 37-item evaluation README phrase “all runtime programs” refers to those eight registered evaluation programs, rather than every later audit or scheduling helper in its runtime directory. No generation, query, score or cohort bytes change with this clarification.

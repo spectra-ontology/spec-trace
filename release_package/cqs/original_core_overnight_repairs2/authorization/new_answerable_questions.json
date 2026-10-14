@@ -1,0 +1,299 @@
+{
+  "purpose": "New answerable original questions prepared for review; no external model API call",
+  "baseline_public404_unchanged": true,
+  "new_local_frozen_original_repair_n": 39,
+  "local_original_frozen_union_n": 443,
+  "local_original_frozen_pending_n": 117,
+  "separate_prior_source_enriched_n": 1,
+  "deadline": "2026-10-15T10:00:00+09:00",
+  "cards": [
+    {
+      "id": "RAN3_P3_CQ4-3",
+      "original_question": "Trace affected sections through CRs referenced by resolutions (decision-to-section tracing).",
+      "question_sha256": "8379c4cb1c45e74743309e1310995a6a3b75f22ef413a84838a4abf7088e712d",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "b27f542afa3a8444be1e5277d495669d1b067b7cabea38a0ba5ebea35ca21ba7",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (res:Resolution)-[:REFERENCES]->(cr:CR)\nWHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:MODIFIES]->(hub:Spec)\nWHERE hub.specRelease IS NULL\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nWITH DISTINCT res, cr, hub, target,\n  [raw IN split(replace(cr.clausesAffected, ';', ','), ',')\n   WHERE trim(raw) =~ '(?:[0-9]+\\\\.)+[A-Za-z]*[0-9]+\\\\s*-\\\\s*[0-9]+(?:\\\\s*\\\\([Nn][Ee][Ww]\\\\))?\\\\s*\\\\.?'] AS rawRanges\nWITH res, cr, hub, target, rawRanges,\n  [raw IN rawRanges | {\n    lowerAddress: split(replace(trim(split(raw, '(')[0]), ' ', ''), '-')[0],\n    upper: toInteger(replace(split(replace(trim(split(raw, '(')[0]), ' ', ''), '-')[1], '.', ''))\n  }] AS rangeParts\nWITH res, cr, hub, target, rawRanges,\n  [part IN rangeParts | {\n    lowerAddress: part.lowerAddress, upper: part.upper,\n    digits: reduce(out = '', ch IN split(last(split(part.lowerAddress, '.')), '') |\n      out + CASE WHEN ch =~ '[0-9]' THEN ch ELSE '' END)\n  }] AS digitParts\nWITH res, cr, hub, target,\n  reduce(cleaned = cr.clausesAffected, raw IN rawRanges | replace(cleaned, raw, '')) AS literalField,\n  reduce(ids = [], part IN digitParts |\n    ids + [ordinal IN range(toInteger(part.digits), part.upper) |\n      substring(part.lowerAddress, 0, size(part.lowerAddress) - size(part.digits)) + toString(ordinal)]) AS rangeIdentifiers\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\n  AND ((literalField CONTAINS sec.sectionNumber AND\n        literalField =~ ('(?s).*(?<![A-Za-z0-9.])\\\\Q' + sec.sectionNumber + '\\\\E(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'))\n       OR sec.sectionNumber IN rangeIdentifiers)\nRETURN DISTINCT res.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, sec.sectionId AS sectionId\nORDER BY resolutionId, tdocNumber, sectionId",
+      "required_fields": [
+        {
+          "name": "resolutionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "resolutionId"
+        },
+        {
+          "name": "tdocNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "tdocNumber"
+        },
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 1232,
+      "answer_n": 1232,
+      "answer_preview": [
+        {
+          "resolutionId": "AGR-119-9.2.4-001",
+          "sectionId": "38.473-Rel-17-8.3.4.2",
+          "tdocNumber": "R3-230491"
+        },
+        {
+          "resolutionId": "AGR-119-9.2.4-001",
+          "sectionId": "38.473-Rel-17-9.2.2.7",
+          "tdocNumber": "R3-230491"
+        },
+        {
+          "resolutionId": "AGR-119-9.2.4-001",
+          "sectionId": "38.473-Rel-17-9.2.2.8",
+          "tdocNumber": "R3-230491"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_resolution_Section_trace_v3/controls.json/projected_native_records.jsonl",
+        "sha256": "d7dba86a539f72bbc7a792099033bb8e8f1a18e97e52ba25c349af370ceb4fed"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN3_resolution_Section_trace_independent_SQL_v3/RAN3_P3_CQ4-3_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original decision-to-section tracing returns Resolution, CR and same-target-Release retained Section identities. Documentary REFERENCES edges define the recorded path and do not assert approval or causal enactment. All244 distinct available declarations and16268 retained Section addresses were checked; complete numeric and symbolic ranges are consumed before literal matching, preserving placeholder and suffix meaning. Actual native and independent inverse SQL agree on all1232 full triples. Missing declarations and unretained source addresses remain unknown; range-source witnesses and both earlier execution preflight failures are preserved. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_resolution_Section_trace_original_context/original_reference_and_full_clause_Section_inputs_source_only_packet.json",
+          "sha256": "a47ee6c4c69ed886c51daada6ee763736fbbcba10cdbd73d3a42baa255bc39a8"
+        },
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN3_trace_root_whole_declared_range_scope/manifest.json",
+          "sha256": "1e57dc399ca114b7e3379e12490bd4f75e7eef95a10e8163fc3d9ee91aff02c0"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": true,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN2_P3_CQ3-2",
+      "original_question": "Return the top-level sections of spec 38.331 that CRs modify (CR-target layout).",
+      "question_sha256": "d1d78027c30a58a5028c8f1af674e5cf733a09af83999390f63f94ab719e8b2a",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "ee0cebd96bb789ec8749a4dd3c215bfb78da0d48b021e5c1efca8e32ca51b0d2",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.331'})\nWHERE hub.specRelease IS NULL\nWITH DISTINCT hub\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nMATCH (s:Section {level:1})-[:BELONGS_TO_SPEC]->(rk)\nRETURN DISTINCT s.sectionId AS sectionId",
+      "required_fields": [
+        {
+          "name": "sectionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "s.sectionId"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 133,
+      "answer_n": 133,
+      "answer_preview": [
+        {
+          "sectionId": "38.331-Rel-15-C"
+        },
+        {
+          "sectionId": "38.331-Rel-15-A"
+        },
+        {
+          "sectionId": "38.331-Rel-15-6"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": false,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_CR_target_layout/RAN2_P3_CQ3-2/projected_native_records.jsonl",
+        "sha256": "2b5c54ccef8050e00dc6e13ccc4cd208a0a3efe3abbe80f778017a64f88d24f4"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_CR_target_layout_independent_SQL/RAN2_P3_CQ3-2_source_pinned_admission_definition.json",
+      "interpretation_and_limits": "Original CR-target-layout design follows recorded CR MODIFIES Spec and top-level level1 Sections. All retained 38.331 edition identities are included, without LIMIT10 or arbitrary latest-edition selection. Independent inverse HAS_SECTION SQL and the actual forward native query agree on all133 Section identities. The recorded hierarchy is distinguished from physical-source Annex nesting discrepancies; actual authored-source hierarchy completeness is not claimed. Full native and independently authored SQL agree on every returned field and actual requested-field scorer controls pass. These are nonblind development checks, not authored-source completeness, expert certification or new model performance.",
+      "source_witnesses": null,
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/two_original_recorded_CR_Spec_operations/source_only_independent_review/RAN2_P3_CQ3-2_original_source_only_packet.json",
+          "sha256": "ea269db5caad0c8f446aee1082f63da61e665bf734eae621af89397ba938b86f"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": true,
+      "publicly_uploaded": false
+    }
+  ],
+  "separate_TR_enrichment": {
+    "status": "source_graph_and_SQL_built_and_full_native_query_matched; original_false_topic_premises_pending",
+    "questions": [
+      "RAN1_P5_CQ5-1",
+      "RAN1_P5_CQ5-2"
+    ],
+    "new_question_admissions": 0,
+    "source_bibliography_pairs": 121,
+    "conditional_number_38_859_outbound": 13,
+    "conditional_number_38_802_incoming": 5,
+    "evidence": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/source_enriched/RAN1_TR_bibliography/native_queries/full_queries.json"
+  },
+  "limits": "These source-first development reference records are not blind Codex predictions, past API benchmark results, new measured model performance, or expert certification. All external model calls remain waiting.",
+  "new_local_source_enriched_repairs_n": 1,
+  "new_source_cards": [
+    {
+      "id": "RAN1_P2_CQ1-2",
+      "original_question": "What was agreed on UL Tx switching (Agenda 5.1) at meeting RAN1#100? (UL switching decisions)",
+      "status": "separate_source_graph_validated; frozen_question_pending; external_model_evaluation_waiting",
+      "question_sha256": "c457946bfcbc8319fc66dace3d37dee26c4920dcd64405e4cb4de439aa8d9817",
+      "repair_sha256": "7903f18f960a1da17e4e67aebbab4e0d6575d65a8f6718073a0ed6f6272301f9",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '5.1'}), (a)-[:MADE_AT]->(m:Meeting {meetingNumber: 'RAN1#100'}) RETURN DISTINCT a.formalSourceContentWithTables AS content",
+      "required_fields": [
+        {
+          "name": "content",
+          "nullable": false,
+          "source_column_or_expression": "a.formalSourceContentWithTables",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "answer_n": 6,
+      "answer_preview": [
+        {
+          "content": "For standalone SUL, if UL switching period is configured by RRC\nThe switching period is not always applicable on the carrier configured with switching period.\nThe switching period is only applicable when the scheduled UL transmissions are switched between 1Tx carrier 1 and 2Tx carrier 2.\nFor each UL transmission occasion on a carrier, the existence of the switching period is determined one time every occasion.\nNote: 2Tx carrier 2 refers to an UL carrier capable of 2 Tx chains and both 1-port and 2-port UL transmissions."
+        },
+        {
+          "content": "For SUL, if uplink Tx switching is configured, the state of Tx chains of last UL transmission is assumed in case of no UL transmission.\nWork assumption: For inter-band UL CA, if uplink Tx switching is configured, the state of Tx chains of last UL transmission is assumed in case of no UL transmission. It can be revisited in RAN1#100bis."
+        },
+        {
+          "content": "If uplink Tx switching is triggered, the length of the additional time for PUSCH preparation procedure equals to the length of UL switching period."
+        },
+        {
+          "content": "For inter-band UL CA, if uplink Tx switching is configured, UE is not expected to be scheduled or configured with UL transmissions that result in simultaneous 1Tx transmission on carrier 1 and 2Tx transmission on carrier 2."
+        },
+        {
+          "content": "For inter-band UL CA, UE is not expected to [be scheduled or configured to] transmit on any of the two carriers in the switching period.\nFFS: Whether to handle the case when switching period cannot be ensured by gNB."
+        },
+        {
+          "content": "Case 1 | 1 Tx on carrier 1 and 1 Tx on carrier 2\nCase 2 | 0 Tx on carrier 1 and 2 Tx on carrier 2\nFor inter-band UL CA, if UL switching period is configured by RRC\nThe switching period is not always applicable on the carrier configured with switching period.\nThe switching period is at least applicable between 1-port transmission in carrier 1 and 2-port transmission in carrier 2."
+        }
+      ],
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_UL_formal_source_v2/projected_native_records.jsonl",
+        "sha256": "20e5742ab1f9ed31f8c9d58e00e7bd416ad6c028a58dfde02a74539752b45329"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN1_P2_CQ1-2_formal_source_enriched_v2_candidate.json",
+      "source_graph": "source_enriched/RAN1_UL_formal_v2",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/UL_source_temporal_context.json",
+          "sha256": "ad4705d407370bafd164e50d9e122cbba692575f1cd1416a9e1ec06dd4e5c37c"
+        },
+        {
+          "path": "RAN1/UL_online_meeting_period_independent_check.json",
+          "sha256": "68d2d23d6f12ff933ad1a1320b30db4e8db32ba77ad71a81dae41a3ba514c6bb"
+        }
+      ],
+      "interpretation_and_limits": [
+        "Separate graph, not frozen-original repair.",
+        "Two AI development judgments with source/results exposure, expert0.",
+        "Exact literal content scorer does not certify paraphrases or optional-prose semantics.",
+        "Retained source authentication only; no historical raw report ZIP provenance claim."
+      ],
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    }
+  ],
+  "withheld_source_candidates_n": 2,
+  "withheld_source_candidates": [
+    {
+      "id": "RAN2_P4_CQ4-5",
+      "original_question": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+      "status": "pending_original_English_temporal_scope_after_source_counterexample",
+      "question_admissions_n": 0,
+      "source_scope": "conditional final meeting-associated agreed population; original temporal scope unresolved",
+      "records_are_original_question_gold": false,
+      "repair_sha256": "057f0b7ae82e3815fe4bf4f09d870fcc84664d1abb4b6bfa997e6a2eb85bea0e",
+      "conditional_reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber",
+      "conditional_full_records_n": 240,
+      "conditional_full_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_132_CR_summary_v2/projected_native_records.jsonl",
+        "sha256": "8ca2d765621cdbf41b9daa5c9b5a7f2e0f3e327cd83c2a8ad3117fc3a60e932e"
+      },
+      "historical_execution_and_scorer_controls": "root_controls/RAN2_132_CR_summary_v2/controls.json",
+      "historical_controls_sha256": "829b623b326bac46f3b6821ba6d42e56bd8076e21c3eb731477266d938f50446",
+      "temporal_challenge": "RAN2_RAN5/RAN2_132_postmeeting_temporal_scope_source.json",
+      "temporal_challenge_sha256": "f44499255097075cfc8453fc38b64e95ae15affdbd4f2bc9fddb95e7a6784750",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/RAN2_132_postmeeting_source_context.json",
+          "sha256": "6112e6aaa8f266e96ef9776412512f2daf7a8f35c146c8ed905f19404291049f"
+        },
+        {
+          "path": "RAN2_RAN5/RAN2_132_postmeeting_revision_closure37.json",
+          "sha256": "32590076f95bcf72b60527d08353d9a8a2016e4f6d72a805e1c9c713cd359e7c"
+        }
+      ],
+      "reason": "Final meeting-associated agreed population contains post-meeting outcomes; approved at meeting does not unambiguously certify this temporal population.",
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P4_CQ4-5",
+      "original_question": "List the change summaries of CRs approved at meeting RAN3#123 (meeting-outcome review).",
+      "status": "pending_original_English_temporal_scope_after_source_counterexample",
+      "question_admissions_n": 0,
+      "source_scope": "conditional final meeting-associated agreed population; original temporal scope unresolved",
+      "records_are_original_question_gold": false,
+      "repair_sha256": "85e1c89b27e8c408adbe4e80859178161b080ad8fc19e224bf058f23a935212b",
+      "conditional_reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting)\nWHERE m.canonicalMeetingNumber = 'RAN3#123'\n  AND c.type = 'CR' AND c.status = 'agreed'\nRETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary\nORDER BY sourceTdocNumber ASC",
+      "conditional_full_records_n": 202,
+      "conditional_full_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_123_CR_summary_v2/projected_native_records.jsonl",
+        "sha256": "96a0bbf74a9c5e3762a9351d3d8fb5aecaae377b056f347f514f37103b3d7aa8"
+      },
+      "historical_execution_and_scorer_controls": "root_controls/RAN3_123_CR_summary_v2/controls.json",
+      "historical_controls_sha256": "d43c69098e9287c95379d67f90484f5aaa306f25e1c2639823a92060839e2abd",
+      "temporal_challenge": "RAN3_RAN4/RAN3_123_postmeeting7_source_pairs.json",
+      "temporal_challenge_sha256": "7bb5dbc2e5cb3b20447f54cdd1250fcd5ed498d88a1eba6d960c80b5bc5e69ab",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/RAN3_123_postmeeting_source_pairs.json",
+          "sha256": "d29a9eb6c972729492227cca71a375e1ba7e6b04d346d22fc34abdb1ea2fa296"
+        }
+      ],
+      "reason": "Final meeting-associated agreed population contains post-meeting outcomes; approved at meeting does not unambiguously certify this temporal population.",
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    }
+  ],
+  "cohort_projection_n": 2,
+  "live_registry_original_n": 39,
+  "live_registry_sha256": "27f3eba1bb87c2e97682568ac3d01ad5a6bcb79435d0200dfc26036b1d3119ed"
+}

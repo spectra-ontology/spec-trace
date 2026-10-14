@@ -1,0 +1,47 @@
+{
+  "id": "RAN3_P3_CQ4-3",
+  "question_en": "Trace affected sections through CRs referenced by resolutions (decision-to-section tracing).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR) WHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' MATCH (cr)-[:MODIFIES]->(sp:Spec) RETURN r.resolutionId, cr.tdocNumber, cr.clausesAffected, sp.specNumber ORDER BY r.resolutionId, cr.tdocNumber, sp.specNumber LIMIT 10",
+  "reference_query": "MATCH (res:Resolution)-[:REFERENCES]->(cr:CR)\nWHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\nMATCH (cr)-[:MODIFIES]->(hub:Spec)\nWHERE hub.specRelease IS NULL\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nWITH DISTINCT res, cr, hub, target,\n  [raw IN split(replace(cr.clausesAffected, ';', ','), ',')\n   WHERE trim(raw) =~ '(?:[0-9]+\\\\.)+[A-Za-z]*[0-9]+\\\\s*-\\\\s*[0-9]+(?:\\\\s*\\\\([Nn][Ee][Ww]\\\\))?\\\\s*\\\\.?'] AS rawRanges\nWITH res, cr, hub, target, rawRanges,\n  [raw IN rawRanges | {\n    lowerAddress: split(replace(trim(split(raw, '(')[0]), ' ', ''), '-')[0],\n    upper: toInteger(replace(split(replace(trim(split(raw, '(')[0]), ' ', ''), '-')[1], '.', ''))\n  }] AS rangeParts\nWITH res, cr, hub, target, rawRanges,\n  [part IN rangeParts | {\n    lowerAddress: part.lowerAddress, upper: part.upper,\n    digits: reduce(out = '', ch IN split(last(split(part.lowerAddress, '.')), '') |\n      out + CASE WHEN ch =~ '[0-9]' THEN ch ELSE '' END)\n  }] AS digitParts\nWITH res, cr, hub, target,\n  reduce(cleaned = cr.clausesAffected, raw IN rawRanges | replace(cleaned, raw, '')) AS literalField,\n  reduce(ids = [], part IN digitParts |\n    ids + [ordinal IN range(toInteger(part.digits), part.upper) |\n      substring(part.lowerAddress, 0, size(part.lowerAddress) - size(part.digits)) + toString(ordinal)]) AS rangeIdentifiers\nMATCH (sec:Section)-[:BELONGS_TO_SPEC]->(rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\n  AND ((literalField CONTAINS sec.sectionNumber AND\n        literalField =~ ('(?s).*(?<![A-Za-z0-9.])\\\\Q' + sec.sectionNumber + '\\\\E(?![A-Za-z0-9]|\\\\.[A-Za-z0-9]).*'))\n       OR sec.sectionNumber IN rangeIdentifiers)\nRETURN DISTINCT res.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, sec.sectionId AS sectionId\nORDER BY resolutionId, tdocNumber, sectionId",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "resolutionId"
+    },
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber"
+    },
+    {
+      "name": "sectionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "sectionId"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "b27f542afa3a8444be1e5277d495669d1b067b7cabea38a0ba5ebea35ca21ba7",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reference_query_sha256": "e2c5ff91ddf2baa8115b14d6157dd7a9429ac474076083f15631e544cba8b60b",
+  "original_question_sha256": "8379c4cb1c45e74743309e1310995a6a3b75f22ef413a84838a4abf7088e712d",
+  "original_query_sha256": "5ea5530bc5574b7f618014d4f0eab2a2243937055838fa38eaa1a3e2b889af12",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_resolution_Section_trace_original_context/original_reference_and_full_clause_Section_inputs_source_only_packet.json",
+    "sha256": "a47ee6c4c69ed886c51daada6ee763736fbbcba10cdbd73d3a42baa255bc39a8"
+  },
+  "source_control_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN3_trace_root_whole_declared_range_scope/manifest.json",
+    "sha256": "1e57dc399ca114b7e3379e12490bd4f75e7eef95a10e8163fc3d9ee91aff02c0"
+  }
+}

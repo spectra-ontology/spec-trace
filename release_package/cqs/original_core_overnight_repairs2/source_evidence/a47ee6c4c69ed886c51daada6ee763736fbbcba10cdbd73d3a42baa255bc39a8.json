@@ -1,0 +1,390 @@
+{
+  "id": "RAN3_P3_CQ4-3",
+  "original_English": "Trace affected sections through CRs referenced by resolutions (decision-to-section tracing).",
+  "original_English_sha256": "8379c4cb1c45e74743309e1310995a6a3b75f22ef413a84838a4abf7088e712d",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR) WHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' MATCH (cr)-[:MODIFIES]->(sp:Spec) RETURN r.resolutionId, cr.tdocNumber, cr.clausesAffected, sp.specNumber ORDER BY r.resolutionId, cr.tdocNumber, sp.specNumber LIMIT 10",
+  "original_query_sha256": "5ea5530bc5574b7f618014d4f0eab2a2243937055838fa38eaa1a3e2b889af12",
+  "original_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_pending.jsonl",
+    "sha256": "32af347959e0a8b29627b751274e1df64c4c19c3fad2f6cea6d791377f368bdd"
+  },
+  "original_Korean_record": {
+    "id": "CQ4-3",
+    "category": "CQ4_Resolution연결",
+    "question": "Resolution이 참조한 CR의 clausesAffected를 통한 Section 추적은?",
+    "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR) WHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' MATCH (cr)-[:MODIFIES]->(sp:Spec) RETURN r.resolutionId, cr.tdocNumber, cr.clausesAffected, sp.specNumber LIMIT 10",
+    "expected_min_rows": 1
+  },
+  "original_Korean_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN3/phase-3/cq_test_dataset.json",
+    "sha256": "70ee891e7b9a2def331d4bf7d322707bbb0e3fc32edb128cbfb6e054030d00f5"
+  },
+  "criteria_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  },
+  "source_excerpts": [
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 151,
+          "text": "tdoc:Spec a owl:Class ;"
+        },
+        {
+          "line_1based": 152,
+          "text": "    rdfs:label \"Specification\"@en ;"
+        },
+        {
+          "line_1based": 153,
+          "text": "    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 394,
+          "text": "    rdfs:range tdoc:Company ."
+        },
+        {
+          "line_1based": 395,
+          "text": ""
+        },
+        {
+          "line_1based": 396,
+          "text": "# -----------------------------------------------------------------------------"
+        },
+        {
+          "line_1based": 397,
+          "text": "# Resolution Object Properties (5) - Spec: Section 4.1"
+        },
+        {
+          "line_1based": 398,
+          "text": "# -----------------------------------------------------------------------------"
+        },
+        {
+          "line_1based": 399,
+          "text": ""
+        },
+        {
+          "line_1based": 400,
+          "text": "tdoc:references a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 401,
+          "text": "    rdfs:label \"references\"@en ;"
+        },
+        {
+          "line_1based": 402,
+          "text": "    rdfs:comment \"TDoc(s) referenced in this Resolution content\"@en ;"
+        },
+        {
+          "line_1based": 403,
+          "text": "    rdfs:domain tdoc:Resolution ;"
+        },
+        {
+          "line_1based": 404,
+          "text": "    rdfs:range tdoc:Tdoc ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 556,
+          "text": "    rdfs:range tdoc:Spec ."
+        },
+        {
+          "line_1based": 557,
+          "text": ""
+        },
+        {
+          "line_1based": 558,
+          "text": "tdoc:affectsTestSpec a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 559,
+          "text": "    rdfs:label \"affects test spec\"@en ;"
+        },
+        {
+          "line_1based": 560,
+          "text": "    rdfs:comment \"Test Specification(s) affected by this CR (from 'Other specs affected' section)\"@en ;"
+        },
+        {
+          "line_1based": 561,
+          "text": "    rdfs:domain tdoc:CR ;"
+        },
+        {
+          "line_1based": 562,
+          "text": "    rdfs:range tdoc:Spec ."
+        },
+        {
+          "line_1based": 563,
+          "text": ""
+        },
+        {
+          "line_1based": 564,
+          "text": "tdoc:affectsOMSpec a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 565,
+          "text": "    rdfs:label \"affects OM spec\"@en ;"
+        },
+        {
+          "line_1based": 566,
+          "text": "    rdfs:comment \"O&M Specification(s) affected by this CR (from 'Other specs affected' section)\"@en ;"
+        },
+        {
+          "line_1based": 567,
+          "text": "    rdfs:domain tdoc:CR ;"
+        },
+        {
+          "line_1based": 568,
+          "text": "    rdfs:range tdoc:Spec ."
+        },
+        {
+          "line_1based": 569,
+          "text": ""
+        },
+        {
+          "line_1based": 570,
+          "text": "tdoc:modifiesSection a owl:ObjectProperty ;"
+        },
+        {
+          "line_1based": 571,
+          "text": "    rdfs:label \"modifies section\"@en ;"
+        },
+        {
+          "line_1based": 572,
+          "text": "    rdfs:comment \"Section(s) modified by this CR (derived from clausesAffected field)\"@en ;"
+        },
+        {
+          "line_1based": 573,
+          "text": "    rdfs:domain tdoc:CR ;"
+        },
+        {
+          "line_1based": 574,
+          "text": "    rdfs:range tdoc:Section ;"
+        },
+        {
+          "line_1based": 575,
+          "text": "    owl:inverseOf tdoc:modifiedByCR ."
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN3/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "d99ed8c793e5e378dd430b9e97bca80a78ea477c007523396c1c983481580391"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 172,
+          "text": "    "
+        },
+        {
+          "line_1based": 173,
+          "text": "    ### CQ4. Resolution → TS 연결"
+        },
+        {
+          "line_1based": 174,
+          "text": "    "
+        },
+        {
+          "line_1based": 175,
+          "text": "    | # | Competency Question | 경로 |"
+        },
+        {
+          "line_1based": 176,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 177,
+          "text": "    | 4-1 | 특정 Resolution이 승인한 CR이 수정한 TS는? | Resolution → CR → Spec |"
+        },
+        {
+          "line_1based": 178,
+          "text": "    | 4-2 | 특정 TS를 수정한 CR을 승인한 Resolution 목록은? | Spec ← CR ← Resolution |"
+        },
+        {
+          "line_1based": 179,
+          "text": "    | 4-3 | 특정 회의에서 승인된 CR이 수정한 TS 목록은? | Meeting → Resolution → CR → Spec |"
+        },
+        {
+          "line_1based": 180,
+          "text": "    | 4-4 | 특정 Work Item의 Resolution이 반영된 TS 목록은? | WorkItem → CR ← Resolution, CR → Spec |"
+        },
+        {
+          "line_1based": 181,
+          "text": "    "
+        },
+        {
+          "line_1based": 182,
+          "text": "    *CQ4 제약사항: Resolution이 CR을 references하는 경우만 (Phase-2 Appendix A [P2-V07] 참조)*"
+        }
+      ]
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN3/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "d99ed8c793e5e378dd430b9e97bca80a78ea477c007523396c1c983481580391"
+      },
+      "actual_lines": [
+        {
+          "line_1based": 1783,
+          "text": "    ### 7.2 CR → Section 연결 (clausesAffected 활용)"
+        },
+        {
+          "line_1based": 1784,
+          "text": "    "
+        },
+        {
+          "line_1based": 1785,
+          "text": "    Phase-1 CR의 clausesAffected 속성을 파싱하여 Section 식별:"
+        },
+        {
+          "line_1based": 1786,
+          "text": "    "
+        },
+        {
+          "line_1based": 1787,
+          "text": "    | clausesAffected | 파싱 결과 | 연결 Section |"
+        },
+        {
+          "line_1based": 1788,
+          "text": "    | --- | --- | --- |"
+        },
+        {
+          "line_1based": 1789,
+          "text": "    | \"5.1.3.2\" | [5.1.3.2] | 38.XXX-{release}-5.1.3.2 |"
+        },
+        {
+          "line_1based": 1790,
+          "text": "    | \"5.1.3.2, 7.4\" | [5.1.3.2, 7.4] | 38.XXX-{release}-5.1.3.2, 38.XXX-{release}-7.4 |"
+        },
+        {
+          "line_1based": 1791,
+          "text": "    | \"10.4C (new)\" | [10.4C] | 38.XXX-{release}-10.4C |"
+        },
+        {
+          "line_1based": 1792,
+          "text": "    "
+        },
+        {
+          "line_1based": 1793,
+          "text": "    **연결 방법**:"
+        },
+        {
+          "line_1based": 1794,
+          "text": "    "
+        },
+        {
+          "line_1based": 1795,
+          "text": "    - CR의 modifies → Spec에서 specNumber 확인 + CR의 대상 release 확인"
+        },
+        {
+          "line_1based": 1796,
+          "text": "    - clausesAffected 파싱하여 sectionNumber 추출"
+        },
+        {
+          "line_1based": 1797,
+          "text": "    - sectionId = `{specNumber}-{release}-{sectionNumber}`로 동일 release Section 매칭"
+        },
+        {
+          "line_1based": 1798,
+          "text": "    "
+        },
+        {
+          "line_1based": 1799,
+          "text": "    **제약사항** (Step 1 참조):"
+        },
+        {
+          "line_1based": 1800,
+          "text": "    "
+        },
+        {
+          "line_1based": 1801,
+          "text": "    - clausesAffected 커버리지: Appendix A [P3-V10] 참조"
+        },
+        {
+          "line_1based": 1802,
+          "text": "    - 나머지 CR은 Spec 레벨까지만 연결 (CR → Spec)"
+        },
+        {
+          "line_1based": 1803,
+          "text": "    "
+        }
+      ]
+    }
+  ],
+  "whole_recorded_input_pins": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_resolution_Section_trace_original_context/all_original_Resolution_CR_reference_identity_inputs.jsonl",
+      "sha256": "9d4275ff8b8d5c66567d87bdf5e4ec29e348dc9141ec95441d5fb23076ef9188"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_resolution_Section_trace_original_context/all_referenced_CR_modification_target_release_inputs.jsonl",
+      "sha256": "9730e8b03ff7d2b7b37a53b8426ef9b844e9980ccd94eb99a67e5173625b25db"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_resolution_Section_trace_original_context/all_original_Section_identity_owner_inputs.jsonl",
+      "sha256": "7f36a0077921c6f1923bbe396910125ac228579250d53c67da023215be4e4edd"
+    }
+  ],
+  "whole244_unique_recorded_field_inputs_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_resolution_Section_trace_original_context/all244_unique_nonempty_recorded_clause_literal_token_inputs.jsonl",
+    "sha256": "d0ba9f02aa64fa1ec1b8742ab22ef8c8b87953136579f040a1c8e70749dc4258"
+  },
+  "actual_original_form_source_receipts_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_resolution_Section_trace_original_context/actual_original_range_descriptor_typo_form_source_only_receipts.json",
+    "sha256": "0df1befc41a403649a11483a33c8f1ff5c35710726bf22aa228a2f447019e0d4"
+  },
+  "database_before": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN3.sqlite",
+    "sha256": "ff55fe57ee9435c25b59e1d90c5ee09ee0ff167696c4afeb05f21e367f4c6a29"
+  },
+  "database_after": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN3.sqlite",
+    "sha256": "ff55fe57ee9435c25b59e1d90c5ee09ee0ff167696c4afeb05f21e367f4c6a29"
+  },
+  "input_SQLs": {
+    "references": "SELECT DISTINCT r.node_id AS resolutionNodeId,r.resolutionId,\n        cr.node_id AS crNodeId,cr.tdocNumber,cr.clausesAffected,\n        cr.crNumber,cr.status FROM Resolution r\n        JOIN rel_REFERENCES z ON z.src_id=r.node_id JOIN CR cr ON cr.node_id=z.dst_id\n        ORDER BY r.resolutionId,cr.tdocNumber",
+    "CR_targets": "SELECT DISTINCT cr.node_id AS crNodeId,cr.tdocNumber,sp.node_id AS specNodeId,\n        sp.specNumber,sp.specRelease,trg.node_id AS releaseNodeId,trg.releaseName\n        FROM CR cr JOIN rel_MODIFIES m ON m.src_id=cr.node_id\n        JOIN Spec sp ON sp.node_id=m.dst_id\n        LEFT JOIN rel_TARGET_RELEASE tr ON tr.src_id=cr.node_id\n        LEFT JOIN Release trg ON trg.node_id=tr.dst_id\n        WHERE EXISTS(SELECT 1 FROM Resolution r JOIN rel_REFERENCES z ON z.src_id=r.node_id\n          WHERE z.dst_id=cr.node_id) ORDER BY cr.tdocNumber,sp.specNumber,sp.specRelease,trg.releaseName",
+    "Section_dictionary": "SELECT DISTINCT s.node_id AS sectionNodeId,s.sectionId,s.sectionNumber,\n        s.sectionTitle,s.level,sp.node_id AS ownerSpecNodeId,sp.specNumber,sp.specRelease,sp.specVersion\n        FROM Section s JOIN rel_BELONGS_TO_SPEC b ON b.src_id=s.node_id\n        JOIN Spec sp ON sp.node_id=b.dst_id ORDER BY s.sectionId"
+  },
+  "whole_reference_pair_input_n": 3794,
+  "referenced_CR_document_input_n": 3479,
+  "unique_nonempty_recorded_clause_field_input_n": 244,
+  "whole_Section_dictionary_input_n": 16268,
+  "original_source_scope_challenges": [
+    "English and exact Korean CQ ask documentary tracing of affected Sections through CRs referenced by Resolutions; later current design CQ4-3 mapping table has a different meeting-approved wording and is not adopted as replacement English.",
+    "REFERENCES denotes a Tdoc citation in Resolution content, not approval, implementation, enacted effect or causal influence. Query must not import any such predicate or interpretation.",
+    "Original §7.2 parses recorded Phase1 clausesAffected and matches Section by CR targetRelease and modifying logical specNumber. Retained MODIFIES_SECTION fallback-le/fwd implementation is not automatic exact-release authority.",
+    "Derive requested trace roles before projecting: relationship tuples may require Resolution, CR and Section identities to preserve trace, whereas plain unassociated Section set could erase paths. Old raw field RETURN is not automatic required field authority.",
+    "All244 field values must be examined for literal suffixes, terminal punctuation, new annotations, whitespace/semicolon separation, embedded numeric IDs in descriptors, explicit ranges and placeholders. ANY witness sufficiency for CR-list sibling does not prove full Section trace completeness.",
+    "Do not silently fix 91.1.1.7, 8.13,14,2 or invent wildcard expansion for X/Y placeholders. Exact recorded Section identities and documented same-release rule define successful resolution; unresolved or external-spec absence is not physical authored Section absence.",
+    "No proposed output tuples, matching answer counts, primary judgment, native, gold, predictions, external API or admission is included. All inputs are nonblind AI development evidence, not model measurement or expert review."
+  ],
+  "canonical_definition_prepared": false,
+  "new_SQL_answer_or_gold_included": false,
+  "native_started": false,
+  "admitted": false,
+  "expert_validation_n": 0,
+  "public_changed": false,
+  "script_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/prepare_RAN3_resolution_Section_trace_source_inputs.py",
+    "sha256": "4c52470606b0f610617fc826e9b3227cbea8873c6e150e8e9ea5316f3ba30f32"
+  }
+}
