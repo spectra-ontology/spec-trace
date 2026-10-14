@@ -83,6 +83,12 @@ pinned reviews, native capture, scorer checks and bundle manifest. The
 current index uses those verified completion records; frozen proposal
 metadata is retained rather than rewritten after evaluation.
 
+The two observed-trend ledger entries retain their earlier `reason` and
+`continuation_triage` records as history. Their current top-level `status:
+pass` and `current_bundle` link to the completed reviews, native captures,
+and scorer checks. Historical pending flags describe the earlier inspection,
+not the current admission state.
+
 Local preparation, offline replay, public upload, and fresh anonymous
 download verification are separate states. Model predictions for these two
 new contracts have a separate frozen evaluation when actually completed;
