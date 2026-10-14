@@ -133,3 +133,25 @@ jobs:
           --bundle release_package/cqs/original_core_topk_replacements
           --parent release_package/cqs/original_core_repair
           --out /tmp/spectra-current-topk-evaluation.json
+      - name: Verify explicit named Agreement repair
+        working-directory: release_package/cqs/original_core_named_agreement_repairs
+        run: python3 -B -S verify_additions.py
+      - name: Replay explicit named Agreement evaluation
+        run: >-
+          python3 -B -S release_package/cqs/original_core_named_agreement_evaluation/runtime/verify_additional_evaluation.py
+          --evidence release_package/cqs/original_core_named_agreement_evaluation
+          --bundle release_package/cqs/original_core_named_agreement_repairs
+          --parent release_package/cqs/original_core_repair
+          --out /tmp/spectra-named-agreement-evaluation.json
+      - name: Verify resolution-to-CR-to-spec ranking repair
+        run: >-
+          python3 -B -S release_package/cqs/original_core_path_top5_repairs/verify_path_top5_bundle.py
+          --bundle release_package/cqs/original_core_path_top5_repairs
+          --parent release_package/cqs/original_core_repair
+      - name: Replay resolution-to-CR-to-spec ranking evaluation
+        run: >-
+          python3 -B -S release_package/cqs/original_core_RAN3_path_evaluation/runtime/verify_path_top5_evaluation.py
+          --evidence release_package/cqs/original_core_RAN3_path_evaluation
+          --bundle release_package/cqs/original_core_path_top5_repairs
+          --parent release_package/cqs/original_core_repair
+          --out /tmp/spectra-path-top5-evaluation.json

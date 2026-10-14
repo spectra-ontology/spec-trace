@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 400 have passed the stated repair checks,
-and 160 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 402 have passed the stated repair checks,
+and 158 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 400 unchanged original questions.
+included in these 402 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -34,23 +34,21 @@ Preparation, public upload and external download/replay verification are
 separate states. The paired raw-source and retrieval diagnostic is limited
 to its fixed 23 items and does not certify the complete corpus.
 
-A compact [review evidence download](review_evidence.tar.gz) packages this
-400-item index and the separately scoped new evidence. Its exact file and
-archive hashes are in [manifest.json](manifest.json) and
-[archive_inventory.json](archive_inventory.json). Identical bytes are stored
-once and copied back to independent regular files by the download verifier;
-plain extraction alone does not restore all duplicate paths.
-
-To fetch an exact public Git commit without credentials and replay its saved
-checks in a fresh directory:
+The compact [review evidence download](review_evidence.tar.gz) preserves the
+400-item snapshot at commit `e89d2769de3e1740f50411fe2333d33341b77873`.
+Later original-question repairs are separate, pinned bundles linked by this
+index; their model results remain separate. The archive's exact hashes and
+file membership are in [manifest.json](manifest.json) and
+[archive_inventory.json](archive_inventory.json). The byte-identical duplicate
+paths are restored as independent regular files by the supplied verifier.
 
 ```sh
 python3 -B -S release_package/cqs/current_core/verify_download.py \
-  --commit FULL_40_CHARACTER_COMMIT_SHA \
-  --manifest-sha256 EXACT_MANIFEST_SHA256 \
+  --commit e89d2769de3e1740f50411fe2333d33341b77873 \
+  --manifest-sha256 f09422274860088fca875a928560ea581b413f752aebe8726a17ddbea4ed3485 \
   --out-dir /your/fresh/review-evidence
 ```
 
-These checks reuse retained predictions and source witnesses. They do not
-make new model calls, execute a database, repeat the full historical 371-item
-model experiment, or count prepared forms as completed expert reviews.
+This replays saved evidence without model calls or database execution. It
+does not repeat the complete historical 371-item model experiment or count
+prepared forms as completed expert reviews.
