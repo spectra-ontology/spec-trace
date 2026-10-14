@@ -1,0 +1,84 @@
+{
+  "actual_retained_corpus_query_plans": {
+    "frozen": [
+      [
+        7,
+        0,
+        0,
+        "SCAN search VIRTUAL TABLE INDEX 0:M1"
+      ],
+      [
+        12,
+        0,
+        0,
+        "SEARCH d USING INTEGER PRIMARY KEY (rowid=?)"
+      ],
+      [
+        28,
+        0,
+        0,
+        "USE TEMP B-TREE FOR ORDER BY"
+      ]
+    ],
+    "rank_stream_only": [
+      [
+        3,
+        0,
+        0,
+        "SCAN search VIRTUAL TABLE INDEX 32:M1"
+      ]
+    ],
+    "rank_with_rowid_tie": [
+      [
+        4,
+        0,
+        0,
+        "SCAN search VIRTUAL TABLE INDEX 0:M1"
+      ],
+      [
+        19,
+        0,
+        0,
+        "USE TEMP B-TREE FOR ORDER BY"
+      ]
+    ]
+  },
+  "sqlite_version": "3.37.2",
+  "actual_FTS_configuration": [
+    [
+      "version",
+      4
+    ]
+  ],
+  "rank_uses_default_BM25": true,
+  "synthetic_fixtures": [
+    {
+      "fixture_kind": "mixed lengths with boundary ties",
+      "documents": 2000,
+      "maximum": 160,
+      "full_stable_frozen_rows_equal_complete_boundary_variant": true,
+      "naive_rank_only_limit_rows_equal_frozen": false,
+      "complete_boundary_rows_hydrated": 160,
+      "frozen_seconds": 0.0013398129995039199,
+      "boundary_variant_seconds": 0.001566601000376977,
+      "scope": "Synthetic development fixture; no benchmark gold or model calls; timings do not measure actual archive baseline speed."
+    },
+    {
+      "fixture_kind": "all matching scores equal",
+      "documents": 2000,
+      "maximum": 160,
+      "full_stable_frozen_rows_equal_complete_boundary_variant": true,
+      "naive_rank_only_limit_rows_equal_frozen": false,
+      "complete_boundary_rows_hydrated": 2000,
+      "frozen_seconds": 0.0017028559996106196,
+      "boundary_variant_seconds": 0.005773273001977941,
+      "scope": "Synthetic development fixture; no benchmark gold or model calls; timings do not measure actual archive baseline speed."
+    }
+  ],
+  "interpretation": "Frozen BM25-plus-metadata-tie query uses FTS unsorted matching scan and a temporary ORDER BY B-tree. Pure rank order uses FTS sorted-rank virtual index. Stable tie fields prevent that direct optimization. A complete-boundary two-stage variant can preserve exact top-160 values but naive rank-only LIMIT cannot; huge equal-score boundaries can still approach the full match population.",
+  "frozen_run_changed": false,
+  "new_model_calls": 0,
+  "actual_baseline_optimized_rerun_performed": false,
+  "representativeness_limit": "Frozen bounded implementation results include engineering deadline failures and cannot establish a general failure of text retrieval or corpus absence. Query plans demonstrate an implementation limit, not universal baseline invalidity.",
+  "tool_sha256": "ccda8b77d3be42e6b9589fe7910a5c44766d67b0d2ba98df69e102b9d96a2083"
+}

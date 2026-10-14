@@ -1,0 +1,97 @@
+{
+  "id": "RAN3_P3_CQ2-8",
+  "instruction": "Open only after independent meaning and answer records have been fixed.",
+  "original_benchmark_source": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/spectra_cq_v2.0/benchmark.jsonl",
+    "sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef"
+  },
+  "repair_sha256": "0d16f8185e9fa2e46ca1dae0ea6c89f9f67722233cfb529127288c4686a437e4",
+  "original_query": "MATCH (s1:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.423'}), (s1)-[:REFERENCES_SECTION]->(s2:Section)-[:BELONGS_TO_SPEC]->(sp) RETURN s2.sectionId, s2.sectionTitle, count(*) AS refCount ORDER BY refCount DESC, s2.sectionId LIMIT 5",
+  "reference_query": "MATCH (b:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber:'38.423'})\nWITH DISTINCT b, sp\nOPTIONAL MATCH (a:Section)-[:BELONGS_TO_SPEC]->(sp), (a)-[ref:REFERENCES_SECTION]->(b)\nWITH b, count(DISTINCT ref) AS referenceCount\nRETURN coalesce(b.sectionId,b.iri) AS sectionId, referenceCount\nORDER BY referenceCount DESC",
+  "required_fields": [
+    {
+      "name": "sectionId",
+      "nullable": false,
+      "source_column_or_expression": "sectionId",
+      "type": "string"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "direction": "desc",
+        "source_column": "referenceCount"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "value": 5,
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "tie_policy": "any_subset_at_boundary",
+    "value": 5
+  },
+  "native_execution_evidence": {
+    "bytes_retained": 90957,
+    "columns": [
+      "sectionId",
+      "referenceCount"
+    ],
+    "elapsed_s": 1.13,
+    "execution_query_type": "r",
+    "execution_summary_complete": true,
+    "finished_utc": "2026-10-14T05:37:54.371828+00:00",
+    "full_rows_available": true,
+    "id": "RAN3_P3_CQ2-8",
+    "limits": {
+      "bytes": 268435456,
+      "rows": 100000,
+      "timeout_s": 60
+    },
+    "plan_query_type": "r",
+    "provenance": {
+      "graph_source_sha256": "d9791c08773a0e38b89869b3882d3098d879a37ddd7109630c346200d6776e95",
+      "import_manifest_sha256": "6a325f06f5c5fe903d6b382635e7096a107c4b620e3a9288cf5a18852e30c0a5",
+      "run_report_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/execution_RAN3.json",
+      "run_report_sha256": "427092b395e4a5ae2d2ef486f2f59d99330a521f8134906b5dee7e1f724e34bb",
+      "same_count_property_changes_detected": false,
+      "source_guard_sha256": "ab89822e5e99644e48e17483e21832703121649f1b06da7560bac9815b00da2e"
+    },
+    "query": "MATCH (b:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber:'38.423'})\nWITH DISTINCT b, sp\nOPTIONAL MATCH (a:Section)-[:BELONGS_TO_SPEC]->(sp), (a)-[ref:REFERENCES_SECTION]->(b)\nWITH b, count(DISTINCT ref) AS referenceCount\nRETURN coalesce(b.sectionId,b.iri) AS sectionId, referenceCount\nORDER BY referenceCount DESC",
+    "query_sha256": "88dcfdb473bac3e7e209ce2dbdb20a3c552b16e51625c23265e677473477c110",
+    "receipt_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/reference_outputs/RAN3_P3_CQ2-8/88dcfdb473bac3e7e209ce2dbdb20a3c552b16e51625c23265e677473477c110.json",
+    "receipt_sha256": "a96ae62eccf94ef7f8ca7d3d5f79e1992328ad18af17d859545396d760d88798",
+    "rollback_completed": true,
+    "rows_file": "reference_outputs/RAN3_P3_CQ2-8/88dcfdb473bac3e7e209ce2dbdb20a3c552b16e51625c23265e677473477c110.jsonl",
+    "rows_retained": 3208,
+    "rows_sha256": "c0064978e6deeb964339e0b60f61a4edd764c042de6d67f3e060489f696bb396",
+    "source": "new read-only execution on owned archived TTL restoration",
+    "started_utc": "2026-10-14T05:37:53.241757+00:00",
+    "status": "OK",
+    "truncated": false,
+    "wg": "RAN3"
+  },
+  "portable_native_evidence": {
+    "receipt_file": "reference_outputs/RAN3_P3_CQ2-8/88dcfdb473bac3e7e209ce2dbdb20a3c552b16e51625c23265e677473477c110.json",
+    "receipt_sha256": "a96ae62eccf94ef7f8ca7d3d5f79e1992328ad18af17d859545396d760d88798",
+    "rows_file": "reference_outputs/RAN3_P3_CQ2-8/88dcfdb473bac3e7e209ce2dbdb20a3c552b16e51625c23265e677473477c110.jsonl",
+    "rows_sha256": "c0064978e6deeb964339e0b60f61a4edd764c042de6d67f3e060489f696bb396",
+    "run_report_file": "provenance/further_execution_RAN3.json",
+    "source_kind": "captured_repaired_query"
+  },
+  "completeness_witness": null,
+  "expanded_contract_manifest": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/manifest.json",
+    "sha256": "1b42bef40acce3497c0f8e5a693f18fc268196e1cd5b5abb7bf24be2fb5f186e"
+  },
+  "projected_reference_path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/reference_gold.jsonl",
+  "projected_reference_file_sha256": "f4907c9ea765273d700f1c9052549777c0dbe990ff6b4b25cb4ecdca64a368bc",
+  "projected_reference_record_sha256": "10645ffaf31df1ffabcd2dc9e5d89a49e5022e8fea8acc7fa045a0c5f787a6b0",
+  "reference_record_hash_codec": "typed_values.json_exact",
+  "reference_is_frozen_graph_derived_not_independent_expert_answer": true,
+  "human_author_review_completed": false,
+  "independent_expert_validation_n": 0
+}

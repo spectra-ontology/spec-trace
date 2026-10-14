@@ -1,72 +1,58 @@
 # Original-question-preserving Core repairs
 
-This bundle repairs answer contracts while retaining the exact English questions
-from the original SpectraCQ Core release. Each admitted item has two separate
-AI semantic judgments against the original question, exact-query captured native
-output from the pinned archived graph restoration, and requested-field scorer
-checks. These are AI-assisted checks, not human author or independent 3GPP expert
-validation. No new model predictions or performance results are included.
+This supplement retains each admitted item's exact original English question.
+The query and requested-field scoring contract are inspected by two separate AI
+reviews against seven fixed semantic units, followed by captured native output
+and actual scorer controls. These checks are not independent human or 3GPP
+expert validation, nor proof that every frozen-graph fact is correct.
 
 | Accounting | Items |
 | --- | ---: |
-| Original Core IDs, all visible in the disposition ledger | 560 |
-| Admitted original-question-preserving repairs | 300 |
-| Original reference query retained; answer contract repaired | 118 |
-| Reference query and answer contract repaired; question retained | 182 |
-| Pending original meaning, second review or technical admission | 257 |
-| Blocked by a recorded semantic or technical issue | 3 |
+| Original Core IDs in disposition ledger | 560 |
+| Admitted original-question-preserving repairs | 371 |
+| Original query retained; scorer repaired | 119 |
+| Query and scorer repaired; English question retained | 252 |
+| Pending | 189 |
+| Blocked | 0 |
 
-Use the admitted set when preparing a new evaluation. Unresolved original items
-are outside this set; they are not silently admitted or counted as verified.
-The original 31-question diagnostic keeps its original scoring and prediction
-scope. This repaired set is a new contract validation, not an increase in that
-unchanged diagnostic, and the separate 36 changed-question tasks are not added.
-The admitted set overlaps the historical 31 on 31 IDs
-and includes 269 IDs outside it. These set relationships do not
-permit adding their validation counts or transferring historical scores.
-The sibling `canonical_core/` provides revised definitions for all 560 IDs,
-including changed-question variants; those are not evidence that all original
-questions align. Full-original-Core completion is **not claimed** here.
+The 350-item scientific cohort remains frozen under manifest
+`18b301baac1bdacffd7b9f93917f3362c516d54ed5ad2ed7826c7df96e57edb5`. The 21 further repairs are disjoint from
+that cohort and require a separate evaluation; merging these definitions does
+not silently extend an existing experiment. [Frozen cohort pins](provenance/frozen_evaluation_350.json)
+record both scopes. This repair package contains reference evidence and scorer
+checks, not model predictions or performance results.
 
-## Inspect the changes
+[All 560 dispositions](all_core_dispositions.jsonl) expose every unresolved ID.
+Only pass IDs occur in [tasks](tasks.jsonl) and [gold](reference_gold.jsonl).
+The admitted set overlaps all 31 historical diagnostic IDs and includes
+340 other IDs. Those historical predictions and scores do not transfer
+to the repaired contracts; the separate 36 changed-question variants are not
+added. The sibling canonical_core contains different proposed question wording
+and is not evidence of original-Core alignment. Full-Core completion is not claimed.
 
-[Review guide](REVIEW_GUIDE.md) links the original wording, original and repaired
-queries, required answer roles and types, native outputs and both AI judgments.
-[Readable dispositions](DISPOSITIONS.md) and [all 560 records](all_core_dispositions.jsonl)
-retain the remaining issues.
-[Tasks](tasks.jsonl), [native-derived gold](reference_gold.jsonl) and
-[per-item scorer checks](provenance/scorer_checks.jsonl) are machine-readable.
-Reference rows include all returned values; only the fields actually requested
-by the question are mandatory answers. Unrequested titles or ordering metadata
-are not silently made required answer fields.
-When an unchanged query has a nonbinding output cap, its complete-answer claim
-is checked against a separate uncapped capture on the same frozen graph. The
-uncapped query, output and receipt are included as a completeness witness; this
-is a check of the pinned snapshot, not a guarantee about future graphs.
-The [frozen import inventory](provenance/frozen_ttl_import_manifest.json) and
-[RAN1/RAN2 source scan](provenance/ran12_source_semantics.json) retain population
-checks used in the semantic reviews. The scan's measurement script is preserved
-with its historical local paths; rerunning it requires the corresponding archived
-body graphs and shipped loader. It is not part of the offline replay commands.
+[Review guide](REVIEW_GUIDE.md), [per-working-group changes](changes/), and
+[readable dispositions](DISPOSITIONS.md) show the original questions and queries,
+repaired queries, required answer fields, native receipts, and recorded AI reviews.
+Unasked titles, counts, or arbitrary sorting keys are not required answer fields.
+Explicit top-k queries retain the entire eligible ranking pool: every item above
+the cutoff is required and any appropriate subset at the tied cutoff is accepted.
+Answer ordering is required only where the question asks for it.
+
+Two maximum-frequency tasks also carry complete frozen-source frequency pools.
+The offline verifier derives all maximum ties from those retained pools and
+compares them to actual native requested-field gold. This checks stored frozen
+graph evidence, not raw-archive truth or expert validation. The historical
+derivation scripts retain local source paths; rerunning them requires those graphs.
 
 ```bash
 cd release_package/cqs/original_core_repair
 python3 -B -S verify_release.py
-python3 -B -S -m unittest test_scorer test_native_order test_predictions
-```
-
-These commands verify stored evidence and scorer behavior offline. They do not
-rerun queries or independently attest graph content or domain utility. Historical
-model scores and rankings cannot be transferred to repaired definitions. New
-predictions must carry the exact `repair_sha256` of their admitted definition:
-
-```bash
+python3 -B -S -m unittest test_scorer test_native_order test_predictions test_boundary_ties
 python3 -B -S score_predictions.py --predictions predictions.jsonl
 ```
 
-Each prediction is a JSON record with `id`, `repair_sha256` and `records` (a list
-of named answer records). Wrong counts, missing asked fields or incompatible
-types receive no complete-record credit. Both requested-field matching and
-cardinality/order rules are enforced. Source ordering metadata may determine
-answer sequence without itself becoming an asked answer field. No historical
-whole-row F1 is relabeled as performance under this contract.
+The first two commands check stored evidence and scorer behavior offline; they
+do not execute a database or generate model answers. Predictions must provide
+the exact repair_sha256 and named requested-field records. Wrong values, missing
+asked fields, incompatible types, duplicate identities, and invalid cardinality
+receive no complete-record credit. Human/expert reviews completed: zero.

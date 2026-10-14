@@ -1,0 +1,123 @@
+{
+  "id": "RAN3_P3_CQ2-3",
+  "instruction": "Open only after independent meaning and answer records have been fixed.",
+  "original_benchmark_source": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/spectra_cq_v2.0/benchmark.jsonl",
+    "sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef"
+  },
+  "repair_sha256": "f6155a593da7f902b42f22ec88f7a837ccabde165f1201358d585ee36ba16372",
+  "original_query": "MATCH (s1:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.413'}), (s1)-[:REFERENCES_SECTION]->(s2:Section) RETURN s2.sectionId, count(*) AS refs ORDER BY refs DESC, s2.sectionId LIMIT 10",
+  "reference_query": "MATCH (target:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:'38.413'})\nWITH DISTINCT target\nOPTIONAL MATCH (:Section)-[ref:REFERENCES_SECTION]->(target)\nWITH target, count(DISTINCT ref) AS referenceCount\nWITH collect({sectionId:coalesce(target.sectionId,target.iri), referenceCount:referenceCount}) AS candidates, max(referenceCount) AS maximum\nUNWIND candidates AS candidate\nWITH candidate, maximum WHERE candidate.referenceCount=maximum\nRETURN DISTINCT candidate.sectionId AS sectionId",
+  "required_fields": [
+    {
+      "name": "sectionId",
+      "nullable": false,
+      "source_column_or_expression": "sectionId",
+      "type": "string"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "extent": "Most with no explicit k naturally means maximum incoming frequency and every equal maximum. Capture all eligible target counts, including zero; collect-plus-max returns all maxima instead of inventing k10 or a count threshold. A separate full-pool witness is required before admission.",
+    "mode": "all"
+  },
+  "native_execution_evidence": {
+    "bytes_retained": 105,
+    "columns": [
+      "sectionId"
+    ],
+    "elapsed_s": 1.0053,
+    "execution_query_type": "r",
+    "execution_summary_complete": true,
+    "finished_utc": "2026-10-14T05:50:03.585009+00:00",
+    "full_rows_available": true,
+    "id": "RAN3_P3_CQ2-3",
+    "limits": {
+      "bytes": 268435456,
+      "rows": 100000,
+      "timeout_s": 60
+    },
+    "plan_query_type": "r",
+    "provenance": {
+      "graph_source_sha256": "d9791c08773a0e38b89869b3882d3098d879a37ddd7109630c346200d6776e95",
+      "import_manifest_sha256": "6a325f06f5c5fe903d6b382635e7096a107c4b620e3a9288cf5a18852e30c0a5",
+      "run_report_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/execution_RAN3.json",
+      "run_report_sha256": "427092b395e4a5ae2d2ef486f2f59d99330a521f8134906b5dee7e1f724e34bb",
+      "same_count_property_changes_detected": false,
+      "source_guard_sha256": "ab89822e5e99644e48e17483e21832703121649f1b06da7560bac9815b00da2e"
+    },
+    "query": "MATCH (target:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:'38.413'})\nWITH DISTINCT target\nOPTIONAL MATCH (:Section)-[ref:REFERENCES_SECTION]->(target)\nWITH target, count(DISTINCT ref) AS referenceCount\nWITH collect({sectionId:coalesce(target.sectionId,target.iri), referenceCount:referenceCount}) AS candidates, max(referenceCount) AS maximum\nUNWIND candidates AS candidate\nWITH candidate, maximum WHERE candidate.referenceCount=maximum\nRETURN DISTINCT candidate.sectionId AS sectionId",
+    "query_sha256": "3177f9d9a9572bf5d6b18fc9508ccb879185eeea3c6c322385c6f0ecc6344632",
+    "receipt_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/reference_outputs/RAN3_P3_CQ2-3/3177f9d9a9572bf5d6b18fc9508ccb879185eeea3c6c322385c6f0ecc6344632.json",
+    "receipt_sha256": "7292fc55f2f53354f2f89ca980154d51a74b995d8638010cb2fc6e8524130ba5",
+    "rollback_completed": true,
+    "rows_file": "reference_outputs/RAN3_P3_CQ2-3/3177f9d9a9572bf5d6b18fc9508ccb879185eeea3c6c322385c6f0ecc6344632.jsonl",
+    "rows_retained": 5,
+    "rows_sha256": "a38feb86ba97a37136d2f2fb35005cca2454be2a9bfd7d29928f0b379ac5ac7a",
+    "source": "new read-only execution on owned archived TTL restoration",
+    "started_utc": "2026-10-14T05:50:02.579713+00:00",
+    "status": "OK",
+    "truncated": false,
+    "wg": "RAN3"
+  },
+  "portable_native_evidence": {
+    "receipt_file": "reference_outputs/RAN3_P3_CQ2-3/3177f9d9a9572bf5d6b18fc9508ccb879185eeea3c6c322385c6f0ecc6344632.json",
+    "receipt_sha256": "7292fc55f2f53354f2f89ca980154d51a74b995d8638010cb2fc6e8524130ba5",
+    "rows_file": "reference_outputs/RAN3_P3_CQ2-3/3177f9d9a9572bf5d6b18fc9508ccb879185eeea3c6c322385c6f0ecc6344632.jsonl",
+    "rows_sha256": "a38feb86ba97a37136d2f2fb35005cca2454be2a9bfd7d29928f0b379ac5ac7a",
+    "run_report_file": "provenance/further_execution_RAN3.json",
+    "source_kind": "captured_repaired_query"
+  },
+  "completeness_witness": {
+    "actual_native_projected_records_sha256": "b633afb31807353107b501d926264d76ba9215c5fe9b185f0b689dc842b6e0b5",
+    "derivation_script_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/audit_maximum_source.py",
+    "derivation_script_sha256": "bb15122f9480a822e3a91e654bfb56095bd16c4131a3952fadf4f118ffc86cb7",
+    "expected_maximum_records_sha256": "ffa538c61091c4b9def05ff3debd663b78d1010254cfb6def2c06f63a657d3b7",
+    "expert_validation_n": 0,
+    "graph_source_path": "release_package/kg/per_wg/RAN3-body.ttl",
+    "graph_source_sha256": "d9791c08773a0e38b89869b3882d3098d879a37ddd7109630c346200d6776e95",
+    "human_author_review_completed": false,
+    "id": "RAN3_P3_CQ2-3",
+    "kind": "full_frozen_source_frequency_pool",
+    "maximum_frequency": 4,
+    "maximum_tie_n": 5,
+    "native_argmax_matches_complete_source_pool": true,
+    "native_receipt_sha256": "7292fc55f2f53354f2f89ca980154d51a74b995d8638010cb2fc6e8524130ba5",
+    "native_rows_sha256": "a38feb86ba97a37136d2f2fb35005cca2454be2a9bfd7d29928f0b379ac5ac7a",
+    "original_question_sha256": "e86e775bb4535f0127bb90d610892145f51df4e00bca539832e96e59d0bb51c1",
+    "parser_path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/pipeline/load_released_kg.py",
+    "parser_sha256": "9499ac120ea4fcf1c2707f6e3151e399530d9b4f43f5aec9d2d93040792d6e25",
+    "portable_source_evidence": {
+      "derivation_script_file": "provenance/frequency_source_derivation.py",
+      "derivation_script_sha256": "bb15122f9480a822e3a91e654bfb56095bd16c4131a3952fadf4f118ffc86cb7",
+      "parser_file": "provenance/frequency_source_parser.py",
+      "parser_sha256": "9499ac120ea4fcf1c2707f6e3151e399530d9b4f43f5aec9d2d93040792d6e25",
+      "source_pool_file": "coverage_witnesses/RAN3_P3_CQ2-3/full_frequency_pool.jsonl",
+      "source_pool_sha256": "9c18c71a77f2213f18ffdb741363d1a8fca1f1ee4b395f54217a398339b3f884",
+      "source_witness_file": "provenance/frequency_source_witness.json",
+      "source_witness_sha256": "de154879dbc9f2c9f50ae5ad5153e22ec988b764963a9ce603a1cea6c61b94d9"
+    },
+    "query_sha256": "3177f9d9a9572bf5d6b18fc9508ccb879185eeea3c6c322385c6f0ecc6344632",
+    "repair_sha256": "f6155a593da7f902b42f22ec88f7a837ccabde165f1201358d585ee36ba16372",
+    "scope": "All eligible frequency-pool records independently derived from the exact frozen graph; actual native requested gold equals all argmax ties. This does not assert raw archive truth or human/expert validation.",
+    "source_pool_n": 4242,
+    "source_pool_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/source_pool_RAN3_P3_CQ2-3.jsonl",
+    "source_pool_sha256": "9c18c71a77f2213f18ffdb741363d1a8fca1f1ee4b395f54217a398339b3f884",
+    "source_witness_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/max_frequency_source_witness.json",
+    "source_witness_sha256": "de154879dbc9f2c9f50ae5ad5153e22ec988b764963a9ce603a1cea6c61b94d9",
+    "source_zero_n": 4175
+  },
+  "expanded_contract_manifest": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/manifest.json",
+    "sha256": "1b42bef40acce3497c0f8e5a693f18fc268196e1cd5b5abb7bf24be2fb5f186e"
+  },
+  "projected_reference_path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/reference_gold.jsonl",
+  "projected_reference_file_sha256": "f4907c9ea765273d700f1c9052549777c0dbe990ff6b4b25cb4ecdca64a368bc",
+  "projected_reference_record_sha256": "abf0fe8c9facfc2145297b95f1b1304922afbc612aabfb7c8b69ed985f88e5ba",
+  "reference_record_hash_codec": "typed_values.json_exact",
+  "reference_is_frozen_graph_derived_not_independent_expert_answer": true,
+  "human_author_review_completed": false,
+  "independent_expert_validation_n": 0
+}

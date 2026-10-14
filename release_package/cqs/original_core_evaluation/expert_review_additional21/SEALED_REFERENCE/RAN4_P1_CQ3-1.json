@@ -1,0 +1,92 @@
+{
+  "id": "RAN4_P1_CQ3-1",
+  "instruction": "Open only after independent meaning and answer records have been fixed.",
+  "original_benchmark_source": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/spectra_cq_v2.0/benchmark.jsonl",
+    "sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef"
+  },
+  "repair_sha256": "5d87712a471ca3115accd71b75273e8c22f1f21159027215aa5bc3a04e056480",
+  "original_query": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem) RETURN ai.agendaNumber, count(t) AS cnt ORDER BY cnt DESC LIMIT 10",
+  "reference_query": "MATCH (ai:AgendaItem)\nOPTIONAL MATCH (t:Tdoc)-[:BELONGS_TO]->(ai)\nWITH ai, count(DISTINCT t) AS tdocCount\nRETURN coalesce(ai.id, ai.iri) AS agendaId, tdocCount",
+  "required_fields": [
+    {
+      "name": "agendaId",
+      "nullable": false,
+      "source_column_or_expression": "agendaId",
+      "type": "string"
+    },
+    {
+      "name": "tdocCount",
+      "nullable": false,
+      "source_column_or_expression": "tdocCount",
+      "type": "integer"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "extent": "Return every eligible agenda item including count0, without the unasked10 cap. Fresh complete output must verify unique nonnull identity and integer count for every item.",
+    "mode": "all"
+  },
+  "native_execution_evidence": {
+    "bytes_retained": 593925,
+    "columns": [
+      "agendaId",
+      "tdocCount"
+    ],
+    "elapsed_s": 3.2995,
+    "execution_query_type": "r",
+    "execution_summary_complete": true,
+    "finished_utc": "2026-10-14T05:38:41.262886+00:00",
+    "full_rows_available": true,
+    "id": "RAN4_P1_CQ3-1",
+    "limits": {
+      "bytes": 268435456,
+      "rows": 100000,
+      "timeout_s": 60
+    },
+    "plan_query_type": "r",
+    "provenance": {
+      "graph_source_sha256": "90c6bf7d4420949b7395e8a0b5700a07f8866ddd461699d4516fe4e4f5deec5d",
+      "import_manifest_sha256": "79fdfaf2b47c96f5bd39ede7acb577f0da0e4d306463512cb0892cdb61d6386c",
+      "run_report_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/execution_RAN4.json",
+      "run_report_sha256": "ab65b5c0069ee2ac51a70b0dc3fe1058ea661f7ca787e7712c22bd6a744f2b4e",
+      "same_count_property_changes_detected": false,
+      "source_guard_sha256": "6b6ec52cdf58ce86164aa00fddab037212a3006707015cb92437e898af51762a"
+    },
+    "query": "MATCH (ai:AgendaItem)\nOPTIONAL MATCH (t:Tdoc)-[:BELONGS_TO]->(ai)\nWITH ai, count(DISTINCT t) AS tdocCount\nRETURN coalesce(ai.id, ai.iri) AS agendaId, tdocCount",
+    "query_sha256": "8998ff5cbe7a15c57e9fb65debdaa6067a784d1a4c5589fa3ffba2cb514c6de5",
+    "receipt_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/reference_outputs/RAN4_P1_CQ3-1/8998ff5cbe7a15c57e9fb65debdaa6067a784d1a4c5589fa3ffba2cb514c6de5.json",
+    "receipt_sha256": "3a4ab8e87e49fd4d1397f423941366c30f1f72a2e16da2aae2f5dd85b01d158f",
+    "rollback_completed": true,
+    "rows_file": "reference_outputs/RAN4_P1_CQ3-1/8998ff5cbe7a15c57e9fb65debdaa6067a784d1a4c5589fa3ffba2cb514c6de5.jsonl",
+    "rows_retained": 19763,
+    "rows_sha256": "932c3f2d11223f916bf95e28bca0caba9605304b7e6ead828ab9831923e3a382",
+    "source": "new read-only execution on owned archived TTL restoration",
+    "started_utc": "2026-10-14T05:38:37.963321+00:00",
+    "status": "OK",
+    "truncated": false,
+    "wg": "RAN4"
+  },
+  "portable_native_evidence": {
+    "receipt_file": "reference_outputs/RAN4_P1_CQ3-1/8998ff5cbe7a15c57e9fb65debdaa6067a784d1a4c5589fa3ffba2cb514c6de5.json",
+    "receipt_sha256": "3a4ab8e87e49fd4d1397f423941366c30f1f72a2e16da2aae2f5dd85b01d158f",
+    "rows_file": "reference_outputs/RAN4_P1_CQ3-1/8998ff5cbe7a15c57e9fb65debdaa6067a784d1a4c5589fa3ffba2cb514c6de5.jsonl",
+    "rows_sha256": "932c3f2d11223f916bf95e28bca0caba9605304b7e6ead828ab9831923e3a382",
+    "run_report_file": "provenance/further_execution_RAN4.json",
+    "source_kind": "captured_repaired_query"
+  },
+  "completeness_witness": null,
+  "expanded_contract_manifest": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/manifest.json",
+    "sha256": "1b42bef40acce3497c0f8e5a693f18fc268196e1cd5b5abb7bf24be2fb5f186e"
+  },
+  "projected_reference_path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/reference_gold.jsonl",
+  "projected_reference_file_sha256": "f4907c9ea765273d700f1c9052549777c0dbe990ff6b4b25cb4ecdca64a368bc",
+  "projected_reference_record_sha256": "24e5221ed484ad0050128bd3780a37ffafac53191cdc854ef108fbaec8a43e3e",
+  "reference_record_hash_codec": "typed_values.json_exact",
+  "reference_is_frozen_graph_derived_not_independent_expert_answer": true,
+  "human_author_review_completed": false,
+  "independent_expert_validation_n": 0
+}

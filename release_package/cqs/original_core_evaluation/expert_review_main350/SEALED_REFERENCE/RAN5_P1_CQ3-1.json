@@ -1,0 +1,83 @@
+{
+  "id": "RAN5_P1_CQ3-1",
+  "instruction": "Open only after the independent answer and source interpretation have been fixed.",
+  "original_benchmark_source": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/spectra_cq_v2.0/benchmark.jsonl",
+    "sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef",
+    "record_id": "RAN5_P1_CQ3-1"
+  },
+  "repair_sha256": "bfefa20e4e1fd96e7be5f46b0000b00e31c29c358a5628479ea5f6b592a88350",
+  "reference_query": "MATCH (ai:AgendaItem)\nOPTIONAL MATCH (t:Tdoc)-[:BELONGS_TO]->(ai)\nWITH ai, count(DISTINCT t) AS tdocCount\nRETURN coalesce(ai.id, ai.iri) AS agendaItemId, tdocCount\nORDER BY tdocCount DESC",
+  "original_query": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem) RETURN ai.agendaNumber, count(t) AS cnt ORDER BY cnt DESC LIMIT 10",
+  "required_fields": [
+    {
+      "name": "agendaItemId",
+      "nullable": false,
+      "source_column_or_expression": "agendaItemId",
+      "type": "string"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "direction": "desc",
+        "source_column": "tdocCount"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "value": 10,
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "tie_policy": "any_subset_at_boundary",
+    "value": 10
+  },
+  "native_execution_evidence": {
+    "bytes_retained": 262750,
+    "columns": [
+      "agendaItemId",
+      "tdocCount"
+    ],
+    "elapsed_s": 2.4962,
+    "execution_query_type": "r",
+    "execution_summary_complete": true,
+    "finished_utc": "2026-10-14T05:06:51.729568+00:00",
+    "full_rows_available": true,
+    "id": "RAN5_P1_CQ3-1",
+    "limits": {
+      "bytes": 268435456,
+      "rows": 100000,
+      "timeout_s": 60
+    },
+    "plan_query_type": "r",
+    "provenance": {
+      "graph_source_sha256": "1ab414b785a155b58218a209be71ed9d1dacc1ea86ae13abbacfbaea27808f5e",
+      "import_manifest_sha256": "10817e42ef9ea5fe4b6409ecc6f61cf1f8e09456c32a4e60db8d8918e6c8895d",
+      "run_report_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/continuation/execution_RAN5.json",
+      "run_report_sha256": "d806506c6329e71fc2c8751062539e812f7dc7d1e1fec642ccdebdebaea48278",
+      "same_count_property_changes_detected": false,
+      "source_guard_sha256": "97dada532d23203773dd85693a10dd03228a787c338bc5cb70850d7e310db68e"
+    },
+    "query": "MATCH (ai:AgendaItem)\nOPTIONAL MATCH (t:Tdoc)-[:BELONGS_TO]->(ai)\nWITH ai, count(DISTINCT t) AS tdocCount\nRETURN coalesce(ai.id, ai.iri) AS agendaItemId, tdocCount\nORDER BY tdocCount DESC",
+    "query_sha256": "84fef65a1f272c1edbefbb3b3e01f9102f04189c8e7cccd117adfb0aca9913e2",
+    "receipt_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/continuation/reference_outputs/RAN5_P1_CQ3-1/84fef65a1f272c1edbefbb3b3e01f9102f04189c8e7cccd117adfb0aca9913e2.json",
+    "receipt_sha256": "d392e9a8f8a431b3b2dacdc2d12d20913947d5bb4fc596ec4d1d8ee5ce4cacf4",
+    "rollback_completed": true,
+    "rows_file": "reference_outputs/RAN5_P1_CQ3-1/84fef65a1f272c1edbefbb3b3e01f9102f04189c8e7cccd117adfb0aca9913e2.jsonl",
+    "rows_retained": 8632,
+    "rows_sha256": "310c7fdf766ff0a23cdc01b1320fdf4762b117e9b6506688202e794e2611ace3",
+    "source": "new read-only execution on owned archived TTL restoration",
+    "started_utc": "2026-10-14T05:06:49.233338+00:00",
+    "status": "OK",
+    "truncated": false,
+    "wg": "RAN5"
+  },
+  "projected_reference_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging/release_package/cqs/original_core_repair/reference_gold.jsonl",
+  "projected_reference_file_sha256": "b287ae509abf076eb0d00d23d3cf422eb0d1efb07a7a13e4adbe010f9dfe46f5",
+  "projected_reference_record_available_for_exact_repair": true,
+  "projected_reference_record_sha256": "47746f0d64a2c56bc008553585f99d9309ca599afe3f14eb7cd02c0b49b4fe5a",
+  "reference_is_frozen_graph_derived_not_independent_expert_answer": true
+}

@@ -1,0 +1,30 @@
+{
+  "id": "RAN5_P3_CQ2-4",
+  "wg": "RAN5",
+  "query_sha256": "8a177aea43fcbb1c006147ff7f80f99d719264657cc9a2a33760f97b7f5da227",
+  "query": "MATCH (a:Section)-[ref:REFERENCES_SECTION]->(b:Section),\n(a)-[:BELONGS_TO_SPEC]->(sa:Spec),\n(b)-[:BELONGS_TO_SPEC]->(sb:Spec)\nWHERE sa.specNumber <> sb.specNumber\nWITH sa.specNumber AS fromSpec, sb.specNumber AS toSpec,\ncount(DISTINCT ref) AS referenceCount\nWITH collect({fromSpec:fromSpec,toSpec:toSpec,referenceCount:referenceCount}) AS pairs,\nmax(referenceCount) AS maximumFrequency\nUNWIND pairs AS pair\nWITH pair, maximumFrequency WHERE pair.referenceCount = maximumFrequency\nRETURN pair.fromSpec AS fromSpec, pair.toSpec AS toSpec",
+  "started_utc": "2026-10-14T05:40:17.151661+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN5_P3_CQ2-4/8a177aea43fcbb1c006147ff7f80f99d719264657cc9a2a33760f97b7f5da227.jsonl",
+  "columns": [
+    "fromSpec",
+    "toSpec"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 60
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 2,
+  "bytes_retained": 48,
+  "rows_sha256": "3e9697e7895d54e9ca7b2041412386df33dc5779b5a76311eafc9c06e4da69ed",
+  "finished_utc": "2026-10-14T05:40:20.632112+00:00",
+  "elapsed_s": 3.4804,
+  "full_rows_available": true
+}

@@ -1,0 +1,69 @@
+{
+  "status": "runtime_frozen_actual_five_group_SQL_source_and_common_loader_identity_prepared",
+  "api": {
+    "generate": "evaluate(task_public,method,caller,run_dir) -> record. Methods A/B or Text2Cypher/Text2SQL. Does not execute DB queries.",
+    "execute": "execute_generated(record,task_public,sql_db=None,expected_sql_sha=None,executor_directory=None,source_guard_expected=None,source_guard_batch_verified=False,expected_sql_stat=None) -> complete-or-explicit-failure record",
+    "graph_schema": "graph_schema(source_schema_frozen_v1.working_groups[WG])",
+    "sql_schema": "relational/WG.manifest.json -> schema only; never feed whole manifest to model",
+    "file_identity": "file_identity(SQL_DB) -> bytes/mtime_ns/device/inode; root pins after verifying full DB hash at WG batch start and verifies full hash again at batch end"
+  },
+  "task_public_keys": [
+    "id",
+    "repair_sha256",
+    "wg",
+    "question_en",
+    "required_fields",
+    "collection",
+    "cardinality_policy",
+    "graph_schema",
+    "sql_schema",
+    "identity_format"
+  ],
+  "generation_policy": {
+    "max_tokens": 4096,
+    "one_scientific_generation_per_task_method": true,
+    "result_based_retry": false,
+    "gold_reference_review_input": false,
+    "format": "exact JSON object with query:string and abstain:boolean"
+  },
+  "execution_policy": {
+    "row_cap": 100000,
+    "json_byte_cap": 268435456,
+    "timeout_seconds": 60,
+    "automatic_limit_appended": false,
+    "partial_output_may_be_scored_as_complete": false,
+    "working_group_sequential": true,
+    "root_query_concurrency_max": 2,
+    "source_guard_default": "full hash+inventory per query",
+    "batch_fast_path": "root verifies full graph/SQL source at batch start and end; Cypher each query owned container+unchanged import manifest+ordinary EXPLAIN+ordinary execution summary+rollback; SQL each query immutable read-only and pinned file identity"
+  },
+  "encoding_policy": {
+    "native_projection": "same shipped frozen-TTL parser/property/list/relationship codec as Neo4j restoration",
+    "booleans": "SQL INTEGER0/1 to bool only when predeclared field/schema is unambiguously boolean",
+    "arrays_objects": "canonical JSON SQL text decoded only for predeclared JSON field; recursively decode unambiguous boolean0/1 leaves",
+    "numeric_strings": "never coerced",
+    "multilabels": "same node_id in each label table",
+    "relationship_multiplicity": "exact source/type/target triples are unique as in shipped RDF restoration; absent original multiplicity is not reconstructed",
+    "auxiliary_loader_identity": "node_identity(node_id,iri) encodes the exact shipped Neo4j loader-only /inst/_/{cls}/{nid} identity. Graph cards expose iri on each node label. This differs from original RDF sourceIRI and contributes no additional source-authored facts.",
+    "source_authored_iri_property_collisions": 0
+  },
+  "scientific_claim_limits": [
+    "Synthetic tests use mocks; they are not model measurements.",
+    "Matching encoded source records does not establish causal fairness across representations.",
+    "No domain expert/human review is created."
+  ],
+  "runtime_code_pins": {
+    "structured_adapter.py": "1c6802bccbc4eb09b9703050ee8f45912992228fb4752ddc1ba602b7e46014d5",
+    "build_frozen_sqlite.py": "15d6b13d0899f1ac7d3a03ab0611bf565b989724859c3e7d04a49cce0e43f14a",
+    "add_loader_identity.py": "25d41d10540c343f2b9a39a582ea3b7f0981d019757360e55aee0f4766ff9466",
+    "verify_sql_encoding.py": "9c5ba1a631e82ab70343cc4cb81a2c938cfb7fcf766ff5ac4f4fa606b12ad3d5"
+  },
+  "runtime_frozen": true,
+  "synthetic_development_test": {
+    "command": "python3 -B -S -m unittest test_structured_adapter -q",
+    "tests": 29,
+    "status": "PASS",
+    "model_calls": 0,
+    "scope": "Mock calls, synthetic two-node SQL data and mock graph transactions. Not benchmark/model measurements."
+  }
+}

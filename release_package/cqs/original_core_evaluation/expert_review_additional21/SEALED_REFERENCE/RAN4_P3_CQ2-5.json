@@ -1,0 +1,104 @@
+{
+  "id": "RAN4_P3_CQ2-5",
+  "instruction": "Open only after independent meaning and answer records have been fixed.",
+  "original_benchmark_source": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/spectra_cq_v2.0/benchmark.jsonl",
+    "sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef"
+  },
+  "repair_sha256": "3c0c13c3b7f95b268c0cc82e5180f825a2763c1a1d6cfdfed5630f2b22bcf210",
+  "original_query": "MATCH (a:Section)-[:BELONGS_TO_SPEC]->(sa:Spec), (a)-[:REFERENCES_SECTION]->(b:Section)-[:BELONGS_TO_SPEC]->(sb:Spec) WHERE sa.specNumber <> sb.specNumber RETURN sa.specNumber AS fromSpec, sb.specNumber AS toSpec, count(*) AS refCount ORDER BY refCount DESC LIMIT 10",
+  "reference_query": "MATCH (a:Section)-[ref:REFERENCES_SECTION]->(b:Section),\n(a)-[:BELONGS_TO_SPEC]->(sa:Spec), (b)-[:BELONGS_TO_SPEC]->(sb:Spec)\nWHERE sa.specNumber <> sb.specNumber\nRETURN sa.specNumber AS fromSpec, sb.specNumber AS toSpec, count(DISTINCT ref) AS referenceCount\nORDER BY referenceCount DESC",
+  "required_fields": [
+    {
+      "name": "fromSpec",
+      "nullable": false,
+      "source_column_or_expression": "fromSpec",
+      "type": "string"
+    },
+    {
+      "name": "toSpec",
+      "nullable": false,
+      "source_column_or_expression": "toSpec",
+      "type": "string"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "direction": "desc",
+        "source_column": "referenceCount"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "value": 10,
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "tie_policy": "any_subset_at_boundary",
+    "value": 10
+  },
+  "native_execution_evidence": {
+    "bytes_retained": 101,
+    "columns": [
+      "fromSpec",
+      "toSpec",
+      "referenceCount"
+    ],
+    "elapsed_s": 1.1417,
+    "execution_query_type": "r",
+    "execution_summary_complete": true,
+    "finished_utc": "2026-10-14T05:38:50.674624+00:00",
+    "full_rows_available": true,
+    "id": "RAN4_P3_CQ2-5",
+    "limits": {
+      "bytes": 268435456,
+      "rows": 100000,
+      "timeout_s": 60
+    },
+    "plan_query_type": "r",
+    "provenance": {
+      "graph_source_sha256": "90c6bf7d4420949b7395e8a0b5700a07f8866ddd461699d4516fe4e4f5deec5d",
+      "import_manifest_sha256": "79fdfaf2b47c96f5bd39ede7acb577f0da0e4d306463512cb0892cdb61d6386c",
+      "run_report_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/execution_RAN4.json",
+      "run_report_sha256": "ab65b5c0069ee2ac51a70b0dc3fe1058ea661f7ca787e7712c22bd6a744f2b4e",
+      "same_count_property_changes_detected": false,
+      "source_guard_sha256": "6b6ec52cdf58ce86164aa00fddab037212a3006707015cb92437e898af51762a"
+    },
+    "query": "MATCH (a:Section)-[ref:REFERENCES_SECTION]->(b:Section),\n(a)-[:BELONGS_TO_SPEC]->(sa:Spec), (b)-[:BELONGS_TO_SPEC]->(sb:Spec)\nWHERE sa.specNumber <> sb.specNumber\nRETURN sa.specNumber AS fromSpec, sb.specNumber AS toSpec, count(DISTINCT ref) AS referenceCount\nORDER BY referenceCount DESC",
+    "query_sha256": "03ff5d82a6351aebdb5c26cc27bf06ec4a0601ee68cd7d671e62f22e4018adb8",
+    "receipt_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/reference_outputs/RAN4_P3_CQ2-5/03ff5d82a6351aebdb5c26cc27bf06ec4a0601ee68cd7d671e62f22e4018adb8.json",
+    "receipt_sha256": "4ac774328d5af8dae30a3e553ff6d4551e8e0b1db6283e54c9a05e34a752071c",
+    "rollback_completed": true,
+    "rows_file": "reference_outputs/RAN4_P3_CQ2-5/03ff5d82a6351aebdb5c26cc27bf06ec4a0601ee68cd7d671e62f22e4018adb8.jsonl",
+    "rows_retained": 4,
+    "rows_sha256": "d90eb81e9ebc75db4b279b6c2709820c5e3cc7172818356913622dcb88961a33",
+    "source": "new read-only execution on owned archived TTL restoration",
+    "started_utc": "2026-10-14T05:38:49.532864+00:00",
+    "status": "OK",
+    "truncated": false,
+    "wg": "RAN4"
+  },
+  "portable_native_evidence": {
+    "receipt_file": "reference_outputs/RAN4_P3_CQ2-5/03ff5d82a6351aebdb5c26cc27bf06ec4a0601ee68cd7d671e62f22e4018adb8.json",
+    "receipt_sha256": "4ac774328d5af8dae30a3e553ff6d4551e8e0b1db6283e54c9a05e34a752071c",
+    "rows_file": "reference_outputs/RAN4_P3_CQ2-5/03ff5d82a6351aebdb5c26cc27bf06ec4a0601ee68cd7d671e62f22e4018adb8.jsonl",
+    "rows_sha256": "d90eb81e9ebc75db4b279b6c2709820c5e3cc7172818356913622dcb88961a33",
+    "run_report_file": "provenance/further_execution_RAN4.json",
+    "source_kind": "captured_repaired_query"
+  },
+  "completeness_witness": null,
+  "expanded_contract_manifest": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/manifest.json",
+    "sha256": "1b42bef40acce3497c0f8e5a693f18fc268196e1cd5b5abb7bf24be2fb5f186e"
+  },
+  "projected_reference_path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/reference_gold.jsonl",
+  "projected_reference_file_sha256": "f4907c9ea765273d700f1c9052549777c0dbe990ff6b4b25cb4ecdca64a368bc",
+  "projected_reference_record_sha256": "013c9dfed2c9e4968d4f0278a1548d9dfab55549942e8c1099184dc6e428ca5b",
+  "reference_record_hash_codec": "typed_values.json_exact",
+  "reference_is_frozen_graph_derived_not_independent_expert_answer": true,
+  "human_author_review_completed": false,
+  "independent_expert_validation_n": 0
+}

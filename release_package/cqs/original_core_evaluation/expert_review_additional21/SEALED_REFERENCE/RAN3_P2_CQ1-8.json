@@ -1,0 +1,97 @@
+{
+  "id": "RAN3_P2_CQ1-8",
+  "instruction": "Open only after independent meaning and answer records have been fixed.",
+  "original_benchmark_source": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/spectra_cq_v2.0/benchmark.jsonl",
+    "sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef"
+  },
+  "repair_sha256": "a28824e5e10b22a13ce09ed2ed719eb6659268ab328a6c85624a8dfba57b64d8",
+  "original_query": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) RETURN ai.agendaNumber, count(r) AS cnt ORDER BY cnt DESC, ai.agendaNumber LIMIT 10",
+  "reference_query": "MATCH (ai:AgendaItem)\nOPTIONAL MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai)\nWITH ai, count(DISTINCT r) AS resolutionCount\nRETURN coalesce(ai.id, ai.iri) AS agendaId, resolutionCount\nORDER BY resolutionCount DESC",
+  "required_fields": [
+    {
+      "name": "agendaId",
+      "nullable": false,
+      "source_column_or_expression": "agendaId",
+      "type": "string"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "direction": "desc",
+        "source_column": "resolutionCount"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "value": 10,
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "tie_policy": "any_subset_at_boundary",
+    "value": 10
+  },
+  "native_execution_evidence": {
+    "bytes_retained": 110551,
+    "columns": [
+      "agendaId",
+      "resolutionCount"
+    ],
+    "elapsed_s": 2.1096,
+    "execution_query_type": "r",
+    "execution_summary_complete": true,
+    "finished_utc": "2026-10-14T05:37:50.901400+00:00",
+    "full_rows_available": true,
+    "id": "RAN3_P2_CQ1-8",
+    "limits": {
+      "bytes": 268435456,
+      "rows": 100000,
+      "timeout_s": 60
+    },
+    "plan_query_type": "r",
+    "provenance": {
+      "graph_source_sha256": "d9791c08773a0e38b89869b3882d3098d879a37ddd7109630c346200d6776e95",
+      "import_manifest_sha256": "6a325f06f5c5fe903d6b382635e7096a107c4b620e3a9288cf5a18852e30c0a5",
+      "run_report_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/execution_RAN3.json",
+      "run_report_sha256": "427092b395e4a5ae2d2ef486f2f59d99330a521f8134906b5dee7e1f724e34bb",
+      "same_count_property_changes_detected": false,
+      "source_guard_sha256": "ab89822e5e99644e48e17483e21832703121649f1b06da7560bac9815b00da2e"
+    },
+    "query": "MATCH (ai:AgendaItem)\nOPTIONAL MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai)\nWITH ai, count(DISTINCT r) AS resolutionCount\nRETURN coalesce(ai.id, ai.iri) AS agendaId, resolutionCount\nORDER BY resolutionCount DESC",
+    "query_sha256": "d1ae35072746b5104d138b63783d43ad1a9d79125737c8a7dd6be96d85344bfb",
+    "receipt_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/further_expansion/native_capture/reference_outputs/RAN3_P2_CQ1-8/d1ae35072746b5104d138b63783d43ad1a9d79125737c8a7dd6be96d85344bfb.json",
+    "receipt_sha256": "c43c1cb23cdc55eca22e425f7c5b4934bbfa5cdfb95a5fd0e1592fb6ed77e024",
+    "rollback_completed": true,
+    "rows_file": "reference_outputs/RAN3_P2_CQ1-8/d1ae35072746b5104d138b63783d43ad1a9d79125737c8a7dd6be96d85344bfb.jsonl",
+    "rows_retained": 3582,
+    "rows_sha256": "0bb2852664d38108a3e8b1449f406da20f48d857beacafb6c74029515393d1a6",
+    "source": "new read-only execution on owned archived TTL restoration",
+    "started_utc": "2026-10-14T05:37:48.791798+00:00",
+    "status": "OK",
+    "truncated": false,
+    "wg": "RAN3"
+  },
+  "portable_native_evidence": {
+    "receipt_file": "reference_outputs/RAN3_P2_CQ1-8/d1ae35072746b5104d138b63783d43ad1a9d79125737c8a7dd6be96d85344bfb.json",
+    "receipt_sha256": "c43c1cb23cdc55eca22e425f7c5b4934bbfa5cdfb95a5fd0e1592fb6ed77e024",
+    "rows_file": "reference_outputs/RAN3_P2_CQ1-8/d1ae35072746b5104d138b63783d43ad1a9d79125737c8a7dd6be96d85344bfb.jsonl",
+    "rows_sha256": "0bb2852664d38108a3e8b1449f406da20f48d857beacafb6c74029515393d1a6",
+    "run_report_file": "provenance/further_execution_RAN3.json",
+    "source_kind": "captured_repaired_query"
+  },
+  "completeness_witness": null,
+  "expanded_contract_manifest": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/manifest.json",
+    "sha256": "1b42bef40acce3497c0f8e5a693f18fc268196e1cd5b5abb7bf24be2fb5f186e"
+  },
+  "projected_reference_path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/final_staging_expanded/release_package/cqs/original_core_repair/reference_gold.jsonl",
+  "projected_reference_file_sha256": "f4907c9ea765273d700f1c9052549777c0dbe990ff6b4b25cb4ecdca64a368bc",
+  "projected_reference_record_sha256": "5ca56370056019ae58eccbc09f57e19912cf6ed4fd36dfb743b5a44501056b44",
+  "reference_record_hash_codec": "typed_values.json_exact",
+  "reference_is_frozen_graph_derived_not_independent_expert_answer": true,
+  "human_author_review_completed": false,
+  "independent_expert_validation_n": 0
+}

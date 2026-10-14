@@ -16,6 +16,7 @@ import scorer
 import original_scorer
 import review_schema
 import contract_checks
+import maximum_pool_checks
 
 BASE = Path(__file__).resolve().parent
 DEFINITION_KEYS = ('id', 'question_en', 'original_query', 'reference_query',
@@ -74,6 +75,9 @@ def project(rows, fields, columns):
 
 
 def verify_uncapped_witness(task, candidate, native_records, order_groups, manifest):
+    if task['id'] in maximum_pool_checks.REQUIRED_IDS:
+        maximum_pool_checks.verify(BASE, task, native_records, manifest)
+        return
     population = task['primary_review'].get('whole_population_evidence')
     needs_witness = population or (task['repair_class'] == 'scorer_only' and task['cardinality_policy']['mode'] == 'all'
                                   and re.search(r'\bLIMIT\b', task['reference_query'], re.I))
@@ -167,6 +171,8 @@ def verify():
     originals = index(read(original_path))
     original_contracts = index([row for row in read(contract_path) if 'id' in row])
     candidates = index(read(BASE / 'provenance/candidate_definitions.jsonl'))
+    additional_path = BASE / 'provenance/additional_definitions.jsonl'
+    additional = index(read(additional_path)) if additional_path.exists() else {}
     tasks = index(read(BASE / 'tasks.jsonl'))
     gold = index(read(BASE / 'reference_gold.jsonl'))
     dispositions = index(read(BASE / 'all_core_dispositions.jsonl'))
@@ -195,24 +201,32 @@ def verify():
                 or task.get('original_question_preserved') is not True
                 or task['repair_class'] != ('scorer_only' if task['reference_query'] == original['cypher'] else 'query_and_scorer')):
             raise ValueError('original question or repair definition identity mismatch: ' + id)
-        candidate = candidates[id]
-        candidate_sha = text_sha(json.dumps(candidate, ensure_ascii=False, sort_keys=True, separators=(',', ':')))
         primary, secondary = task['primary_review'], task['secondary_review']
-        primary_fields = [dict(field) for field in primary['required_fields']]
-        for field in primary_fields:
-            if 'nested_semantics' in field and 'nested_array_semantics' not in field:
-                field['nested_array_semantics'] = field.pop('nested_semantics')
-        primary_query = original['cypher'] if primary['query_choice'] == 'original' else candidate['candidate_query']
-        if (primary_query != task['reference_query'] or primary['repair_class'] != task['repair_class']
-                or digest(primary_fields) != digest(task['required_fields'])
-                or digest(primary['collection']) != digest(task['collection'])
-                or digest(primary['cardinality_policy']) != digest(task['cardinality_policy'])):
-            raise ValueError('primary judgment concerns a different repaired contract: ' + id)
+        if id in additional:
+            proposed = additional[id]
+            if digest({key: proposed[key] for key in DEFINITION_KEYS}) != repair_sha:
+                raise ValueError('additional proposal differs from its admitted definition')
+            candidate = {'candidate_query': proposed['reference_query']}
+            review_schema.check_pass(primary, original['question_en'], criteria['semantic_units'],
+                                     criteria_sha=criteria_sha, identity_key='repair_sha256', identity_sha=repair_sha)
+        else:
+            candidate = candidates[id]
+            candidate_sha = text_sha(json.dumps(candidate, ensure_ascii=False, sort_keys=True, separators=(',', ':')))
+            primary_fields = [dict(field) for field in primary['required_fields']]
+            for field in primary_fields:
+                if 'nested_semantics' in field and 'nested_array_semantics' not in field:
+                    field['nested_array_semantics'] = field.pop('nested_semantics')
+            primary_query = original['cypher'] if primary['query_choice'] == 'original' else candidate['candidate_query']
+            if (primary_query != task['reference_query'] or primary['repair_class'] != task['repair_class']
+                    or digest(primary_fields) != digest(task['required_fields'])
+                    or digest(primary['collection']) != digest(task['collection'])
+                    or digest(primary['cardinality_policy']) != digest(task['cardinality_policy'])):
+                raise ValueError('primary judgment concerns a different repaired contract: ' + id)
+            review_schema.check_pass(primary, original['question_en'], criteria['semantic_units'],
+                                     criteria_sha=criteria_sha, identity_key='definition_sha256', identity_sha=candidate_sha)
         for review in (primary, secondary):
             if review.get('id') != id:
                 raise ValueError('review attached to another task')
-        review_schema.check_pass(primary, original['question_en'], criteria['semantic_units'],
-                                 criteria_sha=criteria_sha, identity_key='definition_sha256', identity_sha=candidate_sha)
         review_schema.check_pass(secondary, original['question_en'], criteria['semantic_units'],
                                  criteria_sha=criteria_sha, identity_key='repair_sha256', identity_sha=repair_sha)
         if (task.get('validation_status') != 'validated' or task.get('human_author_review_completed') is not False
@@ -275,14 +289,14 @@ def verify():
         rows = [dict(zip(columns, row)) for row in positional]
         records = project(rows, task['required_fields'], columns)
         groups = None
-        if task['collection']['kind'] == 'native_ordered_ties':
+        if task['collection']['kind'] in {'native_ordered_ties', 'top_k_boundary_ties'}:
             if any(key['source_column'] not in columns for key in task['collection']['source_order_keys']):
                 raise ValueError('native order key lacks a returned column')
             groups = original_scorer.make_order_groups(task, rows, records)
         if (digest(records) != task['projected_records_sha256']
                 or scorer.get_kernel().json_exact(records) != scorer.get_kernel().json_exact(gold[id]['records'])
                 or scorer.get_kernel().json_exact(groups) != scorer.get_kernel().json_exact(gold[id]['order_groups'])
-                or not original_scorer.score(task, records, records, order_groups=groups)['exact']):
+                or not original_scorer.score(task, records, original_scorer.reference_prediction(task, records), order_groups=groups)['exact']):
             raise ValueError('gold or ordering differs from actual native projection: ' + id)
         verify_uncapped_witness(task, candidate, records, groups, manifest)
         outcome = recorded_checks[id]
