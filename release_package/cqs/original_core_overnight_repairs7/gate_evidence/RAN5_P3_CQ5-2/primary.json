@@ -1,0 +1,252 @@
+{
+  "id": "RAN5_P3_CQ5-2",
+  "repair_sha256": "fedc100327b7237268dd718ad7434e6f27b353394ce6c4fbc351dc4e23ce31c4",
+  "original_question_sha256": "eee5be68f4f1d87590715119b3ea4d5cb772be039a1a996a8cafae261b59626e",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Direct Codex original source-context primary judgment /root/reaudit_ran2_ran5",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+      "finding": "A logical contribution matrix identifies the company axis and spec-family axis and supplies an integer CR count per coordinate. companyName/specNumber/crCount directly express the three requested roles. The English each-company matrix supersedes the Korean specific-company lookup and old capped row query for extent; it does not request CR document identities as each cell’s mandatory list. Fresh V5 exact review: dense named-cell roles remain companyName/specNumber/crCount. The sparse envelope explicitly names these identical three roles and typed axes/cells; no new required scientific answer field is introduced.",
+      "query_clauses": [
+        "MATCH (dimension:Spec)",
+        "WHERE dimension.specNumber STARTS WITH '38.5'",
+        "  AND NOT dimension.specNumber STARTS WITH '38.591'",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers",
+        "MATCH (company:Company)",
+        "UNWIND specNumbers AS specNumber",
+        "OPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)",
+        "WHERE modified.specNumber=specNumber",
+        "RETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount",
+        "ORDER BY companyName ASC,specNumber ASC"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+      "finding": "The preserved pre-repair HEAD/index phase3 design §6 explicitly defines the TS scope as RAN5 38.5xx and excludes38.591. This constraints section follows the CQ/default tables, rather than being only a Word-parser procedure. §1.5 preserves all earlier phase1-2 instances; hence restricting the metadata matrix to only15 newly parsed body families would discard allowed phase1 Spec targets without a question predicate. Applying the literal scope to the full recorded family domain yields19 families, including recorded parent identities, across all179 recorded Company entities. No current ownership catalogue/epoch or latest-edition selection is added. Fresh V5 exact review: eligible companies/spec-family dimensions remain the same source-bound19-domain. Sparse axes are supplied in the answer, never read/inferred from gold by the decoder; incomplete axes expand to incomplete record sets, not invented values.",
+      "query_clauses": [
+        "MATCH (dimension:Spec)",
+        "WHERE dimension.specNumber STARTS WITH '38.5'",
+        "  AND NOT dimension.specNumber STARTS WITH '38.591'",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers",
+        "MATCH (company:Company)",
+        "UNWIND specNumbers AS specNumber",
+        "OPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)",
+        "WHERE modified.specNumber=specNumber",
+        "RETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount",
+        "ORDER BY companyName ASC,specNumber ASC"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+      "finding": "Original phase1 modifies denotes the specification targeted by a change request, and submittedBy records document company submitters. The matrix is the recorded Company←submittedBy–CR–modifies→Spec relation. It requires no approval, adoption, Agreement causality, numeric final CR-number predicate or currentWG catalogue; documentary change-request attribution is not inferred real-world technical ownership. Fresh V5 exact review: the collection representation descriptor does not change submittedBy/modifies documentary predicates, series exclusion or absence of approval/status/latest filters; the reference query is byte-identical to V3.",
+      "query_clauses": [
+        "MATCH (dimension:Spec)",
+        "WHERE dimension.specNumber STARTS WITH '38.5'",
+        "  AND NOT dimension.specNumber STARTS WITH '38.591'",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers",
+        "MATCH (company:Company)",
+        "UNWIND specNumbers AS specNumber",
+        "OPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)",
+        "WHERE modified.specNumber=specNumber",
+        "RETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount",
+        "ORDER BY companyName ASC,specNumber ASC"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+      "finding": "Original CR natural identity is tdocNumber; all53351 actual CR records have unique nonnull natural IDs in the pinned input. count(DISTINCT cr) per company/spec-family removes repeated edges and duplicate release-specific Spec witnesses while preserving distinct CR/Tdoc contributions. A co-submitted CR can count once for each explicitly related Company, according to the original multivalued role, without legal-entity consolidation or fractional counting. Fresh V5 exact review: one coordinate is one company/spec-family CR count. Repeated identical axis labels/cells are one set member; conflicting values at one coordinate are malformed. DISTINCT CR remains the query counting unit and no row normalization sums or changes counts.",
+      "query_clauses": [
+        "MATCH (dimension:Spec)",
+        "WHERE dimension.specNumber STARTS WITH '38.5'",
+        "  AND NOT dimension.specNumber STARTS WITH '38.591'",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers",
+        "MATCH (company:Company)",
+        "UNWIND specNumbers AS specNumber",
+        "OPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)",
+        "WHERE modified.specNumber=specNumber",
+        "RETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount",
+        "ORDER BY companyName ASC,specNumber ASC"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+      "finding": "Each company and each eligible recorded spec-family coordinate remains present, including recorded0where the optional path has no matching CR. OPTIONAL MATCH plus count(DISTINCT cr) correctly retains these axes; full179×19 logical closure is intended. The oldLIMIT10 is not a complete matrix. Recorded0is a property of the frozen graph, not a claim of no historical physical contribution. A dense row encoding and an explicit complete-axis/default0 sparse encoding express the same logical matrix; the representation scorer gate is still separately pending and is not established by this semantic judgment. Fresh V5 exact review: complete dense and explicit-axis/default0 sparse representations denote the same Cartesian cell set. Missing row/column axes are not inferred; extra axes introduce unmatched records; omitted nonzero cells default incorrectly and fail ordinary requested-field matching. All18 synthetic controls and the one-cell auxiliary trigger counterexample were examined; actual matrix controls remain required.",
+      "query_clauses": [
+        "MATCH (dimension:Spec)",
+        "WHERE dimension.specNumber STARTS WITH '38.5'",
+        "  AND NOT dimension.specNumber STARTS WITH '38.591'",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers",
+        "MATCH (company:Company)",
+        "UNWIND specNumbers AS specNumber",
+        "OPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)",
+        "WHERE modified.specNumber=specNumber",
+        "RETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount",
+        "ORDER BY companyName ASC,specNumber ASC"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+      "finding": "This question requests a matrix, not rank. Company/spec ASC is reproducible serialization, with no required rank order or tie-break semantics. The collection set contains one complete typed cell record per unique coordinate; repeated identical display rows do not change its set, whereas replacing a required coordinate loses matrix content. Fresh V5 exact review: axis/cell order is immaterial to the requested matrix. Explicit sparse axes normalize without sorting by counts or introducing ranks; same-member repetition is idempotent under declared set semantics.",
+      "query_clauses": [
+        "MATCH (dimension:Spec)",
+        "WHERE dimension.specNumber STARTS WITH '38.5'",
+        "  AND NOT dimension.specNumber STARTS WITH '38.591'",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers",
+        "MATCH (company:Company)",
+        "UNWIND specNumbers AS specNumber",
+        "OPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)",
+        "WHERE modified.specNumber=specNumber",
+        "RETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount",
+        "ORDER BY companyName ASC,specNumber ASC"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+      "finding": "All scope facts are bound to original HEAD/index source and the frozen source graph; working-tree edits, the2026current catalogue91 and physical source absence are not imported as authority. The scope recognizes the explicit38.591 exclusion and the available earlier metadata rather than silently choosing15/23/91 alternatives. This is a direct nonblind AI source/context diagnosis, not an expert or human evaluation, and it asserts no new performance or real-world completeness. Fresh V5 exact review: generic decoder receives contract and prediction records plus pinned type kernel only, with no gold/source or company-specific facts. It validates named roles/default/types before expansion. Existing kernel/source snapshots remain unchanged, and scorer integration/full native controls are explicitly still uncompleted rather than asserted by these18 synthetic cases.",
+      "query_clauses": [
+        "MATCH (dimension:Spec)",
+        "WHERE dimension.specNumber STARTS WITH '38.5'",
+        "  AND NOT dimension.specNumber STARTS WITH '38.591'",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers",
+        "MATCH (company:Company)",
+        "UNWIND specNumbers AS specNumber",
+        "OPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)",
+        "WHERE modified.specNumber=specNumber",
+        "RETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount",
+        "ORDER BY companyName ASC,specNumber ASC"
+      ]
+    }
+  ],
+  "definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_domain19_matrix_representations_source_only_v5/canonical_source_only_definition.json",
+    "sha256": "78f0369c3740003989fe74b1ff294cb182f44baffb0fb86bb53be0ff3e23f49f",
+    "bytes": 2435
+  },
+  "source_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/manifest.json",
+    "sha256": "a96f583e9a5971c2ac65fed1df4178281f9033b5c29ecd922ac28888a8eddf3f",
+    "bytes": 5627
+  },
+  "exact_scope_context": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_domain19_matrix_representations_source_only_v5/source_only_exact_matrix_representation_context.json",
+    "sha256": "602af8fef1fb71d1a8ec86dfd61e9af2a02fd42d42330135993d42463ccc08fa",
+    "bytes": 4430
+  },
+  "all_unfiltered_rows_parsed": {
+    "all_unfiltered_CR.jsonl": 53351,
+    "all_unfiltered_Company.jsonl": 179,
+    "all_unfiltered_Spec.jsonl": 170,
+    "all_unfiltered_rel_MODIFIES.jsonl": 53288,
+    "all_unfiltered_rel_SUBMITTED_BY.jsonl": 83409
+  },
+  "natural_identity_observations": {
+    "all_unfiltered_CR.jsonl": {
+      "nonnull_unique": true,
+      "unit_field": "tdocNumber",
+      "n": 53351
+    },
+    "all_unfiltered_Company.jsonl": {
+      "nonnull_unique": true,
+      "unit_field": "companyName",
+      "n": 179
+    }
+  },
+  "logical_spec_family_axes": [
+    "38.508",
+    "38.508-1",
+    "38.508-2",
+    "38.509",
+    "38.521",
+    "38.521-1",
+    "38.521-2",
+    "38.521-3",
+    "38.521-4",
+    "38.521-5",
+    "38.522",
+    "38.523",
+    "38.523-1",
+    "38.523-2",
+    "38.523-3",
+    "38.532-2",
+    "38.533",
+    "38.551",
+    "38.561"
+  ],
+  "source_pins_before": {
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_CR.jsonl": "b244c159070bcf80ca4569f5b006a358b4ca2cbf5c0767b2e388902fd6e7c3cb",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_Company.jsonl": "c01f41e5607ab0af1cbdecbca63de0d4e58aa96384be96b2a13290497febc6ee",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_Spec.jsonl": "a30e47d98d1ea5e9e99433924384c92dfd95151a78bc4c4af38a79327a217d3a",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_rel_MODIFIES.jsonl": "c1539f6752b48e70bd8d5d276e89054a134bf83f43688a4c5b58983047413361",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_rel_SUBMITTED_BY.jsonl": "d16f411b0ee7526a4101485d4b9285e9a7efff4bf9b6fba07dbd483cee198b61",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/original_matrix_domain_context_and_independent_interpretation_questions.json": "39e6f849588e1e120dfbc87a31f2a0d26f83588333b61eb8f1728fe162d56d96",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/original_published_ontology.ttl": "ac0c2f2b00e042bcbde4e026ab439a1cb61dc7104425f2b74cf7b6c2cf50cec1",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase1_Tdoc_HEAD_legacy_path.md": "28337cd46bf260a01e247e1047a0d950870e15d46c42e68961c189ae37ba4aa1",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase1_Tdoc_index_TSG_path.md": "28337cd46bf260a01e247e1047a0d950870e15d46c42e68961c189ae37ba4aa1",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase1_Tdoc_working_TSG_path.md": "07e05ee25f0d5c74eaef3394a450a8e8e2f8d7b6213708391fdbf16f1fec212c",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase3_TS_HEAD_legacy_path.md": "1240eadd86829ca4890f3c8f47388ebae6cdbfcfcdcc20ccdbd226c269bf5e1d",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase3_TS_index_TSG_path.md": "1240eadd86829ca4890f3c8f47388ebae6cdbfcfcdcc20ccdbd226c269bf5e1d",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase3_TS_working_TSG_path.md": "124b09c40f85445c7425eb05484f795a5621278e7d4a5cf51f212586cc2caaf7",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/unfiltered_source_dimension_and_identity_observations.json": "7177c6d2649476b48eecf02d6828140ec5c53c85853ae4498af77aeda062f2d0"
+  },
+  "source_pins_after": {
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_CR.jsonl": "b244c159070bcf80ca4569f5b006a358b4ca2cbf5c0767b2e388902fd6e7c3cb",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_Company.jsonl": "c01f41e5607ab0af1cbdecbca63de0d4e58aa96384be96b2a13290497febc6ee",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_Spec.jsonl": "a30e47d98d1ea5e9e99433924384c92dfd95151a78bc4c4af38a79327a217d3a",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_rel_MODIFIES.jsonl": "c1539f6752b48e70bd8d5d276e89054a134bf83f43688a4c5b58983047413361",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/all_unfiltered_rel_SUBMITTED_BY.jsonl": "d16f411b0ee7526a4101485d4b9285e9a7efff4bf9b6fba07dbd483cee198b61",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/original_matrix_domain_context_and_independent_interpretation_questions.json": "39e6f849588e1e120dfbc87a31f2a0d26f83588333b61eb8f1728fe162d56d96",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/original_published_ontology.ttl": "ac0c2f2b00e042bcbde4e026ab439a1cb61dc7104425f2b74cf7b6c2cf50cec1",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase1_Tdoc_HEAD_legacy_path.md": "28337cd46bf260a01e247e1047a0d950870e15d46c42e68961c189ae37ba4aa1",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase1_Tdoc_index_TSG_path.md": "28337cd46bf260a01e247e1047a0d950870e15d46c42e68961c189ae37ba4aa1",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase1_Tdoc_working_TSG_path.md": "07e05ee25f0d5c74eaef3394a450a8e8e2f8d7b6213708391fdbf16f1fec212c",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase3_TS_HEAD_legacy_path.md": "1240eadd86829ca4890f3c8f47388ebae6cdbfcfcdcc20ccdbd226c269bf5e1d",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase3_TS_index_TSG_path.md": "1240eadd86829ca4890f3c8f47388ebae6cdbfcfcdcc20ccdbd226c269bf5e1d",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/phase3_TS_working_TSG_path.md": "124b09c40f85445c7425eb05484f795a5621278e7d4a5cf51f212586cc2caaf7",
+    "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/unfiltered_source_dimension_and_identity_observations.json": "7177c6d2649476b48eecf02d6828140ec5c53c85853ae4498af77aeda062f2d0"
+  },
+  "exposure": {
+    "proposer_primary_for_prior15_23_91_alternatives_read": false,
+    "new19filtered_SQL_gold_native_model_read": false,
+    "prior_agent3_source_only_pending_domain_observations_received": true,
+    "claim_of_blind_expert_review": false
+  },
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "native_execution_n": 0,
+  "external_model_API_calls_n": 0,
+  "admitted": false,
+  "new_gold": false,
+  "remaining_gate": "Second exact V5semantic review, actual matrix full SQL/native/sparse-vs-dense/source counting controls and frozen scoring-wrapper integration remain required.",
+  "prior_source_observations_reused_explicitly": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_literal_original_domain19_source_only_v3/RAN5_P3_CQ5-2_original_domain19_logical_matrix_primary_semantic_judgment_v2.json",
+    "sha256": "1b2a578b19106f3c5f11f6cac303f8c67672c2077ec06246ee272080e0a0ca40",
+    "bytes": 20291
+  },
+  "freshly_reviewed_representation_code": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/matrix_representation_adapter_proposal_v2/matrix_records.py",
+    "sha256": "103c26148df89e295ea50ca7524e2b95f0505a819e388a6238159e208f356229",
+    "bytes": 3584
+  },
+  "fresh_representation_controls": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/matrix_representation_adapter_proposal_v2/synthetic_semantic_representation_controls_v2.json",
+    "sha256": "7502bb1c7359d05ac98ad5eb34571146e60ad09fb94198d236367b7c0bc21ce1",
+    "bytes": 7056
+  },
+  "fresh_read_scope": "All final decoder code/18results/exact nine-key definition diff/source authority lines rechecked; prior complete unfiltered input reading explicitly reused, not a new native/SQL result."
+}

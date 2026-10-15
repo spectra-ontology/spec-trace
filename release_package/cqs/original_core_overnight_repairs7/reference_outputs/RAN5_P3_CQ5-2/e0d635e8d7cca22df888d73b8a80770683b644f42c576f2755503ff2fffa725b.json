@@ -1,0 +1,31 @@
+{
+  "id": "RAN5_P3_CQ5-2",
+  "wg": "RAN5",
+  "query_sha256": "e0d635e8d7cca22df888d73b8a80770683b644f42c576f2755503ff2fffa725b",
+  "query": "MATCH (dimension:Spec)\nWHERE dimension.specNumber STARTS WITH '38.5'\n  AND NOT dimension.specNumber STARTS WITH '38.591'\nWITH collect(DISTINCT dimension.specNumber) AS specNumbers\nMATCH (company:Company)\nUNWIND specNumbers AS specNumber\nOPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)\nWHERE modified.specNumber=specNumber\nRETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount\nORDER BY companyName ASC,specNumber ASC",
+  "started_utc": "2026-10-15T03:06:29.024728+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN5_P3_CQ5-2/e0d635e8d7cca22df888d73b8a80770683b644f42c576f2755503ff2fffa725b.jsonl",
+  "columns": [
+    "companyName",
+    "specNumber",
+    "crCount"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 3401,
+  "bytes_retained": 107859,
+  "rows_sha256": "126c39dcdfec9ad09f38a1ae6ac1dbce52bd230d61481d19a8318ae069338936",
+  "finished_utc": "2026-10-15T03:06:34.228094+00:00",
+  "elapsed_s": 5.2034,
+  "full_rows_available": true
+}

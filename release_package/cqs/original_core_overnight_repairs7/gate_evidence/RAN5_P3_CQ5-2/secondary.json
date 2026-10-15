@@ -1,0 +1,118 @@
+{
+  "id": "RAN5_P3_CQ5-2",
+  "question_en": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+  "repair_sha256": "fedc100327b7237268dd718ad7434e6f27b353394ce6c4fbc351dc4e23ce31c4",
+  "status": "pass",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_domain19_matrix_representations_source_only_v5/canonical_source_only_definition.json",
+    "sha256": "78f0369c3740003989fe74b1ff294cb182f44baffb0fb86bb53be0ff3e23f49f",
+    "bytes": 2435
+  },
+  "source_manifest_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/manifest.json",
+    "sha256": "a96f583e9a5971c2ac65fed1df4178281f9033b5c29ecd922ac28888a8eddf3f",
+    "bytes": 5627
+  },
+  "exact_clean_manifest_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_domain19_matrix_representations_source_only_v5/manifest.json",
+    "sha256": "8ea8896d71048143230cbaba472471bffd1debe166228c210c48f9c3b92d0940",
+    "bytes": 2888
+  },
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "original_quote": "each company's CR contributions per RAN5 spec",
+      "finding": "The requested contribution matrix has three roles: company identity, logical spec identity and integer contribution count. Original CQ5 count analysis and Phase1 submittedBy/CR/modifies metadata support these recorded documentary contributions. It does not request shares, weights, normative approval, title or CR lists. Required companyName/specNumber/crCount exactly preserve the roles.",
+      "query_clauses": [
+        "RETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount",
+        "required_fields=companyName:string,specNumber:string,crCount:integer"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "population and source context",
+      "original_quote": "per RAN5 spec",
+      "finding": "Original Phase3 §6 is the general CQ constraints section and explicitly defines TS scope as RAN5 38.5xx with38.591 series excluded. Its wording is not limited to DOCX parsing; §2.2 separately supplies that parsing rationale. Reading §6 as a CQ domain constraint therefore follows the retained source rather than adding a new catalogue interpretation. §1.5 preserves all Phase1–2 instances, so the15 newly parsed body inputs are not the whole metadata domain. The recorded23 prefix families minus the four explicitly excluded38.591 families yield19 family identities, including retained metadata-only and unsplit strings. These are graph metadata families, not verified present-day formal catalogue ownership.",
+      "query_clauses": [
+        "MATCH (dimension:Spec) WHERE dimension.specNumber STARTS WITH '38.5' AND NOT dimension.specNumber STARTS WITH '38.591'",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers",
+        "MATCH (company:Company)"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "original_quote": "CR contributions",
+      "finding": "Phase1 modifies explicitly means the technical specification targeted by a change request, not an enacted change. SUBMITTED_BY records a company contributor to the CR TDoc. Each recorded co-submitter receives one contribution on each targeted logical spec family. The question has no status, approval, numericCRnumber, latest release or physical-body filter, so none is added. General TS range is the contextual RAN5 domain definition, not a source approval substitution.",
+      "query_clauses": [
+        "(company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)",
+        "WHERE modified.specNumber=specNumber",
+        "no status/approval/release filters"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "original_quote": "CR contributions",
+      "finding": "The natural recorded count unit is one distinct CR/TDoc document per company/spec coordinate, not duplicate join paths or release-specific Spec hubs. Original Phase1 identifies CR by tdocNumber; all53351 input CR identities are nonnull/unique. The179 company names are nonnull/unique, so query grouping does not collapse distinct retained company identities. count(DISTINCT cr) counts each submitted CR once per coordinate, including draft/pCR records in the original CR class.",
+      "query_clauses": [
+        "count(DISTINCT cr) AS crCount",
+        "WITH collect(DISTINCT dimension.specNumber) AS specNumbers"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "cardinality and completeness",
+      "original_quote": "each company's",
+      "finding": "Each-company matrix requires both complete recorded axes and the value of every coordinate. All recorded Company nodes cross the complete eligible family axis before OPTIONAL MATCH, preserving recorded zero-contribution coordinates. A positive-only list or arbitraryLIMIT10 fails this request; original default list-limit is overridden by the unchanged explicit each-company matrix wording. Dense rows and explicit complete axes with default0 encode the same logical matrix. The reviewed generic decoder expands only supplied axes/cells and never obtains missing axes or values from gold/source. An omitted nonzero cell becomes a wrong0; omitted axes remain missing. Actual scorer-wrapper integration and full native/SQL validation are separate outstanding gates.",
+      "query_clauses": [
+        "MATCH (company:Company) UNWIND specNumbers AS specNumber",
+        "OPTIONAL MATCH ...",
+        "cardinality_policy.mode=all",
+        "collection.matrix_representation=cartesian_cells;dense_named_records or explicit_axes_default_cells"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "original_quote": "contribution matrix",
+      "finding": "No top-k, comparative ranking or display order is requested. Company/spec ASC is deterministic capture serialization only. The set contract permits axis and cell presentation order to vary. The generic sparse decoder preserves the same typed coordinate set and rejects conflicting values at a coordinate; repeated identical axis labels/cells denote the same logical coordinate rather than extra contributions.",
+      "query_clauses": [
+        "ORDER BY companyName ASC,specNumber ASC",
+        "collection.kind=set",
+        "matrix normalizer explicit-axis Cartesian expansion"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "original_quote": "per RAN5 spec",
+      "finding": "The domain uses immutable original HEAD/index Phase3 source bytes1240eadd and Phase1 bytes28337cd4, separately preserving later working-tree sources. No current-world ownership, external catalogue, causal effect, approval, real-world absence or complete authored TS-body coverage is asserted. Recorded zero means no matching recorded contribution path. The exact decoder is pinned to103c2614 and inspected independently, including sparse0, dense auxiliary matrix field and malformed boolean-count controls. No proposer primary, filtered matrix count answer, gold, native or model output was read. This seven-unit pass is a semantic judgment only; native/fullSQL/scorer-wrapper completion and admission remain root gates.",
+      "query_clauses": [
+        "repair_class=query_and_scorer",
+        "normalizer_sha256=103c26148df89e295ea50ca7524e2b95f0505a819e388a6238159e208f356229",
+        "original_question_preserved=true"
+      ],
+      "status": "pass"
+    }
+  ],
+  "reviewer_kind": "Independent original/source-only /root/reaudit_ran3_ran4",
+  "prior_review_preserved": "V1 23-domain pending receipt remains unchanged; new explicit19-domain exact candidate independently assessed.",
+  "source_context_exposure": "Old23/15/catalogue domain challenge and synthetic decoder controls known. Original source/whole unfiltered operands and exact definition/code inspected. No proposer primary, new filtered matrix count answer, gold/native/model output read.",
+  "independent_synthetic_code_checks_n": 3,
+  "actual_matrix_count_answers_computed": false,
+  "scorer_wrapper_integration_completed": false,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "API_calls_n": 0,
+  "native_queries_n": 0,
+  "filtered_answer_SQL_queries_n": 0,
+  "new_admissions_n": 0,
+  "script_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/review_RAN5_matrix19_exact_source_only_v5.py",
+    "sha256": "56cff423e353e7323c23593ff4aac77838e19e5cad9bb5c148562051b8412f14",
+    "bytes": 11336
+  },
+  "check_pass": "PASS_EXACT_IDENTITY_AND_SEVEN_UNITS"
+}

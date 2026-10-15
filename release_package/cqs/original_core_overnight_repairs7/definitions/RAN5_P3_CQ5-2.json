@@ -1,0 +1,68 @@
+{
+  "id": "RAN5_P3_CQ5-2",
+  "question_en": "Show each company's CR contributions per RAN5 spec (contribution matrix).",
+  "original_query": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH c.companyName AS company, sp.specNumber AS spec, count(cr) AS cnt ORDER BY cnt DESC RETURN company, spec, cnt LIMIT 10",
+  "reference_query": "MATCH (dimension:Spec)\nWHERE dimension.specNumber STARTS WITH '38.5'\n  AND NOT dimension.specNumber STARTS WITH '38.591'\nWITH collect(DISTINCT dimension.specNumber) AS specNumbers\nMATCH (company:Company)\nUNWIND specNumbers AS specNumber\nOPTIONAL MATCH (company)<-[:SUBMITTED_BY]-(cr:CR)-[:MODIFIES]->(modified:Spec)\nWHERE modified.specNumber=specNumber\nRETURN company.companyName AS companyName,specNumber,count(DISTINCT cr) AS crCount\nORDER BY companyName ASC,specNumber ASC",
+  "required_fields": [
+    {
+      "name": "companyName",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "company.companyName"
+    },
+    {
+      "name": "specNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "dimension.specNumber"
+    },
+    {
+      "name": "crCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "count(DISTINCT cr) for the company/specNumber coordinate"
+    }
+  ],
+  "collection": {
+    "kind": "set",
+    "matrix_representation": {
+      "kind": "cartesian_cells",
+      "row_field": "companyName",
+      "column_field": "specNumber",
+      "value_field": "crCount",
+      "default_value": 0,
+      "equivalent_encodings": [
+        "dense_named_records",
+        "explicit_axes_default_cells"
+      ],
+      "normalizer_sha256": "103c26148df89e295ea50ca7524e2b95f0505a819e388a6238159e208f356229"
+    }
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "fedc100327b7237268dd718ad7434e6f27b353394ce6c4fbc351dc4e23ce31c4",
+  "original_question_sha256": "eee5be68f4f1d87590715119b3ea4d5cb772be039a1a996a8cafae261b59626e",
+  "original_query_sha256": "8681f8dc60fcd38a472c06dd519e114fe06f5b3aaa722b2e1727e5bf48ad63d6",
+  "reference_query_sha256": "e0d635e8d7cca22df888d73b8a80770683b644f42c576f2755503ff2fffa725b",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_witnesses": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/manifest.json",
+      "sha256": "a96f583e9a5971c2ac65fed1df4178281f9033b5c29ecd922ac28888a8eddf3f",
+      "bytes": 5627
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P3_CQ5-2_original_phase3_domain_source_only_v1/original_matrix_domain_context_and_independent_interpretation_questions.json",
+      "sha256": "39e6f849588e1e120dfbc87a31f2a0d26f83588333b61eb8f1728fe162d56d96",
+      "bytes": 53193
+    }
+  ],
+  "matrix_protocol_source_free_proof": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_matrix19_public_pipeline_proposal_v1/source_free_exact_pipeline_replay_v1/receipt.json",
+    "sha256": "28bed5dddb79122d0ea4098fca3ee081c98a26094d8821dfab173fbd96a7baf2",
+    "bytes": 34752
+  }
+}

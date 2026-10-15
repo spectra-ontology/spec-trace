@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 450 have passed the stated repair checks,
-and 110 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 451 have passed the stated repair checks,
+and 109 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 450 unchanged original questions.
+included in these 451 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -114,3 +114,5 @@ The separate original-question cohort 5 adds `RAN1_P3_CQ038`: Return the top 10 
 For cohort5, all four measured requested-record F1 scores are0. The generated graph and SQL queries ranked by CR modification count rather than the original most-referenced-section rank; one retrieval abstained and the other returned a partial answer. Every first response and execution is preserved without answer-quality regeneration.
 
 The separate original-question cohort 6 adds `RAN2_P2_CQ3-2`: Rank the main contributors to spec 38.331 (RRC ownership). Its complete retained reference pool and fresh four-method evaluation are in `release_package/cqs/original_core_overnight_repairs6` and `release_package/cqs/original_core_overnight_evaluation6`. The current index is 450/560, with 110 pending. Earlier cohorts and measurements remain separate; human and expert validation remain incomplete.
+
+The separate original-question cohort 7 adds `RAN5_P3_CQ5-2`: Show each company's CR contributions per RAN5 spec (contribution matrix). Its complete retained reference pool and fresh four-method evaluation are in `release_package/cqs/original_core_overnight_repairs7` and `release_package/cqs/original_core_overnight_evaluation7`. The current index is 451/560, with 109 pending. Earlier cohorts and measurements remain separate; human and expert validation remain incomplete.
