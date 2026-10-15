@@ -1,0 +1,50 @@
+{
+  "id": "RAN1_P2_CQ5-6",
+  "question_en": "How did the number of agreements per meeting trend from RAN1#100 to RAN1#121?",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE m.meetingNumber IN ['RAN1#100', 'RAN1#101', 'RAN1#102', 'RAN1#103', 'RAN1#104', 'RAN1#105', 'RAN1#106', 'RAN1#107', 'RAN1#108', 'RAN1#109', 'RAN1#110', 'RAN1#111', 'RAN1#112', 'RAN1#113', 'RAN1#114', 'RAN1#115', 'RAN1#116', 'RAN1#117', 'RAN1#118', 'RAN1#119', 'RAN1#120', 'RAN1#121'] RETURN m.meetingNumber, count(a) AS agreementCount ORDER BY m.meetingNumber",
+  "reference_query": "MATCH (m:Meeting)\nWHERE m.workingGroup = 'RAN1' AND m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121\nOPTIONAL MATCH (a:Agreement)-[:MADE_AT]->(m)\nRETURN m.canonicalMeetingNumber AS meetingNumber,\n       m.meetingNumberInt AS meetingNumberInt,\n       count(DISTINCT a) AS agreementCount\nORDER BY meetingNumberInt ASC, meetingNumber ASC",
+  "required_fields": [
+    {
+      "name": "meetingNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "m.canonicalMeetingNumber"
+    },
+    {
+      "name": "agreementCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "agreementCount"
+    }
+  ],
+  "collection": {
+    "kind": "native_ordered_ties",
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "asc"
+      },
+      {
+        "source_column": "meetingNumber",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_order_within_equal_keys"
+  },
+  "cardinality_policy": {
+    "mode": "all",
+    "extent": "one pair per retained logical canonical Meeting in original named inclusive range; include recorded zero Agreement meetings"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "a4f756e7cadd6394ef551f7d701fb2fe3cac1f8ff33e0bbdb68a30484e863b9d",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "9aea42b316af891f6c4099feefa3210f99f21f81fc8883d7a54e0b83222a6a68",
+  "original_query_sha256": "56e48ae04705123516be4563deb497f97db32a51e83a2564e966ec51779601c0",
+  "reference_query_sha256": "19adc04e5fcf0c4ef2241ab4975d6979466e705fadec31f61515d02f29fa16a3",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/original_question_and_canonical_range_source_only_packet.json",
+    "sha256": "7c01ebf0f14c8facd54a755b3b4aec91a3a3bc5575e4232b71d018930a7c1701",
+    "bytes": 30888
+  }
+}

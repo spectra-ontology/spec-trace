@@ -1,0 +1,189 @@
+{
+  "id": "RAN1_P2_CQ5-6",
+  "repair_sha256": "a4f756e7cadd6394ef551f7d701fb2fe3cac1f8ff33e0bbdb68a30484e863b9d",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "9aea42b316af891f6c4099feefa3210f99f21f81fc8883d7a54e0b83222a6a68",
+  "reviewer_kind": "Independent secondary direct Codex /root/reaudit_ran2_ran5; nonblind source development review",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "How did the number of agreements per meeting trend from RAN1#100 to RAN1#121?",
+      "finding": "Original English asks the number of agreements per meeting over a named range: both canonical meeting identity and integer agreementCount are required. Identity-only answers or one total omit a requested role. meetingNumberInt is auxiliary to ordering; source dates/content/physical report are not required answer roles.",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "WHERE m.workingGroup = 'RAN1' AND m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121",
+        "OPTIONAL MATCH (a:Agreement)-[:MADE_AT]->(m)",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber,",
+        "       m.meetingNumberInt AS meetingNumberInt,",
+        "       count(DISTINCT a) AS agreementCount",
+        "ORDER BY meetingNumberInt ASC, meetingNumber ASC"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "How did the number of agreements per meeting trend from RAN1#100 to RAN1#121?",
+      "finding": "The original WG/Phase2 benchmark is retained Final Report Agreement metadata. English from #100 to #121 does not say regular meetings only. The pre-repair whole Korean file matches original pending provenance SHA8e8d and its exact CQ5-6 explicitly numeric-inclusive100..121 with canonicalMeetingNumber. Indexed Phase1 preserves bis and removes only-e. Thus include all retained canonical meetings with numeric identity within inclusive endpoints, including bis, rather than restricting to English translated query IN-list. This is not a claim of all real-world meetings or authored agreement coverage.",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "WHERE m.workingGroup = 'RAN1' AND m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121",
+        "OPTIONAL MATCH (a:Agreement)-[:MADE_AT]->(m)",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber,",
+        "       m.meetingNumberInt AS meetingNumberInt,",
+        "       count(DISTINCT a) AS agreementCount",
+        "ORDER BY meetingNumberInt ASC, meetingNumber ASC"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "How did the number of agreements per meeting trend from RAN1#100 to RAN1#121?",
+      "finding": "The query uses original Agreement MADE_AT Meeting provenance, not citations, approval or a semantic finality predicate. Exact RAN1 workingGroup and meetingNumberInt range implement the named WG and endpoints. Original indexed madeAt mapping uses canonicalMeetingNumber. Source60 dates are auxiliary identity/order corroboration only and do not add new graph fields or change query population.",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "WHERE m.workingGroup = 'RAN1' AND m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121",
+        "OPTIONAL MATCH (a:Agreement)-[:MADE_AT]->(m)",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber,",
+        "       m.meetingNumberInt AS meetingNumberInt,",
+        "       count(DISTINCT a) AS agreementCount",
+        "ORDER BY meetingNumberInt ASC, meetingNumber ASC"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "How did the number of agreements per meeting trend from RAN1#100 to RAN1#121?",
+      "finding": "One count unit is a distinct retained Agreement identity per logical canonical Meeting. Grouping by canonicalMeetingNumber and its integer key merges original #100/-e aliases; count(DISTINCT a) avoids double counting both paths to the same canonical event. I independently checked whole21058 Agreement identities are unique and each has exactly one logical canonical MADE_AT population. This does not infer real-world duplicate agreements or expand beyond recorded nodes.",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "WHERE m.workingGroup = 'RAN1' AND m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121",
+        "OPTIONAL MATCH (a:Agreement)-[:MADE_AT]->(m)",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber,",
+        "       m.meetingNumberInt AS meetingNumberInt,",
+        "       count(DISTINCT a) AS agreementCount",
+        "ORDER BY meetingNumberInt ASC, meetingNumber ASC"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "How did the number of agreements per meeting trend from RAN1#100 to RAN1#121?",
+      "finding": "Original indexed trend default is all results, unlike list default10. Start with all Meeting nodes in range and OPTIONAL Agreement links to retain recorded zeros; no arbitrary latest, status, release or positive-only cap. Canonical aliases form one row, bis remains a distinct key. All60Meeting/21058Agreement/all24956MADE_AT inputs were independently reread and exactly equal pinned immutable SQLite. No selected Agreement count was computed to choose this scope.",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "WHERE m.workingGroup = 'RAN1' AND m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121",
+        "OPTIONAL MATCH (a:Agreement)-[:MADE_AT]->(m)",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber,",
+        "       m.meetingNumberInt AS meetingNumberInt,",
+        "       count(DISTINCT a) AS agreementCount",
+        "ORDER BY meetingNumberInt ASC, meetingNumber ASC"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "How did the number of agreements per meeting trend from RAN1#100 to RAN1#121?",
+      "finding": "Indexed trend operation explicitly uses meetingNumberInt ASC; exact preserved Korean CQ5-6 adds canonical meeting text ASC. Candidate source_order_keys and ORDER BY reproduce these keys. Independently checked whole unfiltered60Meeting numeric/canonical ordering agrees with source-reported periods, with same-period aliases. No latest-date shortcut or arbitrary ID tie-break is added. After canonical grouping the identity key is complete; generic any_order_within_equal_keys does not require unknown physical chronology.",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "WHERE m.workingGroup = 'RAN1' AND m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121",
+        "OPTIONAL MATCH (a:Agreement)-[:MADE_AT]->(m)",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber,",
+        "       m.meetingNumberInt AS meetingNumberInt,",
+        "       count(DISTINCT a) AS agreementCount",
+        "ORDER BY meetingNumberInt ASC, meetingNumber ASC"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "How did the number of agreements per meeting trend from RAN1#100 to RAN1#121?",
+      "finding": "Named endpoints, canonical identity, count unit and documented all/trend order are derivable from original English plus pinned pre-repair Korean/indexed context; no inferred current date, regular-only population, episode approval or external semantic labeling is required. Previous22vs33 diagnostic exposure is disclosed, but no new selected aggregate/gold/native/model/primary was read or computed for this review. Source60 whole metadata mapping is reused, not falsely claimed a new raw report reread.",
+      "query_clauses": [
+        "MATCH (m:Meeting)",
+        "WHERE m.workingGroup = 'RAN1' AND m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121",
+        "OPTIONAL MATCH (a:Agreement)-[:MADE_AT]->(m)",
+        "RETURN m.canonicalMeetingNumber AS meetingNumber,",
+        "       m.meetingNumberInt AS meetingNumberInt,",
+        "       count(DISTINCT a) AS agreementCount",
+        "ORDER BY meetingNumberInt ASC, meetingNumber ASC"
+      ]
+    }
+  ],
+  "source_evidence": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/manifest.json",
+      "sha256": "02ad6ceb18bd0d13fcb70d3d426b7b1c469b4ab437a19e0fbf7bfe43590d07fd",
+      "bytes": 1352
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/original_question_and_canonical_range_source_only_packet.json",
+      "sha256": "7c01ebf0f14c8facd54a755b3b4aec91a3a3bc5575e4232b71d018930a7c1701",
+      "bytes": 30888
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/original_Korean_whole_snapshot.json",
+      "sha256": "8e8d1f7c3fd81f3531fbfbe8a98020f2798337ce6285c50808161f70079e905f",
+      "bytes": 15492
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/original_phase1_indexed_snapshot.md",
+      "sha256": "7881cff35e756aa36dc6e4414d23676f0e7ec6d7224d05e294dac41fe66fe06b",
+      "bytes": 64250
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/original_phase2_indexed_snapshot.md",
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5",
+      "bytes": 70135
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/whole_unfiltered_canonical_Meeting_alias_source_closure.json",
+      "sha256": "75ab717348afbba46d86cdbde6f23dc8ff34160b58bfce209e67e1ee60b359b9",
+      "bytes": 2839
+    }
+  ],
+  "definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "4d50cac4b07cc2f1391168b990035678b10a50b7cd1ae826864a4809a9cbf712",
+    "bytes": 2310
+  },
+  "whole_input_equality": [
+    {
+      "table": "Meeting",
+      "row_n": 60,
+      "pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/all_unfiltered_Meeting_source_inputs.jsonl",
+        "sha256": "f3251aa84ab39a0578726ed277be00d6c60d00c87753418f76346a408dc7cac1",
+        "bytes": 9385
+      }
+    },
+    {
+      "table": "Agreement",
+      "row_n": 21058,
+      "pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/all_unfiltered_Agreement_source_inputs.jsonl",
+        "sha256": "36b5b89b932f3d8aafe353458f9178322b1500bb8720089cdd883408838372af",
+        "bytes": 1129066
+      }
+    },
+    {
+      "table": "rel_MADE_AT",
+      "row_n": 24956,
+      "pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ5_6_original_canonical_Meeting_trend_source_only_v1/source_only_independent_review/all_unfiltered_rel_MADE_AT_source_inputs.jsonl",
+        "sha256": "ea48bb6c914559c6ad16f602e804f5dd2def57c1c53ccac4f66bedc1f6b94389",
+        "bytes": 1207511
+      }
+    }
+  ],
+  "database_before_after_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+  "no_named_range_Agreement_aggregate_computed": true,
+  "proposer_primary_selected_SQL_gold_native_predictions_read": false,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "external_model_API_calls": 0,
+  "new_native_executions": 0,
+  "created_utc": "2026-10-15T06:27:41.182647+00:00"
+}
