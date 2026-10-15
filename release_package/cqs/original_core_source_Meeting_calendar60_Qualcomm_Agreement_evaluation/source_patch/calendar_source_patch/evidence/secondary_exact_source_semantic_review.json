@@ -1,0 +1,328 @@
+{
+  "id": "RAN1_P3_CQ017",
+  "status": "pass",
+  "repair_sha256": "7dde3f5e3a5e7fac336ecfbc7f1e4fdffc06f607cbf9de3f6781fd2660384a2a",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "f87b5d14d3ffbac6b9c33d954f062f0edb347fb7551bfcd3da1ace61f9a341ba",
+  "reference_query_sha256": "53558e7bdc91cbc3d95832cc275051a748f09dee38606a11e6d40614026d7349",
+  "reviewer_kind": "Independent source-first original calendar-Meeting recency review by /root/reaudit_ran3_ran4",
+  "exposure": "Original unchanged English/KO/schema/design/definition plus all60 neutral own-report periods, all192 source-member resolutions and unranked target inputs read before proposer primary, ranked answers, gold, native or predictions. NONBLIND AI development diagnosis to source-domain counts, not human endorsement.",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "List the 20 most recent CRs modifying TS 38.213 (recent changes).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'})",
+        "MATCH (cr)-[:PRESENTED_AT]->(m:Meeting)",
+        "WITH cr, max(m.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber, meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC, tdocNumber ASC"
+      ],
+      "finding": "List the20 most recent CRs requests document identities, represented by tdocNumber strings. Titles/company/meetingPeriodEndDate are identification context or ranking evidence rather than separately requested answer roles. A top20 contract requires exactly20 distinct matching CR identities, with source metric retained in the reference pool for membership scoring; required_fields correctly contains tdocNumber only."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "List the 20 most recent CRs modifying TS 38.213 (recent changes).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'})",
+        "MATCH (cr)-[:PRESENTED_AT]->(m:Meeting)",
+        "WITH cr, max(m.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber, meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC, tdocNumber ASC"
+      ],
+      "finding": "The fixed numeric TS38.213 and original RAN1 Phase3 CR-link context define all recorded CR→MODIFIES→Spec38.213 documents. Original schema includes CR/draftCR/pCR as CR documents. Source-design CQ3 uses Meeting as its primary recency axis and Phase1 presentedAt means the meeting where a Tdoc was presented/discussed. The separate snapshot's calendar dates encode the same actual meetings, without replacing original nodes or claiming all real-world3GPP changes. All unranked target inputs' recorded meeting nodes belong to the complete60 source-date domain."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "List the 20 most recent CRs modifying TS 38.213 (recent changes).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'})",
+        "MATCH (cr)-[:PRESENTED_AT]->(m:Meeting)",
+        "WITH cr, max(m.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber, meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC, tdocNumber ASC"
+      ],
+      "finding": "Modifying is the original documentary MODIFIES relationship, without approval/adoption filtering. Recent is temporal: normal122 and122bis share integer122 while actual source periods are Aug25–29 and Oct13–17,2025. Numeric grouping therefore does not preserve this original temporal meaning. Source-own meeting calendar ordering repairs that source-defined Meeting-recency axis; it does not substitute unasked upload/submission/approval times. INNER presentedAt is appropriate to this explicitly meeting-context task. Removing the old submittedBy join prevents company-missing documents being omitted without a question filter."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "List the 20 most recent CRs modifying TS 38.213 (recent changes).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'})",
+        "MATCH (cr)-[:PRESENTED_AT]->(m:Meeting)",
+        "WITH cr, max(m.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber, meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC, tdocNumber ASC"
+      ],
+      "finding": "The unit is one CR document tdocNumber, not a CR number across revisions, a meeting, a company or relationship path. WITHcr,max(m.sourceReportedEndDate) takes a document's most recent associated source-reported meeting and prevents several presentation or target paths multiplying entries. RETURN DISTINCT removes repeated identical document/metric pairs. The complete unranked original input has no Tdoc identity assigned to different CR nodes, so the grouping does not create different ranked rows for the same requested document."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "List the 20 most recent CRs modifying TS 38.213 (recent changes).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'})",
+        "MATCH (cr)-[:PRESENTED_AT]->(m:Meeting)",
+        "WITH cr, max(m.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber, meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC, tdocNumber ASC"
+      ],
+      "finding": "The query returns the complete uncapped eligible CR+metric pool; the top_k_boundary_ties contract selects20 members using the whole pool, accepting an arbitrary subset of the boundary group. It adds no latest-release restriction, approval predicate, time cutoff or company-presence prerequisite. Complete source dates for all recorded Meeting nodes avoid treating an absent date as oldest. Whole59 actual meeting periods are disjoint, so source end/start chronologies agree and the end choice does not hide an overlapping-period ambiguity. This semantic completeness claim still requires exact source property materialization and full native/SQL/scorer gates before registration."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List the 20 most recent CRs modifying TS 38.213 (recent changes).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'})",
+        "MATCH (cr)-[:PRESENTED_AT]->(m:Meeting)",
+        "WITH cr, max(m.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber, meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC, tdocNumber ASC"
+      ],
+      "finding": "Most recent defines descending temporal membership; the English does not explicitly require an ordered presentation or a lexical secondary tiebreak. Full boundary ties at the source-defined meeting-period grain therefore allow any valid20-member boundary subset in any display order. CRs in the same meeting have no finer original requested timestamp; imposing TdocASC as semantic rank would invent one. ORDER BYtdocASC is deterministic reference presentation only, not required answer ordering. Actual calendar distinct normal/bis dates correct the prior coarse integer group counterexample."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "List the 20 most recent CRs modifying TS 38.213 (recent changes).",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'})",
+        "MATCH (cr)-[:PRESENTED_AT]->(m:Meeting)",
+        "WITH cr, max(m.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber, meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC, tdocNumber ASC"
+      ],
+      "finding": "New sourceReportedStartDate/EndDate are literal own-report periods, with exact original ZIP/member/XML/paragraph pins and all identity-matched retained versions agreeing. The malformed86bisbis draft remains an unresolved source-member identity and is not silently corrected; other authentic86bis reports support the recorded86b node. The original100 and100-e nodes preserve identity while sharing the ontology-defined canonical meeting. Source enrichment is explicit and separate; no frozen-field replacement, physical within-meeting timing, enacted normative change, human/expert review, API score or execution completion is inferred."
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ017_actual_calendar_Meeting_source_context/original_calendar_candidate/source_only_independent_review/canonical_source_only_definition.json",
+      "sha256": "48e82a02ef44b1a9977addaa2d303a0e429ab7ef8ff3b0030fe66dd5f2d3ab3a",
+      "bytes": 2380
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ017_actual_calendar_Meeting_source_context/original_calendar_candidate/source_only_independent_review/original_English_KO_and_complete_own_Meeting_period_source_only_packet.json",
+      "sha256": "372023562d87dabcc39b2605916a10defe128b187489062d4a0c8beb6a4ce657",
+      "bytes": 9210
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+      "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "bytes": 3382
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ017_actual_calendar_Meeting_source_context/calendar_period_resolution_v2/all60_frozen_Meeting_source_reported_period_ledger.jsonl",
+      "sha256": "22fcf702119598fb6976f4d13dea7ffa35836557b8c19207c90ac4f26d2c8f09",
+      "bytes": 322168
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ017_actual_calendar_Meeting_source_context/calendar_period_resolution_v2/all192_member_own_identity_and_period_resolution.jsonl",
+      "sha256": "925aeb047304fed025e03ccf4477006ff83091936a95ecd767bf7ed0586793ac",
+      "bytes": 272590
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ017_actual_calendar_Meeting_source_context/whole_original38_213_CR_presentation_target_inputs.jsonl",
+      "sha256": "6c1900345c808cd2ac161d0782d835b591eb2ccee0087481f43f22720c5e3dec",
+      "bytes": 965641
+    }
+  ],
+  "fresh_actual_own_report_header_reads": [
+    {
+      "meeting": "RAN1#100-e",
+      "source_archive_pin": {
+        "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/meetings/RAN1/source/TSGR1_100_e/Report/Archive/Draft_Minutes_report_RAN1#100-e_v011.zip",
+        "sha256": "1e04c793c9757820461851ee3a824017f23fe6eb51087e5f70cee89ae6633105",
+        "bytes": 532888
+      },
+      "member": "Draft_Minutes_report_RAN1#100-e_v011.docx",
+      "member_sha256": "f009fc26340bbe703dc6f8d0664ed9e03ab54122ec93edfbd08f7f66d40e2fef",
+      "member_CRC32": 2455128949,
+      "document_XML_sha256": "1af0cdbe560527c8fbab759c356e8ebcb958d93ab84894a7a79b6c27e29dfa5e",
+      "title_raw_paragraph_zero_based": 3,
+      "date_raw_paragraph_zero_based": 4,
+      "actual_title_W_t_projection": "Title:Draft Report of 3GPP TSG RAN WG1 #100-e v0.1.1",
+      "actual_title_final_visible_text": "Title:\tDraft Report of 3GPP TSG RAN WG1 #100-e v0.1.1",
+      "actual_own_report_period_W_t_projection": "(Online meeting, 24th February – 6th March 2020)",
+      "actual_own_report_period_final_visible_text": "\t(Online meeting, 24th February – 6th March 2020)",
+      "reported_start": "2020-02-24",
+      "reported_end": "2020-03-06",
+      "source_role": "Own report Title immediately followed by its reported meeting period; not the next meeting named by report submission metadata."
+    },
+    {
+      "meeting": "RAN1#122",
+      "source_archive_pin": {
+        "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/meetings/RAN1/source/TSGR1_122/Report/Archive/Draft_Minutes_report_RAN1#122_v010.zip",
+        "sha256": "69b10426ace22a831890485c12baab69631efa4b05d0bb683d3039e801831f8f",
+        "bytes": 894312
+      },
+      "member": "Draft_Minutes_report_RAN1#122_v010.docx",
+      "member_sha256": "2d56b82b36a33e3eed4e3cd061f8db15f7290d58770a9e70225dd2ec568be51b",
+      "member_CRC32": 1080677086,
+      "document_XML_sha256": "e6bc5cb9d7b3a702bede48f6d3e422b0eac58c8f48c5ee22fedc229f72199cdd",
+      "title_raw_paragraph_zero_based": 3,
+      "date_raw_paragraph_zero_based": 4,
+      "actual_title_W_t_projection": "Title:Draft Report of 3GPP TSG RAN WG1 #122 v0.1.0",
+      "actual_title_final_visible_text": "Title:\tDraft Report of 3GPP TSG RAN WG1 #122 v0.1.0",
+      "actual_own_report_period_W_t_projection": "(Bengaluru, India, August 25th – 29th, 2025)",
+      "actual_own_report_period_final_visible_text": "\t(Bengaluru, India, August 25th – 29th, 2025)",
+      "reported_start": "2025-08-25",
+      "reported_end": "2025-08-29",
+      "source_role": "Own report Title immediately followed by its reported meeting period; not the next meeting named by report submission metadata."
+    },
+    {
+      "meeting": "RAN1#122b",
+      "source_archive_pin": {
+        "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/meetings/RAN1/source/TSGR1_122b/Report/R1_25XXXXX_Minutes_report_RAN1#122bis_v100.zip",
+        "sha256": "8831c00856fad312432bcee3b57638749de1fea9b763d4aadc2750638e31fea6",
+        "bytes": 2372550
+      },
+      "member": "R1_25XXXXX_Minutes_report_RAN1#122bis_v100.docx",
+      "member_sha256": "83a74b3ae65454148a5874bd18d316bd08fb55e2879c15a7711b844fdb82761e",
+      "member_CRC32": 767017583,
+      "document_XML_sha256": "e1ccbaf14e9be65823add7476aafd35cbbe81b5bab0506a4a89576cc9fe5beac",
+      "title_raw_paragraph_zero_based": 3,
+      "date_raw_paragraph_zero_based": 4,
+      "actual_title_W_t_projection": "Title:Final Report of 3GPP TSG RAN WG1 #122-bis v1.0.0",
+      "actual_title_final_visible_text": "Title:\tFinal Report of 3GPP TSG RAN WG1 #122-bis v1.0.0",
+      "actual_own_report_period_W_t_projection": "(Prague, CZ, October 13th – 17th, 2025)",
+      "actual_own_report_period_final_visible_text": "\t(Prague, CZ, October 13th – 17th, 2025)",
+      "reported_start": "2025-10-13",
+      "reported_end": "2025-10-17",
+      "source_role": "Own report Title immediately followed by its reported meeting period; not the next meeting named by report submission metadata."
+    },
+    {
+      "meeting": "RAN1#123",
+      "source_archive_pin": {
+        "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/meetings/RAN1/source/TSGR1_123/Report/Final_Minutes_report_RAN1#123_v100.zip",
+        "sha256": "26a84a0591ac2e3a5ddfa4efffdaffe4fd1025270f2f7172f9816fcb392d665e",
+        "bytes": 1850167
+      },
+      "member": "Final_Minutes_report_RAN1#123_v100.docx",
+      "member_sha256": "0fc4f4da372d682fef7585d8f72d2e5ebac3f46e41f8205658e8742b48e11b71",
+      "member_CRC32": 3044496520,
+      "document_XML_sha256": "361ad487a69a1980d91690d792ccaeaa819063572be9d58cafc94fd005bc3ed2",
+      "title_raw_paragraph_zero_based": 3,
+      "date_raw_paragraph_zero_based": 4,
+      "actual_title_W_t_projection": "Title:Final Report of 3GPP TSG RAN WG1 #123 v1.0.0",
+      "actual_title_final_visible_text": "Title:\tFinal Report of 3GPP TSG RAN WG1 #123 v1.0.0",
+      "actual_own_report_period_W_t_projection": "(Dallas, USA, November 17th – 21st, 2025)",
+      "actual_own_report_period_final_visible_text": "\t(Dallas, USA, November 17th – 21st, 2025)",
+      "reported_start": "2025-11-17",
+      "reported_end": "2025-11-21",
+      "source_role": "Own report Title immediately followed by its reported meeting period; not the next meeting named by report submission metadata."
+    },
+    {
+      "meeting": "RAN1#86b",
+      "source_archive_pin": {
+        "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/meetings/RAN1/source/TSGR1_86b/Report/Final_Minutes_report_RAN1#86b_v100.zip",
+        "sha256": "f44d132397b23c63cc7bc1c23804b3a5ba5fcb14117f9790ee1b6a3a464fac6b",
+        "bytes": 1416503
+      },
+      "member": "Final_Minutes_report_RAN1#86b_v100.docx",
+      "member_sha256": "47da75656b90227a4aa73f2596e31e89c72790aff70378f34a4143d8f162f522",
+      "member_CRC32": 1726522213,
+      "document_XML_sha256": "ff69166358b50c2129adc0bcd404e8d1177da1eb13db8e9c1572e55c97c7a1a5",
+      "title_raw_paragraph_zero_based": 4,
+      "date_raw_paragraph_zero_based": 5,
+      "actual_title_W_t_projection": "Title:Final Report of 3GPP TSG RAN WG1 #86bis v1.0.0",
+      "actual_title_final_visible_text": "Title:\tFinal Report of 3GPP TSG RAN WG1 #86bis v1.0.0",
+      "actual_own_report_period_W_t_projection": "(Lisbon, Portugal, 10th – 14th October 2016)",
+      "actual_own_report_period_final_visible_text": "\t(Lisbon, Portugal, 10th – 14th October 2016)",
+      "reported_start": "2016-10-10",
+      "reported_end": "2016-10-14",
+      "source_role": "Own report Title immediately followed by its reported meeting period; not the next meeting named by report submission metadata."
+    }
+  ],
+  "additional_original_relation_source_context": [
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+        "bytes": 71963
+      },
+      "lines": [
+        78,
+        81
+      ],
+      "literal": "tdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en ."
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+        "bytes": 71963
+      },
+      "lines": [
+        304,
+        311
+      ],
+      "literal": "tdoc:presentedAt a owl:ObjectProperty ;\n    rdfs:label \"presented at\"@en ;\n    rdfs:comment \"Meeting where this TDoc was presented/discussed. Cardinality is 0..* in practice: a small fraction of TDocs are re-tabled at consecutive meetings under the same identifier (rare in the released RAN1 KG; 1 case in the current snapshot).\"@en ;\n    rdfs:domain tdoc:Tdoc ;\n    rdfs:range tdoc:Meeting .\n\ntdoc:isRevisionOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"is revision of\"@en ;"
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+        "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d",
+        "bytes": 64413
+      },
+      "lines": [
+        592,
+        592
+      ],
+      "literal": "    | presentedAt | Meeting | 파일명 | Tdoc이 발표/논의된 3GPP 회의 |"
+    }
+  ],
+  "whole59_distinct_periods_nonoverlapping_start_end_order_equivalent": true,
+  "all60_neutral_period_domain_read": true,
+  "all192_member_resolution_records_read": true,
+  "unknown_member_identity_retained": [
+    {
+      "candidate_frozen_Meeting_labels": [
+        "RAN1#86b"
+      ],
+      "date_all_document_paragraph_index": 5,
+      "date_paragraph_XML_sha256": "9e99c500281d59d5e36796a757da2bea1734c680f6b67e847d2bc9ed036a1287",
+      "document_XML_sha256": "3befe8e495be32f8149c93733e26bd6140ba4086aa5fd5488349c78a1a97eb36",
+      "identity_limit": "Do not silently repair malformed report suffix; other independently matched reports may support the same folder.",
+      "member": "Draft_Minutes_report_RAN1#86b_v010.docx",
+      "member_sha256": "2576ae4ee250bf97110fe77a453cdd3d209eb76fa7cc134316470ba6e7233278",
+      "period": {
+        "end": "2016-10-14",
+        "literal": "(Lisbon, Portugal, 10th – 14th October 2016)",
+        "matched_date_span": "10th – 14th October 2016",
+        "ordinal_suffix_misspelling_preserved": false,
+        "start": "2016-10-10",
+        "state": "literal_period_parsed"
+      },
+      "source_archive": {
+        "bytes": 879244,
+        "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/meetings/RAN1/source/TSGR1_86b/Report/Draft_Minutes_report_RAN1#86b_v010.zip",
+        "sha256": "b35ceb4fe6488acdefa321e1a9ad387116bac630d51a104bcecf99c0497c861f"
+      },
+      "source_directory": "TSGR1_86b",
+      "source_role": "Own-report Title plus its immediately following literal period; next-meeting cover metadata never used.",
+      "state": "unknown_report_identity",
+      "title_all_document_paragraph_index": 4,
+      "title_literal": "Title:Draft Report of 3GPP TSG RAN WG1 #86bisbis v0.1.0",
+      "title_paragraph_XML_sha256": "ca813bd3e5d0730edd1606dd23628fe1bf04187c6a0c763db85af1853f364a88"
+    }
+  ],
+  "original_100_alias_nodes_preserved": true,
+  "new_ranked_SQL_answers_gold_native_predictions_read": false,
+  "proposer_primary_or_verdict_read": false,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "native_execution_n": 0,
+  "external_model_API_calls_n": 0,
+  "question_admissions_n": 0,
+  "script_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/review_CQ017_exact_calendar_meeting_recency_source_only_v3.py",
+    "sha256": "8eceb79923b2583d5e7a5dfc439aa56b05a64a8e5258976e3350eed19f5572a1",
+    "bytes": 13848
+  }
+}

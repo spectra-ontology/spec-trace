@@ -1,0 +1,122 @@
+{
+  "status": "full_uncapped_question_and_all60_typed_calendar_properties_native_SQL_equal",
+  "started_utc": "2026-10-15T02:46:07.052651+00:00",
+  "reader": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/capture_P2_CQ3_4_calendar_Agreement_full_native_v1.py",
+    "sha256": "de60effc27fed4ce5a761ff56b68bcf02d10828132e0767ac039b16bf704590e",
+    "bytes": 15461
+  },
+  "native_import_manifest": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/CQ017_all60_source_reported_Meeting_period_materialized_v1/native_import_v1/native_import_manifest.json",
+    "sha256": "a4d04e4900f2bf7708e2d14a1759297089d24f408d44ebaff3097c55739adc2f",
+    "bytes": 10014
+  },
+  "calendar60_capture_plan": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/root_native_capture_adapter_v1/root_capture_plan.json",
+    "sha256": "3dc3ef216f5b686e5c9f7288f8566a83111e8926c81698e20dd5f8570358e54b",
+    "bytes": 4196
+  },
+  "input": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/root_native_capture_adapter_v1/Qualcomm_Agreement_and_all60_properties_native_input.jsonl",
+    "sha256": "f9c053ec7181e013cfce909d3239740f94dffce6c9f70002cf3f46a8c446976b",
+    "bytes": 800
+  },
+  "queries": [
+    {
+      "id": "RAN1_P2_CQ3-4",
+      "query_sha256": "a358ca349e31c7160a8e96db20dd12780a322c8a7045b918a314755a649ab23e",
+      "SQL": "WITH company_documents AS (\n      SELECT DISTINCT sb.src_id AS document_id\n      FROM Company c JOIN rel_SUBMITTED_BY sb ON sb.dst_id=c.node_id\n      JOIN Tdoc t ON t.node_id=sb.src_id WHERE c.companyName='Qualcomm'\n    ), company_agreements AS (\n      SELECT DISTINCT a.node_id AS agreement_id\n      FROM Agreement a JOIN rel_REFERENCES ref ON ref.src_id=a.node_id\n      JOIN company_documents doc ON doc.document_id=ref.dst_id\n    )\n    SELECT a.resolutionId AS resolutionId,a.content AS content,\n           max(m.sourceReportedEndDate) AS meetingPeriodEndDate\n    FROM company_agreements q JOIN Agreement a ON a.node_id=q.agreement_id\n    JOIN rel_MADE_AT made ON made.src_id=a.node_id\n    JOIN Meeting m ON m.node_id=made.dst_id\n    GROUP BY a.node_id,a.resolutionId,a.content\n    ORDER BY meetingPeriodEndDate DESC,a.resolutionId ASC\n",
+      "SQL_full_rows_n": 1094,
+      "SQL_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/root_native_capture_adapter_v1/root_actual_queries_v1/RAN1_P2_CQ3-4_independent_SQL.jsonl",
+        "sha256": "5dc2ab0c9de5b92eca01640c80d6982f5ab9cb0830953fc4cd0e8f58309e4aad",
+        "bytes": 1399437
+      },
+      "status": "OK",
+      "columns": [
+        "resolutionId",
+        "content",
+        "meetingPeriodEndDate"
+      ],
+      "full_native_rows_n": 1094,
+      "native_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/root_native_capture_adapter_v1/root_actual_queries_v1/RAN1_P2_CQ3-4_native.jsonl",
+        "sha256": "5dc2ab0c9de5b92eca01640c80d6982f5ab9cb0830953fc4cd0e8f58309e4aad",
+        "bytes": 1399437
+      },
+      "full_rows_available": true,
+      "truncated": false,
+      "independent_SQL_full_multiset_equal": true,
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "execution_summary_complete": true,
+      "rollback_completed": true,
+      "elapsed_seconds": 1.848214615998586,
+      "limits": {
+        "timeout_s": 20,
+        "rows": 100000,
+        "bytes": 268435456
+      }
+    },
+    {
+      "id": "RAN1_CALENDAR60_ALL_EXISTING_TYPED_PROPERTIES",
+      "query_sha256": "fdfebccf7ad68e4087279e17f72f18b58cbd8cf59f41024f8bc0f878cdab8f80",
+      "SQL": "SELECT i.iri AS iri,m.id AS id,m.meetingNumber AS meetingNumber,\n      m.canonicalMeetingNumber AS canonicalMeetingNumber,m.meetingNumberInt AS meetingNumberInt,\n      m.workingGroup AS workingGroup,m.sourceReportedStartDate AS sourceReportedStartDate,\n      m.sourceReportedEndDate AS sourceReportedEndDate\n      FROM Meeting m JOIN node_identity i USING(node_id) ORDER BY meetingNumber",
+      "SQL_full_rows_n": 60,
+      "SQL_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/root_native_capture_adapter_v1/root_actual_queries_v1/RAN1_CALENDAR60_ALL_EXISTING_TYPED_PROPERTIES_independent_SQL.jsonl",
+        "sha256": "9ee4de37805fa9d1b72cfb8deb528d6de3cb3f150879a9f6ee099ca44981d86f",
+        "bytes": 17272
+      },
+      "status": "OK",
+      "columns": [
+        "iri",
+        "id",
+        "meetingNumber",
+        "canonicalMeetingNumber",
+        "meetingNumberInt",
+        "workingGroup",
+        "sourceReportedStartDate",
+        "sourceReportedEndDate"
+      ],
+      "full_native_rows_n": 60,
+      "native_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/root_native_capture_adapter_v1/root_actual_queries_v1/RAN1_CALENDAR60_ALL_EXISTING_TYPED_PROPERTIES_native.jsonl",
+        "sha256": "9ee4de37805fa9d1b72cfb8deb528d6de3cb3f150879a9f6ee099ca44981d86f",
+        "bytes": 17272
+      },
+      "full_rows_available": true,
+      "truncated": false,
+      "independent_SQL_full_multiset_equal": true,
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "execution_summary_complete": true,
+      "rollback_completed": true,
+      "elapsed_seconds": 0.1657851540003321,
+      "limits": {
+        "timeout_s": 20,
+        "rows": 100000,
+        "bytes": 268435456
+      }
+    }
+  ],
+  "canonical_repair_sha256": "5b8636a8a5d334b37f6920d2d5f3f0d8aab7f8938ba35d9d718541ce0cea220f",
+  "question_admissions_n": 0,
+  "external_model_API_calls_n": 0,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "scope": "Separate source calendar graph. Qualcomm Agreement participation is reference provenance. All60 existing Meeting dates encode actual own-report periods. Uncapped original question pool; no ownership, upload/approval timing or frozen/public replacement.",
+  "API_source_window_boundary": "If source60 raw augmentation is reused for models, it is the first eight actual paragraphs of each of 192 retained reports. It is not the whole report body. No parsed ISO date, canonical labels, gold or reference query is retrieval input.",
+  "inventory_before": {
+    "nodes": 165418,
+    "relationships": 848228
+  },
+  "inventory_after": {
+    "nodes": 165418,
+    "relationships": 848228
+  },
+  "native_execution_n": 2,
+  "owned_container_stopped": true,
+  "finished_utc": "2026-10-15T02:46:34.722534+00:00",
+  "elapsed_seconds": 27.038554810998903
+}

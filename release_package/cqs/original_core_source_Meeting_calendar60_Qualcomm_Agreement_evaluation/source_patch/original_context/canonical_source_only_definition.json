@@ -1,0 +1,41 @@
+{
+  "id": "RAN1_P2_CQ3-4",
+  "question_en": "List Qualcomm's 10 most recent agreements.",
+  "original_query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Qualcomm'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, a.resolutionId, a.content, m.meetingNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber, a.resolutionId LIMIT 10",
+  "reference_query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})\nMATCH (a)-[:MADE_AT]->(meeting:Meeting)\nWITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate\nRETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate\nORDER BY meetingPeriodEndDate DESC,resolutionId ASC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "a.resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "source_column": "meetingPeriodEndDate",
+        "direction": "desc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "separate_source_enriched_query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "5b8636a8a5d334b37f6920d2d5f3f0d8aab7f8938ba35d9d718541ce0cea220f",
+  "original_question_sha256": "80a9662dbfc89d9a251087d97e7889446117b1be28e631364b12bfd8542f84d9",
+  "original_query_sha256": "39d8bd4e4bf7e4e154b81be6779f3cdca4d1615131669828caea33b1b5e6a6d6",
+  "reference_query_sha256": "a358ca349e31c7160a8e96db20dd12780a322c8a7045b918a314755a649ab23e",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_enrichment_required": true,
+  "frozen_question_admitted": false
+}

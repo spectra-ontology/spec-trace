@@ -1,0 +1,124 @@
+{
+  "id": "RAN1_P2_CQ3-4",
+  "repair_sha256": "5b8636a8a5d334b37f6920d2d5f3f0d8aab7f8938ba35d9d718541ce0cea220f",
+  "question_en": "List Qualcomm's 10 most recent agreements.",
+  "status": "pass",
+  "reviewer_kind": "Primary original source judgment /root/verify_prepared_replies",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "e4a91a4d7948a6b37dcde665107e7032d1056c50dc89b13297fd24bb901aa889",
+    "bytes": 1977
+  },
+  "source_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/original_English_KO_company_Resolution_and_calendar_source_only_packet.json",
+    "sha256": "cd421c9f64cfe864f3e0d2bbd2ec27f8ba1fc231aa648ca9fc55f5206d897e91",
+    "bytes": 32747
+  },
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "original_quote": "List Qualcomm's 10 most recent agreements.",
+      "finding": "The question asks to list Agreement records, so their unique resolutionId is the requested identity. It does not ask what was agreed, quote agreement text, show referenced TDocs, or identify the meeting/date. Thus content is useful optional context rather than an extra required answer role. The original RETURN content is not used as role authority. Original ontology treats Agreement as a Resolution subtype and assigns unique resolution IDs; all21058 retained Agreement IDs are nonnull/unique. Distinct identities must be retained even when their content strings match.",
+      "query_clauses": [
+        "RETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate",
+        "required_fields=resolutionId string nonnull"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "population and source context",
+      "original_quote": "Qualcomm's",
+      "finding": "The unchanged KO expressly says Qualcomm participation in Agreements, and original indexed CQ3 defines company contribution through Resolution references→Tdoc→Company, with submittedBy an explicitly required reused relation. This grounds recorded participation attribution independently of the old query. The source population is Agreement records citing Qualcomm-submitted TDocs, including co-submitted/cross-company citation records; it does not attribute exclusive ownership, causal creation, technical success or legal agreement rights. No latest Spec edition, CR-only, Qualcomm-only-submitter or approved-Tdoc subset is introduced.",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "original_quote": "agreements",
+      "finding": "Agreement is the original recorded Resolution subtype, and REFERENCES is documentary citation. Original CQ3 company attribution explicitly reuses this reference/submission path, so the possessive is read as the KO recorded participation rather than normative ownership. MADE_AT is independently defined as the Meeting where the Resolution was derived, unlike PRESENTED_AT of a cited TDoc. Therefore recency follows the Agreement event, not referenced-document upload/presentation, successor outcomes or normative incorporation. Generic CQ3 count defaults cannot replace the explicit recent request.",
+      "query_clauses": [
+        "(a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})",
+        "(a)-[:MADE_AT]->(meeting:Meeting)"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "original_quote": "10 most recent agreements",
+      "finding": "The quota counts distinct Agreement records, not references, submitted companies or Meeting alias nodes. WITH a collapses all attributed TDoc/company/meeting joins. The complete unfiltered source census shows all21058 Agreement records have exactly one own calendar period:230 records have two MADE_AT Meeting nodes but both nodes represent the same #100 event period. Thus max(endDate) is an alias-safe scalar extraction here, not a newly invented latest association rule choosing among competing distinct meetings. The unique resolutionId projection gives one output per Agreement.",
+      "query_clauses": [
+        "WITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN a.resolutionId AS resolutionId"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "cardinality and completeness",
+      "original_quote": "10",
+      "finding": "Ten is explicit in both unchanged English and KO. The reference query keeps the full eligible attributed Agreement population and delegates the top10 quota to the declared boundary-tie contract. It does not inherit old LIMIT10 row truncation across repeated TDocs, arbitrary date windows or generic CQ3 rank counts. All recorded Agreement MADE_AT events have date coverage in the existing neutral source60 overlay; no missing source period is replaced with an invented zero or cut off by a latest calendar date. This is completeness in the retained graph context, not every physically authored company contribution.",
+      "query_clauses": [
+        "no LIMIT or calendar-window predicate",
+        "collection.kind=top_k_boundary_ties,value=10",
+        "cardinality_policy.mode=top_k"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "original_quote": "most recent",
+      "finding": "The original Phase2 Resolution temporal event is MADE_AT Meeting, explicitly defined and reused for temporal analysis; the record model does not expose an Agreement-level timestamp. Explicit recent therefore orders its recorded event periods, rather than importing the category Count default or treating CR/TDoc identifiers as chronology. The neutral source60 overlay resolves actual reported Meeting periods, including #122 versus #122bis; numeric Meeting keys cannot collapse those distinct periods. All Agreements at one recorded event period share the available temporal key, so finer intra-meeting Agreement chronology is not asserted. Any sufficient boundary-period subset is accepted, and the full pool must preserve every tie member. resolutionId ASC is optional capture presentation; source rank membership alone is scored.",
+      "query_clauses": [
+        "max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC,resolutionId ASC",
+        "require_rank_order=false;within_tie_order=any;tie_policy=any_subset_at_boundary"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "original_quote": "Qualcomm's 10 most recent agreements",
+      "finding": "This candidate reuses the already isolated documentary source60 Meeting date overlay, preserving all original Agreement content/IDs and baseline relations. Own reported event dates are not document upload, normative approval or current-world finality. Recorded citation-submit participation is not exclusive company ownership or evidence that a TDoc caused an Agreement. The requested source-context record list does not certify every actual technical issue, physical report extraction or finer real-world within-meeting creation sequence. Original question bytes remain exact; neutral date properties enrich source evidence rather than rewriting the question. Two exact semantic reviews, native/full independent SQL and requested-field/tie controls remain required; this primary judgment alone does not admit the case.",
+      "query_clauses": [
+        "repair_class=separate_source_enriched_query_and_scorer",
+        "original_question_preserved=true",
+        "no ownership/causal/status/approval/upload predicate"
+      ],
+      "status": "pass"
+    }
+  ],
+  "each_required_field_schema": [
+    {
+      "type": "string"
+    }
+  ],
+  "empty_diagnostic_structural_preflight": {
+    "diagnostic_only": true,
+    "exact": true,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "matched_records": 0,
+    "gold_records": 0,
+    "predicted_records": 0,
+    "reference_population_records": 0,
+    "type_errors": [],
+    "cardinality_valid": true,
+    "order_valid": true
+  },
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "API_calls": 0,
+  "native_queries": 0,
+  "filtered_answer_SQL_queries": 0,
+  "new_admissions": 0,
+  "exposure_disclosure": "Nonblind local source development diagnosis. Exact original English/KO/query, source-only proposal and all unfiltered Agreement/Tdoc/Company/reference/submission/event operands read. Existing source60 source diagnosis and earlier separate CQ017 evaluation known, but no CQ3-4 filtered answer SQL, native result, gold, model response or proposer second review was read. No historical score transferred.",
+  "script_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/review_P2_CQ3_4_original_calendar_Agreement_source_variant_v1.py",
+    "sha256": "ce64e4e7f424090a6fe1b2e6c935eb47d9356a1bf96ff8b60d02cc4dd7859d6e",
+    "bytes": 9943
+  },
+  "check_pass": "PASS_EXACT_IDENTITY_AND_SEVEN_UNITS"
+}

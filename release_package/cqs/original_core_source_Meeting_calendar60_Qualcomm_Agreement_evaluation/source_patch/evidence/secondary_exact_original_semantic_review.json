@@ -1,0 +1,191 @@
+{
+  "id": "RAN1_P2_CQ3-4",
+  "repair_sha256": "5b8636a8a5d334b37f6920d2d5f3f0d8aab7f8938ba35d9d718541ce0cea220f",
+  "status": "pass",
+  "original_question_sha256": "80a9662dbfc89d9a251087d97e7889446117b1be28e631364b12bfd8542f84d9",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Independent direct Codex source-first exact judgment /root/reaudit_ran2_ran5",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "agreements",
+      "finding": "The direct requested objects are Agreement entities, so their unique nonnull resolutionId identities close a list of agreements. Textual content is optional context and remains returned; no question wording asks a summary, quotation or detailed description. Neither cited Tdoc number nor Meeting number is an additional mandatory role. Whole21058 Agreement IDs are unique; identity-only answers do not silently replace agreements with documents.",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})",
+        "MATCH (a)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC,resolutionId ASC"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Qualcomm's",
+      "finding": "The original CQ3 recorded company-attribution design explicitly requires Resolution references to phase1 Tdoc and Company (lines289,497). The source variant keeps all retained Agreement records, original Company equality and citation/submission roles. It adds only already-neutral source60 own-event dates; it does not assume every physical agreement or every real Qualcomm activity was archived.",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})",
+        "MATCH (a)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC,resolutionId ASC"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Qualcomm's",
+      "finding": "English company possessive is read in the original operational company-contribution context: Agreement REFERENCES a Tdoc SUBMITTED_BY Qualcomm. Indexed/HEAD required-term mapping and published ontology establish this recorded attribution independently of the oldquery. Co-submitter participation is sufficient. This does not mean legal ownership, authoring every quoted statement, causal creation, or TSG implementation; upload/presentedAt does not replace Agreement MADE_AT.",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})",
+        "MATCH (a)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC,resolutionId ASC"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "agreements",
+      "finding": "The unit is a distinct Agreement node/resolutionId. WITH a collapses multiple cited Qualcomm documents, repeated company paths and COVID Meeting aliases, preventing document/path multiplication. All21058 original Agreement MADE_AT operands independently have exactly one unique authored event period;230 double links share that period, so max(EndDate) is only an equivalent alias reduction, not selecting an unsupported later event.",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})",
+        "MATCH (a)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC,resolutionId ASC"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "10 most recent",
+      "finding": "Ten is explicit and governs cardinality. The exact query preserves the entire eligible recorded Agreement pool without LIMIT, datewindow, chosenMeeting, approval or updatedDate filter; top_k10 uses source-event EndDate DESC. Any subset at the cutoff Meeting-period tie is allowed because source operands provide no finer Agreement chronology. The full reference pool is evidence for eligibility, not a request to return all its members.",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})",
+        "MATCH (a)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC,resolutionId ASC"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "most recent",
+      "finding": "The named chronological selection is based on the Agreement MADE_AT Meeting own source-reported period. ISO dates are validated from all60 actual source operands; source60 raw192 member observations were previously independently verified and are reused explicitly. Original generic CQ3 Count sorting cannot override this concrete English request for most recent. Identity ASC is stable reference serialization only, and does not fabricate within-period chronology or require output order beyond selecting the recent10.",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})",
+        "MATCH (a)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC,resolutionId ASC"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "agreements.",
+      "finding": "This is a separately source-enriched recorded-Agreement query variant. It does not close frozen date absence or infer individual within-meeting timestamps, current issue finality, physical whole-report extraction accuracy, approval, worldwide Qualcomm participation or legal ownership. Retained Agreement-body boundary defects remain a source-faithfulness risk. Original HEAD/index phase2 attribution authority is directly pinned; current Korean wording is corroboration, not a replacement for exact frozenEnglish.",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Qualcomm'})",
+        "MATCH (a)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate",
+        "ORDER BY meetingPeriodEndDate DESC,resolutionId ASC"
+      ]
+    }
+  ],
+  "source_only_manifest": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/manifest.json",
+    "sha256": "bd9de72f220ec12376e1c32ae81458c2a002e7e5f2afb0eb6f733065d29bf1e8",
+    "bytes": 2996
+  },
+  "exact_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "e4a91a4d7948a6b37dcde665107e7032d1056c50dc89b13297fd24bb901aa889",
+    "bytes": 1977
+  },
+  "whole_source_unfiltered_SQL_verifications": [
+    {
+      "name": "all21058_original_Agreement_operands",
+      "records_n": 21058,
+      "whole_SQL_source_exact": true,
+      "file": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all21058_original_Agreement_operands.jsonl",
+        "sha256": "172085826935d899580fd282b47a2b30fdd6c4c1327308305ba86307e9dbf172",
+        "bytes": 14175397
+      }
+    },
+    {
+      "name": "all_original_Tdoc_identity_operands",
+      "records_n": 123677,
+      "whole_SQL_source_exact": true,
+      "file": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_Tdoc_identity_operands.jsonl",
+        "sha256": "8f8a5e32486fdcbc2c0de6418b8a5ac8355d6e724a3bcc7b683af2aab02235fa",
+        "bytes": 5483841
+      }
+    },
+    {
+      "name": "all_original_Company_operands",
+      "records_n": 222,
+      "whole_SQL_source_exact": true,
+      "file": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_Company_operands.jsonl",
+        "sha256": "bcd0a1882be36bc6cab98b518f8d66f77a6aa847f068935d1d962d4d58354672",
+        "bytes": 28021
+      }
+    },
+    {
+      "name": "all_original_references_edges",
+      "records_n": 19454,
+      "whole_SQL_source_exact": true,
+      "file": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_references_edges.jsonl",
+        "sha256": "7bd727043c8b6c668f2191782d3a922a37cd558ae9708636004176cf90acf8f6",
+        "bytes": 1412318
+      }
+    },
+    {
+      "name": "all_original_submitted_by_edges",
+      "records_n": 154525,
+      "whole_SQL_source_exact": true,
+      "file": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_submitted_by_edges.jsonl",
+        "sha256": "62e39c6733d71a59ac72dbba782324664e7ca8ea2eaa58a4608eb2b85809f521",
+        "bytes": 11801149
+      }
+    },
+    {
+      "name": "all_original_made_at_edges",
+      "records_n": 24956,
+      "whole_SQL_source_exact": true,
+      "file": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_made_at_edges.jsonl",
+        "sha256": "79145a09096bbd3f07b5f9cae6be25dafa9b35fb0948a8a32ac95ed15532ebce",
+        "bytes": 1731587
+      }
+    }
+  ],
+  "whole_Meeting_date_and_Agreement_alias_closure": {
+    "Meeting_n": 60,
+    "Agreement_n": 21058,
+    "double_alias_Agreement_n": 230,
+    "competing_periods_n": 0,
+    "SQL_before_after": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/CQ017_all60_source_reported_Meeting_period_materialized_v1/RAN1.sqlite",
+      "sha256": "addd770283764b2eb90f7675d059389f631602e84dd6fdd26d08d7e111af74cb",
+      "bytes": 503873536
+    }
+  },
+  "prior_source_observations_reused_explicitly": "Source60 anonymous fresh192 rawmember/source rebuild validation previously completed by this agent; not claiming a new raw192 reread here.",
+  "exposure": "Direct development judgment, not blind/expert evaluation. Prior source60 sibling model outcomes known; this exact candidate primary/filteredSQL/rank/gold/native/model outcomes not read.",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "new_native_API_calls_n": 0,
+  "frozen_original_question_admitted": false,
+  "judgment_UTC": "2026-10-15T02:29:26.027328+00:00"
+}
