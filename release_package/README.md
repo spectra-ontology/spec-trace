@@ -378,3 +378,5 @@ If you reuse SPECTRA, please cite the accompanying paper (currently under review
 ## License
 
 SPECTRA-authored components (the ontology, SHACL shapes, SpectraCQ, queries, synthetic/metadata-only examples, validation scripts, parsing pipeline source, and PyLODE documentation) are released under Creative Commons Attribution 4.0 (CC-BY 4.0). 3GPP-derived text literals included in the per-WG body-text KGs are retained with explicit 3GPP attribution under the applicable ETSI/3GPP terms and are not relicensed as original SPECTRA-authored content. See `LICENSE` for the full CC-BY 4.0 text.
+
+Documentary approval and normative incorporation for17CRs are available as a [separate source snapshot](cqs/original_core_source_CR_incorporation17/README.md), with original sources and reconstruction checks.
