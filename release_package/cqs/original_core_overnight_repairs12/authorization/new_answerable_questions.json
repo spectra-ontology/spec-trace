@@ -1,0 +1,46 @@
+{
+  "cohort_projection_n": 1,
+  "cards": [
+    {
+      "id": "RAN1_P4_CQ2-2",
+      "original_question": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+      "repair_sha256": "97d1507db6d718d16a533e0f8f8c3a2f5e4b4d1b85fbcebc9edea82d4cf9e844",
+      "required_fields": [
+        {
+          "name": "affectedSpec",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "other.specNumber"
+        },
+        {
+          "name": "crCount",
+          "type": "integer",
+          "nullable": false,
+          "source_column_or_expression": "count(DISTINCT cr) per recorded other.specNumber across all three typed AFFECTS roles"
+        }
+      ],
+      "collection": {
+        "kind": "native_ordered_ties",
+        "tie_policy": "any_order_within_equal_keys",
+        "source_order_keys": [
+          {
+            "source_column": "crCount",
+            "direction": "desc"
+          },
+          {
+            "source_column": "affectedSpec",
+            "direction": "asc"
+          }
+        ]
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 10,
+      "status": "local_semantic_native_SQL_controls_pass; fresh_paid_evaluation_separate"
+    }
+  ],
+  "baseline_public_pass_n": 463,
+  "target_registered_union_n": 464,
+  "pending_n": 96
+}

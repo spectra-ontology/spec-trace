@@ -1,0 +1,49 @@
+{
+  "id": "RAN1_P4_CQ2-2",
+  "question_en": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(mainSpec:Spec {specNumber: '38.214'}) MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(otherSpec:Spec) WHERE mainSpec <> otherSpec RETURN mainSpec.specNumber AS modifiedSpec, otherSpec.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount ORDER BY crCount DESC",
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.214'})\nMATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(other:Spec)\nWHERE other.specNumber IS NOT NULL AND other.specNumber <> '38.214'\nRETURN other.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount\nORDER BY crCount DESC, affectedSpec ASC",
+  "required_fields": [
+    {
+      "name": "affectedSpec",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "other.specNumber"
+    },
+    {
+      "name": "crCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "count(DISTINCT cr) per recorded other.specNumber across all three typed AFFECTS roles"
+    }
+  ],
+  "collection": {
+    "kind": "native_ordered_ties",
+    "tie_policy": "any_order_within_equal_keys",
+    "source_order_keys": [
+      {
+        "source_column": "crCount",
+        "direction": "desc"
+      },
+      {
+        "source_column": "affectedSpec",
+        "direction": "asc"
+      }
+    ]
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "97d1507db6d718d16a533e0f8f8c3a2f5e4b4d1b85fbcebc9edea82d4cf9e844",
+  "original_question_sha256": "73ba3a90c668a9e178b9b51a73ecb8bc8ca084aea9949efc6f69c63822673b4e",
+  "original_query_sha256": "7e26d2cb6c3ac63885ed466a9e5dbcb31e1dfca490f94c2743c629ca30178ea6",
+  "reference_query_sha256": "d6f815cf0e7caa1dbfa545ee989cfdee5535276202868384a1e590e4c5d485e1",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/original_cross_spec_field_mapping_and_whole_unfiltered_source_only_packet.json",
+    "sha256": "962591a4de186f431afd590adfb483d4490afa5c9f6c16a452f99c630cc924d9",
+    "bytes": 19087
+  }
+}

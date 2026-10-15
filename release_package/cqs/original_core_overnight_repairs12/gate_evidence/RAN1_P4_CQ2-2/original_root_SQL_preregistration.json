@@ -1,0 +1,26 @@
+{
+  "id": "RAN1_P4_CQ2-2",
+  "repair_sha256": "97d1507db6d718d16a533e0f8f8c3a2f5e4b4d1b85fbcebc9edea82d4cf9e844",
+  "definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "3e1d1261fcfb7a0ec336a04a442f055decbf706a65eef661213f4d7ef258eaf8",
+    "bytes": 2104
+  },
+  "source_judgment": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P4_CQ2_2_root_original_source_registration_v1/root_original_source_seven_unit_judgment.json",
+    "sha256": "9a38724782fe7dc5857b3ddfe1fb30082764b15123279097990a2219b0fcb62b",
+    "bytes": 15472
+  },
+  "SQL": "WITH affected AS (\n SELECT dst_id AS other_id, src_id AS cr_id FROM rel_AFFECTS_CORE_SPEC\n UNION SELECT dst_id,src_id FROM rel_AFFECTS_TEST_SPEC\n UNION SELECT dst_id,src_id FROM rel_AFFECTS_OM_SPEC\n)\nSELECT s.specNumber AS affectedSpec, COUNT(DISTINCT c.node_id) AS crCount\nFROM Spec s JOIN affected a ON a.other_id=s.node_id JOIN CR c ON c.node_id=a.cr_id\nWHERE s.specNumber IS NOT NULL AND s.specNumber<>'38.214'\nAND EXISTS (SELECT 1 FROM rel_MODIFIES m JOIN Spec main ON main.node_id=m.dst_id WHERE m.src_id=c.node_id AND main.specNumber='38.214')\nGROUP BY s.specNumber ORDER BY crCount DESC, affectedSpec ASC",
+  "SQL_sha256": "c0f0999e948a256cf887d07f29fc95b3f2d2bf1bc0cec22cf3601da0eb0330f6",
+  "strategy": "Start from other Spec and role-union incidence, then EXISTS qualifying primary modification; unlike CR-first double-match reference. UNION and COUNT DISTINCT preserve role and node multiplicity.",
+  "frozen_SQL": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+    "sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+    "bytes": 503873536
+  },
+  "before_new_selected_execution": true,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "created_utc": "2026-10-15T05:21:56.946249+00:00"
+}

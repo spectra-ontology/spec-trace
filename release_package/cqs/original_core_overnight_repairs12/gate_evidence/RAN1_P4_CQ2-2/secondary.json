@@ -1,0 +1,242 @@
+{
+  "id": "RAN1_P4_CQ2-2",
+  "repair_sha256": "97d1507db6d718d16a533e0f8f8c3a2f5e4b4d1b85fbcebc9edea82d4cf9e844",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "73ba3a90c668a9e178b9b51a73ecb8bc8ca084aea9949efc6f69c63822673b4e",
+  "reviewer_kind": "Independent direct Codex secondary /root/reaudit_ran2_ran5; AI development diagnosis, not human or expert review",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+      "finding": "The unchanged English explicitly asks other spec identities and how many CRs for each; affectedSpec/string and crCount/integer preserve both roles. A constant modifiedSpec=38.214, CR identities, impact role labels and explanatory titles are not additional requested answer roles.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.214'})",
+        "MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(other:Spec)",
+        "WHERE other.specNumber IS NOT NULL AND other.specNumber <> '38.214'",
+        "RETURN other.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount",
+        "ORDER BY crCount DESC, affectedSpec ASC"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+      "finding": "Original indexed CQ2-2 explicitly binds modifies plus the three affects roles; Phase4 graph metadata and dynamic referenced Specs are the declared input. All original CR and Spec identities and every MODIFIES/typed AFFECTS edge were freshly matched field-for-field to immutable SQLite. The recorded graph task includes dynamically created referenced Specs and is not restricted to RAN1-owned or body-parsed TSs. A missing recorded edge is not a claim of no physical effect.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.214'})",
+        "MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(other:Spec)",
+        "WHERE other.specNumber IS NOT NULL AND other.specNumber <> '38.214'",
+        "RETURN other.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount",
+        "ORDER BY crCount DESC, affectedSpec ASC"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+      "finding": "Ripple into is operationally grounded by the exact original CQ2-2 required-term map and Other Specs Affected source-field definitions. The query returns these recorded typed links, without inferring adoption, approval, normative incorporation or causal technical propagation. Other specs means a different specNumber, so a second edition node with number38.214 is excluded. The authentic No-with-stale-numbers and Yes-with-unknown-target witness is preserved as a source-faithfulness risk; it does not change the original graph-relative operand definition into a Yes-only source reconstruction.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.214'})",
+        "MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(other:Spec)",
+        "WHERE other.specNumber IS NOT NULL AND other.specNumber <> '38.214'",
+        "RETURN other.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount",
+        "ORDER BY crCount DESC, affectedSpec ASC"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+      "finding": "How many CRs each counts distinct CR document identities for each other specNumber. A CR may have duplicate primary Spec witnesses, several editions of an affected spec, or several AFFECTS role witnesses; count(DISTINCT cr) contributes at most once for that pair. The original Phase4 CR identity is unique tdocNumber, independently confirmed across all10715 CRs, rather than final numeric CR+revision families or raw relation rows.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.214'})",
+        "MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(other:Spec)",
+        "WHERE other.specNumber IS NOT NULL AND other.specNumber <> '38.214'",
+        "RETURN other.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount",
+        "ORDER BY crCount DESC, affectedSpec ASC"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+      "finding": "Indexed default table expressly calls CQ2-2 an all query, unlike CQ2-1/2-3 list10 and CQ2-4 top10. The complete set of positive recorded affected-spec groups is required; no LIMIT, latest edition, chosen period, arbitrary owned-spec subset or imported zero axis is added. The English most often plus how many each asks the full count comparison under that explicit all-query context, not one invented winner.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.214'})",
+        "MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(other:Spec)",
+        "WHERE other.specNumber IS NOT NULL AND other.specNumber <> '38.214'",
+        "RETURN other.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount",
+        "ORDER BY crCount DESC, affectedSpec ASC"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+      "finding": "Most often determines descending distinct CR frequency for these spec rows. The generic CQ2 influence-spec-count DESC rule refers to a different metric for CR-outdegree questions and cannot replace this exact question's requested how-many-CRs metric. Original Spec-number ASC remains the specified secondary key; affectedSpec is a requested identity, so this tie key adds no hidden answer field. The complete grouped output is unique per specNumber and the native_ordered_ties definition preserves both source keys.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.214'})",
+        "MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(other:Spec)",
+        "WHERE other.specNumber IS NOT NULL AND other.specNumber <> '38.214'",
+        "RETURN other.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount",
+        "ORDER BY crCount DESC, affectedSpec ASC"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Which other specs do CRs modifying TS 38.214 most often ripple into, and how many CRs each?",
+      "finding": "No external or later-world interpretation is required for this recorded field-map task. The raw cover adverse example was freshly reread with all three role rows, and the current/index design drift was verified separately. This is direct AI development diagnosis, not blind human/expert validation. Proposer primary, selected eligibility joins/counts/ranking, gold, native and model outputs remain unread; actual native/full SQL/scorer/prompt gates are still downstream requirements.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.214'})",
+        "MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(other:Spec)",
+        "WHERE other.specNumber IS NOT NULL AND other.specNumber <> '38.214'",
+        "RETURN other.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount",
+        "ORDER BY crCount DESC, affectedSpec ASC"
+      ]
+    }
+  ],
+  "exact_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "3e1d1261fcfb7a0ec336a04a442f055decbf706a65eef661213f4d7ef258eaf8",
+    "bytes": 2104
+  },
+  "source_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/original_cross_spec_field_mapping_and_whole_unfiltered_source_only_packet.json",
+    "sha256": "962591a4de186f431afd590adfb483d4490afa5c9f6c16a452f99c630cc924d9",
+    "bytes": 19087
+  },
+  "whole_unfiltered_input_SQL_equality": [
+    {
+      "name": "CR",
+      "rows": 10715,
+      "input_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/all_original_CR_unfiltered_source_only.jsonl",
+        "sha256": "f96dd69cbf82e51ec266ce458f313dd312c3d247497d6cd5086adbb9ff48949c",
+        "bytes": 8110595
+      },
+      "all_columns_and_types_equal_SQL": true
+    },
+    {
+      "name": "Spec",
+      "rows": 127,
+      "input_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/all_original_Spec_unfiltered_source_only.jsonl",
+        "sha256": "d5509b6c8e1297fd014fc3af83d4aba6eebb61ebaf366a7f9a4b808052b6976f",
+        "bytes": 13654
+      },
+      "all_columns_and_types_equal_SQL": true
+    },
+    {
+      "name": "rel_MODIFIES",
+      "rows": 10671,
+      "input_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/all_original_rel_MODIFIES_unfiltered_source_only.jsonl",
+        "sha256": "7a0077c092bcfc46e403ba4c1675c58bf9c6579a70a5c4da79be8c524904cd7e",
+        "bytes": 540839
+      },
+      "all_columns_and_types_equal_SQL": true
+    },
+    {
+      "name": "rel_AFFECTS_CORE_SPEC",
+      "rows": 572,
+      "input_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/all_original_rel_AFFECTS_CORE_SPEC_unfiltered_source_only.jsonl",
+        "sha256": "a1f0f351da35bb605c205968d854d3e6ec6ce2ce5e5a1168735e4a06fee2ea07",
+        "bytes": 29172
+      },
+      "all_columns_and_types_equal_SQL": true
+    },
+    {
+      "name": "rel_AFFECTS_TEST_SPEC",
+      "rows": 3,
+      "input_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/all_original_rel_AFFECTS_TEST_SPEC_unfiltered_source_only.jsonl",
+        "sha256": "fdad643a3949c0a95f6c52c389c20accecd8436aff8c479b656d8c4dbbd12bfd",
+        "bytes": 153
+      },
+      "all_columns_and_types_equal_SQL": true
+    },
+    {
+      "name": "rel_AFFECTS_OM_SPEC",
+      "rows": 2,
+      "input_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/all_original_rel_AFFECTS_OM_SPEC_unfiltered_source_only.jsonl",
+        "sha256": "10d8d4fb0770a0bc6e0c87cbb452edf6cd30d61c96f3712d53be0bc0ee0b7244",
+        "bytes": 102
+      },
+      "all_columns_and_types_equal_SQL": true
+    }
+  ],
+  "database_before_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+  "database_after_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+  "adverse_authentic_raw_witness": {
+    "archive": {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/meetings/RAN1/source/TSGR1_96b/Docs/R1-1905602.zip",
+      "sha256": "86bf3fd4c04f7c8119788ece1db6867f066bed5c0f587f7102d63ec1641091e8",
+      "bytes": 62004
+    },
+    "member_sha256": "08fab3902afa844b29e1a5843cc99ebb4da91340cc9b441baf0375723799c25e",
+    "document_xml_sha256": "83bef98e3d9242a6763eb9dbcec6b19e3b1029c9d353ac7f14dc32906bf28004",
+    "all_three_roles": [
+      {
+        "role": "core",
+        "literal_cells": [
+          "Other specs",
+          "",
+          "X",
+          " Other core specifications",
+          "TS 38.211 CR R1-1904647TS 38.215 CR R1-1905603"
+        ],
+        "row_XML_sha256": "76532f93403e79816a45134fb1f136ab92e6852fd42654152c42fa22e7355cd4"
+      },
+      {
+        "role": "test",
+        "literal_cells": [
+          "affected:",
+          "",
+          "X",
+          " Test specifications",
+          "TS/TR ... CR ... "
+        ],
+        "row_XML_sha256": "e922f2b9195a80a82522ca9bed69e796291c3193d86b0e3161b2edb53336dfd4"
+      },
+      {
+        "role": "om",
+        "literal_cells": [
+          "(show related CRs)",
+          "X",
+          "",
+          " O&M Specifications",
+          "TS/TR ... CR ... "
+        ],
+        "row_XML_sha256": "79d4af26ea0f4065cb2eec1f5f773220b2bc07387b19497279e261825a4a5013"
+      }
+    ]
+  },
+  "source_axes": {
+    "indexed": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/CR_design_actual_Git_index_snapshot.md",
+      "sha256": "208d2baeb694aaf8955d51c976d27cbff66f7c6597ceff2a27cb7faf6b13020d",
+      "bytes": 58716
+    },
+    "working_separate": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P4_CQ2_2_original_recorded_cross_spec_source_only_v2/source_only_independent_review/CR_design_working_snapshot_separate_axis.md",
+      "sha256": "f96f34706a57139f7faebc2cbe3d6aa47b4ca809a317f946152aa47ce1dc7fb6",
+      "bytes": 59864
+    },
+    "whole_bytes_differ": true
+  },
+  "source_only_before_selected": true,
+  "proposer_primary_read": false,
+  "selected_query_gold_native_model_read": false,
+  "selected_SQL_or_join_executed": false,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "external_model_API_calls": 0,
+  "native_execution_n": 0,
+  "utc": "2026-10-15T05:18:51.134199+00:00",
+  "check_pass": "PASS (identity/completeness schema only; semantic judgment is independently stated above)"
+}
