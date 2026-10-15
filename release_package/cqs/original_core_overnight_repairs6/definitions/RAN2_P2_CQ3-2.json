@@ -1,0 +1,40 @@
+{
+  "id": "RAN2_P2_CQ3-2",
+  "question_en": "Rank the main contributors to spec 38.331 (RRC ownership).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.331'}), (t)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT r) AS contributions ORDER BY contributions DESC LIMIT 10",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber:'38.331'}), (t)-[:SUBMITTED_BY]->(c:Company)\nRETURN c.companyName AS companyName, count(DISTINCT r) AS contributionCount\nORDER BY contributionCount DESC, companyName ASC",
+  "required_fields": [
+    {
+      "name": "companyName",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "companyName"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": true,
+    "source_order_keys": [
+      {
+        "source_column": "contributionCount",
+        "direction": "desc"
+      },
+      {
+        "source_column": "companyName",
+        "direction": "asc"
+      }
+    ]
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "8344604fa975b887cfdf1ea9e0ad56c87c26564bf3697f38c64de3cc264c8e62",
+  "reference_query_sha256": "29c2a044e3dc3e79bc1f3901851bfc2b191094a83675bc52b395080975d27406"
+}
