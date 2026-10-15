@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 447 have passed the stated repair checks,
-and 113 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 448 have passed the stated repair checks,
+and 112 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 447 unchanged original questions.
+included in these 448 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -104,3 +104,7 @@ Runtime provenance clarification: the eight evaluation programs listed in each p
 The [three recorded title-and-table repairs](../original_core_overnight_repairs3/README.md) add PDCCH, PUSCH and SRS Section-title searches with each direct table-ID set, including empty sets. This separate cohort raises the current index to 446/560, with 114 pending; its [fresh four-method evaluation](../original_core_overnight_evaluation3/README.md) retains all three IDs per method. Earlier cohorts and all their predictions remain unchanged.
 
 The [one recorded TS-comparison repair](../original_core_overnight_repairs1/README.md) compares the top five TS families by CR count with their section counts using the original explicit eight-family domain. This separate cohort raises the current index to 447/560, with 113 pending; its [fresh four-method evaluation](../original_core_overnight_evaluation1/README.md) retains the one ID in every method. Earlier cohorts and all their predictions remain unchanged.
+
+The [Rel-19 recorded-document survey](../original_core_overnight_repairs4/README.md) adds one unchanged original question and all 5,948 recorded matching TDoc identities. This cohort raises the current index to 448/560, with 112 pending; its [fresh four-method evaluation](../original_core_overnight_evaluation4/README.md) retains the one ID in every method. Actual speech, full physical-source truth, and human or expert validation are not established.
+
+The Rel-19 survey evaluation retains five requests, six transport attempts, five received HTTP200 response bodies, $0.294875 known cost and one read-timeout attempt of unknown cost. The first response body was not received; its identical transport retry follows the frozen policy. No answer-quality retry was performed.

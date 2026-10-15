@@ -1,0 +1,136 @@
+{
+  "id": "RAN3_P1_CQ1-4",
+  "original_English": "List the TDocs discussed under Rel-19 (release-scoped document survey).",
+  "original_English_sha256": "e24a58b4b02d777d75d32db7db93f88a61e8d8eb43f5a61fdb7bc396fb84f343",
+  "original_Cypher": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-19'}) RETURN t.tdocNumber, t.title, t.type ORDER BY t.tdocNumber DESC LIMIT 10",
+  "actual_KO_source_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN3/phase-1/cq_test_dataset.json",
+    "sha256": "ea0e3864d11090bb4c611fbd5bad2c84aff53fe5162e5f0daaf1cdf2c244a26a",
+    "bytes": 8774
+  },
+  "original_KO_question": "Rel-19에서 논의된 Tdoc 목록은?",
+  "criteria_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+    "bytes": 3382
+  },
+  "original_schema_design_excerpts": [
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN3/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+        "sha256": "40dfc0c8947b949db202638bc470459271e120ed0ac220d1faf7ad886029d6e3",
+        "bytes": 68314
+      },
+      "line_start": 45,
+      "line_end": 56,
+      "literal": "    | 사용자 | 핵심 니즈 |\n    | --- | --- |\n    | **표준화 엔지니어** | Tdoc 검색, 관계 추적, 경쟁사 분석 |\n    \n    ### 1.4 데이터 소스\n    \n    | Phase | 데이터 소스 | 범위 |\n    | --- | --- | --- |\n    | **Phase-1** | **Tdoc_list (Excel)** | [P1-V04] 미팅, [P1-V01] TDocs (dedup 기준) |\n    \n    데이터 경로: TDoc List Excel 파일 (미팅별 `.xlsx`)\n    "
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN3/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+        "sha256": "40dfc0c8947b949db202638bc470459271e120ed0ac220d1faf7ad886029d6e3",
+        "bytes": 68314
+      },
+      "line_start": 121,
+      "line_end": 138,
+      "literal": "    \n    TDoc List 컬럼 구조가 31컬럼 기본이므로 표준 CQ 체계를 그대로 적용한다.\n    \n    ### CQ1. Tdoc 기본 검색\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 1-1 | 특정 회의에서 특정 Work Item 관련 Tdoc 목록은? |\n    | 1-2 | 특정 회의에서 특정 Agenda Item 관련 Tdoc 목록은? |\n    | 1-3 | 특정 회의에서 특정 회사가 제출한 Tdoc 목록은? |\n    | 1-4 | 특정 Release에서 논의된 Tdoc 목록은? |\n    | 1-5 | 특정 회의에서 승인/합의된 Tdoc 목록은? |\n    | 1-6 | 특정 Tdoc의 결정 결과(Status)는? |\n    | 1-7 | 특정 Tdoc의 목적(For)은? |\n    | 1-8 | 특정 Tdoc의 담당자(Contact)는? |\n    | 1-9 | 이번 회의 전체 Agenda 목록과 설명은? |\n    \n    ### CQ2. Tdoc 관계 추적"
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN3/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+        "sha256": "40dfc0c8947b949db202638bc470459271e120ed0ac220d1faf7ad886029d6e3",
+        "bytes": 68314
+      },
+      "line_start": 198,
+      "line_end": 213,
+      "literal": "    ## 5. CQ vs Tdoc 메타데이터 검증\n    \n    TDoc List 컬럼 구조가 31컬럼 기본이므로, 표준 CQ 답변 가능성이 그대로 적용된다.\n    \n    | # | Competency Question | 필요한 데이터 | 컬럼 존재 | 답변 가능 | 비고 |\n    | --- | --- | --- | --- | --- | --- |\n    | **CQ1. Tdoc 기본 검색** | | | | | |\n    | 1-1 | 특정 회의에서 특정 Work Item 관련 Tdoc 목록은? | Meeting, Related WIs | ✅ | ✅ | Meeting은 파일명에서 추출 |\n    | 1-2 | 특정 회의에서 특정 Agenda Item 관련 Tdoc 목록은? | Meeting, Agenda item | ✅ | ✅ | |\n    | 1-3 | 특정 회의에서 특정 회사가 제출한 Tdoc 목록은? | Meeting, Source | ✅ | ✅ | |\n    | 1-4 | 특정 Release에서 논의된 Tdoc 목록은? | Release | ✅ | ✅ | |\n    | 1-5 | 특정 회의에서 승인/합의된 Tdoc 목록은? | Meeting, TDoc Status | ✅ | ✅ | |\n    | 1-6 | 특정 Tdoc의 결정 결과(Status)는? | TDoc Status | ✅ | ✅ | |\n    | 1-7 | 특정 Tdoc의 목적(For)은? | For | ✅ | ✅ | |\n    | 1-8 | 특정 Tdoc의 담당자(Contact)는? | Contact | ✅ | ✅ | 빈값 존재 |\n    | 1-9 | 이번 회의 전체 Agenda 목록과 설명은? | Agenda item, description | ✅ | ✅ | |"
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN3/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+        "sha256": "40dfc0c8947b949db202638bc470459271e120ed0ac220d1faf7ad886029d6e3",
+        "bytes": 68314
+      },
+      "line_start": 692,
+      "line_end": 711,
+      "literal": "    \n    | 속성명 | Range | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | submittedBy | Company | Source | Tdoc을 제출한 회사/조직. 복수 회사가 공동 제출 가능 |\n    | hasContact | Contact | Contact | Tdoc의 담당자 (빈값 존재) |\n    | relatedTo | WorkItem | Related WIs | Tdoc이 관련된 Work Item. 다대다 |\n    | belongsTo | AgendaItem | Agenda item | Tdoc이 논의되는 Agenda Item (빈값 존재) |\n    | targetRelease | Release | Release | Tdoc이 대상으로 하는 3GPP Release (Rel-12~20) |\n    | presentedAt | Meeting | 파일명 | Tdoc이 발표/논의된 3GPP 회의 |\n    | isRevisionOf | Tdoc | Is revision of | 이 Tdoc이 수정한 이전 버전 Tdoc |\n    | revisedTo | Tdoc | Revised to | 이 Tdoc을 수정한 이후 버전 Tdoc. isRevisionOf의 역관계 |\n    | replyTo | Tdoc | Reply to | 이 Tdoc이 답변하는 대상 Tdoc |\n    | replyIn | Tdoc | Reply in | 이 Tdoc에 대한 답변 Tdoc (replyTo의 역관계) |\n    \n    ### 3.2 Data Property\n    \n    | 속성명 | Type | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | tdocNumber | String | TDoc | Tdoc의 고유 식별자. **형식: R3-NNNNNN (6자리)** |\n    | title | String | Title | Tdoc의 제목 |"
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+        "bytes": 71963
+      },
+      "line_start": 71,
+      "line_end": 99,
+      "literal": "# Tdoc and Subclasses\n# -----------------------------------------------------------------------------\n\ntdoc:Tdoc a owl:Class ;\n    rdfs:label \"TDoc\"@en ;\n    rdfs:comment \"3GPP Technical Document - base class for all meeting documents\"@en .\n\ntdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en .\n\ntdoc:LS a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Liaison Statement\"@en ;\n    rdfs:comment \"Liaison Statement for official communication between Working Groups or external organizations\"@en .\n\ntdoc:Summary a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Summary\"@en ;\n    rdfs:comment \"FL Summary or Moderator Summary document from Final Report\"@en .\n\ntdoc:SessionNotes a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Session Notes\"@en ;\n    rdfs:comment \"Session notes for ad-hoc discussions from Final Report\"@en .\n\n# -----------------------------------------------------------------------------\n# Resolution Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md"
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+        "bytes": 71963
+      },
+      "line_start": 279,
+      "line_end": 283,
+      "literal": "tdoc:targetRelease a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"target release\"@en ;\n    rdfs:comment \"Target 3GPP Release version for this TDoc or TechnicalReport\"@en ;\n    rdfs:domain [ a owl:Class ; owl:unionOf (tdoc:Tdoc tdoc:TechnicalReport) ] ;\n    rdfs:range tdoc:Release ."
+    },
+    {
+      "source_pin": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+        "bytes": 71963
+      },
+      "line_start": 304,
+      "line_end": 310,
+      "literal": "tdoc:presentedAt a owl:ObjectProperty ;\n    rdfs:label \"presented at\"@en ;\n    rdfs:comment \"Meeting where this TDoc was presented/discussed. Cardinality is 0..* in practice: a small fraction of TDocs are re-tabled at consecutive meetings under the same identifier (rare in the released RAN1 KG; 1 case in the current snapshot).\"@en ;\n    rdfs:domain tdoc:Tdoc ;\n    rdfs:range tdoc:Meeting .\n\ntdoc:isRevisionOf a owl:ObjectProperty, owl:FunctionalProperty ;"
+    }
+  ],
+  "complete_original_unfiltered_inputs": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P1_CQ1-4_recorded_release_context_v3/source_only_independent_review/all_original_Tdoc_identity_and_metadata_inputs.jsonl",
+      "sha256": "ac1894506f0c35bb72b2dfbb15ef3faefa41874664508bdbcef04a3b6b59100a",
+      "bytes": 7679602
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P1_CQ1-4_recorded_release_context_v3/source_only_independent_review/all_original_TARGET_RELEASE_source_operands.jsonl",
+      "sha256": "049ca39c16102fe023ae9290454c3fa58cb3295beb07cc5fc36c3db386b26de5",
+      "bytes": 4077844
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P1_CQ1-4_recorded_release_context_v3/source_only_independent_review/all_original_PRESENTED_AT_source_operands.jsonl",
+      "sha256": "558b38929b8d62f7da891a63c4a058d3f6aced441311a74bba68e92333834bbc",
+      "bytes": 8403535
+    }
+  ],
+  "database_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN3.sqlite",
+    "sha256": "ff55fe57ee9435c25b59e1d90c5ee09ee0ff167696c4afeb05f21e367f4c6a29",
+    "bytes": 248152064
+  },
+  "complete_recorded_domain_identity_diagnosis": {
+    "all_original_Tdoc_n": 58482,
+    "nonnull_unique_business_key_n": 58240,
+    "null_key_node_n": 242,
+    "null_key_nodes_have_any_TARGET_RELEASE_edge": false,
+    "all_TARGET_RELEASE_reachable_Tdocs_have_nonnull_unique_tdocNumber": true,
+    "null_business_key_records_pin": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN3_P1_CQ1-4_recorded_release_context_v3/source_only_independent_review/all_unfiltered_Tdoc_null_business_key_actual_node_maps.jsonl",
+      "sha256": "6f41976753c5b1c18efebdfc67430408a8531e57f6b277d2325136a3f9c9fe34",
+      "bytes": 52719
+    },
+    "interpretation": "Tdoc class also contains Summary subtype nodes without a document business key; preserve these full source maps as typed records. None has a recorded TARGET_RELEASE relationship. This does not assert physical release membership absence or infer any missing key."
+  },
+  "source_context_claim": "Phase1 original task is an Excel-derived document metadata survey; exact CQ1-4 maps Release alone, while discussed/presented Meeting is also expressly filename-derived. This is source-context evidence to test recorded target-Release meaning, not a statement that every registered/withdrawn document was actually spoken about.",
+  "substantive_independent_challenges": [
+    "Does exact phase1 CQ1-4 Release-column mapping plus release-scoped survey close recorded discussion scope, or does original English still require actual report speech evidence?",
+    "Is tdocNumber identity sufficient for List the TDocs, without making old extra title/type projections mandatory?",
+    "No approval, status, body presence, company, special Meeting or latest filter is introduced. Should absence of any of these be an original condition?",
+    "Unfiltered record-context completeness versus all physical standardization documents must remain distinct."
+  ],
+  "source_provenance_limit": "Actual original-process design/schema paths are pinned as available preserved operational context. Their file timestamps/version prose do not prove authenticated historical bytes.",
+  "proposer_primary_newSQL_gold_native_predictions_omitted": true,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "native_API_calls_n": 0
+}
