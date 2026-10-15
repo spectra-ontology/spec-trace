@@ -1,0 +1,7 @@
+This separate source variant keeps the original CQ017 English question and its top-20 CR identity role. It adds the own-report meeting start/end dates to 60 existing Meeting nodes, with no new nodes or edges. The frozen 560-question index, prior gold and base stores remain unchanged.
+
+The source package includes all 192 authentic own-report frontmatter windows, 8 raw authored paragraphs each; full report body equality is not established. Serialized XML fragments preserve the actual paragraph structure and are linked to original archive, member and full document XML hashes. Meeting-period dates are neither upload nor approval times. Human/expert validation is 0.
+
+Run `python verify_rebuild.py` for portable source verification and `python evaluation/verify_controls.py` for the 22 actual-data scoring controls. To rebuild separate stores, provide `--base-sql ORIGINAL_RAN1.sqlite --base-ttl ORIGINAL_RAN1-body.ttl --rebuild-dir NEW_DIRECTORY`. The original store hashes are enforced; no full SQL or RDF snapshot is included in this package. Rebuilt SQL may have different physical bytes while its full records follow the same additive contract.
+
+The reference includes the full 3,041-CR ranking population and all ordering groups. Any 20-row response must contain the 18 more recent CR identities and any 2 from the 46-CR boundary group; display order is free. The complete ranking pool is evidence, not a request to return all 3,041 CRs. New model predictions must be evaluated separately; historical scores are not transferred.

@@ -384,3 +384,5 @@ Documentary approval and normative incorporation for17CRs are available as a [se
 The [separate source10 four-method evaluation](cqs/original_core_source_table_correction10_evaluation/README.md) retains all actual first responses, failures and offline score replay. All four requested-record F1 values are0 for this one-question source snapshot.
 
 The [separate source17 four-method evaluation](cqs/original_core_source_CR_incorporation17_evaluation/README.md) includes actual responses and offline replay. Text2SQL returned all3 requested identities but did not implement the approval/incorporation predicate; requested-record F1=1 is not source-provenance validation.
+
+Separate own-report Meeting calendar60 correction and actual four-method results: [source and rebuild](cqs/original_core_source_Meeting_calendar60), [model evaluation](cqs/original_core_source_Meeting_calendar60_evaluation). Record F1 does not validate generated query source predicates.
