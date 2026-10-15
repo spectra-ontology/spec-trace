@@ -1,0 +1,1705 @@
+{
+  "id": "RAN1_P3_CQ036",
+  "repair_sha256": "7891756ebef2d618d3ff3f4a910a6c8e742ec97de71d8b784fc97be23d9090a9",
+  "original_question_sha256": "40d6cbef7956b165a20651d2cb5c80fa74f3cc834dacf99e0e775ae6046ee8e0",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Independent secondary direct Codex original/source-context review /root/reaudit_ran2_ran5",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "Compare the top5 TSs by CR count against their section counts explicitly requests the TS identity, CR count and Section count for each selected TS. specNumber/crCount/sectionCount close those three roles with nonnull string/integer/integer types. The complexity vs change frequency purpose does not explicitly request a correlation coefficient, causal claim, per-release distribution, individual CR names or section titles; such outputs are optional explanations rather than mandatory answer fields.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 168,
+          "line_end": 176,
+          "literal": "    ### CQ5. 통합 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |\n    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |\n    | 5-3 | 특정 Release에서 변경된 TS 목록은? |\n    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 179,
+          "line_end": 215,
+          "literal": "    ## 5. CQ 결과 규칙\n    \n    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |\n    | 전체 조회 | 전체 | CQ1-3 (breadcrumb) |\n    \n    ---\n    \n    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 518,
+          "line_end": 544,
+          "literal": "    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1410,
+          "line_end": 1426,
+          "literal": "    \n    ## 2. 데이터 소스\n    \n    ### 2.1 TS 문서 목록\n    \n    | # | TS 번호 | 제목 | 버전 |\n    | --- | --- | --- | --- |\n    | 1 | 38.201 | Physical layer; General description | j00 |\n    | 2 | 38.202 | Services provided by the physical layer | j00 |\n    | 3 | 38.211 | Physical channels and modulation | j10 |\n    | 4 | 38.212 | Multiplexing and channel coding | j10 |\n    | 5 | 38.213 | Physical layer procedures for control | j10 |\n    | 6 | 38.214 | Physical layer procedures for data | j10 |\n    | 7 | 38.215 | Physical layer measurements | j10 |\n    | 8 | 38.291 | NR positioning; NR positioning enhancements | j10 |\n    \n    ### 2.2 인스턴스 소스"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 140,
+          "line_end": 165,
+          "literal": "    rdfs:label \"Work Item\"@en ;\n    rdfs:comment \"3GPP Work Item (WI) or Study Item (SI)\"@en .\n\ntdoc:AgendaItem a owl:Class ;\n    rdfs:label \"Agenda Item\"@en ;\n    rdfs:comment \"Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)\"@en .\n\ntdoc:Release a owl:Class ;\n    rdfs:label \"Release\"@en ;\n    rdfs:comment \"3GPP Release version (e.g., Rel-18, Rel-19)\"@en .\n\ntdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en .\n\ntdoc:WorkingGroup a owl:Class ;\n    rdfs:label \"Working Group\"@en ;\n    rdfs:comment \"3GPP Working Group (e.g., RAN1, RAN2, SA2)\"@en .\n\n# -----------------------------------------------------------------------------\n# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md\n# -----------------------------------------------------------------------------\n\ntdoc:Figure a owl:Class ;\n    rdfs:label \"Figure\"@en ;\n    rdfs:comment \"Technical figure embedded in Final Report (captioned or structural >50KB)\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1230,
+          "line_end": 1252,
+          "literal": "    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;\n    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:level a owl:DatatypeProperty ;\n    rdfs:label \"level\"@en ;\n    rdfs:comment \"Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:integer .\n\ntdoc:isVoid a owl:DatatypeProperty ;\n    rdfs:label \"is void\"@en ;"
+        }
+      ],
+      "additional_CR_class_source": {
+        "CR_class_actual_literal": "\ntdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en .\n",
+        "ontology_pin": {
+          "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+          "bytes": 71963,
+          "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+        },
+        "Phase1_design_pin": {
+          "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+          "bytes": 64413,
+          "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+        },
+        "Phase1_CR_type_literal": "| CR | Type이 CR, draftCR, pCR |",
+        "formal_number_limit": "| crNumber | String | CR | CR의 공식 번호 (예: 0693). draftCR은 이 값이 없음 |"
+      }
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "The original Phase3 design §6 expressly fixes the RAN1 TS domain to38.201,38.202,38.211–215,38.291, and §2.1 independently enumerates all eight. This domain is source-context evidence beyond the old query whitelist. The original release-aware schema expressly describes release-blind aggregation through the hub and all retained release variants; this request does not choose a single edition or latest/current Section snapshot. Optional CR and Section matches include every declared family even with recorded zero counts; absence of a retained observation is not real-world no activity.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 168,
+          "line_end": 176,
+          "literal": "    ### CQ5. 통합 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |\n    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |\n    | 5-3 | 특정 Release에서 변경된 TS 목록은? |\n    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 179,
+          "line_end": 215,
+          "literal": "    ## 5. CQ 결과 규칙\n    \n    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |\n    | 전체 조회 | 전체 | CQ1-3 (breadcrumb) |\n    \n    ---\n    \n    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 518,
+          "line_end": 544,
+          "literal": "    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1410,
+          "line_end": 1426,
+          "literal": "    \n    ## 2. 데이터 소스\n    \n    ### 2.1 TS 문서 목록\n    \n    | # | TS 번호 | 제목 | 버전 |\n    | --- | --- | --- | --- |\n    | 1 | 38.201 | Physical layer; General description | j00 |\n    | 2 | 38.202 | Services provided by the physical layer | j00 |\n    | 3 | 38.211 | Physical channels and modulation | j10 |\n    | 4 | 38.212 | Multiplexing and channel coding | j10 |\n    | 5 | 38.213 | Physical layer procedures for control | j10 |\n    | 6 | 38.214 | Physical layer procedures for data | j10 |\n    | 7 | 38.215 | Physical layer measurements | j10 |\n    | 8 | 38.291 | NR positioning; NR positioning enhancements | j10 |\n    \n    ### 2.2 인스턴스 소스"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 140,
+          "line_end": 165,
+          "literal": "    rdfs:label \"Work Item\"@en ;\n    rdfs:comment \"3GPP Work Item (WI) or Study Item (SI)\"@en .\n\ntdoc:AgendaItem a owl:Class ;\n    rdfs:label \"Agenda Item\"@en ;\n    rdfs:comment \"Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)\"@en .\n\ntdoc:Release a owl:Class ;\n    rdfs:label \"Release\"@en ;\n    rdfs:comment \"3GPP Release version (e.g., Rel-18, Rel-19)\"@en .\n\ntdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en .\n\ntdoc:WorkingGroup a owl:Class ;\n    rdfs:label \"Working Group\"@en ;\n    rdfs:comment \"3GPP Working Group (e.g., RAN1, RAN2, SA2)\"@en .\n\n# -----------------------------------------------------------------------------\n# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md\n# -----------------------------------------------------------------------------\n\ntdoc:Figure a owl:Class ;\n    rdfs:label \"Figure\"@en ;\n    rdfs:comment \"Technical figure embedded in Final Report (captioned or structural >50KB)\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1230,
+          "line_end": 1252,
+          "literal": "    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;\n    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:level a owl:DatatypeProperty ;\n    rdfs:label \"level\"@en ;\n    rdfs:comment \"Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:integer .\n\ntdoc:isVoid a owl:DatatypeProperty ;\n    rdfs:label \"is void\"@en ;"
+        }
+      ],
+      "additional_CR_class_source": {
+        "CR_class_actual_literal": "\ntdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en .\n",
+        "ontology_pin": {
+          "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+          "bytes": 71963,
+          "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+        },
+        "Phase1_design_pin": {
+          "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+          "bytes": 64413,
+          "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+        },
+        "Phase1_CR_type_literal": "| CR | Type이 CR, draftCR, pCR |",
+        "formal_number_limit": "| crNumber | String | CR | CR의 공식 번호 (예: 0693). draftCR은 이 값이 없음 |"
+      }
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "The actual original CR class is a Tdoc subclass for CR/draftCR/pCR documents, and Phase1 assigns the class from these type values. The question ranks CR document observations modifying the declared TS family through MODIFIES and then counts its owned recorded Sections through BELONGS_TO_SPEC. It supplies no approval, agreement, formal-numeric-CR-only, meeting date or chosen-release filter. The full candidate remains a count comparison, not an assertion that proposed CRs entered normative text.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 168,
+          "line_end": 176,
+          "literal": "    ### CQ5. 통합 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |\n    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |\n    | 5-3 | 특정 Release에서 변경된 TS 목록은? |\n    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 179,
+          "line_end": 215,
+          "literal": "    ## 5. CQ 결과 규칙\n    \n    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |\n    | 전체 조회 | 전체 | CQ1-3 (breadcrumb) |\n    \n    ---\n    \n    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 518,
+          "line_end": 544,
+          "literal": "    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1410,
+          "line_end": 1426,
+          "literal": "    \n    ## 2. 데이터 소스\n    \n    ### 2.1 TS 문서 목록\n    \n    | # | TS 번호 | 제목 | 버전 |\n    | --- | --- | --- | --- |\n    | 1 | 38.201 | Physical layer; General description | j00 |\n    | 2 | 38.202 | Services provided by the physical layer | j00 |\n    | 3 | 38.211 | Physical channels and modulation | j10 |\n    | 4 | 38.212 | Multiplexing and channel coding | j10 |\n    | 5 | 38.213 | Physical layer procedures for control | j10 |\n    | 6 | 38.214 | Physical layer procedures for data | j10 |\n    | 7 | 38.215 | Physical layer measurements | j10 |\n    | 8 | 38.291 | NR positioning; NR positioning enhancements | j10 |\n    \n    ### 2.2 인스턴스 소스"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 140,
+          "line_end": 165,
+          "literal": "    rdfs:label \"Work Item\"@en ;\n    rdfs:comment \"3GPP Work Item (WI) or Study Item (SI)\"@en .\n\ntdoc:AgendaItem a owl:Class ;\n    rdfs:label \"Agenda Item\"@en ;\n    rdfs:comment \"Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)\"@en .\n\ntdoc:Release a owl:Class ;\n    rdfs:label \"Release\"@en ;\n    rdfs:comment \"3GPP Release version (e.g., Rel-18, Rel-19)\"@en .\n\ntdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en .\n\ntdoc:WorkingGroup a owl:Class ;\n    rdfs:label \"Working Group\"@en ;\n    rdfs:comment \"3GPP Working Group (e.g., RAN1, RAN2, SA2)\"@en .\n\n# -----------------------------------------------------------------------------\n# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md\n# -----------------------------------------------------------------------------\n\ntdoc:Figure a owl:Class ;\n    rdfs:label \"Figure\"@en ;\n    rdfs:comment \"Technical figure embedded in Final Report (captioned or structural >50KB)\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1230,
+          "line_end": 1252,
+          "literal": "    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;\n    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:level a owl:DatatypeProperty ;\n    rdfs:label \"level\"@en ;\n    rdfs:comment \"Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:integer .\n\ntdoc:isVoid a owl:DatatypeProperty ;\n    rdfs:label \"is void\"@en ;"
+        }
+      ],
+      "additional_CR_class_source": {
+        "CR_class_actual_literal": "\ntdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en .\n",
+        "ontology_pin": {
+          "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+          "bytes": 71963,
+          "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+        },
+        "Phase1_design_pin": {
+          "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+          "bytes": 64413,
+          "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+        },
+        "Phase1_CR_type_literal": "| CR | Type이 CR, draftCR, pCR |",
+        "formal_number_limit": "| crNumber | String | CR | CR의 공식 번호 (예: 0693). draftCR은 이 값이 없음 |"
+      }
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "One TS-family member is identified by specNumber. CR document nodes have unique recorded tdocNumber identities; draft/pCR records can lack a formal CR number, so counting only numeric crNumber or deduplicating formal spec+CR would silently change the original class unit. count(DISTINCT cr) removes join multiplicity to hub/edition witnesses. Section identities are release-aware, and count(DISTINCT sec.sectionId) counts each original recorded Section once across that family; it does not collapse different retained releases into a single invented edition. Sequential aggregates prevent a CR×Section product.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 168,
+          "line_end": 176,
+          "literal": "    ### CQ5. 통합 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |\n    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |\n    | 5-3 | 특정 Release에서 변경된 TS 목록은? |\n    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 179,
+          "line_end": 215,
+          "literal": "    ## 5. CQ 결과 규칙\n    \n    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |\n    | 전체 조회 | 전체 | CQ1-3 (breadcrumb) |\n    \n    ---\n    \n    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 518,
+          "line_end": 544,
+          "literal": "    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1410,
+          "line_end": 1426,
+          "literal": "    \n    ## 2. 데이터 소스\n    \n    ### 2.1 TS 문서 목록\n    \n    | # | TS 번호 | 제목 | 버전 |\n    | --- | --- | --- | --- |\n    | 1 | 38.201 | Physical layer; General description | j00 |\n    | 2 | 38.202 | Services provided by the physical layer | j00 |\n    | 3 | 38.211 | Physical channels and modulation | j10 |\n    | 4 | 38.212 | Multiplexing and channel coding | j10 |\n    | 5 | 38.213 | Physical layer procedures for control | j10 |\n    | 6 | 38.214 | Physical layer procedures for data | j10 |\n    | 7 | 38.215 | Physical layer measurements | j10 |\n    | 8 | 38.291 | NR positioning; NR positioning enhancements | j10 |\n    \n    ### 2.2 인스턴스 소스"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 140,
+          "line_end": 165,
+          "literal": "    rdfs:label \"Work Item\"@en ;\n    rdfs:comment \"3GPP Work Item (WI) or Study Item (SI)\"@en .\n\ntdoc:AgendaItem a owl:Class ;\n    rdfs:label \"Agenda Item\"@en ;\n    rdfs:comment \"Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)\"@en .\n\ntdoc:Release a owl:Class ;\n    rdfs:label \"Release\"@en ;\n    rdfs:comment \"3GPP Release version (e.g., Rel-18, Rel-19)\"@en .\n\ntdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en .\n\ntdoc:WorkingGroup a owl:Class ;\n    rdfs:label \"Working Group\"@en ;\n    rdfs:comment \"3GPP Working Group (e.g., RAN1, RAN2, SA2)\"@en .\n\n# -----------------------------------------------------------------------------\n# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md\n# -----------------------------------------------------------------------------\n\ntdoc:Figure a owl:Class ;\n    rdfs:label \"Figure\"@en ;\n    rdfs:comment \"Technical figure embedded in Final Report (captioned or structural >50KB)\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1230,
+          "line_end": 1252,
+          "literal": "    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;\n    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:level a owl:DatatypeProperty ;\n    rdfs:label \"level\"@en ;\n    rdfs:comment \"Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:integer .\n\ntdoc:isVoid a owl:DatatypeProperty ;\n    rdfs:label \"is void\"@en ;"
+        }
+      ],
+      "additional_CR_class_source": {
+        "CR_class_actual_literal": "\ntdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en .\n",
+        "ontology_pin": {
+          "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+          "bytes": 71963,
+          "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+        },
+        "Phase1_design_pin": {
+          "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+          "bytes": 64413,
+          "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+        },
+        "Phase1_CR_type_literal": "| CR | Type이 CR, draftCR, pCR |",
+        "formal_number_limit": "| crNumber | String | CR | CR의 공식 번호 (예: 0693). draftCR은 이 값이 없음 |"
+      }
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "Top5 requires five eligible highest-CR-count families, with their own complete count pair. The uncapped source query retains the entire fixed eight-family eligible pool rather than selecting one arbitrary boundary tie before scoring. The top_k_boundary_ties contract permits any subset at the fifth-count boundary and rejects lower-count replacement or fewer than5 records when the pool supports5. Complete original unfiltered class/edge inputs independently match immutable SQLite. Native full capture and actual scorer controls remain separate gates; no observed rank/count was used to derive this cardinality.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 168,
+          "line_end": 176,
+          "literal": "    ### CQ5. 통합 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |\n    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |\n    | 5-3 | 특정 Release에서 변경된 TS 목록은? |\n    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 179,
+          "line_end": 215,
+          "literal": "    ## 5. CQ 결과 규칙\n    \n    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |\n    | 전체 조회 | 전체 | CQ1-3 (breadcrumb) |\n    \n    ---\n    \n    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 518,
+          "line_end": 544,
+          "literal": "    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1410,
+          "line_end": 1426,
+          "literal": "    \n    ## 2. 데이터 소스\n    \n    ### 2.1 TS 문서 목록\n    \n    | # | TS 번호 | 제목 | 버전 |\n    | --- | --- | --- | --- |\n    | 1 | 38.201 | Physical layer; General description | j00 |\n    | 2 | 38.202 | Services provided by the physical layer | j00 |\n    | 3 | 38.211 | Physical channels and modulation | j10 |\n    | 4 | 38.212 | Multiplexing and channel coding | j10 |\n    | 5 | 38.213 | Physical layer procedures for control | j10 |\n    | 6 | 38.214 | Physical layer procedures for data | j10 |\n    | 7 | 38.215 | Physical layer measurements | j10 |\n    | 8 | 38.291 | NR positioning; NR positioning enhancements | j10 |\n    \n    ### 2.2 인스턴스 소스"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 140,
+          "line_end": 165,
+          "literal": "    rdfs:label \"Work Item\"@en ;\n    rdfs:comment \"3GPP Work Item (WI) or Study Item (SI)\"@en .\n\ntdoc:AgendaItem a owl:Class ;\n    rdfs:label \"Agenda Item\"@en ;\n    rdfs:comment \"Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)\"@en .\n\ntdoc:Release a owl:Class ;\n    rdfs:label \"Release\"@en ;\n    rdfs:comment \"3GPP Release version (e.g., Rel-18, Rel-19)\"@en .\n\ntdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en .\n\ntdoc:WorkingGroup a owl:Class ;\n    rdfs:label \"Working Group\"@en ;\n    rdfs:comment \"3GPP Working Group (e.g., RAN1, RAN2, SA2)\"@en .\n\n# -----------------------------------------------------------------------------\n# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md\n# -----------------------------------------------------------------------------\n\ntdoc:Figure a owl:Class ;\n    rdfs:label \"Figure\"@en ;\n    rdfs:comment \"Technical figure embedded in Final Report (captioned or structural >50KB)\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1230,
+          "line_end": 1252,
+          "literal": "    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;\n    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:level a owl:DatatypeProperty ;\n    rdfs:label \"level\"@en ;\n    rdfs:comment \"Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:integer .\n\ntdoc:isVoid a owl:DatatypeProperty ;\n    rdfs:label \"is void\"@en ;"
+        }
+      ],
+      "additional_CR_class_source": {
+        "CR_class_actual_literal": "\ntdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en .\n",
+        "ontology_pin": {
+          "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+          "bytes": 71963,
+          "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+        },
+        "Phase1_design_pin": {
+          "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+          "bytes": 64413,
+          "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+        },
+        "Phase1_CR_type_literal": "| CR | Type이 CR, draftCR, pCR |",
+        "formal_number_limit": "| crNumber | String | CR | CR의 공식 번호 (예: 0693). draftCR은 이 값이 없음 |"
+      }
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "The original English requests top5 membership by CR count, but does not request a mandatory serialization order among returned families. require_rank_orderfalse and within_tie_orderany preserve that meaning. Count-descending native query order supplies ranking groups and specNumber ascending is deterministic presentation; it does not impose an extra name-based tie winner. Permuting complete eligible records is equivalent, while displacing a required higher-rank member or changing its paired counts is not.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 168,
+          "line_end": 176,
+          "literal": "    ### CQ5. 통합 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |\n    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |\n    | 5-3 | 특정 Release에서 변경된 TS 목록은? |\n    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 179,
+          "line_end": 215,
+          "literal": "    ## 5. CQ 결과 규칙\n    \n    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |\n    | 전체 조회 | 전체 | CQ1-3 (breadcrumb) |\n    \n    ---\n    \n    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 518,
+          "line_end": 544,
+          "literal": "    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1410,
+          "line_end": 1426,
+          "literal": "    \n    ## 2. 데이터 소스\n    \n    ### 2.1 TS 문서 목록\n    \n    | # | TS 번호 | 제목 | 버전 |\n    | --- | --- | --- | --- |\n    | 1 | 38.201 | Physical layer; General description | j00 |\n    | 2 | 38.202 | Services provided by the physical layer | j00 |\n    | 3 | 38.211 | Physical channels and modulation | j10 |\n    | 4 | 38.212 | Multiplexing and channel coding | j10 |\n    | 5 | 38.213 | Physical layer procedures for control | j10 |\n    | 6 | 38.214 | Physical layer procedures for data | j10 |\n    | 7 | 38.215 | Physical layer measurements | j10 |\n    | 8 | 38.291 | NR positioning; NR positioning enhancements | j10 |\n    \n    ### 2.2 인스턴스 소스"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 140,
+          "line_end": 165,
+          "literal": "    rdfs:label \"Work Item\"@en ;\n    rdfs:comment \"3GPP Work Item (WI) or Study Item (SI)\"@en .\n\ntdoc:AgendaItem a owl:Class ;\n    rdfs:label \"Agenda Item\"@en ;\n    rdfs:comment \"Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)\"@en .\n\ntdoc:Release a owl:Class ;\n    rdfs:label \"Release\"@en ;\n    rdfs:comment \"3GPP Release version (e.g., Rel-18, Rel-19)\"@en .\n\ntdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en .\n\ntdoc:WorkingGroup a owl:Class ;\n    rdfs:label \"Working Group\"@en ;\n    rdfs:comment \"3GPP Working Group (e.g., RAN1, RAN2, SA2)\"@en .\n\n# -----------------------------------------------------------------------------\n# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md\n# -----------------------------------------------------------------------------\n\ntdoc:Figure a owl:Class ;\n    rdfs:label \"Figure\"@en ;\n    rdfs:comment \"Technical figure embedded in Final Report (captioned or structural >50KB)\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1230,
+          "line_end": 1252,
+          "literal": "    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;\n    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:level a owl:DatatypeProperty ;\n    rdfs:label \"level\"@en ;\n    rdfs:comment \"Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:integer .\n\ntdoc:isVoid a owl:DatatypeProperty ;\n    rdfs:label \"is void\"@en ;"
+        }
+      ],
+      "additional_CR_class_source": {
+        "CR_class_actual_literal": "\ntdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en .\n",
+        "ontology_pin": {
+          "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+          "bytes": 71963,
+          "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+        },
+        "Phase1_design_pin": {
+          "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+          "bytes": 64413,
+          "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+        },
+        "Phase1_CR_type_literal": "| CR | Type이 CR, draftCR, pCR |",
+        "formal_number_limit": "| crNumber | String | CR | CR의 공식 번호 (예: 0693). draftCR은 이 값이 없음 |"
+      }
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "The finite TS domain, CR document class, release-aware Section identity and release-blind aggregation operation are all stated in the original design/schema. No result-size inference, proposer verdict, current worldwide ownership catalogue or external causal interpretation defines the contract. Current source bytes do not prove authoring chronology or complete physical archive recovery. Own prior actual raw heading corroboration supports Section metadata provenance only. This is direct nonblind AI development diagnosis, with human/expert0 and no new model/native/scorer/admission claim.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 168,
+          "line_end": 176,
+          "literal": "    ### CQ5. 통합 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |\n    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |\n    | 5-3 | 특정 Release에서 변경된 TS 목록은? |\n    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 179,
+          "line_end": 215,
+          "literal": "    ## 5. CQ 결과 규칙\n    \n    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |\n    | 전체 조회 | 전체 | CQ1-3 (breadcrumb) |\n    \n    ---\n    \n    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 518,
+          "line_end": 544,
+          "literal": "    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1410,
+          "line_end": 1426,
+          "literal": "    \n    ## 2. 데이터 소스\n    \n    ### 2.1 TS 문서 목록\n    \n    | # | TS 번호 | 제목 | 버전 |\n    | --- | --- | --- | --- |\n    | 1 | 38.201 | Physical layer; General description | j00 |\n    | 2 | 38.202 | Services provided by the physical layer | j00 |\n    | 3 | 38.211 | Physical channels and modulation | j10 |\n    | 4 | 38.212 | Multiplexing and channel coding | j10 |\n    | 5 | 38.213 | Physical layer procedures for control | j10 |\n    | 6 | 38.214 | Physical layer procedures for data | j10 |\n    | 7 | 38.215 | Physical layer measurements | j10 |\n    | 8 | 38.291 | NR positioning; NR positioning enhancements | j10 |\n    \n    ### 2.2 인스턴스 소스"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 140,
+          "line_end": 165,
+          "literal": "    rdfs:label \"Work Item\"@en ;\n    rdfs:comment \"3GPP Work Item (WI) or Study Item (SI)\"@en .\n\ntdoc:AgendaItem a owl:Class ;\n    rdfs:label \"Agenda Item\"@en ;\n    rdfs:comment \"Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)\"@en .\n\ntdoc:Release a owl:Class ;\n    rdfs:label \"Release\"@en ;\n    rdfs:comment \"3GPP Release version (e.g., Rel-18, Rel-19)\"@en .\n\ntdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en .\n\ntdoc:WorkingGroup a owl:Class ;\n    rdfs:label \"Working Group\"@en ;\n    rdfs:comment \"3GPP Working Group (e.g., RAN1, RAN2, SA2)\"@en .\n\n# -----------------------------------------------------------------------------\n# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md\n# -----------------------------------------------------------------------------\n\ntdoc:Figure a owl:Class ;\n    rdfs:label \"Figure\"@en ;\n    rdfs:comment \"Technical figure embedded in Final Report (captioned or structural >50KB)\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1230,
+          "line_end": 1252,
+          "literal": "    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;\n    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:level a owl:DatatypeProperty ;\n    rdfs:label \"level\"@en ;\n    rdfs:comment \"Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:integer .\n\ntdoc:isVoid a owl:DatatypeProperty ;\n    rdfs:label \"is void\"@en ;"
+        }
+      ],
+      "additional_CR_class_source": {
+        "CR_class_actual_literal": "\ntdoc:CR a owl:Class ;\n    rdfs:subClassOf tdoc:Tdoc ;\n    rdfs:label \"Change Request\"@en ;\n    rdfs:comment \"Change Request document that modifies a 3GPP specification (TS/TR). Includes CR, draftCR, and pCR types.\"@en .\n",
+        "ontology_pin": {
+          "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+          "bytes": 71963,
+          "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+        },
+        "Phase1_design_pin": {
+          "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+          "bytes": 64413,
+          "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+        },
+        "Phase1_CR_type_literal": "| CR | Type이 CR, draftCR, pCR |",
+        "formal_number_limit": "| crNumber | String | CR | CR의 공식 번호 (예: 0693). draftCR은 이 값이 없음 |"
+      }
+    }
+  ],
+  "exact_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/canonical_source_only_definition.json",
+    "bytes": 2911,
+    "sha256": "3f11f599af547f1a6696838c275e66116583f429b044a469cd916c389ff971b2"
+  },
+  "source_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/original_English_KO_explicit_TS_scope_and_count_units_source_only_packet.json",
+    "bytes": 16469,
+    "sha256": "7cf2cc7755cd4bd0fe5c6c322f8926d6529809ac1eb50df3b54a7e81299e6d5c"
+  },
+  "actual_Korean_record": {
+    "id": "CQ036",
+    "category": "통합분석",
+    "persona": "전략기획",
+    "question": "CR이 가장 많이 발생한 TS Top 5와 각 TS의 Section 수를 비교해줘. 복잡도와 변경 빈도의 상관관계를 보고 싶어",
+    "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] WITH sp.specNumber AS ts, count(cr) AS crCount ORDER BY crCount DESC LIMIT 5 MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp2:Spec {specNumber: ts}) RETURN ts, crCount, count(sec) AS sectionCount ORDER BY crCount DESC",
+    "original_id": "CQ086"
+  },
+  "complete_unfiltered_SQL_integrity": {
+    "all_recorded_classes_and_edges_equal": true,
+    "role_input_record_counts": {
+      "Spec": 127,
+      "CR": 10715,
+      "Section": 3942,
+      "MODIFIES": 10671,
+      "BELONGS_TO_SPEC": 3942
+    },
+    "CR_tdocNumber_unique": true,
+    "Section_releaseaware_ID_unique": true,
+    "explicit_original_TS_domain": [
+      "38.201",
+      "38.202",
+      "38.211",
+      "38.212",
+      "38.213",
+      "38.214",
+      "38.215",
+      "38.291"
+    ]
+  },
+  "prior_own_actual_source_heading_receipt_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/crossreview_RAN1_P3_CQ035_original_title_keyword_context.json",
+    "bytes": 56299,
+    "sha256": "87d3d9b31a0288a0b88cbbc4bac9603f67f99a88da0a55980292f676cb78caac"
+  },
+  "exposure": "Read only clean source-only packet/canonical task and actual original English/KO/design/schema plus complete unfiltered class/edge identities. Proposer primary, filtered SQL, aggregate counts/ranks, gold/native/predictions unread. Independent SQLite reads were entire input comparisons only.",
+  "limits": [
+    "Original recorded CR counts include source CR/draftCR/pCR documents; no formal approved-change or legal identity claim.",
+    "Section observations aggregate all retained release-aware source records; no single current-edition complexity assertion.",
+    "No correlation coefficient or causal advantage is asserted by these requested count roles."
+  ],
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "native_execution_completed": false,
+  "new_admissions": 0,
+  "external_model_APIcalls": 0,
+  "input_pins_before": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/manifest.json",
+      "bytes": 1033,
+      "sha256": "4c5968bf0bc452a7e62e3d73cd5ea86ba8bd18a01bccea358ce6f961d315165e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/canonical_source_only_definition.json",
+      "bytes": 2911,
+      "sha256": "3f11f599af547f1a6696838c275e66116583f429b044a469cd916c389ff971b2"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/original_English_KO_explicit_TS_scope_and_count_units_source_only_packet.json",
+      "bytes": 16469,
+      "sha256": "7cf2cc7755cd4bd0fe5c6c322f8926d6529809ac1eb50df3b54a7e81299e6d5c"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+      "bytes": 3382,
+      "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1_pending.jsonl",
+      "bytes": 530056,
+      "sha256": "228d50e60edeb76e60ba38d27a0669d408ad09638cb72679818bfd5b251874b3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN1/phase-3/cq_test_dataset.json",
+      "bytes": 33191,
+      "sha256": "a746bc5ae143c64f286246bfd8184b54a2c52b54a5d95ced9ca240bb2f4c3b3e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+      "bytes": 64413,
+      "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_Spec_inputs.jsonl",
+      "bytes": 14797,
+      "sha256": "2e6bcbf9582d0c7d024dca345e2fe76c4d6419c67703db9892ee12ba35dd01d2"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_CR_inputs.jsonl",
+      "bytes": 8592770,
+      "sha256": "2dfcea8dbb5e4cfe9e1fd7b601c5095940525ef867ee1834cdc2fcb45bbd8295"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_Section_inputs.jsonl",
+      "bytes": 624904,
+      "sha256": "541bba02e274e5a22c300faa56d0a69f8ecc6b0160caa331bab3459324123cdf"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_MODIFIES_inputs.jsonl",
+      "bytes": 594194,
+      "sha256": "3f39822211ea07e37613d6cc73713ab6384a65644b54949b5de111d1cd427250"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_BELONGS_TO_SPEC_inputs.jsonl",
+      "bytes": 220752,
+      "sha256": "f10808d9bdf6d4240a756e61f8d83941bc65fa0c5ba098abc157890e157c3d1a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/all3942_frozen_Sections_source_heading_direct_and_hierarchy_status.jsonl",
+      "bytes": 10059157,
+      "sha256": "67535cf2037045a69021c514282935eef787e94e529f615c95927150856362a3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/crossreview_RAN1_P3_CQ035_original_title_keyword_context.json",
+      "bytes": 56299,
+      "sha256": "87d3d9b31a0288a0b88cbbc4bac9603f67f99a88da0a55980292f676cb78caac"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-f00.docx",
+      "bytes": 62757,
+      "sha256": "78113fc84a603ab94e55c243e820fda7aed9a491fee508ef24dbf2089afdf6c6"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-15_document.original-or-derived.xml",
+      "bytes": 232270,
+      "sha256": "182302b64208f4a3eadd187b9a0bd93735bec122b7f49b5800763dd8c373c3a1"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-g00.docx",
+      "bytes": 63557,
+      "sha256": "0e8ff649d6a2ea0db17a7ab15b6bfec35796c69f1a6b70189db492c8a0332922"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-16_document.original-or-derived.xml",
+      "bytes": 245588,
+      "sha256": "ff6510aaac99ea1af58aa7b06b2df5d062f537dca6da8461f517e49975067b85"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-h00.docx",
+      "bytes": 63727,
+      "sha256": "0ca96494315337bd3544e2197e46a3291a651132b26b4832bb0b7937611928f1"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-17_document.original-or-derived.xml",
+      "bytes": 251024,
+      "sha256": "a001472c0d9eff0660f41837c222a5bfae5d3d441f73fb571da7f5281fe475cf"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-i00.docx",
+      "bytes": 139325,
+      "sha256": "b5e7b182c0e78cf3d515bbe6eb3095b93420c008750021c8c4545187412036ba"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-18_document.original-or-derived.xml",
+      "bytes": 265853,
+      "sha256": "e8b31b4639469bec1a5a880360442895c74ff800b5fdfbe03b34da2d590224b0"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-j00.docx",
+      "bytes": 140473,
+      "sha256": "73c183cdc834261356b592182d5385b97529af79ec85e0a6fe5382ddf8275ab1"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-19_document.original-or-derived.xml",
+      "bytes": 289784,
+      "sha256": "4ba8d2696f8abf1addb2471ffe93badb3961d5c2865b4d0fda5b5a9ff3d5561a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-15/38202-f60.docx",
+      "bytes": 593902,
+      "sha256": "3c07b9212720f3e1195ba234554d98c11f1671802e48dc5061dcd667b151f031"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-15_document.original-or-derived.xml",
+      "bytes": 327453,
+      "sha256": "9789f0883be9b1f7be7aebcc1460eab688cd79ea4013be6ec3453ea3764e90bf"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-16/38202-g40.docx",
+      "bytes": 1020852,
+      "sha256": "beab1550fa8cff58794ce583d82af32b4f3a61f03f9ed1b2ce5a7d3eccbc106a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-16_document.original-or-derived.xml",
+      "bytes": 505141,
+      "sha256": "ce088ba45cb000c0646a0b654bb3216721dc155c7d1b6e2bdeaa67e5d173e588"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-17/38202-h50.docx",
+      "bytes": 1027743,
+      "sha256": "5b384489eff86520b305d00f1345aca6bddf76ace45c1b6e0e6b6e7e6e7c5858"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-17_document.original-or-derived.xml",
+      "bytes": 605512,
+      "sha256": "5bba242f3f51dcf0257e7654ab497cb9178c770897d2bde6083891b8aeb1f155"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-18/38202-i40.docx",
+      "bytes": 1067675,
+      "sha256": "6c766fe6169f27a88d9c9b6ae726e9ef5ef3b799c9a4964bd1a75b1470a9896b"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-18_document.original-or-derived.xml",
+      "bytes": 694461,
+      "sha256": "a041d0c371fd74d57a82d71245816835d1d4c4c931ddbb1c7d3835a9bb1d3660"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-19/38202-j00.docx",
+      "bytes": 1067988,
+      "sha256": "05b32e1b7bfb08d67932bd2936b28108f9f513bc4e1a28dfa510a007846a68d2"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-19_document.original-or-derived.xml",
+      "bytes": 706978,
+      "sha256": "6a4c4e2696a531d89f55bb158e200d5229c3c799a056a3e33b0e2b639d4ef12e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-15/38211-fa0.docx",
+      "bytes": 1524805,
+      "sha256": "8b8314ccdb7db395f512787ff545190a2903a9d8c74f52de651dd52a6e9c9d4c"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-15_document.original-or-derived.xml",
+      "bytes": 8763757,
+      "sha256": "c38b7db9956c379ffd0f272ad26dcbc0d1ff8777582559e35fa96963de85cde3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-16/38211-ga0.docx",
+      "bytes": 1673918,
+      "sha256": "e07c25b9da44cb7a57bc8df01acafc0f9b1e0b9f0b11cb89f336cfb88eef741d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-16_document.original-or-derived.xml",
+      "bytes": 12740491,
+      "sha256": "4fb845bc888581b3c88403b29bf2a5bef2eacad46878b0af68ec917c81448f2c"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-17/38211-ha0.docx",
+      "bytes": 1604600,
+      "sha256": "d76bad2277ce97b64df84adb6152763e5a6b4e3385d485afc2bb0996856e7db5"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-17_document.original-or-derived.xml",
+      "bytes": 13202391,
+      "sha256": "95871e8809536b653ea1860acf309dd2147d5c0008a01f51421b393c3b28ff30"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-18/38211-i90.docx",
+      "bytes": 1684489,
+      "sha256": "49219b5f0b4ce4280445cf1d1cee3fe92a99698cd1d44a846477438575b56c52"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-18_document.original-or-derived.xml",
+      "bytes": 17556868,
+      "sha256": "9b9999ab3033c85c2621c75ac031114f85b5b7dee71105224d4616ec785b258d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-19/38211-j30.docx",
+      "bytes": 1676034,
+      "sha256": "25057c79cb0fa95e7f0e5da199459fa724dda6d129b6aa099b6ea8653d34b8b4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-19_document.original-or-derived.xml",
+      "bytes": 17890892,
+      "sha256": "d9bddfb2b256464c6370925a45a5e498eaa5a732b34198152bfde37aa93ab334"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-15/38212-fd0.docx",
+      "bytes": 2113923,
+      "sha256": "fcea02d0ae63c72ad275ee110814cfc62757b26f4517aa0254baf89f3bcd2195"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-15_document.original-or-derived.xml",
+      "bytes": 8138914,
+      "sha256": "2560d34182606e8e5b2c0cd19f2967188951690f8ce9c72947716b4da84905ca"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-16/38212-gf0.docx",
+      "bytes": 2315501,
+      "sha256": "f170eedd57b40bfbab1427c6e203846b2b28032942f39d3b8dc94696d2ecb7ea"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-16_document.original-or-derived.xml",
+      "bytes": 11606806,
+      "sha256": "ec523f05d05c75736fde08d99eb2338c810cdf2c80f86864466a101cf99cce7f"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-17/38212-hd0.docx",
+      "bytes": 2486146,
+      "sha256": "f82e6be4119d02bc2cede193347ee167886dbbb3b94ff5e5938f7ffe8c19d385"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-17_document.original-or-derived.xml",
+      "bytes": 14605376,
+      "sha256": "4b545ac9669d84f69bce73f713df8518d9ecab68dc49556b4d6bef1c9e167898"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-18/38212-i80.docx",
+      "bytes": 3122007,
+      "sha256": "95a9258d3b5e81ef2fb741790c3844e9c8fcccb0823bdc5388301ec04de2a57b"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-18_document.original-or-derived.xml",
+      "bytes": 30364779,
+      "sha256": "be9d8318cd4465369547a2e321fa5966560ad5844284f2965f2728bf8d2ae4f7"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-19/38212-j30.docx",
+      "bytes": 3225991,
+      "sha256": "d4b6f1d43946d4356efca1a90c2ee41e235e37171b638bc871173d122bf70a0d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-19_document.original-or-derived.xml",
+      "bytes": 33121864,
+      "sha256": "6971afa70ef134df009408776da1936cb5bc4d64b40ac6149e8b87d7646e6f4a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-15/38213-ff0.docx",
+      "bytes": 2207672,
+      "sha256": "dcaa5a5ab67ac0316b9649f1f6cb88dd24e910432c8e633b73454a2c37c250f4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-15_document.original-or-derived.xml",
+      "bytes": 5282645,
+      "sha256": "c3bb971da502fc383b8160d9eeadda3c5739a0c01dbc1e6afa2ad1addf717c07"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-16/38213-gh0.docx",
+      "bytes": 1257881,
+      "sha256": "52141233a5fc5148d4e493da899f7c59693fe5462fa13b753cfb890aa1cccfb6"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-16_document.original-or-derived.xml",
+      "bytes": 10219153,
+      "sha256": "7aa6b53df24c2d22607f82b79c97773ab6844f5ae44e8a407404be6cf017f150"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-17/38213-hd0.docx",
+      "bytes": 1187423,
+      "sha256": "c3c092b8998532279ef072c5a9af3465436d8b8b986245c828ef3b1fa0bc9564"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-17_document.original-or-derived.xml",
+      "bytes": 15646543,
+      "sha256": "c00a494161581e6756ff53d96e6736f8b2e937d6ab3fef4d9a28d3cf25b17f2a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-18/38213-i80.docx",
+      "bytes": 1350880,
+      "sha256": "cc0dea9b7a33964bde82c2b2ed29ae9ea5a24d36478825eb8873ef436e63d3d1"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-18_document.original-or-derived.xml",
+      "bytes": 18125754,
+      "sha256": "db98c127ff2cbc3e1b067f3fe729173b761f11a3f264cda7e08cf7ae4b860e04"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-19/38213-j30.docx",
+      "bytes": 1379432,
+      "sha256": "38f882ed4b00dbe2fac0c8a8e6c52b5ff444e14eb83bec2c440d45f247258b3f"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-19_document.original-or-derived.xml",
+      "bytes": 18962644,
+      "sha256": "de5c8f473ab5ee34121a1deae14855c8f4d8f670fd48cbe9b08c9e525dd9e75a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-15/38214-fg0.docx",
+      "bytes": 2002979,
+      "sha256": "593aba9a99eda2b9d4097cd428e5f6d5aed14f03741dd9860af98a0b6d171497"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-15_document.original-or-derived.xml",
+      "bytes": 5932565,
+      "sha256": "001c93828aa0e171745361f54857bd9cae4c99eb5f22fb05a37b130bfae8ed97"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-16/38214-gh0.docx",
+      "bytes": 2422766,
+      "sha256": "3f084d6ee38db7be0da41a3376f0f4e0fc592e53e6b19ee64795a53d44ca928e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-16_document.original-or-derived.xml",
+      "bytes": 10902535,
+      "sha256": "e4a577d4b9b331520554d12efee796559b4fcf629b37da809cb6606048f80a18"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-17/38214-hg0.docx",
+      "bytes": 2660038,
+      "sha256": "8f5b6ac4d4c4577c27ad3c7932e7d4e7e17630b6f9c7b6f848d9a27ab96ad6af"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-17_document.original-or-derived.xml",
+      "bytes": 14829869,
+      "sha256": "5d59f50f87774dbdc66266aa692765ad1671979e67306220d5b9451fbd91f2d4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-18/38214-i90.docx",
+      "bytes": 3631041,
+      "sha256": "23df38aa40d57ba3722753b4e902f419bbe9cc87a1b77077e5aa49b17a95f3df"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-18_document.original-or-derived.xml",
+      "bytes": 25550638,
+      "sha256": "73c1fc543e5222aa663b5b09b45ca02f302bcc57f7df36a2bc5724f3240c7d70"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-19/38214-j30.docx",
+      "bytes": 3798961,
+      "sha256": "b8d90206d40e2a8c020334a603c2f65c56ca92eab5e92a515e57ee596a2b1d65"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-19_document.original-or-derived.xml",
+      "bytes": 29127624,
+      "sha256": "30ad251b5f23caa72f83712690c495ca2c28b55d06b6a2115897c96d955466e8"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-15/38215-f70.docx",
+      "bytes": 75625,
+      "sha256": "310041b46707c1469e73be1c8ad009c082242c310eb7397240c85f97fc88037d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-15_document.original-or-derived.xml",
+      "bytes": 371010,
+      "sha256": "ca61cc7aedb44518d8a0980d6c791646fb0b8867f26196f390f33998dd4bac25"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-16/38215-g70.docx",
+      "bytes": 112545,
+      "sha256": "54c35c1fd3de1a9715f94f6cf4af051d70ac017e80e14cc669ef57a8e50a4b4a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-16_document.original-or-derived.xml",
+      "bytes": 840448,
+      "sha256": "14a999d96ee895fe52d0a529392e5e96b359490def4ee7f9e0a9578ce61eeb13"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-17/38215-h50.docx",
+      "bytes": 118575,
+      "sha256": "2eab2b1c50669ad2df65e5f876c8a11ff150517b4d1753d5a3210341eb546fb4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-17_document.original-or-derived.xml",
+      "bytes": 940858,
+      "sha256": "7ad2868e0fc46ac05dc2384417f2f692e1499fa7825d2b4bec518db40e6dad4e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-18/38215-i40.docx",
+      "bytes": 171644,
+      "sha256": "e94c05091e16a02fcb1f6ac58d4e419c71cdf999c9a913abef92b025ffb0c706"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-18_document.original-or-derived.xml",
+      "bytes": 1258475,
+      "sha256": "e0373d6b02c1a08de5f352013c6b297fc8d77f534ed0504041f7446204c8c670"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-19/38215-j20.docx",
+      "bytes": 186841,
+      "sha256": "dedb39708a2722b34fa14eab6994eb54601ae2633a0cc126445e5e2a310b5df3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-19_document.original-or-derived.xml",
+      "bytes": 1448532,
+      "sha256": "26215ad19f595ec6fc35e5b9dcd67a25106609c539b6777907fc0bfc5dfa30cb"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.291/Rel-19/38291-j30.docx",
+      "bytes": 187348,
+      "sha256": "8102e60e64d5bc16ece372ef9b4de8b1d2fefd0683f8938b93c70e1824a075e0"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.291_Rel-19_document.original-or-derived.xml",
+      "bytes": 711346,
+      "sha256": "746cfd51845131068429ba2f37dca2187df88d9a348f6fbea29c893d9684dbc3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "bytes": 503873536,
+      "sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "bytes": 35150,
+      "sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8"
+    }
+  ],
+  "input_pins_after": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/manifest.json",
+      "bytes": 1033,
+      "sha256": "4c5968bf0bc452a7e62e3d73cd5ea86ba8bd18a01bccea358ce6f961d315165e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/canonical_source_only_definition.json",
+      "bytes": 2911,
+      "sha256": "3f11f599af547f1a6696838c275e66116583f429b044a469cd916c389ff971b2"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/original_English_KO_explicit_TS_scope_and_count_units_source_only_packet.json",
+      "bytes": 16469,
+      "sha256": "7cf2cc7755cd4bd0fe5c6c322f8926d6529809ac1eb50df3b54a7e81299e6d5c"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+      "bytes": 3382,
+      "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1_pending.jsonl",
+      "bytes": 530056,
+      "sha256": "228d50e60edeb76e60ba38d27a0669d408ad09638cb72679818bfd5b251874b3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN1/phase-3/cq_test_dataset.json",
+      "bytes": 33191,
+      "sha256": "a746bc5ae143c64f286246bfd8184b54a2c52b54a5d95ced9ca240bb2f4c3b3e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+      "bytes": 64413,
+      "sha256": "e6159ebe9a3f6a9df7d0af2cf4b6be21ee02b9c4b8921a40c27f50960d39373d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_Spec_inputs.jsonl",
+      "bytes": 14797,
+      "sha256": "2e6bcbf9582d0c7d024dca345e2fe76c4d6419c67703db9892ee12ba35dd01d2"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_CR_inputs.jsonl",
+      "bytes": 8592770,
+      "sha256": "2dfcea8dbb5e4cfe9e1fd7b601c5095940525ef867ee1834cdc2fcb45bbd8295"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_Section_inputs.jsonl",
+      "bytes": 624904,
+      "sha256": "541bba02e274e5a22c300faa56d0a69f8ecc6b0160caa331bab3459324123cdf"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_MODIFIES_inputs.jsonl",
+      "bytes": 594194,
+      "sha256": "3f39822211ea07e37613d6cc73713ab6384a65644b54949b5de111d1cd427250"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_BELONGS_TO_SPEC_inputs.jsonl",
+      "bytes": 220752,
+      "sha256": "f10808d9bdf6d4240a756e61f8d83941bc65fa0c5ba098abc157890e157c3d1a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/all3942_frozen_Sections_source_heading_direct_and_hierarchy_status.jsonl",
+      "bytes": 10059157,
+      "sha256": "67535cf2037045a69021c514282935eef787e94e529f615c95927150856362a3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/crossreview_RAN1_P3_CQ035_original_title_keyword_context.json",
+      "bytes": 56299,
+      "sha256": "87d3d9b31a0288a0b88cbbc4bac9603f67f99a88da0a55980292f676cb78caac"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-f00.docx",
+      "bytes": 62757,
+      "sha256": "78113fc84a603ab94e55c243e820fda7aed9a491fee508ef24dbf2089afdf6c6"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-15_document.original-or-derived.xml",
+      "bytes": 232270,
+      "sha256": "182302b64208f4a3eadd187b9a0bd93735bec122b7f49b5800763dd8c373c3a1"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-g00.docx",
+      "bytes": 63557,
+      "sha256": "0e8ff649d6a2ea0db17a7ab15b6bfec35796c69f1a6b70189db492c8a0332922"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-16_document.original-or-derived.xml",
+      "bytes": 245588,
+      "sha256": "ff6510aaac99ea1af58aa7b06b2df5d062f537dca6da8461f517e49975067b85"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-h00.docx",
+      "bytes": 63727,
+      "sha256": "0ca96494315337bd3544e2197e46a3291a651132b26b4832bb0b7937611928f1"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-17_document.original-or-derived.xml",
+      "bytes": 251024,
+      "sha256": "a001472c0d9eff0660f41837c222a5bfae5d3d441f73fb571da7f5281fe475cf"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-i00.docx",
+      "bytes": 139325,
+      "sha256": "b5e7b182c0e78cf3d515bbe6eb3095b93420c008750021c8c4545187412036ba"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-18_document.original-or-derived.xml",
+      "bytes": 265853,
+      "sha256": "e8b31b4639469bec1a5a880360442895c74ff800b5fdfbe03b34da2d590224b0"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/38201_independent_conversions/derived_DOCX/38201-j00.docx",
+      "bytes": 140473,
+      "sha256": "73c183cdc834261356b592182d5385b97529af79ec85e0a6fe5382ddf8275ab1"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.201_Rel-19_document.original-or-derived.xml",
+      "bytes": 289784,
+      "sha256": "4ba8d2696f8abf1addb2471ffe93badb3961d5c2865b4d0fda5b5a9ff3d5561a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-15/38202-f60.docx",
+      "bytes": 593902,
+      "sha256": "3c07b9212720f3e1195ba234554d98c11f1671802e48dc5061dcd667b151f031"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-15_document.original-or-derived.xml",
+      "bytes": 327453,
+      "sha256": "9789f0883be9b1f7be7aebcc1460eab688cd79ea4013be6ec3453ea3764e90bf"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-16/38202-g40.docx",
+      "bytes": 1020852,
+      "sha256": "beab1550fa8cff58794ce583d82af32b4f3a61f03f9ed1b2ce5a7d3eccbc106a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-16_document.original-or-derived.xml",
+      "bytes": 505141,
+      "sha256": "ce088ba45cb000c0646a0b654bb3216721dc155c7d1b6e2bdeaa67e5d173e588"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-17/38202-h50.docx",
+      "bytes": 1027743,
+      "sha256": "5b384489eff86520b305d00f1345aca6bddf76ace45c1b6e0e6b6e7e6e7c5858"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-17_document.original-or-derived.xml",
+      "bytes": 605512,
+      "sha256": "5bba242f3f51dcf0257e7654ab497cb9178c770897d2bde6083891b8aeb1f155"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-18/38202-i40.docx",
+      "bytes": 1067675,
+      "sha256": "6c766fe6169f27a88d9c9b6ae726e9ef5ef3b799c9a4964bd1a75b1470a9896b"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-18_document.original-or-derived.xml",
+      "bytes": 694461,
+      "sha256": "a041d0c371fd74d57a82d71245816835d1d4c4c931ddbb1c7d3835a9bb1d3660"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.202/Rel-19/38202-j00.docx",
+      "bytes": 1067988,
+      "sha256": "05b32e1b7bfb08d67932bd2936b28108f9f513bc4e1a28dfa510a007846a68d2"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.202_Rel-19_document.original-or-derived.xml",
+      "bytes": 706978,
+      "sha256": "6a4c4e2696a531d89f55bb158e200d5229c3c799a056a3e33b0e2b639d4ef12e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-15/38211-fa0.docx",
+      "bytes": 1524805,
+      "sha256": "8b8314ccdb7db395f512787ff545190a2903a9d8c74f52de651dd52a6e9c9d4c"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-15_document.original-or-derived.xml",
+      "bytes": 8763757,
+      "sha256": "c38b7db9956c379ffd0f272ad26dcbc0d1ff8777582559e35fa96963de85cde3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-16/38211-ga0.docx",
+      "bytes": 1673918,
+      "sha256": "e07c25b9da44cb7a57bc8df01acafc0f9b1e0b9f0b11cb89f336cfb88eef741d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-16_document.original-or-derived.xml",
+      "bytes": 12740491,
+      "sha256": "4fb845bc888581b3c88403b29bf2a5bef2eacad46878b0af68ec917c81448f2c"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-17/38211-ha0.docx",
+      "bytes": 1604600,
+      "sha256": "d76bad2277ce97b64df84adb6152763e5a6b4e3385d485afc2bb0996856e7db5"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-17_document.original-or-derived.xml",
+      "bytes": 13202391,
+      "sha256": "95871e8809536b653ea1860acf309dd2147d5c0008a01f51421b393c3b28ff30"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-18/38211-i90.docx",
+      "bytes": 1684489,
+      "sha256": "49219b5f0b4ce4280445cf1d1cee3fe92a99698cd1d44a846477438575b56c52"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-18_document.original-or-derived.xml",
+      "bytes": 17556868,
+      "sha256": "9b9999ab3033c85c2621c75ac031114f85b5b7dee71105224d4616ec785b258d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.211/Rel-19/38211-j30.docx",
+      "bytes": 1676034,
+      "sha256": "25057c79cb0fa95e7f0e5da199459fa724dda6d129b6aa099b6ea8653d34b8b4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.211_Rel-19_document.original-or-derived.xml",
+      "bytes": 17890892,
+      "sha256": "d9bddfb2b256464c6370925a45a5e498eaa5a732b34198152bfde37aa93ab334"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-15/38212-fd0.docx",
+      "bytes": 2113923,
+      "sha256": "fcea02d0ae63c72ad275ee110814cfc62757b26f4517aa0254baf89f3bcd2195"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-15_document.original-or-derived.xml",
+      "bytes": 8138914,
+      "sha256": "2560d34182606e8e5b2c0cd19f2967188951690f8ce9c72947716b4da84905ca"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-16/38212-gf0.docx",
+      "bytes": 2315501,
+      "sha256": "f170eedd57b40bfbab1427c6e203846b2b28032942f39d3b8dc94696d2ecb7ea"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-16_document.original-or-derived.xml",
+      "bytes": 11606806,
+      "sha256": "ec523f05d05c75736fde08d99eb2338c810cdf2c80f86864466a101cf99cce7f"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-17/38212-hd0.docx",
+      "bytes": 2486146,
+      "sha256": "f82e6be4119d02bc2cede193347ee167886dbbb3b94ff5e5938f7ffe8c19d385"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-17_document.original-or-derived.xml",
+      "bytes": 14605376,
+      "sha256": "4b545ac9669d84f69bce73f713df8518d9ecab68dc49556b4d6bef1c9e167898"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-18/38212-i80.docx",
+      "bytes": 3122007,
+      "sha256": "95a9258d3b5e81ef2fb741790c3844e9c8fcccb0823bdc5388301ec04de2a57b"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-18_document.original-or-derived.xml",
+      "bytes": 30364779,
+      "sha256": "be9d8318cd4465369547a2e321fa5966560ad5844284f2965f2728bf8d2ae4f7"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.212/Rel-19/38212-j30.docx",
+      "bytes": 3225991,
+      "sha256": "d4b6f1d43946d4356efca1a90c2ee41e235e37171b638bc871173d122bf70a0d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.212_Rel-19_document.original-or-derived.xml",
+      "bytes": 33121864,
+      "sha256": "6971afa70ef134df009408776da1936cb5bc4d64b40ac6149e8b87d7646e6f4a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-15/38213-ff0.docx",
+      "bytes": 2207672,
+      "sha256": "dcaa5a5ab67ac0316b9649f1f6cb88dd24e910432c8e633b73454a2c37c250f4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-15_document.original-or-derived.xml",
+      "bytes": 5282645,
+      "sha256": "c3bb971da502fc383b8160d9eeadda3c5739a0c01dbc1e6afa2ad1addf717c07"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-16/38213-gh0.docx",
+      "bytes": 1257881,
+      "sha256": "52141233a5fc5148d4e493da899f7c59693fe5462fa13b753cfb890aa1cccfb6"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-16_document.original-or-derived.xml",
+      "bytes": 10219153,
+      "sha256": "7aa6b53df24c2d22607f82b79c97773ab6844f5ae44e8a407404be6cf017f150"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-17/38213-hd0.docx",
+      "bytes": 1187423,
+      "sha256": "c3c092b8998532279ef072c5a9af3465436d8b8b986245c828ef3b1fa0bc9564"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-17_document.original-or-derived.xml",
+      "bytes": 15646543,
+      "sha256": "c00a494161581e6756ff53d96e6736f8b2e937d6ab3fef4d9a28d3cf25b17f2a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-18/38213-i80.docx",
+      "bytes": 1350880,
+      "sha256": "cc0dea9b7a33964bde82c2b2ed29ae9ea5a24d36478825eb8873ef436e63d3d1"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-18_document.original-or-derived.xml",
+      "bytes": 18125754,
+      "sha256": "db98c127ff2cbc3e1b067f3fe729173b761f11a3f264cda7e08cf7ae4b860e04"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.213/Rel-19/38213-j30.docx",
+      "bytes": 1379432,
+      "sha256": "38f882ed4b00dbe2fac0c8a8e6c52b5ff444e14eb83bec2c440d45f247258b3f"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.213_Rel-19_document.original-or-derived.xml",
+      "bytes": 18962644,
+      "sha256": "de5c8f473ab5ee34121a1deae14855c8f4d8f670fd48cbe9b08c9e525dd9e75a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-15/38214-fg0.docx",
+      "bytes": 2002979,
+      "sha256": "593aba9a99eda2b9d4097cd428e5f6d5aed14f03741dd9860af98a0b6d171497"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-15_document.original-or-derived.xml",
+      "bytes": 5932565,
+      "sha256": "001c93828aa0e171745361f54857bd9cae4c99eb5f22fb05a37b130bfae8ed97"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-16/38214-gh0.docx",
+      "bytes": 2422766,
+      "sha256": "3f084d6ee38db7be0da41a3376f0f4e0fc592e53e6b19ee64795a53d44ca928e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-16_document.original-or-derived.xml",
+      "bytes": 10902535,
+      "sha256": "e4a577d4b9b331520554d12efee796559b4fcf629b37da809cb6606048f80a18"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-17/38214-hg0.docx",
+      "bytes": 2660038,
+      "sha256": "8f5b6ac4d4c4577c27ad3c7932e7d4e7e17630b6f9c7b6f848d9a27ab96ad6af"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-17_document.original-or-derived.xml",
+      "bytes": 14829869,
+      "sha256": "5d59f50f87774dbdc66266aa692765ad1671979e67306220d5b9451fbd91f2d4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-18/38214-i90.docx",
+      "bytes": 3631041,
+      "sha256": "23df38aa40d57ba3722753b4e902f419bbe9cc87a1b77077e5aa49b17a95f3df"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-18_document.original-or-derived.xml",
+      "bytes": 25550638,
+      "sha256": "73c1fc543e5222aa663b5b09b45ca02f302bcc57f7df36a2bc5724f3240c7d70"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.214/Rel-19/38214-j30.docx",
+      "bytes": 3798961,
+      "sha256": "b8d90206d40e2a8c020334a603c2f65c56ca92eab5e92a515e57ee596a2b1d65"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.214_Rel-19_document.original-or-derived.xml",
+      "bytes": 29127624,
+      "sha256": "30ad251b5f23caa72f83712690c495ca2c28b55d06b6a2115897c96d955466e8"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-15/38215-f70.docx",
+      "bytes": 75625,
+      "sha256": "310041b46707c1469e73be1c8ad009c082242c310eb7397240c85f97fc88037d"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-15_document.original-or-derived.xml",
+      "bytes": 371010,
+      "sha256": "ca61cc7aedb44518d8a0980d6c791646fb0b8867f26196f390f33998dd4bac25"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-16/38215-g70.docx",
+      "bytes": 112545,
+      "sha256": "54c35c1fd3de1a9715f94f6cf4af051d70ac017e80e14cc669ef57a8e50a4b4a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-16_document.original-or-derived.xml",
+      "bytes": 840448,
+      "sha256": "14a999d96ee895fe52d0a529392e5e96b359490def4ee7f9e0a9578ce61eeb13"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-17/38215-h50.docx",
+      "bytes": 118575,
+      "sha256": "2eab2b1c50669ad2df65e5f876c8a11ff150517b4d1753d5a3210341eb546fb4"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-17_document.original-or-derived.xml",
+      "bytes": 940858,
+      "sha256": "7ad2868e0fc46ac05dc2384417f2f692e1499fa7825d2b4bec518db40e6dad4e"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-18/38215-i40.docx",
+      "bytes": 171644,
+      "sha256": "e94c05091e16a02fcb1f6ac58d4e419c71cdf999c9a913abef92b025ffb0c706"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-18_document.original-or-derived.xml",
+      "bytes": 1258475,
+      "sha256": "e0373d6b02c1a08de5f352013c6b297fc8d77f534ed0504041f7446204c8c670"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.215/Rel-19/38215-j20.docx",
+      "bytes": 186841,
+      "sha256": "dedb39708a2722b34fa14eab6994eb54601ae2633a0cc126445e5e2a310b5df3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.215_Rel-19_document.original-or-derived.xml",
+      "bytes": 1448532,
+      "sha256": "26215ad19f595ec6fc35e5b9dcd67a25106609c539b6777907fc0bfc5dfa30cb"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/TS/RAN1/source/38.291/Rel-19/38291-j30.docx",
+      "bytes": 187348,
+      "sha256": "8102e60e64d5bc16ece372ef9b4de8b1d2fefd0683f8938b93c70e1824a075e0"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/38.291_Rel-19_document.original-or-derived.xml",
+      "bytes": 711346,
+      "sha256": "746cfd51845131068429ba2f37dca2187df88d9a348f6fbea29c893d9684dbc3"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "bytes": 503873536,
+      "sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "bytes": 35150,
+      "sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8"
+    }
+  ]
+}

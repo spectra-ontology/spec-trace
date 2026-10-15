@@ -1,0 +1,151 @@
+{
+  "id": "RAN1_P3_CQ036",
+  "status": "pass",
+  "repair_sha256": "7891756ebef2d618d3ff3f4a910a6c8e742ec97de71d8b784fc97be23d9090a9",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Source-first original-question AI judgment /root/verify_prepared_replies",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "source_context": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/original_English_KO_explicit_TS_scope_and_count_units_source_only_packet.json",
+    "sha256": "7cf2cc7755cd4bd0fe5c6c322f8926d6529809ac1eb50df3b54a7e81299e6d5c",
+    "bytes": 16469
+  },
+  "definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "3f11f599af547f1a6696838c275e66116583f429b044a469cd916c389ff971b2",
+    "bytes": 2911
+  },
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "Compare explicitly asks both per-TS CRcount and Sectioncount with TSidentity; three required fields implement that comparison. Correlation estimation or implementation difficulty is not added as a fourth requested role.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "Original phase3 §6 independently enumerates exactly eight RAN1-related TS families; it is not imported solely from query IN8. All retained editions are counted per logical family using original release-blind aggregation policy. Existing external targets/TechnicalReports are outside this explicitly bounded phase3 structure comparison.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "MODIFIES is the original CRdocument-to-Spec change association and BELONGS_TO_SPEC is the source owner. No approval/status/current/latest/minor-version predicate is inserted; all graph-recorded CRs and Section identities within the eight-family domain contribute.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "The two independent OPTIONAL matches are separated by WITH. Distinct CRnodes count documents including original CRsubtypes; distinct release-aware sectionIds count recorded Sectionobjects once. Multiple owner editions and join paths cannot multiply the requested counts.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "The original exact top5 requirement is implemented from the complete uncapped eight-family native/reference pool. Missing roles or below-boundary members must fail. Five selections at a tied boundary may be any subset of that tied pool; no arbitrary identity tie-break is a membership rule.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "CRcount descending is explicit in top5 by CRcount. Sectioncount is the comparison value, not a second ranking metric. Query specNumberASC presents equal counts only; scorer requires no displayed order and permits any within-boundary tie subset.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "finding": "Original question/KO/schema/design context is pinned before output inspection. No all-authored CR, physical Section completeness, source5 table patch, causal relation, human expert or model performance is inferred. Original criteria topK tie semantics supplies an equivalence contract without manufacturing a preference among equal-ranked records.",
+      "query_clauses": [
+        "MATCH (sp:Spec)",
+        "WHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]",
+        "WITH DISTINCT sp.specNumber AS specNumber",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)",
+        "WHERE target.specNumber = specNumber",
+        "WITH specNumber, count(DISTINCT cr) AS crCount",
+        "OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "WHERE owner.specNumber = specNumber",
+        "RETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount",
+        "ORDER BY crCount DESC, specNumber ASC"
+      ]
+    }
+  ],
+  "native_executions_n": 0,
+  "admissions_n": 0,
+  "gold_created": false,
+  "proposer_SQL_answers_or_old_gold_used_as_semantic_authority": false
+}

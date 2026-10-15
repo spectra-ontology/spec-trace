@@ -1,0 +1,151 @@
+{
+  "id": "RAN1_P3_CQ036",
+  "original_English": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+  "original_English_sha256": "40d6cbef7956b165a20651d2cb5c80fa74f3cc834dacf99e0e775ae6046ee8e0",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] WITH sp.specNumber AS ts, count(cr) AS crCount ORDER BY crCount DESC LIMIT 5 MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp2:Spec {specNumber: ts}) RETURN ts, crCount, count(sec) AS sectionCount ORDER BY crCount DESC",
+  "original_query_sha256": "e9fbfa79f2694ed911551663013068e630e075565fec0e799837fda1d7adf6e7",
+  "unchanged_original_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1_pending.jsonl",
+    "sha256": "228d50e60edeb76e60ba38d27a0669d408ad09638cb72679818bfd5b251874b3",
+    "bytes": 530056
+  },
+  "original_KO": {
+    "file": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN1/phase-3/cq_test_dataset.json",
+    "original_cypher_matches": true,
+    "question_ko": "CR이 가장 많이 발생한 TS Top 5와 각 TS의 Section 수를 비교해줘. 복잡도와 변경 빈도의 상관관계를 보고 싶어",
+    "sha256": "86156beb6415073c8514916673c4f975f54faf2a83a5818b8a4056667f3fbdbb"
+  },
+  "actual_KO_file": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN1/phase-3/cq_test_dataset.json",
+    "sha256": "a746bc5ae143c64f286246bfd8184b54a2c52b54a5d95ced9ca240bb2f4c3b3e",
+    "bytes": 33191
+  },
+  "original_design_scope_and_count_context": [
+    {
+      "source": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+        "bytes": 91818
+      },
+      "line_start": 168,
+      "line_end": 176,
+      "literal": "    ### CQ5. 통합 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 5-1 | 특정 TS의 전체 변경 관련 CR 목록은? |\n    | 5-2 | 특정 회사의 TS별 CR 기여 현황은? |\n    | 5-3 | 특정 Release에서 변경된 TS 목록은? |\n    | 5-4 | 가장 많이 CR이 발생한 TS Top N은? |\n    "
+    },
+    {
+      "source": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+        "bytes": 91818
+      },
+      "line_start": 179,
+      "line_end": 215,
+      "literal": "    ## 5. CQ 결과 규칙\n    \n    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |\n    | 전체 조회 | 전체 | CQ1-3 (breadcrumb) |\n    \n    ---\n    \n    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+    },
+    {
+      "source": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+        "bytes": 91818
+      },
+      "line_start": 518,
+      "line_end": 544,
+      "literal": "    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |"
+    },
+    {
+      "source": {
+        "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+        "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+        "bytes": 91818
+      },
+      "line_start": 1410,
+      "line_end": 1426,
+      "literal": "    \n    ## 2. 데이터 소스\n    \n    ### 2.1 TS 문서 목록\n    \n    | # | TS 번호 | 제목 | 버전 |\n    | --- | --- | --- | --- |\n    | 1 | 38.201 | Physical layer; General description | j00 |\n    | 2 | 38.202 | Services provided by the physical layer | j00 |\n    | 3 | 38.211 | Physical channels and modulation | j10 |\n    | 4 | 38.212 | Multiplexing and channel coding | j10 |\n    | 5 | 38.213 | Physical layer procedures for control | j10 |\n    | 6 | 38.214 | Physical layer procedures for data | j10 |\n    | 7 | 38.215 | Physical layer measurements | j10 |\n    | 8 | 38.291 | NR positioning; NR positioning enhancements | j10 |\n    \n    ### 2.2 인스턴스 소스"
+    }
+  ],
+  "original_schema_recorded_unit_context": [
+    {
+      "source": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+        "bytes": 71963
+      },
+      "line_start": 140,
+      "line_end": 165,
+      "literal": "    rdfs:label \"Work Item\"@en ;\n    rdfs:comment \"3GPP Work Item (WI) or Study Item (SI)\"@en .\n\ntdoc:AgendaItem a owl:Class ;\n    rdfs:label \"Agenda Item\"@en ;\n    rdfs:comment \"Meeting agenda item with hierarchical numbering (e.g., 9.1, 9.1.1)\"@en .\n\ntdoc:Release a owl:Class ;\n    rdfs:label \"Release\"@en ;\n    rdfs:comment \"3GPP Release version (e.g., Rel-18, Rel-19)\"@en .\n\ntdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en .\n\ntdoc:WorkingGroup a owl:Class ;\n    rdfs:label \"Working Group\"@en ;\n    rdfs:comment \"3GPP Working Group (e.g., RAN1, RAN2, SA2)\"@en .\n\n# -----------------------------------------------------------------------------\n# Embedded Content Classes (Phase-2) - Spec: tdoc_ontology_specs(Final_report).md\n# -----------------------------------------------------------------------------\n\ntdoc:Figure a owl:Class ;\n    rdfs:label \"Figure\"@en ;\n    rdfs:comment \"Technical figure embedded in Final Report (captioned or structural >50KB)\"@en ."
+    },
+    {
+      "source": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+        "bytes": 71963
+      },
+      "line_start": 287,
+      "line_end": 299,
+      "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+    },
+    {
+      "source": {
+        "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+        "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+        "bytes": 71963
+      },
+      "line_start": 1230,
+      "line_end": 1252,
+      "literal": "    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;\n    rdfs:comment \"Section title text from heading (excluding sectionNumber)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:level a owl:DatatypeProperty ;\n    rdfs:label \"level\"@en ;\n    rdfs:comment \"Hierarchy level (1-6). Derived from heading style: Heading 1-5 → 1-5, H6/Heading 6 → 6, Heading 8/9 → 1 (Annex)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:integer .\n\ntdoc:isVoid a owl:DatatypeProperty ;\n    rdfs:label \"is void\"@en ;"
+    }
+  ],
+  "criteria": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+    "bytes": 3382
+  },
+  "unfiltered_original_inputs": {
+    "Spec": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_Spec_inputs.jsonl",
+      "sha256": "2e6bcbf9582d0c7d024dca345e2fe76c4d6419c67703db9892ee12ba35dd01d2",
+      "bytes": 14797
+    },
+    "CR": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_CR_inputs.jsonl",
+      "sha256": "2dfcea8dbb5e4cfe9e1fd7b601c5095940525ef867ee1834cdc2fcb45bbd8295",
+      "bytes": 8592770
+    },
+    "Section": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_Section_inputs.jsonl",
+      "sha256": "541bba02e274e5a22c300faa56d0a69f8ecc6b0160caa331bab3459324123cdf",
+      "bytes": 624904
+    },
+    "MODIFIES": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_MODIFIES_inputs.jsonl",
+      "sha256": "3f39822211ea07e37613d6cc73713ab6384a65644b54949b5de111d1cd427250",
+      "bytes": 594194
+    },
+    "BELONGS_TO_SPEC": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/whole_original_BELONGS_TO_SPEC_inputs.jsonl",
+      "sha256": "f10808d9bdf6d4240a756e61f8d83941bc65fa0c5ba098abc157890e157c3d1a",
+      "bytes": 220752
+    }
+  },
+  "read_only_original_SQL": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+    "sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+    "bytes": 503873536
+  },
+  "explicit_original_phase3_TS_domain": [
+    "38.201",
+    "38.202",
+    "38.211",
+    "38.212",
+    "38.213",
+    "38.214",
+    "38.215",
+    "38.291"
+  ],
+  "all3942_authentic_source_heading_receipt_reused": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ035_whole_source_mentions/source_census/all3942_frozen_Sections_source_heading_direct_and_hierarchy_status.jsonl",
+    "sha256": "67535cf2037045a69021c514282935eef787e94e529f615c95927150856362a3",
+    "bytes": 10059157
+  },
+  "source_context_timing_limit": "Current preserved original phase/schema document bytes establish development context; no historical authoring date or pre-freeze publication time is asserted.",
+  "proposer_primary_filtered_SQL_counts_gold_predictions_native_included": false
+}

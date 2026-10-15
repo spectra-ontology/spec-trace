@@ -1,0 +1,266 @@
+{
+  "purpose": "New answerable original questions prepared for review; no external model API call",
+  "baseline_public404_unchanged": true,
+  "new_local_frozen_original_repair_n": 43,
+  "local_original_frozen_union_n": 447,
+  "local_original_frozen_pending_n": 113,
+  "separate_prior_source_enriched_n": 1,
+  "deadline": "2026-10-15T14:00:00+09:00",
+  "cards": [
+    {
+      "id": "RAN1_P3_CQ036",
+      "original_question": "Compare the top 5 TSs by CR count against their section counts (complexity vs. change frequency).",
+      "question_sha256": "40d6cbef7956b165a20651d2cb5c80fa74f3cc834dacf99e0e775ae6046ee8e0",
+      "status": "local_semantic_native_and_scorer_validated; external_model_evaluation_waiting",
+      "repair_sha256": "7891756ebef2d618d3ff3f4a910a6c8e742ec97de71d8b784fc97be23d9090a9",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (sp:Spec)\nWHERE sp.specNumber IN [\"38.201\", \"38.202\", \"38.211\", \"38.212\", \"38.213\", \"38.214\", \"38.215\", \"38.291\"]\nWITH DISTINCT sp.specNumber AS specNumber\nOPTIONAL MATCH (cr:CR)-[:MODIFIES]->(target:Spec)\nWHERE target.specNumber = specNumber\nWITH specNumber, count(DISTINCT cr) AS crCount\nOPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)\nWHERE owner.specNumber = specNumber\nRETURN specNumber, crCount, count(DISTINCT sec.sectionId) AS sectionCount\nORDER BY crCount DESC, specNumber ASC",
+      "required_fields": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "specNumber"
+        },
+        {
+          "name": "crCount",
+          "type": "integer",
+          "nullable": false,
+          "source_column_or_expression": "count(DISTINCT cr)"
+        },
+        {
+          "name": "sectionCount",
+          "type": "integer",
+          "nullable": false,
+          "source_column_or_expression": "count(DISTINCT sec.sectionId)"
+        }
+      ],
+      "collection": {
+        "kind": "top_k_boundary_ties",
+        "value": 5,
+        "require_rank_order": false,
+        "source_order_keys": [
+          {
+            "source_column": "crCount",
+            "direction": "desc"
+          }
+        ],
+        "tie_policy": "any_subset_at_boundary",
+        "within_tie_order": "any"
+      },
+      "cardinality_policy": {
+        "mode": "top_k",
+        "value": 5,
+        "tie_policy": "any_subset_at_boundary"
+      },
+      "native_full_population_n": 8,
+      "answer_n": 5,
+      "answer_preview": [
+        {
+          "crCount": 3041,
+          "sectionCount": 546,
+          "specNumber": "38.213"
+        },
+        {
+          "crCount": 2423,
+          "sectionCount": 807,
+          "specNumber": "38.214"
+        },
+        {
+          "crCount": 654,
+          "sectionCount": 766,
+          "specNumber": "38.212"
+        },
+        {
+          "crCount": 468,
+          "sectionCount": 1212,
+          "specNumber": "38.211"
+        },
+        {
+          "crCount": 161,
+          "sectionCount": 277,
+          "specNumber": "38.215"
+        }
+      ],
+      "preview_is_one_permissible_boundary_choice": true,
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_CQ036/RAN1_P3_CQ036/projected_native_records.jsonl",
+        "sha256": "bdb802128d80a13b9d756098944b8c965e91e4db6a59c7bd8cc87877ea2c7311"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_prepared_RAN1_CQ036/RAN1_P3_CQ036_source_pinned_admission_definition.json",
+      "interpretation_and_limits": null,
+      "source_witnesses": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/original_English_KO_explicit_TS_scope_and_count_units_source_only_packet.json",
+        "sha256": "7cf2cc7755cd4bd0fe5c6c322f8926d6529809ac1eb50df3b54a7e81299e6d5c",
+        "bytes": 16469
+      },
+      "additional_explicit_source_pins": [
+        {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ036_original_top5_TS_CR_and_Section_counts/source_only_independent_review/original_English_KO_explicit_TS_scope_and_count_units_source_only_packet.json",
+          "sha256": "7cf2cc7755cd4bd0fe5c6c322f8926d6529809ac1eb50df3b54a7e81299e6d5c"
+        }
+      ],
+      "original_keyword_design_context": null,
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": true,
+      "publicly_uploaded": false
+    }
+  ],
+  "separate_TR_enrichment": {
+    "status": "source_graph_and_SQL_built_and_full_native_query_matched; original_false_topic_premises_pending",
+    "questions": [
+      "RAN1_P5_CQ5-1",
+      "RAN1_P5_CQ5-2"
+    ],
+    "new_question_admissions": 0,
+    "source_bibliography_pairs": 121,
+    "conditional_number_38_859_outbound": 13,
+    "conditional_number_38_802_incoming": 5,
+    "evidence": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/source_enriched/RAN1_TR_bibliography/native_queries/full_queries.json"
+  },
+  "limits": "These source-first development reference records are not blind Codex predictions, past API benchmark results, new measured model performance, or expert certification. All external model calls remain waiting.",
+  "new_local_source_enriched_repairs_n": 1,
+  "new_source_cards": [
+    {
+      "id": "RAN1_P2_CQ1-2",
+      "original_question": "What was agreed on UL Tx switching (Agenda 5.1) at meeting RAN1#100? (UL switching decisions)",
+      "status": "separate_source_graph_validated; frozen_question_pending; external_model_evaluation_waiting",
+      "question_sha256": "c457946bfcbc8319fc66dace3d37dee26c4920dcd64405e4cb4de439aa8d9817",
+      "repair_sha256": "7903f18f960a1da17e4e67aebbab4e0d6575d65a8f6718073a0ed6f6272301f9",
+      "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "reference_query": "MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '5.1'}), (a)-[:MADE_AT]->(m:Meeting {meetingNumber: 'RAN1#100'}) RETURN DISTINCT a.formalSourceContentWithTables AS content",
+      "required_fields": [
+        {
+          "name": "content",
+          "nullable": false,
+          "source_column_or_expression": "a.formalSourceContentWithTables",
+          "type": "string"
+        }
+      ],
+      "collection": {
+        "kind": "set"
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "answer_n": 6,
+      "answer_preview": [
+        {
+          "content": "For standalone SUL, if UL switching period is configured by RRC\nThe switching period is not always applicable on the carrier configured with switching period.\nThe switching period is only applicable when the scheduled UL transmissions are switched between 1Tx carrier 1 and 2Tx carrier 2.\nFor each UL transmission occasion on a carrier, the existence of the switching period is determined one time every occasion.\nNote: 2Tx carrier 2 refers to an UL carrier capable of 2 Tx chains and both 1-port and 2-port UL transmissions."
+        },
+        {
+          "content": "For SUL, if uplink Tx switching is configured, the state of Tx chains of last UL transmission is assumed in case of no UL transmission.\nWork assumption: For inter-band UL CA, if uplink Tx switching is configured, the state of Tx chains of last UL transmission is assumed in case of no UL transmission. It can be revisited in RAN1#100bis."
+        },
+        {
+          "content": "If uplink Tx switching is triggered, the length of the additional time for PUSCH preparation procedure equals to the length of UL switching period."
+        },
+        {
+          "content": "For inter-band UL CA, if uplink Tx switching is configured, UE is not expected to be scheduled or configured with UL transmissions that result in simultaneous 1Tx transmission on carrier 1 and 2Tx transmission on carrier 2."
+        },
+        {
+          "content": "For inter-band UL CA, UE is not expected to [be scheduled or configured to] transmit on any of the two carriers in the switching period.\nFFS: Whether to handle the case when switching period cannot be ensured by gNB."
+        },
+        {
+          "content": "Case 1 | 1 Tx on carrier 1 and 1 Tx on carrier 2\nCase 2 | 0 Tx on carrier 1 and 2 Tx on carrier 2\nFor inter-band UL CA, if UL switching period is configured by RRC\nThe switching period is not always applicable on the carrier configured with switching period.\nThe switching period is at least applicable between 1-port transmission in carrier 1 and 2-port transmission in carrier 2."
+        }
+      ],
+      "full_reference_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN1_UL_formal_source_v2/projected_native_records.jsonl",
+        "sha256": "20e5742ab1f9ed31f8c9d58e00e7bd416ad6c028a58dfde02a74539752b45329"
+      },
+      "definition_path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN1_P2_CQ1-2_formal_source_enriched_v2_candidate.json",
+      "source_graph": "source_enriched/RAN1_UL_formal_v2",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/UL_source_temporal_context.json",
+          "sha256": "ad4705d407370bafd164e50d9e122cbba692575f1cd1416a9e1ec06dd4e5c37c"
+        },
+        {
+          "path": "RAN1/UL_online_meeting_period_independent_check.json",
+          "sha256": "68d2d23d6f12ff933ad1a1320b30db4e8db32ba77ad71a81dae41a3ba514c6bb"
+        }
+      ],
+      "interpretation_and_limits": [
+        "Separate graph, not frozen-original repair.",
+        "Two AI development judgments with source/results exposure, expert0.",
+        "Exact literal content scorer does not certify paraphrases or optional-prose semantics.",
+        "Retained source authentication only; no historical raw report ZIP provenance claim."
+      ],
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    }
+  ],
+  "withheld_source_candidates_n": 2,
+  "withheld_source_candidates": [
+    {
+      "id": "RAN2_P4_CQ4-5",
+      "original_question": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+      "status": "pending_original_English_temporal_scope_after_source_counterexample",
+      "question_admissions_n": 0,
+      "source_scope": "conditional final meeting-associated agreed population; original temporal scope unresolved",
+      "records_are_original_question_gold": false,
+      "repair_sha256": "057f0b7ae82e3815fe4bf4f09d870fcc84664d1abb4b6bfa997e6a2eb85bea0e",
+      "conditional_reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber",
+      "conditional_full_records_n": 240,
+      "conditional_full_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN2_132_CR_summary_v2/projected_native_records.jsonl",
+        "sha256": "8ca2d765621cdbf41b9daa5c9b5a7f2e0f3e327cd83c2a8ad3117fc3a60e932e"
+      },
+      "historical_execution_and_scorer_controls": "root_controls/RAN2_132_CR_summary_v2/controls.json",
+      "historical_controls_sha256": "829b623b326bac46f3b6821ba6d42e56bd8076e21c3eb731477266d938f50446",
+      "temporal_challenge": "RAN2_RAN5/RAN2_132_postmeeting_temporal_scope_source.json",
+      "temporal_challenge_sha256": "f44499255097075cfc8453fc38b64e95ae15affdbd4f2bc9fddb95e7a6784750",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/RAN2_132_postmeeting_source_context.json",
+          "sha256": "6112e6aaa8f266e96ef9776412512f2daf7a8f35c146c8ed905f19404291049f"
+        },
+        {
+          "path": "RAN2_RAN5/RAN2_132_postmeeting_revision_closure37.json",
+          "sha256": "32590076f95bcf72b60527d08353d9a8a2016e4f6d72a805e1c9c713cd359e7c"
+        }
+      ],
+      "reason": "Final meeting-associated agreed population contains post-meeting outcomes; approved at meeting does not unambiguously certify this temporal population.",
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    },
+    {
+      "id": "RAN3_P4_CQ4-5",
+      "original_question": "List the change summaries of CRs approved at meeting RAN3#123 (meeting-outcome review).",
+      "status": "pending_original_English_temporal_scope_after_source_counterexample",
+      "question_admissions_n": 0,
+      "source_scope": "conditional final meeting-associated agreed population; original temporal scope unresolved",
+      "records_are_original_question_gold": false,
+      "repair_sha256": "85e1c89b27e8c408adbe4e80859178161b080ad8fc19e224bf058f23a935212b",
+      "conditional_reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting)\nWHERE m.canonicalMeetingNumber = 'RAN3#123'\n  AND c.type = 'CR' AND c.status = 'agreed'\nRETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary\nORDER BY sourceTdocNumber ASC",
+      "conditional_full_records_n": 202,
+      "conditional_full_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_controls/RAN3_123_CR_summary_v2/projected_native_records.jsonl",
+        "sha256": "96a0bbf74a9c5e3762a9351d3d8fb5aecaae377b056f347f514f37103b3d7aa8"
+      },
+      "historical_execution_and_scorer_controls": "root_controls/RAN3_123_CR_summary_v2/controls.json",
+      "historical_controls_sha256": "d43c69098e9287c95379d67f90484f5aaa306f25e1c2639823a92060839e2abd",
+      "temporal_challenge": "RAN3_RAN4/RAN3_123_postmeeting7_source_pairs.json",
+      "temporal_challenge_sha256": "7bb5dbc2e5cb3b20447f54cdd1250fcd5ed498d88a1eba6d960c80b5bc5e69ab",
+      "supplementary_source_context": [
+        {
+          "path": "root_evidence/RAN3_123_postmeeting_source_pairs.json",
+          "sha256": "d29a9eb6c972729492227cca71a375e1ba7e6b04d346d22fc34abdb1ea2fa296"
+        }
+      ],
+      "reason": "Final meeting-associated agreed population contains post-meeting outcomes; approved at meeting does not unambiguously certify this temporal population.",
+      "human_expert_validation_n": 0,
+      "new_model_prediction": false,
+      "model_calls_authorized": false,
+      "publicly_uploaded": false
+    }
+  ],
+  "cohort_projection_n": 1,
+  "live_registry_original_n": 43,
+  "live_registry_sha256": "38461163f70759e216c2b218661998afacfb0c451541ee125830ee8dc8a1187a"
+}
