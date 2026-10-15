@@ -1,0 +1,177 @@
+{
+  "kind": "Source-only primary semantic judgment of exact original NewTS enum competency",
+  "id": "RAN4_P5_CQ2-3",
+  "status": "pass",
+  "original_question": "Which TRs led to a new TS? (spinning up new specs).",
+  "repair_sha256": "141e828d2bf827808fe94847de19e75cbf90958aafb9bb51a04db7a9bf939718",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Codex development agent /root/reaudit_ran3_ran4; AI primary judgment; nonblind development",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Which TRs led to a new TS? (spinning up new specs).",
+      "finding": "English asks which TRs, so the required answer is a TechnicalReport identity, trNumber. It does not separately request the new TS identity, TR title, impact description, or a count. The exact source CQ2-3 term mapping at indexed line648 likewise lists TR, hasTRImpact, TRImpact, and impactType. Original-query title/target projections are auxiliary evidence and are not made mandatory.",
+      "query_clauses": [
+        "RETURN DISTINCT tr.trNumber AS trNumber",
+        "required_fields=[trNumber:string,nullable:false]"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Which TRs led to a new TS? (spinning up new specs).",
+      "finding": "Criteria explicitly uses original phase/WG graph-relative process context. Indexed phase5 lines19,27–29 define TR-TS tracking and impact-type analysis; lines233–234 define RAN4 TRs, multipart identities, one retained version. This is a survey of the recorded TechnicalReport domain and its recorded classified impact objects, not a claim of complete real-world TR histories or source-validity expertise. The whole100 TR identities are nonempty and unique before any eligible selection. No latest-edition filter is newly imposed.",
+      "query_clauses": [
+        "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact ...)",
+        "No status/release/additional TR-number filter"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Which TRs led to a new TS? (spinning up new specs).",
+      "finding": "This operational interpretation is supported by the original exact question, not solely its old Cypher: indexed line166 literally defines the same new-TS-creating TR question as (ImpactType = NewTS); line648 repeats impactType (=NewTS), and line123 defines NewTS as wholly new TS creation. Thus selecting the recorded NewTS classification faithfully implements this source-defined competency. HAS_TR_IMPACT and IMPACTS_SPEC preserve the typed TR→classified impact→TS target chain. An arbitrary REFERENCES citation would not suffice. This does not turn an unrelated citation into approved/incorporated change, nor independently establish that every recorded label is historically causal.",
+      "query_clauses": [
+        "imp:TRImpact {impactType: 'NewTS'}",
+        "[:HAS_TR_IMPACT]",
+        "[:IMPACTS_SPEC]->(s:Spec)"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Which TRs led to a new TS? (spinning up new specs).",
+      "finding": "The answer unit is a distinct logical TR, not an impact record, a release node, or a TS target. A TR with several NewTS impact witnesses must appear once. Original single-version and multipart identity rules plus whole-domain uniqueness support trNumber as the stable requested identity. DISTINCT removes join multiplicity without replacing the requested unit. No number of impacts or created specs is scored.",
+      "query_clauses": [
+        "RETURN DISTINCT tr.trNumber AS trNumber"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Which TRs led to a new TS? (spinning up new specs).",
+      "finding": "English which-TR list does not explicitly say all; original results rule line222 expressly assigns default list10 to exact CQ2-3. Therefore the final task uses that preexisting limit, while the query captures the entire qualifying recorded pool before top10 scoring. Every typed witness in the frozen source domain is eligible, without completed-only/approved-only or externally selected version filters. Missing manual labels are not represented as proof of absent real-world creation events.",
+      "query_clauses": [
+        "Reference query uncapped",
+        "cardinality_policy={mode:top_k,value:10,tie_policy:any_subset_at_boundary}"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Which TRs led to a new TS? (spinning up new specs).",
+      "finding": "Indexed line212 explicitly orders CQ2 by ImpactTypeASC and then TRnumberASC. Because this exact predicate fixes ImpactType=NewTS, the first key is constant; TRnumberASC is the remaining source order. Distinct trNumber makes full-key groups singleton, so no arbitrary boundary tie preference or source edition tie is introduced. The contract requires rank order and retains the full pool for a later native order-group proof. The source order is a number-label order, not a recency claim.",
+      "query_clauses": [
+        "ORDER BY trNumber ASC",
+        "source_order_keys=[trNumber:asc]",
+        "require_rank_order=true"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Which TRs led to a new TS? (spinning up new specs).",
+      "finding": "The known classification-provenance weakness remains explicit: indexed lines231/1685 describe LLM analysis; the current pipeline README instead documents a manually authored CSV and missing section targets. That mismatch limits annotation faithfulness and historical causal claims; it does not erase the original exact enum-based competency definition. No raw-source causal adjudication, human/expert validation, TS adoption event, model result, or inferred NoChange negative is invented. Two independent exact reviews, full native/independentSQL agreement, requested-role scorer controls, and root admission remain unfinished. The adjacent CQ2-4 has a NewSection versus ExtendSection conflict and is not covered by this judgment.",
+      "query_clauses": [
+        "Original question_en bytes preserved",
+        "Only existing impactType='NewTS' and typed existing relations",
+        "No external interpretation added"
+      ]
+    }
+  ],
+  "source_evidence": {
+    "clean_manifest": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/manifest.json",
+      "sha256": "b62d701fca9f58fe0d48f3b37b1c656c24412ac8cc6bc925df71169881811113",
+      "bytes": 3926
+    },
+    "definition": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/canonical_source_only_definition.json",
+      "sha256": "ae619b9b952ec54632e4d3d5a7d278e353584d240fdcbd050ba3134c7a5697ee",
+      "bytes": 1325
+    },
+    "packet": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/original_enum_mapping_and_whole_source_inputs_packet.json",
+      "sha256": "083d9ee8c09b88afd5e5aadf3af0f17bfea1063f76fe8a14fc153d53ef103927",
+      "bytes": 23053
+    },
+    "criteria": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+      "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+      "bytes": 3382
+    },
+    "indexed_design": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/original_indexed_RAN4_phase5_TR_design.md",
+      "sha256": "02d718a0765c09c7051ef36aa617ad589820151141f740dfdaabe59e03fe4bf6",
+      "bytes": 76073
+    },
+    "authored_mapping": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/original_authored_impact_mapping_whole.csv",
+      "sha256": "e6f0a3ec48b218fd3d1c992dfc55a78d915ad24e283acba15638f9f74f77ad4d",
+      "bytes": 10828
+    },
+    "pipeline_quality_disclosure": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/current_TR_pipeline_README_with_data_quality_limits.md",
+      "sha256": "0bec435cb69015766d0ee876983de7f58c8c6cb9c02a7cd4e4ba3c0cbd40beb9",
+      "bytes": 13932
+    },
+    "whole_unfiltered_inputs": {
+      "TechnicalReport": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/whole_unfiltered_TechnicalReport.jsonl",
+        "sha256": "7539b261f85b45e7f474dab4a2056b7d47286a4ba119d43526fbe053221ccab1",
+        "bytes": 78212,
+        "rows_n": 100,
+        "SQL": "SELECT * FROM \"TechnicalReport\"",
+        "scope": "Entire immutable original table; no eligible filter/join/rank/aggregate"
+      },
+      "TRImpact": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/whole_unfiltered_TRImpact.jsonl",
+        "sha256": "583808a65f6074c76ccf7558a587e5c4a4d911e7a1599a7f3d88256f5f643801",
+        "bytes": 11657,
+        "rows_n": 68,
+        "SQL": "SELECT * FROM \"TRImpact\"",
+        "scope": "Entire immutable original table; no eligible filter/join/rank/aggregate"
+      },
+      "Spec": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/whole_unfiltered_Spec.jsonl",
+        "sha256": "d05f4c52ca89fa474d44ed2948c0792ad412b0595265f9b950c8bfcbf31ad6a4",
+        "bytes": 62462,
+        "rows_n": 482,
+        "SQL": "SELECT * FROM \"Spec\"",
+        "scope": "Entire immutable original table; no eligible filter/join/rank/aggregate"
+      },
+      "rel_HAS_TR_IMPACT": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/whole_unfiltered_rel_HAS_TR_IMPACT.jsonl",
+        "sha256": "73c238d4cbc65fa134b550624a86afb8ce39611e56d00f6f9c99b607cd65f7c8",
+        "bytes": 3483,
+        "rows_n": 68,
+        "SQL": "SELECT * FROM \"rel_HAS_TR_IMPACT\"",
+        "scope": "Entire immutable original table; no eligible filter/join/rank/aggregate"
+      },
+      "rel_IMPACTS_SPEC": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-3_original_NewTS_enum_source_only_v1/whole_unfiltered_rel_IMPACTS_SPEC.jsonl",
+        "sha256": "16d4af66210c97db44e524fd0a4673abb3d9e949ddee16ece4d51d01aac08e1f",
+        "bytes": 3468,
+        "rows_n": 68,
+        "SQL": "SELECT * FROM \"rel_IMPACTS_SPEC\"",
+        "scope": "Entire immutable original table; no eligible filter/join/rank/aggregate"
+      }
+    }
+  },
+  "competing_interpretation": "Reading led to as independently verified historical causality would not be answered by unverified manual labels. The original exact CQ2-3 enum/process definition supports recorded classification semantics here. A second independent reviewer may disagree; if so admission remains pending.",
+  "exposure": {
+    "fully_blind": false,
+    "own_prior_pending_diagnoses_and_original_query_seen": true,
+    "current_README_existing_NewTS_label_summary_seen": true,
+    "new_eligible_SQL_joins_counts_rank_gold_native_or_model_computed_or_read": false,
+    "other_primary_or_secondary_judgment_unread": true,
+    "whole_source_identity_only_check": true
+  },
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "AI_diagnostic_only": true,
+  "native_calls": 0,
+  "external_model_calls": 0,
+  "admission_or_performance_claim": false
+}

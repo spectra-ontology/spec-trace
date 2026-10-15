@@ -1,0 +1,48 @@
+{
+  "id": "RAN2_P1_CQ4-1",
+  "question_en": "List Samsung's contributions to Work Item NR_Mob_enh2-Core across earlier meetings (contribution history).",
+  "original_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}), (t)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_Mob_enh2-Core'}), (t)-[:PRESENTED_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, t.status, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10",
+  "reference_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Samsung'})\nMATCH (t)-[:RELATED_TO]->(:WorkItem {workItemCode:'NR_Mob_enh2-Core'})\nMATCH (t)-[:PRESENTED_AT]->(m:Meeting)\nRETURN DISTINCT t.tdocNumber AS tdocNumber, m.meetingNumberInt AS meetingNumberInt\nORDER BY meetingNumberInt DESC, tdocNumber ASC",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "tdocNumber",
+        "direction": "asc"
+      }
+    ],
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "c523ee04c2e8f9553cb4713a3d183585d3026d39c000d86affd7a89f269c6c89",
+  "reference_query_sha256": "06387d8dd623e786f6fb79e113fafd4079a3df3855ca2a8f3e9713d8eee38205",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "1e3a219d7c38082f3e9340bd2f607c6e7185c9d802a6113bfadf9dc6051356aa",
+  "original_query_sha256": "d3da3ec75a89c7499e718aa9999c648e0cb527861f8b3b77114c16aaa38f2d2e",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P1_CQ4-1_original_history_source_only_v1/original_company_WorkItem_history_default_and_identity_source_only_packet.json",
+    "sha256": "087c849f88a4a4eb689d462c7b1092b99253724a2e8b99c5cef209f1f3ee4124",
+    "bytes": 19777
+  }
+}
