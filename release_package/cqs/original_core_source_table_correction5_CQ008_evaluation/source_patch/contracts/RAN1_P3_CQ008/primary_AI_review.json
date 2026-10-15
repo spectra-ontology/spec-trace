@@ -1,0 +1,83 @@
+{
+  "id": "RAN1_P3_CQ008",
+  "status": "pass",
+  "repair_sha256": "3dc896e7e43117decfc4681d23e9f67bc03306826ad91034967e72e36758e807",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Proposer source-first AI judgment /root/verify_prepared_replies",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "original_question_en": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+  "source_context_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source5_original_count_and_containment_review/source_only_independent_review/RAN1_P3_CQ008_original_and_source_context_packet.json",
+    "sha256": "1378e179d276f1b3211a969f132108784bd0b59e679bfca35e26d8c933cdb43c",
+    "bytes": 19900
+  },
+  "exposure_disclosure": "Previously inspected current definitions, source5 raw witnesses and native/SQL diagnostic count impact. Not blind. No model evaluation used in semantics.",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "The request asks for a per-TS comparison by three counts; all four role fields specNumber/sectionCount/tableCount/figureCount are required. It does not ask for a separate subjective complexity annotation.",
+      "query_clauses": [
+        "RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "The original eight-TS RAN1 Phase3 population is represented by retained Section-owning specNumber families. Hybrid schema expressly supplies release-blind aggregation with release-specific identities. Added source facts remain in that same domain; no single-edition layout or latest value is claimed.",
+      "query_clauses": [
+        "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "Original Section owner, TABLE_IN_SECTION and FIGURE_IN_SECTION relationships identify the counted records; no approval/topic/CR or descendant filter is added.",
+      "query_clauses": [
+        "OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber})"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "Each retained release-specific Section/TSTable/TSFigure identity is counted once per family. Independent OPTIONAL branches and DISTINCT avoid Cartesian multiplication. Actual source5 facts meet original physical table class/owner rather than relying on caption style as the class definition.",
+      "query_clauses": [
+        "count(DISTINCT sec); count(DISTINCT tbl); count(DISTINCT fig)"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "All eight family rows and all three integer counts are required, including observed zeros; no final cap. This completeness is for the recorded source snapshot, not an assertion that every physical source omission was repaired.",
+      "query_clauses": [
+        "WITH DISTINCT sourceSpec.specNumber AS specNumber; OPTIONAL MATCH; no LIMIT"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "Compare does not request ranked answer order or a fixed number of winners; unordered complete set is adequate. Original query sorting is presentation only.",
+      "query_clauses": [
+        "collection.kind=set; cardinality_policy.mode=all"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "No new release/version/latest authority, human assessment, or external complexity model is required. Lossless OMML evidence establishes the five added source records, not caption-prose completeness for old records.",
+      "query_clauses": [
+        "original_question_preserved=true; original four required fields only"
+      ]
+    }
+  ],
+  "native_or_scorer_or_model_replayed_here": false,
+  "frozen_original_index_modified_or_admitted": false
+}

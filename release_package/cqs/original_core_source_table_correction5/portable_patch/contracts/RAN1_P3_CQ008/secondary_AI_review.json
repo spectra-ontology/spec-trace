@@ -1,0 +1,901 @@
+{
+  "id": "RAN1_P3_CQ008",
+  "repair_sha256": "3dc896e7e43117decfc4681d23e9f67bc03306826ad91034967e72e36758e807",
+  "original_question_sha256": "6f3807031c3cb0ede434fb645708a91ab1be83c5cc861879257831bb800a388f",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Independent secondary direct Codex source-context judgment /root/reaudit_ran2_ran5",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "The unchanged English explicitly requests comparing all eight TSs by section, table and figure counts. All four nonnull roles specNumber/sectionCount/tableCount/figureCount are therefore required; a TS-only result fails. The complexity purpose does not require a separate causal or subjective complexity rating.",
+      "query_clauses": [
+        "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,count(DISTINCT sec) AS sectionCount OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,sectionCount,count(DISTINCT tbl) AS tableCount OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 151,
+          "line_end": 153,
+          "literal": "tdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 175,
+          "line_end": 206,
+          "literal": "# -----------------------------------------------------------------------------\n# TS Structure Classes (Phase-3) - Spec: tdoc_ontology_specs(TS).md\n# -----------------------------------------------------------------------------\n\ntdoc:Section a owl:Class ;\n    rdfs:label \"Section\"@en ;\n    rdfs:comment \"A section within a 3GPP Technical Specification document, identified by heading style\"@en .\n\ntdoc:TSTable a owl:Class ;\n    rdfs:label \"TS Table\"@en ;\n    rdfs:comment \"A table within a 3GPP Technical Specification document, identified by TH-style caption\"@en .\n\ntdoc:TSFigure a owl:Class ;\n    rdfs:label \"TS Figure\"@en ;\n    rdfs:comment \"A figure within a 3GPP Technical Specification document, identified by figure caption\"@en .\n\n# -----------------------------------------------------------------------------\n# CR Document Classes (Phase-4) - Spec: tdoc_ontology_specs(CR).md\n# -----------------------------------------------------------------------------\n\ntdoc:CRPack a owl:Class ;\n    rdfs:label \"CR Pack\"@en ;\n    rdfs:comment \"TSG CR Pack - a bundle of CRs submitted to TSG plenary meeting (e.g., RP-250233). Identified by Cover Sheet.\"@en .\n\n# -----------------------------------------------------------------------------\n# TR Document Classes (Phase-5) - Spec: tdoc_ontology_specs(TR).md\n# -----------------------------------------------------------------------------\n\ntdoc:TechnicalReport a owl:Class ;\n    rdfs:label \"Technical Report\"@en ;\n    rdfs:comment \"3GPP Technical Report (TR) - research/study documents that may lead to TS changes. Contains scope, conclusions, and TR-TS impact analysis.\"@en .\n"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 459,
+          "line_end": 534,
+          "literal": "\n# -----------------------------------------------------------------------------\n# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5\n# -----------------------------------------------------------------------------\n\ntdoc:hasSection a owl:ObjectProperty ;\n    rdfs:label \"has section\"@en ;\n    rdfs:comment \"Top-level Section(s) contained in this Spec\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:belongsToSpec .\n\ntdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"belongs to spec\"@en ;\n    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Spec ;\n    owl:inverseOf tdoc:hasSection .\n\ntdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"has sub-section\"@en ;\n    rdfs:comment \"Direct child Section(s) of this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:parentSection .\n\ntdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"parent section\"@en ;\n    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:hasSubSection .\n\ntdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"references section\"@en ;\n    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencedBySection .\n\ntdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"referenced by section\"@en ;\n    rdfs:comment \"Section(s) that reference this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencesSection .\n\ntdoc:containsTable a owl:ObjectProperty ;\n    rdfs:label \"contains table\"@en ;\n    rdfs:comment \"TSTable(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSTable ;\n    owl:inverseOf tdoc:tableInSection .\n\ntdoc:containsFigure a owl:ObjectProperty ;\n    rdfs:label \"contains figure\"@en ;\n    rdfs:comment \"TSFigure(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSFigure ;\n    owl:inverseOf tdoc:figureInSection .\n\ntdoc:tableInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"table in section\"@en ;\n    rdfs:comment \"Section that contains this TSTable (exactly one)\"@en ;\n    rdfs:domain tdoc:TSTable ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsTable .\n\ntdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"figure in section\"@en ;\n    rdfs:comment \"Section that contains this TSFigure (exactly one)\"@en ;\n    rdfs:domain tdoc:TSFigure ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsFigure .\n\n# -----------------------------------------------------------------------------"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1225,
+          "line_end": 1240,
+          "literal": "# -----------------------------------------------------------------------------\n\ntdoc:sectionId a owl:DatatypeProperty ;\n    rdfs:label \"section ID\"@en ;\n    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 514,
+          "line_end": 564,
+          "literal": "    \n    ## 3. 용어 나열\n    \n    ### 3.1 TS 구조 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.4 TSFigure 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **figureId** | Figure 고유 식별자 | 생성 | CQ1 |\n    | **figureNumber** | Figure 번호 | 캡션 파싱 (예: 5-1) | CQ1 |\n    | **figureCaption** | Figure 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.5 관계 관련 (Phase-3 신규)\n    \n    | 용어 | 설명 | 관련 CQ |\n    | --- | --- | --- |\n    | **hasSection** | Spec → Section (최상위) | CQ1 |\n    | **hasSubSection** | Section → Section (부모-자식) | CQ1-2, CQ1-3 |\n    | **containsTable** | Section → TSTable | CQ1-5, CQ1-7 |\n    | **containsFigure** | Section → TSFigure | CQ1-6 |\n    | **referencesSection** | Section → Section (TS 간 참조) | CQ2 |\n    | **referencesSpec** | Section → Spec (TS-only 참조, clause 없이 TS 번호만) | CQ2 |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 967,
+          "line_end": 1000,
+          "literal": "    \n    ### 3.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | belongsToSpec | Spec | hasSection | Section이 속한 TS |\n    | hasSubSection | Section | parentSection | 하위 Section (부모→자식) |\n    | parentSection | Section | hasSubSection | 상위 Section (자식→부모) |\n    | referencesSection | Section | referencedBySection | 참조하는 다른 Section |\n    | referencedBySection | Section | referencesSection | 이 Section을 참조하는 Section |\n    | referencesSpec | Spec | — | Section이 참조하는 다른 TS (clause 없이 TS 번호만 언급) |\n    | containsTable | TSTable | tableInSection | Section에 포함된 Table |\n    | containsFigure | TSFigure | figureInSection | Section에 포함된 Figure |\n    \n    ---\n    \n    ## 4. TSTable 클래스 속성\n    \n    ### 4.1 Data Property\n    \n    | Property | Type | Description | 데이터 소스 |\n    | --- | --- | --- | --- |\n    | tableId | String | Table 고유 식별자 | 생성 (release-aware 예: 38.214-Rel-15-T5.1.3.2-1) |\n    | tableNumber | String | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) |\n    | tableCaption | String | Table 캡션 | 캡션 파싱 |\n    \n    ### 4.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | tableInSection | Section | containsTable | Table이 속한 Section |\n    \n    ---\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1233,
+          "line_end": 1247,
+          "literal": "    ## 5. TSTable Data Property Facet\n    \n    | Property | Type | Cardinality | Required | 제약 | Description |\n    | --- | --- | --- | --- | --- | --- |\n    | tableId | String | 1 | ✅ | PK | release-aware 패턴: `{specNumber}-{release}-T{tableNumber}` (예 `38.214-Rel-15-T5.1.3.2-1`) |\n    | tableNumber | String | 1 | ✅ | 패턴 | `^[0-9A-Z]+(\\.[0-9]+)*-[0-9]+$` |\n    | tableCaption | String | 0..1 | ❌ | - | 캡션 없는 Table 존재 가능 |\n    \n    ---\n    \n    ## 6. TSTable Object Property Facet\n    \n    | Property | Domain | Range | Cardinality | Functional | Inverse | 특성 |\n    | --- | --- | --- | --- | --- | --- | --- |\n    | tableInSection | TSTable | Section | 1 | ✅ | containsTable | - |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 203,
+          "line_end": 215,
+          "literal": "    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 2172,
+          "line_end": 2182,
+          "literal": "\n    > 출처: `ontology/output/tsg/RAN/formal/parsed_ts/RAN1/parse_summary_release.json` + `validate_ts_jsonld.py --wg RAN1` 실측. 입력 = `data/corpus/tsg/RAN/formal/TS/RAN1/source/{spec}/{release}/`. release별 final 버전을 모두 파싱한 결과이며, Neo4j 재적재 전(비파괴) 산출물 기준이다.\n\n    | ID | 항목 | 기준값 | 비고 |\n    | --- | --- | --- | --- |\n    | P3-R01 | spec-release 수 | 36 | 8 spec × release (Rel-15 7 / Rel-16 7 / Rel-17 7 / Rel-18 7 / Rel-19 8) |\n    | P3-R02 | 대상 spec | 8 | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |\n    | P3-R03 | Section 총 수 | 3,949 | release별 final 합산 (sectionId에 release 토큰) |\n    | P3-R04 | TSTable 총 수 | 2,376 | |\n    | P3-R05 | TSFigure 총 수 | 50 | |\n    | P3-R06 | void Section 수 | 20 | |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1837,
+          "line_end": 1850,
+          "literal": "    ```\n    \n    **캡션 없는 Table**:\n    \n    ```json\n    {\n      \"@type\": \"TSTable\",\n      \"tableId\": \"38.214-Rel-15-T5.2.1-3\",\n      \"tableNumber\": \"5.2.1-3\",\n      \"tableCaption\": null,\n      \"tableInSection\": { \"@id\": \"section:38.214-Rel-15-5.2.1\" }\n    }\n    ```\n    "
+        }
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "Original Phase3 §6 names the exact eight RAN1 TS families and release-final input domain. Its release-aware baseline expressly states Section totals are summed across release-final identities; the schema separately allows release-blind aggregation. The first MATCH selects recorded Section-bearing family identities, which cover this specified eight-family input. The source5 graph is the original frozen graph plus five actual TSTable records, not an invented single-edition union or worldwide completeness claim.",
+      "query_clauses": [
+        "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,count(DISTINCT sec) AS sectionCount OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,sectionCount,count(DISTINCT tbl) AS tableCount OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 151,
+          "line_end": 153,
+          "literal": "tdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 175,
+          "line_end": 206,
+          "literal": "# -----------------------------------------------------------------------------\n# TS Structure Classes (Phase-3) - Spec: tdoc_ontology_specs(TS).md\n# -----------------------------------------------------------------------------\n\ntdoc:Section a owl:Class ;\n    rdfs:label \"Section\"@en ;\n    rdfs:comment \"A section within a 3GPP Technical Specification document, identified by heading style\"@en .\n\ntdoc:TSTable a owl:Class ;\n    rdfs:label \"TS Table\"@en ;\n    rdfs:comment \"A table within a 3GPP Technical Specification document, identified by TH-style caption\"@en .\n\ntdoc:TSFigure a owl:Class ;\n    rdfs:label \"TS Figure\"@en ;\n    rdfs:comment \"A figure within a 3GPP Technical Specification document, identified by figure caption\"@en .\n\n# -----------------------------------------------------------------------------\n# CR Document Classes (Phase-4) - Spec: tdoc_ontology_specs(CR).md\n# -----------------------------------------------------------------------------\n\ntdoc:CRPack a owl:Class ;\n    rdfs:label \"CR Pack\"@en ;\n    rdfs:comment \"TSG CR Pack - a bundle of CRs submitted to TSG plenary meeting (e.g., RP-250233). Identified by Cover Sheet.\"@en .\n\n# -----------------------------------------------------------------------------\n# TR Document Classes (Phase-5) - Spec: tdoc_ontology_specs(TR).md\n# -----------------------------------------------------------------------------\n\ntdoc:TechnicalReport a owl:Class ;\n    rdfs:label \"Technical Report\"@en ;\n    rdfs:comment \"3GPP Technical Report (TR) - research/study documents that may lead to TS changes. Contains scope, conclusions, and TR-TS impact analysis.\"@en .\n"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 459,
+          "line_end": 534,
+          "literal": "\n# -----------------------------------------------------------------------------\n# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5\n# -----------------------------------------------------------------------------\n\ntdoc:hasSection a owl:ObjectProperty ;\n    rdfs:label \"has section\"@en ;\n    rdfs:comment \"Top-level Section(s) contained in this Spec\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:belongsToSpec .\n\ntdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"belongs to spec\"@en ;\n    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Spec ;\n    owl:inverseOf tdoc:hasSection .\n\ntdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"has sub-section\"@en ;\n    rdfs:comment \"Direct child Section(s) of this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:parentSection .\n\ntdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"parent section\"@en ;\n    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:hasSubSection .\n\ntdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"references section\"@en ;\n    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencedBySection .\n\ntdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"referenced by section\"@en ;\n    rdfs:comment \"Section(s) that reference this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencesSection .\n\ntdoc:containsTable a owl:ObjectProperty ;\n    rdfs:label \"contains table\"@en ;\n    rdfs:comment \"TSTable(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSTable ;\n    owl:inverseOf tdoc:tableInSection .\n\ntdoc:containsFigure a owl:ObjectProperty ;\n    rdfs:label \"contains figure\"@en ;\n    rdfs:comment \"TSFigure(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSFigure ;\n    owl:inverseOf tdoc:figureInSection .\n\ntdoc:tableInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"table in section\"@en ;\n    rdfs:comment \"Section that contains this TSTable (exactly one)\"@en ;\n    rdfs:domain tdoc:TSTable ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsTable .\n\ntdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"figure in section\"@en ;\n    rdfs:comment \"Section that contains this TSFigure (exactly one)\"@en ;\n    rdfs:domain tdoc:TSFigure ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsFigure .\n\n# -----------------------------------------------------------------------------"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1225,
+          "line_end": 1240,
+          "literal": "# -----------------------------------------------------------------------------\n\ntdoc:sectionId a owl:DatatypeProperty ;\n    rdfs:label \"section ID\"@en ;\n    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 514,
+          "line_end": 564,
+          "literal": "    \n    ## 3. 용어 나열\n    \n    ### 3.1 TS 구조 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.4 TSFigure 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **figureId** | Figure 고유 식별자 | 생성 | CQ1 |\n    | **figureNumber** | Figure 번호 | 캡션 파싱 (예: 5-1) | CQ1 |\n    | **figureCaption** | Figure 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.5 관계 관련 (Phase-3 신규)\n    \n    | 용어 | 설명 | 관련 CQ |\n    | --- | --- | --- |\n    | **hasSection** | Spec → Section (최상위) | CQ1 |\n    | **hasSubSection** | Section → Section (부모-자식) | CQ1-2, CQ1-3 |\n    | **containsTable** | Section → TSTable | CQ1-5, CQ1-7 |\n    | **containsFigure** | Section → TSFigure | CQ1-6 |\n    | **referencesSection** | Section → Section (TS 간 참조) | CQ2 |\n    | **referencesSpec** | Section → Spec (TS-only 참조, clause 없이 TS 번호만) | CQ2 |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 967,
+          "line_end": 1000,
+          "literal": "    \n    ### 3.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | belongsToSpec | Spec | hasSection | Section이 속한 TS |\n    | hasSubSection | Section | parentSection | 하위 Section (부모→자식) |\n    | parentSection | Section | hasSubSection | 상위 Section (자식→부모) |\n    | referencesSection | Section | referencedBySection | 참조하는 다른 Section |\n    | referencedBySection | Section | referencesSection | 이 Section을 참조하는 Section |\n    | referencesSpec | Spec | — | Section이 참조하는 다른 TS (clause 없이 TS 번호만 언급) |\n    | containsTable | TSTable | tableInSection | Section에 포함된 Table |\n    | containsFigure | TSFigure | figureInSection | Section에 포함된 Figure |\n    \n    ---\n    \n    ## 4. TSTable 클래스 속성\n    \n    ### 4.1 Data Property\n    \n    | Property | Type | Description | 데이터 소스 |\n    | --- | --- | --- | --- |\n    | tableId | String | Table 고유 식별자 | 생성 (release-aware 예: 38.214-Rel-15-T5.1.3.2-1) |\n    | tableNumber | String | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) |\n    | tableCaption | String | Table 캡션 | 캡션 파싱 |\n    \n    ### 4.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | tableInSection | Section | containsTable | Table이 속한 Section |\n    \n    ---\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1233,
+          "line_end": 1247,
+          "literal": "    ## 5. TSTable Data Property Facet\n    \n    | Property | Type | Cardinality | Required | 제약 | Description |\n    | --- | --- | --- | --- | --- | --- |\n    | tableId | String | 1 | ✅ | PK | release-aware 패턴: `{specNumber}-{release}-T{tableNumber}` (예 `38.214-Rel-15-T5.1.3.2-1`) |\n    | tableNumber | String | 1 | ✅ | 패턴 | `^[0-9A-Z]+(\\.[0-9]+)*-[0-9]+$` |\n    | tableCaption | String | 0..1 | ❌ | - | 캡션 없는 Table 존재 가능 |\n    \n    ---\n    \n    ## 6. TSTable Object Property Facet\n    \n    | Property | Domain | Range | Cardinality | Functional | Inverse | 특성 |\n    | --- | --- | --- | --- | --- | --- | --- |\n    | tableInSection | TSTable | Section | 1 | ✅ | containsTable | - |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 203,
+          "line_end": 215,
+          "literal": "    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 2172,
+          "line_end": 2182,
+          "literal": "\n    > 출처: `ontology/output/tsg/RAN/formal/parsed_ts/RAN1/parse_summary_release.json` + `validate_ts_jsonld.py --wg RAN1` 실측. 입력 = `data/corpus/tsg/RAN/formal/TS/RAN1/source/{spec}/{release}/`. release별 final 버전을 모두 파싱한 결과이며, Neo4j 재적재 전(비파괴) 산출물 기준이다.\n\n    | ID | 항목 | 기준값 | 비고 |\n    | --- | --- | --- | --- |\n    | P3-R01 | spec-release 수 | 36 | 8 spec × release (Rel-15 7 / Rel-16 7 / Rel-17 7 / Rel-18 7 / Rel-19 8) |\n    | P3-R02 | 대상 spec | 8 | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |\n    | P3-R03 | Section 총 수 | 3,949 | release별 final 합산 (sectionId에 release 토큰) |\n    | P3-R04 | TSTable 총 수 | 2,376 | |\n    | P3-R05 | TSFigure 총 수 | 50 | |\n    | P3-R06 | void Section 수 | 20 | |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1837,
+          "line_end": 1850,
+          "literal": "    ```\n    \n    **캡션 없는 Table**:\n    \n    ```json\n    {\n      \"@type\": \"TSTable\",\n      \"tableId\": \"38.214-Rel-15-T5.2.1-3\",\n      \"tableNumber\": \"5.2.1-3\",\n      \"tableCaption\": null,\n      \"tableInSection\": { \"@id\": \"section:38.214-Rel-15-5.2.1\" }\n    }\n    ```\n    "
+        }
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "Section BELONGS_TO_SPEC, table TABLE_IN_SECTION, and figure FIGURE_IN_SECTION select the requested recorded TS structure. Matching every owner Spec with the same specNumber implements family aggregation. There is no latest/release/status/approval filter. Existing forward and inverse ownership map to the original design.",
+      "query_clauses": [
+        "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,count(DISTINCT sec) AS sectionCount OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,sectionCount,count(DISTINCT tbl) AS tableCount OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 151,
+          "line_end": 153,
+          "literal": "tdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 175,
+          "line_end": 206,
+          "literal": "# -----------------------------------------------------------------------------\n# TS Structure Classes (Phase-3) - Spec: tdoc_ontology_specs(TS).md\n# -----------------------------------------------------------------------------\n\ntdoc:Section a owl:Class ;\n    rdfs:label \"Section\"@en ;\n    rdfs:comment \"A section within a 3GPP Technical Specification document, identified by heading style\"@en .\n\ntdoc:TSTable a owl:Class ;\n    rdfs:label \"TS Table\"@en ;\n    rdfs:comment \"A table within a 3GPP Technical Specification document, identified by TH-style caption\"@en .\n\ntdoc:TSFigure a owl:Class ;\n    rdfs:label \"TS Figure\"@en ;\n    rdfs:comment \"A figure within a 3GPP Technical Specification document, identified by figure caption\"@en .\n\n# -----------------------------------------------------------------------------\n# CR Document Classes (Phase-4) - Spec: tdoc_ontology_specs(CR).md\n# -----------------------------------------------------------------------------\n\ntdoc:CRPack a owl:Class ;\n    rdfs:label \"CR Pack\"@en ;\n    rdfs:comment \"TSG CR Pack - a bundle of CRs submitted to TSG plenary meeting (e.g., RP-250233). Identified by Cover Sheet.\"@en .\n\n# -----------------------------------------------------------------------------\n# TR Document Classes (Phase-5) - Spec: tdoc_ontology_specs(TR).md\n# -----------------------------------------------------------------------------\n\ntdoc:TechnicalReport a owl:Class ;\n    rdfs:label \"Technical Report\"@en ;\n    rdfs:comment \"3GPP Technical Report (TR) - research/study documents that may lead to TS changes. Contains scope, conclusions, and TR-TS impact analysis.\"@en .\n"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 459,
+          "line_end": 534,
+          "literal": "\n# -----------------------------------------------------------------------------\n# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5\n# -----------------------------------------------------------------------------\n\ntdoc:hasSection a owl:ObjectProperty ;\n    rdfs:label \"has section\"@en ;\n    rdfs:comment \"Top-level Section(s) contained in this Spec\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:belongsToSpec .\n\ntdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"belongs to spec\"@en ;\n    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Spec ;\n    owl:inverseOf tdoc:hasSection .\n\ntdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"has sub-section\"@en ;\n    rdfs:comment \"Direct child Section(s) of this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:parentSection .\n\ntdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"parent section\"@en ;\n    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:hasSubSection .\n\ntdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"references section\"@en ;\n    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencedBySection .\n\ntdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"referenced by section\"@en ;\n    rdfs:comment \"Section(s) that reference this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencesSection .\n\ntdoc:containsTable a owl:ObjectProperty ;\n    rdfs:label \"contains table\"@en ;\n    rdfs:comment \"TSTable(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSTable ;\n    owl:inverseOf tdoc:tableInSection .\n\ntdoc:containsFigure a owl:ObjectProperty ;\n    rdfs:label \"contains figure\"@en ;\n    rdfs:comment \"TSFigure(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSFigure ;\n    owl:inverseOf tdoc:figureInSection .\n\ntdoc:tableInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"table in section\"@en ;\n    rdfs:comment \"Section that contains this TSTable (exactly one)\"@en ;\n    rdfs:domain tdoc:TSTable ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsTable .\n\ntdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"figure in section\"@en ;\n    rdfs:comment \"Section that contains this TSFigure (exactly one)\"@en ;\n    rdfs:domain tdoc:TSFigure ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsFigure .\n\n# -----------------------------------------------------------------------------"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1225,
+          "line_end": 1240,
+          "literal": "# -----------------------------------------------------------------------------\n\ntdoc:sectionId a owl:DatatypeProperty ;\n    rdfs:label \"section ID\"@en ;\n    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 514,
+          "line_end": 564,
+          "literal": "    \n    ## 3. 용어 나열\n    \n    ### 3.1 TS 구조 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.4 TSFigure 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **figureId** | Figure 고유 식별자 | 생성 | CQ1 |\n    | **figureNumber** | Figure 번호 | 캡션 파싱 (예: 5-1) | CQ1 |\n    | **figureCaption** | Figure 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.5 관계 관련 (Phase-3 신규)\n    \n    | 용어 | 설명 | 관련 CQ |\n    | --- | --- | --- |\n    | **hasSection** | Spec → Section (최상위) | CQ1 |\n    | **hasSubSection** | Section → Section (부모-자식) | CQ1-2, CQ1-3 |\n    | **containsTable** | Section → TSTable | CQ1-5, CQ1-7 |\n    | **containsFigure** | Section → TSFigure | CQ1-6 |\n    | **referencesSection** | Section → Section (TS 간 참조) | CQ2 |\n    | **referencesSpec** | Section → Spec (TS-only 참조, clause 없이 TS 번호만) | CQ2 |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 967,
+          "line_end": 1000,
+          "literal": "    \n    ### 3.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | belongsToSpec | Spec | hasSection | Section이 속한 TS |\n    | hasSubSection | Section | parentSection | 하위 Section (부모→자식) |\n    | parentSection | Section | hasSubSection | 상위 Section (자식→부모) |\n    | referencesSection | Section | referencedBySection | 참조하는 다른 Section |\n    | referencedBySection | Section | referencesSection | 이 Section을 참조하는 Section |\n    | referencesSpec | Spec | — | Section이 참조하는 다른 TS (clause 없이 TS 번호만 언급) |\n    | containsTable | TSTable | tableInSection | Section에 포함된 Table |\n    | containsFigure | TSFigure | figureInSection | Section에 포함된 Figure |\n    \n    ---\n    \n    ## 4. TSTable 클래스 속성\n    \n    ### 4.1 Data Property\n    \n    | Property | Type | Description | 데이터 소스 |\n    | --- | --- | --- | --- |\n    | tableId | String | Table 고유 식별자 | 생성 (release-aware 예: 38.214-Rel-15-T5.1.3.2-1) |\n    | tableNumber | String | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) |\n    | tableCaption | String | Table 캡션 | 캡션 파싱 |\n    \n    ### 4.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | tableInSection | Section | containsTable | Table이 속한 Section |\n    \n    ---\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1233,
+          "line_end": 1247,
+          "literal": "    ## 5. TSTable Data Property Facet\n    \n    | Property | Type | Cardinality | Required | 제약 | Description |\n    | --- | --- | --- | --- | --- | --- |\n    | tableId | String | 1 | ✅ | PK | release-aware 패턴: `{specNumber}-{release}-T{tableNumber}` (예 `38.214-Rel-15-T5.1.3.2-1`) |\n    | tableNumber | String | 1 | ✅ | 패턴 | `^[0-9A-Z]+(\\.[0-9]+)*-[0-9]+$` |\n    | tableCaption | String | 0..1 | ❌ | - | 캡션 없는 Table 존재 가능 |\n    \n    ---\n    \n    ## 6. TSTable Object Property Facet\n    \n    | Property | Domain | Range | Cardinality | Functional | Inverse | 특성 |\n    | --- | --- | --- | --- | --- | --- | --- |\n    | tableInSection | TSTable | Section | 1 | ✅ | containsTable | - |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 203,
+          "line_end": 215,
+          "literal": "    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 2172,
+          "line_end": 2182,
+          "literal": "\n    > 출처: `ontology/output/tsg/RAN/formal/parsed_ts/RAN1/parse_summary_release.json` + `validate_ts_jsonld.py --wg RAN1` 실측. 입력 = `data/corpus/tsg/RAN/formal/TS/RAN1/source/{spec}/{release}/`. release별 final 버전을 모두 파싱한 결과이며, Neo4j 재적재 전(비파괴) 산출물 기준이다.\n\n    | ID | 항목 | 기준값 | 비고 |\n    | --- | --- | --- | --- |\n    | P3-R01 | spec-release 수 | 36 | 8 spec × release (Rel-15 7 / Rel-16 7 / Rel-17 7 / Rel-18 7 / Rel-19 8) |\n    | P3-R02 | 대상 spec | 8 | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |\n    | P3-R03 | Section 총 수 | 3,949 | release별 final 합산 (sectionId에 release 토큰) |\n    | P3-R04 | TSTable 총 수 | 2,376 | |\n    | P3-R05 | TSFigure 총 수 | 50 | |\n    | P3-R06 | void Section 수 | 20 | |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1837,
+          "line_end": 1850,
+          "literal": "    ```\n    \n    **캡션 없는 Table**:\n    \n    ```json\n    {\n      \"@type\": \"TSTable\",\n      \"tableId\": \"38.214-Rel-15-T5.2.1-3\",\n      \"tableNumber\": \"5.2.1-3\",\n      \"tableCaption\": null,\n      \"tableInSection\": { \"@id\": \"section:38.214-Rel-15-5.2.1\" }\n    }\n    ```\n    "
+        }
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "DISTINCT sec/tbl/fig count distinct recorded objects, with release-aware IDs preserving one object per retained release; no collapse by caption or bare clause number. Separate WITH aggregations avoid Section×Table×Figure cross products. TH-style is an extraction cue, not a necessary ontological membership test: original term table maps TSTable to actual w:tbl, and the original facet/example permits absent captions. Fresh raw five confirm real Word tables, original edition and direct Section owner.",
+      "query_clauses": [
+        "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,count(DISTINCT sec) AS sectionCount OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,sectionCount,count(DISTINCT tbl) AS tableCount OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 151,
+          "line_end": 153,
+          "literal": "tdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 175,
+          "line_end": 206,
+          "literal": "# -----------------------------------------------------------------------------\n# TS Structure Classes (Phase-3) - Spec: tdoc_ontology_specs(TS).md\n# -----------------------------------------------------------------------------\n\ntdoc:Section a owl:Class ;\n    rdfs:label \"Section\"@en ;\n    rdfs:comment \"A section within a 3GPP Technical Specification document, identified by heading style\"@en .\n\ntdoc:TSTable a owl:Class ;\n    rdfs:label \"TS Table\"@en ;\n    rdfs:comment \"A table within a 3GPP Technical Specification document, identified by TH-style caption\"@en .\n\ntdoc:TSFigure a owl:Class ;\n    rdfs:label \"TS Figure\"@en ;\n    rdfs:comment \"A figure within a 3GPP Technical Specification document, identified by figure caption\"@en .\n\n# -----------------------------------------------------------------------------\n# CR Document Classes (Phase-4) - Spec: tdoc_ontology_specs(CR).md\n# -----------------------------------------------------------------------------\n\ntdoc:CRPack a owl:Class ;\n    rdfs:label \"CR Pack\"@en ;\n    rdfs:comment \"TSG CR Pack - a bundle of CRs submitted to TSG plenary meeting (e.g., RP-250233). Identified by Cover Sheet.\"@en .\n\n# -----------------------------------------------------------------------------\n# TR Document Classes (Phase-5) - Spec: tdoc_ontology_specs(TR).md\n# -----------------------------------------------------------------------------\n\ntdoc:TechnicalReport a owl:Class ;\n    rdfs:label \"Technical Report\"@en ;\n    rdfs:comment \"3GPP Technical Report (TR) - research/study documents that may lead to TS changes. Contains scope, conclusions, and TR-TS impact analysis.\"@en .\n"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 459,
+          "line_end": 534,
+          "literal": "\n# -----------------------------------------------------------------------------\n# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5\n# -----------------------------------------------------------------------------\n\ntdoc:hasSection a owl:ObjectProperty ;\n    rdfs:label \"has section\"@en ;\n    rdfs:comment \"Top-level Section(s) contained in this Spec\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:belongsToSpec .\n\ntdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"belongs to spec\"@en ;\n    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Spec ;\n    owl:inverseOf tdoc:hasSection .\n\ntdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"has sub-section\"@en ;\n    rdfs:comment \"Direct child Section(s) of this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:parentSection .\n\ntdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"parent section\"@en ;\n    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:hasSubSection .\n\ntdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"references section\"@en ;\n    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencedBySection .\n\ntdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"referenced by section\"@en ;\n    rdfs:comment \"Section(s) that reference this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencesSection .\n\ntdoc:containsTable a owl:ObjectProperty ;\n    rdfs:label \"contains table\"@en ;\n    rdfs:comment \"TSTable(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSTable ;\n    owl:inverseOf tdoc:tableInSection .\n\ntdoc:containsFigure a owl:ObjectProperty ;\n    rdfs:label \"contains figure\"@en ;\n    rdfs:comment \"TSFigure(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSFigure ;\n    owl:inverseOf tdoc:figureInSection .\n\ntdoc:tableInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"table in section\"@en ;\n    rdfs:comment \"Section that contains this TSTable (exactly one)\"@en ;\n    rdfs:domain tdoc:TSTable ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsTable .\n\ntdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"figure in section\"@en ;\n    rdfs:comment \"Section that contains this TSFigure (exactly one)\"@en ;\n    rdfs:domain tdoc:TSFigure ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsFigure .\n\n# -----------------------------------------------------------------------------"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1225,
+          "line_end": 1240,
+          "literal": "# -----------------------------------------------------------------------------\n\ntdoc:sectionId a owl:DatatypeProperty ;\n    rdfs:label \"section ID\"@en ;\n    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 514,
+          "line_end": 564,
+          "literal": "    \n    ## 3. 용어 나열\n    \n    ### 3.1 TS 구조 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.4 TSFigure 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **figureId** | Figure 고유 식별자 | 생성 | CQ1 |\n    | **figureNumber** | Figure 번호 | 캡션 파싱 (예: 5-1) | CQ1 |\n    | **figureCaption** | Figure 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.5 관계 관련 (Phase-3 신규)\n    \n    | 용어 | 설명 | 관련 CQ |\n    | --- | --- | --- |\n    | **hasSection** | Spec → Section (최상위) | CQ1 |\n    | **hasSubSection** | Section → Section (부모-자식) | CQ1-2, CQ1-3 |\n    | **containsTable** | Section → TSTable | CQ1-5, CQ1-7 |\n    | **containsFigure** | Section → TSFigure | CQ1-6 |\n    | **referencesSection** | Section → Section (TS 간 참조) | CQ2 |\n    | **referencesSpec** | Section → Spec (TS-only 참조, clause 없이 TS 번호만) | CQ2 |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 967,
+          "line_end": 1000,
+          "literal": "    \n    ### 3.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | belongsToSpec | Spec | hasSection | Section이 속한 TS |\n    | hasSubSection | Section | parentSection | 하위 Section (부모→자식) |\n    | parentSection | Section | hasSubSection | 상위 Section (자식→부모) |\n    | referencesSection | Section | referencedBySection | 참조하는 다른 Section |\n    | referencedBySection | Section | referencesSection | 이 Section을 참조하는 Section |\n    | referencesSpec | Spec | — | Section이 참조하는 다른 TS (clause 없이 TS 번호만 언급) |\n    | containsTable | TSTable | tableInSection | Section에 포함된 Table |\n    | containsFigure | TSFigure | figureInSection | Section에 포함된 Figure |\n    \n    ---\n    \n    ## 4. TSTable 클래스 속성\n    \n    ### 4.1 Data Property\n    \n    | Property | Type | Description | 데이터 소스 |\n    | --- | --- | --- | --- |\n    | tableId | String | Table 고유 식별자 | 생성 (release-aware 예: 38.214-Rel-15-T5.1.3.2-1) |\n    | tableNumber | String | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) |\n    | tableCaption | String | Table 캡션 | 캡션 파싱 |\n    \n    ### 4.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | tableInSection | Section | containsTable | Table이 속한 Section |\n    \n    ---\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1233,
+          "line_end": 1247,
+          "literal": "    ## 5. TSTable Data Property Facet\n    \n    | Property | Type | Cardinality | Required | 제약 | Description |\n    | --- | --- | --- | --- | --- | --- |\n    | tableId | String | 1 | ✅ | PK | release-aware 패턴: `{specNumber}-{release}-T{tableNumber}` (예 `38.214-Rel-15-T5.1.3.2-1`) |\n    | tableNumber | String | 1 | ✅ | 패턴 | `^[0-9A-Z]+(\\.[0-9]+)*-[0-9]+$` |\n    | tableCaption | String | 0..1 | ❌ | - | 캡션 없는 Table 존재 가능 |\n    \n    ---\n    \n    ## 6. TSTable Object Property Facet\n    \n    | Property | Domain | Range | Cardinality | Functional | Inverse | 특성 |\n    | --- | --- | --- | --- | --- | --- | --- |\n    | tableInSection | TSTable | Section | 1 | ✅ | containsTable | - |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 203,
+          "line_end": 215,
+          "literal": "    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 2172,
+          "line_end": 2182,
+          "literal": "\n    > 출처: `ontology/output/tsg/RAN/formal/parsed_ts/RAN1/parse_summary_release.json` + `validate_ts_jsonld.py --wg RAN1` 실측. 입력 = `data/corpus/tsg/RAN/formal/TS/RAN1/source/{spec}/{release}/`. release별 final 버전을 모두 파싱한 결과이며, Neo4j 재적재 전(비파괴) 산출물 기준이다.\n\n    | ID | 항목 | 기준값 | 비고 |\n    | --- | --- | --- | --- |\n    | P3-R01 | spec-release 수 | 36 | 8 spec × release (Rel-15 7 / Rel-16 7 / Rel-17 7 / Rel-18 7 / Rel-19 8) |\n    | P3-R02 | 대상 spec | 8 | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |\n    | P3-R03 | Section 총 수 | 3,949 | release별 final 합산 (sectionId에 release 토큰) |\n    | P3-R04 | TSTable 총 수 | 2,376 | |\n    | P3-R05 | TSFigure 총 수 | 50 | |\n    | P3-R06 | void Section 수 | 20 | |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1837,
+          "line_end": 1850,
+          "literal": "    ```\n    \n    **캡션 없는 Table**:\n    \n    ```json\n    {\n      \"@type\": \"TSTable\",\n      \"tableId\": \"38.214-Rel-15-T5.2.1-3\",\n      \"tableNumber\": \"5.2.1-3\",\n      \"tableCaption\": null,\n      \"tableInSection\": { \"@id\": \"section:38.214-Rel-15-5.2.1\" }\n    }\n    ```\n    "
+        }
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "Cardinality all means one complete four-role record for each of the eight requested TS identities. Uncapped reference query closes all recorded objects in this additive snapshot. Physical extraction completeness of all authored documents is not claimed; source5 addresses five exact documented omissions while old frozen gold stays unchanged.",
+      "query_clauses": [
+        "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,count(DISTINCT sec) AS sectionCount OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,sectionCount,count(DISTINCT tbl) AS tableCount OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 151,
+          "line_end": 153,
+          "literal": "tdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 175,
+          "line_end": 206,
+          "literal": "# -----------------------------------------------------------------------------\n# TS Structure Classes (Phase-3) - Spec: tdoc_ontology_specs(TS).md\n# -----------------------------------------------------------------------------\n\ntdoc:Section a owl:Class ;\n    rdfs:label \"Section\"@en ;\n    rdfs:comment \"A section within a 3GPP Technical Specification document, identified by heading style\"@en .\n\ntdoc:TSTable a owl:Class ;\n    rdfs:label \"TS Table\"@en ;\n    rdfs:comment \"A table within a 3GPP Technical Specification document, identified by TH-style caption\"@en .\n\ntdoc:TSFigure a owl:Class ;\n    rdfs:label \"TS Figure\"@en ;\n    rdfs:comment \"A figure within a 3GPP Technical Specification document, identified by figure caption\"@en .\n\n# -----------------------------------------------------------------------------\n# CR Document Classes (Phase-4) - Spec: tdoc_ontology_specs(CR).md\n# -----------------------------------------------------------------------------\n\ntdoc:CRPack a owl:Class ;\n    rdfs:label \"CR Pack\"@en ;\n    rdfs:comment \"TSG CR Pack - a bundle of CRs submitted to TSG plenary meeting (e.g., RP-250233). Identified by Cover Sheet.\"@en .\n\n# -----------------------------------------------------------------------------\n# TR Document Classes (Phase-5) - Spec: tdoc_ontology_specs(TR).md\n# -----------------------------------------------------------------------------\n\ntdoc:TechnicalReport a owl:Class ;\n    rdfs:label \"Technical Report\"@en ;\n    rdfs:comment \"3GPP Technical Report (TR) - research/study documents that may lead to TS changes. Contains scope, conclusions, and TR-TS impact analysis.\"@en .\n"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 459,
+          "line_end": 534,
+          "literal": "\n# -----------------------------------------------------------------------------\n# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5\n# -----------------------------------------------------------------------------\n\ntdoc:hasSection a owl:ObjectProperty ;\n    rdfs:label \"has section\"@en ;\n    rdfs:comment \"Top-level Section(s) contained in this Spec\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:belongsToSpec .\n\ntdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"belongs to spec\"@en ;\n    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Spec ;\n    owl:inverseOf tdoc:hasSection .\n\ntdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"has sub-section\"@en ;\n    rdfs:comment \"Direct child Section(s) of this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:parentSection .\n\ntdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"parent section\"@en ;\n    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:hasSubSection .\n\ntdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"references section\"@en ;\n    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencedBySection .\n\ntdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"referenced by section\"@en ;\n    rdfs:comment \"Section(s) that reference this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencesSection .\n\ntdoc:containsTable a owl:ObjectProperty ;\n    rdfs:label \"contains table\"@en ;\n    rdfs:comment \"TSTable(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSTable ;\n    owl:inverseOf tdoc:tableInSection .\n\ntdoc:containsFigure a owl:ObjectProperty ;\n    rdfs:label \"contains figure\"@en ;\n    rdfs:comment \"TSFigure(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSFigure ;\n    owl:inverseOf tdoc:figureInSection .\n\ntdoc:tableInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"table in section\"@en ;\n    rdfs:comment \"Section that contains this TSTable (exactly one)\"@en ;\n    rdfs:domain tdoc:TSTable ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsTable .\n\ntdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"figure in section\"@en ;\n    rdfs:comment \"Section that contains this TSFigure (exactly one)\"@en ;\n    rdfs:domain tdoc:TSFigure ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsFigure .\n\n# -----------------------------------------------------------------------------"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1225,
+          "line_end": 1240,
+          "literal": "# -----------------------------------------------------------------------------\n\ntdoc:sectionId a owl:DatatypeProperty ;\n    rdfs:label \"section ID\"@en ;\n    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 514,
+          "line_end": 564,
+          "literal": "    \n    ## 3. 용어 나열\n    \n    ### 3.1 TS 구조 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.4 TSFigure 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **figureId** | Figure 고유 식별자 | 생성 | CQ1 |\n    | **figureNumber** | Figure 번호 | 캡션 파싱 (예: 5-1) | CQ1 |\n    | **figureCaption** | Figure 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.5 관계 관련 (Phase-3 신규)\n    \n    | 용어 | 설명 | 관련 CQ |\n    | --- | --- | --- |\n    | **hasSection** | Spec → Section (최상위) | CQ1 |\n    | **hasSubSection** | Section → Section (부모-자식) | CQ1-2, CQ1-3 |\n    | **containsTable** | Section → TSTable | CQ1-5, CQ1-7 |\n    | **containsFigure** | Section → TSFigure | CQ1-6 |\n    | **referencesSection** | Section → Section (TS 간 참조) | CQ2 |\n    | **referencesSpec** | Section → Spec (TS-only 참조, clause 없이 TS 번호만) | CQ2 |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 967,
+          "line_end": 1000,
+          "literal": "    \n    ### 3.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | belongsToSpec | Spec | hasSection | Section이 속한 TS |\n    | hasSubSection | Section | parentSection | 하위 Section (부모→자식) |\n    | parentSection | Section | hasSubSection | 상위 Section (자식→부모) |\n    | referencesSection | Section | referencedBySection | 참조하는 다른 Section |\n    | referencedBySection | Section | referencesSection | 이 Section을 참조하는 Section |\n    | referencesSpec | Spec | — | Section이 참조하는 다른 TS (clause 없이 TS 번호만 언급) |\n    | containsTable | TSTable | tableInSection | Section에 포함된 Table |\n    | containsFigure | TSFigure | figureInSection | Section에 포함된 Figure |\n    \n    ---\n    \n    ## 4. TSTable 클래스 속성\n    \n    ### 4.1 Data Property\n    \n    | Property | Type | Description | 데이터 소스 |\n    | --- | --- | --- | --- |\n    | tableId | String | Table 고유 식별자 | 생성 (release-aware 예: 38.214-Rel-15-T5.1.3.2-1) |\n    | tableNumber | String | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) |\n    | tableCaption | String | Table 캡션 | 캡션 파싱 |\n    \n    ### 4.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | tableInSection | Section | containsTable | Table이 속한 Section |\n    \n    ---\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1233,
+          "line_end": 1247,
+          "literal": "    ## 5. TSTable Data Property Facet\n    \n    | Property | Type | Cardinality | Required | 제약 | Description |\n    | --- | --- | --- | --- | --- | --- |\n    | tableId | String | 1 | ✅ | PK | release-aware 패턴: `{specNumber}-{release}-T{tableNumber}` (예 `38.214-Rel-15-T5.1.3.2-1`) |\n    | tableNumber | String | 1 | ✅ | 패턴 | `^[0-9A-Z]+(\\.[0-9]+)*-[0-9]+$` |\n    | tableCaption | String | 0..1 | ❌ | - | 캡션 없는 Table 존재 가능 |\n    \n    ---\n    \n    ## 6. TSTable Object Property Facet\n    \n    | Property | Domain | Range | Cardinality | Functional | Inverse | 특성 |\n    | --- | --- | --- | --- | --- | --- | --- |\n    | tableInSection | TSTable | Section | 1 | ✅ | containsTable | - |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 203,
+          "line_end": 215,
+          "literal": "    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 2172,
+          "line_end": 2182,
+          "literal": "\n    > 출처: `ontology/output/tsg/RAN/formal/parsed_ts/RAN1/parse_summary_release.json` + `validate_ts_jsonld.py --wg RAN1` 실측. 입력 = `data/corpus/tsg/RAN/formal/TS/RAN1/source/{spec}/{release}/`. release별 final 버전을 모두 파싱한 결과이며, Neo4j 재적재 전(비파괴) 산출물 기준이다.\n\n    | ID | 항목 | 기준값 | 비고 |\n    | --- | --- | --- | --- |\n    | P3-R01 | spec-release 수 | 36 | 8 spec × release (Rel-15 7 / Rel-16 7 / Rel-17 7 / Rel-18 7 / Rel-19 8) |\n    | P3-R02 | 대상 spec | 8 | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |\n    | P3-R03 | Section 총 수 | 3,949 | release별 final 합산 (sectionId에 release 토큰) |\n    | P3-R04 | TSTable 총 수 | 2,376 | |\n    | P3-R05 | TSFigure 총 수 | 50 | |\n    | P3-R06 | void Section 수 | 20 | |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1837,
+          "line_end": 1850,
+          "literal": "    ```\n    \n    **캡션 없는 Table**:\n    \n    ```json\n    {\n      \"@type\": \"TSTable\",\n      \"tableId\": \"38.214-Rel-15-T5.2.1-3\",\n      \"tableNumber\": \"5.2.1-3\",\n      \"tableCaption\": null,\n      \"tableInSection\": { \"@id\": \"section:38.214-Rel-15-5.2.1\" }\n    }\n    ```\n    "
+        }
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "No mandatory answer order or tie ranking is requested. Set collection is appropriate; count values provide comparison. Extra descending presentation is allowed but not a required role. Same-member repetition is set-equivalent; displacement, missing TS or wrong count must fail.",
+      "query_clauses": [
+        "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,count(DISTINCT sec) AS sectionCount OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,sectionCount,count(DISTINCT tbl) AS tableCount OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 151,
+          "line_end": 153,
+          "literal": "tdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 175,
+          "line_end": 206,
+          "literal": "# -----------------------------------------------------------------------------\n# TS Structure Classes (Phase-3) - Spec: tdoc_ontology_specs(TS).md\n# -----------------------------------------------------------------------------\n\ntdoc:Section a owl:Class ;\n    rdfs:label \"Section\"@en ;\n    rdfs:comment \"A section within a 3GPP Technical Specification document, identified by heading style\"@en .\n\ntdoc:TSTable a owl:Class ;\n    rdfs:label \"TS Table\"@en ;\n    rdfs:comment \"A table within a 3GPP Technical Specification document, identified by TH-style caption\"@en .\n\ntdoc:TSFigure a owl:Class ;\n    rdfs:label \"TS Figure\"@en ;\n    rdfs:comment \"A figure within a 3GPP Technical Specification document, identified by figure caption\"@en .\n\n# -----------------------------------------------------------------------------\n# CR Document Classes (Phase-4) - Spec: tdoc_ontology_specs(CR).md\n# -----------------------------------------------------------------------------\n\ntdoc:CRPack a owl:Class ;\n    rdfs:label \"CR Pack\"@en ;\n    rdfs:comment \"TSG CR Pack - a bundle of CRs submitted to TSG plenary meeting (e.g., RP-250233). Identified by Cover Sheet.\"@en .\n\n# -----------------------------------------------------------------------------\n# TR Document Classes (Phase-5) - Spec: tdoc_ontology_specs(TR).md\n# -----------------------------------------------------------------------------\n\ntdoc:TechnicalReport a owl:Class ;\n    rdfs:label \"Technical Report\"@en ;\n    rdfs:comment \"3GPP Technical Report (TR) - research/study documents that may lead to TS changes. Contains scope, conclusions, and TR-TS impact analysis.\"@en .\n"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 459,
+          "line_end": 534,
+          "literal": "\n# -----------------------------------------------------------------------------\n# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5\n# -----------------------------------------------------------------------------\n\ntdoc:hasSection a owl:ObjectProperty ;\n    rdfs:label \"has section\"@en ;\n    rdfs:comment \"Top-level Section(s) contained in this Spec\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:belongsToSpec .\n\ntdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"belongs to spec\"@en ;\n    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Spec ;\n    owl:inverseOf tdoc:hasSection .\n\ntdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"has sub-section\"@en ;\n    rdfs:comment \"Direct child Section(s) of this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:parentSection .\n\ntdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"parent section\"@en ;\n    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:hasSubSection .\n\ntdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"references section\"@en ;\n    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencedBySection .\n\ntdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"referenced by section\"@en ;\n    rdfs:comment \"Section(s) that reference this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencesSection .\n\ntdoc:containsTable a owl:ObjectProperty ;\n    rdfs:label \"contains table\"@en ;\n    rdfs:comment \"TSTable(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSTable ;\n    owl:inverseOf tdoc:tableInSection .\n\ntdoc:containsFigure a owl:ObjectProperty ;\n    rdfs:label \"contains figure\"@en ;\n    rdfs:comment \"TSFigure(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSFigure ;\n    owl:inverseOf tdoc:figureInSection .\n\ntdoc:tableInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"table in section\"@en ;\n    rdfs:comment \"Section that contains this TSTable (exactly one)\"@en ;\n    rdfs:domain tdoc:TSTable ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsTable .\n\ntdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"figure in section\"@en ;\n    rdfs:comment \"Section that contains this TSFigure (exactly one)\"@en ;\n    rdfs:domain tdoc:TSFigure ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsFigure .\n\n# -----------------------------------------------------------------------------"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1225,
+          "line_end": 1240,
+          "literal": "# -----------------------------------------------------------------------------\n\ntdoc:sectionId a owl:DatatypeProperty ;\n    rdfs:label \"section ID\"@en ;\n    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 514,
+          "line_end": 564,
+          "literal": "    \n    ## 3. 용어 나열\n    \n    ### 3.1 TS 구조 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.4 TSFigure 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **figureId** | Figure 고유 식별자 | 생성 | CQ1 |\n    | **figureNumber** | Figure 번호 | 캡션 파싱 (예: 5-1) | CQ1 |\n    | **figureCaption** | Figure 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.5 관계 관련 (Phase-3 신규)\n    \n    | 용어 | 설명 | 관련 CQ |\n    | --- | --- | --- |\n    | **hasSection** | Spec → Section (최상위) | CQ1 |\n    | **hasSubSection** | Section → Section (부모-자식) | CQ1-2, CQ1-3 |\n    | **containsTable** | Section → TSTable | CQ1-5, CQ1-7 |\n    | **containsFigure** | Section → TSFigure | CQ1-6 |\n    | **referencesSection** | Section → Section (TS 간 참조) | CQ2 |\n    | **referencesSpec** | Section → Spec (TS-only 참조, clause 없이 TS 번호만) | CQ2 |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 967,
+          "line_end": 1000,
+          "literal": "    \n    ### 3.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | belongsToSpec | Spec | hasSection | Section이 속한 TS |\n    | hasSubSection | Section | parentSection | 하위 Section (부모→자식) |\n    | parentSection | Section | hasSubSection | 상위 Section (자식→부모) |\n    | referencesSection | Section | referencedBySection | 참조하는 다른 Section |\n    | referencedBySection | Section | referencesSection | 이 Section을 참조하는 Section |\n    | referencesSpec | Spec | — | Section이 참조하는 다른 TS (clause 없이 TS 번호만 언급) |\n    | containsTable | TSTable | tableInSection | Section에 포함된 Table |\n    | containsFigure | TSFigure | figureInSection | Section에 포함된 Figure |\n    \n    ---\n    \n    ## 4. TSTable 클래스 속성\n    \n    ### 4.1 Data Property\n    \n    | Property | Type | Description | 데이터 소스 |\n    | --- | --- | --- | --- |\n    | tableId | String | Table 고유 식별자 | 생성 (release-aware 예: 38.214-Rel-15-T5.1.3.2-1) |\n    | tableNumber | String | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) |\n    | tableCaption | String | Table 캡션 | 캡션 파싱 |\n    \n    ### 4.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | tableInSection | Section | containsTable | Table이 속한 Section |\n    \n    ---\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1233,
+          "line_end": 1247,
+          "literal": "    ## 5. TSTable Data Property Facet\n    \n    | Property | Type | Cardinality | Required | 제약 | Description |\n    | --- | --- | --- | --- | --- | --- |\n    | tableId | String | 1 | ✅ | PK | release-aware 패턴: `{specNumber}-{release}-T{tableNumber}` (예 `38.214-Rel-15-T5.1.3.2-1`) |\n    | tableNumber | String | 1 | ✅ | 패턴 | `^[0-9A-Z]+(\\.[0-9]+)*-[0-9]+$` |\n    | tableCaption | String | 0..1 | ❌ | - | 캡션 없는 Table 존재 가능 |\n    \n    ---\n    \n    ## 6. TSTable Object Property Facet\n    \n    | Property | Domain | Range | Cardinality | Functional | Inverse | 특성 |\n    | --- | --- | --- | --- | --- | --- | --- |\n    | tableInSection | TSTable | Section | 1 | ✅ | containsTable | - |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 203,
+          "line_end": 215,
+          "literal": "    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 2172,
+          "line_end": 2182,
+          "literal": "\n    > 출처: `ontology/output/tsg/RAN/formal/parsed_ts/RAN1/parse_summary_release.json` + `validate_ts_jsonld.py --wg RAN1` 실측. 입력 = `data/corpus/tsg/RAN/formal/TS/RAN1/source/{spec}/{release}/`. release별 final 버전을 모두 파싱한 결과이며, Neo4j 재적재 전(비파괴) 산출물 기준이다.\n\n    | ID | 항목 | 기준값 | 비고 |\n    | --- | --- | --- | --- |\n    | P3-R01 | spec-release 수 | 36 | 8 spec × release (Rel-15 7 / Rel-16 7 / Rel-17 7 / Rel-18 7 / Rel-19 8) |\n    | P3-R02 | 대상 spec | 8 | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |\n    | P3-R03 | Section 총 수 | 3,949 | release별 final 합산 (sectionId에 release 토큰) |\n    | P3-R04 | TSTable 총 수 | 2,376 | |\n    | P3-R05 | TSFigure 총 수 | 50 | |\n    | P3-R06 | void Section 수 | 20 | |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1837,
+          "line_end": 1850,
+          "literal": "    ```\n    \n    **캡션 없는 Table**:\n    \n    ```json\n    {\n      \"@type\": \"TSTable\",\n      \"tableId\": \"38.214-Rel-15-T5.2.1-3\",\n      \"tableNumber\": \"5.2.1-3\",\n      \"tableCaption\": null,\n      \"tableInSection\": { \"@id\": \"section:38.214-Rel-15-5.2.1\" }\n    }\n    ```\n    "
+        }
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+      "finding": "No additional input, external semantic/causal inference or unasked choice of edition is added. Source-supported five-table insertion and actual equations/XML are separately pinned; w:t captions are not asserted to be full mathematical rendering. This exact judgment covers the additive source snapshot only and is not native, scorer, paid-model or expert validation.",
+      "query_clauses": [
+        "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,count(DISTINCT sec) AS sectionCount OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,sectionCount,count(DISTINCT tbl) AS tableCount OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount"
+      ],
+      "source_evidence": [
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 151,
+          "line_end": 153,
+          "literal": "tdoc:Spec a owl:Class ;\n    rdfs:label \"Specification\"@en ;\n    rdfs:comment \"A 3GPP Technical Specification (TS) or Technical Report (TR). v4.1 (release-aware, hybrid) — a Spec exists in two roles. (1) ABSTRACT HUB: one node per specNumber (IRI tdoc:spec/{specNumber_}, e.g. tdoc:spec/38_211), no tdoc:specRelease; the stable target of release-blind document references — Tdoc/CR MODIFIES & AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC/SPEC_IMPACTED_BY (a CR modifies 'the spec', not a single release). (2) RELEASE-KEYED: one node per (specNumber, release) (IRI tdoc:spec/{specNumber_}/{release}, e.g. tdoc:spec/38_211/Rel-15), carries tdoc:specInRelease + tdoc:specRelease + that release's specVersion; the parent of release-specific Sections (BELONGS_TO_SPEC/HAS_SECTION); linked to its hub via tdoc:inReleaseOf. This hybrid preserves release-blind reference edges intact (no re-keying) while giving each release's Sections a release-keyed parent. Pre-v4.0 had a single specNumber node (latest snapshot); v4.0 had only release-keyed nodes (broke hub references) — v4.1 restores the hub additively.\"@en ."
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 287,
+          "line_end": 299,
+          "literal": "    rdfs:comment \"v4.1 (release-aware, hybrid): the 3GPP Release a RELEASE-KEYED Spec node represents. Present only on release-keyed Spec nodes (one (specNumber, release) pair → one Release); ABSTRACT HUB Spec nodes have none. Parallels tdoc:targetRelease (which targets Tdoc/TechnicalReport).\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Release .\n\ntdoc:inReleaseOf a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"in release of\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): links a RELEASE-KEYED Spec node (specNumber, release) to its ABSTRACT HUB Spec node (specNumber only). Functional: each release-keyed Spec belongs to exactly one hub. Lets release-blind references resolve to the hub while Sections attach to the release-keyed parent; release-blind aggregation CQs traverse hub ← inReleaseOf ← release-keyed → Section. Neo4j relation type IN_RELEASE_OF.\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Spec .\n\ntdoc:hasReleaseVariant a owl:ObjectProperty ;\n    rdfs:label \"has release variant\"@en ;\n    rdfs:comment \"v4.1 (release-aware, hybrid): inverse of tdoc:inReleaseOf — an ABSTRACT HUB Spec node to its RELEASE-KEYED variants (one per release present in the corpus). 0..* (a spec lacking a frozen final for some release has no variant there).\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 175,
+          "line_end": 206,
+          "literal": "# -----------------------------------------------------------------------------\n# TS Structure Classes (Phase-3) - Spec: tdoc_ontology_specs(TS).md\n# -----------------------------------------------------------------------------\n\ntdoc:Section a owl:Class ;\n    rdfs:label \"Section\"@en ;\n    rdfs:comment \"A section within a 3GPP Technical Specification document, identified by heading style\"@en .\n\ntdoc:TSTable a owl:Class ;\n    rdfs:label \"TS Table\"@en ;\n    rdfs:comment \"A table within a 3GPP Technical Specification document, identified by TH-style caption\"@en .\n\ntdoc:TSFigure a owl:Class ;\n    rdfs:label \"TS Figure\"@en ;\n    rdfs:comment \"A figure within a 3GPP Technical Specification document, identified by figure caption\"@en .\n\n# -----------------------------------------------------------------------------\n# CR Document Classes (Phase-4) - Spec: tdoc_ontology_specs(CR).md\n# -----------------------------------------------------------------------------\n\ntdoc:CRPack a owl:Class ;\n    rdfs:label \"CR Pack\"@en ;\n    rdfs:comment \"TSG CR Pack - a bundle of CRs submitted to TSG plenary meeting (e.g., RP-250233). Identified by Cover Sheet.\"@en .\n\n# -----------------------------------------------------------------------------\n# TR Document Classes (Phase-5) - Spec: tdoc_ontology_specs(TR).md\n# -----------------------------------------------------------------------------\n\ntdoc:TechnicalReport a owl:Class ;\n    rdfs:label \"Technical Report\"@en ;\n    rdfs:comment \"3GPP Technical Report (TR) - research/study documents that may lead to TS changes. Contains scope, conclusions, and TR-TS impact analysis.\"@en .\n"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 459,
+          "line_end": 534,
+          "literal": "\n# -----------------------------------------------------------------------------\n# TS Structure Object Properties (10) - Spec: tdoc_ontology_specs(TS).md Step 5\n# -----------------------------------------------------------------------------\n\ntdoc:hasSection a owl:ObjectProperty ;\n    rdfs:label \"has section\"@en ;\n    rdfs:comment \"Top-level Section(s) contained in this Spec\"@en ;\n    rdfs:domain tdoc:Spec ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:belongsToSpec .\n\ntdoc:belongsToSpec a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"belongs to spec\"@en ;\n    rdfs:comment \"Spec that this Section belongs to (exactly one)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Spec ;\n    owl:inverseOf tdoc:hasSection .\n\ntdoc:hasSubSection a owl:ObjectProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"has sub-section\"@en ;\n    rdfs:comment \"Direct child Section(s) of this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:parentSection .\n\ntdoc:parentSection a owl:ObjectProperty, owl:FunctionalProperty, owl:IrreflexiveProperty, owl:AsymmetricProperty ;\n    rdfs:label \"parent section\"@en ;\n    rdfs:comment \"Direct parent Section (exactly one, null for level-1)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:hasSubSection .\n\ntdoc:referencesSection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"references section\"@en ;\n    rdfs:comment \"Section(s) referenced by this Section's content (clause/subclause patterns)\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencedBySection .\n\ntdoc:referencedBySection a owl:ObjectProperty, owl:IrreflexiveProperty ;\n    rdfs:label \"referenced by section\"@en ;\n    rdfs:comment \"Section(s) that reference this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:referencesSection .\n\ntdoc:containsTable a owl:ObjectProperty ;\n    rdfs:label \"contains table\"@en ;\n    rdfs:comment \"TSTable(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSTable ;\n    owl:inverseOf tdoc:tableInSection .\n\ntdoc:containsFigure a owl:ObjectProperty ;\n    rdfs:label \"contains figure\"@en ;\n    rdfs:comment \"TSFigure(s) contained in this Section\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range tdoc:TSFigure ;\n    owl:inverseOf tdoc:figureInSection .\n\ntdoc:tableInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"table in section\"@en ;\n    rdfs:comment \"Section that contains this TSTable (exactly one)\"@en ;\n    rdfs:domain tdoc:TSTable ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsTable .\n\ntdoc:figureInSection a owl:ObjectProperty, owl:FunctionalProperty ;\n    rdfs:label \"figure in section\"@en ;\n    rdfs:comment \"Section that contains this TSFigure (exactly one)\"@en ;\n    rdfs:domain tdoc:TSFigure ;\n    rdfs:range tdoc:Section ;\n    owl:inverseOf tdoc:containsFigure .\n\n# -----------------------------------------------------------------------------"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+            "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9",
+            "bytes": 71963
+          },
+          "line_start": 1225,
+          "line_end": 1240,
+          "literal": "# -----------------------------------------------------------------------------\n\ntdoc:sectionId a owl:DatatypeProperty ;\n    rdfs:label \"section ID\"@en ;\n    rdfs:comment \"Section unique identifier. v4.0 (release-aware) pattern: {specNumber}-{release}-{sectionNumber}, e.g., 38.214-Rel-15-5.1.3.2 (pre-v4.0: {specNumber}-{sectionNumber}).\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionNumber a owl:DatatypeProperty ;\n    rdfs:label \"section number\"@en ;\n    rdfs:comment \"Section number from heading (e.g., 5.1.3.2, A.1, 8.1.4A). Body: ^[0-9]+(\\\\.[0-9]+)*[a-zA-Z]?$, Annex: ^[A-Z](\\\\.[0-9]+)*$\"@en ;\n    rdfs:domain tdoc:Section ;\n    rdfs:range xsd:string .\n\ntdoc:sectionTitle a owl:DatatypeProperty ;\n    rdfs:label \"section title\"@en ;"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 514,
+          "line_end": 564,
+          "literal": "    \n    ## 3. 용어 나열\n    \n    ### 3.1 TS 구조 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **TS (=Spec)** | Technical Specification 문서 | 문서 자체 | CQ1, CQ3, CQ4, CQ5 |\n    | **Section** | TS 내부 계층 구조 (본문 + Annex) | 헤딩 파싱 | CQ1, CQ2, CQ3, CQ4 |\n    | **TSTable** | TS 내 표 | `<w:tbl>` 파싱 | CQ1 |\n    | **TSFigure** | TS 내 그림 | `<w:drawing>` 파싱 | CQ1 |\n    \n    *참고: TS는 Phase-1 Spec 클래스 재사용 (Step 2 결정)*\n    \n    ### 3.2 Section 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **sectionId** | Section 고유 식별자 | 생성 (TS번호-섹션번호) | 전체 |\n    | **sectionNumber** | Section 번호 | 헤딩 파싱 (예: 5.1.3.2, A.1) | CQ1 |\n    | **sectionTitle** | Section 제목 | 헤딩 파싱 | CQ1-9 |\n    | **level** | Section 계층 레벨 | 번호에서 추출 (1~6) | CQ1-4 |\n    | **isVoid** | Void 여부 | 본문에 \"Void\" 텍스트 | CQ1 |\n    \n    ### 3.3 TSTable 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **tableId** | Table 고유 식별자 | 생성 | CQ1 |\n    | **tableNumber** | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) | CQ1-10 |\n    | **tableCaption** | Table 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.4 TSFigure 속성 관련\n    \n    | 용어 | 설명 | 데이터 소스 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | **figureId** | Figure 고유 식별자 | 생성 | CQ1 |\n    | **figureNumber** | Figure 번호 | 캡션 파싱 (예: 5-1) | CQ1 |\n    | **figureCaption** | Figure 캡션 | 캡션 파싱 | CQ1 |\n    \n    ### 3.5 관계 관련 (Phase-3 신규)\n    \n    | 용어 | 설명 | 관련 CQ |\n    | --- | --- | --- |\n    | **hasSection** | Spec → Section (최상위) | CQ1 |\n    | **hasSubSection** | Section → Section (부모-자식) | CQ1-2, CQ1-3 |\n    | **containsTable** | Section → TSTable | CQ1-5, CQ1-7 |\n    | **containsFigure** | Section → TSFigure | CQ1-6 |\n    | **referencesSection** | Section → Section (TS 간 참조) | CQ2 |\n    | **referencesSpec** | Section → Spec (TS-only 참조, clause 없이 TS 번호만) | CQ2 |\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 967,
+          "line_end": 1000,
+          "literal": "    \n    ### 3.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | belongsToSpec | Spec | hasSection | Section이 속한 TS |\n    | hasSubSection | Section | parentSection | 하위 Section (부모→자식) |\n    | parentSection | Section | hasSubSection | 상위 Section (자식→부모) |\n    | referencesSection | Section | referencedBySection | 참조하는 다른 Section |\n    | referencedBySection | Section | referencesSection | 이 Section을 참조하는 Section |\n    | referencesSpec | Spec | — | Section이 참조하는 다른 TS (clause 없이 TS 번호만 언급) |\n    | containsTable | TSTable | tableInSection | Section에 포함된 Table |\n    | containsFigure | TSFigure | figureInSection | Section에 포함된 Figure |\n    \n    ---\n    \n    ## 4. TSTable 클래스 속성\n    \n    ### 4.1 Data Property\n    \n    | Property | Type | Description | 데이터 소스 |\n    | --- | --- | --- | --- |\n    | tableId | String | Table 고유 식별자 | 생성 (release-aware 예: 38.214-Rel-15-T5.1.3.2-1) |\n    | tableNumber | String | Table 번호 | 캡션 파싱 (예: 5.1.3.2-1) |\n    | tableCaption | String | Table 캡션 | 캡션 파싱 |\n    \n    ### 4.2 Object Property\n    \n    | Property | Range | Inverse | Description |\n    | --- | --- | --- | --- |\n    | tableInSection | Section | containsTable | Table이 속한 Section |\n    \n    ---\n    "
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1233,
+          "line_end": 1247,
+          "literal": "    ## 5. TSTable Data Property Facet\n    \n    | Property | Type | Cardinality | Required | 제약 | Description |\n    | --- | --- | --- | --- | --- | --- |\n    | tableId | String | 1 | ✅ | PK | release-aware 패턴: `{specNumber}-{release}-T{tableNumber}` (예 `38.214-Rel-15-T5.1.3.2-1`) |\n    | tableNumber | String | 1 | ✅ | 패턴 | `^[0-9A-Z]+(\\.[0-9]+)*-[0-9]+$` |\n    | tableCaption | String | 0..1 | ❌ | - | 캡션 없는 Table 존재 가능 |\n    \n    ---\n    \n    ## 6. TSTable Object Property Facet\n    \n    | Property | Domain | Range | Cardinality | Functional | Inverse | 특성 |\n    | --- | --- | --- | --- | --- | --- | --- |\n    | tableInSection | TSTable | Section | 1 | ✅ | containsTable | - |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 203,
+          "line_end": 215,
+          "literal": "    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | **release별 final** (release-aware). 각 (specNumber, release)마다 Spec 노드를 두고, 해당 release final 버전을 specVersion에, release를 specRelease/specInRelease에 기록 | 전체 minor-version 이력은 미적재(release당 final 1개). Spec IRI = `tdoc:spec/{specNumber_}/{release}` |\n    | **TS 범위** | RAN1 관련 | 38.201, 38.202, 38.211-215, 38.291 |\n    \n    > **specVersion·release 추출 규칙 (release-aware)**: 각 TS를 release별 디렉토리(`data/corpus/tsg/RAN/formal/TS/{WG}/source/{spec}/{release}/`)의 final docx에서 적재하고, release·version 정본은 cover-page에서 추출(`scripts/tsg/RAN/formal/common/phase-0/ts_cover_metadata.py` — `(Release N)` + `3GPP TS NN.NNN V x.y.z`)하여 파일명 버전코드(base-36, letter=major)와 교차검증한다(불일치 시 cover 우선). 각 (specNumber, release)마다 Spec 노드, specVersion=해당 release final.\n    > \n    > - 파일명 패턴: `{5자리 specNumber}-{버전코드}.docx` (예: `38214-j10.docx`)\n    > - 버전 코드 → 시맨틱 버전 변환: 알파벳(a=10, b=11, ..., j=19, k=20) + 2자리 숫자 → `{major}.{minor}.0` (예: j10 → 19.1.0)\n    > - 이 변환 로직은 Phase-5 `extract_tr_version_from_filename()`과 동일하다"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 2172,
+          "line_end": 2182,
+          "literal": "\n    > 출처: `ontology/output/tsg/RAN/formal/parsed_ts/RAN1/parse_summary_release.json` + `validate_ts_jsonld.py --wg RAN1` 실측. 입력 = `data/corpus/tsg/RAN/formal/TS/RAN1/source/{spec}/{release}/`. release별 final 버전을 모두 파싱한 결과이며, Neo4j 재적재 전(비파괴) 산출물 기준이다.\n\n    | ID | 항목 | 기준값 | 비고 |\n    | --- | --- | --- | --- |\n    | P3-R01 | spec-release 수 | 36 | 8 spec × release (Rel-15 7 / Rel-16 7 / Rel-17 7 / Rel-18 7 / Rel-19 8) |\n    | P3-R02 | 대상 spec | 8 | 38.201, 38.202, 38.211, 38.212, 38.213, 38.214, 38.215, 38.291 |\n    | P3-R03 | Section 총 수 | 3,949 | release별 final 합산 (sectionId에 release 토큰) |\n    | P3-R04 | TSTable 총 수 | 2,376 | |\n    | P3-R05 | TSFigure 총 수 | 50 | |\n    | P3-R06 | void Section 수 | 20 | |"
+        },
+        {
+          "source": {
+            "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+            "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62",
+            "bytes": 91818
+          },
+          "line_start": 1837,
+          "line_end": 1850,
+          "literal": "    ```\n    \n    **캡션 없는 Table**:\n    \n    ```json\n    {\n      \"@type\": \"TSTable\",\n      \"tableId\": \"38.214-Rel-15-T5.2.1-3\",\n      \"tableNumber\": \"5.2.1-3\",\n      \"tableCaption\": null,\n      \"tableInSection\": { \"@id\": \"section:38.214-Rel-15-5.2.1\" }\n    }\n    ```\n    "
+        }
+      ]
+    }
+  ],
+  "exact_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source5_original_count_and_containment_review/source_only_independent_review/RAN1_P3_CQ008_canonical_source_only_definition.json",
+    "sha256": "367912335fe2cc0149b1defb59d210c7c386816efc3df3781d9e9997980c84c7",
+    "bytes": 2185
+  },
+  "source_only_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source5_original_count_and_containment_review/source_only_independent_review/RAN1_P3_CQ008_original_and_source_context_packet.json",
+    "sha256": "1378e179d276f1b3211a969f132108784bd0b59e679bfca35e26d8c933cdb43c",
+    "bytes": 19900
+  },
+  "snapshot_identity": {
+    "RDF": {
+      "bytes": 163483519,
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN1_source_table_omissions5/same_ontology_materialized/RAN1-source5-body.ttl",
+      "sha256": "6ffc6ab42c8d45127e352096549b510915e889bca9dec1fdbc417582413fd8a2"
+    },
+    "SQL": {
+      "bytes": 503873536,
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN1_source_table_omissions5/same_ontology_materialized/RAN1.sqlite",
+      "sha256": "b15d7e46c7bfc6821e00044c13b163dc8573324581f5d652f65cf35ee5916f87"
+    },
+    "manifest": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN1_source_table_omissions5/same_ontology_materialized/RAN1.manifest.json",
+      "sha256": "e324d04d9b307bf5dcd719bc51975830b25af7caf81f3902534ca2133aa22224",
+      "bytes": 46930
+    }
+  },
+  "raw_source_integrity": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/Source5_two_contracts_fresh_raw5_source_context_integrity.json",
+    "sha256": "72db591ba0fbcf5a6be811baf8c2768a87c3a2f4cb7532286b29e71b3c758ca7",
+    "bytes": 13226
+  },
+  "exposure": "Prior old current404 and source5 native/SQL footprint diagnostics were seen. Fresh judgment reads clean original/context/definition/raw5 before new primary/filtered answers. No blind review claimed.",
+  "limits": [
+    "Separate source5 snapshot only; original frozen404 bytes/gold and current447 count unchanged",
+    "Not complete authored physical extraction proof",
+    "No native/API/scorer execution in this review"
+  ],
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "new_model_calls_n": 0,
+  "new_native_runs_n": 0,
+  "new_admissions_n": 0,
+  "mechanical_check_pass": "PASS exact seven units and definition identity; this validates record shape, not semantic truth"
+}

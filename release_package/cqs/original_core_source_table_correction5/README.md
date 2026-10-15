@@ -1,0 +1,7 @@
+Separate original-ontology source correction adds five authentic Word tables and ten ownership edges to RAN1. Both exact source ZIP/DOCX members and caption XML/OMML provenance are included. All old SQL/RDF populations remain intact; full physical extraction completeness is not established. The frozen 447/560 index remains unchanged.
+
+CQ008 retains all four original requested fields and CQ041 retains the full Section identity set with the inclusive five-table direct-containment threshold. Native results match independent SQL; all 34 scorer controls pass and both contracts have two exact AI semantic judgments. Human/expert validation is 0.
+
+Separate actual model evaluations are published in [CQ008](../original_core_source_table_correction5_CQ008_evaluation) and [CQ041](../original_core_source_table_correction5_CQ041_evaluation). Ten HTTP200 first calls cost $0.533915 with no quality retry and zero unknown-cost responses. CQ008 requested-record F1 is 0 for all methods, including a retained SQL generation-format error; CQ041 Cypher/SQL F1 is 1 and both retrieval methods abstain. Requested-record scores do not establish generated-query predicate correctness or a causal effect of source correction.
+
+Use portable_patch/verify_rebuild.py and portable_patch/evaluation/verify_controls.py for source reconstruction and complete control replay. Original baseline stores are needed only for a separate fresh rebuild.

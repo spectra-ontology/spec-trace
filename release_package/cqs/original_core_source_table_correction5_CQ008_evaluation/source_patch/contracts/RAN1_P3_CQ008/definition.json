@@ -1,0 +1,42 @@
+{
+  "cardinality_policy": {
+    "mode": "all",
+    "notes": "all originally requested matching records; no unstated final row cap"
+  },
+  "collection": {
+    "kind": "set"
+  },
+  "id": "RAN1_P3_CQ008",
+  "original_query": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WITH sp.specNumber AS ts, count(sec) AS secCnt OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(sp2:Spec) WHERE sp2.specNumber = ts WITH ts, secCnt, count(DISTINCT tbl) AS tblCnt OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(sp3:Spec) WHERE sp3.specNumber = ts RETURN ts, secCnt, tblCnt, count(DISTINCT fig) AS figCnt ORDER BY secCnt DESC",
+  "original_question_preserved": true,
+  "question_en": "Compare the eight TSs by section, table, and figure counts (which spec is most complex).",
+  "reference_query": "MATCH (:Section)-[:BELONGS_TO_SPEC]->(sourceSpec:Spec) WITH DISTINCT sourceSpec.specNumber AS specNumber OPTIONAL MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,count(DISTINCT sec) AS sectionCount OPTIONAL MATCH (tbl:TSTable)-[:TABLE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) WITH specNumber,sectionCount,count(DISTINCT tbl) AS tableCount OPTIONAL MATCH (fig:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)-[:BELONGS_TO_SPEC]->(:Spec {specNumber:specNumber}) RETURN specNumber,sectionCount,tableCount,count(DISTINCT fig) AS figureCount",
+  "repair_class": "query_and_scorer",
+  "required_fields": [
+    {
+      "name": "specNumber",
+      "nullable": false,
+      "source_column_or_expression": "specNumber",
+      "type": "string"
+    },
+    {
+      "name": "sectionCount",
+      "nullable": false,
+      "source_column_or_expression": "sectionCount",
+      "type": "integer"
+    },
+    {
+      "name": "tableCount",
+      "nullable": false,
+      "source_column_or_expression": "tableCount",
+      "type": "integer"
+    },
+    {
+      "name": "figureCount",
+      "nullable": false,
+      "source_column_or_expression": "figureCount",
+      "type": "integer"
+    }
+  ],
+  "repair_sha256": "3dc896e7e43117decfc4681d23e9f67bc03306826ad91034967e72e36758e807"
+}
