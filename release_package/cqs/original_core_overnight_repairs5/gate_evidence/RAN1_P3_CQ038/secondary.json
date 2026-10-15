@@ -1,0 +1,470 @@
+{
+  "id": "RAN1_P3_CQ038",
+  "repair_sha256": "d1bdafb26d49862e8c0591453df485559f4c4b0e6cf62eb663f7d7dc9c54050b",
+  "original_question_sha256": "d44bce0a73ee3c86c16900afbb07cb243f25a2eb58688dc0312666ece2487618",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Fresh independent direct Codex v5 exact original/source-only judgment /root/reaudit_ran2_ran5",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Return the top 10 most-referenced sections and how many CRs modified each",
+      "finding": "The requested answer identifies each release-aware Section and its CR-document count, so sectionId and integer crCount are necessary and sufficient. refCount supplies ranking provenance; title, specNumber, source edition text and rank are unasked auxiliary fields. Parenthetical stability explains the requested comparison without requesting a new stability formula.",
+      "query_clauses": [
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "OPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)",
+        "WITH sec,owner,count(DISTINCT referrer) AS refCount",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)",
+        "WHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease",
+        "  AND cr.clausesAffected IS NOT NULL",
+        "  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')",
+        "      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'",
+        "        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)",
+        "WITH sec,refCount,count(DISTINCT cr) AS crCount",
+        "RETURN sec.sectionId AS sectionId,crCount,refCount",
+        "ORDER BY refCount DESC,sectionId ASC"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "most-referenced sections",
+      "finding": "The benchmark Section class and explicit release-final original design define all3942 recorded unique Section identities, including zero-ref/zero-matched-CR records. Design §6 explicitly limits CR→Section links to clausesAffected-available records; this is a recorded matching count, not a claim about all authored physical changes. No unasked latest/version/status/TS subset was added.",
+      "query_clauses": [
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "OPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)",
+        "WITH sec,owner,count(DISTINCT referrer) AS refCount",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)",
+        "WHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease",
+        "  AND cr.clausesAffected IS NOT NULL",
+        "  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')",
+        "      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'",
+        "        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)",
+        "WITH sec,refCount,count(DISTINCT cr) AS crCount",
+        "RETURN sec.sectionId AS sectionId,crCount,refCount",
+        "ORDER BY refCount DESC,sectionId ASC"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "how many CRs modified each",
+      "finding": "Incoming direct REFERENCES_SECTION defines references; REFERENCES_SPEC-only, outgoing direction or transitive paths do not. Original §7.2 binds CR MODIFIES specNumber and TARGET_RELEASE to the Section owner release, with exact declared ordinal identity. The maximal literal-token grammar avoids substring/ancestor/subtree invention. All336 available literals contain no interval. The new generic whole-token grammar admits numeric/alphanumeric dotted ordinals including9.A, and uppercase Annex-leading ordinals, with at most one prose period stripped. Fresh all-field versus all same-target Section dictionaries found no retained exact ordinal excluded by the new grammar; three actual9.A witnesses that invalidated v2 are included. The sole Annex-declaring CR targets38.901 outside retained Section domain; Annex tokens are nevertheless recognized rather than omitted by fiat.",
+      "query_clauses": [
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "OPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)",
+        "WITH sec,owner,count(DISTINCT referrer) AS refCount",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)",
+        "WHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease",
+        "  AND cr.clausesAffected IS NOT NULL",
+        "  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')",
+        "      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'",
+        "        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)",
+        "WITH sec,refCount,count(DISTINCT cr) AS crCount",
+        "RETURN sec.sectionId AS sectionId,crCount,refCount",
+        "ORDER BY refCount DESC,sectionId ASC"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "how many CRs",
+      "finding": "Each recorded CR entity/document contributes once to a Section, even with duplicate relationship witnesses or repeated declared tokens. count(DISTINCT cr) preserves that unit; count(DISTINCT referrer) ranks recorded referring Sections once. Aggregating references first prevents Cartesian reference×CR join multiplication, and OPTIONAL preserves zero recorded matches without interpreting metadata absence as world absence.",
+      "query_clauses": [
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "OPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)",
+        "WITH sec,owner,count(DISTINCT referrer) AS refCount",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)",
+        "WHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease",
+        "  AND cr.clausesAffected IS NOT NULL",
+        "  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')",
+        "      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'",
+        "        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)",
+        "WITH sec,refCount,count(DISTINCT cr) AS crCount",
+        "RETURN sec.sectionId AS sectionId,crCount,refCount",
+        "ORDER BY refCount DESC,sectionId ASC"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "top 10",
+      "finding": "The requested answer contains exactly ten eligible Section/count records, with all strict-above-boundary records and sufficient boundary-tied members. Uncapped fullpool query establishes the complete ranking population for scoring; it does not require a model to output3942 rows. Complete available-field source closure is bounded and all10715 recorded CR inputs remain visible, including nulls; no authored-cover absence is converted to a negative scientific claim.",
+      "query_clauses": [
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "OPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)",
+        "WITH sec,owner,count(DISTINCT referrer) AS refCount",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)",
+        "WHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease",
+        "  AND cr.clausesAffected IS NOT NULL",
+        "  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')",
+        "      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'",
+        "        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)",
+        "WITH sec,refCount,count(DISTINCT cr) AS crCount",
+        "RETURN sec.sectionId AS sectionId,crCount,refCount",
+        "ORDER BY refCount DESC,sectionId ASC"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "top 10 most-referenced sections",
+      "finding": "refCount descending defines top10 eligibility. The English does not require returned display order or specify a choice within tied boundary ranks. any_subset_at_boundary, within_tie_order=any and require_rank_order=false preserve the requested top set; sectionId ASC merely makes native fullpool reproducible and does not impose an unasked lexical boundary selection.",
+      "query_clauses": [
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "OPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)",
+        "WITH sec,owner,count(DISTINCT referrer) AS refCount",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)",
+        "WHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease",
+        "  AND cr.clausesAffected IS NOT NULL",
+        "  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')",
+        "      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'",
+        "        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)",
+        "WITH sec,refCount,count(DISTINCT cr) AS crCount",
+        "RETURN sec.sectionId AS sectionId,crCount,refCount",
+        "ORDER BY refCount DESC,sectionId ASC"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "(stability of core sections)",
+      "finding": "No approved/adopted causal outcome, today-final technical stability, physical-source completeness or external normalization is inferred. The current/staged design bytes are explicitly pinned and are not asserted as proven prefreeze authoring. The unchanged original query also binds clausesAffected-present records, while source schema/design explain exact matching release scope; this conjunction supports recorded graph semantics under fixed criteria. Separate authored-cover gaps/conflicts remain disclosed.",
+      "query_clauses": [
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "OPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)",
+        "WITH sec,owner,count(DISTINCT referrer) AS refCount",
+        "OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)",
+        "WHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease",
+        "  AND cr.clausesAffected IS NOT NULL",
+        "  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')",
+        "      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'",
+        "        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)",
+        "WITH sec,refCount,count(DISTINCT cr) AS crCount",
+        "RETURN sec.sectionId AS sectionId,crCount,refCount",
+        "ORDER BY refCount DESC,sectionId ASC"
+      ]
+    }
+  ],
+  "definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/canonical_source_only_definition.json",
+    "bytes": 2528,
+    "sha256": "4b5c858dec54193138982b77fe6b6fe73e76ed1afe469112daf4d4a11070818a"
+  },
+  "source_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/original_CQ038_and_whole_available_field_source_context_packet.json",
+    "bytes": 24851,
+    "sha256": "822693fcf48fd97f9901f3dd855734e46c798eb717c05e81ef2b7a773291a313"
+  },
+  "pure_Cypher_equivalence": {
+    "nonquery_canonical_keys_unchanged": true,
+    "old_APOC_guard_preserved": true,
+    "character_literal_projections_fresh_equal": 336,
+    "reverse_query_replacement_exact": true
+  },
+  "full_source_input_counts": {
+    "Sections": 3942,
+    "Section_reference_edges": 3505,
+    "CRs": 10715,
+    "available_nonempty_CR_fields": 610,
+    "literal_fields": 336
+  },
+  "actual_Annex_exclusion_source_witnesses": [
+    {
+      "tdocNumber": "R1-2504964",
+      "literal_ordinal": "A",
+      "actual_original_target_specs": [
+        "38.901"
+      ],
+      "actual_original_target_releases": [
+        "Rel-19"
+      ],
+      "retained_matching_Section_n": 0
+    },
+    {
+      "tdocNumber": "R1-2504964",
+      "literal_ordinal": "A.1",
+      "actual_original_target_specs": [
+        "38.901"
+      ],
+      "actual_original_target_releases": [
+        "Rel-19"
+      ],
+      "retained_matching_Section_n": 0
+    },
+    {
+      "tdocNumber": "R1-2504964",
+      "literal_ordinal": "A.2",
+      "actual_original_target_specs": [
+        "38.901"
+      ],
+      "actual_original_target_releases": [
+        "Rel-19"
+      ],
+      "retained_matching_Section_n": 0
+    }
+  ],
+  "actual_9A_positive_grammar_controls": [
+    {
+      "tdocNumber": "R1-2308427",
+      "actual_literal": "9.A, 9.1.4, 9.1.5, 9.3",
+      "actual_same_release_Section_keys": [
+        [
+          "38.213",
+          "Rel-17",
+          "9.A"
+        ]
+      ],
+      "whole_token_accepted": true
+    },
+    {
+      "tdocNumber": "R1-2302084",
+      "actual_literal": "9, 9.A, 9.2, 9.2.5, 9.2.5.3",
+      "actual_same_release_Section_keys": [
+        [
+          "38.213",
+          "Rel-17",
+          "9.A"
+        ]
+      ],
+      "whole_token_accepted": true
+    },
+    {
+      "tdocNumber": "R1-2308697",
+      "actual_literal": "9, 9.A, 9.1.2.1, 9.1.2.2, 9.1.3.1, 9.1.3.2, 9.1.4, 9.1.5, 9.2.3, 9.2.5.2, 9.3, 10.1",
+      "actual_same_release_Section_keys": [
+        [
+          "38.213",
+          "Rel-18",
+          "9.A"
+        ]
+      ],
+      "whole_token_accepted": true
+    }
+  ],
+  "prior_v2_pass_and_grammar_challenge_preserved": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/crossreview_RAN1_P3_CQ038_recorded_reference_and_available_CR_field_scope_v2.json",
+      "bytes": 24621,
+      "sha256": "a4a46e802c19459ed3b2595efed08ef598e59da50c234ff73e690c09cb9aa007"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/crossreview_RAN1_P3_CQ038_v2_actual_9A_grammar_counterexample_pending_challenge.json",
+      "bytes": 1209,
+      "sha256": "2405e21626cdf3d33d7e97e64282ac5979e5d99cd169935deb99bcea4fd0d3d2"
+    }
+  ],
+  "input_pins_before": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/manifest.json",
+      "bytes": 2295,
+      "sha256": "cde700cab398948fd9bef5c2e13718305fd757582394fd607c6d8a5d531d3e04"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/canonical_source_only_definition.json",
+      "bytes": 2528,
+      "sha256": "4b5c858dec54193138982b77fe6b6fe73e76ed1afe469112daf4d4a11070818a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/original_CQ038_and_whole_available_field_source_context_packet.json",
+      "bytes": 24851,
+      "sha256": "822693fcf48fd97f9901f3dd855734e46c798eb717c05e81ef2b7a773291a313"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all3942_original_Section_owner_inputs.jsonl",
+      "bytes": 938108,
+      "sha256": "477840d439a9edcdfc5dc01fae625ecaa591960330e8cae26bd4c7d87bae4537"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all_unfiltered_REFERENCES_SECTION_inputs.jsonl",
+      "bytes": 178755,
+      "sha256": "dba6da4ea8fa9acf29f64f4b49c9b4f058ac06693b836286c680ffcfefa1b8e9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all10715_unfiltered_CR_available_field_inputs.jsonl",
+      "bytes": 736335,
+      "sha256": "7ec4b51eec82bf39b8c61a24e969f8e15a89d61ae44bc1e2f55f9f8926800845"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all_unfiltered_CR_MODIFIES_inputs.jsonl",
+      "bytes": 1085060,
+      "sha256": "4be80d6b95a54263013c1efee5c9ccb7c50a51ee8000d06af3a25aefa2060043"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all_unfiltered_CR_TARGET_RELEASE_inputs.jsonl",
+      "bytes": 921723,
+      "sha256": "d5c95bfe745d8bced58fd5b0b0920cc5a048763f7d037ebbbebe7c0bb18a1378"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all336_literal_declaration_grammar_observations.jsonl",
+      "bytes": 57880,
+      "sha256": "c6716fc435c5e36c96caeb8a6c603bd5d0c5ac4de06253f6186591ab01ece599"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all336_pure_character_reducer_source_literal_equivalence.jsonl",
+      "bytes": 49754,
+      "sha256": "9d7ee90bcac8374b2c6aeaa13559d1d9340b12102a53f6b065aa2419401516ff"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/APOC_guard_failure_and_pure_Cypher_exact_identity_bridge.json",
+      "bytes": 2595,
+      "sha256": "8379bf13ea2de2e6da57de2dcddb81c876c44b54f952076d0cd3796b44fa381f"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/crossreview_RAN1_P3_CQ038_recorded_reference_and_available_CR_field_scope_v4.json",
+      "bytes": 26972,
+      "sha256": "4a10c144ec9ed0a0dc61b9f15f849697c65b8da932b77bf0357fa1c958f1ecfa"
+    }
+  ],
+  "input_pins_after": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/manifest.json",
+      "bytes": 2295,
+      "sha256": "cde700cab398948fd9bef5c2e13718305fd757582394fd607c6d8a5d531d3e04"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/canonical_source_only_definition.json",
+      "bytes": 2528,
+      "sha256": "4b5c858dec54193138982b77fe6b6fe73e76ed1afe469112daf4d4a11070818a"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/original_CQ038_and_whole_available_field_source_context_packet.json",
+      "bytes": 24851,
+      "sha256": "822693fcf48fd97f9901f3dd855734e46c798eb717c05e81ef2b7a773291a313"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/docs/tsg/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+      "bytes": 91818,
+      "sha256": "d5176d4a81ecb5144921f45f4c6bb7cdcc6e60a001538a0169848ac8db0b5a62"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/schema/tdoc-ontology.ttl",
+      "bytes": 71963,
+      "sha256": "c7e7fae6f87059bf5971c06c30d54aaef5ce87f18d5d732437f3ed668183cab9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all3942_original_Section_owner_inputs.jsonl",
+      "bytes": 938108,
+      "sha256": "477840d439a9edcdfc5dc01fae625ecaa591960330e8cae26bd4c7d87bae4537"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all_unfiltered_REFERENCES_SECTION_inputs.jsonl",
+      "bytes": 178755,
+      "sha256": "dba6da4ea8fa9acf29f64f4b49c9b4f058ac06693b836286c680ffcfefa1b8e9"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all10715_unfiltered_CR_available_field_inputs.jsonl",
+      "bytes": 736335,
+      "sha256": "7ec4b51eec82bf39b8c61a24e969f8e15a89d61ae44bc1e2f55f9f8926800845"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all_unfiltered_CR_MODIFIES_inputs.jsonl",
+      "bytes": 1085060,
+      "sha256": "4be80d6b95a54263013c1efee5c9ccb7c50a51ee8000d06af3a25aefa2060043"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all_unfiltered_CR_TARGET_RELEASE_inputs.jsonl",
+      "bytes": 921723,
+      "sha256": "d5c95bfe745d8bced58fd5b0b0920cc5a048763f7d037ebbbebe7c0bb18a1378"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all336_literal_declaration_grammar_observations.jsonl",
+      "bytes": 57880,
+      "sha256": "c6716fc435c5e36c96caeb8a6c603bd5d0c5ac4de06253f6186591ab01ece599"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/all336_pure_character_reducer_source_literal_equivalence.jsonl",
+      "bytes": 49754,
+      "sha256": "9d7ee90bcac8374b2c6aeaa13559d1d9340b12102a53f6b065aa2419401516ff"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/APOC_guard_failure_and_pure_Cypher_exact_identity_bridge.json",
+      "bytes": 2595,
+      "sha256": "8379bf13ea2de2e6da57de2dcddb81c876c44b54f952076d0cd3796b44fa381f"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/crossreview_RAN1_P3_CQ038_recorded_reference_and_available_CR_field_scope_v4.json",
+      "bytes": 26972,
+      "sha256": "4a10c144ec9ed0a0dc61b9f15f849697c65b8da932b77bf0357fa1c958f1ecfa"
+    }
+  ],
+  "exposure": "Original query, exact proposed query and unfiltered source inputs read. Prior own v2 pass and actual9.A source counterexample seen and preserved; fresh v5 original/exact query/all unfiltered inputs reread; v4 APOC guard failure and v3 uppercase type failure preserved. Independently derived all336 character reducer projections and byte-exact reverse query replacement; no previous semantic pass is auto-transferred. No proposer primary, filtered SQL/counts, gold, native or model predictions read.",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "native_execution_n": 0,
+  "external_model_API_calls_n": 0,
+  "new_gold": false,
+  "admitted": false,
+  "limits": "Semantic development review only. Actual uncapped native/reference fullpool, independent SQL all requested fields, top-k scorer controls and root integration remain necessary; no all-authored extraction or real-world zero claim."
+}

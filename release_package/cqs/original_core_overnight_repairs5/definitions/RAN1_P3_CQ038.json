@@ -1,0 +1,42 @@
+{
+  "id": "RAN1_P3_CQ038",
+  "question_en": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+  "original_query": "MATCH (tgt:Section)<-[:REFERENCES_SECTION]-(src:Section) WITH tgt, count(src) AS refCount ORDER BY refCount DESC LIMIT 10 MATCH (tgt)-[:BELONGS_TO_SPEC]->(sp:Spec) OPTIONAL MATCH (cr:CR)-[:MODIFIES]->(sp) WHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected CONTAINS tgt.sectionNumber RETURN sp.specNumber, tgt.sectionNumber, tgt.sectionTitle, refCount, count(cr) AS crCount ORDER BY refCount DESC",
+  "reference_query": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)\nOPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)\nWITH sec,owner,count(DISTINCT referrer) AS refCount\nOPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)\nWHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease\n  AND cr.clausesAffected IS NOT NULL\n  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')\n      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'\n        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)\nWITH sec,refCount,count(DISTINCT cr) AS crCount\nRETURN sec.sectionId AS sectionId,crCount,refCount\nORDER BY refCount DESC,sectionId ASC",
+  "required_fields": [
+    {
+      "name": "sectionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "sectionId"
+    },
+    {
+      "name": "crCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "crCount"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "source_column": "refCount",
+        "direction": "desc"
+      }
+    ]
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "d1bdafb26d49862e8c0591453df485559f4c4b0e6cf62eb663f7d7dc9c54050b",
+  "reference_query_sha256": "ea43e2907869ba1f83511101ecf987109e78e8505491527ceb05c7b82554eb1d"
+}

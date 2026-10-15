@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 448 have passed the stated repair checks,
-and 112 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 449 have passed the stated repair checks,
+and 111 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 448 unchanged original questions.
+included in these 449 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -108,3 +108,7 @@ The [one recorded TS-comparison repair](../original_core_overnight_repairs1/READ
 The [Rel-19 recorded-document survey](../original_core_overnight_repairs4/README.md) adds one unchanged original question and all 5,948 recorded matching TDoc identities. This cohort raises the current index to 448/560, with 112 pending; its [fresh four-method evaluation](../original_core_overnight_evaluation4/README.md) retains the one ID in every method. Actual speech, full physical-source truth, and human or expert validation are not established.
 
 The Rel-19 survey evaluation retains five requests, six transport attempts, five received HTTP200 response bodies, $0.294875 known cost and one read-timeout attempt of unknown cost. The first response body was not received; its identical transport retry follows the frozen policy. No answer-quality retry was performed.
+
+The separate original-question cohort 5 adds `RAN1_P3_CQ038`: Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections). Its complete retained reference pool and fresh four-method evaluation are in `release_package/cqs/original_core_overnight_repairs5` and `release_package/cqs/original_core_overnight_evaluation5`. The current index is 449/560, with 111 pending. Earlier cohorts and measurements remain separate; human and expert validation remain incomplete.
+
+For cohort5, all four measured requested-record F1 scores are0. The generated graph and SQL queries ranked by CR modification count rather than the original most-referenced-section rank; one retrieval abstained and the other returned a partial answer. Every first response and execution is preserved without answer-quality regeneration.

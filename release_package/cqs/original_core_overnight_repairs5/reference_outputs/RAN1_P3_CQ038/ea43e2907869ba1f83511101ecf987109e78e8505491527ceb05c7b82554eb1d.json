@@ -1,0 +1,31 @@
+{
+  "id": "RAN1_P3_CQ038",
+  "wg": "RAN1",
+  "query_sha256": "ea43e2907869ba1f83511101ecf987109e78e8505491527ceb05c7b82554eb1d",
+  "query": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)\nOPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)\nWITH sec,owner,count(DISTINCT referrer) AS refCount\nOPTIONAL MATCH (cr:CR)-[:MODIFIES]->(modified:Spec),(cr)-[:TARGET_RELEASE]->(release:Release)\nWHERE modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease\n  AND cr.clausesAffected IS NOT NULL\n  AND any(token IN split(reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1) | clean + CASE WHEN substring(cr.clausesAffected,pos,1) =~ '[0-9A-Za-z.]' THEN substring(cr.clausesAffected,pos,1) ELSE ' ' END),' ')\n      WHERE token =~ '[0-9][A-Za-z0-9]*([.][A-Za-z0-9]+)*[.]?|[A-Z]([.][A-Za-z0-9]+)*[.]?'\n        AND CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber)\nWITH sec,refCount,count(DISTINCT cr) AS crCount\nRETURN sec.sectionId AS sectionId,crCount,refCount\nORDER BY refCount DESC,sectionId ASC",
+  "started_utc": "2026-10-15T01:53:02.966942+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN1_P3_CQ038/ea43e2907869ba1f83511101ecf987109e78e8505491527ceb05c7b82554eb1d.jsonl",
+  "columns": [
+    "sectionId",
+    "crCount",
+    "refCount"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 3942,
+  "bytes_retained": 113738,
+  "rows_sha256": "0867ede8669d432c00efe12ef66991bee190a1c66559c34993ed329ea2606d65",
+  "finished_utc": "2026-10-15T01:53:18.491403+00:00",
+  "elapsed_s": 15.5245,
+  "full_rows_available": true
+}

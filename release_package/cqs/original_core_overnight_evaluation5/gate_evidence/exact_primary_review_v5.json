@@ -1,0 +1,114 @@
+{
+  "id": "RAN1_P3_CQ038",
+  "status": "pass",
+  "repair_sha256": "d1bdafb26d49862e8c0591453df485559f4c4b0e6cf62eb663f7d7dc9c54050b",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Proposer original source-first AI judgment /root/verify_prepared_replies",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "original_question_en": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+  "source_context_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/original_CQ038_and_whole_available_field_source_context_packet.json",
+    "sha256": "822693fcf48fd97f9901f3dd855734e46c798eb717c05e81ef2b7a773291a313",
+    "bytes": 24851
+  },
+  "definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/canonical_source_only_definition.json",
+    "sha256": "4b5c858dec54193138982b77fe6b6fe73e76ed1afe469112daf4d4a11070818a",
+    "bytes": 2528
+  },
+  "exposure_disclosure": "Original query/prior diagnosis/schema/design/all unfiltered inputs and prior unscored full SQL pool were already read. The current exact judgment reuses pinned source readings and rechecks all seven units after the preserved APOC zero-row guard failure. Source-only equivalence and typed/lexical structural preflight were checked. No model/gold prediction or successful native answer read. AI/nonblind/expert0.",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+      "finding": "The English asks ranked section identities and how many CRs modified each, so one connected row must carry sectionId and integer crCount. Reference frequency supplies the requested ranking and remains auxiliary. Titles, version labels, refCount, rank and a synthesized stability score are not extra mandatory answer roles. The stability parenthetical motivates the two requested quantities.",
+      "query_clauses": [
+        "RETURN sec.sectionId AS sectionId,crCount,refCount"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+      "finding": "Plural sections denotes retained unique release-aware Section records in the original ontology. The original hybrid schema explicitly keeps all release-keyed Section identities while enabling release-blind analysis. Phase3 general §6 restricts direct CR-to-Section links to available clausesAffected, and §7.2 states resolution to existing same-release identifiers. This substantive original recorded-domain context closes a graph-relative population without demanding unasked all-authored physical change completeness or a latest edition.",
+      "query_clauses": [
+        "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(owner:Spec)",
+        "cr.clausesAffected IS NOT NULL"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+      "finding": "Most-referenced is direct incoming Section-to-Section references as defined in the original schema, not referencesSpec or reversed direction. A modifying CR must match the target family and targetRelease and a whole exact declared ordinal. Actual9.A witnesses disprove the preserved numeric-only candidate. The current query retains complete maximal ASCII alphanumeric/dot tokens, validates numeric-leading or single-capital Annex-leading addresses, strips one final prose period, and compares exact case-sensitive Section numbers. Replacing APOC regreplace with a pure character reducer leaves that lexical projection identical on every one of the336 actual literals; reverse replacement exactly reconstructs v4. The unchanged guard screens v5 successfully, but only actual native execution can validate query runtime. No ancestor, substring, subtree, interval, approval, status or topic rule is introduced. Whole336 declarations contain no interval needing expansion.",
+      "query_clauses": [
+        "OPTIONAL MATCH (referrer:Section)-[:REFERENCES_SECTION]->(sec)",
+        "modified.specNumber=owner.specNumber AND release.releaseName=owner.specRelease",
+        "reduce(clean='', pos IN range(0,size(cr.clausesAffected)-1)",
+        "CASE WHEN token ENDS WITH '.' THEN substring(token,0,size(token)-1) ELSE token END=sec.sectionNumber"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+      "finding": "Reference frequency counts distinct recorded source Section identities once, not physical citation occurrences. Modification count counts distinct CR document records, including original draft/provisional CR records, once per exact retained endpoint. These units follow the original Section/CR ontology and guard path multiplicity. Unknown authored data is not a claim of no physical edit.",
+      "query_clauses": [
+        "count(DISTINCT referrer) AS refCount",
+        "count(DISTINCT cr) AS crCount"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+      "finding": "The candidate returns the complete uncapped3942 Section-owner population and preserves recorded zero counts via OPTIONAL paths. No early LIMIT truncates the ranking or modification pool. Original available-field relation completeness is explicit and differs from complete physical edits across unknown or unparsed source covers. Both requested fields remain nonnull with integer counts.",
+      "query_clauses": [
+        "OPTIONAL MATCH",
+        "RETURN sec.sectionId AS sectionId,crCount,refCount",
+        "no LIMIT"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+      "finding": "The original explicitly requires top10 by descending incoming reference frequency. The scorer accepts any valid cutoff-tie subset and does not require output row rank order. SectionId ascending is only query presentation within ties; crCount does not become an unasked secondary ranking key. Complete native rank groups are still required at the execution gate.",
+      "query_clauses": [
+        "ORDER BY refCount DESC,sectionId ASC",
+        "source_order_keys=refCount DESC",
+        "top_k_boundary_ties=10; require_rank_order=false"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Return the top 10 most-referenced sections and how many CRs modified each (stability of core sections).",
+      "finding": "The candidate keeps unchanged English, original query bytes, requested fields, collection, cardinality, source boundary and retained relation meanings. The actual earlier APOC guard failure is preserved; neither that failure nor lexical preflight is scored as an answer. Supported lowercase typed schemas and cardinality mode were checked before this review. No human expertise, actual-world finality, approval, latest release rule, all-authored completeness, model success or admission is asserted. Source conflicts and whole10715 cover unknowns remain separate evidence.",
+      "query_clauses": [
+        "original_question_preserved=true",
+        "required_fields=sectionId and crCount",
+        "pure-Cypher portability only; frozen guard unchanged"
+      ]
+    }
+  ],
+  "source_contract_not_physical_closure": true,
+  "pure_portability_bridge": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/source_only_independent_review_v5/APOC_guard_failure_and_pure_Cypher_exact_identity_bridge.json",
+    "sha256": "8379bf13ea2de2e6da57de2dcddb81c876c44b54f952076d0cd3796b44fa381f",
+    "bytes": 2595
+  },
+  "schema_lexical_preflight": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/CQ038_v5_unchanged_typed_kernel_and_lexical_guard_presemantic_preflight.json",
+    "sha256": "ad117095643b7cbf6497e5653d350aef224d1cabd4d99e4a6c92f24b95bcb63d",
+    "bytes": 1437
+  },
+  "prior_review_preserved": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ038_original_recorded_Section_reference_and_available_CR_field_scope/CQ038_exact_original_complete_ordinal_reference_count_primary_v4.json",
+    "sha256": "9d84709235b3dc4b7a46ef9cd9f25a6c0c18963cf7b4dfc1008f14f169563326",
+    "bytes": 9015
+  },
+  "native_model_API_or_admission_n": 0
+}
