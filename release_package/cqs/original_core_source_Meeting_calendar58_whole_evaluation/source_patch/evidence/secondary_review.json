@@ -1,0 +1,148 @@
+{
+  "id": "RAN4_P3_CQ3-3",
+  "repair_sha256": "c4f534fda848bfac16ce25f5634c28fb7e7ec56a8b453d20ba2be34c2a0ec338",
+  "question_en": "List the top 10 CRs that modify spec 38.133 (recent changes to the spec).",
+  "status": "pass",
+  "reviewer_kind": "Independent original-only source judgment /root/verify_prepared_replies",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recent_CR_actual_calendar_source_variant_v2/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "d3fcdb52ceae09bd034f2b7fcc5219c7310f411f37834151052e8fa3a6329491",
+    "bytes": 1823
+  },
+  "source_packet_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recent_CR_actual_calendar_source_variant_v2/source_only_independent_review/original_English_KO_and_complete_own_Meeting_period_source_only_packet.json",
+    "sha256": "31c31beb4c89aa752e1ec27f4f06ff8c12d9b5b946316f656ae7175bbf92d812",
+    "bytes": 35648
+  },
+  "source_only_raw_corroboration_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/RAN4_calendar_source_only_independent_raw_corroboration_v4/receipt.json",
+    "sha256": "d5f541c60202d9e65522c979e72436992ef5a23e2640192ae586e1dbcdf636eb",
+    "bytes": 267647
+  },
+  "source_binding_comparison_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recent_CR_actual_calendar_source_variant_v2/source_only_independent_review/actual_original_role_excerpt_preservation_and_current_source_snapshot_comparison.json",
+    "sha256": "f99cd2139eb6a732eab249c5c897b113d4168c5b0a191b3f62cce072cb999990",
+    "bytes": 19118
+  },
+  "actual_source_period_role_checks": {
+    "all58_nonoverlapping_intervals": true,
+    "all58_unique_end_dates": true,
+    "original_CR_ranked_answers_used": false
+  },
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "original_quote": "List the top 10 CRs",
+      "finding": "The requested objects are CR document identities. tdocNumber identifies each retained CR document. Its title, individual upload time, normative approval, and meeting dates are useful context but are not separately requested answer roles. The query temporal key is auxiliary rank evidence and must not become a new required field.",
+      "query_clauses": [
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber,meetingPeriodEndDate",
+        "required_fields=tdocNumber string nonnull"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "population and source context",
+      "original_quote": "CRs that modify spec 38.133",
+      "finding": "The original Phase3 CQ3 source path explicitly associates a named TS with recorded CRs; Phase1 records include CR, draftCR and pCR TDoc records. The target is the logical specNumber family, with all retained release-specific target paths allowed, without an unasked latest edition or status filter. Complete unranked operands were independently read against all direct MODIFIES/PRESENTED_AT database records: every one of the 16017 target CR records has exactly one recorded presentation Meeting among the source-complete 58. This bounded retained domain does not certify every physically authored or enacted CR.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber:'38.133'})",
+        "MATCH (cr)-[:PRESENTED_AT]->(meeting:Meeting)"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "original_quote": "(recent changes to the spec)",
+      "finding": "The original source CQ3 specifically uses Meeting recency; Phase1 defines presentedAtMeeting as the meeting where a document is presented/discussed, separately from upload and reservation times. Therefore chronological recency here uses the recorded presentation Meeting period, while MODIFIES is its recorded target relation, not proof of normative enactment. Actual original report p0/p1 may describe the next meeting receiving the report, whereas its own Meeting Report/FactSummary title and following period identify the event reported. The all58 date observations use the latter role. The exact query traverses each CR presentation edge to that Meeting and does not confuse the report TDoc presentation meeting with the CR event, require approval, or substitute uploadedDate.",
+      "query_clauses": [
+        "(cr)-[:MODIFIES]->(:Spec {specNumber:'38.133'})",
+        "(cr)-[:PRESENTED_AT]->(meeting:Meeting)",
+        "max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "original_quote": "top 10 CRs",
+      "finding": "The selection unit is each distinct CR TDoc identity, including separate revisions when recorded as distinct documents. It is neither CR number shared across revisions nor relation-path rows. WITH cr aggregates duplicate target/presentation joins before DISTINCT tdocNumber. The complete source operands independently establish one actual recorded presentation Meeting per CR here, so max does not invent a terminal chain or select an arbitrary meeting from competing presentations. Multiple Spec editions and duplicate joins cannot inflate the requested ten.",
+      "query_clauses": [
+        "WITH cr,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate",
+        "RETURN DISTINCT cr.tdocNumber AS tdocNumber,meetingPeriodEndDate"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "cardinality and completeness",
+      "original_quote": "top 10",
+      "finding": "The unchanged English explicitly fixes ten. The uncapped reference query retains the complete recorded target-CR rank pool; top_k_boundary_ties selects min(10,population) without a date cutoff, LIMIT-generated arbitrary boundary membership, minimum count, latest release, or submitted-only restriction. Missing dates are not defaulted: own-event source periods are closed for all58 presentation Meetings before materialization. This is completeness of the retained graph-relative input population, not physical archive completeness or approval success.",
+      "query_clauses": [
+        "reference query has no LIMIT/date-window filter",
+        "collection.kind=top_k_boundary_ties",
+        "cardinality_policy.mode=top_k,value=10"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "original_quote": "recent changes",
+      "finding": "Recent requires chronological eligibility rather than lexicographic TDoc order. Original numeric Meeting sorting defines the meeting temporal grain but collapses 116 and116bis despite their literal August and October periods; the earlier numeric-only pending proposal remains pending. Own reported calendar periods refine that source grain truthfully. Their source-complete58 intervals have no overlaps or duplicate end dates, so start/end period order is equivalent within this domain. CRs at the same Meeting remain genuinely tied: chronological within-meeting document ordering is unproved and is not invented from CR ASC or uploadedDate. The unordered answer contract accepts any sufficient cutoff-tie subset, while the full pool preserves the boundary groups. ORDER BY tdocNumber is capture presentation only.",
+      "query_clauses": [
+        "ORDER BY meetingPeriodEndDate DESC,tdocNumber ASC",
+        "source_order_keys=meetingPeriodEndDate DESC",
+        "require_rank_order=false,within_tie=any,boundary_tie_policy=any_subset"
+      ],
+      "status": "pass"
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "original_quote": "(recent changes to the spec)",
+      "finding": "This is an explicitly separate source-enriched snapshot. sourceReportedEndDate means a documentary own-event period, not upload, approval, enactment or current-world latest status. Raw342 original-member/XML vectors and all58 ledger observations are corroborated independently;23 legacy DOC derivatives retain conversion provenance and are not asserted to be original XML. Month ambiguity101 is corroborated by approved own arrangements,114bis by authored April arrangement and its chair-opening literal despite draft/not-treated status; no approval claim follows. Malformed final titles remain preserved as unknown observations. The prior full phase3 7efa source bytes have not been restored: only the33 relevant old literal lines are retained in the old packet and independently equal at the same coordinates in immutable GitHEAD/original-context snapshots. No current bytes are assigned the old hash and no assertion about omitted old document text is made. Those literal original operational rules plus unchanged schema/Phase1 source are sufficient for this exact relationship/temporal grain, without relying on proposer answers or changing original question meaning.",
+      "query_clauses": [
+        "repair_class=separate_source_enriched_query_and_scorer",
+        "original_question_preserved=true",
+        "no upload/status/approval/enactment predicate"
+      ],
+      "status": "pass"
+    }
+  ],
+  "each_required_field_schema": [
+    {
+      "type": "string"
+    }
+  ],
+  "diagnostic_empty_structural_preflight": {
+    "diagnostic_only": true,
+    "exact": true,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "matched_records": 0,
+    "gold_records": 0,
+    "predicted_records": 0,
+    "reference_population_records": 0,
+    "type_errors": [],
+    "cardinality_valid": true,
+    "order_valid": true
+  },
+  "exposure_disclosure": "Exact source-only original English/KO/definition, schema/design excerpts and immutable current/GitHEAD snapshot comparison; all342 authentic raw report members, all58 own periods, all16017 unranked input records. No proposer primary, filtered/ranked SQL output, top10 answer/gold, native result or model prediction read. Generic input sizes and source fields were visible. Earlier numeric source-grain discussion is disclosed and not reused as a verdict.",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "API_calls": 0,
+  "native_queries": 0,
+  "filtered_answer_SQL_queries": 0,
+  "new_admissions": 0,
+  "source_boundary": "Documented own Meeting recency of retained CR presentation records, not enacted change or world latest status.",
+  "source_binding_limit": "Prior entire phase3 7efa bytes unrecovered; preserved relevant33 old literals independently match immutable GitHEAD and current source snapshots. No old whole-byte identity claim.",
+  "old_reader_failures_preserved": [
+    "standalone DOCX source was initially assumed outer ZIP",
+    "all342/all58 source assertions completed before whole-DB hash allocation failed",
+    "streaming reader rejected later changed original phase3 source pin"
+  ],
+  "script_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/review_RAN4_calendar_source58_exact_source_bound_v2.py",
+    "sha256": "7f978a2a84edb86da1f72e59eb32962fa13982a942c93f8c9e0b11c02d01e27f",
+    "bytes": 12759
+  },
+  "check_pass": "PASS_EXACT_IDENTITY_AND_SEVEN_UNITS"
+}
