@@ -1,0 +1,59 @@
+{
+  "id": "RAN3_P2_CQ1-6",
+  "question_en": "List the resolutions that modify spec 38.423 (decision-to-spec tracing).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec {specNumber: '38.423'}) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT r.resolutionId, labels(r) AS types, m.canonicalMeetingNumber, m.meetingNumberInt AS mNum ORDER BY mNum DESC, r.resolutionId LIMIT 15",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(:Tdoc)-[:MODIFIES]->(:Spec {specNumber: '38.423'})\nMATCH (r)-[:MADE_AT]->(m:Meeting)\nOPTIONAL MATCH (r)-[:RESOLUTION_BELONGS_TO]->(a:AgendaItem)\nRETURN DISTINCT r.resolutionId AS resolutionId, m.meetingNumberInt AS meetingNumberInt, a.agendaNumber AS agendaNumber, r.sequence AS sequence\nORDER BY meetingNumberInt DESC, agendaNumber ASC, sequence ASC, resolutionId ASC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "r.resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "agendaNumber",
+        "direction": "asc"
+      },
+      {
+        "source_column": "sequence",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "5e94096eed90725383d4f4673569ba1d096e55b28d0bfe3eeb758c7b27ae616f",
+  "original_question_sha256": "fb7fc0035bf083bda05efefe2bb88dd599d361a9ce497a84868c61809dd4bdfb",
+  "original_query_sha256": "a3860cfc6d2f4b8efd8e5fc9c5ae4b3a7c77610e0779e3b6b2fbaaad5c7b720d",
+  "reference_query_sha256": "286b805977b7ea4c0c9a957516aec57752a3003bec4dfd55562b7c41f1b0750f",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_context_metadata": {
+    "source_default_is_not_an_inferred_unasked_limit": "Original indexed CQ result rules explicitly apply list10 to CQ1-1..1-7, and the unchanged English does not request all.",
+    "meeting_integer_role": "Explicit original operational ordering group; not a claim that suffix-collapsed numbers are exact calendar chronology.",
+    "agenda_number_role": "Original string-valued Agenda number ascending; numeric or natural-order normalization is not introduced.",
+    "nullable_auxiliary_key_policy_to_challenge": "OPTIONAL preserves Resolution membership if recorded Agenda relation is missing; native Cypher ASC places NULL last. This operational NULL placement is not a source assertion of actual agenda order.",
+    "last_resolutionId_order": "Deterministic capture presentation only; not a substantive rank key or a required tie breaker.",
+    "no_native_gold_filtered_SQL_or_model_answers_in_clean": true
+  },
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/two_original_documentary_decision_to_Spec_documented_defaults_v3/source_only_independent_review/original_documented_list10_default_order_full_source_only_packet.json",
+    "sha256": "d423e2d56f739dba6d251c1dc3669d66e037a0618385f8bf9d278c0b9ccf49a9"
+  }
+}

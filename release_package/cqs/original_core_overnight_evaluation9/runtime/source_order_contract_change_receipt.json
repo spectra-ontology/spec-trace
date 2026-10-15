@@ -1,0 +1,35 @@
+{
+  "status": "PREREGISTERED_NO_PREDICTIONS_SOURCE_RANKING_PROMPT_CONTRACT_CORRECTION",
+  "utc": "2026-10-15T04:17:50.581666+00:00",
+  "scope": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/authorized_incremental9_OpenRouter_release/scope.json",
+    "sha256": "aeb17735eddde25179b4bda9e55c4609fdead0ecda357751c60f37eb8ff3e544",
+    "bytes": 27814
+  },
+  "old_frozen_protocol": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/authorized_incremental9_OpenRouter_release/evaluation/run/protocol.json",
+    "sha256": "be22c413c2370cc29e2b41cebff39a5ea27411aafa998bacf6b8f36b2a6a96e1",
+    "bytes": 32461
+  },
+  "old_generation_requests_n": 0,
+  "old_runtime_preserved": true,
+  "old_run_preserved": true,
+  "changed_modules": {
+    "run_evaluation.py": "--- runtime/run_evaluation.py\n+++ runtime_v2/run_evaluation.py\n@@ -36,7 +36,7 @@\n def public_task(t):\n     allowed={'name','type','nullable','json_schema','nested_array_semantics'}\n     collection={k:v for k,v in t['collection'].items() if k in\n-                {'kind','value','tie_policy','within_tie_order','require_rank_order','order_keys'}}\n+                {'kind','value','tie_policy','within_tie_order','require_rank_order','order_keys','source_order_keys'}}\n     result={'id':t['id'],'wg':t['id'].split('_')[0],'repair_sha256':t['repair_sha256'],\n             'question_en':t['question_en'],\n             'required_fields':[{k:v for k,v in f.items() if k in allowed} for f in t['required_fields']],\n",
+    "structured_adapter.py": "--- runtime/structured_adapter.py\n+++ runtime_v2/structured_adapter.py\n@@ -57,7 +57,7 @@\n         for field in fields]\n     collection = contract.get('collection', {})\n     visible_collection = {key: collection[key] for key in\n-        ('kind', 'value', 'order_keys', 'tie_policy', 'within_tie_order', 'require_rank_order') if key in collection}\n+        ('kind', 'value', 'order_keys', 'source_order_keys', 'tie_policy', 'within_tie_order', 'require_rank_order') if key in collection}\n     cardinality = contract.get('cardinality_policy', {})\n     visible_cardinality = {key: cardinality[key] for key in ('mode', 'value', 'tie_policy') if key in cardinality}\n     return {'required_fields': visible_fields, 'collection': visible_collection,\n",
+    "retrieval_adapter.py": "--- runtime/retrieval_adapter.py\n+++ runtime_v2/retrieval_adapter.py\n@@ -211,6 +211,14 @@\n                 for key in order_keys):\n             raise ValueError('Order keys must name requested fields only')\n         collection['order_keys'] = order_keys\n+    if 'source_order_keys' in task['collection']:\n+        source_keys = task['collection']['source_order_keys']\n+        if not isinstance(source_keys, list) or any(\n+                not isinstance(key, dict) or set(key) != {'source_column', 'direction'} or\n+                not isinstance(key['source_column'], str) or not key['source_column'] or\n+                key['direction'] not in {'asc', 'desc'} for key in source_keys):\n+            raise ValueError('Invalid declared source-side rank keys')\n+        collection['source_order_keys'] = source_keys\n     cardinality = {k: v for k, v in task['cardinality_policy'].items()\n                    if k in {'mode', 'tie_policy'} or (k == 'value' and task['cardinality_policy'].get('mode') == 'top_k')}\n     result={'required_fields': fields, 'collection': collection, 'cardinality_policy': cardinality}\n"
+  },
+  "only_new_public_information": "Already declared collection.source_order_keys: source-column names and directions, without any answer values, eligible identities, counts, queries, examples, or gold. Output roles remain unchanged.",
+  "matched_protocol_limitation": "Earlier runtime omitted source_order_keys while requiring ranked output. This new cohort is explicitly prompt-contract corrected; do not describe it as byte-identical to the old protocol or compare as a controlled source-medium effect.",
+  "unchanged": [
+    "original English",
+    "canonical definition/repair/query identities",
+    "tasks/gold/scorer",
+    "model/provider/transport/quality-retry policy",
+    "source inventories",
+    "retrieval selection and passages",
+    "execution guards"
+  ],
+  "native_and_API_calls_n": 0,
+  "actual_generation_started": false
+}

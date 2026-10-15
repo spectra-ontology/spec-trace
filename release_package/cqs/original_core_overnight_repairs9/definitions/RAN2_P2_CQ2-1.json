@@ -1,0 +1,47 @@
+{
+  "id": "RAN2_P2_CQ2-1",
+  "question_en": "Which resolutions did TDoc R2-2508373 lead to (contribution-to-decision trace)?",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc) WHERE 'R2-2508373' IN t.tdocNumber MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, r.resolutionId, labels(r) AS type, m.canonicalMeetingNumber, r.content",
+  "reference_query": "MATCH (t:Tdoc {tdocNumber:'R2-2508373'})<-[:REFERENCES]-(r:Resolution)\nMATCH (r)-[:MADE_AT]->(m:Meeting)\nRETURN DISTINCT r.resolutionId AS resolutionId, m.meetingNumberInt AS meetingNumberInt, r.sequence AS sequence\nORDER BY meetingNumberInt DESC, sequence ASC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "sequence",
+        "direction": "asc"
+      }
+    ],
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "ad30c35b9e1af9c5ba56b9b31c9c7faafc7c8bdfc5b4d3fb6c39d031739e744c",
+  "reference_query_sha256": "11945bcfa05a121c24ea6b25de9b06947c6487e493c6986f8499aa525bac6c94",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "fedbc952f6af4401ada3f1123b5a1b979c0063e23952e3305ca5e08c6c50b405",
+  "original_query_sha256": "994bbb3c54f91c386ea19de501174091e2b55c8328ea25e128fe25ca035b59f3",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ2-1_original_documentary_default10_source_only_v3/original_documentary_trace_and_default10_source_context_packet.json",
+    "sha256": "0a099e31d76fb2610e4dae9f002083d06434299f22182062387bc2614eb0e533"
+  }
+}

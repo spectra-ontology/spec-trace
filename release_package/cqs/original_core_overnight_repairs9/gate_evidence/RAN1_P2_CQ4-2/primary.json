@@ -1,0 +1,134 @@
+{
+  "id": "RAN1_P2_CQ4-2",
+  "repair_sha256": "4b45c903a577c178a3151859532bdb3af62f5ca8628ed08b1a2552dab254baec",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "ac81b41cf4a940bd4db1f2680a4a4dcb99345874f06963237666793600e3efcd",
+  "reviewer_kind": "Primary original source and finite key-closure judgment /root/verify_prepared_replies",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+      "finding": "The unchanged List the agenda items asks for meeting-specific Agenda identities. agenda.id is a unique nonnull string for every Summary-linked Agenda, unlike repeated agendaNumber across meetings. agendaItemId is the only required answer field; Meeting and Agenda sort values are auxiliary native rank evidence, and title/count/company are not extra mandatory roles.",
+      "query_clauses": [
+        "MATCH (summary:Summary)-[:MODERATED_BY]->(:Company {companyName:'Huawei'}),",
+        "      (summary)-[:BELONGS_TO]->(agenda:AgendaItem),",
+        "      (summary)-[:PRESENTED_AT]->(meeting:Meeting)",
+        "WHERE summary.summaryType='FL'",
+        "RETURN DISTINCT agenda.id AS agendaItemId, meeting.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber",
+        "ORDER BY meetingNumberInt DESC, agendaNumber ASC, agendaItemId ASC"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+      "finding": "The exact original indexed/HEAD f414 design specifies Final Report role lookup. Summary is the original class for FL/Moderator source entries, and original CQ4 maps to Summary/moderatedBy/Company. The retained explicit Huawei role and Summary→Agenda relation are the requested population; no approval, latest calendar date, technological influence or physical complete-source domain is substituted.",
+      "query_clauses": [
+        "MATCH (summary:Summary)-[:MODERATED_BY]->(:Company {companyName:'Huawei'}),",
+        "      (summary)-[:BELONGS_TO]->(agenda:AgendaItem),",
+        "      (summary)-[:PRESENTED_AT]->(meeting:Meeting)",
+        "WHERE summary.summaryType='FL'",
+        "RETURN DISTINCT agenda.id AS agendaItemId, meeting.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber",
+        "ORDER BY meetingNumberInt DESC, agendaNumber ASC, agendaItemId ASC"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+      "finding": "Original f414 lines414–421 explicitly unify Moderator and Feature Lead as the same stored role; schema summaryType explicitly distinguishes FL from Moderator. Thus Summary MODERATED_BY exact Company Huawei with summaryType FL and BELONGS_TO Agenda implements the unchanged FL-summary role rather than inferring leadership from document submitter. The original CQ4 numeric Meeting default is accessed through the inherited Tdoc PRESENTED_AT relation. Missing recorded role evidence is not turned into a real-world negative claim.",
+      "query_clauses": [
+        "MATCH (summary:Summary)-[:MODERATED_BY]->(:Company {companyName:'Huawei'}),",
+        "      (summary)-[:BELONGS_TO]->(agenda:AgendaItem),",
+        "      (summary)-[:PRESENTED_AT]->(meeting:Meeting)",
+        "WHERE summary.summaryType='FL'",
+        "RETURN DISTINCT agenda.id AS agendaItemId, meeting.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber",
+        "ORDER BY meetingNumberInt DESC, agendaNumber ASC, agendaItemId ASC"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+      "finding": "The requested unit is one AgendaItem identity, not FL Summary rounds, Tdocs or a count of mentions. DISTINCT identity plus rank keys suppresses repeated Summary paths. Whole unfiltered closure found one genuine multi-Meeting source, R1-2007482; a plan was fixed before inspecting its role. It has no MODERATED_BY edge and cannot satisfy the exact recorded Huawei role path. Excluding only this source leaves every source Agenda with one nonnull typed Meeting/Agenda key, so the candidate cannot place one requested Agenda identity into multiple rank groups on this frozen population. No MIN/MAX or Agenda-owner Meeting policy was chosen.",
+      "query_clauses": [
+        "MATCH (summary:Summary)-[:MODERATED_BY]->(:Company {companyName:'Huawei'}),",
+        "      (summary)-[:BELONGS_TO]->(agenda:AgendaItem),",
+        "      (summary)-[:PRESENTED_AT]->(meeting:Meeting)",
+        "WHERE summary.summaryType='FL'",
+        "RETURN DISTINCT agenda.id AS agendaItemId, meeting.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber",
+        "ORDER BY meetingNumberInt DESC, agendaNumber ASC, agendaItemId ASC"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+      "finding": "Original f414 result-rule line151 explicitly applies default list10 to CQ4. The unchanged English List has no all override or alternative N parameter. This candidate honors that source default, while preserving all original eligible records as the ranking evidence. Top-k boundary ties permits only min(10,population) identities, with alternatives limited to the full original Meeting/Agenda key. Old LIMIT15 or count-based rank does not justify the contract.",
+      "query_clauses": [
+        "MATCH (summary:Summary)-[:MODERATED_BY]->(:Company {companyName:'Huawei'}),",
+        "      (summary)-[:BELONGS_TO]->(agenda:AgendaItem),",
+        "      (summary)-[:PRESENTED_AT]->(meeting:Meeting)",
+        "WHERE summary.summaryType='FL'",
+        "RETURN DISTINCT agenda.id AS agendaItemId, meeting.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber",
+        "ORDER BY meetingNumberInt DESC, agendaNumber ASC, agendaItemId ASC"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+      "finding": "Original f414 lines142/145 expressly specify Meeting number DESC using Phase1 meetingNumberInt, then Agenda number ASC. This operational integer key is not asserted to be actual calendar chronology. Agenda identifiers retain their recorded string order, without invented decimal/natural conversion. Finite full-key/source-role proof ensures all eligible Agenda keys are unique per identity and typed/nonnull. The complete-key tie policy permits within-tie variation; final agendaItemId only stabilizes captured evidence and is not a mandatory tie breaker. No general policy for multi-Meeting Tdocs or unknown roles is inferred.",
+      "query_clauses": [
+        "MATCH (summary:Summary)-[:MODERATED_BY]->(:Company {companyName:'Huawei'}),",
+        "      (summary)-[:BELONGS_TO]->(agenda:AgendaItem),",
+        "      (summary)-[:PRESENTED_AT]->(meeting:Meeting)",
+        "WHERE summary.summaryType='FL'",
+        "RETURN DISTINCT agenda.id AS agendaItemId, meeting.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber",
+        "ORDER BY meetingNumberInt DESC, agendaNumber ASC, agendaItemId ASC"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+      "finding": "This is a retained graph role lookup with source-declared operational defaults. It does not claim Huawei actually led every physical meeting, owned the technology, caused adoption or retained leadership today. Original English/query/criteria and indexed f414 source are preserved; the earlier all/unordered pending judgments and genuine multi-Meeting counterexample remain history. This primary uses source and conditional metadata, not old gold or model results; expert/human endorsement is absent.",
+      "query_clauses": [
+        "MATCH (summary:Summary)-[:MODERATED_BY]->(:Company {companyName:'Huawei'}),",
+        "      (summary)-[:BELONGS_TO]->(agenda:AgendaItem),",
+        "      (summary)-[:PRESENTED_AT]->(meeting:Meeting)",
+        "WHERE summary.summaryType='FL'",
+        "RETURN DISTINCT agenda.id AS agendaItemId, meeting.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber",
+        "ORDER BY meetingNumberInt DESC, agendaNumber ASC, agendaItemId ASC"
+      ]
+    }
+  ],
+  "source_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ4_2_original_unified_FL_role/source_only_documented_defaults_v3/canonical_source_only_definition.json",
+    "sha256": "a8add247f44cf2b4e32562ada13a10d986a47ee57641ede1e862ab14915a576a",
+    "bytes": 2041
+  },
+  "source_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ4_2_original_unified_FL_role/source_only_documented_defaults_v3/original_role_default_and_complete_unfiltered_operand_source_only_packet.json",
+    "sha256": "91ae363bc300b95b542021b8854aeb44db3b3f53c4e8a5984e6747053d827c49",
+    "bytes": 16251
+  },
+  "conditional_plan": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ4_2_original_unified_FL_role/conditional_multi_Meeting_source_role_invariance_v1/predeclared_plan.json",
+    "sha256": "a40d5573f2cad258cb6ec326e402ccf171c129de815832b5f65a71d4c5ef0345",
+    "bytes": 1317
+  },
+  "actual_source_key_role_inapplicability": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ4_2_original_unified_FL_role/conditional_multi_Meeting_source_role_invariance_v1/actual_full_default_key_and_hazard_source_role_receipt.json",
+    "sha256": "110d6aae83ce8415f213e40fde215de85f6287ce9f49555dc85d236efc135925",
+    "bytes": 1945
+  },
+  "no_general_Meeting_selection_policy_inferred": true,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "native_API_calls_n": 0,
+  "primary_written_before_eligible_SQL_or_gold_computation": true,
+  "admitted": false
+}

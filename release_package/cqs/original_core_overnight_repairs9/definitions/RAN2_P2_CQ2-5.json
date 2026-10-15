@@ -1,0 +1,47 @@
+{
+  "id": "RAN2_P2_CQ2-5",
+  "question_en": "Which resolutions did TDoc R2-2500064 lead to (contribution-to-decision trace)?",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc {tdocNumber: 'R2-2500064'}), (r)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, r.resolutionId, labels(r) AS type, m.canonicalMeetingNumber, r.content",
+  "reference_query": "MATCH (t:Tdoc {tdocNumber:'R2-2500064'})<-[:REFERENCES]-(r:Resolution)\nMATCH (r)-[:MADE_AT]->(m:Meeting)\nRETURN DISTINCT r.resolutionId AS resolutionId, m.meetingNumberInt AS meetingNumberInt, r.sequence AS sequence\nORDER BY meetingNumberInt DESC, sequence ASC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "sequence",
+        "direction": "asc"
+      }
+    ],
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "5b12c457a2aad9e62bbb4da4e4d64cb82fa891efa0f993951e8d92ed4240e502",
+  "reference_query_sha256": "be59d4ef7375a4295e69b85601a8055091255f6be0f960529e1c5a1e97c09dd2",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "90de2ed2be973ed31379626c4e22695bbdfc894fd49d784a26c9eb1a973a4f25",
+  "original_query_sha256": "e17bae2585b61a9abf4525ccf5ead61044e67d54d531cec17198ebe34fea34c1",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ2-5_original_documentary_default10_source_only_v1/original_English_indexed_documentary_CQ2_defaults_and_whole_operands_packet.json",
+    "sha256": "fb2863840c3ca69a0b83b6ce836aae2c6f912d0369e32591e9373f2f772aa808"
+  }
+}

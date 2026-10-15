@@ -1,0 +1,47 @@
+{
+  "id": "RAN1_P2_CQ4-2",
+  "question_en": "List the agenda items where Huawei served as Feature Lead on the FL summary (areas it leads).",
+  "original_query": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem), (t)-[:MODERATED_BY]->(c:Company {companyName: 'Huawei'})\nWHERE t.summaryType = 'FL'\nRETURN DISTINCT ai.agendaNumber, count(t) AS flCount ORDER BY flCount DESC, ai.agendaNumber LIMIT 15",
+  "reference_query": "MATCH (summary:Summary)-[:MODERATED_BY]->(:Company {companyName:'Huawei'}),\n      (summary)-[:BELONGS_TO]->(agenda:AgendaItem),\n      (summary)-[:PRESENTED_AT]->(meeting:Meeting)\nWHERE summary.summaryType='FL'\nRETURN DISTINCT agenda.id AS agendaItemId, meeting.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber\nORDER BY meetingNumberInt DESC, agendaNumber ASC, agendaItemId ASC",
+  "required_fields": [
+    {
+      "name": "agendaItemId",
+      "nullable": false,
+      "source_column_or_expression": "agenda.id",
+      "type": "string"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "agendaNumber",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "4b45c903a577c178a3151859532bdb3af62f5ca8628ed08b1a2552dab254baec",
+  "original_question_sha256": "ac81b41cf4a940bd4db1f2680a4a4dcb99345874f06963237666793600e3efcd",
+  "original_query_sha256": "bd337976cef1556fbe0feb95d99e05b8012c510fadddf41abcc24792619d6b8c",
+  "reference_query_sha256": "dc8873db2601981c34dfa83175c83bb77725533d12efae97c07767e55413b83c",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ4_2_original_unified_FL_role/source_only_documented_defaults_v3/original_role_default_and_complete_unfiltered_operand_source_only_packet.json",
+    "sha256": "91ae363bc300b95b542021b8854aeb44db3b3f53c4e8a5984e6747053d827c49"
+  }
+}
