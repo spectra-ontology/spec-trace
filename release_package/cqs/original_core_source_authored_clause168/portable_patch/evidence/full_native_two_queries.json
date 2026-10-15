@@ -1,0 +1,70 @@
+{
+  "status": "all168_source_properties_and_exact_three_role_trace_full_native_SQL_match",
+  "started_utc": "2026-10-15T00:54:26.845318+00:00",
+  "native_import_manifest_sha256": "fe44c9b585abea34fa54a0c905cc58e427e98221a4f7db8d86ceca3655406bc8",
+  "capture_reader_sha256": "9a86533bc38cb9566ce0d26ff574d03566e304d2290c828e869bcbbc7ccae04e",
+  "exact_source_definition_sha256": "a68322468dc811ed5ecaa9ed5bf41ae8b0d99f69ce71c8f07627c532d1d6da6c",
+  "materialization_manifest_sha256": "4f561537342e5e51cdecd78de012bde2a8b170e7214f2ec85c9c60f18ba4cf85",
+  "unchanged_repair_sha256": {
+    "RAN2_P3_CQ4-3": "5dbb15a774b1d1e64ce5aaf2e4d14b9428859fd0079280facec483fc89b6e0b9"
+  },
+  "snapshot_sha256": "0ec72edb24c86b0d858837b8f98634646307860ee94c0e9e78c51b171902dbb5",
+  "db_sha256": "a27da13cb49f7d39c640db937226d2cfe44e0dfac9a69b9914191d337b0849df",
+  "queries": [
+    {
+      "name": "all168_complete_source_properties",
+      "query": "MATCH (cr:CR) WHERE cr.sourceAuthoredClausesAffected IS NOT NULL RETURN cr.iri AS iri,cr.tdocNumber AS tdocNumber,cr.clausesAffected AS frozenClausesAffected,cr.sourceAuthoredClausesAffected AS sourceAuthoredClausesAffected",
+      "query_sha256": "dbd3f77dc4a620c10dbefca18d0b730b4d5d702147f10e76ae15729eec470e55",
+      "SQL": "SELECT ni.iri AS iri,cr.tdocNumber AS tdocNumber,cr.clausesAffected AS frozenClausesAffected,cr.sourceAuthoredClausesAffected AS sourceAuthoredClausesAffected FROM CR cr JOIN node_identity ni USING(node_id) WHERE cr.sourceAuthoredClausesAffected IS NOT NULL",
+      "columns": [
+        "iri",
+        "tdocNumber",
+        "frozenClausesAffected",
+        "sourceAuthoredClausesAffected"
+      ],
+      "rows_n": 168,
+      "records": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_trace168_native_import_v1/root_actual_queries_v1/all168_complete_source_properties.jsonl",
+      "records_sha256": "01719ae36dd73f663f25399df27bed0f8c1ac81516b496b071725c8b7185f69a",
+      "full_rows_available": true,
+      "independent_SQL_full_multiset_equal": true,
+      "read_plan_and_execution": true,
+      "rollback_completed": true,
+      "elapsed_seconds": 0.7839996969996719
+    },
+    {
+      "name": "RAN2_P3_CQ4-3",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)\nWHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\n  AND cr.sourceAuthoredClausesAffected IS NOT NULL\nMATCH (cr)-[:MODIFIES]->(hub:Spec)\nWHERE hub.specRelease IS NULL\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField\nUNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem\nWITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item\nWITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom\nWITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber\nWHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE s.sectionNumber = clauseNumber\nRETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId\nORDER BY resolutionId, tdocNumber, sectionId",
+      "query_sha256": "9ce889b3ad85debb141144460b3677875f2ff05ee9494c62d1918958d867f0c5",
+      "SQL": "SELECT DISTINCT r.resolutionId AS resolutionId,cr.tdocNumber AS tdocNumber,s.sectionId AS sectionId\n        FROM rel_REFERENCES rf JOIN Resolution r ON r.node_id=rf.src_id JOIN CR cr ON cr.node_id=rf.dst_id\n        JOIN rel_MODIFIES md ON md.src_id=cr.node_id JOIN Spec hub ON hub.node_id=md.dst_id\n        JOIN rel_TARGET_RELEASE tr ON tr.src_id=cr.node_id JOIN Release target ON target.node_id=tr.dst_id\n        JOIN rel_IN_RELEASE_OF ri ON ri.dst_id=hub.node_id JOIN Spec rk ON rk.node_id=ri.src_id AND rk.specRelease=target.releaseName\n        JOIN rel_BELONGS_TO_SPEC owner ON owner.dst_id=rk.node_id JOIN Section s ON s.node_id=owner.src_id\n        JOIN json_each(AUTHORED_ORDINALS(cr.sourceAuthoredClausesAffected)) item ON s.sectionNumber=item.value\n        WHERE hub.specRelease IS NULL AND cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected)<>''\n        AND cr.sourceAuthoredClausesAffected IS NOT NULL",
+      "columns": [
+        "resolutionId",
+        "tdocNumber",
+        "sectionId"
+      ],
+      "rows_n": 434,
+      "records": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_trace168_native_import_v1/root_actual_queries_v1/RAN2_P3_CQ4-3.jsonl",
+      "records_sha256": "0d4dbb0404c593e0b4e3400082dab7d1b19d98196577533456c00f31958cb766",
+      "full_rows_available": true,
+      "independent_SQL_full_multiset_equal": true,
+      "read_plan_and_execution": true,
+      "rollback_completed": true,
+      "elapsed_seconds": 3.294945910000024
+    }
+  ],
+  "question_admissions_n": 0,
+  "external_model_API_calls_n": 0,
+  "human_expert_validation_n": 0,
+  "new_model_performance_n": 0,
+  "scope": "Separate authored declaration source variant for168 originally nonempty referencedCR fields. Every old field/edge remains preserved;1996 unavailable operands remain unknown and no frozen question count changes.",
+  "inventory_before": {
+    "nodes": 156288,
+    "relationships": 939037
+  },
+  "inventory_after": {
+    "nodes": 156288,
+    "relationships": 939037
+  },
+  "owned_container_stopped": true,
+  "finished_utc": "2026-10-15T00:54:52.851421+00:00",
+  "elapsed_seconds": 26.006039731999408
+}

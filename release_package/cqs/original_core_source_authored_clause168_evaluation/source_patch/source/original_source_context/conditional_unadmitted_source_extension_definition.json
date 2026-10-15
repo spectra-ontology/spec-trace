@@ -1,0 +1,38 @@
+{
+  "id": "RAN2_P3_CQ4-3",
+  "question_en": "Trace sections from a resolution through its CR's affected clauses (decision-to-section trace).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR) WHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' MATCH (cr)-[:MODIFIES]->(sp:Spec) RETURN r.resolutionId, cr.tdocNumber, cr.clausesAffected, sp.specNumber ORDER BY r.resolutionId, cr.tdocNumber, sp.specNumber LIMIT 10",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)\nWHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''\n  AND cr.sourceAuthoredClausesAffected IS NOT NULL\nMATCH (cr)-[:MODIFIES]->(hub:Spec)\nWHERE hub.specRelease IS NULL\nMATCH (cr)-[:TARGET_RELEASE]->(target:Release)\nMATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)\nWHERE rk.specRelease = target.releaseName\nWITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField\nUNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem\nWITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item\nWITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom\nWITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber\nWHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'\nMATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)\nWHERE s.sectionNumber = clauseNumber\nRETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId\nORDER BY resolutionId, tdocNumber, sectionId",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "resolutionId"
+    },
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber"
+    },
+    {
+      "name": "sectionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "sectionId"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "kind": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "5dbb15a774b1d1e64ce5aaf2e4d14b9428859fd0079280facec483fc89b6e0b9",
+  "semantic_status": "pending_source_first_independent_review",
+  "new_gold": false,
+  "native_executed": false
+}

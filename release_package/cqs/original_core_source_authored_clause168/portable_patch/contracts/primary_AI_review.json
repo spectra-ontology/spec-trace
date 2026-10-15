@@ -1,0 +1,416 @@
+{
+  "id": "RAN2_P3_CQ4-3",
+  "repair_sha256": "94ca4ee4f8dee39ff7c7fbea2ec3d685c2dc752480eaa902895ea094044749b5",
+  "original_question_sha256": "b79a85fd5d36b5ca53f4cdf6f0fa5804de868a425d78f3bb45760d6f08fcebd2",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Primary direct Codex fresh v2 exact source-only semantic development judgment /root/reaudit_ran2_ran5",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Trace sections from a resolution through its CR's affected clauses (decision-to-section trace).",
+      "finding": "The unchanged trace asks the resolution origin, its referenced CR bridge and the Section endpoint; resolutionId/tdocNumber/sectionId are the complete path identity roles. Original KO names Resolution, referenced CR and Section; original query projects resolution and CR identities but stops before Section. Raw clause text/spec number/title are auxiliary bridge provenance rather than additional required endpoints. Fresh v2 exact reconsideration: the original English, source-bound population, required tuple fields, exact query and set collection are unchanged. Cardinality remains all eligible trace tuples; the executable contract now uses the scorer-defined mode=all key. The old kind=all spelling had no valid scorer implementation and is preserved as a failed gate, not treated as an evaluated contract.",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)",
+        "WHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "  AND cr.sourceAuthoredClausesAffected IS NOT NULL",
+        "MATCH (cr)-[:MODIFIES]->(hub:Spec)",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (cr)-[:TARGET_RELEASE]->(target:Release)",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "WHERE rk.specRelease = target.releaseName",
+        "WITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField",
+        "UNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem",
+        "WITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item",
+        "WITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom",
+        "WITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber",
+        "WHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'",
+        "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+        "WHERE s.sectionNumber = clauseNumber",
+        "RETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId",
+        "ORDER BY resolutionId, tdocNumber, sectionId"
+      ],
+      "source_evidence": {
+        "clean_source_packet_manifest": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/manifest.json",
+          "bytes": 3986,
+          "sha256": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b"
+        },
+        "relevant_design_line_ranges": [
+          [
+            390,
+            430
+          ],
+          [
+            1700,
+            1778
+          ]
+        ],
+        "raw168_cell_census": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/all168_actual_authored_cover_cell_source_inputs.jsonl",
+          "bytes": 1033571,
+          "sha256": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab"
+        }
+      }
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Trace sections from a resolution through its CR's affected clauses (decision-to-section trace).",
+      "finding": "Generic a resolution has no named ID in English/KO. All original recorded Resolution REFERENCES paths with available nonempty CR.clausesAffected metadata form the original phase3 operation domain; this is all2164 referenced CR inputs,168 originally nonempty operands and1996 unavailable operands, with all14397 recorded release-aware Section identities. The proposed authored field on precisely all168 existing available operands is a declared separate source correction; it adds no physical-empty records or world-complete claims. Fresh v2 exact reconsideration: the original English, source-bound population, required tuple fields, exact query and set collection are unchanged. Cardinality remains all eligible trace tuples; the executable contract now uses the scorer-defined mode=all key. The old kind=all spelling had no valid scorer implementation and is preserved as a failed gate, not treated as an evaluated contract.",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)",
+        "WHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "  AND cr.sourceAuthoredClausesAffected IS NOT NULL",
+        "MATCH (cr)-[:MODIFIES]->(hub:Spec)",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (cr)-[:TARGET_RELEASE]->(target:Release)",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "WHERE rk.specRelease = target.releaseName",
+        "WITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField",
+        "UNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem",
+        "WITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item",
+        "WITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom",
+        "WITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber",
+        "WHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'",
+        "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+        "WHERE s.sectionNumber = clauseNumber",
+        "RETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId",
+        "ORDER BY resolutionId, tdocNumber, sectionId"
+      ],
+      "source_evidence": {
+        "clean_source_packet_manifest": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/manifest.json",
+          "bytes": 3986,
+          "sha256": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b"
+        },
+        "relevant_design_line_ranges": [
+          [
+            390,
+            430
+          ],
+          [
+            1700,
+            1778
+          ]
+        ],
+        "raw168_cell_census": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/all168_actual_authored_cover_cell_source_inputs.jsonl",
+          "bytes": 1033571,
+          "sha256": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab"
+        }
+      }
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "through its CR's affected clauses",
+      "finding": "Original generic §5 Resolution→REFERENCES→CR→MODIFIES→Spec→hasSection and §7.2 per-clause targetRelease matching define recorded references and declared ordinal matches, not approval/adoption/causal effect. Authored formal Clauses affected remains that same requested bridge meaning with exact actual specimen/CR/revision identity. Original targetRelease selects the same-release final recorded Section domain; CurrentVersion baseline is retained provenance and not substituted. All168 source cells have exact finite item boundaries. Initial ordinal atoms retain compound suffix/Annex/new declarations; no number prefix/subtree/title alias expansion. Actual3.2Abbreviations title conflict is retained as an authored declaration and exact3.2 metadata match, not proof of body semantics or an alias to3.1. Fresh v2 exact reconsideration: the original English, source-bound population, required tuple fields, exact query and set collection are unchanged. Cardinality remains all eligible trace tuples; the executable contract now uses the scorer-defined mode=all key. The old kind=all spelling had no valid scorer implementation and is preserved as a failed gate, not treated as an evaluated contract.",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)",
+        "WHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "  AND cr.sourceAuthoredClausesAffected IS NOT NULL",
+        "MATCH (cr)-[:MODIFIES]->(hub:Spec)",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (cr)-[:TARGET_RELEASE]->(target:Release)",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "WHERE rk.specRelease = target.releaseName",
+        "WITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField",
+        "UNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem",
+        "WITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item",
+        "WITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom",
+        "WITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber",
+        "WHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'",
+        "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+        "WHERE s.sectionNumber = clauseNumber",
+        "RETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId",
+        "ORDER BY resolutionId, tdocNumber, sectionId"
+      ],
+      "source_evidence": {
+        "clean_source_packet_manifest": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/manifest.json",
+          "bytes": 3986,
+          "sha256": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b"
+        },
+        "relevant_design_line_ranges": [
+          [
+            390,
+            430
+          ],
+          [
+            1700,
+            1778
+          ]
+        ],
+        "raw168_cell_census": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/all168_actual_authored_cover_cell_source_inputs.jsonl",
+          "bytes": 1033571,
+          "sha256": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab"
+        }
+      }
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Trace sections",
+      "finding": "Set unit is the distinct resolutionId/tdocNumber/sectionId path tuple. Different resolutions, referenced CRs or Section endpoints remain different records. Repeated metadata observations, duplicate MODIFIES hubs/edition join witnesses or repeated declarations do not multiply a set member. CR identity is original Tdoc record, not numeric CR alone across revisions. Fresh v2 exact reconsideration: the original English, source-bound population, required tuple fields, exact query and set collection are unchanged. Cardinality remains all eligible trace tuples; the executable contract now uses the scorer-defined mode=all key. The old kind=all spelling had no valid scorer implementation and is preserved as a failed gate, not treated as an evaluated contract.",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)",
+        "WHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "  AND cr.sourceAuthoredClausesAffected IS NOT NULL",
+        "MATCH (cr)-[:MODIFIES]->(hub:Spec)",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (cr)-[:TARGET_RELEASE]->(target:Release)",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "WHERE rk.specRelease = target.releaseName",
+        "WITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField",
+        "UNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem",
+        "WITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item",
+        "WITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom",
+        "WITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber",
+        "WHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'",
+        "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+        "WHERE s.sectionNumber = clauseNumber",
+        "RETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId",
+        "ORDER BY resolutionId, tdocNumber, sectionId"
+      ],
+      "source_evidence": {
+        "clean_source_packet_manifest": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/manifest.json",
+          "bytes": 3986,
+          "sha256": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b"
+        },
+        "relevant_design_line_ranges": [
+          [
+            390,
+            430
+          ],
+          [
+            1700,
+            1778
+          ]
+        ],
+        "raw168_cell_census": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/all168_actual_authored_cover_cell_source_inputs.jsonl",
+          "bytes": 1033571,
+          "sha256": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab"
+        }
+      }
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Trace sections from a resolution through its CR's affected clauses",
+      "finding": "All exact source-declared ordinal matches in the original recorded Section domain are returned without LIMIT. Per-clause matching is existential at each endpoint, so an unresolved sibling does not suppress valid endpoints and is not falsely expanded. All168 nonempty original operands have unique source cells; full2164 input availability closure and all14397 recorded endpoints are pinned. The answer covers graph/source-operation traces, not every physical CR/clause or all unrecorded decisions; unknown or unretained Section declarations remain source diagnostics rather than physical negatives. Fresh v2 exact reconsideration: the original English, source-bound population, required tuple fields, exact query and set collection are unchanged. Cardinality remains all eligible trace tuples; the executable contract now uses the scorer-defined mode=all key. The old kind=all spelling had no valid scorer implementation and is preserved as a failed gate, not treated as an evaluated contract.",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)",
+        "WHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "  AND cr.sourceAuthoredClausesAffected IS NOT NULL",
+        "MATCH (cr)-[:MODIFIES]->(hub:Spec)",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (cr)-[:TARGET_RELEASE]->(target:Release)",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "WHERE rk.specRelease = target.releaseName",
+        "WITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField",
+        "UNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem",
+        "WITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item",
+        "WITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom",
+        "WITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber",
+        "WHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'",
+        "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+        "WHERE s.sectionNumber = clauseNumber",
+        "RETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId",
+        "ORDER BY resolutionId, tdocNumber, sectionId"
+      ],
+      "source_evidence": {
+        "clean_source_packet_manifest": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/manifest.json",
+          "bytes": 3986,
+          "sha256": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b"
+        },
+        "relevant_design_line_ranges": [
+          [
+            390,
+            430
+          ],
+          [
+            1700,
+            1778
+          ]
+        ],
+        "raw168_cell_census": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/all168_actual_authored_cover_cell_source_inputs.jsonl",
+          "bytes": 1033571,
+          "sha256": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab"
+        }
+      }
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Trace sections",
+      "finding": "English/KO request no order/rank/count; set/all is appropriate. Query sorting supplies deterministic presentation only. Same-member repetitions do not change the answer set; duplicate displacement causing a missing tuple fails. Fresh v2 exact reconsideration: the original English, source-bound population, required tuple fields, exact query and set collection are unchanged. Cardinality remains all eligible trace tuples; the executable contract now uses the scorer-defined mode=all key. The old kind=all spelling had no valid scorer implementation and is preserved as a failed gate, not treated as an evaluated contract.",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)",
+        "WHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "  AND cr.sourceAuthoredClausesAffected IS NOT NULL",
+        "MATCH (cr)-[:MODIFIES]->(hub:Spec)",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (cr)-[:TARGET_RELEASE]->(target:Release)",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "WHERE rk.specRelease = target.releaseName",
+        "WITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField",
+        "UNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem",
+        "WITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item",
+        "WITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom",
+        "WITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber",
+        "WHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'",
+        "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+        "WHERE s.sectionNumber = clauseNumber",
+        "RETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId",
+        "ORDER BY resolutionId, tdocNumber, sectionId"
+      ],
+      "source_evidence": {
+        "clean_source_packet_manifest": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/manifest.json",
+          "bytes": 3986,
+          "sha256": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b"
+        },
+        "relevant_design_line_ranges": [
+          [
+            390,
+            430
+          ],
+          [
+            1700,
+            1778
+          ]
+        ],
+        "raw168_cell_census": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/all168_actual_authored_cover_cell_source_inputs.jsonl",
+          "bytes": 1033571,
+          "sha256": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab"
+        }
+      }
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "CR's affected clauses",
+      "finding": "All168 source inputs are actual primary ZIP/DOCX cells with corroborated original Tdoc/header identity and metadata. This enrichment is explicit as sourceAuthoredClausesAffected with frozen bytes/field retained, never a same-snapshot claim; direct original visible ordinal is the bridge, not a guessed register delimiter. New field availability is fully closed over the original available-operand domain; no latest/currentVersion/status/approval filters or external causal interpretation are added. The real source title/number inconsistency is disclosed and not repaired by inference. Fresh v2 exact reconsideration: the original English, source-bound population, required tuple fields, exact query and set collection are unchanged. Cardinality remains all eligible trace tuples; the executable contract now uses the scorer-defined mode=all key. The old kind=all spelling had no valid scorer implementation and is preserved as a failed gate, not treated as an evaluated contract.",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)",
+        "WHERE cr.clausesAffected IS NOT NULL AND trim(cr.clausesAffected) <> ''",
+        "  AND cr.sourceAuthoredClausesAffected IS NOT NULL",
+        "MATCH (cr)-[:MODIFIES]->(hub:Spec)",
+        "WHERE hub.specRelease IS NULL",
+        "MATCH (cr)-[:TARGET_RELEASE]->(target:Release)",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "WHERE rk.specRelease = target.releaseName",
+        "WITH DISTINCT r, cr, rk, cr.sourceAuthoredClausesAffected AS declaredField",
+        "UNWIND split(replace(replace(declaredField, ';', ','), '\\n', ','), ',') AS declaredItem",
+        "WITH r, cr, rk, trim(replace(declaredItem, '\\t', ' ')) AS item",
+        "WITH r, cr, rk, split(split(item, ' ')[0], '(')[0] AS atom",
+        "WITH r, cr, rk, CASE WHEN atom ENDS WITH '.' THEN substring(atom, 0, size(atom)-1) ELSE atom END AS clauseNumber",
+        "WHERE clauseNumber =~ '[0-9][A-Za-z0-9]*(?:\\\\.[A-Za-z0-9]+)*|[A-Z](?:\\\\.[A-Za-z0-9]+)*'",
+        "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(rk)",
+        "WHERE s.sectionNumber = clauseNumber",
+        "RETURN DISTINCT r.resolutionId AS resolutionId, cr.tdocNumber AS tdocNumber, s.sectionId AS sectionId",
+        "ORDER BY resolutionId, tdocNumber, sectionId"
+      ],
+      "source_evidence": {
+        "clean_source_packet_manifest": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/manifest.json",
+          "bytes": 3986,
+          "sha256": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b"
+        },
+        "relevant_design_line_ranges": [
+          [
+            390,
+            430
+          ],
+          [
+            1700,
+            1778
+          ]
+        ],
+        "raw168_cell_census": {
+          "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/all168_actual_authored_cover_cell_source_inputs.jsonl",
+          "bytes": 1033571,
+          "sha256": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab"
+        }
+      }
+    }
+  ],
+  "exact_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review_v2/canonical_source_only_definition.json",
+    "bytes": 2383,
+    "sha256": "7167b194d2169c190cf537a4b3e34ab3d988b037a146dc1a4020c77a6bd59a84"
+  },
+  "source_context_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review/original_source_context_and_scope_questions.json",
+    "bytes": 17579,
+    "sha256": "a58633f15f7cd7a1415cb11340c78001ac1acdd16d9bde0813bd04d2836ce990"
+  },
+  "full_lexical_source_diagnostic_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_trace168_source_declared_item_grammar_diagnostic.jsonl",
+    "bytes": 102071,
+    "sha256": "e5102af367d34db87b424a2546fabe0e408cff57dea3beeed16bf3557b236780"
+  },
+  "scope": "Conditional separate authored-source snapshot only; no frozen corpus or benchmark admission",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "native_execution_completed": false,
+  "new_gold": false,
+  "new_admissions": 0,
+  "external_model_APIcalls": 0,
+  "exposure": {
+    "proposer_definition_and_complete_source_inputs_read": true,
+    "new_filtered_SQL_or_answer_tuple_counts_read": false,
+    "new_gold_native_or_model_predictions_read": false,
+    "prior_related_CR_membership_parser_diagnoses_known": true,
+    "not_blind_or_human_expert_evaluation": true
+  },
+  "input_pins_before": {
+    "all113_original_nonempty_field_literals.jsonl": "c38015a14d872342fae50d9db7a2bd02417b126fc89105f3af53be3507bc132a",
+    "original_source_context_and_scope_questions.json": "a58633f15f7cd7a1415cb11340c78001ac1acdd16d9bde0813bd04d2836ce990",
+    "neutral_additive_field_schema_mapping.json": "9d3a6b8b254abba92195dd752e5db0d04c71d5fc83fbdff405d8c69b50bc3d8a",
+    "conditional_unadmitted_source_extension_definition.json": "a68322468dc811ed5ecaa9ed5bf41ae8b0d99f69ce71c8f07627c532d1d6da6c",
+    "all14397_original_Section_source_identity_inputs.jsonl": "954fb07d44f238e8a5ed0d1a21d4c4c5926475ca3fd60f7662b324a42bc91b03",
+    "all168_actual_authored_cover_cell_source_inputs.jsonl": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab",
+    "manifest.json": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b",
+    "all2164_original_recorded_referenced_CR_source_inputs.jsonl": "434a11ca5658b30b41e9baafbec3f3d4dcb4342466a66e394844eb1c2ecf89d5",
+    "tdoc_ontology_specs(TS).md": "228cd3f64d7ace2ffa774708fec9868fba20af7080045b3e8a36601837d5ee75",
+    "cq_test_dataset.json": "222609e194df5d03093fc2b7445b4c64d5ec3509de20997fd41951fda07db8dc"
+  },
+  "input_pins_after": {
+    "all113_original_nonempty_field_literals.jsonl": "c38015a14d872342fae50d9db7a2bd02417b126fc89105f3af53be3507bc132a",
+    "original_source_context_and_scope_questions.json": "a58633f15f7cd7a1415cb11340c78001ac1acdd16d9bde0813bd04d2836ce990",
+    "neutral_additive_field_schema_mapping.json": "9d3a6b8b254abba92195dd752e5db0d04c71d5fc83fbdff405d8c69b50bc3d8a",
+    "conditional_unadmitted_source_extension_definition.json": "a68322468dc811ed5ecaa9ed5bf41ae8b0d99f69ce71c8f07627c532d1d6da6c",
+    "all14397_original_Section_source_identity_inputs.jsonl": "954fb07d44f238e8a5ed0d1a21d4c4c5926475ca3fd60f7662b324a42bc91b03",
+    "all168_actual_authored_cover_cell_source_inputs.jsonl": "025d3cb7e3d51a7573e03294985a13e25947071cd8e19ceb64922180fa91f3ab",
+    "manifest.json": "3a7f8dde93d75fc2e348d73a0e24473cbee3ac42ec08e555fa08a938bf3e575b",
+    "all2164_original_recorded_referenced_CR_source_inputs.jsonl": "434a11ca5658b30b41e9baafbec3f3d4dcb4342466a66e394844eb1c2ecf89d5",
+    "tdoc_ontology_specs(TS).md": "228cd3f64d7ace2ffa774708fec9868fba20af7080045b3e8a36601837d5ee75",
+    "cq_test_dataset.json": "222609e194df5d03093fc2b7445b4c64d5ec3509de20997fd41951fda07db8dc"
+  },
+  "limits": [
+    "This semantic judgment is conditional on a distinct enriched source snapshot and has no native/scorer/source-independence admission gate.",
+    "Numeric ordinal metadata match is not an authored body/content or causal adoption claim.",
+    "All1996 unavailable original operands stay unknown at physical-source level.",
+    "Actual3.2Abbreviations/3.2Definitions conflict and6.3.1.a/6.3.1a difference remain unchanged."
+  ],
+  "prior_exact_review_preserved": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_conditional_primary_review.json",
+    "bytes": 25992,
+    "sha256": "803ede3eeafa67efbc8c7d9bc3fe7ed93920cca976236ee1e342f1b789989373"
+  },
+  "schema_gate_failure_and_bridge": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P3_CQ4-3_authored_field_trace_source_only_review_v2/old_invalid_scorer_schema_and_new_identity_bridge.json",
+    "bytes": 1519,
+    "sha256": "1d50be451e3a4e6072ba168b64084b23bfb83be5111ad9b9c640b9390f8b23df"
+  },
+  "exposure_v2": "Prior primary and all authored168 source read; subsequently actual native434/root inverseSQL and invalid-cardinality score failure observed. This is unblinded development diagnosis, no expert/human or evaluation performance."
+}

@@ -1,0 +1,13 @@
+# Separate RAN2 authored-clause source168 snapshot
+
+This additive patch retains every frozen field, node and edge, and adds the exact final-visible authored CR cover-cell string `sourceAuthoredClausesAffected` to 168 existing CR/Tdoc records. Original paragraph boundaries are joined with newlines, preserving tabs and visible breaks. Two original frozen clause strings fused separate authored paragraphs; neither old string is overwritten. A declared source clause is not automatically an actual modified or adopted Section.
+
+All 168 authentic original ZIPs, original DOCX member/hash receipts, whole raw document XML hashes and exact formal CR/header/clause-cell coordinates are included. XML subtree hashes use declared ElementTree US-ASCII serialization; original document hashes use original raw bytes. The verifier freshly checks every archive/member/identity/revision/cell/paragraph and the absence of revision/symbol/math/object content in these source cells.
+
+Run `python3 -B -S verify_rebuild.py --package .` for source verification. To rebuild, add `--base-sql /path/to/frozen/RAN2.sqlite --base-ttl /path/to/frozen/RAN2-body.ttl --out-dir /new/output`. Baseline SHA pins are in the manifest. Only new output files are written. All 79 old SQL tables and columns are checked in both directions, allowing only the explicit new `_node_record` and `node_property` field deltas; RDF retains the exact old byte prefix plus 168 property triples. No nodes, labels, relationships or aliases are added.
+
+Run `python3 -B -S evaluation/verify_controls.py --package .` for the exact two AI semantic judgments, full434 native/independent SQL tuples and 24 typed three-role score controls. `evaluation/score_predictions.py --predictions PATH` scores supplied predictions against this separately declared source snapshot. Its copied generic CLI has a historical Source17 docstring; executable inputs here are one Source168 task.
+
+The 2,164 original referenced CR records contain 168 originally nonempty operands and 1,996 unavailable operands. Those unavailable operands remain unknown. This source-only contract and its model measurements are separate from frozen original-question completion and do not change the public447/560 index or transfer old scores. Neither human/expert validation nor enacted causal adoption is claimed.
+
+The old source-only contract used invalid scorer cardinality key `kind:all`, and its actual score failed before admission. That original definition/review/native output is preserved. The new exact contract uses `mode:all`, with two fresh exact semantic judgments and an explicit unchanged-query/snapshot/full-output bridge. No source/query/output value was adjusted to improve model scores.
