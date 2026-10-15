@@ -1,0 +1,52 @@
+{
+  "id": "RAN2_P2_CQ1-6",
+  "question_en": "List the resolutions that drive changes to spec 38.331 (RRC decision impact).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.331'}), (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, m.canonicalMeetingNumber, r.content ORDER BY m.meetingNumberInt DESC, r.resolutionId LIMIT 10",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(:Tdoc)-[:MODIFIES]->(:Spec {specNumber:'38.331'})\nMATCH (r)-[:MADE_AT]->(m:Meeting)\nOPTIONAL MATCH (r)-[:RESOLUTION_BELONGS_TO]->(agenda:AgendaItem)\nRETURN DISTINCT r.resolutionId AS resolutionId, m.meetingNumberInt AS meetingNumberInt, agenda.agendaNumber AS agendaNumber, r.sequence AS sequence\nORDER BY meetingNumberInt DESC, agendaNumber ASC, sequence ASC, resolutionId ASC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "agendaNumber",
+        "direction": "asc"
+      },
+      {
+        "source_column": "sequence",
+        "direction": "asc"
+      }
+    ],
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "1d035096948ceb41e72bc673f82fe36e64ffdc8fbfcfcf4827c83a5644278e49",
+  "reference_query_sha256": "8f575e9874e0f11557cfe29fa9238ec59f45008473a221076df12eea21eafc43",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "e9a71ff1a642c40d5f67408012570ee4c59060e8eae118b3775f5f0dd80cd974",
+  "original_query_sha256": "ba2e7cd97443696eb07cd0852d4148b14c40f07fcada4ba6a64c15cb86b2ba64",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ1-6_original_documentary_default10_source_only_v3/original_documentary_Spec_Resolution_and_default_source_context_packet.json",
+    "sha256": "ea99880e65bfda76b19ea6d7eddb635c9c21798796264de93c5a24b3d0f14b4b",
+    "bytes": 19238
+  }
+}

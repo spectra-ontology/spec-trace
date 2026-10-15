@@ -1,0 +1,76 @@
+{
+  "id": "RAN4_P2_CQ3-1",
+  "question_en": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+  "original_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}) OPTIONAL MATCH (r:Resolution)-[:REFERENCES]->(t) RETURN count(DISTINCT t) AS totalTdocs, count(DISTINCT r) AS resolutionLinkedTdocs",
+  "reference_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})\nWITH DISTINCT t\nWITH count(t) AS denominator,\n     sum(CASE WHEN EXISTS { MATCH (:Resolution)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS numerator\nRETURN {numerator: numerator, denominator: denominator} AS resolutionLinkedTdocShare",
+  "required_fields": [
+    {
+      "name": "resolutionLinkedTdocShare",
+      "type": "json",
+      "nullable": false,
+      "source_column_or_expression": "exact count(distinct linked Tdoc)/count(distinct all Samsung Tdoc), encoded as an integer numerator/denominator pair",
+      "json_schema": {
+        "type": "object",
+        "properties": {
+          "numerator": {
+            "type": "integer"
+          },
+          "denominator": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "numerator",
+          "denominator"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "collection": {
+    "kind": "set",
+    "rational_share_representation": {
+      "kind": "exact_rational_share",
+      "unit": "one",
+      "field": "resolutionLinkedTdocShare",
+      "canonical_encoding": {
+        "numerator": "integer",
+        "denominator": "nonzero integer, sign normalized to positive"
+      },
+      "allowed_equivalent_encodings": [
+        "integer rational pair",
+        "typed finite exact JSON number in units of one",
+        "explicit percent object with typed finite exact number"
+      ],
+      "rounded_approximations_equivalent": false,
+      "normalizer_file": "rational_share_records.py",
+      "normalizer_sha256": "16875d932f77598d3b217fd5ad6366b5009053ac44d77ffbcacdd97ca87f6172",
+      "normalizer_has_gold_or_source_access": false,
+      "runtime_adapter_file": "share_runtime_adapter.py",
+      "runtime_adapter_sha256": "72ee1aebbf07e500937223f4603cef7e6175555e713016af5e67c36e235048b1",
+      "public_task_rule": "Fresh runner public_task hook preserves value-free collection kind/unit/field and required-field codec marker before freeze; unchanged legacy filtering otherwise removes them.",
+      "decimal_resource_bound": "coefficient digits plus absolute base-10 exponent at most 4096; resource rejection retains one invalid unmatched row without expansion",
+      "raw_decimal_rule": "Raw retrieval response and SQL JSON text are parsed with Decimal before canonicalization; native driver float means its available shortest JSON decimal encoding only.",
+      "invalid_candidate_rule": "Malformed individual required-field values and nonobject records remain distinct unmatched rows; matching valid rows retain partial score.",
+      "all_methods_public_rule": "The same value-free exact rational/decimal/explicit-percent specification is in every method public contract before any call.",
+      "ordinary_contract_rule": "Undeclared contracts use original parser, decoder and scorer without share normalization."
+    }
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "8c11a967cad0ae104eeb2b98ee96bee7ffdbe6d653757cc9ecccb3c13c13764d",
+  "original_question_sha256": "5299f5847d6e37a7ce90bb3fd5c8d3d2e67292ebb1e4cbadfcd4d1b839d10549",
+  "original_query_sha256": "e95d5a0817ff42ab529d4387221533819be63e529e446924a9b7788bd11481db",
+  "reference_query_sha256": "47f794965d88cc4c462c0efc25faf5741768d71dad2f3a54e8b6eaf3c8a3ddce",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "semantic_status": "pending_fresh_two_exact_reviews_and_root_runtime_gate",
+  "admitted": false,
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_exact_documentary_share_source_only_v8/original_English_KO_schema_unfiltered_inputs_and_exact_share_representation_packet.json",
+    "sha256": "b2995133b3265af828de7de5ce1056a0ea00f0bef751e9f8afddf93c2ff68550",
+    "bytes": 20005
+  }
+}

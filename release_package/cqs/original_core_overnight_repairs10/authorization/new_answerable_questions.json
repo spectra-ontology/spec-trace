@@ -1,0 +1,112 @@
+{
+  "cohort_projection_n": 2,
+  "cards": [
+    {
+      "id": "RAN2_P2_CQ1-6",
+      "original_question": "List the resolutions that drive changes to spec 38.331 (RRC decision impact).",
+      "repair_sha256": "1d035096948ceb41e72bc673f82fe36e64ffdc8fbfcfcf4827c83a5644278e49",
+      "required_fields": [
+        {
+          "name": "resolutionId",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "resolutionId"
+        }
+      ],
+      "collection": {
+        "kind": "top_k_boundary_ties",
+        "value": 10,
+        "tie_policy": "any_subset_at_boundary",
+        "source_order_keys": [
+          {
+            "source_column": "meetingNumberInt",
+            "direction": "desc"
+          },
+          {
+            "source_column": "agendaNumber",
+            "direction": "asc"
+          },
+          {
+            "source_column": "sequence",
+            "direction": "asc"
+          }
+        ],
+        "within_tie_order": "any",
+        "require_rank_order": true
+      },
+      "cardinality_policy": {
+        "mode": "top_k",
+        "value": 10,
+        "tie_policy": "any_subset_at_boundary"
+      },
+      "native_full_population_n": 233,
+      "status": "local_semantic_native_SQL_controls_pass; fresh_paid_evaluation_separate"
+    },
+    {
+      "id": "RAN4_P2_CQ3-1",
+      "original_question": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+      "repair_sha256": "8c11a967cad0ae104eeb2b98ee96bee7ffdbe6d653757cc9ecccb3c13c13764d",
+      "required_fields": [
+        {
+          "name": "resolutionLinkedTdocShare",
+          "type": "json",
+          "nullable": false,
+          "source_column_or_expression": "exact count(distinct linked Tdoc)/count(distinct all Samsung Tdoc), encoded as an integer numerator/denominator pair",
+          "json_schema": {
+            "type": "object",
+            "properties": {
+              "numerator": {
+                "type": "integer"
+              },
+              "denominator": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "numerator",
+              "denominator"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "collection": {
+        "kind": "set",
+        "rational_share_representation": {
+          "kind": "exact_rational_share",
+          "unit": "one",
+          "field": "resolutionLinkedTdocShare",
+          "canonical_encoding": {
+            "numerator": "integer",
+            "denominator": "nonzero integer, sign normalized to positive"
+          },
+          "allowed_equivalent_encodings": [
+            "integer rational pair",
+            "typed finite exact JSON number in units of one",
+            "explicit percent object with typed finite exact number"
+          ],
+          "rounded_approximations_equivalent": false,
+          "normalizer_file": "rational_share_records.py",
+          "normalizer_sha256": "16875d932f77598d3b217fd5ad6366b5009053ac44d77ffbcacdd97ca87f6172",
+          "normalizer_has_gold_or_source_access": false,
+          "runtime_adapter_file": "share_runtime_adapter.py",
+          "runtime_adapter_sha256": "72ee1aebbf07e500937223f4603cef7e6175555e713016af5e67c36e235048b1",
+          "public_task_rule": "Fresh runner public_task hook preserves value-free collection kind/unit/field and required-field codec marker before freeze; unchanged legacy filtering otherwise removes them.",
+          "decimal_resource_bound": "coefficient digits plus absolute base-10 exponent at most 4096; resource rejection retains one invalid unmatched row without expansion",
+          "raw_decimal_rule": "Raw retrieval response and SQL JSON text are parsed with Decimal before canonicalization; native driver float means its available shortest JSON decimal encoding only.",
+          "invalid_candidate_rule": "Malformed individual required-field values and nonobject records remain distinct unmatched rows; matching valid rows retain partial score.",
+          "all_methods_public_rule": "The same value-free exact rational/decimal/explicit-percent specification is in every method public contract before any call.",
+          "ordinary_contract_rule": "Undeclared contracts use original parser, decoder and scorer without share normalization."
+        }
+      },
+      "cardinality_policy": {
+        "mode": "all"
+      },
+      "native_full_population_n": 1,
+      "status": "local_semantic_native_SQL_controls_pass; fresh_paid_evaluation_separate"
+    }
+  ],
+  "baseline_public_pass_n": 458,
+  "target_registered_union_n": 460,
+  "pending_n": 100
+}

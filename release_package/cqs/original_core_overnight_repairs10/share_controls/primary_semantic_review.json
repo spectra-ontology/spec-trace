@@ -1,0 +1,146 @@
+{
+  "kind": "Primary exact original-source seven-unit semantic judgment, separate from runtime validation",
+  "id": "RAN4_P2_CQ3-1",
+  "status": "pass",
+  "repair_sha256": "8c11a967cad0ae104eeb2b98ee96bee7ffdbe6d653757cc9ecccb3c13c13764d",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+  "reviewer_kind": "Codex development agent /root/reaudit_ran3_ran4; AI diagnostic, proposer-primary, nonblind",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+      "finding": "The English asks one share of Samsung TDocs that led to resolutions. The requested role is a dimensionless subset-to-total ratio. It does not separately require the numerator count, denominator count, company name, Resolution count or percent-only display. An exact rational pair is a representation of this one ratio, not two independently requested aggregate roles.",
+      "query_clauses": [
+        "RETURN {numerator: numerator, denominator: denominator} AS resolutionLinkedTdocShare",
+        "required_fields: resolutionLinkedTdocShare=json exact-rational value"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+      "finding": "Original RAN4 phase2 is a recorded Tdoc/Company and Resolution association task. Exact CQ3-1 asks the ratio of a company’s Tdocs; no meeting, release, CR-only subtype, approval or physical report cutoff is inserted. One original typed Tdoc→Samsung edge is explicitly witnessed so this actual denominator domain is nonempty; this witness does not calculate the answer.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+      "finding": "The original exact CQ3-1..3-4 operational mapping is references→Tdoc→submittedBy; REFERENCES is defined as documentary Resolution citation. In this source-defined task, led-to means that recorded association. Causal effectiveness, approval and normative incorporation remain unverified and are not inferred from the English parenthetical success-rate label.",
+      "query_clauses": [
+        "EXISTS { MATCH (:Resolution)-[:REFERENCES]->(t) }"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+      "finding": "Both terms count distinct Tdoc instances. WITH DISTINCT t removes duplicate company-join witnesses before count(t). EXISTS returns one Boolean per Tdoc regardless of the number of Resolutions or repeated citation edges, and sum of that Boolean counts the qualifying subset once. Counting Resolutions as in the old query is not counting a share of documents.",
+      "query_clauses": [
+        "WITH DISTINCT t",
+        "count(t) AS denominator",
+        "sum(CASE WHEN EXISTS { MATCH (:Resolution)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS numerator"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+      "finding": "The named-company denominator is the complete recorded Tdoc population, including documents with no recorded citation; the numerator is the existentially linked subset. There is no LIMIT, top-N sampling, status or approval filter. The aggregate produces one ratio. A genuine zero qualifying numerator is allowed; 0/0 is never assigned a synthetic value.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company",
+        "WITH count(t) AS denominator",
+        "RETURN {numerator: numerator, denominator: denominator} AS resolutionLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+      "finding": "The unchanged question asks no rank, order, tie or decimal precision. One scalar ratio has no ordering role; set/all is appropriate. Exact rational, exact finite unit-one decimal, and explicitly labelled percent that denote the same mathematical value are accepted by the declared representation codec. The original source does not justify arbitrary rounding or forcing native binary floating-point output.",
+      "query_clauses": [
+        "collection.kind=set",
+        "cardinality_policy.mode=all",
+        "collection.rational_share_representation"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "What share of Samsung's TDocs led to resolutions? (contribution success rate).",
+      "finding": "The query uses only original recorded fields/edges. The new gold-blind codec reduces the candidate’s own numeric encoding without reading source, gold or an expected ratio; it adds no source evidence or inferred approval flag. It is explicit new evaluation-interface code, not an inherited-runtime claim. Fifty-five actual synthetic checks exercise byte-identical existing prompt/parser/execution adapter control flow and the unchanged original scorer with a real isolated immutable synthetic SQLite file and fake retrieval source/caller/native execution only. The actual runner public_task filtering is explicitly exercised, then a new public_task hook retains only value-free kind/unit/field descriptor and field codec marker through freeze. Both actual execute_generated and direct task_public.required_fields SQL decoding retain lexical precision. Raw C/D content and SQL JSON text use Decimal before any binary float conversion, then persist canonical integer pairs. Each malformed candidate cell remains an unmatched record so valid records retain partial credit. A strict canonical pair JSON schema is present. The same representation specification is disclosed before all four methods. A declared 4096 expanded-decimal resource bound avoids huge exponent expansion while the exact integer-pair representation remains available for the requested graph ratio. These are real offline integration checks, not actual native/source/model or frozen-runtime claims.",
+      "query_clauses": [
+        "rational_share_records.parse_retrieval_answer(contract,raw,legacy_parser)",
+        "rational_share_records.normalize_sql_records(contract,records)",
+        "rational_share_records.normalize_records(contract,records,gold=False)",
+        "share_runtime_adapter.public_task(task,legacy_public_task)",
+        "share_runtime_adapter.install(structured,retrieval)",
+        "share_runtime_adapter.score(contract,gold,predicted,original_score)",
+        "required_fields[0].json_schema=canonical exact integer pair",
+        "normalizer_has_gold_or_source_access=false",
+        "normalizer_sha256=16875d932f77598d3b217fd5ad6366b5009053ac44d77ffbcacdd97ca87f6172"
+      ]
+    }
+  ],
+  "source_evidence": {
+    "clean_definition": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_exact_documentary_share_source_only_v8/canonical_source_only_definition.json",
+      "sha256": "bf4cbea07180068118de8f39a8a926685d456880c5d9d8cc66a5cab37d421313",
+      "bytes": 3980
+    },
+    "clean_packet": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_exact_documentary_share_source_only_v8/original_English_KO_schema_unfiltered_inputs_and_exact_share_representation_packet.json",
+      "sha256": "b2995133b3265af828de7de5ce1056a0ea00f0bef751e9f8afddf93c2ff68550",
+      "bytes": 20005
+    },
+    "original_design": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/three_recorded_contribution_original_context_v2/source_only_independent_review/RAN4_phase2_design_git_index.md",
+      "sha256": "2aa9abf53a42c7dc1203f4109b8ba0162920bc2980ffadcadfcf1251daa129b1",
+      "bytes": 57716
+    },
+    "unchanged_schema": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/three_recorded_contribution_original_context_v2/source_only_independent_review/RAN4_unchanged_schema_snapshot.ttl",
+      "sha256": "6a1de338d9e54615305e8aa9f23092a2eb7711f8af558175c70225974a7290bb",
+      "bytes": 15320
+    },
+    "nonempty_domain_existence_only_witness": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_original_exact_documentary_share_primary_v3/original_company_Tdoc_domain_nonempty_existence_only_witness.json",
+      "sha256": "41bf2674f8a71bb42cb745522e3c94ba1b5e69a35ffe864702cc4efeb9824f54",
+      "bytes": 2694
+    },
+    "codec": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_exact_documentary_share_source_only_v8/rational_share_records.py",
+      "sha256": "16875d932f77598d3b217fd5ad6366b5009053ac44d77ffbcacdd97ca87f6172",
+      "bytes": 7113
+    },
+    "synthetic_cases": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_exact_documentary_share_source_only_v8/check_share_runtime_synthetic_controls.py",
+      "sha256": "d9556f5f50258d5f0f66c022436c7c8cfbf7fd68b041b44e37c31a91df879da6",
+      "bytes": 11143
+    }
+  },
+  "exposure": {
+    "proposer_and_primary_same_agent": true,
+    "fully_blind": false,
+    "historical_context_seen": true,
+    "current_exact_secondary_unread": true,
+    "prior_V3_secondary_runtime_challenges_read": true,
+    "new_filtered_SQL_native_gold_predictions_unread": true,
+    "actual_numerator_denominator_or_ratio_not_computed": true
+  },
+  "remaining_execution_gates": [
+    "separate exact source-first AI review and root source challenge",
+    "root independent replay and review of the fresh isolated adapter; any custom native runner must explicitly invoke candidate_records before persistence",
+    "native full singleton equals independently computed exact SQL numerator/denominator ratio",
+    "runtime prompts/DDL/parser/score protocol preregistration before model calls",
+    "public portable evidence and actual anonymous replay"
+  ],
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "AI_diagnostic_only": true,
+  "admission_or_model_performance_claim": false
+}
