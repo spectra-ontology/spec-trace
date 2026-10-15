@@ -1,0 +1,11 @@
+# Separate FFS-marker Agreement calendar companion
+
+This unchanged question asks for recent agreements carrying an FFS marker. The contract evaluates retained marker presence and authentic own reported Meeting periods. It does not establish present-world issue finality, complete physical report extraction, or truth of optional explanatory prose.
+
+The source60 dependency is preserved byte for byte under `calendar_source_patch/`, manifest `90efdbdb3537e270ac3686e1d04167d4b1561f56012cabf32d384af55c7f5823`, also published at `release_package/cqs/original_core_source_Meeting_calendar60/portable_patch`. It supplies60 Meeting periods from exactly eight authored paragraphs of each of192 report members. These windows include every supporting period witness; they are not complete report bodies. Parsed dates, reference queries, gold and reviews are excluded from model retrieval.
+
+This companion contains all4,635 native records and all five returned fields, rank groups, two AI judgments, root independent SQL and14 actual typed controls. Required answer role is Agreement identity. Original list10, AgendaASC and sequenceASC follow event-date recency. Equal complete-key boundary records are interchangeable. All147 missing-sequence records remain in the full reference; their latest event is older than at least ten complete-key records, so unspecified NULL placement cannot affect the requested top10. No general NULL convention is inferred.
+
+Run `python -B verify_companion.py` for exact payload/source/contract/control replay. `--existing-sql <source60 RAN1.sqlite>` checks all five fields and order of every record. Alternatively pass `--base-sql <frozen RAN1.sqlite> --base-ttl <frozen RAN1-body.ttl> --rebuild-dir <new directory>` to rebuild the preserved calendar dependency and check this contract. The dependency preserves every original column in all89 tables and the original RDF byte prefix. Neither verifier invokes a provider or graph container.
+
+The frozen original remains pending; this separate source variant is not added to the frozen index. These are nonblind AI development judgments, with no human author review or expert validation. Paid model outputs belong to a separate retained evaluation. Historical absolute paths are immutable provenance; payload and dependency files use relative hash-pinned paths.

@@ -1,0 +1,124 @@
+{
+  "status": "full_uncapped_question_and_all60_typed_calendar_properties_native_SQL_equal",
+  "started_utc": "2026-10-15T04:17:55.837321+00:00",
+  "reader": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/capture_P2_CQ1_5_calendar_FFS_Agreement_full_native_v1.py",
+    "sha256": "d7edf3ccc1a35bd9bd707e4749c453c5a41a1cb13eea5ae2ba9de980b0a95adb",
+    "bytes": 15332
+  },
+  "native_import_manifest": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/CQ017_all60_source_reported_Meeting_period_materialized_v1/native_import_v1/native_import_manifest.json",
+    "sha256": "a4d04e4900f2bf7708e2d14a1759297089d24f408d44ebaff3097c55739adc2f",
+    "bytes": 10014
+  },
+  "calendar60_capture_plan": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ1_5_original_FFS_marker_calendar_source_variant_v1/root_native_capture_adapter_v1/root_capture_plan.json",
+    "sha256": "660c0c861561f0dafe61f67260001f09310526a901382f9d2497e5ad6f326556",
+    "bytes": 4698
+  },
+  "input": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ1_5_original_FFS_marker_calendar_source_variant_v1/root_native_capture_adapter_v1/FFS_Agreement_and_all60_properties_native_input.jsonl",
+    "sha256": "8e2ea793cea1dd6924f2caa772a976650229511f9741a230a5bf5732514da1c5",
+    "bytes": 915
+  },
+  "queries": [
+    {
+      "id": "RAN1_P2_CQ1-5",
+      "query_sha256": "1508819aeab112dae42679331cd5eb1fbb94f1cefde79fb28508d84c081dcfdb",
+      "SQL": "WITH event_period AS (\n      SELECT a.node_id AS agreement_node_id, max(m.sourceReportedEndDate) AS meetingPeriodEndDate\n      FROM Agreement a JOIN rel_MADE_AT made ON made.src_id=a.node_id\n      JOIN Meeting m ON m.node_id=made.dst_id\n      GROUP BY a.node_id\n    )\n    SELECT DISTINCT a.resolutionId AS resolutionId,a.content AS content,p.meetingPeriodEndDate,\n                    i.agendaNumber AS agendaNumber,a.sequence AS sequence\n    FROM Agreement a JOIN event_period p ON p.agreement_node_id=a.node_id\n    LEFT JOIN rel_RESOLUTION_BELONGS_TO own ON own.src_id=a.node_id\n    LEFT JOIN AgendaItem i ON i.node_id=own.dst_id\n    WHERE a.hasFFS=1\n    ORDER BY p.meetingPeriodEndDate DESC,i.agendaNumber ASC NULLS LAST,a.sequence ASC NULLS LAST,a.resolutionId ASC\n",
+      "SQL_full_rows_n": 4635,
+      "SQL_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ1_5_original_FFS_marker_calendar_source_variant_v1/root_native_capture_adapter_v1/root_actual_queries_v3/RAN1_P2_CQ1-5_independent_SQL.jsonl",
+        "sha256": "3bbb9c6e9f7a2f8a46b8a6854f00a0740a9824051c01f58c33a937ab0f2da1a2",
+        "bytes": 3944452
+      },
+      "status": "OK",
+      "columns": [
+        "resolutionId",
+        "content",
+        "meetingPeriodEndDate",
+        "agendaNumber",
+        "sequence"
+      ],
+      "full_native_rows_n": 4635,
+      "native_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ1_5_original_FFS_marker_calendar_source_variant_v1/root_native_capture_adapter_v1/root_actual_queries_v3/RAN1_P2_CQ1-5_native.jsonl",
+        "sha256": "3bbb9c6e9f7a2f8a46b8a6854f00a0740a9824051c01f58c33a937ab0f2da1a2",
+        "bytes": 3944452
+      },
+      "full_rows_available": true,
+      "truncated": false,
+      "independent_SQL_full_multiset_equal": true,
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "execution_summary_complete": true,
+      "rollback_completed": true,
+      "elapsed_seconds": 2.2361219829981565,
+      "limits": {
+        "timeout_s": 20,
+        "rows": 100000,
+        "bytes": 268435456
+      }
+    },
+    {
+      "id": "RAN1_CALENDAR60_ALL_EXISTING_TYPED_PROPERTIES",
+      "query_sha256": "fdfebccf7ad68e4087279e17f72f18b58cbd8cf59f41024f8bc0f878cdab8f80",
+      "SQL": "SELECT i.iri AS iri,m.id AS id,m.meetingNumber AS meetingNumber,\n      m.canonicalMeetingNumber AS canonicalMeetingNumber,m.meetingNumberInt AS meetingNumberInt,\n      m.workingGroup AS workingGroup,m.sourceReportedStartDate AS sourceReportedStartDate,\n      m.sourceReportedEndDate AS sourceReportedEndDate\n      FROM Meeting m JOIN node_identity i USING(node_id) ORDER BY meetingNumber",
+      "SQL_full_rows_n": 60,
+      "SQL_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ1_5_original_FFS_marker_calendar_source_variant_v1/root_native_capture_adapter_v1/root_actual_queries_v3/RAN1_CALENDAR60_ALL_EXISTING_TYPED_PROPERTIES_independent_SQL.jsonl",
+        "sha256": "9ee4de37805fa9d1b72cfb8deb528d6de3cb3f150879a9f6ee099ca44981d86f",
+        "bytes": 17272
+      },
+      "status": "OK",
+      "columns": [
+        "iri",
+        "id",
+        "meetingNumber",
+        "canonicalMeetingNumber",
+        "meetingNumberInt",
+        "workingGroup",
+        "sourceReportedStartDate",
+        "sourceReportedEndDate"
+      ],
+      "full_native_rows_n": 60,
+      "native_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ1_5_original_FFS_marker_calendar_source_variant_v1/root_native_capture_adapter_v1/root_actual_queries_v3/RAN1_CALENDAR60_ALL_EXISTING_TYPED_PROPERTIES_native.jsonl",
+        "sha256": "9ee4de37805fa9d1b72cfb8deb528d6de3cb3f150879a9f6ee099ca44981d86f",
+        "bytes": 17272
+      },
+      "full_rows_available": true,
+      "truncated": false,
+      "independent_SQL_full_multiset_equal": true,
+      "plan_query_type": "r",
+      "execution_query_type": "r",
+      "execution_summary_complete": true,
+      "rollback_completed": true,
+      "elapsed_seconds": 0.09554679899883922,
+      "limits": {
+        "timeout_s": 20,
+        "rows": 100000,
+        "bytes": 268435456
+      }
+    }
+  ],
+  "canonical_repair_sha256": "f599fa3c01af4b7efb2197da8845edfa4a150bc001679df81e0ca58419b5e6be",
+  "question_admissions_n": 0,
+  "external_model_API_calls_n": 0,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "scope": "Separate source calendar graph. Retained FFS marker presence and own reported Meeting periods. Full4635 reference pool with original Agenda/sequence defaults; no current-world issue finality or frozen/public replacement.",
+  "API_source_window_boundary": "If source60 raw augmentation is reused for models, it is the first eight actual paragraphs of each of 192 retained reports. It is not the whole report body. No parsed ISO date, canonical labels, gold or reference query is retrieval input.",
+  "inventory_before": {
+    "nodes": 165418,
+    "relationships": 848228
+  },
+  "inventory_after": {
+    "nodes": 165418,
+    "relationships": 848228
+  },
+  "native_execution_n": 2,
+  "owned_container_stopped": true,
+  "finished_utc": "2026-10-15T04:18:23.249547+00:00",
+  "elapsed_seconds": 27.177419141000428
+}

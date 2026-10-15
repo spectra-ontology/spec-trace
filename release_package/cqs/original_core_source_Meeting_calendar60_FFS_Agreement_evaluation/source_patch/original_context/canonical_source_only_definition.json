@@ -1,0 +1,49 @@
+{
+  "id": "RAN1_P2_CQ1-5",
+  "question_en": "List recent agreements carrying an FFS (Further For Study) marker (items needing further study).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.hasFFS = true RETURN a.resolutionId, a.content, m.meetingNumber ORDER BY m.meetingNumberInt DESC, a.resolutionId LIMIT 15",
+  "reference_query": "MATCH (a:Agreement)-[:MADE_AT]->(meeting:Meeting)\nWHERE a.hasFFS=true\nWITH a,max(meeting.sourceReportedEndDate) AS meetingPeriodEndDate\nOPTIONAL MATCH (a)-[:RESOLUTION_BELONGS_TO]->(agenda:AgendaItem)\nRETURN DISTINCT a.resolutionId AS resolutionId,a.content AS content,meetingPeriodEndDate,\n                agenda.agendaNumber AS agendaNumber,a.sequence AS sequence\nORDER BY meetingPeriodEndDate DESC,agendaNumber ASC,sequence ASC,resolutionId ASC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "a.resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "require_rank_order": true,
+    "source_order_keys": [
+      {
+        "source_column": "meetingPeriodEndDate",
+        "direction": "desc"
+      },
+      {
+        "source_column": "agendaNumber",
+        "direction": "asc"
+      },
+      {
+        "source_column": "sequence",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "separate_source_enriched_query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "f599fa3c01af4b7efb2197da8845edfa4a150bc001679df81e0ca58419b5e6be",
+  "original_question_sha256": "7c6f9dcf3ff4acba7672003d51206d56cdf79618f57c2c2082d58c1468ff9809",
+  "original_query_sha256": "cc5df0214d12b15dd06a1aaa784bdea554aa0a6e9b9ea5dbb58ab88c4d7e8937",
+  "reference_query_sha256": "1508819aeab112dae42679331cd5eb1fbb94f1cefde79fb28508d84c081dcfdb",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_enrichment_required": true,
+  "frozen_question_admitted": false
+}

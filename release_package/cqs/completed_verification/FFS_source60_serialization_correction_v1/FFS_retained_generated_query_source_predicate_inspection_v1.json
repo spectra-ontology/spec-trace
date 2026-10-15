@@ -1,0 +1,27 @@
+{
+  "status": "ACTUAL_RETAINED_QUERY_INSPECTION_DIAGNOSTIC",
+  "utc": "2026-10-15T04:43:42.576669+00:00",
+  "id": "RAN1_P2_CQ1-5",
+  "methods": {
+    "text2cypher": {
+      "actual_output_sha256": "188de942a4ddb4e3a8b690962e09bf87ba4300f85af0a1ba397045ac9a3e7ced",
+      "generated_query": "MATCH (a:Agreement) WHERE a.hasFFS = true MATCH (a)-[:MADE_AT]->(m:Meeting) OPTIONAL MATCH (a)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) RETURN a.resolutionId AS resolutionId ORDER BY m.sourceReportedEndDate DESC, ai.agendaNumber ASC, a.sequence ASC LIMIT 10",
+      "recorded_marker_hasFFS_used": true,
+      "added_source_reported_end_date_used": true,
+      "original_Agenda_secondary_key_used": true,
+      "retained_complete_execution_status": "OK"
+    },
+    "text2sql": {
+      "actual_output_sha256": "6713a3de3319d2f229631c8ac5598fc2533ef51bb50af3e81762ac8cdf18d30b",
+      "generated_query": "SELECT ag.\"resolutionId\" AS resolutionId FROM \"Agreement\" ag JOIN \"rel_MADE_AT\" r ON r.src_id=ag.node_id JOIN \"Meeting\" m ON m.node_id=r.dst_id WHERE ag.\"hasFFS\"=1 ORDER BY m.\"sourceReportedEndDate\" DESC, ag.\"sequence\" ASC LIMIT 10",
+      "recorded_marker_hasFFS_used": true,
+      "added_source_reported_end_date_used": true,
+      "original_Agenda_secondary_key_used": false,
+      "retained_complete_execution_status": "OK"
+    }
+  },
+  "finding": "Both retained generated queries explicitly use the FFS marker and added sourceReportedEndDate. SQL omits the original Agenda secondary ordering and returns 7/10 requested identities (F1 .7); Cypher returns10/10 (F1 1).",
+  "scope_boundary": "Direct clause inspection plus actual saved output, not a proof of general query equivalence or a controlled source-medium improvement. Optional explanations and current-world finality remain unscored. No new model call or retry.",
+  "AI_diagnostic_only": true,
+  "human_expert_n": 0
+}

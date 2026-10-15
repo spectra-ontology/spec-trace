@@ -1,0 +1,99 @@
+{
+  "status": "PRECALL_FFS_ALL_FIVE_PROMPT_CONTRACT_PROJECTIONS_COMPLETE",
+  "id": "RAN1_P2_CQ1-5",
+  "repair_sha256": "f599fa3c01af4b7efb2197da8845edfa4a150bc001679df81e0ca58419b5e6be",
+  "task_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source_variant_OpenRouter_registration/source60_FFS_Agreement/tasks.jsonl",
+    "sha256": "ef91aedc1c7c1a3ab6cc671f76c6591ed36e4e692e540a72dc0ff061837712cd",
+    "bytes": 1976
+  },
+  "config_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source_variant_OpenRouter_registration/source60_FFS_Agreement/source_config.json",
+    "sha256": "cde1bb0606985d995100006ac5a17d3a568f6554b372756fece3c7d2030b312e",
+    "bytes": 4909
+  },
+  "declared_source_order_keys": [
+    {
+      "direction": "desc",
+      "source_column": "meetingPeriodEndDate"
+    },
+    {
+      "direction": "asc",
+      "source_column": "agendaNumber"
+    },
+    {
+      "direction": "asc",
+      "source_column": "sequence"
+    }
+  ],
+  "checks": [
+    {
+      "method": "A",
+      "actual_structured_message_contract_keys_equal": true
+    },
+    {
+      "method": "B",
+      "actual_structured_message_contract_keys_equal": true
+    },
+    {
+      "method": "C_answer",
+      "same_actual_retrieval_public_contract_keys_equal": true
+    },
+    {
+      "method": "D_followup",
+      "same_actual_retrieval_public_contract_keys_equal": true
+    },
+    {
+      "method": "D_answer",
+      "same_actual_retrieval_public_contract_keys_equal": true
+    }
+  ],
+  "diffs": {
+    "source_enriched_evaluation.py": "--- preserved/source_enriched_evaluation.py\n+++ isolated/source_enriched_evaluation.py\n@@ -1,5 +1,5 @@\n #!/usr/bin/env python3\n-\"\"\"Spec: separately registered Source10/Source17 original-question evaluation.\n+\"\"\"Spec: separately registered FFS-marker source-calendar original-question evaluation.\n Ontology: additive graph snapshots, original old facts preserved.\n Cycle: KDD2027 Datasets/Benchmarks Cycle1.\n 배경: preserve four methods and no answer-dependent regeneration.\n@@ -49,7 +49,7 @@\n     result = {'id':t['id'],'wg':t['id'].split('_',1)[0],'question_en':t['question_en'],'repair_sha256':t['repair_sha256'],\n               'required_fields':[{k:v for k,v in f.items() if k in allowed} for f in t['required_fields']],\n               'collection':{k:v for k,v in t['collection'].items() if k in\n-                 {'kind','value','tie_policy','within_tie_order','require_rank_order','order_keys'}},\n+                 {'kind','value','tie_policy','within_tie_order','require_rank_order','order_keys','source_order_keys'}},\n               'cardinality_policy':{k:v for k,v in t['cardinality_policy'].items() if k in {'mode','value','tie_policy'}}}\n     import structured_adapter as structured\n     structured.reject_private(result)\n",
+    "runtime/structured_adapter.py": "--- preserved/runtime/structured_adapter.py\n+++ isolated/runtime/structured_adapter.py\n@@ -57,7 +57,7 @@\n         for field in fields]\n     collection = contract.get('collection', {})\n     visible_collection = {key: collection[key] for key in\n-        ('kind', 'value', 'order_keys', 'tie_policy', 'within_tie_order', 'require_rank_order') if key in collection}\n+        ('kind', 'value', 'order_keys', 'source_order_keys', 'tie_policy', 'within_tie_order', 'require_rank_order') if key in collection}\n     cardinality = contract.get('cardinality_policy', {})\n     visible_cardinality = {key: cardinality[key] for key in ('mode', 'value', 'tie_policy') if key in cardinality}\n     return {'required_fields': visible_fields, 'collection': visible_collection,\n",
+    "runtime/retrieval_adapter.py": "--- preserved/runtime/retrieval_adapter.py\n+++ isolated/runtime/retrieval_adapter.py\n@@ -211,6 +211,14 @@\n                 for key in order_keys):\n             raise ValueError('Order keys must name requested fields only')\n         collection['order_keys'] = order_keys\n+    if 'source_order_keys' in task['collection']:\n+        source_keys = task['collection']['source_order_keys']\n+        if not isinstance(source_keys, list) or any(\n+                not isinstance(key, dict) or set(key) != {'source_column', 'direction'} or\n+                not isinstance(key['source_column'], str) or not key['source_column'] or\n+                key['direction'] not in {'asc', 'desc'} for key in source_keys):\n+            raise ValueError('Invalid declared source-side rank keys')\n+        collection['source_order_keys'] = source_keys\n     cardinality = {k: v for k, v in task['cardinality_policy'].items()\n                    if k in {'mode', 'tie_policy'} or (k == 'value' and task['cardinality_policy'].get('mode') == 'top_k')}\n     result={'required_fields': fields, 'collection': collection, 'cardinality_policy': cardinality}\n"
+  },
+  "shared_runtime_before_after_identical": true,
+  "only_new_public_information": "Already declared source-side column names and directions; no answer values, reference query, gold, counts, eligible identities or reviews. Required output roles remain unchanged.",
+  "source_retrieval_and_selection_unchanged": true,
+  "matched_protocol_limitation": "This new pre-call runtime corrects the inherited omission. It is not byte-identical to earlier source60 model prompt contracts and cannot establish a controlled source-medium effect.",
+  "source_inventory_model_provider_retry_execution_guard_unchanged": true,
+  "actual_model_API_native_calls_n": 0,
+  "code_pins": {
+    "build_retrieval_snapshot.py": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source_variant_OpenRouter_registration/source60_FFS_Agreement/registration_v2/build_retrieval_snapshot.py",
+      "sha256": "5ad148c291abd5c5f98763dd948bedce18ed72db69e2b80b6214e910e3fca600",
+      "bytes": 6195
+    },
+    "runtime/openrouter_client.py": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source_variant_OpenRouter_registration/source60_FFS_Agreement/registration_v2/runtime/openrouter_client.py",
+      "sha256": "13ced6083b42d2f876b5ac4267f7d67274ca8870a511225367711691331c23ac",
+      "bytes": 7984
+    },
+    "runtime/read_query_guard.py": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source_variant_OpenRouter_registration/source60_FFS_Agreement/registration_v2/runtime/read_query_guard.py",
+      "sha256": "0a710cec92a65d7034e24d47e78abdd7a175947229c675064b65056664cd0e66",
+      "bytes": 18311
+    },
+    "runtime/retrieval_adapter.py": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source_variant_OpenRouter_registration/source60_FFS_Agreement/registration_v2/runtime/retrieval_adapter.py",
+      "sha256": "c86aaa54a67b7a27ca529f3f9e3a9633e7f2252aaf1766dcf5dac025b8f49d33",
+      "bytes": 25482
+    },
+    "runtime/structured_adapter.py": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source_variant_OpenRouter_registration/source60_FFS_Agreement/registration_v2/runtime/structured_adapter.py",
+      "sha256": "9c75dedccdceeaaca36c0e7add5bc0d7ea20f108f9c801a8a331ffcc61c6c3cf",
+      "bytes": 19976
+    },
+    "source_enriched_evaluation.py": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/source_variant_OpenRouter_registration/source60_FFS_Agreement/registration_v2/source_enriched_evaluation.py",
+      "sha256": "470555fd99e4f161147edc6b4845de45e2e6fdd5f299f83193d4f612581b4f3d",
+      "bytes": 20430
+    }
+  },
+  "reader": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/prepare_FFS_public_source_order_runtime_v2.py",
+    "sha256": "d5ceeeb24c4cbecbbda41fe184da5381ceee13afe3b14fc56f69c9a0b3d60bfc",
+    "bytes": 7606
+  }
+}
