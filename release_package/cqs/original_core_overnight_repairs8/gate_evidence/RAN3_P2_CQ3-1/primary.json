@@ -1,0 +1,136 @@
+{
+  "kind": "Primary independent original-source semantic judgment by Codex development agent",
+  "id": "RAN3_P2_CQ3-1",
+  "status": "pass",
+  "repair_sha256": "16782d4371f16a45861d4faa83987bcff3bc34244014688e639242ec730dbbc5",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+      "finding": "The English asks 'how many of ZTE's TDocs': one integer count of qualifying documents. It does not request a Resolution count, total-submission count, proportion, or CR-only count. The Korean ratio predecessor does not override unchanged English.",
+      "query_clauses": [
+        "RETURN count(DISTINCT t) AS resolutionLinkedTdocCount"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+      "finding": "The fixed RAN3 phase2 task is a recorded graph survey over submitted Tdoc instances. Complete unfiltered original class/edge inputs are supplied; no meeting, release, approval, or named physical report population is added.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'ZTE'})"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+      "finding": "The explicit original CQ3-1..3-4 operational map is references→Tdoc→submittedBy, and original references is defined as a Resolution citing a Tdoc. Thus in this benchmark context led-to is the documentary Resolution association that the task was designed to test. It must not be reported as proof of approval, adoption, effect or real-world causal influence. This is source-based scope, not an external effect question arbitrarily recast as counts.",
+      "query_clauses": [
+        "WHERE EXISTS { MATCH (:Resolution)-[:REFERENCES]->(t) }"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+      "finding": "English makes the counting unit TDocs. COUNT(DISTINCT t) after existential Resolution citation counts one submitted Tdoc once despite multiple referencing Resolutions or duplicate join witnesses. COUNT(DISTINCT r) in the original query is a wrong unit for the English request.",
+      "query_clauses": [
+        "count(DISTINCT t)",
+        "EXISTS { MATCH (:Resolution)-[:REFERENCES]->(t) }"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+      "finding": "The aggregate is over the complete recorded named-company Tdoc domain with no LIMIT and no approval/status filtering. A Tdoc without any recorded Resolution reference is outside this recorded predicate, which does not prove no real-world influence.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)",
+        "RETURN count(DISTINCT t) AS resolutionLinkedTdocCount"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+      "finding": "One aggregate has no requested ordering or cutoff. Set/all permits that one integer answer, and requires no display-only sorting.",
+      "query_clauses": [
+        "collection.kind=set",
+        "cardinality_policy.mode=all"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Return how many of ZTE's TDocs led to resolutions (contribution effectiveness).",
+      "finding": "Only preserved original English, original process design, ontology, and frozen recorded fields/edges are used. No newly authored field, LLM approval inference, source corpus reconstruction, or current query result is needed. Original design bytes available here are explicitly index snapshots, not falsely authenticated historical commit bytes.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'ZTE'})\nWHERE EXISTS { MATCH (:Resolution)-[:REFERENCES]->(t) }\nRETURN count(DISTINCT t) AS resolutionLinkedTdocCount"
+      ]
+    }
+  ],
+  "source_evidence": {
+    "clean_definition": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/three_recorded_contribution_original_context_v2/source_only_independent_review/RAN3_P2_CQ3-1_canonical_source_only_definition.json",
+      "sha256": "955e9293545b242163d615f93d0b7a1558add16321fb8cdf49fee24003ba96e6",
+      "bytes": 1495
+    },
+    "source_packet": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/three_recorded_contribution_original_context_v2/source_only_independent_review/original_English_KO_schema_complete_unfiltered_inputs_source_packet.json",
+      "sha256": "2658894f9e006c4de215b10507377e4ee4af4046c01e09f23d865ba4aba19c73",
+      "bytes": 34695
+    },
+    "indexed_original_design": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/three_recorded_contribution_original_context_v2/source_only_independent_review/RAN3_phase2_design_git_index.md",
+      "sha256": "26512e239eabfe4d1499e3db4380659a2466c607085d819093b8628c3c0397e0",
+      "bytes": 59091
+    },
+    "working_design_separately_preserved": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/three_recorded_contribution_original_context_v2/source_only_independent_review/RAN3_phase2_design_working_snapshot.md",
+      "sha256": "207bcecb3868606df08f9c39b58ef3e7fd561cc18b5cf5d6d3aeb2605dc6f00f",
+      "bytes": 59948
+    },
+    "ontology": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/three_recorded_contribution_original_context_v2/source_only_independent_review/RAN3_unchanged_schema_snapshot.ttl",
+      "sha256": "298f94a8714ea084253249f5378603309e51df9e89ba38a18ad577751f8e125f",
+      "bytes": 14483
+    }
+  },
+  "exposure": {
+    "reviewer": "/root/reaudit_ran3_ran4",
+    "source_first_before_new_filtered_SQL_native_gold_predictions": true,
+    "proposer_and_primary_same_agent": true,
+    "fully_blind": false,
+    "historical_diagnoses_seen": true,
+    "new_secondary_judgment_unread": true
+  },
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "AI_diagnostic_only": true,
+  "remaining_execution_gates": [
+    "separate exact independent AI semantic review",
+    "root original-source challenge",
+    "full uncapped native versus independent SQL agreement",
+    "actual requested-field/order/tie/count negative controls"
+  ],
+  "admission_or_new_model_measurement_claim": false,
+  "reviewer_kind": "Codex development agent /root/reaudit_ran3_ran4; AI diagnostic, proposer-primary, nonblind",
+  "provenance_only_metadata_copy": {
+    "original_review": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/three_recorded_contribution_original_context_v2/primary_original_source_reviews_v1/RAN3_P2_CQ3-1_primary_exact_semantic_review.json",
+      "sha256": "e319eaa21865a7cee7551ab70e16ace38abe6f39a3965fdf83a0e62480d78628",
+      "bytes": 7521
+    },
+    "only_added_keys": [
+      "reviewer_kind",
+      "provenance_only_metadata_copy"
+    ],
+    "semantic_judgment_status_hash_and_all_seven_findings_unchanged": true,
+    "human_author_review_completed": false,
+    "expert_validation_n": 0
+  }
+}

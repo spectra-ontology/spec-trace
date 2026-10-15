@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 451 have passed the stated repair checks,
-and 109 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 452 have passed the stated repair checks,
+and 108 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 451 unchanged original questions.
+included in these 452 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -116,3 +116,5 @@ For cohort5, all four measured requested-record F1 scores are0. The generated gr
 The separate original-question cohort 6 adds `RAN2_P2_CQ3-2`: Rank the main contributors to spec 38.331 (RRC ownership). Its complete retained reference pool and fresh four-method evaluation are in `release_package/cqs/original_core_overnight_repairs6` and `release_package/cqs/original_core_overnight_evaluation6`. The current index is 450/560, with 110 pending. Earlier cohorts and measurements remain separate; human and expert validation remain incomplete.
 
 The separate original-question cohort 7 adds `RAN5_P3_CQ5-2`: Show each company's CR contributions per RAN5 spec (contribution matrix). Its complete retained reference pool and fresh four-method evaluation are in `release_package/cqs/original_core_overnight_repairs7` and `release_package/cqs/original_core_overnight_evaluation7`. The current index is 451/560, with 109 pending. Earlier cohorts and measurements remain separate; human and expert validation remain incomplete.
+
+The separate [ZTE documentary TDoc-count repair](../original_core_overnight_repairs8/README.md) and its [fresh four-method evaluation](../original_core_overnight_evaluation8/README.md) add one unchanged original question: 452/560 now pass and108 remain pending. The count uses distinct recorded TDocs cited by Resolutions, with17 actual controls (seven basic and ten count-unit/type/multiplicity controls). It does not establish causal effectiveness, approval or incorporation. All five first-call responses are retained; requested-record F1 is1/1/0/0 for Cypher/SQL/single/two-round retrieval. No quality retry was performed.
