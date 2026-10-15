@@ -1,8 +1,8 @@
 # Current original Core contract index
 
 This is the single entry point for the current original-question repairs.
-All 560 original IDs are retained: 460 have passed the stated repair checks,
-and 100 remain pending with their itemized reasons. Original English wording
+All 560 original IDs are retained: 463 have passed the stated repair checks,
+and 97 remain pending with their itemized reasons. Original English wording
 is unchanged. Ten already admitted IDs use separate full-ranking-pool repairs;
 they add zero IDs. Every historical cohort, submission and model result is preserved.
 
@@ -16,7 +16,7 @@ captured executions, including actual scorer controls. Independent human and
 domain-expert validation are not complete. Incomplete raw-source relationships,
 ambiguous editions/counting units and unsupported premises remain explicit.
 The broader revised canonical Core is a different definition set and is not
-included in these 460 unchanged original questions.
+included in these 463 unchanged original questions.
 
 New model predictions remain under their actual cohort and input conditions.
 The corrected SQL378 experiment uses the earlier contracts. Supplemental
@@ -122,3 +122,5 @@ The separate [ZTE documentary TDoc-count repair](../original_core_overnight_repa
 The separate [six original documentary and recorded-role repairs](../original_core_overnight_repairs9/README.md) and their [fresh four-method evaluation](../original_core_overnight_evaluation9/README.md) bring the current index to 458/560, with 102 pending. All 442 reference-pool records and 126 controls are retained (49 generic, 65 additional saved actual controls and 12 explicitly synthetic controls). Before any model call, the new cohort protocol exposed the declared source ordering keys to every method; the zero-call earlier protocol and the preregistered correction remain preserved. This prompt protocol differs from earlier cohorts. All 30 first-call responses, four-method failures and abstentions are retained; no quality retry was performed. These recorded documentary paths and marker/role contracts do not establish causal adoption or current-world issue finality.
 
 The separate [two documentary-reference and exact-share repairs](../original_core_overnight_repairs10/README.md) and their [fresh four-method evaluation](../original_core_overnight_evaluation10/README.md) bring the current index to 460/560, with 100 pending. All234 reference-pool records,15 generic controls and63 additional saved control replays are retained. The saved20/root24 share sets overlap; they are not44 independent cases. There are31 source-free checks (six tie fixtures and25 protocol integration checks). Before any model call, every method received the same declared exact rational-share representation, without rounding tolerance; source ordering disclosure is preserved. All10 first-call responses and eight method items, including failures and abstentions, remain unchanged. No quality retry was performed. Documentary references do not establish causal adoption.
+
+The separate [three recorded-status and documentary-share repairs](../original_core_overnight_repairs11/README.md) and their [fresh four-method evaluation](../original_core_overnight_evaluation11/README.md) bring this index snapshot to 463/560, with 97 pending. Five complete native reference records,23 generic scorer controls and50 additional actual source controls are retained; seven separate synthetic boundary/lexical checks and the source-free runtime checks are development diagnostics, not independent population samples. Samsung requires both Tdoc count and exact share, while Huawei requires exact share. All15 first-call responses and12 method outcomes, including errors and abstentions, are retained with no quality retry. Original source ordering keys and the exact-share public representation were exposed before calls. Recorded documentary links do not establish causal adoption. The later local CQ2-2 admission is excluded from this immutable three-question cohort.

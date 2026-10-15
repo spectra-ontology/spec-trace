@@ -1,0 +1,81 @@
+{
+  "id": "RAN1_P2_CQ3-2",
+  "question_en": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+  "original_query": "MATCH (c:Company {companyName: 'Samsung'})<-[:SUBMITTED_BY]-(t:Tdoc) WITH c, count(t) AS totalTdocs OPTIONAL MATCH (a:Agreement)-[:REFERENCES]->(t2:Tdoc)-[:SUBMITTED_BY]->(c) WITH c, totalTdocs, count(DISTINCT a) AS agreementCount RETURN c.companyName, totalTdocs, agreementCount, round(100.0 * agreementCount / totalTdocs, 1) AS contributionRate",
+  "reference_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})\nWITH DISTINCT t\nWITH count(t) AS totalTdocs,\n     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount\nRETURN agreementLinkedTdocCount,\n       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare",
+  "required_fields": [
+    {
+      "name": "agreementLinkedTdocCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "count(distinct Samsung Tdoc referenced by at least one typed Agreement)"
+    },
+    {
+      "name": "agreementLinkedTdocShare",
+      "type": "json",
+      "nullable": false,
+      "source_column_or_expression": "exact agreementLinkedTdocCount/count(distinct all retained Samsung Tdoc), encoded as an integer numerator/denominator pair",
+      "json_schema": {
+        "type": "object",
+        "properties": {
+          "numerator": {
+            "type": "integer"
+          },
+          "denominator": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "numerator",
+          "denominator"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "collection": {
+    "kind": "set",
+    "rational_share_representation": {
+      "kind": "exact_rational_share",
+      "unit": "one",
+      "field": "agreementLinkedTdocShare",
+      "canonical_encoding": {
+        "numerator": "integer",
+        "denominator": "nonzero integer, sign normalized to positive"
+      },
+      "allowed_equivalent_encodings": [
+        "integer rational pair",
+        "typed finite exact JSON number in units of one",
+        "explicit percent object with typed finite exact number"
+      ],
+      "rounded_approximations_equivalent": false,
+      "normalizer_file": "rational_share_records.py",
+      "normalizer_sha256": "16875d932f77598d3b217fd5ad6366b5009053ac44d77ffbcacdd97ca87f6172",
+      "normalizer_has_gold_or_source_access": false,
+      "runtime_adapter_file": "share_runtime_adapter.py",
+      "runtime_adapter_sha256": "72ee1aebbf07e500937223f4603cef7e6175555e713016af5e67c36e235048b1",
+      "public_task_rule": "Fresh runner public_task hook preserves value-free collection kind/unit/field and required-field codec marker before freeze; unchanged legacy filtering otherwise removes them.",
+      "decimal_resource_bound": "coefficient digits plus absolute base-10 exponent at most 4096; resource rejection retains one invalid unmatched row without expansion",
+      "raw_decimal_rule": "Raw retrieval response and SQL JSON text are parsed with Decimal before canonicalization; native driver float means its available shortest JSON decimal encoding only.",
+      "invalid_candidate_rule": "Malformed individual required-field values and nonobject records remain distinct unmatched rows; matching valid rows retain partial score.",
+      "all_methods_public_rule": "The same value-free exact rational/decimal/explicit-percent specification is in every method public contract before any call.",
+      "ordinary_contract_rule": "Undeclared contracts use original parser, decoder and scorer without share normalization."
+    }
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 1
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "94004ce445b428e7748a8d41a43debcdd14769d6bf90274108baf861018bae8b",
+  "original_question_sha256": "d57b07a0bb06879e2b59df1b559048656efececd0914a2ba6c318b2c74b4f84f",
+  "original_query_sha256": "a4dbce51ccc9906f6bde9d6b48909fd28053f1a7474cc4cd6cf1c2e82671715e",
+  "reference_query_sha256": "ce77d14aef66f14bac7ec8867b181513b959b81a25c89185d69d8776632dcc86",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_2_original_Samsung_exact_count_share_v5/source_only_independent_review/original_English_KO_and_unfiltered_count_and_exact_share_source_only_packet.json",
+    "sha256": "d7214f253da43c362bb801367952f7ebb59243cd812db83c9324c6544d32f150",
+    "bytes": 23907
+  }
+}

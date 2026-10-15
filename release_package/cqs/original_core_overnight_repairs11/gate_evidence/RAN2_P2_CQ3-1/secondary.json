@@ -1,0 +1,152 @@
+{
+  "kind": "Fresh independent exact original-source seven-unit Huawei share judgment before selected outputs",
+  "id": "RAN2_P2_CQ3-1",
+  "status": "pass",
+  "original_question": "Return the share of Huawei's TDocs that led to resolutions (effectiveness rate).",
+  "repair_sha256": "1d2f657fc59390b01cd0b9d0e941a1e791fbb6172413f00842d3d6363f237c40",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reviewer_kind": "Codex development agent /root/reaudit_ran3_ran4; independent AI secondary, nonblind development",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Return the share of Huawei's TDocs that led to resolutions (effectiveness rate).",
+      "finding": "The immutable English requests the share of Huawei Tdocs, a single dimensionless subset-to-total ratio. The exact original Korean CQ asks the same proportion. Neither the numerator count nor total count is separately requested, and neither the original query RETURN nor its one-decimal percent rounding creates an extra answer role. The one JSON field represents that one ratio using an exact integer pair; equivalent exact unit-one numbers and explicit percents remain accepted by the declared codec.",
+      "query_clauses": [
+        "RETURN {numerator: numerator, denominator: denominator} AS resolutionLinkedTdocShare",
+        "required_fields=[resolutionLinkedTdocShare:json,nullable:false]"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Return the share of Huawei's TDocs that led to resolutions (effectiveness rate).",
+      "finding": "The original RAN2 Phase2 domain is Final Report-recorded Resolution information extending the Phase1 Tdoc ontology (indexed designlines28,49–60). Original CQ3 reuses submittedBy from Tdoc to Company (line314). The English fixes Huawei and does not restrict meeting, release, subtype, approval or time. Canonical Company.companyName is the Phase1 identifier (Phase1lines1315–1323), and joint submissions may belong to multiple companies (line685); the question asks Huawei documents rather than fractional company credits. The whole277 Company and120000 Tdoc inputs have unique nonempty business identifiers, and one typed original Huawei-submission witness is replayed without counting the requested population.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Huawei'})"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Return the share of Huawei's TDocs that led to resolutions (effectiveness rate).",
+      "finding": "The led-to/effectiveness wording is not independently proven causal. The actual source supplies a narrower operational task meaning: exact CQ3-1 at line120 asks the Tdoc-to-Resolution ratio, and the explicit CQ3-1..3-4 required-terms mapping at line500 is Resolution plus references through Phase1 Tdoc/Company. REFERENCES is separately defined as a Resolution citing a Tdoc (lines435–437,756–757,826). Thus this original graph-context CQ measures recorded documentary linkage. A citation alone establishes neither adoption nor positive agreement, approval, normative incorporation, or causal effectiveness; those are not claims of this admitted interpretation. This finding relies on the exact CQ source mapping, not on the old query or the separate RAN4 empirical result.",
+      "query_clauses": [
+        "EXISTS { MATCH (:Resolution)-[:REFERENCES]->(t) }"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Return the share of Huawei's TDocs that led to resolutions (effectiveness rate).",
+      "finding": "The denominator unit is each distinct Huawei Tdoc record; the numerator is the subset of those same documents with at least one typed Resolution citation. The English explicitly says share of Tdocs, so counting Resolution records or reference edges would change units. WITH DISTINCT t removes repeated company-edge witnesses and EXISTS yields one Boolean regardless of repeated citations, shared documents, or several Resolutions. The complete unfiltered120000 Tdoc business identifiers are unique, and all SUBMITTED_BY/REFERENCES operands have typed endpoint closure.",
+      "query_clauses": [
+        "WITH DISTINCT t",
+        "count(t) AS denominator",
+        "sum(CASE WHEN EXISTS { MATCH (:Resolution)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS numerator"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Return the share of Huawei's TDocs that led to resolutions (effectiveness rate).",
+      "finding": "All recorded Huawei-submitted Tdocs contribute to the denominator, including documents lacking any recorded Resolution reference. No status, CR-only, meeting cutoff, or positive-reference-only denominator is introduced. The full aggregate returns one ratio. The replayed single authentic submission witness establishes only denominator nonzero, without computing it; a zero linked numerator is allowed but undefined0/0 is not assigned a value. The source generic CQ3 topN10 default cannot truncate this fixed-company singleton aggregate: applying10 to one record is invariant without learning any answer value.",
+      "query_clauses": [
+        "MATCH ... Huawei",
+        "WITH count(t) AS denominator, sum(...) AS numerator",
+        "reference_query has no LIMIT",
+        "cardinality_policy.mode=all"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Return the share of Huawei's TDocs that led to resolutions (effectiveness rate).",
+      "finding": "This question requests a scalar ratio, not a ranked company list, order, or decimal precision. The source CQ3 generic CountDESC/CompanyASC order and10-item default do not alter a one-record fixed-company aggregate. Set/all therefore makes no additional ordering choice. The ratio is evaluated mathematically through a public exact-rational codec; no post hoc precision tolerance is chosen from a selected answer. Exact equivalent fractions, finite unit-one decimals, and explicitly labelled exact percent values are representations of the same one requested role.",
+      "query_clauses": [
+        "collection.kind=set",
+        "collection.rational_share_representation.unit=one",
+        "rounded_approximations_equivalent=false"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Return the share of Huawei's TDocs that led to resolutions (effectiveness rate).",
+      "finding": "The exact canonical identity is newly checked; the declared codec and runtime adapter hashes are byte-identical to the separately reviewed V8 generic implementation, not Huawei-specific model or gold code. That implementation preserves raw lexical decimals, normalizes only the declared share field, retains auxiliary/ordinary fields, and keeps malformed rows as unmatched rows so valid partial credit survives. Prior actual source-free55/25 runtime checks are explicitly reused as generic-code evidence; no fresh Huawei native or runtime success is claimed. A fresh isolated Huawei cohort must still expose the sanitized value-free share descriptor/marker and identical parser/scorer hooks to every method before calls, then capture full native/independent SQL/source guards and controls. No external adoption label, alias merger, current-world missingness, or causal outcome is supplied.",
+      "query_clauses": [
+        "normalizer_sha256=16875d932f77598d3b217fd5ad6366b5009053ac44d77ffbcacdd97ca87f6172",
+        "runtime_adapter_sha256=72ee1aebbf07e500937223f4603cef7e6175555e713016af5e67c36e235048b1",
+        "collection.rational_share_representation.public_task_rule",
+        "ordinary_contract_rule"
+      ]
+    }
+  ],
+  "source_evidence": {
+    "clean_manifest": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ3-1_original_Huawei_exact_share_source_only_v1/manifest.json",
+      "sha256": "6af364450f6371ad9bb70e67b5370f40b044a7f0b79fea653d2cc6e976c25d0d",
+      "bytes": 2847
+    },
+    "definition": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ3-1_original_Huawei_exact_share_source_only_v1/canonical_source_only_definition.json",
+      "sha256": "8ee04b4afbc417e5c208315a4f7ef44e99c566ad329c4a09a51d469f914ee3ff",
+      "bytes": 4124
+    },
+    "source_packet": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ3-1_original_Huawei_exact_share_source_only_v1/original_Huawei_share_source_context_and_unfiltered_operands.json",
+      "sha256": "e093d84cbc51aa10333d7d80b80dc28b7b968da270c0400dabb58c48dd101dc7",
+      "bytes": 27808
+    },
+    "indexed_phase2": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ3-1_original_Huawei_exact_share_source_only_v1/indexed_complete_original_design.md",
+      "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9",
+      "bytes": 54914
+    },
+    "indexed_phase1": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ3-1_original_Huawei_exact_share_source_only_v1/indexed_complete_original_Phase1_design.md",
+      "sha256": "5cb9f1c4056f0e658aeaf3933bad7c7bad0195d71d430d91877479c964d65be0",
+      "bytes": 73900
+    },
+    "codec": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_exact_documentary_share_source_only_v8/rational_share_records.py",
+      "sha256": "16875d932f77598d3b217fd5ad6366b5009053ac44d77ffbcacdd97ca87f6172",
+      "bytes": 7113
+    },
+    "adapter": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_exact_documentary_share_source_only_v8/share_runtime_adapter.py",
+      "sha256": "72ee1aebbf07e500937223f4603cef7e6175555e713016af5e67c36e235048b1",
+      "bytes": 5511
+    }
+  },
+  "fresh_whole_source_operand_validation": {
+    "all_clean_manifest_file_hashes_verified": true,
+    "Company": 277,
+    "Tdoc": 120000,
+    "Resolution": 3773,
+    "SUBMITTED_BY": 156575,
+    "REFERENCES": 12995,
+    "all_business_identity_keys_unique_nonempty_strings": true,
+    "all_typed_endpoints_closed": true,
+    "single_nonzero_denominator_domain_witness_replayed": true,
+    "selected_company_population_numerator_denominator_ratio_or_eligible_join_not_computed": true
+  },
+  "exposure": {
+    "fully_blind": false,
+    "original_query_and_prior_triage_in_clean_packet_seen": true,
+    "other_agent_primary_unread": true,
+    "new_SQL_gold_native_models_unread": true,
+    "RAN4_share_code_and_results_previously_known": true,
+    "RAN4_answer_not_used_as_Huawei_evidence": true
+  },
+  "remaining_execution_gates": [
+    "actual full Huawei SQL/native equality and source guards",
+    "actual Huawei wrong-unit/duplicate/zero/typed-value negative controls",
+    "fresh isolated declared-codec prompt/parser/normalization/scoring freeze before any API",
+    "root admission/public portable anonymous verification"
+  ],
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "AI_diagnostic_only": true,
+  "admission_or_model_performance_claim": false
+}

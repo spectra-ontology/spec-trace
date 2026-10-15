@@ -1,0 +1,140 @@
+{
+  "id": "RAN1_P2_CQ3-2",
+  "repair_sha256": "94004ce445b428e7748a8d41a43debcdd14769d6bf90274108baf861018bae8b",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "d57b07a0bb06879e2b59df1b559048656efececd0914a2ba6c318b2c74b4f84f",
+  "reviewer_kind": "Primary original-source semantic judgment /root/verify_prepared_replies; AI nonblind development diagnosis",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "English explicitly asks 'How many of Samsung's TDocs ... and what share?'. These are two independently required roles: a distinct linked-Tdoc count and that subset's share of all Samsung Tdocs. A rational pair encodes the one share value; it is not a request for separate numerator/denominator answer roles. The denominator or company name may be explanatory but are not additional required fields.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "The original WG/phase graph domain supplies all retained typed Samsung-submitted Tdocs. Indexed f414 lines94 and497 independently define company-Tdoc contribution ratio and its Phase1 Company/reference context. All five complete unfiltered operand populations were freshly compared to every corresponding immutable SQLite column. The new boolean nonempty denominator witness is not a selected count or ratio.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "Indexed f414 references means Resolution cites a Tdoc, and original CQ3 required-term mapping explicitly connects references to Phase1 Tdoc/Company. This supports fed into as the recorded documentary participation convention. Agreement is the English-specified Resolution subtype. No approval, technical adoption, causation, release, meeting or date predicate is added, and real causal contribution performance is unproved.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "Tdocs is the counted unit in both requested roles. WITH DISTINCT t deduplicates submission paths and joint-company links; EXISTS over typed Agreement prevents one Tdoc being counted repeatedly for multiple agreements. Count of Agreement objects, references edges or CR identities is a different and unsupported numerator.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "One aggregate over the complete typed company population yields the count and share together. The explicitly single-company scalar request is not a TopN company list. The source boolean nonempty witness closes denominator zero for this frozen source only; the unchanged codec rejects denominator zero instead of inventing0/0=0. Exact cardinality1 matches the one combined aggregate.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "There is no requested ranking of the one scalar record. Original CountDESC/CompanyASC presentation cannot introduce rounding or a mandatory decimal scale. Unchanged V8 canonical rational reduction accepts exact unit decimals and explicitly labelled percent values as equivalent encodings, rejects approximate rounded values as exact equality, and does not select a precision using observed answers.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "No fresh selected numerator, denominator, ratio, qualifying source join, source gold, native or provider output was read or computed. Prior proposer count diagnostics are disclosed and are not semantic evidence. V8 codec/runtime files are byte-identical to the independently validated generic implementation; its full public-task/immutableSQLite/fakecaller proof is reused explicitly. New15 synthetic controls establish both required roles, exact alternative encodings and malformed-row partial credit. A new isolated runtime must still install the same public hooks before freeze; this source-only primary is not native or provider admission.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    }
+  ],
+  "source_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_2_original_Samsung_exact_count_share_v5/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "e0d837bc3c5d55f858f6be0a4e7da571a639d03eb7adf0d7466a125bbb75015a",
+    "bytes": 4338
+  },
+  "source_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_2_original_Samsung_exact_count_share_v5/source_only_independent_review/original_English_KO_and_unfiltered_count_and_exact_share_source_only_packet.json",
+    "sha256": "d7214f253da43c362bb801367952f7ebb59243cd812db83c9324c6544d32f150",
+    "bytes": 23907
+  },
+  "fresh_unfiltered_source_receipt": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_2_original_Samsung_exact_count_share_v5/fresh_unfiltered_source_equality_and_boolean_denominator_precondition.json",
+    "sha256": "ca43bfc4bbb20a5d9aa7ce7a5a824dd96d24a8b04b36eab08c4f4128a7ae1ed9",
+    "bytes": 3283
+  },
+  "synthetic_controls": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_2_original_Samsung_exact_count_share_v5/actual_fifteen_gold_blind_two_role_codec_and_scorer_controls.json",
+    "sha256": "6358ac491be5fe55c731e49599774989df2a0445c6de4a16a3c0980987d82b0f",
+    "bytes": 21082
+  },
+  "semantic_units_pass_n": 7,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "prior_proposer_count_diagnostics_exposure": true,
+  "new_selected_SQL_count_ratio_gold_native_model_read_or_computed": false,
+  "admitted": false,
+  "root_frozen_runtime_native_SQL_provider_gate_required": true,
+  "reader": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/review_P2_CQ3_2_original_Samsung_exact_count_share_v5.py",
+    "sha256": "c91351fc909d4ecf9556fb82ccbcae0c02476e6d0cd831b1eec8b37a0472545a",
+    "bytes": 10585
+  }
+}

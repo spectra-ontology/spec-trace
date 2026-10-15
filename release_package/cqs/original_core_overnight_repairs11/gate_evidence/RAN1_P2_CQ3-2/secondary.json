@@ -1,0 +1,283 @@
+{
+  "id": "RAN1_P2_CQ3-2",
+  "repair_sha256": "94004ce445b428e7748a8d41a43debcdd14769d6bf90274108baf861018bae8b",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "d57b07a0bb06879e2b59df1b559048656efececd0914a2ba6c318b2c74b4f84f",
+  "reviewer_kind": "Secondary direct Codex source judgment /root/reaudit_ran2_ran5; nonblind development diagnosis, not human or expert review",
+  "status": "pass",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "The unchanged how many of Samsung TDocs and what share explicitly asks two roles: the distinct Agreement-linked Tdoc count and its share among all Samsung Tdocs. Both required fields remain mandatory. Company, total count and Agreement count from the old RETURN are explanatory auxiliaries, not additional English roles.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "The original indexed Phase2 source defines CQ3 company contribution through Resolution references to Phase1 Tdoc and Company and explicitly reuses submittedBy. The frozen question specializes Resolution to typed Agreement. Its population is all recorded Samsung-submitted typed Tdoc records, including jointly submitted records, without status, approval, meeting, latest or release filters. Retained untracked Korean text is separately disclosed and is not needed as historical category authority.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "Fed into agreements is operationally bound by the original CQ3 references and submittedBy map and the immutable query relation path. It measures documented participation, not causal technical authorship, positive adoption, or actual performance. EXISTS requires at least one typed Agreement REFERENCES witness; a Conclusion or other Resolution alone cannot satisfy this exact English.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "The counted noun is TDocs. WITH DISTINCT t makes the denominator one per submitted Tdoc identity; EXISTS makes numerator one per Tdoc even if many Agreements reference it. Joint submitters do not fractionalize the named company membership. The former Agreement-count numerator is a different unit. Independent complete unfiltered input comparison verifies the recorded operands without calculating the requested numerator or denominator.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "A fixed-company aggregate asks one complete count/share pair. CQ3 TopN10 default cannot truncate a scalar aggregate or make unrelated companies required; all and default10 have the same one-record aggregate cardinality. Boolean submitted-Tdoc existence establishes a nonzero denominator without reading a target count. The explicit exact1 policy is supported by the aggregation shape and the original singular share request.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "The one aggregate has no requested ranking or tie order. Exact rational pair and equivalent exact finite unit/explicit-percent encodings represent the same value without arbitrary one-decimal rounding or tolerance. The unchanged generic codec retains the separately required count; own source-free five-case tests verify equivalent shares match while wrong, missing and boolean count fail.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "How many of Samsung's TDocs fed into agreements, and what share? (contribution performance)",
+      "finding": "The judgment reuses only disclosed existing generic codec/runtime source evidence and directly rereads original design literals, all five unfiltered input populations and the exact new definition. It does not read proposer primary or selected n/d, ratio, gold, native or model outputs. Fresh per-task runtime installation, native/independent full SQL and actual controls remain downstream gates; no completed evaluation or human/expert validation is asserted.",
+      "query_clauses": [
+        "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName: 'Samsung'})",
+        "WITH DISTINCT t",
+        "WITH count(t) AS totalTdocs,",
+        "     sum(CASE WHEN EXISTS { MATCH (:Agreement)-[:REFERENCES]->(t) } THEN 1 ELSE 0 END) AS agreementLinkedTdocCount",
+        "RETURN agreementLinkedTdocCount,",
+        "       {numerator: agreementLinkedTdocCount, denominator: totalTdocs} AS agreementLinkedTdocShare"
+      ]
+    }
+  ],
+  "source_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_2_original_Samsung_exact_count_share_v5/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "e0d837bc3c5d55f858f6be0a4e7da571a639d03eb7adf0d7466a125bbb75015a",
+    "bytes": 4338
+  },
+  "source_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_2_original_Samsung_exact_count_share_v5/source_only_independent_review/original_English_KO_and_unfiltered_count_and_exact_share_source_only_packet.json",
+    "sha256": "d7214f253da43c362bb801367952f7ebb59243cd812db83c9324c6544d32f150",
+    "bytes": 23907
+  },
+  "complete_unfiltered_equality": [
+    {
+      "name": "all21058_original_Agreement_operands",
+      "rows": 21058,
+      "pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all21058_original_Agreement_operands.jsonl",
+        "sha256": "172085826935d899580fd282b47a2b30fdd6c4c1327308305ba86307e9dbf172",
+        "bytes": 14175397
+      },
+      "all_fields_and_storage_types_equal": true
+    },
+    {
+      "name": "all_original_Tdoc_identity_operands",
+      "rows": 123677,
+      "pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_Tdoc_identity_operands.jsonl",
+        "sha256": "8f8a5e32486fdcbc2c0de6418b8a5ac8355d6e724a3bcc7b683af2aab02235fa",
+        "bytes": 5483841
+      },
+      "all_fields_and_storage_types_equal": true
+    },
+    {
+      "name": "all_original_Company_operands",
+      "rows": 222,
+      "pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_Company_operands.jsonl",
+        "sha256": "bcd0a1882be36bc6cab98b518f8d66f77a6aa847f068935d1d962d4d58354672",
+        "bytes": 28021
+      },
+      "all_fields_and_storage_types_equal": true
+    },
+    {
+      "name": "all_original_references_edges",
+      "rows": 19454,
+      "pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_references_edges.jsonl",
+        "sha256": "7bd727043c8b6c668f2191782d3a922a37cd558ae9708636004176cf90acf8f6",
+        "bytes": 1412318
+      },
+      "all_fields_and_storage_types_equal": true
+    },
+    {
+      "name": "all_original_submitted_by_edges",
+      "rows": 154525,
+      "pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ3_4_original_calendar_Agreement_source_variant_v1/source_only_independent_review/all_original_submitted_by_edges.jsonl",
+        "sha256": "62e39c6733d71a59ac72dbba782324664e7ca8ea2eaa58a4608eb2b85809f521",
+        "bytes": 11801149
+      },
+      "all_fields_and_storage_types_equal": true
+    }
+  ],
+  "database_before_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+  "database_after_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+  "source_free_two_role_codec_checks": [
+    {
+      "name": "equivalent_pair",
+      "synthetic_only": true,
+      "expected_exact": true,
+      "actual": {
+        "diagnostic_only": true,
+        "exact": true,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "matched_records": 1,
+        "gold_records": 1,
+        "predicted_records": 1,
+        "type_errors": [],
+        "cardinality_valid": true,
+        "order_valid": true
+      }
+    },
+    {
+      "name": "equivalent_percent",
+      "synthetic_only": true,
+      "expected_exact": true,
+      "actual": {
+        "diagnostic_only": true,
+        "exact": true,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "matched_records": 1,
+        "gold_records": 1,
+        "predicted_records": 1,
+        "type_errors": [],
+        "cardinality_valid": true,
+        "order_valid": true
+      }
+    },
+    {
+      "name": "wrong_count",
+      "synthetic_only": true,
+      "expected_exact": false,
+      "actual": {
+        "diagnostic_only": true,
+        "exact": false,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "matched_records": 0,
+        "gold_records": 1,
+        "predicted_records": 1,
+        "type_errors": [],
+        "cardinality_valid": true,
+        "order_valid": true
+      }
+    },
+    {
+      "name": "missing_count",
+      "synthetic_only": true,
+      "expected_exact": false,
+      "actual": {
+        "diagnostic_only": true,
+        "exact": false,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "matched_records": 0,
+        "gold_records": 1,
+        "predicted_records": 1,
+        "type_errors": [
+          {
+            "row": 0,
+            "reason": "missing required field: agreementLinkedTdocCount"
+          }
+        ],
+        "cardinality_valid": true,
+        "order_valid": false
+      }
+    },
+    {
+      "name": "boolean_count",
+      "synthetic_only": true,
+      "expected_exact": false,
+      "actual": {
+        "diagnostic_only": true,
+        "exact": false,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "matched_records": 0,
+        "gold_records": 1,
+        "predicted_records": 1,
+        "type_errors": [
+          {
+            "row": 0,
+            "reason": "wrong JSON type at $"
+          }
+        ],
+        "cardinality_valid": true,
+        "order_valid": false
+      }
+    }
+  ],
+  "prior_RAN4_generic_codec_and_earlier_RAN1_pending_review_known": true,
+  "other_primary_new_selected_SQL_gold_native_model_read": false,
+  "selected_numerator_denominator_computed": false,
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "new_native_API_calls_n": 0,
+  "admitted": false,
+  "created_utc": "2026-10-15T05:04:23.031397+00:00",
+  "mechanical_review_schema_check_pass": true
+}

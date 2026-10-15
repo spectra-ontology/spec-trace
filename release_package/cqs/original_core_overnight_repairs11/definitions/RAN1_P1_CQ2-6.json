@@ -1,0 +1,41 @@
+{
+  "id": "RAN1_P1_CQ2-6",
+  "question_en": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+  "original_query": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc {status: 'postponed'}) RETURN t.tdocNumber, t.title, t.type ORDER BY t.tdocNumber ASC LIMIT 10",
+  "reference_query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)\nWHERE t.status = 'postponed'\nRETURN DISTINCT t.tdocNumber AS tdocNumber\nORDER BY tdocNumber ASC",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "source_order_keys": [
+      {
+        "source_column": "tdocNumber",
+        "direction": "asc"
+      }
+    ],
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "037f216bfdafc60f6514642e7a864311dc4f32013a784c5c816304cea76bebac",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P1_CQ2_6_original_status_source_only_v1/original_status_mapping_source_context_and_unfiltered_operands.json",
+    "sha256": "25ff35e350f215030bc16d400114f17d6329ae124a4ed1a97a2a9732e2a34107",
+    "bytes": 7328
+  }
+}

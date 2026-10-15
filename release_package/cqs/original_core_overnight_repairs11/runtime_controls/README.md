@@ -1,0 +1,3 @@
+This source-free replay uses the unchanged validated V8 codec and isolated four-method runtime. It creates an isolated temporary synthetic workspace (an empty .git marker satisfies the runtime root locator), then imports exact copied code. Only temporary synthetic SQLite is executed. Native execution and retrieval/model responses are explicit stubs; no research database, native server, API, credentials, or actual answer is read. Three contract shapes cover Samsung count-plus-share, Huawei share-only, and ordinary postponed identity/top-10 ordering. The actual independent source/native gates are packaged separately.
+
+Run: python3 -B -S replay_runtime.py --out NEW_RECEIPT.json

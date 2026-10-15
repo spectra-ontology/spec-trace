@@ -1,0 +1,126 @@
+{
+  "kind": "Independent exact original-source seven-unit semantic review before selected outputs",
+  "id": "RAN1_P1_CQ2-6",
+  "status": "pass",
+  "repair_sha256": "037f216bfdafc60f6514642e7a864311dc4f32013a784c5c816304cea76bebac",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+  "reviewer_kind": "Codex development agent /root/reaudit_ran3_ran4; independent AI secondary, nonblind historical context",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+      "finding": "The English asks which Tdocs were postponed, so the required role is document identity. The original design identifies tdocNumber as the unique Tdoc key (lines602/864), and all123677 unfiltered Tdoc records have unique nonempty string numbers. Title and type describe those identities but are not requested answer roles. The candidate requires only the unique number.",
+      "query_clauses": [
+        "RETURN DISTINCT t.tdocNumber AS tdocNumber",
+        "required_fields=[tdocNumber:string,nullable:false]"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+      "finding": "Original Phase1 explicitly scopes the ontology to meeting-document metadata sourced from Tdoc_list Excel (lines19,36–51); Final Minutes body is a separate Phase2 input. This question names RAN1#120. canonicalMeetingNumber removes the e-meeting suffix while retaining bis (lines663–674). The complete60 Meeting operands contain distinct RAN1#120 and RAN1#120b records even though both have meetingNumberInt120. Equality on canonical RAN1#120 therefore preserves the named event and does not join the bis meeting by numeric alias.",
+      "query_clauses": [
+        "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+      "finding": "This is not inferred from the old query. The exact original CQ2-6 is explicitly mapped to TDoc Status(postponed) at designline153, and the status vocabulary itself defines postponed as next-meeting deferral at line1027. Thus the requested next-meeting predicate is the recorded postponed status within the original Phase1 process. It does not demand proving actual attendance at the later meeting or a currently unresolved issue, neither of which the question asks in its fixed metadata context. PRESENTED_AT connects the document to its source meeting (line319).",
+      "query_clauses": [
+        "WHERE t.status = 'postponed'",
+        "MATCH ... <-[:PRESENTED_AT]-(t:Tdoc)"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+      "finding": "The unit is a Tdoc identity, not a status event, meeting edge or revised successor. RETURN DISTINCT tdocNumber removes repeated PRESENTED_AT witnesses. Whole unfiltered endpoint validation confirms all123678 relation rows point from one of123677 typed Tdoc identities to one of60 typed Meetings; all document numbers are globally unique. No count aggregate or inferred successor replacement changes the unit.",
+      "query_clauses": [
+        "RETURN DISTINCT t.tdocNumber AS tdocNumber"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+      "finding": "English says List without an explicit all or K. Original source CQ result rules explicitly assign list default10 to CQ2-6 at line125; the same design says the limit may be a query parameter at line129, but this fixed question supplies no override. The candidate obtains the full uncapped source pool and declares top_k10 in scoring, so it preserves the original documented ten-item answer rather than silently treating the old LIMIT as authority or claiming all eligible documents must be emitted. A pool smaller than10 is returned completely.",
+      "query_clauses": [
+        "reference_query contains no LIMIT",
+        "collection.kind=top_k_boundary_ties, value=10",
+        "cardinality_policy.mode=top_k,value=10"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+      "finding": "Original CQ2 sorting is explicitly TDoc number ASC at line115. Candidate query and public source_order_keys implement precisely that identity order; require_rank_order is true. The full input has unique nonempty string Tdoc numbers, so there are no distinct identities tied on this key. The boundary-tie mechanism does not introduce an arbitrary rank preference. This is lexicographic document-number order specified by the source, not date or numeric meeting recency.",
+      "query_clauses": [
+        "ORDER BY tdocNumber ASC",
+        "collection.source_order_keys=[tdocNumber asc]",
+        "collection.require_rank_order=true"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "List the TDocs postponed to the next meeting at RAN1#120 (tracking open items).",
+      "finding": "All candidate operands are preserved original Meeting, Tdoc status/number and PRESENTED_AT records. Exact source status mapping independently supplies the next-meeting meaning; no target-meeting lookup, report-derived approval, current finality flag or external calendar is required. The original indexed source is pinned as the actual index snapshot and is not claimed to establish historical creation time. This pass concerns the original recorded-field task only: register/report inconsistency and actual later attendance are separate source-faithfulness questions, not observations established here. Native execution, independent eligible SQL, scorer controls and root admission remain pending execution gates.",
+      "query_clauses": [
+        "MATCH/WHERE/RETURN use original frozen fields only",
+        "original_question_preserved=true",
+        "repair_class=query_and_scorer"
+      ]
+    }
+  ],
+  "source_evidence": {
+    "clean_manifest": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P1_CQ2_6_original_status_source_only_v1/manifest.json",
+      "sha256": "5804228b62d0fa5c58bc8a4eeb50a5c166f001a0433434a5e988af34eb1d7af5",
+      "bytes": 3608
+    },
+    "definition": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P1_CQ2_6_original_status_source_only_v1/canonical_source_only_definition.json",
+      "sha256": "6ee977f970a329f04081ee1c58b786a3534361f347d85dec3561d74766ddfb27",
+      "bytes": 1350
+    },
+    "source_packet": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P1_CQ2_6_original_status_source_only_v1/original_status_mapping_source_context_and_unfiltered_operands.json",
+      "sha256": "25ff35e350f215030bc16d400114f17d6329ae124a4ed1a97a2a9732e2a34107",
+      "bytes": 7328
+    },
+    "actual_indexed_design": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P1_CQ2_6_original_status_source_only_v1/original_indexed_phase1_Tdoc_design.md",
+      "sha256": "7881cff35e756aa36dc6e4414d23676f0e7ec6d7224d05e294dac41fe66fe06b",
+      "bytes": 64250
+    }
+  },
+  "whole_unfiltered_input_validation": {
+    "all_declared_file_hashes_and_sizes_verified": true,
+    "Tdoc_rows": 123677,
+    "PRESENTED_AT_rows": 123678,
+    "Meeting_rows": 60,
+    "all_Tdoc_numbers_unique_nonempty_strings": true,
+    "full_typed_endpoint_referential_closure": true,
+    "canonical120_vs120b_distinct": true,
+    "eligible_status_meeting_join_or_rank_not_computed": true
+  },
+  "exposure": {
+    "original_question_and_query_seen": true,
+    "historical_triage_diagnostics_known": true,
+    "proposer_primary_unread": true,
+    "new_selected_SQL_gold_native_predictions_unread": true,
+    "new_eligible_count_not_computed": true,
+    "fully_blind": false
+  },
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "AI_diagnostic_only": true,
+  "admission_or_performance_claim": false
+}
