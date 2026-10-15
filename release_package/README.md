@@ -380,3 +380,7 @@ If you reuse SPECTRA, please cite the accompanying paper (currently under review
 SPECTRA-authored components (the ontology, SHACL shapes, SpectraCQ, queries, synthetic/metadata-only examples, validation scripts, parsing pipeline source, and PyLODE documentation) are released under Creative Commons Attribution 4.0 (CC-BY 4.0). 3GPP-derived text literals included in the per-WG body-text KGs are retained with explicit 3GPP attribution under the applicable ETSI/3GPP terms and are not relicensed as original SPECTRA-authored content. See `LICENSE` for the full CC-BY 4.0 text.
 
 Documentary approval and normative incorporation for17CRs are available as a [separate source snapshot](cqs/original_core_source_CR_incorporation17/README.md), with original sources and reconstruction checks.
+
+The [separate source10 four-method evaluation](cqs/original_core_source_table_correction10_evaluation/README.md) retains all actual first responses, failures and offline score replay. All four requested-record F1 values are0 for this one-question source snapshot.
+
+The [separate source17 four-method evaluation](cqs/original_core_source_CR_incorporation17_evaluation/README.md) includes actual responses and offline replay. Text2SQL returned all3 requested identities but did not implement the approval/incorporation predicate; requested-record F1=1 is not source-provenance validation.
