@@ -365,6 +365,8 @@ does not establish a graph-engine advantage. The original questions and runs
 remain unchanged. These Git additions are separate from the frozen Zenodo
 archives; cite the Git commit used for a later analysis.
 
+The [separate TS 38.133 source-table correction](cqs/original_core_source_table_correction10/README.md) publishes a portable ten-table additive patch and completed source/native/SQL validation. Its 80 caption identities comprise 62 actual Word tables and 18 authored Void captions; the original frozen 70-record task is preserved. Fresh model evaluation is a separate stage.
+
 ## Citation
 
 If you reuse SPECTRA, please cite the accompanying paper (currently under review; BibTeX will be added once the venue assigns a citation key) and this software/data record via the metadata in `CITATION.cff` (machine-readable) or `codemeta.json`.
