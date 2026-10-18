@@ -1,0 +1,107 @@
+{
+  "id": "RAN2_P4_CQ4-5",
+  "status": "pass",
+  "repair_sha256": "057f0b7ae82e3815fe4bf4f09d870fcc84664d1abb4b6bfa997e6a2eb85bea0e",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "28472a2f2a7880ce172ffe900905c9dedb82d49fc1b12f89c0d87c9a5697b5f8",
+  "question_en": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+  "actor": "Codex AI /root/reaudit_ran2_ran5",
+  "reviewer_kind": "Independent AI source-process semantic reassessment; nonblind development audit",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "source_only_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_132_summary_original_meeting_process_context_source_only_v1/source_only_original_meeting_process_packet.json",
+    "bytes": 85897,
+    "sha256": "22888709bb4222bd792f587415629e03afa7be6940f59a466e5d1b3157dc17be"
+  },
+  "unchanged_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P4_CQ4-5_source_definition.json",
+    "bytes": 12707,
+    "sha256": "3855b039de092a8936bde1469dc8d7b62ca4d9f8334813c8603b5b209d4d3996"
+  },
+  "independent_actual_source_replay": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_132_summary_independent_original_process_context_review_v1/actual_original_278_process_paragraphs_independent_replay.json",
+    "bytes": 108231,
+    "sha256": "085443563b31cbe953cecbd18b4368d616c7f1660226f51f268ce1287fe018d5"
+  },
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "change summaries",
+      "finding": "The direct object is the change summaries. Require the summary text, not CR/TDoc IDs, a separate status field, reason for change, Spec IDs or an Agreement record. The auxiliary sourceTdocNumber establishes source provenance without adding an answer role. The source-enriched property is the same CR revision’s complete Summary-of-change cell, not a generated narrative or inferred approval.",
+      "query_clauses": [
+        "RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "at meeting 132 (meeting change digest)",
+      "finding": "RAN2 is the preserved WG context and #132 is its named meeting process. Annex G explicitly attributes short postmeeting outcomes to the current meeting (8444), requires R2-132 numbers (8462), and assigns long discussions to R2-133 (8689–8690). The named-meeting digest therefore includes final short-process outcomes recorded for #132; it is not restricted to physical 17–21 November. It does not include arbitrary later final statuses or next-meeting long outcomes merely because a report mentions them. The prior whole roster and exact own-CR/source-identity audit remain necessary technical population evidence and are not replaced by this interpretation.",
+      "query_clauses": [
+        "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting)",
+        "m.canonicalMeetingNumber = 'RAN2#132'"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "CRs approved",
+      "finding": "In this named-WG digest, approved is final WG authorization, not a universal synonym for every favorable status and not a demand for later TSG final authority. Annex G distinguishes final declaration from an intended outcome (8449/8462) and records actual Agreed in CR outcomes; the draft CR pair at8550–8555 is merely Endorsed and is not silently included. The underlying final agreed source status is consequently a faithful CR-stage predicate in this specific process. REFERENCES alone, agreement in principle, endorsement, a blank outcome, or a PRESENTED_AT edge alone would not establish it. The original physical-event date interval is preserved as provenance but is not an added filter.",
+      "query_clauses": [
+        "c.status = 'agreed'",
+        "m.canonicalMeetingNumber = 'RAN2#132'"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "summaries of CRs",
+      "finding": "One summary occurrence belongs to each distinct accepted CR TDoc/revision identity represented by the pinned source snapshot. DISTINCT over sourceTdocNumber and summary removes duplicate meeting paths while retaining different CRs whose summary strings happen to be identical. Projection to the required summary role must keep multiset multiplicity. The same literal content is not one global distinct answer, and incident-edge count is not the answer unit.",
+      "query_clauses": [
+        "RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary",
+        "collection.kind=multiset"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "List the change summaries of CRs approved at meeting 132",
+      "finding": "The exact English asks for the meeting change digest with no requested top-k cap. All qualifying CR summary occurrences are required; the original implementation LIMIT10 or missing summary filter is not evidence that ten or only previously extracted cells are intended. Keep the previously fixed all/multiset contract and full same-identity source-summary extraction, rather than choosing membership from the process passages. This source-only review does not independently re-extract the240 cells or certify their native materialization; complete source values and graph/query/scorer gates remain separate.",
+      "query_clauses": [
+        "cardinality_policy.mode=all",
+        "WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed'",
+        "No LIMIT"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List the change summaries",
+      "finding": "There is no requested ranking, chronology, lexical order or top-k tie boundary. sourceTdocNumber ordering is a reproducibility aid only. Multiset scoring retains per-CR repetitions and accepts reordered rows without making the unasked auxiliary ID mandatory.",
+      "query_clauses": [
+        "ORDER BY sourceTdocNumber",
+        "collection.kind=multiset"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "(meeting change digest)",
+      "finding": "The positive current-versus-next meeting process wording closes the prior temporal interpretation gap without rewriting the English or asserting that postmeeting events physically happened during the meeting. This is source-enriched exact source-text retrieval only. It neither certifies formal TSG approval, specification enactment, unique causality nor all acceptable paraphrases. Literal-string scoring can reject formatting or paraphrase despite equivalent meaning; any measured result must disclose that retrieval-metric limitation. The unchanged frozen snapshot and public original denominator are untouched, and actual source-property/native/typed-scorer gates still require their own evidence.",
+      "query_clauses": [
+        "c.sourceAuthoredSummary AS summary",
+        "c.status = 'agreed'",
+        "m.canonicalMeetingNumber = 'RAN2#132'"
+      ]
+    }
+  ],
+  "pass_units_n": 7,
+  "pending_units_n": 0,
+  "scope": "Exact unchanged source-enriched named-WG meeting digest candidate only; no original-frozen admission, automatic local count, source completeness, native or performance certification.",
+  "prior_temporal_challenge_preserved": true,
+  "new_source_reason_for_reconsideration": "Whole Annex G current-meeting short process vs next133 long process and final actual declarations; dates are not erased or retrospectively changed.",
+  "exposure": "Historical own embedded primary, old temporal objections and source240 count known. Root new judgment unread; no new summary-answer rows, gold, task query/native or performance results read or produced.",
+  "selected_task_SQL_native_gold_API_graph_public_central_actions_n": 0
+}

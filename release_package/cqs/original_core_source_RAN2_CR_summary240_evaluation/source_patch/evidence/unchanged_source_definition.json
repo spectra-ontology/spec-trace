@@ -1,0 +1,152 @@
+{
+  "id": "RAN2_P4_CQ4-5",
+  "question_en": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE m.meetingNumberInt = 132 WITH a MATCH (a)-[:REFERENCES]->(c:CR) WHERE c.summaryOfChange IS NOT NULL RETURN c.tdocNumber AS tdocNumber, c.summaryOfChange AS summary ORDER BY c.tdocNumber DESC LIMIT 10",
+  "reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber",
+  "required_fields": [
+    {
+      "name": "summary",
+      "nullable": false,
+      "source_column_or_expression": "summary",
+      "type": "string"
+    }
+  ],
+  "collection": {
+    "kind": "multiset"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "source_enrichment_and_query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "057f0b7ae82e3815fe4bf4f09d870fcc84664d1abb4b6bfa997e6a2eb85bea0e",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "28472a2f2a7880ce172ffe900905c9dedb82d49fc1b12f89c0d87c9a5697b5f8",
+  "original_query_sha256": "3729caf7ad2494a142eba20fdbcb82457823165a91759c85c71e68f700b6dd4d",
+  "reference_query_sha256": "d0c3faeb27cbdf2b24bcf5e559c759a9640a4d18e55b352421a51f917e877c32",
+  "source_enrichment_field": "sourceAuthoredSummary",
+  "new_source_snapshot_required": true,
+  "new_source_property_n": 1,
+  "source_property_values_n": 240,
+  "original_graph_fields_modified_n": 0,
+  "admitted": false,
+  "native_execution_completed": false,
+  "model_calls_n": 0,
+  "expert_validation_n": 0,
+  "primary_review": {
+    "id": "RAN2_P4_CQ4-5",
+    "status": "pass",
+    "repair_sha256": "057f0b7ae82e3815fe4bf4f09d870fcc84664d1abb4b6bfa997e6a2eb85bea0e",
+    "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+    "original_question_sha256": "28472a2f2a7880ce172ffe900905c9dedb82d49fc1b12f89c0d87c9a5697b5f8",
+    "reviewer_kind": "Primary Codex original-question/source-context semantic judgment; not blind, human or expert review",
+    "human_author_review_completed": false,
+    "expert_validation_n": 0,
+    "semantic_evidence": [
+      {
+        "unit": "requested answer roles and fields",
+        "status": "pass",
+        "original_quote": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+        "query_clauses": [
+          "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber"
+        ],
+        "finding": "The original direct object is the change summaries, not an explicitly requested CR-identifier/summary table. Require only summary: one Summary of change content value per accepted CR. The original RETURN projection alone does not make tdocNumber an answer requirement. sourceTdocNumber remains a native provenance and CR-identity auxiliary only. Spec number, current version, revision, pack, source company, reasonForChange, status, approval stage and display formatting are likewise not additional required answer fields. The new sourceAuthoredSummary property is an explicit primary-cell extraction, not a new inferred outcome."
+      },
+      {
+        "unit": "population and source context",
+        "status": "pass",
+        "original_quote": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+        "query_clauses": [
+          "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber"
+        ],
+        "finding": "The unchanged original is from the RAN2 graph context and expressly names meeting132. Use only archived CRs PRESENTED_AT the canonical RAN2#132 meeting whose final official register status is agreed. The exact source register contains488 CR-family rows; all240 final-agreed CRs have source ZIPs and matching full spec/CR-number/revision/current-version form headers. Do not substitute the latest meeting or a TSG meeting. This is the final archived meeting digest, not a claim about the upload timestamp of every final revision."
+      },
+      {
+        "unit": "filters and relationship meaning",
+        "status": "pass",
+        "original_quote": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+        "query_clauses": [
+          "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber"
+        ],
+        "finding": "My primary interpretation derives from the expressly named RAN2 meeting and the source workflow, rather than zero literal approved statuses. The local TRv15 calls WG-accepted CRs approved by WGs before TSG approval, and the actual #132 report uses formal approval for final WG acceptance. Thus status=agreed represents final WG authorization in this named-WG context, while PRESENTED_AT binds the archived meeting outcome. This does not equate WG agreed with formal TSG approval or REFERENCES with approval. The latter normative reading would remain pending; no new approved label is introduced."
+      },
+      {
+        "unit": "counting unit and join multiplicity",
+        "status": "pass",
+        "original_quote": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+        "query_clauses": [
+          "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber"
+        ],
+        "finding": "The answer unit is one summary occurrence per distinct accepted CR TDoc, including repeated identical source-summary texts across different CRs. All240 original source IRIs and tdocNumbers are unique, and full header review verifies the exact specification, CR number and revision rather than a title-only or predecessor match. RETURN DISTINCT operates over sourceTdocNumber plus summary, avoiding repeated presentation paths without merging different CRs with identical text. The scorer projects only summary but uses multiset semantics, preserving one occurrence per accepted CR. No CR or section count is an unasked answer field."
+      },
+      {
+        "unit": "cardinality and completeness",
+        "status": "pass",
+        "original_quote": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+        "query_clauses": [
+          "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber"
+        ],
+        "finding": "List is uncapped and requires every eligible recorded CR with its summary. Remove the arbitrary LIMIT10 and the non-null frozen-summary filter. All240 primary Summary of change cells are nonempty;30 frozen properties are missing and2 omit later paragraphs of the same cell. Adding exact sourceAuthoredSummary to all240 preserves old properties while closing the requested content population. The DOC-only R2-2509406 source has an exact primary byte copy and independent conversion matching the retained converted form. Native full240 output and source-value comparison remain required; the source diagnostic alone is not native gold."
+      },
+      {
+        "unit": "ordering and ties when requested",
+        "status": "pass",
+        "original_quote": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+        "query_clauses": [
+          "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber"
+        ],
+        "finding": "The English requests a list without chronological or lexical ordering. Use a multiset of one source-summary occurrence per CR, permitting any display order while retaining repeated summaries. ORDER BY sourceTdocNumber makes a reproducible diagnostic output only and the auxiliary ID is not scored. Reversed display order and JSON escaped versus decoded representation must be accepted after JSON parsing. There is no top-k boundary or unasked descending order."
+      },
+      {
+        "unit": "unverified additional inputs or external interpretation",
+        "status": "pass",
+        "original_quote": "List the change summaries of CRs approved at meeting 132 (meeting change digest).",
+        "query_clauses": [
+          "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting) WHERE m.canonicalMeetingNumber = 'RAN2#132' AND c.status = 'agreed' RETURN DISTINCT c.tdocNumber AS sourceTdocNumber, c.sourceAuthoredSummary AS summary ORDER BY sourceTdocNumber"
+        ],
+        "finding": "The proposed WG-context meaning is supported by explicit primary-source wording, preserved benchmark graph context and the final source register, and requires no API or arbitrary input. Root must independently agree this contextual reading before admission. Source extraction is not human/expert validation, actual TSG approval, normative incorporation or a model performance measurement. Strict typed-string exact scoring is more restrictive than human semantic equivalence for formatting-only whitespace or paraphrase; this limitation must be reported, or a separately versioned generic declared whitespace adapter must be reviewed and tested before scores are used."
+      }
+    ],
+    "scope_of_pass": "Named RAN2 final-WG-authorization reading only; formal TSG-approval reading is not validated.",
+    "still_required": [
+      "Independent second semantic judgment including approval-stage context",
+      "Isolated source graph with distinct manifest and preserved old fields",
+      "Full native240 values equal the exact primary cells",
+      "Required-field/value/type/omission/wrong-stage and formatting diagnostic controls"
+    ],
+    "strict_string_metric_limitation": "Existing scorer tokenizes strings exactly with no whitespace normalization. This is a source-property exact retrieval diagnostic, not all semantically acceptable natural-language summaries. Formatting-only failures must not be reported as factual-summary errors.",
+    "requested_field_correction": "Initial primary draft over-required tdocNumber. After strict original direct-object review, only summary is required and the collection is a multiset. Initial draft hashes are superseded and must not be admitted."
+  },
+  "source_witnesses": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_132_WG_vs_TSG_approval_source_readings.json",
+      "sha256": "0e9d2a3710abafbaddacd6655fec2a3d5874e80360c700f895f7a37fabdefa2b",
+      "bytes": 9866
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_132_source_inventory_receipt.json",
+      "sha256": "e84ffc179073835cb764be1da8b8d5ad98e793d582094d59517dccde1578468d",
+      "bytes": 4466383
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_132_all240_primary_form_v2_receipt.json",
+      "sha256": "d5a30ef87ff7e93dc03988dea12438e2b1311cda05b4f04ceb1b0badc94dc161",
+      "bytes": 55230
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_132_full240_source_identity_review.jsonl",
+      "sha256": "c71828eb3076e337deeee7cd278172626539427bbb7cf16cfbf45edde5d25ddc",
+      "bytes": 308006
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_132_sourceAuthoredSummary_materialization_receipt.json",
+      "sha256": "3719e85b34dd08738d6301817dd7e9937271baf5c915189dbf974afb7f8884ce",
+      "bytes": 5598
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_132_sourceAuthoredSummary240_add.nt",
+      "sha256": "2e50d468ccf0991c75fc0113f7575ea5a765837f1bffa822901222422c32f4e2",
+      "bytes": 161076
+    }
+  ]
+}
