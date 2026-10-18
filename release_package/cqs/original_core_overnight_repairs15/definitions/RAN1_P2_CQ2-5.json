@@ -1,0 +1,48 @@
+{
+  "id": "RAN1_P2_CQ2-5",
+  "question_en": "List the resolutions related to changes to TS 38.211 (revision history of 38.211).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS '38.211' RETURN a.resolutionId, m.meetingNumber, a.content ORDER BY m.meetingNumberInt DESC, a.resolutionId LIMIT 15",
+  "reference_query": "MATCH (resolution:Resolution)-[:REFERENCES]->(:CR)-[:MODIFIES]->(:Spec {specNumber:'38.211'}),\n      (resolution)-[:MADE_AT]->(meeting:Meeting)\nWITH DISTINCT resolution, meeting.meetingNumberInt AS meetingNumberInt\nRETURN resolution.resolutionId AS resolutionId,\n       meetingNumberInt,\n       coalesce(resolution.sequence, toInteger(last(split(resolution.resolutionId,'-')))) AS sequence\nORDER BY meetingNumberInt DESC, sequence ASC, resolutionId ASC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "resolution.resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "sequence",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "a3e2b0a36f5abba10d4109a987189d70fb6808b8f20763fa89dd4be3f240a79b",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "148e2145aac75806378f0dd16a6e480ac28a69f5227d1ec4f61d7c393accc1ab",
+  "original_query_sha256": "1bcc9ff82266d3c400cb886737bbd3231ab394f69865f2af07dedb4b395f8194",
+  "reference_query_sha256": "bae3ef6727b1cf1295d4eb189848bdc829e36054d8e4ce0aafffd317fac9a5bb",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ2_5_original_Spec_change_Resolution_source_only_v2/source_only_independent_review/original_question_operation_category_and_all_unfiltered_inputs_packet.json",
+    "sha256": "ad572429350549d56329b502da4dd48324c2da53ab28e57470a1ac8d0b5145e0",
+    "bytes": 53906
+  }
+}

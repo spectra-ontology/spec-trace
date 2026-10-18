@@ -1,0 +1,149 @@
+{
+  "id": "RAN1_P2_CQ2-5",
+  "status": "pass",
+  "repair_sha256": "a3e2b0a36f5abba10d4109a987189d70fb6808b8f20763fa89dd4be3f240a79b",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "148e2145aac75806378f0dd16a6e480ac28a69f5227d1ec4f61d7c393accc1ab",
+  "reference_query_sha256": "bae3ef6727b1cf1295d4eb189848bdc829e36054d8e4ce0aafffd317fac9a5bb",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "List the resolutions related to changes to TS 38.211 (revision history of 38.211).",
+      "query_clauses": [
+        "MATCH (resolution:Resolution)-[:REFERENCES]->(:CR)-[:MODIFIES]->(:Spec {specNumber:'38.211'}),",
+        "      (resolution)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH DISTINCT resolution, meeting.meetingNumberInt AS meetingNumberInt",
+        "RETURN resolution.resolutionId AS resolutionId,",
+        "       meetingNumberInt,",
+        "       coalesce(resolution.sequence, toInteger(last(split(resolution.resolutionId,'-')))) AS sequence",
+        "ORDER BY meetingNumberInt DESC, sequence ASC, resolutionId ASC"
+      ],
+      "finding": "The unchanged English asks for Resolution identities. Required resolutionId alone identifies the requested records; the fixed TS is a filter, and content, meeting label, count and Sequence are not additionally required answer fields. Original Resolution superclass expressly integrates Agreement, Conclusion and WorkingAssumption, so retaining only Agreement from the old query would narrow the requested role."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "List the resolutions related to changes to TS 38.211 (revision history of 38.211).",
+      "query_clauses": [
+        "MATCH (resolution:Resolution)-[:REFERENCES]->(:CR)-[:MODIFIES]->(:Spec {specNumber:'38.211'}),",
+        "      (resolution)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH DISTINCT resolution, meeting.meetingNumberInt AS meetingNumberInt",
+        "RETURN resolution.resolutionId AS resolutionId,",
+        "       meetingNumberInt,",
+        "       coalesce(resolution.sequence, toInteger(last(split(resolution.resolutionId,'-')))) AS sequence",
+        "ORDER BY meetingNumberInt DESC, sequence ASC, resolutionId ASC"
+      ],
+      "finding": "The fixed original WG/phase source is the recorded Final Report Resolution ontology with preserved Phase1 Tdoc/CR/Spec connections. Original design73 identifies the Spec-change Resolution operation;247/249/294 and482/491 explicitly connect it through Phase1 references and CR modifies. This source operation supports documentary relatedness to registered CR changes, not a claim that all actual normative changes, unlinked technical prose or physical revision-history events were exhaustively reconstructed. The exact validation category is CQ2_Tdoc-Resolution추적, not generic CQ1 ordering."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "List the resolutions related to changes to TS 38.211 (revision history of 38.211).",
+      "query_clauses": [
+        "MATCH (resolution:Resolution)-[:REFERENCES]->(:CR)-[:MODIFIES]->(:Spec {specNumber:'38.211'}),",
+        "      (resolution)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH DISTINCT resolution, meeting.meetingNumberInt AS meetingNumberInt",
+        "RETURN resolution.resolutionId AS resolutionId,",
+        "       meetingNumberInt,",
+        "       coalesce(resolution.sequence, toInteger(last(split(resolution.resolutionId,'-')))) AS sequence",
+        "ORDER BY meetingNumberInt DESC, sequence ASC, resolutionId ASC"
+      ],
+      "finding": "Resolution REFERENCES CR MODIFIES Spec38.211 implements the independently stated original Spec-change operation. REFERENCES remains a citation and MODIFIES is the CR's recorded target; no agreement/approval/enactment filter is invented. The old content-CONTAINS implementation is contrary evidence considered explicitly: a lexical number mention alone can include unrelated prose and miss CR-linked decisions lacking a repeated number. Original176 places semantic content search outside this KG operation, and482/491 supplies the documentary path independently of the candidate query. Broader technical prose-relatedness is a different possible practical task, not silently claimed by this recorded answer."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "List the resolutions related to changes to TS 38.211 (revision history of 38.211).",
+      "query_clauses": [
+        "MATCH (resolution:Resolution)-[:REFERENCES]->(:CR)-[:MODIFIES]->(:Spec {specNumber:'38.211'}),",
+        "      (resolution)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH DISTINCT resolution, meeting.meetingNumberInt AS meetingNumberInt",
+        "RETURN resolution.resolutionId AS resolutionId,",
+        "       meetingNumberInt,",
+        "       coalesce(resolution.sequence, toInteger(last(split(resolution.resolutionId,'-')))) AS sequence",
+        "ORDER BY meetingNumberInt DESC, sequence ASC, resolutionId ASC"
+      ],
+      "finding": "Unit is each unique resolutionId, not references, CRs, target Spec editions or Meeting aliases. WITH DISTINCT resolution,meetingNumberInt collapses repeated documentary paths and equal-key Meeting aliases. Whole unfiltered source corroboration proves unique Resolution natural IDs, complete subtype union and one distinct integer Meeting key per Resolution, so this projection cannot give multiple differently ranked occurrences of the same requested identity."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "List the resolutions related to changes to TS 38.211 (revision history of 38.211).",
+      "query_clauses": [
+        "MATCH (resolution:Resolution)-[:REFERENCES]->(:CR)-[:MODIFIES]->(:Spec {specNumber:'38.211'}),",
+        "      (resolution)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH DISTINCT resolution, meeting.meetingNumberInt AS meetingNumberInt",
+        "RETURN resolution.resolutionId AS resolutionId,",
+        "       meetingNumberInt,",
+        "       coalesce(resolution.sequence, toInteger(last(split(resolution.resolutionId,'-')))) AS sequence",
+        "ORDER BY meetingNumberInt DESC, sequence ASC, resolutionId ASC"
+      ],
+      "finding": "Original list rule151 gives default10 for CQ1-1..1-7 andCQ2; English supplies no different limit. The old query LIMIT15 is implementation evidence, not an explicit user request to override that documented default. The reference returns the uncapped eligible pool and the contract selects exactly min(10,pool) with full boundary-tie alternatives. This has not been chosen after seeing target membership, counts or rank. All eligible records and complete boundary groups must still be captured and independently checked before admission."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List the resolutions related to changes to TS 38.211 (revision history of 38.211).",
+      "query_clauses": [
+        "MATCH (resolution:Resolution)-[:REFERENCES]->(:CR)-[:MODIFIES]->(:Spec {specNumber:'38.211'}),",
+        "      (resolution)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH DISTINCT resolution, meeting.meetingNumberInt AS meetingNumberInt",
+        "RETURN resolution.resolutionId AS resolutionId,",
+        "       meetingNumberInt,",
+        "       coalesce(resolution.sequence, toInteger(last(split(resolution.resolutionId,'-')))) AS sequence",
+        "ORDER BY meetingNumberInt DESC, sequence ASC, resolutionId ASC"
+      ],
+      "finding": "The exact preserved KO metadata assigns CQ2-5 to CQ2_Tdoc-Resolution추적 and states Meeting numberDESC, SequenceASC, matching original indexed140. Generic indexedCQ1-6 adds AgendaASC, but the exact implemented-category source supplies the more specific two-key operation; no Agenda key is imported. Original1058 explicitly permits Sequence extraction from the terminal ID ordinal. Whole24710 source identities all parse and every23233 present integer agrees, so the1477 absent properties can use that explicit restoration without guessing NULL order. Require rank order across the two authored keys; equal complete-key records may appear in either order or any boundary subset. Query resolutionIdASC is deterministic serialization only and is not a newly mandatory tie-break."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "List the resolutions related to changes to TS 38.211 (revision history of 38.211).",
+      "query_clauses": [
+        "MATCH (resolution:Resolution)-[:REFERENCES]->(:CR)-[:MODIFIES]->(:Spec {specNumber:'38.211'}),",
+        "      (resolution)-[:MADE_AT]->(meeting:Meeting)",
+        "WITH DISTINCT resolution, meeting.meetingNumberInt AS meetingNumberInt",
+        "RETURN resolution.resolutionId AS resolutionId,",
+        "       meetingNumberInt,",
+        "       coalesce(resolution.sequence, toInteger(last(split(resolution.resolutionId,'-')))) AS sequence",
+        "ORDER BY meetingNumberInt DESC, sequence ASC, resolutionId ASC"
+      ],
+      "finding": "No external approval, causal effect, actual adoption, current validity, upload chronology or whole physical revision history is inferred. Source extraction faithfulness, omitted external citations and retained raw-content boundary risks remain disclosed. Sequence restoration is directly authored representation semantics, not a selected-output convenience. This exact source-only judgment uses unchanged English/KO, original schema/process literals and unfiltered exports; proposer primary, target eligible SQL/count/rank, gold, native and model predictions were not read. Native/full independentSQL/actual scorer negatives remain separate unmet execution gates."
+    }
+  ],
+  "reviewer_kind": "Independent source-only exact AI semantic review /root/reaudit_ran3_ran4",
+  "exact_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ2_5_original_Spec_change_Resolution_source_only_v2/source_only_independent_review/canonical_source_only_definition.json",
+    "sha256": "9e208ec0e3ce8ed0d201165a2d7535876913295b05c5bd719b17544533d53115",
+    "bytes": 2044
+  },
+  "original_source_packet": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P2_CQ2_5_original_Spec_change_Resolution_source_only_v2/source_only_independent_review/original_question_operation_category_and_all_unfiltered_inputs_packet.json",
+    "sha256": "ad572429350549d56329b502da4dd48324c2da53ab28e57470a1ac8d0b5145e0",
+    "bytes": 53906
+  },
+  "whole_source_independent_corroboration": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN1_P2_CQ2-5_original_documentary_operation_independent_review_v2/whole_unfiltered_input_and_ordinal_corroboration.json",
+    "sha256": "0dd0a868300477419b2d9d8567164c47ed35114216140c1ec7ae923fe54509ec",
+    "bytes": 4475
+  },
+  "criteria": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+    "bytes": 3382
+  },
+  "exposure": "NONBLIND development: historical related source disputes and original query known. No proposer prospective/primary, new target eligible join, selected counts/rank/gold/native/model output read. Fresh all10 source exports/literal snippets/whole Sequence and Meeting incidence inspected without requested Spec selection.",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "admitted": false,
+  "selected_query_calls_n": 0,
+  "database_opened": false,
+  "native_API_public_central_Git_mutations_n": 0,
+  "program": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/review_RAN1_P2_CQ2_5_original_documentary_operation_v2.py",
+    "sha256": "62b0798eeab189f7961c7e490d7ae60e8c753b64ed927098dead1eedc63d68ee",
+    "bytes": 12657
+  },
+  "check_pass_schema_result": "pass"
+}

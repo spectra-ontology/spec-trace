@@ -1,0 +1,65 @@
+{
+  "id": "RAN5_P1_CQ1-5",
+  "question_en": "List Samsung's TDocs, newest first (contributor tracking).",
+  "original_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName:'Samsung'}) RETURN t.tdocNumber ORDER BY t.tdocNumber DESC LIMIT 10",
+  "reference_query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(:Company {companyName:'Samsung'})\nMATCH (t)-[:PRESENTED_AT]->(m:Meeting)\nOPTIONAL MATCH (t)-[:BELONGS_TO]->(a:AgendaItem)\nRETURN DISTINCT t.tdocNumber AS tdocNumber, m.meetingNumberInt AS meetingNumberInt, a.agendaNumber AS agendaNumber\nORDER BY meetingNumberInt DESC, agendaNumber ASC, tdocNumber ASC",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": true,
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "agendaNumber",
+        "direction": "asc"
+      },
+      {
+        "source_column": "tdocNumber",
+        "direction": "asc"
+      }
+    ]
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "3b8fcb20c9db910c34d33ec4feb6459cc736908b14c9a4ab356233a29d867c5e",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "source_context": {
+    "scope": "Original Phase1 frozen recorded metadata and documented CQ1 defaults.",
+    "source_packet": "original_documented_recency_source_only_packet.json",
+    "source_packet_sha256": "7fdad733e0eb67db5836b2e2f43c5ad8e703c58e7637aac8f81bd31f2b15a309",
+    "whole_source_census": "whole_unfiltered_source_rank_key_census_receipt.json",
+    "whole_source_census_sha256": "ab76e99324d47cf3579a9e211add5f812c505241a97379c521bf105ce3229d8c",
+    "conditional_status": "NOT_ADMITTED_MISSING_AGENDA_RANK_POLICY_UNRESOLVED",
+    "meaning_limits": [
+      "Meeting-based operational recency; no reservation/upload chronology equivalence claimed.",
+      "The documented CQ1 group default is proposed from source meaning, not numbering alone.",
+      "All missing Agenda operands remain in the optional join; null exclusion or arbitrary fallback is forbidden.",
+      "The native ASC-null behavior is not an independently authorized source policy. Exact task remains pending until the hazard is shown irrelevant or a source policy is recovered."
+    ]
+  },
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P1_CQ1_5_original_documented_recency_source_only_v1/source_only_exact_candidate_v3/original_documented_recency_source_only_packet.json",
+    "sha256": "7fdad733e0eb67db5836b2e2f43c5ad8e703c58e7637aac8f81bd31f2b15a309",
+    "bytes": 3016
+  }
+}

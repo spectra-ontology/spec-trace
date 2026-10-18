@@ -1,0 +1,56 @@
+{
+  "id": "RAN4_P3_CQ3-3",
+  "question_en": "List the top 10 CRs that modify spec 38.133 (recent changes to the spec).",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.133'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10",
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.133'})\nMATCH (cr)-[:PRESENTED_AT]->(meeting:Meeting)\nWITH DISTINCT cr, meeting\nRETURN cr.tdocNumber AS tdocNumber,\n       meeting.meetingNumberInt AS meetingNumberInt,\n       CASE WHEN toLower(meeting.canonicalMeetingNumber) ENDS WITH 'bis' THEN 1 ELSE 0 END AS meetingBisOrdinal,\n       cr.crNumber AS crNumber\nORDER BY meetingNumberInt DESC, meetingBisOrdinal DESC, crNumber ASC, tdocNumber ASC",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "cr.tdocNumber"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "require_rank_order": true,
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "meetingBisOrdinal",
+        "direction": "desc"
+      },
+      {
+        "source_column": "crNumber",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any"
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "922a7b2c42d36ec5b5af35581e58c9b099a4dec59a05934fe0483304b786698d",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "16538d73f0f94d8a9666fd485a31b40b8a4977dac9cec6672dd18ced00279091",
+  "reference_query_sha256": "fa4636f278f52efcdca4ecddff5707d0c1227e566d861fdb920609c5e251018e",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P3_CQ3-3_official_CR_number_calendar_equivalent_source_only_v2/source_only_independent_review/original_English_full_sort_property_and_frozen_calendar_equivalence_source_packet.json",
+    "sha256": "60ceb6a9eb804dd3842c03c4f4e01ad370362e25bd408bcc76406cd202bd348f",
+    "bytes": 31914
+  },
+  "full_source_scope_witness_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P3_CQ3-3_official_CR_number_calendar_equivalent_source_only_v2/historical_scope_and_whole_CR_totality_supplement_v1/source_totality_and_historical_scope_supplement.json",
+    "sha256": "f370d7d9341b9479fd242dd9823e404bda8cb7305722d3729c3347965ca5f9da",
+    "bytes": 3895
+  }
+}

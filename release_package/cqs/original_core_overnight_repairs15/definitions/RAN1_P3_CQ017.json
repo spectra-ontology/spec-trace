@@ -1,0 +1,57 @@
+{
+  "cardinality_policy": {
+    "mode": "top_k",
+    "tie_policy": "any_subset_at_boundary",
+    "value": 20
+  },
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "require_rank_order": true,
+    "source_order_keys": [
+      {
+        "direction": "desc",
+        "source_column": "meetingNumberInt"
+      },
+      {
+        "direction": "desc",
+        "source_column": "meetingBisOrdinal"
+      },
+      {
+        "direction": "asc",
+        "source_column": "crNumber"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "value": 20,
+    "within_tie_order": "any"
+  },
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "id": "RAN1_P3_CQ017",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'}) MATCH (cr)-[:PRESENTED_AT]->(m:Meeting) MATCH (cr)-[:SUBMITTED_BY]->(co:Company) RETURN cr.tdocNumber, cr.title, co.companyName, m.meetingNumber ORDER BY m.meetingNumberInt DESC, cr.tdocNumber LIMIT 20",
+  "original_query_sha256": "5745d599a21458aaf4678a9d741bfa3581caf7c3e4e79fb28b1bc6f7d700230e",
+  "original_question_preserved": true,
+  "original_question_sha256": "f87b5d14d3ffbac6b9c33d954f062f0edb347fb7551bfcd3da1ace61f9a341ba",
+  "question_en": "List the 20 most recent CRs modifying TS 38.213 (recent changes).",
+  "reference_query": "MATCH (cr:CR)-[:MODIFIES]->(:Spec {specNumber: '38.213'})\nMATCH (cr)-[:PRESENTED_AT]->(m:Meeting)\nWITH DISTINCT cr, m.meetingNumberInt AS meetingNumberInt,\n  CASE WHEN m.meetingNumber =~ 'RAN1#[0-9]+b(-e)?' THEN 1 ELSE 0 END AS meetingBisOrdinal\nRETURN DISTINCT cr.tdocNumber AS tdocNumber, meetingNumberInt, meetingBisOrdinal, cr.crNumber AS crNumber\nORDER BY meetingNumberInt DESC, meetingBisOrdinal DESC, crNumber ASC",
+  "reference_query_sha256": "1bf85ea906fd0000621ab6a44b045c67f6ed3129768cf6cd4e42bf95cf5fe09a",
+  "repair_class": "query_and_scorer",
+  "repair_sha256": "17e82463f8956e45e1da3fbf5de7bb3bf67ac606abc64e1529dae614cd88b198",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "nullable": false,
+      "source_column_or_expression": "tdocNumber",
+      "type": "string"
+    }
+  ],
+  "source_context": {
+    "bytes": 29631,
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ017_official_String_CR_order_source_only_v1/original_English_and_whole_source_official_String_order_packet.json",
+    "sha256": "8d2c4d5879af75984c860f3facd6c30688b18f94b617a23f7f518d5f169d08d6"
+  },
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ017_official_String_CR_order_source_only_v1/original_English_and_whole_source_official_String_order_packet.json",
+    "sha256": "8d2c4d5879af75984c860f3facd6c30688b18f94b617a23f7f518d5f169d08d6",
+    "bytes": 29631
+  }
+}

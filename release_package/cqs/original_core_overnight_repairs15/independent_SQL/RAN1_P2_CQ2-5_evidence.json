@@ -1,0 +1,52 @@
+{
+  "id": "RAN1_P2_CQ2-5",
+  "status": "PASS",
+  "sql": "WITH RECURSIVE\n target_cr(node_id) AS (\n   SELECT DISTINCT typed.node_id FROM Spec target\n   JOIN rel_MODIFIES changes ON changes.dst_id=target.node_id\n   JOIN CR typed ON typed.node_id=changes.src_id\n   WHERE target.specNumber='38.211'\n ),\n related_resolution(node_id) AS (\n   SELECT DISTINCT typed.node_id FROM target_cr target\n   JOIN rel_REFERENCES cited ON cited.dst_id=target.node_id\n   JOIN Resolution typed ON typed.node_id=cited.src_id\n ),\n ordinal_tail(node_id,tail) AS (\n   SELECT node_id,resolutionId FROM Resolution\n   UNION ALL\n   SELECT node_id,substr(tail,instr(tail,'-')+1)\n   FROM ordinal_tail WHERE instr(tail,'-')>0\n ),\n original_ordinal(node_id,sequence) AS (\n   SELECT node_id,CAST(tail AS INTEGER) FROM ordinal_tail WHERE instr(tail,'-')=0\n )\n SELECT DISTINCT resolution.resolutionId AS resolutionId,\n   meeting.meetingNumberInt AS meetingNumberInt,\n   COALESCE(resolution.sequence,ordinal.sequence) AS sequence\n FROM related_resolution selected\n JOIN Resolution resolution ON resolution.node_id=selected.node_id\n JOIN original_ordinal ordinal ON ordinal.node_id=resolution.node_id\n JOIN rel_MADE_AT occurred ON occurred.src_id=resolution.node_id\n JOIN Meeting meeting ON meeting.node_id=occurred.dst_id\n ORDER BY meetingNumberInt DESC,sequence ASC,resolutionId ASC",
+  "parameters": [],
+  "columns": [
+    "resolutionId",
+    "meetingNumberInt",
+    "sequence"
+  ],
+  "rows": 83,
+  "all_return_fields_compared": true,
+  "uncapped_SQL": true,
+  "independent_records": "root_evidence/RAN1_P2_CQ2-5_actual_root_Spec_first_full_SQL_v1/full_uncapped_records.jsonl",
+  "independent_records_sha256": "130f1a506a668da4d8036463197492dcfa42a8114dd7d3c974e216663ad59796",
+  "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_actual_root_native_v1/reference_outputs/RAN1_P2_CQ2-5/bae3ef6727b1cf1295d4eb189848bdc829e36054d8e4ce0aafffd317fac9a5bb.json",
+  "native_receipt_sha256": "516ed8ee50dec9192405c49284c9c77d0393dd1fff5852c16265e917054f9aad",
+  "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_actual_root_native_v1/reference_outputs/RAN1_P2_CQ2-5/bae3ef6727b1cf1295d4eb189848bdc829e36054d8e4ce0aafffd317fac9a5bb.jsonl",
+  "native_rows_sha256": "ed2006a2ff7130ff4561e96d3a8a0b25f739712a5800764ad03feffb0d58f4e2",
+  "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+  "db_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+  "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+  "relational_manifest_sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8",
+  "snapshot_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+  "root_actual_agreement_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_actual_root_central73_file_gate_v3/actual_full_native_root_SQL_Python_controls_gate.json",
+    "sha256": "d34b65b145fbdb36b0a7c1d2b2188c62d49fb9d8a905f686c16371f37c14d115",
+    "bytes": 4515
+  },
+  "root_raw_SQL_result_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_actual_root_Spec_first_full_SQL_v1/receipt.json",
+    "sha256": "7141b3529d4e18f52f88c5b039dc2d6134a19c268d9b1cafd80da9e8f8bdc905",
+    "bytes": 4532
+  },
+  "original_SQL_preregistration": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_root_Spec_first_inverse_SQL_preregistration_v1.json",
+    "sha256": "2ada72e2aa1f69bc6101997d08eb61e03cb1b06d228c6af3b65969934e0b2875",
+    "bytes": 2339
+  },
+  "full_source_order_key_vector_equal": true,
+  "full_population_n": 83,
+  "required_fields": [
+    "resolutionId"
+  ],
+  "bridge_only": true,
+  "new_SQL_execution_claim": false,
+  "portable_independent_records": {
+    "file": "independent_SQL/RAN1_P2_CQ2-5.jsonl",
+    "sha256": "130f1a506a668da4d8036463197492dcfa42a8114dd7d3c974e216663ad59796",
+    "bytes": 5965
+  }
+}

@@ -52,6 +52,25 @@ def main():
             assert t['supersedes_repair_sha256']==frozen['original_core_repair'][t['id']]['repair_sha256']
         else:assert 'supersedes_repair_sha256' not in t
     by_id={r['id']:r for r in tasks}
+    quarantine=manifest.get('source_factuality_quarantines')
+    if quarantine:
+        qb=root/quarantine['bundle']; qm=json.loads((qb/'manifest.json').read_text())
+        assert sha(qb/'manifest.json')==manifest['cohort_manifest_pins'][qb.name]
+        registry=qb/'source_factuality/quarantines.json'
+        assert sha(registry)==qm['files']['source_factuality/quarantines.json']
+        entries=json.loads(registry.read_text())['entries']
+        assert {r['id'] for r in entries}==set(quarantine['ids']) and len(entries)==quarantine['n']
+        disposition={r['id']:r for r in ledger}
+        for entry in entries:
+            ident=entry['id']; assert ident not in by_id and disposition[ident]['status']=='pending'
+            assert disposition[ident]['repair_sha256']==entry['repair_sha256']
+            for name in ('source_receipt','root_adjudication','independent_review'):
+                rel='source_factuality/'+ident+'/'+name+'.json'
+                assert sha(qb/rel)==qm['files'][rel]
+                if name!='source_receipt':
+                    review=json.loads((qb/rel).read_text())
+                    assert review['id']==ident and review['repair_sha256']==entry['repair_sha256']
+                    assert str(review['status']).lower().startswith('pending')
     for r in ledger:
         assert r['id'] in originals
         if r['id'] in by_id:

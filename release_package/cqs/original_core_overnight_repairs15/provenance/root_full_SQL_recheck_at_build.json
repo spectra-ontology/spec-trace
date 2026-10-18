@@ -1,0 +1,614 @@
+{
+  "status": "PASS",
+  "scope_n": 12,
+  "cases": [
+    {
+      "id": "RAN1_P2_CQ2-5",
+      "status": "PASS",
+      "sql": "WITH RECURSIVE\n target_cr(node_id) AS (\n   SELECT DISTINCT typed.node_id FROM Spec target\n   JOIN rel_MODIFIES changes ON changes.dst_id=target.node_id\n   JOIN CR typed ON typed.node_id=changes.src_id\n   WHERE target.specNumber='38.211'\n ),\n related_resolution(node_id) AS (\n   SELECT DISTINCT typed.node_id FROM target_cr target\n   JOIN rel_REFERENCES cited ON cited.dst_id=target.node_id\n   JOIN Resolution typed ON typed.node_id=cited.src_id\n ),\n ordinal_tail(node_id,tail) AS (\n   SELECT node_id,resolutionId FROM Resolution\n   UNION ALL\n   SELECT node_id,substr(tail,instr(tail,'-')+1)\n   FROM ordinal_tail WHERE instr(tail,'-')>0\n ),\n original_ordinal(node_id,sequence) AS (\n   SELECT node_id,CAST(tail AS INTEGER) FROM ordinal_tail WHERE instr(tail,'-')=0\n )\n SELECT DISTINCT resolution.resolutionId AS resolutionId,\n   meeting.meetingNumberInt AS meetingNumberInt,\n   COALESCE(resolution.sequence,ordinal.sequence) AS sequence\n FROM related_resolution selected\n JOIN Resolution resolution ON resolution.node_id=selected.node_id\n JOIN original_ordinal ordinal ON ordinal.node_id=resolution.node_id\n JOIN rel_MADE_AT occurred ON occurred.src_id=resolution.node_id\n JOIN Meeting meeting ON meeting.node_id=occurred.dst_id\n ORDER BY meetingNumberInt DESC,sequence ASC,resolutionId ASC",
+      "parameters": [],
+      "columns": [
+        "resolutionId",
+        "meetingNumberInt",
+        "sequence"
+      ],
+      "rows": 83,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN1_P2_CQ2-5_actual_root_Spec_first_full_SQL_v1/full_uncapped_records.jsonl",
+      "independent_records_sha256": "130f1a506a668da4d8036463197492dcfa42a8114dd7d3c974e216663ad59796",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_actual_root_native_v1/reference_outputs/RAN1_P2_CQ2-5/bae3ef6727b1cf1295d4eb189848bdc829e36054d8e4ce0aafffd317fac9a5bb.json",
+      "native_receipt_sha256": "516ed8ee50dec9192405c49284c9c77d0393dd1fff5852c16265e917054f9aad",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_actual_root_native_v1/reference_outputs/RAN1_P2_CQ2-5/bae3ef6727b1cf1295d4eb189848bdc829e36054d8e4ce0aafffd317fac9a5bb.jsonl",
+      "native_rows_sha256": "ed2006a2ff7130ff4561e96d3a8a0b25f739712a5800764ad03feffb0d58f4e2",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "db_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "relational_manifest_sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8",
+      "snapshot_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+      "root_actual_agreement_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_actual_root_central73_file_gate_v3/actual_full_native_root_SQL_Python_controls_gate.json",
+        "sha256": "d34b65b145fbdb36b0a7c1d2b2188c62d49fb9d8a905f686c16371f37c14d115",
+        "bytes": 4515
+      },
+      "root_raw_SQL_result_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_actual_root_Spec_first_full_SQL_v1/receipt.json",
+        "sha256": "7141b3529d4e18f52f88c5b039dc2d6134a19c268d9b1cafd80da9e8f8bdc905",
+        "bytes": 4532
+      },
+      "original_SQL_preregistration": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P2_CQ2-5_root_Spec_first_inverse_SQL_preregistration_v1.json",
+        "sha256": "2ada72e2aa1f69bc6101997d08eb61e03cb1b06d228c6af3b65969934e0b2875",
+        "bytes": 2339
+      },
+      "full_source_order_key_vector_equal": true,
+      "full_population_n": 83,
+      "required_fields": [
+        "resolutionId"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN1_P3_CQ017",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT cr.tdocNumber AS tdocNumber,m.meetingNumberInt AS meetingNumberInt,\n CASE WHEN m.meetingNumber REGEXP '^RAN1#[0-9]+b(-e)?$' THEN 1 ELSE 0 END AS meetingBisOrdinal,\n cr.crNumber AS crNumber\n FROM Spec sp JOIN rel_MODIFIES e ON e.dst_id=sp.node_id\n JOIN CR cr ON cr.node_id=e.src_id JOIN rel_PRESENTED_AT p ON p.src_id=cr.node_id\n JOIN Meeting m ON m.node_id=p.dst_id WHERE sp.specNumber='38.213'\n ORDER BY meetingNumberInt DESC,meetingBisOrdinal DESC,(crNumber IS NULL) ASC,crNumber COLLATE BINARY ASC",
+      "parameters": [],
+      "columns": [
+        "tdocNumber",
+        "meetingNumberInt",
+        "meetingBisOrdinal",
+        "crNumber"
+      ],
+      "rows": 3041,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN1_P5_pair_CQ017_independent_Spec_first_full_SQL_v1/RAN1_P3_CQ017_full_records.jsonl",
+      "independent_records_sha256": "7423d5af978dd38d731c4d3bbb5de9647c158bf6d02806440bc660add394454f",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P5_and_CQ017_actual_root_native_v3/reference_outputs/RAN1_P3_CQ017/1bf85ea906fd0000621ab6a44b045c67f6ed3129768cf6cd4e42bf95cf5fe09a.json",
+      "native_receipt_sha256": "3f3536b9f24d64cf9f82363b997468f8994f97e3cf0a0c1e9e17c49db2eab2c1",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P5_and_CQ017_actual_root_native_v3/reference_outputs/RAN1_P3_CQ017/1bf85ea906fd0000621ab6a44b045c67f6ed3129768cf6cd4e42bf95cf5fe09a.jsonl",
+      "native_rows_sha256": "6d577dbac904514b825d8a54602bfeb24b2610ac7cc89168349fb8ccd6c3834b",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "db_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "relational_manifest_sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8",
+      "snapshot_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+      "root_actual_agreement_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P5_pair_CQ017_central68_70_actual_root_gate_v1/RAN1_P3_CQ017/actual_full_native_root_SQL_Python_controls_gate.json",
+        "sha256": "43add0ed614f05c2a398934fe8e5663e5cf1a2c00c46529fb6bf72f1e8ee4099",
+        "bytes": 5851
+      },
+      "root_raw_SQL_result_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P5_pair_CQ017_independent_Spec_first_full_SQL_v1/receipt.json",
+        "sha256": "8d7b15af338c2e403aa2c31a73168d3978d4f36b3e2f84b84dba68513204a8df",
+        "bytes": 2595
+      },
+      "original_SQL_preregistration": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P5_pair_CQ017_independent_Spec_first_full_SQL_v1/before_execution_plan.json",
+        "sha256": "9012b2264d5556283627e52e9e763c1934fe3f1f1275aae25e8fec1c3ef84bb5",
+        "bytes": 2767
+      },
+      "full_source_order_key_vector_equal": true,
+      "full_population_n": 3041,
+      "required_fields": [
+        "tdocNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN1_P5_CQ2-1",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT target.specNumber AS specNumber,\n       creation.impactType AS impactType, report.trNumber AS trNumber\nFROM Spec target\nJOIN rel_IMPACTS_SPEC produced ON produced.dst_id=target.node_id\nJOIN TRImpact creation ON creation.node_id=produced.src_id\nJOIN rel_HAS_TR_IMPACT owned ON owned.dst_id=creation.node_id\nJOIN TechnicalReport report ON report.node_id=owned.src_id\nWHERE creation.impactType='NewTS' AND report.trNumber='38.769'\nORDER BY impactType ASC NULLS LAST,trNumber ASC NULLS LAST",
+      "parameters": [],
+      "columns": [
+        "specNumber",
+        "impactType",
+        "trNumber"
+      ],
+      "rows": 1,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN1_AmbientIoT_actual_root_Spec_first_full_SQL_v1/full_uncapped_records.jsonl",
+      "independent_records_sha256": "b353dab2da656da3b2177fcd8447ba84996dbe64584e80f4e1fe01b4d9e0d4f4",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_two_documentary_origins_actual_root_native_v1/reference_outputs/RAN1_P5_CQ2-1/0dd9d2c5fdd19333014960bd92629f25ae51ad80ddae7b6dbb1c15c7075401f4.json",
+      "native_receipt_sha256": "5f0d0acb9272ff2d4bd9ed9666e651137628f105cde258f8c602830781507d5e",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_two_documentary_origins_actual_root_native_v1/reference_outputs/RAN1_P5_CQ2-1/0dd9d2c5fdd19333014960bd92629f25ae51ad80ddae7b6dbb1c15c7075401f4.jsonl",
+      "native_rows_sha256": "4b74b99e6ebcbe4247048a43d1a0345e60a2f6e95bd5ef4adf98fd070c21466f",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "db_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "relational_manifest_sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8",
+      "snapshot_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+      "root_actual_agreement_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_two_documentary_origins_actual_root_central74_75_file_gate_v2/RAN1_P5_CQ2-1/actual_full_native_root_SQL_Python_controls_gate.json",
+        "sha256": "401bdddd4cabd5b528baa84b298752ee22c80b9e206ef285e06e54e28de32eb0",
+        "bytes": 4491
+      },
+      "root_raw_SQL_result_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_AmbientIoT_actual_root_Spec_first_full_SQL_v1/receipt.json",
+        "sha256": "50a5871c05af52fdc8f9a7e98cd51de7362850a34d3413b3ebf17ebab99d0103",
+        "bytes": 3679
+      },
+      "original_SQL_preregistration": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_AmbientIoT_root_Spec_first_inverse_SQL_preregistration_v1.json",
+        "sha256": "dbe7ed52b15b30f5a0bd9250759b94fee411d26f0b2346d55084fb54a8b3c0f2",
+        "bytes": 1839
+      },
+      "full_source_order_key_vector_equal": true,
+      "full_population_n": 1,
+      "required_fields": [
+        "specNumber",
+        "impactType"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN1_P5_CQ2-4",
+      "status": "PASS",
+      "sql": "WITH exact_impacts(node_id) AS (\n SELECT DISTINCT impact.node_id\n FROM Spec target\n JOIN rel_IMPACTS_SPEC modifies ON modifies.dst_id=target.node_id\n JOIN TRImpact impact ON impact.node_id=modifies.src_id\n WHERE target.specNumber='38.211'\n   AND EXISTS (\n     SELECT 1 FROM Section endpoint\n     JOIN rel_IMPACTS_SECTION clause ON clause.dst_id=endpoint.node_id\n     WHERE clause.src_id=impact.node_id\n       AND endpoint.sectionNumber='8' AND endpoint.sectionId LIKE '38.211-%')\n)\nSELECT DISTINCT report.trNumber AS trNumber, impact.impactType AS impactType\nFROM exact_impacts selected\nJOIN TRImpact impact ON impact.node_id=selected.node_id\nJOIN rel_HAS_TR_IMPACT owns ON owns.dst_id=impact.node_id\nJOIN TechnicalReport report ON report.node_id=owns.src_id\nORDER BY impactType ASC NULLS LAST,trNumber ASC NULLS LAST",
+      "parameters": [],
+      "columns": [
+        "trNumber",
+        "impactType"
+      ],
+      "rows": 1,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN1_Sidelink_actual_root_Spec_first_full_SQL_v1/full_uncapped_records.jsonl",
+      "independent_records_sha256": "c074792633339fce92f94230161b68002e16a0174b63771b603d961b774e95ad",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_two_documentary_origins_actual_root_native_v1/reference_outputs/RAN1_P5_CQ2-4/39f744f11bff8c3c506cbf8d94b2743953fa8bd21b826e76105863fffa77b6a1.json",
+      "native_receipt_sha256": "8c0dcb8e315507f13ec962a529cd54e8ee723cac6ae82fc5db43f42ba81c1aa7",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_two_documentary_origins_actual_root_native_v1/reference_outputs/RAN1_P5_CQ2-4/39f744f11bff8c3c506cbf8d94b2743953fa8bd21b826e76105863fffa77b6a1.jsonl",
+      "native_rows_sha256": "455be8d8d87fd079380f15c27ffd90dac3340f38337e293fe530d93a9903ea6b",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "db_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "relational_manifest_sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8",
+      "snapshot_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+      "root_actual_agreement_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_two_documentary_origins_actual_root_central74_75_file_gate_v2/RAN1_P5_CQ2-4/actual_full_native_root_SQL_Python_controls_gate.json",
+        "sha256": "9925c6237f645b4aa6f1e9ccf7f95188824e3f8f7068a078da97eeb386520f1d",
+        "bytes": 4483
+      },
+      "root_raw_SQL_result_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_Sidelink_actual_root_Spec_first_full_SQL_v1/receipt.json",
+        "sha256": "2038b94fa7604b5e1d9290c02a2ee472a9ccbaf70dc5dbd169982a617b35e3de",
+        "bytes": 3990
+      },
+      "original_SQL_preregistration": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_Sidelink_root_Spec_first_inverse_SQL_preregistration_v1.json",
+        "sha256": "0f6b2cb2dc69f313ae3c1920b04455621dad55c5ed46ac8da4394a385d2107eb",
+        "bytes": 2211
+      },
+      "full_source_order_key_vector_equal": true,
+      "full_population_n": 1,
+      "required_fields": [
+        "trNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN1_P5_CQ2-5",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT tr.trNumber AS trNumber, sp.specNumber AS specNumber, ti.impactType AS impactType\nFROM Spec sp JOIN rel_IMPACTS_SPEC i ON i.dst_id=sp.node_id\nJOIN TRImpact ti ON ti.node_id=i.src_id\nJOIN rel_HAS_TR_IMPACT h ON h.dst_id=ti.node_id\nJOIN TechnicalReport tr ON tr.node_id=h.src_id\nWHERE ti.impactType='NewTS' ORDER BY impactType COLLATE BINARY ASC,trNumber COLLATE BINARY ASC",
+      "parameters": [],
+      "columns": [
+        "trNumber",
+        "specNumber",
+        "impactType"
+      ],
+      "rows": 1,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN1_P5_pair_CQ017_independent_Spec_first_full_SQL_v1/RAN1_P5_CQ2-5_full_records.jsonl",
+      "independent_records_sha256": "3ad6ae4ebdc2e826065caae6cc246de0d24ebe1b7da60ffbba8c60f9ac6087a0",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P5_and_CQ017_actual_root_native_v3/reference_outputs/RAN1_P5_CQ2-5/c9c89abec0d7f40e1497d65443dd708288b598a1d26340d10c78e3a939003c14.json",
+      "native_receipt_sha256": "6f7605938a94da5904fa39aaaa824f1f903cda561fbdaa07873facf9bf084490",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/P5_and_CQ017_actual_root_native_v3/reference_outputs/RAN1_P5_CQ2-5/c9c89abec0d7f40e1497d65443dd708288b598a1d26340d10c78e3a939003c14.jsonl",
+      "native_rows_sha256": "8a3cec150bf0a2461a525701ed649ff50b005260c7a14780d118854e721d9fdb",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+      "db_sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.manifest.json",
+      "relational_manifest_sha256": "6a0180d0a6d323cb53bdb8df3edccae1c7ed7ea43ea5689ed497adee49c740a8",
+      "snapshot_sha256": "9540683df5407bb3f8978ad4d05ddc7f7880f10c94f21273f588d737f145e231",
+      "root_actual_agreement_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P5_pair_CQ017_central68_70_actual_root_gate_v1/RAN1_P5_CQ2-5/actual_full_native_root_SQL_Python_controls_gate.json",
+        "sha256": "45bf955084930ce7b76999fc8a44e0f3c4ee8a030bf68f4580eff4d3f572eef5",
+        "bytes": 5495
+      },
+      "root_raw_SQL_result_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P5_pair_CQ017_independent_Spec_first_full_SQL_v1/receipt.json",
+        "sha256": "8d7b15af338c2e403aa2c31a73168d3978d4f36b3e2f84b84dba68513204a8df",
+        "bytes": 2595
+      },
+      "original_SQL_preregistration": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN1_P5_pair_CQ017_independent_Spec_first_full_SQL_v1/before_execution_plan.json",
+        "sha256": "9012b2264d5556283627e52e9e763c1934fe3f1f1275aae25e8fec1c3ef84bb5",
+        "bytes": 2767
+      },
+      "full_source_order_key_vector_equal": true,
+      "full_population_n": 1,
+      "required_fields": [
+        "trNumber",
+        "specNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN2_P2_CQ2-4",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT sp.specNumber AS specNumber\nFROM Spec AS sp\nWHERE EXISTS (\n  SELECT 1 FROM edge AS modifies\n  JOIN Tdoc AS t ON t.node_id = modifies.src_id\n  WHERE modifies.dst_id = sp.node_id AND modifies.rel_type = 'MODIFIES'\n    AND t.status = 'agreed'\n    AND EXISTS (\n      SELECT 1 FROM edge AS presented\n      JOIN Meeting AS m ON m.node_id = presented.dst_id\n      WHERE presented.src_id = t.node_id AND presented.rel_type = 'PRESENTED_AT'\n        AND m.canonicalMeetingNumber = 'RAN2#132'\n    )\n)\n",
+      "parameters": [],
+      "columns": [
+        "specNumber"
+      ],
+      "rows": 18,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/independent_sql_recheck_records/RAN2_P2_CQ2-4.jsonl",
+      "independent_records_sha256": "bfc98b6581c62be03d764137295e89204838676348ed2a5e3eca63d5a038eec8",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_132_source_closed_actual_native_v2/reference_outputs/RAN2_P2_CQ2-4/3fc9be0d28050ba87c53d368d0608f337ae4231f7142d7ac8a82d3e7e1e766ee.json",
+      "native_receipt_sha256": "a49309a38e1bd8b3860a05cfa55a6a8ae19f89958eba3a9e6018a2c4981842ec",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_132_source_closed_actual_native_v2/reference_outputs/RAN2_P2_CQ2-4/3fc9be0d28050ba87c53d368d0608f337ae4231f7142d7ac8a82d3e7e1e766ee.jsonl",
+      "native_rows_sha256": "e38185206314815d021b313950ddab0c0402dbe2c67b4be436b7b93cff56b26e",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.sqlite",
+      "db_sha256": "8c4c23348e2d0861e8ecf11393eb01a65d2add247b3e5f0df68f093500d8ddfd",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.manifest.json",
+      "relational_manifest_sha256": "083401646b5d4a2c32b06479ef9f22bea95d9df215bed266d35666088ce12032",
+      "snapshot_sha256": "f0997bbfb5fd5844837514cd29cfe943b8cb2d0240f0ea5579c5e69b4e547d6c",
+      "SQL_query_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_132_source_closed_original_native_SQL_scorer_gate_v1/independent_original_question.sql",
+        "sha256": "aace285d87208e8d11c5cdc3a692c9bcd580d055eb62a8251d609f6893fbdfac"
+      },
+      "reader_pin": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/audit_frozen_required_records_against_native_v3_declared_JSON.py",
+        "sha256": "149b5d7d794c4d1ca77d0dd3f6db074e321c2e818a0a7e78273bdbf58f85d38c"
+      },
+      "full_record_comparison_policy": "Declared typed fields and nested array semantics",
+      "declared_field_definitions": [
+        {
+          "name": "specNumber",
+          "type": "string",
+          "nullable": false,
+          "source_column_or_expression": "sp.specNumber"
+        }
+      ],
+      "typed_kernel_pin": {
+        "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/typed_values.py",
+        "sha256": "d7eee66cce2dabe3ef48c173e84fac47192266bdd3e8ce78214f8361df5161ba"
+      },
+      "full_population_n": 18,
+      "required_fields": [
+        "specNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN2_P4_CQ3-3",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT p.crPackId AS crPackId,p.tsgMeeting AS tsgMeeting\n FROM CRPack p WHERE remove_declared_TSG_prefix(p.tsgMeeting)='RAN#110'\n ORDER BY tsgMeeting COLLATE BINARY DESC,crPackId COLLATE BINARY ASC",
+      "parameters": [],
+      "columns": [
+        "crPackId",
+        "tsgMeeting"
+      ],
+      "rows": 26,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN2_CRPack_central72_root_actual_file_gate_v3/root_preregistered_SQL_full_records.jsonl",
+      "independent_records_sha256": "0d1d090e1d37e122475f929204d67a1308aea5cca7ee650e88f6d61ca8469e99",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_CRPack_submission_actual_root_native_v1/reference_outputs/RAN2_P4_CQ3-3/5de48131e49b8db4e86e96578cd18e0ab5629541d36b43edd022ec7e10f8d68d.json",
+      "native_receipt_sha256": "93ad644d187ea0019266d27438af9fde072c840990e437d342a136a79e45e153",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_CRPack_submission_actual_root_native_v1/reference_outputs/RAN2_P4_CQ3-3/5de48131e49b8db4e86e96578cd18e0ab5629541d36b43edd022ec7e10f8d68d.jsonl",
+      "native_rows_sha256": "38f795ac6e30af898ac4bb5b47c57a7317524cfb87fe2ac6ff34bc544a9401f0",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.sqlite",
+      "db_sha256": "8c4c23348e2d0861e8ecf11393eb01a65d2add247b3e5f0df68f093500d8ddfd",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.manifest.json",
+      "relational_manifest_sha256": "083401646b5d4a2c32b06479ef9f22bea95d9df215bed266d35666088ce12032",
+      "snapshot_sha256": "f0997bbfb5fd5844837514cd29cfe943b8cb2d0240f0ea5579c5e69b4e547d6c",
+      "root_independent_SQL_receipt": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_CRPack_manual_source_grammar_full_SQL_v1/receipt.json",
+        "sha256": "f96321d9df6b3940daf77fb886a6973fe2e9ce292eaaaf55713cba053bbcfc8e",
+        "bytes": 1933
+      },
+      "original_root_SQL_status_preserved": "ACTUAL_ROOT_INDEPENDENT_FULL_SQL_COMPLETE_NATIVE_COMPARISON_PENDING",
+      "root_independent_SQL_preregistration": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_CRPack_manual_source_grammar_full_SQL_v1/preregistration.json",
+        "sha256": "77af7a10dcf81a9a31d60c9e494518bc0a271f1aeb1e0ff13ab1d9d3b2f676c9",
+        "bytes": 1455
+      },
+      "proposer_fullmatch_SQL": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P4_CQ3_3_original_CRPack_submission_source_only_v2/full_SQL_controls_native_ready_v1/independent_CRPack_first_fullmatch_SQL.sql",
+        "sha256": "af3188eade3565bd4429efe76ee5669d456c72466157ab58b97ba46fc0150131",
+        "bytes": 185
+      },
+      "whole_raw_source_reconstruction_witness": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P4_CQ3_3_original_CRPack_submission_source_only_v2/full_SQL_controls_native_ready_v1/whole_source_reconstruction_and_unknowns.json",
+        "sha256": "310d3b4ce4a3329ecd42bbc84b5d01bd8245985dd2af973e863c8fb453024e13",
+        "bytes": 3934
+      },
+      "all_two_return_fields_and_complete_source_order_equal": true,
+      "retained_full_native_two_SQL_and_controls_replay": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_CRPack_actual_root_saved_native_two_SQL_controls_v5.json",
+        "sha256": "67f5f9a2965e3685efac9611eca882e1abfd67dc2c15a0aac89f4662237a0f34",
+        "bytes": 12002
+      },
+      "full_population_n": 26,
+      "required_fields": [
+        "crPackId"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-3",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT tr.trNumber AS trNumber FROM TechnicalReport AS tr WHERE EXISTS(SELECT 1 FROM rel_HAS_TR_IMPACT AS h JOIN TRImpact AS i ON i.node_id=h.dst_id WHERE h.src_id=tr.node_id AND i.impactType='NewTS') ORDER BY trNumber ASC",
+      "parameters": [],
+      "columns": [
+        "trNumber"
+      ],
+      "rows": 1,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN2_newts_central65_actual_root_replay_v1/root_preregistered_SQL_records.jsonl",
+      "independent_records_sha256": "0171875460f1de41f105b6fb733a2441bcbdaab6b848f2e95168489699f16aa1",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P5_two_ImpactType_actual_root_native_v1/reference_outputs/RAN2_P5_TR-CQ-2-3/94f3c74d13e6d0836d4630173eb1c71fd6b47b8ef5bd7e13a09b8b81f712fc6b.json",
+      "native_receipt_sha256": "a4947c3371a3d44a8475e62e2f5e4b60b36623f663ab950db7f1475875d0adf3",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P5_two_ImpactType_actual_root_native_v1/reference_outputs/RAN2_P5_TR-CQ-2-3/94f3c74d13e6d0836d4630173eb1c71fd6b47b8ef5bd7e13a09b8b81f712fc6b.jsonl",
+      "native_rows_sha256": "2620d8bc6540bd3e3367d229913daf3375b61ff2dd24beca0a9c248be9d26c70",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.sqlite",
+      "db_sha256": "8c4c23348e2d0861e8ecf11393eb01a65d2add247b3e5f0df68f093500d8ddfd",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.manifest.json",
+      "relational_manifest_sha256": "083401646b5d4a2c32b06479ef9f22bea95d9df215bed266d35666088ce12032",
+      "snapshot_sha256": "f0997bbfb5fd5844837514cd29cfe943b8cb2d0240f0ea5579c5e69b4e547d6c",
+      "root_independent_SQL_receipt": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_P5_TR_CQ_2_3_4_root_independent_SQL_actual_v1.json",
+        "sha256": "3ef1250baf720d041743291ed4b4214ef79dc34c76d6c9d737788780467b67ef",
+        "bytes": 2113
+      },
+      "root_independent_SQL_original_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_P5_TR_CQ_2_3_root_independent_SQL_records_v1.jsonl",
+        "sha256": "0171875460f1de41f105b6fb733a2441bcbdaab6b848f2e95168489699f16aa1",
+        "bytes": 22
+      },
+      "proposer_Impact_first_SQL": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P5_two_ImpactType_candidate_SQL_native_prereg_v1/RAN2_P5_TR-CQ-2-3_TRImpact_first_full_uncapped_SQL_plan.sql",
+        "sha256": "f24288083aea0bf879c515701dddd305ad26d3dfaeadd63caa1c4bf9005d5dd0",
+        "bytes": 232
+      },
+      "proposer_SQL_parameters": [
+        "NewTS"
+      ],
+      "actual_root_native_all_fields_ordered_proof": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_ImpactType_pair_actual_root_native_SQL_agreement_v1.json",
+        "sha256": "a62c4f10769388e31ed52bb79ac1ddb389abd71e661ac7a76c32c6b61947be61",
+        "bytes": 1025
+      },
+      "actual_root_saved_controls_replay": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_two_ImpactType_saved_controls_actual_root_replay_v1.json",
+        "sha256": "8c41eeb8de48d133d7885d020c91b33fa5178066facf04f2a605da65e6f0669d",
+        "bytes": 2261
+      },
+      "full_population_n": 1,
+      "required_fields": [
+        "trNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN2_P5_TR-CQ-2-4",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT tr.trNumber AS trNumber FROM TechnicalReport AS tr WHERE EXISTS(SELECT 1 FROM rel_HAS_TR_IMPACT AS h JOIN TRImpact AS i ON i.node_id=h.dst_id WHERE h.src_id=tr.node_id AND i.impactType='ExtendSection') ORDER BY trNumber ASC",
+      "parameters": [],
+      "columns": [
+        "trNumber"
+      ],
+      "rows": 6,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN2_extend_central66_actual_root_replay_v1/root_preregistered_SQL_records.jsonl",
+      "independent_records_sha256": "f439f4e7ddf936d38d4e0f9c75f6ddce53cb7cafdf35ff8e229e294955b0d4f4",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P5_two_ImpactType_actual_root_native_v1/reference_outputs/RAN2_P5_TR-CQ-2-4/b3ccd12b84edb7708586d58f537357f173c35349fe9c231053fd45c086d72039.json",
+      "native_receipt_sha256": "af4b6928fa2d11fc713517bf5393ccf964819a04d8e88c5ec905d59b98ed9bc5",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P5_two_ImpactType_actual_root_native_v1/reference_outputs/RAN2_P5_TR-CQ-2-4/b3ccd12b84edb7708586d58f537357f173c35349fe9c231053fd45c086d72039.jsonl",
+      "native_rows_sha256": "433cb1700d697116dc706d23b259bcba508093bd48c48e45138bd4d8769601d4",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.sqlite",
+      "db_sha256": "8c4c23348e2d0861e8ecf11393eb01a65d2add247b3e5f0df68f093500d8ddfd",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.manifest.json",
+      "relational_manifest_sha256": "083401646b5d4a2c32b06479ef9f22bea95d9df215bed266d35666088ce12032",
+      "snapshot_sha256": "f0997bbfb5fd5844837514cd29cfe943b8cb2d0240f0ea5579c5e69b4e547d6c",
+      "root_independent_SQL_receipt": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_P5_TR_CQ_2_3_4_root_independent_SQL_actual_v1.json",
+        "sha256": "3ef1250baf720d041743291ed4b4214ef79dc34c76d6c9d737788780467b67ef",
+        "bytes": 2113
+      },
+      "root_independent_SQL_original_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_P5_TR_CQ_2_4_root_independent_SQL_records_v1.jsonl",
+        "sha256": "f439f4e7ddf936d38d4e0f9c75f6ddce53cb7cafdf35ff8e229e294955b0d4f4",
+        "bytes": 132
+      },
+      "proposer_Impact_first_SQL": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P5_two_ImpactType_candidate_SQL_native_prereg_v1/RAN2_P5_TR-CQ-2-4_TRImpact_first_full_uncapped_SQL_plan.sql",
+        "sha256": "f24288083aea0bf879c515701dddd305ad26d3dfaeadd63caa1c4bf9005d5dd0",
+        "bytes": 232
+      },
+      "proposer_SQL_parameters": [
+        "ExtendSection"
+      ],
+      "actual_root_native_all_fields_ordered_proof": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_ImpactType_pair_actual_root_native_SQL_agreement_v1.json",
+        "sha256": "a62c4f10769388e31ed52bb79ac1ddb389abd71e661ac7a76c32c6b61947be61",
+        "bytes": 1025
+      },
+      "actual_root_saved_controls_replay": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN2_two_ImpactType_saved_controls_actual_root_replay_v1.json",
+        "sha256": "8c41eeb8de48d133d7885d020c91b33fa5178066facf04f2a605da65e6f0669d",
+        "bytes": 2261
+      },
+      "full_population_n": 6,
+      "required_fields": [
+        "trNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN4_P3_CQ3-3",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT cr.tdocNumber AS tdocNumber,m.meetingNumberInt AS meetingNumberInt,\n CASE WHEN substr(lower(m.canonicalMeetingNumber),-3)='bis' THEN 1 ELSE 0 END AS meetingBisOrdinal,\n cr.crNumber AS crNumber\n FROM Spec sp JOIN rel_MODIFIES e ON e.dst_id=sp.node_id\n JOIN CR cr ON cr.node_id=e.src_id\n JOIN rel_PRESENTED_AT p ON p.src_id=cr.node_id JOIN Meeting m ON m.node_id=p.dst_id\n WHERE sp.specNumber='38.133'\n ORDER BY meetingNumberInt DESC,meetingBisOrdinal DESC,(crNumber IS NULL) ASC,crNumber COLLATE BINARY ASC,tdocNumber COLLATE BINARY ASC",
+      "parameters": [],
+      "columns": [
+        "tdocNumber",
+        "meetingNumberInt",
+        "meetingBisOrdinal",
+        "crNumber"
+      ],
+      "rows": 16017,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN4_recent_CR_central71_root_actual_file_gate_v2/root_preregistered_full_SQL_records.jsonl",
+      "independent_records_sha256": "221f33e8ba9a58687c10f57ef2a7151d006974baa3a11bcc6fac474058a4e727",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recent_CR_official_String_actual_root_native_v1/reference_outputs/RAN4_P3_CQ3-3/fa4636f278f52efcdca4ecddff5707d0c1227e566d861fdb920609c5e251018e.json",
+      "native_receipt_sha256": "a4265fce94a7bbf750d0e5d954e204924d01961f033743a24ab882ef66ad45c8",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recent_CR_official_String_actual_root_native_v1/reference_outputs/RAN4_P3_CQ3-3/fa4636f278f52efcdca4ecddff5707d0c1227e566d861fdb920609c5e251018e.jsonl",
+      "native_rows_sha256": "09d567f85ac546cc058976339746a4005477ab4221bfd865765f8a2c16435748",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN4.sqlite",
+      "db_sha256": "24b8d938d456472ad7005178a65acb105857eebc3b96bd9ed8027703b8158c0a",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN4.manifest.json",
+      "relational_manifest_sha256": "c2362b42f5a711f52e17861159ad2b58c655a811898237256e4bc49264ddcce2",
+      "snapshot_sha256": "90c6bf7d4420949b7395e8a0b5700a07f8866ddd461699d4516fe4e4f5deec5d",
+      "root_independent_SQL_receipt": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN4_recent_CR_independent_Spec_first_full_SQL_v1/receipt.json",
+        "sha256": "6f54d79adbb3a676fa4b4030859b327c914ef3604d88e4dd1c89e16f13c1ad3a",
+        "bytes": 2008
+      },
+      "proposer_independent_Meeting_first_SQL": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_recent_CR_official_String_full_SQL_controls_native_ready_v2/full_SQL_whole_class_traversal_and_historical_input_agreement.json",
+        "sha256": "35b0c69438a8a63e02a09cd183cc4b4d1a97d172ea89deee61b5032ae13d6ef2",
+        "bytes": 3177
+      },
+      "full_typed_ordered_all4fields_and_all6232groups_equal": true,
+      "full_population_n": 16017,
+      "required_fields": [
+        "tdocNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN4_P5_CQ2-4",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT tr.trNumber AS trNumber FROM TechnicalReport AS tr WHERE EXISTS (SELECT 1 FROM rel_HAS_TR_IMPACT AS h JOIN TRImpact AS i ON i.node_id=h.dst_id WHERE h.src_id=tr.node_id AND i.impactType='ExtendSection' AND EXISTS (SELECT 1 FROM rel_IMPACTS_SPEC AS x JOIN Spec AS s ON s.node_id=x.dst_id WHERE x.src_id=i.node_id)) ORDER BY trNumber ASC",
+      "parameters": [],
+      "columns": [
+        "trNumber"
+      ],
+      "rows": 62,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "root_evidence/RAN4_ExtendSection_central64_actual_root_replay_v1/root_preregistered_SQL_records.jsonl",
+      "independent_records_sha256": "b767a541fe346b9f23cba67f5e3c5fbece35a0878b312d7d7fca2fa829016116",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-4_actual_root_native_v3/reference_outputs/RAN4_P5_CQ2-4/2aacf3e799b70ee04b2b0d5ec4384e559019c2e79e8c49494c6904a239ca4404.json",
+      "native_receipt_sha256": "12d6d6dc4437115f5362299fbb794ca46a028012bc9889fa70a32c65bbcdbac3",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_P5_CQ2-4_actual_root_native_v3/reference_outputs/RAN4_P5_CQ2-4/2aacf3e799b70ee04b2b0d5ec4384e559019c2e79e8c49494c6904a239ca4404.jsonl",
+      "native_rows_sha256": "3a91718054e7251391e842dc0579ccdfc1c355464ea45d00b522dd2b2f664eed",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN4.sqlite",
+      "db_sha256": "24b8d938d456472ad7005178a65acb105857eebc3b96bd9ed8027703b8158c0a",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN4.manifest.json",
+      "relational_manifest_sha256": "c2362b42f5a711f52e17861159ad2b58c655a811898237256e4bc49264ddcce2",
+      "snapshot_sha256": "90c6bf7d4420949b7395e8a0b5700a07f8866ddd461699d4516fe4e4f5deec5d",
+      "root_independent_SQL_receipt": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN4_P5_CQ2_4_root_independent_SQL_actual_v1.json",
+        "sha256": "0c333f472b601d9e4789a5f13cdb6f3aba2152c7ee17e3718578ac49282552d8",
+        "bytes": 1093
+      },
+      "root_independent_SQL_original_records": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN4_P5_CQ2_4_root_independent_SQL_records_v1.jsonl",
+        "sha256": "b767a541fe346b9f23cba67f5e3c5fbece35a0878b312d7d7fca2fa829016116",
+        "bytes": 1370
+      },
+      "proposer_Spec_first_SQL_receipt": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_ExtendSection_actual_full_SQL_source_controls_native_ready_v1/independent_SQL_and_complete_five_input_witness.json",
+        "sha256": "2cc0c91102c4153e3352feb024a2713487493139d5baf8179cfc9044852b1df6",
+        "bytes": 23112
+      },
+      "full_population_n": 62,
+      "required_fields": [
+        "trNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    },
+    {
+      "id": "RAN5_P1_CQ1-5",
+      "status": "PASS",
+      "sql": "SELECT DISTINCT t.tdocNumber AS tdocNumber, m.meetingNumberInt AS meetingNumberInt, a.agendaNumber AS agendaNumber FROM Company c JOIN rel_SUBMITTED_BY sb ON sb.dst_id=c.node_id JOIN Tdoc t ON t.node_id=sb.src_id JOIN rel_PRESENTED_AT pa ON pa.src_id=t.node_id JOIN Meeting m ON m.node_id=pa.dst_id LEFT JOIN rel_BELONGS_TO bt ON bt.src_id=t.node_id LEFT JOIN AgendaItem a ON a.node_id=bt.dst_id WHERE c.companyName='Samsung' ORDER BY m.meetingNumberInt DESC, (a.agendaNumber IS NULL) ASC, a.agendaNumber COLLATE BINARY ASC, t.tdocNumber COLLATE BINARY ASC",
+      "parameters": [],
+      "columns": [
+        "tdocNumber",
+        "meetingNumberInt",
+        "agendaNumber"
+      ],
+      "rows": 1336,
+      "all_return_fields_compared": true,
+      "uncapped_SQL": true,
+      "independent_records": "RAN2_RAN5/RAN5_central67_root_only_actual_gate_preparation_v1/root_preregistered_SQL_full_records.jsonl",
+      "independent_records_sha256": "53c57f4018a7788a7482a451791a2ab8933805a7cfd8d7e8875c22b91aac8249",
+      "native_receipt": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P1_CQ1_5_actual_root_native_v2/reference_outputs/RAN5_P1_CQ1-5/8a1f01557112d50d9b70b92270370f9aef807f9c644c42e726dbb2f92c86200a.json",
+      "native_receipt_sha256": "e6fb3540ee19857226ff09360bff4f02fefd495c8bb09df6a675b8f2919277c1",
+      "native_rows": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P1_CQ1_5_actual_root_native_v2/reference_outputs/RAN5_P1_CQ1-5/8a1f01557112d50d9b70b92270370f9aef807f9c644c42e726dbb2f92c86200a.jsonl",
+      "native_rows_sha256": "07ce53e39cedbfbb87ad0d151deeabf8acc25a3d8fd8a05245670cff3146d479",
+      "db": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN5.sqlite",
+      "db_sha256": "f26624efee1327477d4a1139be4b15ef9696adf7611f0805c9f5d79f83403b8b",
+      "relational_manifest": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN5.manifest.json",
+      "relational_manifest_sha256": "bd027ded631d03614c6c3fc165145ed416b93cfbb70f80adc9935fae702b5786",
+      "snapshot_sha256": "1ab414b785a155b58218a209be71ed9d1dacc1ea86ae13abbacfbaea27808f5e",
+      "root_independent_SQL_receipt": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN5_P1_CQ1-5_root_independent_full_SQL_v1/receipt.json",
+        "sha256": "325737eeb2fee17f47e96bcfb9c85eefbac713ad125770a98948dc2fd43e1351",
+        "bytes": 1567
+      },
+      "root_independent_SQL_preregistration": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN5_P1_CQ1-5_root_independent_full_SQL_v1/preregistration.json",
+        "sha256": "7b17b45ae6d526bcacd09182f47ade9dc1a57fbb527be7d81c6d0310451a78a5",
+        "bytes": 1302
+      },
+      "proposer_Tdoc_first_SQL": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P1_CQ1_5_original_documented_recency_source_only_v1/full_SQL_controls_native_ready_v1/independent_Tdoc_first_exists_full_SQL.sql",
+        "sha256": "fec5e8e400eae3dd572f9ff49ef5567f1d20f89098eea7ecc0999cad8732ea74",
+        "bytes": 538
+      },
+      "whole_raw_source_incidence_witness": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN5_P1_CQ1_5_original_documented_recency_source_only_v1/full_SQL_controls_native_ready_v1/whole_source_incidence_witness.json",
+        "sha256": "75b46aca94ce27489d6d87aea58c4c6ce72652cebc24454f85ffb2739785443b",
+        "bytes": 515711
+      },
+      "all_three_raw_fields_and_complete_order_equal": true,
+      "retained_full_native_two_SQL_and_controls_replay": {
+        "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/RAN5_P1_CQ1-5_actual_root_native_two_SQL_saved_controls_v1.json",
+        "sha256": "73979a967bdfd229f81bfea6a354a5fa568fbff36dcce658e7f4a69502fa12c3",
+        "bytes": 9489
+      },
+      "full_population_n": 1336,
+      "required_fields": [
+        "tdocNumber"
+      ],
+      "bridge_only": true,
+      "new_SQL_execution_claim": false
+    }
+  ],
+  "source_registry_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/full_independent_sql_recheck.json",
+    "sha256": "65472817747bff7a374b74716dfd5e0a947fe87e7387cea163638e3cbbf81203",
+    "bytes": 395532
+  },
+  "new_SQL_execution_claim": false
+}
