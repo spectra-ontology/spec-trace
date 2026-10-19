@@ -1,0 +1,9 @@
+# Additional original-question repair: named RAN1#121 Conclusions
+
+This one-question cohort extends the pinned 482-question release to 483 of 560; 77 remain nonadmitted (14 clarification-required and 63 evidence-pending). Original English and authored query are unchanged. The named historical meeting RAN1#121 is fixed. The original query selects fifteen Conclusion identities by sequence and resolutionId. The requested answer is their resolutionId set; output serialization order is unscored. The extra content column is compared in full typed native/SQL agreement but is not a required answer field.
+
+Two nonblind seven-unit AI judgments, all 64 source candidates and frozen query operands, their 63 active source records, the unchanged first fifteen identities, read-only rollback native evidence, exact two-column independent SQL agreement, seven generic scorer controls and four identity-set controls are retained. Source label deletion/counterevidence and the first native prequery transport failure are preserved. The source candidate and active populations select the same original fifteen; this does not make the retained inactive item an active Conclusion. This is not a present-day latest-meeting or unresolved-status assertion, authentic optional-content rendering, or human/expert validation.
+
+source_population is answer-bearing verification evidence and is not extra model or retrieval input. The portable command replays included data. Original ZIP/member and whole frozen SQLite replays are separately recorded; they are not silently rerun by the portable command. Historical quarantines, their single explicit RAN5 resolution, three conflicting-TR diagnostics and prior cohorts remain in the pinned baseline. This builder makes no model calls and does not publish.
+
+Run python3 -B -S verify_additions.py --bundle . for the offline check.

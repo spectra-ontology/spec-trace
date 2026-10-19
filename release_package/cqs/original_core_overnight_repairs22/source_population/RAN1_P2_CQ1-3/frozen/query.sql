@@ -1,0 +1,1 @@
+SELECT c.node_id,c.resolutionId,c.sequence,c.content,c.contentWithEquations,m.node_id meeting_node_id FROM Conclusion c JOIN rel_MADE_AT e ON e.src_id=c.node_id JOIN Meeting m ON m.node_id=e.dst_id WHERE m.meetingNumber='RAN1#121' ORDER BY c.sequence,c.resolutionId;
