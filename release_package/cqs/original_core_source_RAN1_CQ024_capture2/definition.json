@@ -1,0 +1,23 @@
+{
+  "id": "RAN1_P3_CQ024",
+  "question_en": "List the 10 most recent agreements affecting TS 38.213 (recent decisions).",
+  "original_query": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'}) MATCH (agr)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT agr.resolutionId, COALESCE(agr.contentWithEquations, agr.content) AS content, m.meetingNumber, m.meetingNumberInt ORDER BY m.meetingNumberInt DESC, agr.resolutionId LIMIT 10",
+  "reference_query": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'}) MATCH (agr)-[:MADE_AT]->(m:Meeting) RETURN DISTINCT agr.resolutionId, COALESCE(agr.contentWithEquations, agr.content) AS content, m.meetingNumber, m.meetingNumberInt ORDER BY m.meetingNumberInt DESC, m.meetingNumber DESC, agr.resolutionId LIMIT 10",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "agr.resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 10
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}
