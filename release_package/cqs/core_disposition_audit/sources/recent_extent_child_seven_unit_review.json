@@ -1,0 +1,243 @@
+{
+  "kind": "source_only_question_first_clarification_proposal",
+  "id": "RAN4_P1_CQ5-2",
+  "original_question": "Show the most recent meetings and their TDoc counts (meeting coverage check).",
+  "original_question_sha256": "e6f71cd7adf86f46e985990971503268720758b86f5cfce83cf21b7964654b9b",
+  "original_query": "MATCH (m:Meeting) WITH m OPTIONAL MATCH (t:Tdoc)-[:PRESENTED_AT]->(m) WITH m, count(t) AS tdocs RETURN m.canonicalMeetingNumber, tdocs ORDER BY m.meetingNumberInt DESC, m.canonicalMeetingNumber LIMIT 5",
+  "original_query_sha256": "81206ec562da489966dca20547253040ed363f2bafcaa3d9a2814303204d2ce6",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "public_snapshot_commit": "108342b91d1b9f250efa96d4fe6492b2c6e94c5d",
+  "original_benchmark_sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef",
+  "original_row_all_keys": [
+    "id",
+    "wg",
+    "phase",
+    "question_en",
+    "cypher",
+    "gold_columns",
+    "gold_primary_column",
+    "gold_primary_values",
+    "gold_row_count"
+  ],
+  "original_row_fixture_binding_keys": [],
+  "original_current_source_Korean_CQ": {
+    "id": "CQ5-2",
+    "question": "미팅 수와 TDoc 커버리지는?",
+    "cypher": "MATCH (m:Meeting) WITH m OPTIONAL MATCH (t:Tdoc)-[:PRESENTED_AT]->(m) WITH m, count(t) AS tdocs RETURN m.canonicalMeetingNumber, tdocs ORDER BY m.meetingNumberInt DESC LIMIT 5",
+    "expected_min_rows": 5
+  },
+  "current_source_dataset_sha256": "58a561db88634f3af56a32ecb8fdd9375b4b624caa718831804b51f9f5090f74",
+  "original_source_context": [
+    {
+      "label": "original_phase1_design",
+      "git_commit": "376eb66e78f160509e992c348435a8b4e20732bc",
+      "git_path": "docs/RAN/formal/RAN4/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md",
+      "git_blob_id": "91b6687ee8659f98f194bd22a9cc2d043a78b09f",
+      "bytes": 70530,
+      "sha256": "c5857b9c29862cc0287bbfc838302df5df03f3a772723c7ab4f4c7106200d248",
+      "excerpts": [
+        {
+          "first_line": 118,
+          "last_line": 194,
+          "lines": [
+            "    ",
+            "    RAN4 TDoc List 컬럼 구조(31개 기본)를 기반으로 다음 CQ 체계를 사용한다.",
+            "    ",
+            "    ### CQ1. Tdoc 기본 검색",
+            "    ",
+            "    | # | Competency Question |",
+            "    | --- | --- |",
+            "    | 1-1 | 특정 회의에서 특정 Work Item 관련 Tdoc 목록은? |",
+            "    | 1-2 | 특정 회의에서 특정 Agenda Item 관련 Tdoc 목록은? |",
+            "    | 1-3 | 특정 회의에서 특정 회사가 제출한 Tdoc 목록은? |",
+            "    | 1-4 | 특정 Release에서 논의된 Tdoc 목록은? |",
+            "    | 1-5 | 특정 회의에서 승인/합의된 Tdoc 목록은? |",
+            "    | 1-6 | 특정 Tdoc의 결정 결과(Status)는? |",
+            "    | 1-7 | 특정 Tdoc의 목적(For)은? |",
+            "    | 1-8 | 특정 Tdoc의 담당자(Contact)는? |",
+            "    | 1-9 | 이번 회의 전체 Agenda 목록과 설명은? |",
+            "    ",
+            "    ### CQ2. Tdoc 관계 추적",
+            "    ",
+            "    | # | Competency Question |",
+            "    | --- | --- |",
+            "    | 2-1 | 특정 Tdoc의 이전/이후 revision은? |",
+            "    | 2-2 | 특정 LS가 어디서 왔고 어디로 갔나? |",
+            "    | 2-3 | 특정 Tdoc이 어떤 LS의 답변(Reply)인가? |",
+            "    | 2-4 | 특정 Tdoc이 어떤 TS/Spec을 변경하나? |",
+            "    | 2-5 | 특정 CR의 카테고리와 영향 범위는? |",
+            "    | 2-6 | 이번 회의에서 다음 회의로 연기된 Tdoc은? |",
+            "    | 2-7 | 이번 회의에 들어온 LS 목록과 관련 Agenda Item은? |",
+            "    ",
+            "    *CQ2-5: CR category는 Phase-1 TDoc List에서 확보. Clauses Affected는 최신 미팅(36컬럼 파일 22개)의 TDoc List에서 확보 + 나머지는 Phase-4 CR 문서 파싱에서.*",
+            "    ",
+            "    ### CQ3. 회사/경쟁사 분석",
+            "    ",
+            "    | # | Competency Question |",
+            "    | --- | --- |",
+            "    | 3-1 | 특정 회사가 특정 Work Item에서 낸 기고 목록은? |",
+            "    | 3-2 | 특정 Agenda Item 관련 다른 회사 기고 목록은? |",
+            "    | 3-3 | 특정 Work Item에서 회사별 기고 수는? |",
+            "    | 3-4 | 특정 회사의 Tdoc 중 채택된 비율은? |",
+            "    | 3-5 | 특정 Tdoc과 같은 Agenda Item에서 다른 회사가 낸 Tdoc 목록은? |",
+            "    | 3-6 | 특정 회사의 주력 기술 영역(Work Item별 기고 분포)은? |",
+            "    ",
+            "    ### CQ4. 히스토리/요약",
+            "    ",
+            "    | # | Competency Question |",
+            "    | --- | --- |",
+            "    | 4-1 | 특정 기술에서 우리 회사가 이전 회의들에서 낸 기고 목록은? |",
+            "    | 4-2 | 이번 회의에서 우리 회사 기고 결과 요약은? |",
+            "    | 4-3 | 특정 Agenda Item에서 아직 미결(not treated)인 Tdoc은? |",
+            "    ",
+            "    ---",
+            "    ",
+            "    ## 4. CQ 결과 규칙",
+            "    ",
+            "    ### 4.1 정렬 기준 (Default Sort Order)",
+            "    ",
+            "    | CQ 그룹 | Primary Sort | Secondary Sort | 구현 속성 |",
+            "    | --- | --- | --- | --- |",
+            "    | CQ1. Tdoc 기본 검색 | Meeting 번호 DESC | Agenda 번호 ASC, TDoc 번호 ASC | `meetingNumberInt DESC` |",
+            "    | CQ2. Tdoc 관계 추적 | TDoc 번호 ASC | - | `tdocNumber ASC` |",
+            "    | CQ3. 회사/경쟁사 분석 | Count DESC (많은 순) | Company 이름 ASC | `count DESC` |",
+            "    | CQ4. 히스토리/요약 | Meeting 번호 DESC | TDoc 번호 ASC | `meetingNumberInt DESC` |",
+            "    ",
+            "    *참고: \"Meeting 번호 DESC\"는 `meetingNumberInt` 속성으로 정렬해야 숫자 기반 정렬이 보장됨 (문자열 정렬 시 #99 > #130 문제 발생)*",
+            "    ",
+            "    // ★ 최신 우선 원칙: 명시적 요청 없으면 항상 DESC",
+            "    ",
+            "    ### 4.2 결과 개수 (Default Limit)",
+            "    ",
+            "    | CQ 유형 | 기본값 | 적용 CQ |",
+            "    | --- | --- | --- |",
+            "    | 목록 조회 | 10 | 1-1 ~ 1-5, 1-9, 2-1 ~ 2-3, 2-6 ~ 2-7, 3-1 ~ 3-2, 3-5, 4-1, 4-3 |",
+            "    | 단일 조회 | 1 | 1-6 ~ 1-8, 2-4 ~ 2-5 |",
+            "    | 집계/순위 | 10 | 3-3 ~ 3-4, 3-6, 4-2 |",
+            "    ",
+            "    ---",
+            "    "
+          ]
+        }
+      ]
+    },
+    {
+      "label": "original_phase1_validation",
+      "git_commit": "376eb66e78f160509e992c348435a8b4e20732bc",
+      "git_path": "docs/RAN/formal/RAN4/phase-1/step3_query-interface.md",
+      "git_blob_id": "ee827b6e7ced405014bb14e967ef64cb5a6f14e3",
+      "bytes": 999,
+      "sha256": "0b7488aada0e1a1fcdc3d87b3087940383c1135baba302f5fe131fb3fb7453af",
+      "excerpts": [
+        {
+          "first_line": 1,
+          "last_line": 34,
+          "lines": [
+            "# Step-3: Query Interface",
+            "",
+            "## CQ 검증 결과",
+            "",
+            "CQ 25/25 PASS. RAN4 실데이터 기반 (Neo4j `bolt://localhost:7690`).",
+            "",
+            "| 구분 | 값 |",
+            "|------|-----|",
+            "| 총 CQ | 25 |",
+            "| PASS | 25 |",
+            "| FAIL | 0 |",
+            "| NO_DATA | 0 |",
+            "",
+            "## 파일 경로",
+            "",
+            "- 질문 데이터셋: `logs/RAN/formal/RAN4/phase-1/cq_test_dataset.json`",
+            "- 실행 결과: `logs/RAN/formal/RAN4/phase-1/cq_cypher_results.json`",
+            "- 실행 스크립트: `scripts/RAN/formal/RAN4/phase-1/validation/01_validate_cq_cypher.py`",
+            "",
+            "## 실행",
+            "",
+            "```bash",
+            "python3 scripts/RAN/formal/RAN4/phase-1/validation/01_validate_cq_cypher.py",
+            "# summary: PASS 25 / FAIL 0 / NO_DATA 0 / ERROR 0",
+            "```",
+            "",
+            "## 질문 카테고리 (Spec Appendix A 기준)",
+            "",
+            "- Tdoc 조회/필터 (회의·의제·저자·Work Item)",
+            "- Meeting/AgendaItem 구조 검증",
+            "- Contact/Company 관계 탐색",
+            "- Spec/Release 메타 조회",
+            "",
+            "상세 질문 목록: Spec `docs/RAN/formal/RAN4/phase-1/design-spec/tdoc_ontology_specs(Tdoc_list).md` §Appendix A 및 `logs/RAN/formal/RAN4/phase-1/cq_test_dataset.json`."
+          ]
+        }
+      ]
+    }
+  ],
+  "proposed_partition": "clarification_required",
+  "proposed_subtype": "missing_result_extent",
+  "scope_condition": "Question-first original English plus preserved source context; authored query alone is not normative answer authority.",
+  "missing_criterion": "Number/window of most recent meetings. Actual calendar recency is independently source-supported over this bounded58-Meeting domain and held fixed in both examples.",
+  "illustrative_interpretations": [
+    {
+      "criterion": "Most recent five Meeting records by known source-reported chronology",
+      "answer_scope": "Conditional k=5 completion, not admitted gold",
+      "receipt": "whole58_source_calendar_held_fixed_extent_counterexample.json#conditional_extent_examples.k5"
+    },
+    {
+      "criterion": "Most recent ten Meeting records by identical chronology and identical TDoc-count unit",
+      "answer_scope": "Conditional k=10 completion, not admitted gold",
+      "receipt": "whole58_source_calendar_held_fixed_extent_counterexample.json#conditional_extent_examples.k10"
+    }
+  ],
+  "opposing_interpretation": {
+    "policy": "Original reference Cypher is itself the normative specification.",
+    "consequence": "LIMIT5 and numeric order fix a query-defined task. Under this alternative hierarchy this is not missing result extent.",
+    "retained": true
+  },
+  "semantic_evidence": {
+    "requested answer roles and fields": {
+      "assessment": "The question requests meeting identities and each meeting’s TDoc count. Those roles are fixed; alternate optional metadata fields are not used as ambiguity evidence.",
+      "independent_derivation": "Show the most recent meetings and their TDoc counts (meeting coverage check).",
+      "evidence": "Original question and unchanged original RETURN m.canonicalMeetingNumber, tdocs."
+    },
+    "population and source context": {
+      "assessment": "Original RAN4 Phase1 metadata context and the loaded Meeting/Tdoc population are fixed. All58 Meeting records were included in an independent read-only SQL count, including optional unmatched nodes. This is source-relative coverage, not all real-world meetings.",
+      "independent_derivation": "Original wg=RAN4, phase=1 and original Meeting/Tdoc schema.",
+      "evidence": "whole58_count_observations.json; original_phase1_design."
+    },
+    "filters and relationship meaning": {
+      "assessment": "Recorded PRESENTED_AT meeting membership and independently source-reported actual Meeting chronology are held fixed; the missing number/window of most recent meetings remains the sole varied criterion in v2 examples.",
+      "independent_derivation": "most recent meetings constrains recency, while TDoc counts are per meeting.",
+      "evidence": "Saved original query uses meetingNumberInt DESC; frozen Meeting has no date field."
+    },
+    "counting unit and join multiplicity": {
+      "assessment": "The requested count unit is TDoc records associated with each meeting. All58 independent SQL counts use distinct Tdoc node IDs, and all observed joined occurrence counts match. No alternative count metric is introduced.",
+      "independent_derivation": "their TDoc counts identifies meeting-grouped TDoc counts.",
+      "evidence": "whole58_count_observations.json all58 rows with both counts."
+    },
+    "cardinality and completeness": {
+      "assessment": "Under the existing question-first repair policy, the evaluated English has no k or time window. The preserved design’s default-limit matrix explicitly maps CQ1–4 IDs, not this CQ5-2; the original validation summary adds no CQ5 recent-window binding. Original LIMIT5 is retained as opposing authored-query evidence, but not silently promoted to question authority. A finite exact-record list therefore needs a stated extent before unique coverage scoring.",
+      "independent_derivation": "Plural most recent meetings does not specify five, ten, a month, or all archived meetings.",
+      "evidence": "Original question/row keys; original design L185–191; saved original LIMIT5."
+    },
+    "ordering and ties when requested": {
+      "assessment": "Known source-reported chronology can be held fixed over all58 Meeting identities. Recomputed1653 pairwise comparisons establish the same strict ordering by own-event start/end periods and by existing integer+bis keys. Thus the competing five-versus-ten lists do not rely on alternate order metrics or missing dates. The original numeric-only/canonical-ASC order has a separate bis ordering defect, retained as opposing implementation evidence.",
+      "independent_derivation": "most recent constrains ordering independently of the missing extent.",
+      "evidence": "whole58_source_calendar_held_fixed_extent_counterexample.json; exact source-ledger pins."
+    },
+    "unverified additional inputs or external interpretation": {
+      "assessment": "No supplementary window/k parameter is present in the released original row. Authored-query-as-normative-contract is a coherent opposing policy and would select LIMIT5; the public classification is conditional on the retained question-first policy. This proposal is AI source diagnosis, expert0, not an admission, benchmark score, or permanent unanswerability claim.",
+      "independent_derivation": "Metadata keys are listed and all question text remains byte-identical.",
+      "evidence": "Original row key set and fixed criteria pass_requires/source_context clauses."
+    }
+  },
+  "status": "proposed_for_independent_root_review",
+  "admission": false,
+  "forced_classification": false,
+  "expert_validation_n": 0,
+  "new_model_calls": 0,
+  "native_execution": false,
+  "public_mutations": false,
+  "source_limit": "This is metadata and source-period scope diagnosis; it does not certify every real-world meeting or all TDoc/register source facts. Original query normative policy remains a coherent opposing interpretation.",
+  "supersedes_without_deleting": "clarification_proposal.json; v1 numeric-prefix illustrations are not the calendar-based v2 witness.",
+  "supporting_calendar_source_scope": "All58 loaded Meeting identities have previously source-audited own-event periods; their pins and all1653 pairwise order directions were rechecked here. No calendar property is added to the graph."
+}
