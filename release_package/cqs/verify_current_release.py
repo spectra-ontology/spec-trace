@@ -23,6 +23,11 @@ def main():
             "--evidence", "original_core_overnight_evaluation23",
             "--bundle", "original_core_overnight_repairs23",
         ]),
+        ("AUTH24_saved_evaluation", [
+            "original_core_overnight_evaluation24/runtime/verify_authorized_incremental24_evaluation.py",
+            "--evidence", "original_core_overnight_evaluation24",
+            "--bundle", "original_core_overnight_repairs24",
+        ]),
     ]
     # Child interpreters use a clean environment and disable site packages; the explicit parent guard runs before package files open.
     environment = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
@@ -40,7 +45,7 @@ def main():
             print(json.dumps({"status": "FAIL", "commands": completed}, sort_keys=True))
             raise SystemExit(result.returncode if result.returncode > 0 else 1)
     print(json.dumps({"status": "PASS", "commands": completed,
-                      "scope": "Included bytes, contract partition and saved AUTH23 output replay only.",
+                      "scope": "Included bytes, contract partition and saved AUTH23 and AUTH24 output replay only.",
                       "fresh_source_extraction": False,
                       "new_model_calls": 0, "new_database_executions": 0,
                       "human_expert_validation": False}, sort_keys=True))

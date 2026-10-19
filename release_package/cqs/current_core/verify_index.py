@@ -7,6 +7,20 @@ from pathlib import Path
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def rows(p):return [json.loads(line) for line in p.read_text().splitlines() if line]
+def verify_file_pin(path, pin):
+    if type(pin) is dict:
+        if set(pin) != {'sha256', 'bytes'} or type(pin['bytes']) is not int or pin['bytes'] < 0:
+            raise ValueError('Invalid cohort file pin: ' + str(path))
+        if path.stat().st_size != pin['bytes']:
+            raise ValueError('Cohort file byte length changed: ' + str(path))
+        digest = pin['sha256']
+    elif type(pin) is str:
+        digest = pin
+    else:
+        raise ValueError('Invalid cohort file pin type: ' + str(path))
+    if type(digest) is not str or sha(path) != digest:
+        raise ValueError('Cohort file SHA256 changed: ' + str(path))
+
 def main():
     here=Path(__file__).resolve().parent;root=here.parents[2]
     manifest=json.loads((here/'index_manifest.json').read_text())
@@ -29,7 +43,7 @@ def main():
         assert sha(bundle/'manifest.json')==digest
         bm=json.loads((bundle/'manifest.json').read_text())
         for name in ['tasks.jsonl','reference_gold.jsonl']:
-            assert sha(bundle/name)==bm['files'][name]
+            verify_file_pin(bundle/name, bm['files'][name])
         frozen[scope]={r['id']:r for r in rows(bundle/'tasks.jsonl')}
         gold[scope]={r['id']:r for r in rows(bundle/'reference_gold.jsonl')}
     for t in tasks:
