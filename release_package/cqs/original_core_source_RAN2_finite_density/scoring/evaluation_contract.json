@@ -1,0 +1,174 @@
+{
+  "status": "prospective_source_contract_primary_pass_execution_and_secondary_pending",
+  "id": "RAN2_P3_CQ5-3",
+  "question_en": "Return CR density (CRs per section) by spec (change-hotspot metric).",
+  "question_sha256": "17e2bd7058d434f51fcef2f6ae700f31b79ff4a792968de93d82e51f3c02f9de",
+  "original_query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCnt, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCnt, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub, crCnt, count(s) AS secCnt RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density ORDER BY density DESC LIMIT 5",
+  "query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCnt, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCnt, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub, crCnt, count(s) AS secCnt RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density ORDER BY density DESC LIMIT 5",
+  "original_query_sha256": "8a353b2881c4fc96bed7c8c4db6cbb26a6acc50ce330f10ffce9e5fdc806ba28",
+  "query_sha256": "8a353b2881c4fc96bed7c8c4db6cbb26a6acc50ce330f10ffce9e5fdc806ba28",
+  "original_query_unchanged": true,
+  "repair_class": "scorer_only",
+  "data_repair_class": "separate_additive_finite_query_dependency_source_snapshot",
+  "kind": "Separate current64 metadata and finite latest14 Section-identity/BELONGS repair; no full current-pipeline reconstruction and no original frozen-core admission.",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "required_fields": [
+    {
+      "name": "specNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "specNumber"
+    },
+    {
+      "name": "crCnt",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "crCnt"
+    },
+    {
+      "name": "secCnt",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "secCnt"
+    },
+    {
+      "name": "density",
+      "type": "number",
+      "nullable": false,
+      "source_column_or_expression": "density"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "selection": {
+    "specific_authored_limit": 5,
+    "source_release_selection": "highest retained integer release per observed CR-positive hub; no current-world latest claim",
+    "row_selection": "density DESC LIMIT5",
+    "cutoff_ties": "No additional tie-breaker invented. Current diagnostics show strict fifth/sixth gap; a completed variant must recheck it or explicitly support all allowed cutoff-tie representatives.",
+    "answer_collection": "set of all4-field records; rank serialization not separately required by this English"
+  },
+  "fixed_population": {
+    "frozen_CR_nodes": 34622,
+    "original_Spec_nodes": 187,
+    "original_latest14_Section_nodes": 3886,
+    "source_latest14_Section_identities": 3894,
+    "raw_current_metadata_files": 64,
+    "historical58_exact_file_versions_reconstructed": false,
+    "new_source_only_CR_nodes": 0
+  },
+  "explicit_source_policy": {
+    "metadata": "All pinned current64 workbook metadata, applied only to the fixed34622 original CR nodes. 106 of107 new pairs come from #133, outside the original Phase1 meeting cutoff. This is a declared source cohort, not a reconstruction of58 historical files.",
+    "source_CR_coverage": "34620 source-classified CRs have complete observed modified-spec multiset equivalence after107 generic additions. Two retained graph CR-labelled nodes have current LS-in metadata and no MODIFIES paths before or after; they remain unknown CR metadata and contribute no positive inner-match paths.",
+    "canonical_hub_resolution": "Exact original production Spec ID first. If absent, uniquely matching existing release-blind hub by specNumber;6 such legacy resolutions on37.320/37.340. Reject duplicate/wrong exact targets. This explicit fallback is part of the separate policy, not silently presented as original code.",
+    "Section": "Complete latest14 Heading-style identity census with original documented numeric/Annex/ASN1 grammar. Generic source3894-minus-frozen3886 yields8 nodes. Add identity properties, BELONGS_TO_SPEC and paired original Heading-style parent links only.",
+    "new_Section_level_and_parent": "All8 are actual Heading4, level4, with the nearest preceding valid lower Heading3 existing parent. Current hierarchy results agree for these8 but are not used to revise any old level/parent."
+  },
+  "exact_additive_recipe": {
+    "new_Section_nodes": 8,
+    "new_MODIFIES_edges": 107,
+    "new_BELONGS_TO_SPEC_edges": 8,
+    "new_PARENT_SECTION_edges": 8,
+    "new_HAS_SUB_SECTION_edges": 8,
+    "new_edges_total": 131,
+    "original_nodes": 156288,
+    "original_edges": 939037,
+    "prospective_nodes": 156296,
+    "prospective_edges": 939168,
+    "original_SQL_tables": 79,
+    "old_node_property_changes": 0,
+    "old_node_or_edge_deletions": 0,
+    "generic_derivation": "No question-specific ID allowlist. Delta derives from full fixed-CR metadata and full source latest14 Section identity sets; parent stack follows original Heading-style rules."
+  },
+  "preserved_unverified_graph_scope": {
+    "existing_properties_preserved_including_155_current_pipeline_differences": true,
+    "all_old_edges_preserved_including_395_old_only_current_pipeline_differences": true,
+    "other_current_source_positive_edges_not_added": true,
+    "complete_source_graph_reconstruction_claim": false,
+    "not_claimed": "No proof of source fidelity for all existing hierarchy, caption ownership, references, other phases, or all graph facts. New8 complete source reference records are not imported. Full source/current generator replacement is a different, unadopted experiment."
+  },
+  "counterinterpretations": [
+    "Frozen recorded-graph arithmetic remains a valid graph diagnostic; this new source cohort must not overwrite or relabel its bytes or scores.",
+    "A reader can prefer the current amended all-release/distinct-natural-section metric; the exact original query defines a different retained-release/path-count metric and remains unchanged here.",
+    "All current source products differ by155 properties/1105 new/395 old-only edges. Adding8 Section identities is not a complete graph repair and must never be described as such.",
+    "ASN1 named type headings can be viewed as information elements rather than sections in ordinary prose; the preserved original TS design explicitly creates Section nodes for ASN1 definitions, which supplies this benchmark denominator authority.",
+    "Current hierarchy uses number ancestors and reassigns some levels, contrary to original style-level rules. This variant adopts neither broad policy nor153 old level changes; only8 new Heading4 nodes whose two policies agree.",
+    "Two LS-in metadata rows do not certify nonexistent CR modified specs. Their unchanged zero hub paths exclude them from the original positive inner-match metric without deleting their old labels.",
+    "No contemporary real-world hottest spec, causal impact, final approval, normative incorporation or complete all-time CR population is certified."
+  ],
+  "source_input_pins": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_canonical_target_and_Section_recipe_v2/prospective_current64_small_recipe_v1/manifest.json",
+      "bytes": 4263,
+      "sha256": "d051962f5330111eaf8cf6e3ad54fe3965e4bd0c7bf3ab3f5942b7862b864f79"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_all14_declared_source_vs_frozen_owned_facts_v2/manifest.json",
+      "bytes": 11304,
+      "sha256": "6475d43e0085c255a0afc70d44580c4e3e0b85ddb20245f1b9d01af0c4c99c0e"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_latest14_release_slice_reconstruction_proposal_v1/manifest.json",
+      "bytes": 9493,
+      "sha256": "0e046dedfb9d1e2ba6153e243d6d785a727401deb9f48e3180d87230b71acb24"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_canonical_target_and_Section_recipe_v2/prospective_current64_small_recipe_v1/evidence/original_Phase1_design_INDEX.md",
+      "bytes": 73900,
+      "sha256": "5cb9f1c4056f0e658aeaf3933bad7c7bad0195d71d430d91877479c964d65be0"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_latest14_release_slice_reconstruction_proposal_v1/original_TS_design_exact_INDEX.md",
+      "bytes": 96135,
+      "sha256": "50b36effff81952779b8ae8e577d9f297390ab377541606b89ffecfee3fafe62"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_canonical_target_and_Section_recipe_v2/prospective_current64_small_recipe_v1/evidence/original_ASN1_design_authority_pins.json",
+      "bytes": 1051,
+      "sha256": "8c25fec033e720f87d51174abf52060598ce37bbd36d8d31133cb26e515531d9"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/root_RAN2_current64_source_policy_review/independent_exact_seven_unit_current64_source_policy_review.json",
+      "bytes": 9909,
+      "sha256": "b783c5fea76c8ebcd3fd7c80430b3680650b5ebdbd14b20f708073ff84438ff6"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/root_RAN2_all14_loader_projection_review/actual_independent_loader_projection_recount.json",
+      "bytes": 1459,
+      "sha256": "55cdfa9020429a920be32041a9316f07bf7f41491373e14fd0393908723bbf6c"
+    }
+  ],
+  "execution_gates_pending": [
+    "Independent secondary semantic/source review of this narrowed recipe",
+    "Actual whole-base TTL and79-table SQLite clone equivalence: preserve every old fact/schema/storage and add exactly8nodes/131edges",
+    "Native original query versus all4-field independent SQL, full pool and selected5, actual rounding and cutoff tie proof",
+    "All4-field scorer negative controls",
+    "Identical declared source graph supplied to all model methods in a separately frozen protocol, first attempts retained"
+  ],
+  "exposure": {
+    "old_frozen_counts_and_full_source_diagnostics_read": true,
+    "blind_claim": false,
+    "model_outputs_used_to_choose_policy": false,
+    "primary_AI_reviews_n": 1,
+    "secondary_AI_reviews_n": 0
+  },
+  "original560_increment": 0,
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "graph_materialized": false,
+  "API_calls": 0,
+  "native_calls": 0,
+  "public_mutations": 0,
+  "repair_sha256": "bc739310bc8d3b131717dd95a7c873156822bc670009c83366e0aed88a69bc5c",
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 5
+  },
+  "validation_status": "separate_source_diagnostic",
+  "prospective_source_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_finite_identity_dependency_variant_v2/prospective_finite_dependency_source_variant_definition.json",
+    "sha256": "01243921dd6086b8df22d01ffa9b5cd1fd4ad96bc6663d90253641a165d5df7c"
+  },
+  "original560_admission_delta": 0,
+  "repair_identity_note": "repair_sha256 identifies the original question/scorer proposal; the separate data policy and evaluation protocol are independently pinned and are not covered by that older identifier."
+}

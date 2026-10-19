@@ -21,3 +21,14 @@ Completed semantic checks are separate nonblind AI reviews and source/execution/
 - [Bounded DCI boundary and equation diagnostics](source_DCI_boundary_equation_diagnostics/README.md). Offline replay reconstructs 93 original OLE equation objects and a specific false boundary cut. A prospective renderer change affects 1 object and leaves 92 unchanged; five AST controls preserve real empty fences. Preview agreement does not certify formula semantics, and the DCI question remains evidence-pending. No model calls, original-Core admissions or installed graph/parser changes are claimed.
 
 The two trend tasks use stored numeric meeting ordinals, with any order allowed within equal ordinals; this does not certify calendar chronology. Their registered strict ordered-output scorer rejects incomplete meeting series. The new model outputs therefore receive zero under that rule even when some returned counts are correct. Execution errors, abstentions and parsing failures are retained. These measurements establish neither improved model performance nor a general advantage of graph storage.
+
+- [RAN2 finite density source evidence](original_core_source_RAN2_finite_density/README.md) and [its saved first-five evaluation](original_core_source_RAN2_finite_density_evaluation/README.md). A separate current64 metadata and finite Section-dependency repair preserves the original four-field query and every old graph fact. Its N=1 outcomes all retain F1 zero: five wrong Cypher records, empty SQL, strict single-retrieval parse failure and a valid two-round abstention. Five first calls cost $0.497470; zero original-Core admissions, quality retries and human experts. Saved-projection replay is distinct from fresh raw-source extraction and full native/SQL/FTS rebuilding.
+
+From this cqs directory, replay the two RAN2 packages with:
+
+```sh
+python3 -B -I original_core_source_RAN2_finite_density/verify_bundle.py
+python3 -B -I original_core_source_RAN2_finite_density_evaluation/verify_package.py --output /tmp/ran2-density-replay-new --source-evidence original_core_source_RAN2_finite_density
+```
+
+Choose a new output path and sibling receipt. The three large derived TTL/SQL/FTS artifacts are omitted with pins and explicit reconstruction procedures.

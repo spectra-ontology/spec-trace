@@ -1,0 +1,62 @@
+--- original_local_materializer.py
++++ materialize_graph.py
+@@ -11,19 +11,19 @@
+ import argparse,gzip,hashlib,importlib.util,json,re,shutil,sqlite3,sys
+ sys.dont_write_bytecode=True
+ HERE=Path(__file__).resolve().parent
+-ROOT=next(p for p in HERE.parents if(p/'CLAUDE.md').exists())
+-OUT=HERE.parent;N=OUT/'RAN2_density_finite_identity_dependency_variant_v2'
+-V=OUT/'RAN2_density_all14_declared_source_vs_frozen_owned_facts_v2'
+-L=OUT/'RAN2_density_latest14_release_slice_reconstruction_proposal_v1'
+-T=OUT/'RAN2_density_canonical_target_and_Section_recipe_v2/prospective_current64_small_recipe_v1'
+-BASE_TTL=ROOT/'release_package/kg/per_wg/RAN2-body.ttl'
+-BASE_SQL=ROOT/'logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN2.sqlite'
++ROOT=HERE.parent
++OUT=ROOT;N=ROOT/'contract'
++V=ROOT/'source_projection/phase3'
++L=ROOT/'source_projection/heading'
++T=ROOT/'source_projection/metadata'
++BASE_TTL=None
++BASE_SQL=None
+ TTL_SHA='f0997bbfb5fd5844837514cd29cfe943b8cb2d0240f0ea5579c5e69b4e547d6c'
+ SQL_SHA='8c4c23348e2d0861e8ecf11393eb01a65d2add247b3e5f0df68f093500d8ddfd'
+ PACKET_SHA='1b70409a85d3ce60ea9f0e813756ffde1a49694d7483515c38d0495ef6974aeb'
+-LEXER=ROOT.parent/'spectra-public/spec-trace/release_package/pipeline/load_released_kg.py'
++LEXER=ROOT/'recipes/load_released_kg.py'
+ LEXER_SHA='9499ac120ea4fcf1c2707f6e3151e399530d9b4f43f5aec9d2d93040792d6e25'
+-BUILDER=HERE/'build_generic_graph_corpus.py'
++BUILDER=ROOT/'recipes/build_generic_graph_corpus.py'
+ def canon(x):return json.dumps(x,ensure_ascii=False,sort_keys=True,separators=(',',':'),allow_nan=False)
+ def load(p):return json.loads(p.read_text())
+ def gz(p):
+@@ -83,14 +83,15 @@
+  return nodes,edges
+ 
+ def main():
+- parser=argparse.ArgumentParser();parser.add_argument('--execute',action='store_true');parser.add_argument('--secondary-review',type=Path,required=True);args=parser.parse_args()
++ global HERE,BASE_SQL,BASE_TTL
++ parser=argparse.ArgumentParser();parser.add_argument('--execute',action='store_true');parser.add_argument('--base-sql',type=Path,required=True);parser.add_argument('--base-ttl',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
++ BASE_SQL=args.base_sql.resolve();BASE_TTL=args.base_ttl.resolve();HERE=args.output.resolve();assert not HERE.exists();HERE.mkdir(parents=True)
++ args.secondary_review=N/'independent_exact_seven_unit_finite_dependency_source_policy_review_v2.json'
+  assert args.execute,'This is a draft until ROOT authorizes --execute after the source gate.'
+- assert sha(N/'manifest.json')==PACKET_SHA
+- for d in [N,V,L,T]:verify_manifest(d)
++ verifier=mod(ROOT/'verify_bundle.py','portable_source_integrity');verifier.verify_integrity(ROOT)
++ assert sha(ROOT/'provenance/original_primary_packet_manifest.json')==PACKET_SHA
+  definition=load(N/'prospective_finite_dependency_source_variant_definition.json');criteria=load(N/'criteria.json')
+- for source_pin in definition['source_input_pins']:
+-  path=ROOT/source_pin['path'];assert path.stat().st_size==source_pin['bytes']and sha(path)==source_pin['sha256'],path
+- schema=mod(OUT/'RAN4_source93_exact_DESC_portable_staging_v1/bundle_v3/contract/review_schema.py','record_schema')
++ schema=mod(ROOT/'contract/review_schema.py','record_schema')
+  for p in [N/'primary_exact_seven_unit_finite_dependency_source_policy_review.json',args.secondary_review]:schema.check_pass(load(p),definition['question_en'],criteria['semantic_units'],criteria_sha=definition['criteria_sha256'],identity_key='repair_sha256',identity_sha=definition['repair_sha256'])
+  assert args.secondary_review.resolve()!= (N/'primary_exact_seven_unit_finite_dependency_source_policy_review.json').resolve()
+  assert sha(args.secondary_review)!=sha(N/'primary_exact_seven_unit_finite_dependency_source_policy_review.json'),'A copied primary is not an independent secondary.'
+@@ -170,7 +171,7 @@
+  with(HERE/'requested_records.jsonl').open('x')as f:
+   for r in selected:f.write(canon(r)+'\n')
+  (HERE/'reference_query.cypher').write_bytes(definition['original_query'].encode())
+- save('actual_materialization_manifest.json',{'status':'PASS_ISOLATED_WHOLE_BASE_PLUS_FINITE_SOURCE_DEPENDENCY_FACTS','base_SQL':pin(BASE_SQL),'base_TTL':pin(BASE_TTL),'source_SQL':pin(target_sql),'source_TTL':pin(target_ttl),'source_packet_manifest':pin(N/'manifest.json'),'definition':pin(N/'prospective_finite_dependency_source_variant_definition.json'),'primary_review':pin(N/'primary_exact_seven_unit_finite_dependency_source_policy_review.json'),'secondary_review':pin(args.secondary_review),'new_Section_nodes':nodes,'new_edges':edges,'whole_nodes':156296,'whole_edges':939168,'old_tables':79,'full_fact_proof':pin(HERE/'actual_all79_tables_and_full_graph_fact_equivalence.json'),'SQL_reference':pin(HERE/'actual_new_full_SQL_density_reference.json'),'requested_records':pin(HERE/'requested_records.jsonl'),'API_calls':0,'native_calls':0,'expert_validation_n':0,'original560_increment':0,'full_source_reconstruction_claim':False})
++ save('actual_materialization_manifest.json',{'status':'PASS_ISOLATED_WHOLE_BASE_PLUS_FINITE_SOURCE_DEPENDENCY_FACTS','base_SQL':pin(BASE_SQL),'base_TTL':pin(BASE_TTL),'source_SQL':pin(target_sql),'source_TTL':pin(target_ttl),'source_packet_manifest':pin(ROOT/'provenance/original_primary_packet_manifest.json'),'definition':pin(N/'prospective_finite_dependency_source_variant_definition.json'),'primary_review':pin(N/'primary_exact_seven_unit_finite_dependency_source_policy_review.json'),'secondary_review':pin(args.secondary_review),'new_Section_nodes':nodes,'new_edges':edges,'whole_nodes':156296,'whole_edges':939168,'old_tables':79,'full_fact_proof':pin(HERE/'actual_all79_tables_and_full_graph_fact_equivalence.json'),'SQL_reference':pin(HERE/'actual_new_full_SQL_density_reference.json'),'requested_records':pin(HERE/'requested_records.jsonl'),'API_calls':0,'native_calls':0,'expert_validation_n':0,'original560_increment':0,'full_source_reconstruction_claim':False})
+  assert sha(BASE_SQL)==SQL_SHA and sha(BASE_TTL)==TTL_SHA
+  print(json.dumps({'status':'PASS','manifest':pin(HERE/'actual_materialization_manifest.json')}))
+ if __name__=='__main__':main()

@@ -1,0 +1,135 @@
+{
+  "status": "SQL_ONLY_REFERENCE_NATIVE_PENDING",
+  "columns": [
+    "specNumber",
+    "crCnt",
+    "secCnt",
+    "density"
+  ],
+  "SQL_full_pool": "WITH cr_counts AS(SELECT hub.node_id,hub.specNumber,count(cr.node_id)AS crCnt FROM Spec hub JOIN rel_MODIFIES x ON x.dst_id=hub.node_id JOIN CR cr ON cr.node_id=x.src_id WHERE hub.specRelease IS NULL GROUP BY hub.node_id), ranked_releases AS(SELECT c.*,rk.node_id AS rk_id,CAST(replace(rk.specRelease,'Rel-','')AS INTEGER)AS releaseInt,row_number()OVER(PARTITION BY c.node_id ORDER BY CAST(replace(rk.specRelease,'Rel-','')AS INTEGER)DESC)AS rank FROM cr_counts c JOIN edge ir ON ir.dst_id=c.node_id AND ir.rel_type='IN_RELEASE_OF' JOIN Spec rk ON rk.node_id=ir.src_id), density_rows AS(SELECT r.specNumber,r.crCnt,count(s.node_id)AS secCnt,round(1.0*r.crCnt/count(s.node_id),2)AS density FROM ranked_releases r JOIN rel_BELONGS_TO_SPEC bs ON bs.dst_id=r.rk_id JOIN Section s ON s.node_id=bs.src_id WHERE r.rank=1 GROUP BY r.node_id,r.specNumber,r.crCnt)SELECT specNumber,crCnt,secCnt,density FROM density_rows ORDER BY density DESC",
+  "SQL_selected": "WITH cr_counts AS(SELECT hub.node_id,hub.specNumber,count(cr.node_id)AS crCnt FROM Spec hub JOIN rel_MODIFIES x ON x.dst_id=hub.node_id JOIN CR cr ON cr.node_id=x.src_id WHERE hub.specRelease IS NULL GROUP BY hub.node_id), ranked_releases AS(SELECT c.*,rk.node_id AS rk_id,CAST(replace(rk.specRelease,'Rel-','')AS INTEGER)AS releaseInt,row_number()OVER(PARTITION BY c.node_id ORDER BY CAST(replace(rk.specRelease,'Rel-','')AS INTEGER)DESC)AS rank FROM cr_counts c JOIN edge ir ON ir.dst_id=c.node_id AND ir.rel_type='IN_RELEASE_OF' JOIN Spec rk ON rk.node_id=ir.src_id), density_rows AS(SELECT r.specNumber,r.crCnt,count(s.node_id)AS secCnt,round(1.0*r.crCnt/count(s.node_id),2)AS density FROM ranked_releases r JOIN rel_BELONGS_TO_SPEC bs ON bs.dst_id=r.rk_id JOIN Section s ON s.node_id=bs.src_id WHERE r.rank=1 GROUP BY r.node_id,r.specNumber,r.crCnt)SELECT specNumber,crCnt,secCnt,density FROM density_rows ORDER BY density DESC LIMIT 5",
+  "complete_pool_rows": [
+    {
+      "specNumber": "38.306",
+      "crCnt": 2757,
+      "secCnt": 128,
+      "density": 21.54
+    },
+    {
+      "specNumber": "38.321",
+      "crCnt": 3242,
+      "secCnt": 327,
+      "density": 9.91
+    },
+    {
+      "specNumber": "38.304",
+      "crCnt": 865,
+      "secCnt": 90,
+      "density": 9.61
+    },
+    {
+      "specNumber": "38.331",
+      "crCnt": 10633,
+      "secCnt": 1506,
+      "density": 7.06
+    },
+    {
+      "specNumber": "38.300",
+      "crCnt": 2062,
+      "secCnt": 616,
+      "density": 3.35
+    },
+    {
+      "specNumber": "38.323",
+      "crCnt": 293,
+      "secCnt": 135,
+      "density": 2.17
+    },
+    {
+      "specNumber": "38.351",
+      "crCnt": 91,
+      "secCnt": 61,
+      "density": 1.49
+    },
+    {
+      "specNumber": "38.340",
+      "crCnt": 72,
+      "secCnt": 66,
+      "density": 1.09
+    },
+    {
+      "specNumber": "38.322",
+      "crCnt": 106,
+      "secCnt": 103,
+      "density": 1.03
+    },
+    {
+      "specNumber": "38.314",
+      "crCnt": 55,
+      "secCnt": 73,
+      "density": 0.75
+    },
+    {
+      "specNumber": "38.305",
+      "crCnt": 398,
+      "secCnt": 552,
+      "density": 0.72
+    },
+    {
+      "specNumber": "37.324",
+      "crCnt": 36,
+      "secCnt": 53,
+      "density": 0.68
+    },
+    {
+      "specNumber": "38.355",
+      "crCnt": 50,
+      "secCnt": 138,
+      "density": 0.36
+    },
+    {
+      "specNumber": "38.391",
+      "crCnt": 5,
+      "secCnt": 46,
+      "density": 0.11
+    }
+  ],
+  "selected_records": [
+    {
+      "specNumber": "38.306",
+      "crCnt": 2757,
+      "secCnt": 128,
+      "density": 21.54
+    },
+    {
+      "specNumber": "38.321",
+      "crCnt": 3242,
+      "secCnt": 327,
+      "density": 9.91
+    },
+    {
+      "specNumber": "38.304",
+      "crCnt": 865,
+      "secCnt": 90,
+      "density": 9.61
+    },
+    {
+      "specNumber": "38.331",
+      "crCnt": 10633,
+      "secCnt": 1506,
+      "density": 7.06
+    },
+    {
+      "specNumber": "38.300",
+      "crCnt": 2062,
+      "secCnt": 616,
+      "density": 3.35
+    }
+  ],
+  "strict_fifth_sixth_gap": true,
+  "reference_query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCnt, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCnt, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub, crCnt, count(s) AS secCnt RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density ORDER BY density DESC LIMIT 5",
+  "reference_query_sha256": "8a353b2881c4fc96bed7c8c4db6cbb26a6acc50ce330f10ffce9e5fdc806ba28",
+  "rounding_native_equivalence_pending": true,
+  "API_calls": 0,
+  "native_calls": 0
+}
