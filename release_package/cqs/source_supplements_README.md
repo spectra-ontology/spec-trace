@@ -32,3 +32,7 @@ python3 -B -I original_core_source_RAN2_finite_density_evaluation/verify_package
 ```
 
 Choose a new output path and sibling receipt. The three large derived TTL/SQL/FTS artifacts are omitted with pins and explicit reconstruction procedures.
+
+- [Four RAN2 own-Agreement FFS source witnesses](source_RAN2_FFS_four_witness_diagnostics/README.md). The original report ZIP contains four active FFS passages under their own Agreements headings whose full normalized paragraphs are absent from all 3,413 preserved Agreement content/note records. The portable replay checks original XML, formatting, source neighborhoods and this bounded literal-absence claim. It does not establish semantic paraphrase absence, a complete source population, present unresolved status or top-ten membership. The original question remains evidence-pending; no graph repair, model calls, original-Core admissions or human expert validations are added.
+
+Replay this diagnostic offline with `python3 -B -I source_RAN2_FFS_four_witness_diagnostics/verify_diagnostic.py`.
