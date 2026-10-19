@@ -1,0 +1,9 @@
+# Additional original-question repair: CQ045 TS identities
+
+This one-question cohort extends the pinned 483-question release to484 of560;76 remain nonadmitted (14 clarification-required and62 evidence-pending). Original English and full authored three-column Cypher are unchanged. The required answer is the complete TS identity set, with serialization order unscored; the two incidental count columns are compared in complete typed native/SQL agreement but are not source-certified required answer values.
+
+Two nonblind seven-unit AI reviews, the original fixed-WI482 source CR candidate rows/four-target upper bound, all61 retained report literal streams/eight excluded fourth-target citation contexts, three own Resolution→CR/WI witnesses and actual approved published normative changes support bounded identity membership. TS38.212 whole-table apostrophe mismatch, historical report108/109 version differences and the table-cell tokenization discrepancy remain disclosed. All3 query rows, read-only rollback/unchanged source evidence, independent full-three-column SQL agreement, seven generic and nine identity-set controls are retained. The first native postquery host-probe infrastructure failure and separate unchanged-query successful retry remain preserved.
+
+source_population is verification evidence, not extra model or retrieval input. Included sparse worksheet XML, derived report streams and actual normative XML replay is separate from an optional original62-workbook/61-DOCX replay. This does not certify incidental counts, all142 witness joins, all-real-world decisions, exclusive causality or mathematical-render equivalence. Human/expert validation n=0. Historical quarantines and exclusions are unchanged. This builder makes no API calls or publication.
+
+Run python3 -B -S verify_additions.py --bundle . for the portable check.
