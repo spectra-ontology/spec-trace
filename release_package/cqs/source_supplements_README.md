@@ -10,5 +10,6 @@ Completed semantic checks are separate nonblind AI reviews and source/execution/
 
 - [Frozen-graph trend repair](original_core_observed_trend_repair/README.md) and [its actual four-method evaluation](original_core_observed_trend_evaluation/README.md).
 - [Source-enriched RAN2 repair](original_core_source_enriched_repair/README.md) and [its actual four-method evaluation](original_core_source_enriched_evaluation/README.md).
+- [Source-enriched RAN3 incoming-impact repair](original_core_source_RAN3_incoming38473/README.md) and [its first-attempt evaluation with separate infrastructure diagnosis](original_core_source_RAN3_incoming38473_evaluation/README.md). This separate experiment adds zero questions to the original frozen-graph count; the primary failures and SQL input limitation remain visible.
 
 The two trend tasks use stored numeric meeting ordinals, with any order allowed within equal ordinals; this does not certify calendar chronology. Their registered strict ordered-output scorer rejects incomplete meeting series. The new model outputs therefore receive zero under that rule even when some returned counts are correct. Execution errors, abstentions and parsing failures are retained. These measurements establish neither improved model performance nor a general advantage of graph storage.

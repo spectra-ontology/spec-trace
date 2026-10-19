@@ -1,0 +1,386 @@
+"""cr_form.py — CR 의 spec 번호를 파일명과 CR 서식 머리 줄에서, CR 번호 · 제목 따위를 서식에서 읽는다. 5 WG Phase-4 CR 문서 파서가 함께 쓴다.
+
+CR 서식(CR-Form)의 첫 표는 `CHANGE REQUEST` 아래 한 줄에 이 CR 의 식별자를 둔다.
+
+    | 38.463 | CR | 0035 | rev | 3 | Current version: | 15.2.0 |
+
+파서는 spec 번호를 파일명(`38463_CR0035r3_…`)에서만 읽었다. 파일명이 그 꼴이 아니면
+(`R5-186454 - 38.905 6.5.2.4.2.docx` · `RP-190611_ASN_Correction….docx`) 서식에 spec 이 적혀
+있어도 spec 이 비었다 — RAN5 1,879 건 · RAN3 7 건.
+
+머리 줄은 서식을 채우지 않은 자리표시(`<Spec#>` · `<CR#>`)가 남거나 파일명과 다른 CR 번호가
+적힌 문서가 있다. 그래서 파일명이 spec 을 주지 못할 때만 쓰고, 칸 전체가 spec 번호 꼴
+(`38.463` · `38.508-1`, 앞의 `TS` 허용)일 때만 받는다.
+
+spec 번호 문법은 파일명과 머리 칸이 함께 쓴다. 문법이 `38331_` · `38101-1_` 꼴만 받던 동안 파서마다
+따로 둔 파일명 규칙이 다음을 놓쳤고, 머리 칸 규칙도 둘째 줄을 놓쳤다.
+
+    `38.401_CR0134r3_…`       점을 찍은 파일명 (RAN3 182 파일 · RAN2 5 · RAN4 · RAN5)
+    `37863-01-01_CR0001r1_…`  꼬리가 두 단인 TR 번호 (머리 칸 `37.863-01-01` 도)
+    `38133-CR0551r1_…`        `CR` 앞 구분자가 `-` · 공백
+    `38-101-3`                머리 칸에서 시리즈 뒤 구분자가 `-`
+
+머리 칸 오타(`38.4231`)는 번호 꼴이 아니라 받지 않는다 — 그런 문서는 파일명이 spec 을 준다.
+
+팩 표지(`RP-…_cover`)는 팩에 든 CR 마다 spec · CR 번호 · 개정 · tdoc 을 한 줄씩 적는다. 파일명과
+문서 어디에서도 자기 번호를 얻지 못한 CR 은 이 줄에서 받는다(`cover_tdoc`). 파일명의 번호가 오타로
+한 자리 길어진 `38413_CR0490r10_(Rel-17)_R3-2229341.docx` 는 앵커 줄에도 번호가 없고, 표지는
+같은 CR 을 `R3-222934` 로 적는다.
+"""
+from __future__ import annotations
+
+import json
+import re
+import sys
+import unicodedata
+from functools import cache
+from pathlib import Path
+
+import docx_text
+
+_ROOT = next(p for p in Path(__file__).resolve().parents if (p / ".git").exists())
+sys.path.insert(0, str(_ROOT / "scripts" / "common" / "common"))
+import axis  # noqa: E402
+
+#: 시리즈 두 자리 · 번호 세 자리 · `-N` 꼬리 0~여러 단. 시리즈 뒤 구분자는 `.` 또는 `-`.
+_SPEC = r"(\d{2})[.-](\d{3})((?:-\d{1,2})*)"
+_SPEC_CELL = re.compile(r"(?:T[SR]\s*)?" + _SPEC, re.IGNORECASE)
+#: 파일명 머리의 spec. 시리즈 뒤 점은 있거나 없고, 뒤에 `_` · 공백 · `-CR` 이 온다.
+_SPEC_NAME = re.compile(r"(\d{2})\.?(\d{3})((?:-\d{1,2})*)(?=[_ ]|-CR)", re.IGNORECASE)
+
+
+def _spec(m: re.Match) -> str:
+    return f"{m.group(1)}.{m.group(2)}{m.group(3)}"
+
+
+def filename_spec(filename: str) -> str | None:
+    """파일명 머리의 spec 번호 (`38331_CR…` → 38.331 · `37863-01-01_CR…` → 37.863-01-01)."""
+    m = _SPEC_NAME.match(filename)
+    return _spec(m) if m else None
+
+
+#: 서식 본문의 글(`Other specs affected` 줄)에 적힌 spec. 자유 글이라 시리즈 뒤 구분자는 `.`(뒤 공백 허용)만
+#: 받는다. 꼬리 뒤에 숫자나 `.세 자리` 가 오면 꼬리가 아니다(`38.213-38.214` 의 `-38` 은 다음 번호의 시리즈).
+_SPEC_TEXT = re.compile(r"\b(\d{2})\.\s*(\d{3})((?:-\d{1,2}(?!\d|\.\s*\d{3}))*)\b")
+
+
+@cache
+def known_specs(tsg: str) -> frozenset[str]:
+    """코퍼스에 실재하는 spec 번호 — Phase-0 이 받은 TS · TR 원본 슬롯(`{TS,TR}/{파티션}/source/{번호}/`)의 이름."""
+    names = set()
+    for part in axis.wgs_of(tsg, include_plenary=True):
+        for doc_type in ("TS", "TR"):
+            slot = axis.tree_path("corpus", wg=part, doc_type=doc_type, slot="source")
+            if slot.is_dir():
+                names.update(p.name for p in slot.iterdir() if p.is_dir())
+    return frozenset(names)
+
+
+def text_specs(text: str, wg: str) -> list[str]:
+    """글에 적힌 spec 번호들을 코퍼스의 실재 번호로 맞춰 차례대로.
+
+    꼬리의 앞자리 0 은 오기일 때도(`38.101-01` = 38.101-1) 번호의 일부일 때도(`38.817-01` · `38.718-01-01`)
+    있다. 적힌 꼴이 실재 번호면 그대로, 아니면서 꼬리의 앞자리 0 을 뗀 꼴이 실재 번호면 그 꼴로 둔다.
+    둘 다 아니면(코퍼스 밖 번호) 판정할 근거가 없으므로 적힌 꼴 그대로 둔다.
+    """
+    known = known_specs(axis.tsg_of(wg))
+    out = []
+    for m in _SPEC_TEXT.finditer(text):
+        written = _spec(m)
+        folded = f"{m.group(1)}.{m.group(2)}" + "".join(f"-{int(t)}" for t in m.group(3).split("-")[1:])
+        out.append(folded if written not in known and folded in known else written)
+    return out
+
+
+#: CR 서식 본문 표의 네 이름 칸 → 이름 칸 글에 차례대로 들어가야 하는 낱말(낱말 앞부분이 같으면 된다).
+#: 저자가 이름 칸을 고쳐 쓴 서식이 있다 — `Reason history for change:` · `Consequences if not- approved:` ·
+#: `Consequences ifnot approved:` · `Summaryc of change:` · 전각 `ＲＥＡＳＯＮ for change:`. 글귀를 통째로
+#: 찾으면 이 서식들을 서식이 아니라고 읽는다(Phase-4 「CR Form Table not found」).
+FORM_LABELS = {
+    "reason for change": ("reason", "change"),
+    "summary of change": ("summary", "change"),
+    "consequences if not approved": ("consequence", "approved"),
+    "clauses affected": ("clause", "affected"),
+}
+#: 이름 칸의 낱말 수 상한. 이름 칸 글은 많아야 네 낱말이고, 이보다 긴 칸은 이름 글귀를 인용한 값이다
+#: (`Rev 1 update of reason for change based on received SA2 LS`).
+_LABEL_MAX_WORDS = 5
+#: 서식 본문 표로 보는 데 필요한 이름 칸 수. 서식에서 이름 칸 하나를 지운 문서가 있다(`Reason for change`
+#: 행의 이름 칸이 빈 R2-2409809 · R5-214483).
+_FORM_MIN_LABELS = 2
+_TBL = f"{{{docx_text.W_NS}}}tbl"
+_T = f"{{{docx_text.W_NS}}}t"
+
+
+def _words(text: str) -> list[str]:
+    return re.findall(r"[a-z]+", unicodedata.normalize("NFKC", text).lower())
+
+
+def is_label(cell: str, label: str) -> bool:
+    """칸 글이 서식 이름 칸 `label`(`FORM_LABELS` 의 열쇠)인가."""
+    words = _words(cell)
+    if not words or len(words) > _LABEL_MAX_WORDS:
+        return False
+    rest = iter(words)
+    return all(any(w.startswith(k) for w in rest) for k in FORM_LABELS[label])
+
+
+def _row_label(cells: list[str]) -> tuple[str, int] | None:
+    """행의 앞 두 칸 가운데 서식 이름 칸이 있으면 (이름, 칸 자리)."""
+    for i, c in enumerate(cells[:2]):
+        for label in FORM_LABELS:
+            if is_label(c, label):
+                return label, i
+    return None
+
+
+def is_form_table(table) -> bool:
+    """자기 칸에 서식 본문 이름 칸을 `_FORM_MIN_LABELS` 개 이상 가진 표. 칸 안에 든 표의 칸은 세지 않는다 —
+    겉 표의 칸 글은 안쪽 서식 전체라 이름 칸 낱말 수 상한을 넘는다."""
+    found = {hit[0] for cells in docx_text.table_rows(table) if (hit := _row_label([c.strip() for c in cells]))}
+    return len(found) >= _FORM_MIN_LABELS
+
+
+def form_tables(doc):
+    """CR 서식을 읽을 표들 — 문서 순서로, 칸 안에 든 표까지(`docx_text.iter_tables`).
+
+    서식 전체를 한 칸짜리 겉 표에 담은 문서는 겉 표 한 칸이 서식 글 전부를 가지므로, 겉 표를
+    서식 표로 읽으면 칸이 나뉘지 않은 채 서식 본문에 닿아 읽기가 끝난다. 그래서 자기는 서식 본문
+    표가 아니고 칸 안의 표가 서식 본문 표인 겉 표는 건너뛰고 그 안의 표를 읽는다.
+    서식 표 자신도 칸 안에 표를 가질 수 있고(이유 칸에 붙인 표가 그 글귀를 인용하는 문서가 있다),
+    그런 표는 자기 칸에 이름 칸이 있으므로 건너뛰지 않는다.
+    """
+    from docx.table import Table
+
+    for table in docx_text.iter_tables(doc):
+        tbl = table._tbl
+        if not is_form_table(table) and any(
+                is_form_table(Table(inner, table._parent)) for inner in tbl.iter(_TBL) if inner is not tbl):
+            continue
+        yield table
+
+
+def _has_text(block) -> bool:
+    return any((t.text or "").strip() for t in block.iter(_T))
+
+
+def form_block(table) -> list:
+    """서식 표와, 글 있는 문단을 사이에 두지 않고 앞뒤로 이어진 표들 — 문서 순서.
+
+    서식 하나를 빈 문단으로 끊어 표 두 개로 둔 문서가 있다. R1-2213012 등 RAN1 34 건은
+    `Consequences if not approved` 부터를, R5s190918 은 `Reason for change` 까지를 다른 표에 두었다.
+    서식 표 하나만 읽으면 다른 표에 든 이름 칸의 값을 잃는다. 글 있는 문단(`Change 1` 따위)을
+    만나면 서식이 끝난 것으로 본다.
+    """
+    from docx.table import Table
+
+    tbl = table._tbl
+    container = tbl.getparent()
+    while container.tag in docx_text._BLOCK_WRAPPERS:
+        container = container.getparent()
+    blocks = list(docx_text.iter_blocks(container))
+    at = next(i for i, b in enumerate(blocks) if b is tbl)
+
+    def joined(seq) -> list:
+        out = []
+        for b in seq:
+            if b.tag == _TBL:
+                out.append(Table(b, table._parent))
+            elif _has_text(b):
+                break
+        return out
+
+    return joined(reversed(blocks[:at]))[::-1] + [table] + joined(blocks[at + 1:])
+
+
+def header_spec(doc) -> str | None:
+    """머리 줄의 `CR` 칸 바로 앞 칸이 spec 번호 꼴이면 그 번호. 서식 본문 표(`is_form_table`)까지만 본다."""
+    for table in form_tables(doc):
+        rows = docx_text.table_rows(table)
+        for row in rows:
+            cells = [c.strip() for c in row]
+            lowered = [c.lower() for c in cells]
+            if "cr" in lowered:
+                at = lowered.index("cr")
+                m = _SPEC_CELL.fullmatch(cells[at - 1]) if at else None
+                return _spec(m) if m else None
+        if is_form_table(table):
+            return None
+    return None
+
+
+#: 파일명의 CR 번호와 개정 (`_CR0490r10_` → 0490 · 10).
+_CR_NAME = re.compile(r"[_ -]CR(\d+)(?:r(\d+))?(?=[_ .(])", re.IGNORECASE)
+
+
+@cache
+def cover_entries(cover_path: Path) -> dict[str, list[dict]]:
+    """`cover_sheets.json` 의 팩별 CR 줄. 표지를 아직 파싱하지 않았으면 빈 사전."""
+    if not cover_path.exists():
+        return {}
+    with open(cover_path, encoding="utf-8") as f:
+        data = json.load(f)
+    return {p["cr_pack_id"]: p.get("cr_entries", []) for p in data.get("crpacks", [])}
+
+
+def _number(value) -> int | None:
+    value = str(value or "").strip()
+    return int(value) if value.isdigit() else None
+
+
+def cover_tdoc(entries: list[dict], filename: str) -> str | None:
+    """팩 표지 줄 가운데 파일명의 spec · CR 번호 · 개정이 같은 줄이 하나뿐이면 그 줄의 tdoc."""
+    spec = filename_spec(filename)
+    m = _CR_NAME.search(filename)
+    if not spec or not m:
+        return None
+    number, rev = int(m.group(1)), int(m.group(2) or 0)
+    hits = {e.get("tdoc_number") for e in entries
+            if e.get("spec") == spec and _number(e.get("cr_number")) == number
+            and (_number(e.get("rev")) or 0) == rev and e.get("tdoc_number")}
+    return hits.pop() if len(hits) == 1 else None
+
+
+#: 서식 본문 표의 이름 칸 → 기록의 키. 이름 칸 뒤 첫 칸이 값이다.
+_FORM_LABELS = {
+    "title": "title",
+    "source to wg": "source",
+    "work item code": "work_item",
+    "category": "category",
+}
+#: 머리 줄의 CR 번호 칸 · 개정 칸. 자리표시(`<CR#>`)는 숫자가 아니라 받지 않는다.
+_DIGITS = re.compile(r"\d+")
+#: 서식 틀이 채우지 않은 칸에 남기는 자리표시(`<Cat>` · `<Title>` · `<Source_if_WG>` · `<Related_WIs>`).
+#: 값 앞뒤에 붙어 남기도 한다(`<Source_if_WG>OPPO, Samsung`) — 그 조각만 떼고 남은 값을 받는다.
+#: 틀이 쓰는 이름만 뗀다 — 제목에 꺾쇠가 든 진짜 글자는 건드리지 않는다.
+_PLACEHOLDER = re.compile(r"<(?:Title|Cat|Source_if_WG|Related_WIs)>")
+#: 작성자가 채운 값을 틀의 꺾쇠째 남긴 칸(`<Editorial corrections to section 9.2>`) — 안쪽만 받는다.
+_WRAPPED = re.compile(r"<\s*([^<>]+?)\s*>")
+#: 분류 칸을 `Cat B` 로 적은 서식 — 분류 글자만 받는다.
+_CAT_PREFIX = re.compile(r"cat\.?\s*([A-F])", re.IGNORECASE)
+
+
+def _field_value(key: str, value: str) -> str:
+    """이름 칸 뒤 칸의 값에서 자리표시를 뗀 값. 분류는 글자 하나로."""
+    value = _PLACEHOLDER.sub("", value).strip(" ,;")
+    m = _WRAPPED.fullmatch(value)
+    if m:
+        value = m.group(1)
+    if key == "category":
+        m = _CAT_PREFIX.fullmatch(value)
+        if m:
+            value = m.group(1).upper()
+    return value
+
+
+def _distinct(row: list[str]) -> list[str]:
+    """병합 셀이 되풀이한 칸을 한 번만 남긴 행."""
+    cells = [c.strip() for c in row]
+    return [c for i, c in enumerate(cells) if c and (i == 0 or c != cells[i - 1])]
+
+
+def labelled_value(table, label: str) -> str | None:
+    """서식 본문 표에서 이름 칸 `label`(`FORM_LABELS` 의 열쇠, `is_label`)이 앞 두 칸에 있는 행의, 이름 칸 뒤 첫 글 있는 칸.
+
+    칸은 가로 합침을 한 번만 세어(`docx_text.table_rows`) 읽는다 — python-docx `row.cells` 는
+    격자 칸마다 합친 칸을 되풀이해, 이름 칸이 격자 세 칸에 걸친 서식에서 세 번째 칸이 이름 칸
+    자신이 된다(값 자리에 `Reason for change:` 가 적힌다). 값이 빈 행은 건너뛰고 다음 행을 본다.
+
+    이름 칸이 없으면 서식 틀의 자리에서 읽고(`_slot_value`), 거기도 없으면 서식을 이어 받은 앞뒤 표
+    (`form_block`)의 이름 칸에서 읽는다. 자기 표를 먼저 보는 것은, 서식 뒤에 빈 문단만 두고 붙은
+    변경 설명 표가 같은 이름 칸(`Reason for change`)을 가질 수 있어서다.
+    """
+    def rows_of(t) -> list[list[str]]:
+        return [[c.strip() for c in cells] for cells in docx_text.table_rows(t)]
+
+    def by_label(rows) -> tuple[bool, str | None]:
+        seen = False
+        for cells in rows:
+            hit = _row_label(cells)
+            if not hit or hit[0] != label:
+                continue
+            seen = True
+            value = next((c for c in cells[hit[1] + 1:] if c), "")
+            if value and not is_label(value, label):
+                return True, value
+        return seen, None
+
+    rows = rows_of(table)
+    seen, value = by_label(rows)
+    if seen:
+        return value
+    value = _slot_value(rows, label)
+    if value:
+        return value
+    for other in form_block(table):
+        if other is not table:
+            seen, value = by_label(rows_of(other))
+            if seen:
+                return value
+    return None
+
+
+#: 분류 칸 아래 도움말 행(`Use one of the following categories:`) — 이름 칸이 비었지만 값 행이 아니다.
+_HELP_ROW = re.compile(r"use one of the following", re.IGNORECASE)
+
+
+def _slot_value(rows: list[list[str]], label: str) -> str | None:
+    """이름 칸을 지운 서식에서 `label` 자리의 값. 서식 틀의 네 이름 칸 차례(`FORM_LABELS`)에서 `label`
+    다음 이름 칸 행 바로 위(빈 행은 건너뜀)가 이름 칸이 빈 글 있는 행이면 그 행의 값이다.
+    R2-2409809 · R5-214483 은 `Reason for change` 이름 칸을, R5-192819 는 `Summary of change` 이름 칸을
+    지웠고 값은 제자리에 있다. 그 위 행도 이름 칸이 빈 글 있는 행이면 어느 행이 값인지 가를 수 없어 읽지 않는다.
+    """
+    order = list(FORM_LABELS)
+    after = order[order.index(label) + 1:]
+    if not after:
+        return None
+    anchor = next((i for i, cells in enumerate(rows)
+                   if (hit := _row_label(cells)) and hit[0] == after[0]), None)
+    if anchor is None:
+        return None
+    content = [i for i in range(anchor) if any(rows[i])]
+
+    def unlabelled(i: int) -> bool:
+        cells = rows[i]
+        return not cells[0] and any(cells[1:]) and not _HELP_ROW.search(" ".join(cells))
+
+    if not content or not unlabelled(content[-1]):
+        return None
+    if len(content) > 1 and unlabelled(content[-2]):
+        return None
+    return next(c for c in rows[content[-1]][1:] if c)
+
+
+def form_fields(doc) -> dict[str, str]:
+    """CR 서식이 적은 이 CR 의 CR 번호 · 개정 · 제목 · 분류 · 작업 항목 · 제출처.
+
+    팩 표지(`cover_sheets.json`)가 같은 값을 적지만, 표지가 없는 팩(`RP-… was R3-…` 처럼 TSG 에
+    바로 올린 CR 의 팩)이나 표지 줄이 빈 CR 은 표지에서 아무것도 받지 못한다. 값은 문서 자신의
+    서식에 있으므로 여기서 읽는다. 서식 본문 표(`is_form_table`)까지만 보고, 찾은 값만 돌려준다.
+
+    서식 본문 표에 닿지 못한 문서는 CR 서식이 아니라 빈 사전을 돌려준다 — 팩 표지의 CR 목록은
+    머리 줄이 `Title | Cat | Work Item` 이라, 이름 칸 뒤 칸을 값으로 읽으면 `Cat` 이 제목이 된다.
+    """
+    found: dict[str, str] = {}
+    for table in form_tables(doc):
+        rows = [_distinct(r) for r in docx_text.table_rows(table)]
+        for cells in rows:
+            lowered = [c.lower() for c in cells]
+            if "cr" in lowered and "cr_number" not in found:
+                at = lowered.index("cr")
+                if at + 1 < len(cells) and _DIGITS.fullmatch(cells[at + 1]):
+                    found["cr_number"] = cells[at + 1]
+                    if "rev" in lowered[at:]:
+                        r = lowered.index("rev", at)
+                        if r + 1 < len(cells) and _DIGITS.fullmatch(cells[r + 1]):
+                            found["rev"] = cells[r + 1]
+            for i, cell in enumerate(lowered[:-1]):
+                key = _FORM_LABELS.get(cell.rstrip(":").strip())
+                if not key or key in found or cells[i + 1].rstrip(":").strip().lower() in _FORM_LABELS:
+                    continue
+                value = _field_value(key, cells[i + 1])
+                if value and value != "-":
+                    found[key] = value
+        if is_form_table(table):
+            return found
+    return {}
