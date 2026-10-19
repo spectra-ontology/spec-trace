@@ -1,0 +1,29 @@
+{
+  "id": "RAN3_P4_CQ4-5",
+  "question_en": "List the change summaries of CRs approved at meeting RAN3#123 (meeting-outcome review).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE m.meetingNumberInt = 123 WITH a MATCH (a)-[:REFERENCES]->(c:CR) WHERE c.reasonForChange IS NOT NULL RETURN c.tdocNumber, c.summaryOfChange ORDER BY c.tdocNumber DESC LIMIT 10",
+  "reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting)\nWHERE m.canonicalMeetingNumber = 'RAN3#123'\n  AND c.type = 'CR' AND c.status = 'agreed'\nWITH DISTINCT c, m\nORDER BY m.meetingNumberInt DESC, c.tdocNumber ASC\nLIMIT 10\nRETURN c.summaryOfChange AS summary",
+  "required_fields": [
+    {
+      "name": "summary",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "c.summaryOfChange"
+    }
+  ],
+  "collection": {
+    "kind": "multiset"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 10
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "403ffd325d157916c9ef13d4df6523bf30868b0ce4d5f1e1a3ca30cfb323eb63",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/loop72_RAN3_123_approved_record_exact_semantic_challenge/prospective_definition_v2_multiset.json",
+    "bytes": 1021,
+    "sha256": "e27984312f9b5e87267069bd5dc73a7c88da19e171d5fc33020c5fa949acf6eb"
+  }
+}

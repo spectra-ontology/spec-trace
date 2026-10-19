@@ -1,0 +1,23 @@
+{
+  "id": "RAN3_P4_CQ4-5",
+  "question_en": "List the change summaries of CRs approved at meeting RAN3#123 (meeting-outcome review).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE m.meetingNumberInt = 123 WITH a MATCH (a)-[:REFERENCES]->(c:CR) WHERE c.reasonForChange IS NOT NULL RETURN c.tdocNumber, c.summaryOfChange ORDER BY c.tdocNumber DESC LIMIT 10",
+  "reference_query": "MATCH (c:CR)-[:PRESENTED_AT]->(m:Meeting)\nWHERE m.canonicalMeetingNumber = 'RAN3#123'\n  AND c.type = 'CR' AND c.status = 'agreed'\nWITH DISTINCT c, m\nORDER BY m.meetingNumberInt DESC, c.tdocNumber ASC\nLIMIT 10\nRETURN c.summaryOfChange AS summary",
+  "required_fields": [
+    {
+      "name": "summary",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "c.summaryOfChange"
+    }
+  ],
+  "collection": {
+    "kind": "multiset"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 10
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}
