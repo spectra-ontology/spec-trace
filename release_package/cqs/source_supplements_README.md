@@ -36,3 +36,7 @@ Choose a new output path and sibling receipt. The three large derived TTL/SQL/FT
 - [Four RAN2 own-Agreement FFS source witnesses](source_RAN2_FFS_four_witness_diagnostics/README.md). The original report ZIP contains four active FFS passages under their own Agreements headings whose full normalized paragraphs are absent from all 3,413 preserved Agreement content/note records. The portable replay checks original XML, formatting, source neighborhoods and this bounded literal-absence claim. It does not establish semantic paraphrase absence, a complete source population, present unresolved status or top-ten membership. The original question remains evidence-pending; no graph repair, model calls, original-Core admissions or human expert validations are added.
 
 Replay this diagnostic offline with `python3 -B -I source_RAN2_FFS_four_witness_diagnostics/verify_diagnostic.py`.
+
+- [Bounded RAN2 native Word strike witness](source_RAN2_native_Word_strike_diagnostics/README.md). Reopening one original binary Word cover verifies 17 struck characters, all 107 native style character arrays, and a retained frozen summary that concatenates the struck phrase with the next word. This is one source-format counterexample; it does not select active-only versus marked historical text or close the approved-change question. Zero original-Core admissions, new model calls, database executions and human expert validations.
+
+Replay this diagnostic offline with `python3 -B -I source_RAN2_native_Word_strike_diagnostics/verify_diagnostic.py`.
