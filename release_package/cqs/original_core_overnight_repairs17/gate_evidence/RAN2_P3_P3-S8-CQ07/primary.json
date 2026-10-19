@@ -1,0 +1,94 @@
+{
+  "id": "RAN2_P3_P3-S8-CQ07",
+  "status": "pass",
+  "reviewer_kind": "root independent original-context exact-definition semantic judgment",
+  "reviewer_identity": "/root",
+  "checked_utc": "2026-10-19T03:04:45.173538+00:00",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "6da14fbf7af31ea1c132ab13dd4dde26c5af0479ea67fcd035f921baca5019ae",
+  "original_question_sha256": "3be95f14a4d291e4a55d3422881e0ccba4951070614c1eece59418a8a1201923",
+  "exposure": "Nonblind development review: root independently reopened original Git source chain and immutable SQLite full population. No current model prediction or score used to choose semantics.",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Are the 28 LTM capability items loaded",
+      "finding": "The original all-loaded question requires one boolean. Count/sample are auxiliary and cannot replace the binary answer.",
+      "query_clauses": [
+        "RETURN all(loaded IN expectedItemLoaded WHERE loaded) AS all_loaded"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "LTM baseline check",
+      "finding": "Original Step8 names cycle02 D-B. The contemporaneous process defines D-B as v4 section6 omitted28 names, identifies v5 regeneration, and the evolution artifact binds its exact path. All28 names appear there before this audit. Accept this as the finite RECORDED baseline, not expert-validated capability taxonomy.",
+      "query_clauses": [
+        "UNWIND [\"LTM-CSI-ReportConfig-r18\", \"LTM-CSI-ReportConfig-r19\", \"LTM-CSI-ResourceConfig-r18\", \"ltm-BeamIndicationJointTCI-CSI-RS-r19\", \"ltm-BeamIndicationJointTCI-r18\", \"ltm-BeamIndicationSeparateTCI-CSI-RS-r19\", \"ltm-BeamIndicationSeparateTCI-r18\", \"ltm-EventMeasAndReport-r19\", \"ltm-FastProcessingConfig-r18\", \"ltm-FastUE-Processing-r18\", \"ltm-InterFreq-r18\", \"ltm-InterFreqMeasGap-r18\", \"ltm-KeyUpdateMCG-r19\", \"ltm-KeyUpdateSCG-r19\", \"ltm-MAC-CE-JointTCI-CSI-RS-r19\", \"ltm-MAC-CE-JointTCI-r18\", \"ltm-MAC-CE-SeparateTCI-CSI-RS-r19\", \"ltm-MAC-CE-SeparateTCI-r18\", \"ltm-MCG-IntraFreq-r18\", \"ltm-MCG-NRDC-Release-r18\", \"ltm-MCG-NRDC-r18\", \"ltm-RACH-LessCG-r18\", \"ltm-RACH-LessDG-r18\", \"ltm-Recovery-r18\", \"ltm-RecoveryWithKeyUpdate-r19\", \"ltm-ReferenceConfig-r18\", \"ltm-SCG-IntraFreq-r18\", \"ltm-interFreqL1-OnlyInBC-r18\"] AS expectedName"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "loaded as CapabilityItem nodes",
+      "finding": "Original Step8 defines item-level independent CapabilityItem identity by name+spec. Match exact names/spec38.306/granularity item; do not relabel or alias the three source-described RRC IE references.",
+      "query_clauses": [
+        "OPTIONAL MATCH (cap:CapabilityItem)",
+        "WHERE cap.capabilityItemName = expectedName AND cap.specNumber = '38.306' AND cap.granularity = 'item'",
+        "WITH expectedName, count(cap) > 0 AS loaded"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "the 28 LTM capability items",
+      "finding": "Each expected name is one membership check. Independent whole86-row Python membership agrees with the child LEFT JOIN:25 unique expected entries present and3 absent.",
+      "query_clauses": [
+        "UNWIND [\"LTM-CSI-ReportConfig-r18\", \"LTM-CSI-ReportConfig-r19\", \"LTM-CSI-ResourceConfig-r18\", \"ltm-BeamIndicationJointTCI-CSI-RS-r19\", \"ltm-BeamIndicationJointTCI-r18\", \"ltm-BeamIndicationSeparateTCI-CSI-RS-r19\", \"ltm-BeamIndicationSeparateTCI-r18\", \"ltm-EventMeasAndReport-r19\", \"ltm-FastProcessingConfig-r18\", \"ltm-FastUE-Processing-r18\", \"ltm-InterFreq-r18\", \"ltm-InterFreqMeasGap-r18\", \"ltm-KeyUpdateMCG-r19\", \"ltm-KeyUpdateSCG-r19\", \"ltm-MAC-CE-JointTCI-CSI-RS-r19\", \"ltm-MAC-CE-JointTCI-r18\", \"ltm-MAC-CE-SeparateTCI-CSI-RS-r19\", \"ltm-MAC-CE-SeparateTCI-r18\", \"ltm-MCG-IntraFreq-r18\", \"ltm-MCG-NRDC-Release-r18\", \"ltm-MCG-NRDC-r18\", \"ltm-RACH-LessCG-r18\", \"ltm-RACH-LessDG-r18\", \"ltm-Recovery-r18\", \"ltm-RecoveryWithKeyUpdate-r19\", \"ltm-ReferenceConfig-r18\", \"ltm-SCG-IntraFreq-r18\", \"ltm-interFreqL1-OnlyInBC-r18\"] AS expectedName",
+        "OPTIONAL MATCH (cap:CapabilityItem)",
+        "WHERE cap.capabilityItemName = expectedName AND cap.specNumber = '38.306' AND cap.granularity = 'item'",
+        "WITH expectedName, count(cap) > 0 AS loaded"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Are the 28",
+      "finding": "Retain every expected entry, including unmatched entries, and compute universal membership. This is neither equality of unrelated counts nor a physical-world capability-completeness claim.",
+      "query_clauses": [
+        "OPTIONAL MATCH (cap:CapabilityItem)",
+        "WHERE cap.capabilityItemName = expectedName AND cap.specNumber = '38.306' AND cap.granularity = 'item'",
+        "WITH expectedName, count(cap) > 0 AS loaded",
+        "WITH collect(loaded) AS expectedItemLoaded",
+        "RETURN all(loaded IN expectedItemLoaded WHERE loaded) AS all_loaded"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "LTM baseline check",
+      "finding": "No ordering, rank, tie or ten-name sample is requested. Auxiliary sample order or cardinality is not scored.",
+      "query_clauses": [
+        "RETURN all(loaded IN expectedItemLoaded WHERE loaded) AS all_loaded"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "LTM baseline check",
+      "finding": "The original named inventory is recoverable from preserved source artifacts. Historical11-chunk payload recovery is not needed to define this authored baseline; do not claim the old extraction was correct or that28 are all true capabilities.",
+      "query_clauses": [
+        "UNWIND [\"LTM-CSI-ReportConfig-r18\", \"LTM-CSI-ReportConfig-r19\", \"LTM-CSI-ResourceConfig-r18\", \"ltm-BeamIndicationJointTCI-CSI-RS-r19\", \"ltm-BeamIndicationJointTCI-r18\", \"ltm-BeamIndicationSeparateTCI-CSI-RS-r19\", \"ltm-BeamIndicationSeparateTCI-r18\", \"ltm-EventMeasAndReport-r19\", \"ltm-FastProcessingConfig-r18\", \"ltm-FastUE-Processing-r18\", \"ltm-InterFreq-r18\", \"ltm-InterFreqMeasGap-r18\", \"ltm-KeyUpdateMCG-r19\", \"ltm-KeyUpdateSCG-r19\", \"ltm-MAC-CE-JointTCI-CSI-RS-r19\", \"ltm-MAC-CE-JointTCI-r18\", \"ltm-MAC-CE-SeparateTCI-CSI-RS-r19\", \"ltm-MAC-CE-SeparateTCI-r18\", \"ltm-MCG-IntraFreq-r18\", \"ltm-MCG-NRDC-Release-r18\", \"ltm-MCG-NRDC-r18\", \"ltm-RACH-LessCG-r18\", \"ltm-RACH-LessDG-r18\", \"ltm-Recovery-r18\", \"ltm-RecoveryWithKeyUpdate-r19\", \"ltm-ReferenceConfig-r18\", \"ltm-SCG-IntraFreq-r18\", \"ltm-interFreqL1-OnlyInBC-r18\"] AS expectedName",
+        "RETURN all(loaded IN expectedItemLoaded WHERE loaded) AS all_loaded"
+      ]
+    }
+  ],
+  "source_context_review": {
+    "path": "root_evidence/two_agent_unresolved_loop/root_LTM28_original_baseline_source_context_independent_review.json",
+    "sha256": "1cff47e95e6babe6e9a078b3501d4cdddc17fd1e5b08392d0416d535ebb0a9f7"
+  },
+  "historical_baseline_defect": "Three recorded expected names are IE references, not actual capability labels. This checks the recorded expected inventory asCapabilityItem and does not claim28 genuine capabilities.",
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "not_a_native_or_model_result": true
+}

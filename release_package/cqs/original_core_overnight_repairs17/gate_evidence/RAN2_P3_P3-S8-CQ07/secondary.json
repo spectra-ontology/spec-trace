@@ -1,0 +1,108 @@
+{
+  "id": "RAN2_P3_P3-S8-CQ07",
+  "status": "pass",
+  "reviewer_kind": "independent_child_RAN2_RAN5_nonblind_AI_source_semantic_review",
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "created_utc": "2026-10-19T03:04:03.952708+00:00",
+  "repair_sha256": "6da14fbf7af31ea1c132ab13dd4dde26c5af0479ea67fcd035f921baca5019ae",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Are the 28 LTM capability items loaded as CapabilityItem nodes (LTM baseline check)?",
+      "finding": "The original English asks whether all items of a named baseline are loaded asCapabilityItem. A single typed boolean answers that role. The old count/sample are auxiliary and do not replace the yes/no answer.",
+      "query_clauses": [
+        "RETURN all(loaded IN expectedItemLoaded WHERE loaded) AS all_loaded"
+      ],
+      "query_and_scoring_mapping": "all_loaded:boolean; exact one result row"
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Are the 28 LTM capability items loaded as CapabilityItem nodes (LTM baseline check)?",
+      "finding": "I accept the recorded finite inventory interpretation independently from the source chain: original Step8 explicitly names cycle02 D-B baseline; contemporaneous process names D-B=v4§6 and v5 regeneration; same-cycle evolution maps exact v4→v5 paths; v5§6 explicitly names28. The source fixture is this recorded list, not a newly chosen valid-capability population.",
+      "query_clauses": [
+        "UNWIND [\"LTM-CSI-ReportConfig-r18\", \"LTM-CSI-ReportConfig-r19\", \"LTM-CSI-ResourceConfig-r18\", \"ltm-BeamIndicationJointTCI-CSI-RS-r19\", \"ltm-BeamIndicationJointTCI-r18\", \"ltm-BeamIndicationSeparateTCI-CSI-RS-r19\", \"ltm-BeamIndicationSeparateTCI-r18\", \"ltm-EventMeasAndReport-r19\", \"ltm-FastProcessingConfig-r18\", \"ltm-FastUE-Processing-r18\", \"ltm-InterFreq-r18\", \"ltm-InterFreqMeasGap-r18\", \"ltm-KeyUpdateMCG-r19\", \"ltm-KeyUpdateSCG-r19\", \"ltm-MAC-CE-JointTCI-CSI-RS-r19\", \"ltm-MAC-CE-JointTCI-r18\", \"ltm-MAC-CE-SeparateTCI-CSI-RS-r19\", \"ltm-MAC-CE-SeparateTCI-r18\", \"ltm-MCG-IntraFreq-r18\", \"ltm-MCG-NRDC-Release-r18\", \"ltm-MCG-NRDC-r18\", \"ltm-RACH-LessCG-r18\", \"ltm-RACH-LessDG-r18\", \"ltm-Recovery-r18\", \"ltm-RecoveryWithKeyUpdate-r19\", \"ltm-ReferenceConfig-r18\", \"ltm-SCG-IntraFreq-r18\", \"ltm-interFreqL1-OnlyInBC-r18\"] AS expectedName"
+      ],
+      "query_and_scoring_mapping": "UNWIND every one of28 unfiltered source names; exact original source fixture"
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Are the 28 LTM capability items loaded as CapabilityItem nodes (LTM baseline check)?",
+      "finding": "Loaded asCapabilityItem is a class-membership check. The misleading original capability label does not require us to assert that every baseline entry is a true capability before checking that class. Exact source spelling/spec38.306/item identity is used; IE-reference entries are retained and their defect disclosed.",
+      "query_clauses": [
+        "WHERE cap.capabilityItemName = expectedName AND cap.specNumber = '38.306' AND cap.granularity = 'item'"
+      ],
+      "query_and_scoring_mapping": "OPTIONAL MATCH CapabilityItem; exact capabilityItemName/specNumber/granularity"
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Are the 28 LTM capability items loaded as CapabilityItem nodes (LTM baseline check)?",
+      "finding": "Each baseline name/spec/item identity contributes one presence boolean, not number of mentions/chunks. Exact SQL found one matched node for each25 loaded identities; independent read of all86CapabilityItem records agrees. Duplicate physical nodes would still mean presence, not multiple expected items.",
+      "query_clauses": [
+        "WITH expectedName, count(cap) > 0 AS loaded"
+      ],
+      "query_and_scoring_mapping": "WITH expectedName,count(cap)>0; collect per-identity presence"
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Are the 28 LTM capability items loaded as CapabilityItem nodes (LTM baseline check)?",
+      "finding": "All28 expected source identities remain in the left join. Three exact baseline names lack a CapabilityItem node, so the conjunction is false. This is a direct membership counterexample, not25<28 plus an assumed prefix superset. Restoring oldQdrant payload is unnecessary for deciding membership of this independently recorded expected list.",
+      "query_clauses": [
+        "OPTIONAL MATCH (cap:CapabilityItem)",
+        "WITH collect(loaded) AS expectedItemLoaded",
+        "RETURN all(loaded IN expectedItemLoaded WHERE loaded) AS all_loaded"
+      ],
+      "query_and_scoring_mapping": "all(loaded IN expectedItemLoaded WHERE loaded); complete28 statuses"
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Are the 28 LTM capability items loaded as CapabilityItem nodes (LTM baseline check)?",
+      "finding": "The original all-loaded check requests no rank/order. A singleton result has no tie policy. The old ten-name sample is not an expected-set truncation rule.",
+      "query_clauses": [
+        "RETURN all(loaded IN expectedItemLoaded WHERE loaded) AS all_loaded"
+      ],
+      "query_and_scoring_mapping": "multiset cardinality1; no ORDERBY/LIMIT"
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Are the 28 LTM capability items loaded as CapabilityItem nodes (LTM baseline check)?",
+      "finding": "The required baseline input is now preserved as an original pre-audit artifact with a contemporaneous original reference chain, explicit28-name fixture and byte/hash provenance. Historical generated prose is used only to define what the named recorded baseline contained, not as truth about capability roles or human validation. No current-model output, original gold25, or new answer performance selects the interpretation. Runtime/source-input availability and native execution are still separate integration gates.",
+      "query_clauses": [
+        "UNWIND [\"LTM-CSI-ReportConfig-r18\", \"LTM-CSI-ReportConfig-r19\", \"LTM-CSI-ResourceConfig-r18\", \"ltm-BeamIndicationJointTCI-CSI-RS-r19\", \"ltm-BeamIndicationJointTCI-r18\", \"ltm-BeamIndicationSeparateTCI-CSI-RS-r19\", \"ltm-BeamIndicationSeparateTCI-r18\", \"ltm-EventMeasAndReport-r19\", \"ltm-FastProcessingConfig-r18\", \"ltm-FastUE-Processing-r18\", \"ltm-InterFreq-r18\", \"ltm-InterFreqMeasGap-r18\", \"ltm-KeyUpdateMCG-r19\", \"ltm-KeyUpdateSCG-r19\", \"ltm-MAC-CE-JointTCI-CSI-RS-r19\", \"ltm-MAC-CE-JointTCI-r18\", \"ltm-MAC-CE-SeparateTCI-CSI-RS-r19\", \"ltm-MAC-CE-SeparateTCI-r18\", \"ltm-MCG-IntraFreq-r18\", \"ltm-MCG-NRDC-Release-r18\", \"ltm-MCG-NRDC-r18\", \"ltm-RACH-LessCG-r18\", \"ltm-RACH-LessDG-r18\", \"ltm-Recovery-r18\", \"ltm-RecoveryWithKeyUpdate-r19\", \"ltm-ReferenceConfig-r18\", \"ltm-SCG-IntraFreq-r18\", \"ltm-interFreqL1-OnlyInBC-r18\"] AS expectedName",
+        "OPTIONAL MATCH (cap:CapabilityItem)"
+      ],
+      "query_and_scoring_mapping": "source fixture pins + full source artifacts; runtime validation remains pending"
+    }
+  ],
+  "original_independent_judgment": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN2_RAN5/loop41_LTM_recorded_baseline_source_only_final_semantics/independent_final_source_only_seven_unit_semantic_review.json",
+    "bytes": 8513,
+    "sha256": "6d7a59c6990f6eac074074617776afc150cc57f137749bfcbf73addf18222bca"
+  },
+  "schema_checked_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN2_RAN5/loop42_LTM_schema_checked_review/source_pinned_prospective_definition_schema_checked.json",
+    "bytes": 4579,
+    "sha256": "3faa7673ff125e7bda3f46b630d865f6efac20030c17d888f30c8bf8c9a3f3b4"
+  },
+  "reformat_only_not_an_additional_independent_judgment": true,
+  "strongest_opposing_reading": "Capability items could be treated as a semantic-role filter requiring28 genuine capability labels. I reject that as the completion target here because the original expressly names the historical D-B baseline and asks loaded asCapabilityItem: a finite recorded baseline can have wrong class expectations, and its failed loading check remains answerable without endorsing them. This interpretation is documented, not hidden.",
+  "no_historical_source_accuracy_assertion": "The baseline includes3IE references and historical v5 was model-generated. Neither this review nor aNo answer certifies28 genuine capabilities, oldQdrant payload equivalence, real-world standard completeness or human validation.",
+  "nonblind_disclosure": "I had seen the original count25 gold, prior pending reviews and root source-context suggestion. I derive the finite-recorded-baseline interpretation from the explicit original reference chain and retained original text. No fresh evaluated-model outcomes or quality-based regeneration were available or used.",
+  "separate_remaining_gates": [
+    "Root independent semantic review/integration before central admission.",
+    "Actual native full query execution against pinned frozen graph and independent SQL agreement.",
+    "Reference/scorer contract sourcepins and portable verification.",
+    "All model methods retain one declared common source-context policy; this helper adds no prompt supplement or retrieval/gold copying. Root must independently check runtime source availability/fairness.",
+    "Any paid evaluation/publication remains root-only and is not claimed here."
+  ],
+  "admitted_by_this_agent": false,
+  "new_API_native_central_public_git_mutations_n": 0
+}
