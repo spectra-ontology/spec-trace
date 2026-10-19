@@ -101,7 +101,7 @@ the two retained-score replays below need only Python 3.10 or later.
 pip install rdflib pyshacl
 python3 -B release_package/tests/verify_benchmark.py --quick --out /tmp/spectra-quick-check
 
-python3 -B -S release_package/cqs/core_disposition_audit/verify_package.py
+python3 -B -I release_package/cqs/verify_current_release.py
 
 python3 -I -B release_package/cqs/contract_repair_v1/original_source_aligned/score_source_aligned_retained_portable_v1.py \
   --bundle release_package/cqs/contract_repair_v1/original_source_aligned \

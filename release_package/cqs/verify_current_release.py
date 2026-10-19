@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""Run the current saved-artifact verifiers with Python assertions enabled."""
+import sys
+
+if sys.flags.optimize != 0:
+    raise SystemExit("Verification requires assertions; Python -O and -OO are refused.")
+
+import json
+import os
+from pathlib import Path
+import subprocess
+
+
+def main():
+    if len(sys.argv) != 1:
+        raise SystemExit("Usage: python3 -B -I verify_current_release.py")
+    package = Path(__file__).resolve().parent
+    specifications = [
+        ("current_core", ["current_core/verify_index.py"]),
+        ("core_disposition", ["core_disposition_audit/verify_package.py"]),
+        ("AUTH23_saved_evaluation", [
+            "original_core_overnight_evaluation23/runtime/verify_authorized_incremental23_evaluation.py",
+            "--evidence", "original_core_overnight_evaluation23",
+            "--bundle", "original_core_overnight_repairs23",
+        ]),
+    ]
+    # Child interpreters use a clean environment and disable site packages; the explicit parent guard runs before package files open.
+    environment = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+                   "LANG": "C.UTF-8", "PYTHONDONTWRITEBYTECODE": "1"}
+    completed = []
+    for name, arguments in specifications:
+        command = [sys.executable, "-B", "-S", *arguments]
+        result = subprocess.run(command, cwd=package, env=environment,
+                                text=True, capture_output=True, timeout=600)
+        record = {"verifier": name, "argv": command,
+                  "exit_code": result.returncode,
+                  "stdout": result.stdout, "stderr": result.stderr}
+        completed.append(record)
+        if result.returncode != 0:
+            print(json.dumps({"status": "FAIL", "commands": completed}, sort_keys=True))
+            raise SystemExit(result.returncode if result.returncode > 0 else 1)
+    print(json.dumps({"status": "PASS", "commands": completed,
+                      "scope": "Included bytes, contract partition and saved AUTH23 output replay only.",
+                      "fresh_source_extraction": False,
+                      "new_model_calls": 0, "new_database_executions": 0,
+                      "human_expert_validation": False}, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

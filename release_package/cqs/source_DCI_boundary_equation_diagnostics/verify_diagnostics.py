@@ -17,6 +17,8 @@ def regular_nosymlink(path):
     return path
 
 def main():
+    if sys.flags.optimize != 0:
+        raise RuntimeError('Optimized Python disables diagnostic assertions and is refused')
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source-docx-123')
     parser.add_argument('--source-docx-117')

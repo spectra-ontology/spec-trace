@@ -167,6 +167,8 @@ def all_text_runs_active(paragraph, styles, defaults):
 
 
 def verify():
+    if sys.flags.optimize != 0:
+        raise RuntimeError('Optimized Python disables diagnostic assertions and is refused')
     # The lexical entry/ancestor boundary is checked before the first file read.
     root = no_symlinks(Path(__file__).absolute()).parent
     actual_paths = set()
