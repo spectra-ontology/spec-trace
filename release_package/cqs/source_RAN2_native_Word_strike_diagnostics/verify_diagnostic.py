@@ -85,7 +85,7 @@ def toggle(operand,style):
  return {0:False,1:True,0x80:style,0x81:not style}[operand]
 
 def main():
- assert sys.flags.optimize==0, 'Python -O disables diagnostic assertions and is refused'
+ if sys.flags.optimize != 0: raise RuntimeError('Python -O disables diagnostic assertions and is refused')
  ib=read('immutable_inventory.json')
  assert len(ib)==INVENTORY_BYTES and sha(ib)==INVENTORY_SHA256
  inv=load('immutable_inventory.json')
