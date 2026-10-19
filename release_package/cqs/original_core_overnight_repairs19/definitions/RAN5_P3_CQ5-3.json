@@ -1,0 +1,44 @@
+{
+  "id": "RAN5_P3_CQ5-3",
+  "question_en": "Which RAN5 specs were changed in each release? (release-level change map)",
+  "original_query": "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN rel.releaseName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10",
+  "reference_query": "MATCH (rel:Release)\nOPTIONAL MATCH (rel)<-[:TARGET_RELEASE]-(cr:CR)-[:MODIFIES]->(sp:Spec)\nWHERE sp.specNumber STARTS WITH '38.5' AND NOT sp.specNumber STARTS WITH '38.591'\nRETURN rel.releaseName AS releaseName, collect(DISTINCT sp.specNumber) AS specNumbers\nORDER BY releaseName ASC",
+  "required_fields": [
+    {
+      "name": "releaseName",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "releaseName"
+    },
+    {
+      "name": "specNumbers",
+      "type": "json",
+      "nullable": false,
+      "source_column_or_expression": "specNumbers",
+      "json_schema": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "nested_array_semantics": {
+        "$": "set"
+      }
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all",
+    "notes": "Every distinct recorded Release identity is represented with its complete distinct set of RAN5 requested-target specNumber identities in the preserved Phase3 38.5xx domain excluding38.591; releases with no qualifying recorded target retain an empty set. No release or spec-membership cap is introduced."
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "e1f0a96c217ea562955d1fff24f4535daf3287f2c75c144d498ad031c5cd4a14",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/loop66_RAN5_release_change_map_exact_definition_and_secondary_review/definition.json",
+    "bytes": 1633,
+    "sha256": "b68b266efeba1b1ab9ca84be0444ba1d81f0e1034ee40e321f8a50bd144442b2"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "id": "RAN5_P3_CQ5-3",
+  "status": "pass",
+  "reviewer_kind": "root independent original-source exact-contract AI review",
+  "reviewer_identity": "/root",
+  "checked_utc": "2026-10-19T04:51:58.977426+00:00",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "e1f0a96c217ea562955d1fff24f4535daf3287f2c75c144d498ad031c5cd4a14",
+  "original_question_sha256": "5aaefefd53c0ea9e538e2ab5877d6067448811eab5f3f507559276cd3c80a0d1",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "finding": "The requested object is a release-to-specification identity map, with no CR count, version, rank or approval role. releaseName plus a nonnull set of specNumber strings encodes the map.",
+      "query_clauses": [
+        "RETURN rel.releaseName AS releaseName, collect(DISTINCT sp.specNumber) AS specNumbers"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "finding": "Original Phase3 retains Phase1/2 classes and instances, explicitly scopes RAN5 to38.5xx excluding38.591, and distinguishes its smaller structural-body input list from metadata. The metadata scope is therefore19 families rather than only15 parsed bodies. All recorded Release identities are the map domain; empty means no matching recorded requested-target relation. Root independently read the historical design and replayed the whole original588415-row CRDB XML, retaining40091 scoped rows and all69 requested pairs; the metadata19 projection and frozen SQL pair identities agree.",
+      "query_clauses": [
+        "MATCH (rel:Release)",
+        "sp.specNumber STARTS WITH '38.5' AND NOT sp.specNumber STARTS WITH '38.591'"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "finding": "Phase1 original L677 explicitly defines modifies as the specification for which CR requests change. Phase3 CQ3 uses this path while CQ4 separately adds approval. In this original graph context, changed denotes the recorded requested-target map; approval or actual editorial incorporation is a different stronger task. Past tense and practical-change motivations remain opposing evidence. Earlier pending actual-created-version review is preserved and is not asserted resolved by this map. Root observed69 requested pairs versus66 numeric created-version pairs; those diagnostics did not select the semantics.",
+      "query_clauses": [
+        "OPTIONAL MATCH (rel)<-[:TARGET_RELEASE]-(cr:CR)-[:MODIFIES]->(sp:Spec)"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "finding": "The unit is each distinct release/specification-number membership. Multiple supporting CRs, paths and release-specific Spec nodes cannot duplicate membership. Grouping by releaseName and collect DISTINCT specNumber implements that identity unit; no incidental count becomes a required answer field.",
+      "query_clauses": [
+        "collect(DISTINCT sp.specNumber) AS specNumbers"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "finding": "Each release explicitly asks a complete map. MATCH the release axis and OPTIONAL qualifying paths retains releases with empty arrays; no cap drops requested memberships. Original generic list default10 is real opposing context, but it cannot truncate the expressly complete each-release object. No result cardinality is used as an authority for this decision.",
+      "query_clauses": [
+        "MATCH (rel:Release)",
+        "OPTIONAL MATCH",
+        "RETURN rel.releaseName AS releaseName"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "finding": "The original English requests a map without ranked output. Outer and nested sets are the semantic objects. Original generic CountDESC/TSASC is disclosed presentation context, not a newly mandatory count or rank. ORDER BY releaseName ASC supplies deterministic serialization only; no claim that it reproduces the old default count sorting.",
+      "query_clauses": [
+        "ORDER BY releaseName ASC"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "finding": "No external release, user parameter, current approval or physical incorporation premise is supplied. Full-axis explicit empty arrays avoid an implicit sparse-map convention. Exact native/source/SQL identity, typed nested controls and equal method input remain independent execution gates; this semantic review does not certify them.",
+      "query_clauses": [
+        "MATCH (rel:Release)",
+        "collect(DISTINCT sp.specNumber) AS specNumbers"
+      ]
+    }
+  ],
+  "independent_root_execution_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/root_RAN5_release_map_pair_closure/actual_whole_metadata19_CRDB_projection_receipt.json",
+    "bytes": 49714,
+    "sha256": "ccbbbf41825a65fb7311f5552bb682b132627b9cd433a6847db789a5fd910c19"
+  },
+  "nonblind_disclosure": "Root has seen prior source diagnostics, child conclusions and proposed query. Root separately reopened original sources and performed the pinned complete source/SQL replay; this is a second AI judgment, not blind or human validation. No model prediction selected the semantics.",
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "native_API_or_public_pass_claim": false
+}

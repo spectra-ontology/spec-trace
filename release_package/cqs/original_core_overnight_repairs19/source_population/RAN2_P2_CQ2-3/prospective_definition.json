@@ -1,0 +1,47 @@
+{
+  "id": "RAN2_P2_CQ2-3",
+  "question_en": "List the agreements flagging items for comeback (deferred-decision tracking).",
+  "original_question_sha256": "a81999e545bf9687adb8252f6c8619f58f85c534e79f6a5c4e9691721e1e2531",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'comeback' RETURN a.resolutionId, m.canonicalMeetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+  "original_query_sha256": "016afa766e3ed09b3685bc646195590d736c41bf5421999959548cca50dfb817",
+  "reference_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting)\nWHERE toLower(a.content) =~ '(?s).*\\\\bcome\\\\s*back\\\\b.*'\nWITH DISTINCT a,m\nORDER BY m.meetingNumberInt DESC, a.sequence ASC\nLIMIT 10\nRETURN a.resolutionId AS resolutionId",
+  "reference_query_sha256": "50f9d4acce711673c2183921b044f28cd233d79293722367a0d8c1ead2c20d21",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "a.resolutionId; distinct original Agreement record identity"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 10
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "query_change": "Match case-insensitive whole-word comeback / come back; preserve original CQ2 default selection keys and limit; return the requested Agreement identity only.",
+  "source_context_interpretation": "Recorded own-Agreement explicit return flags, including conditional reopeners as conditional records. The original content/comeback mapping supports this interpretation. No claim that every flagged technical choice is presently undecided, that a condition occurred, or that a later approval happened.",
+  "population_contract": "The unchanged original RAN2 graph context:3413 Agreement records, not an expanded reconstruction of all physical meeting outcomes. All272 records at or above integer129 have one source-coordinate candidate; the ten effective records have directly inspected source bodies and roles.",
+  "source_default_extent_authority": "Original design CQ2 default10 and the same-Spec validation/category binding; not LIMIT10 alone or an English-only top/recent phrase.",
+  "selection_order": [
+    "m.meetingNumberInt DESC",
+    "a.sequence ASC"
+  ],
+  "scored_order": "Unordered Agreement identity set. The exact English requests a list, not ranked or chronological output. Default selection is retained; its serialization is not an extra required answer role under fixed ordering-and-ties-when-requested criteria.",
+  "cutoff_tie_policy": "All ties relevant to selection are explicitly measured. The last group has one candidate and one slot; no ID tiebreaker. All ten effective flags are within the full272 dependency and all older records have lower integer meeting, so any within-meeting sequence assignment yields the same ten identities.",
+  "source_sequence_defect_preserved": "Six of ten old-vs-current sequence fields differ. No current source sequence correctness is asserted and no sequence/agenda/rank claim is scored.",
+  "opposing_interpretation": "The parenthetical deferred-decision tracking may be read as only currently unsettled decisions. Four latest records explicitly decide the technical choice and only reserve return if external issues/information arrives. That narrower reading yields a different eligible pool and cannot be silently substituted. The proposed reading prioritizes exact flagging wording plus original content-pattern authority and records the conditionality rather than asserting present open status.",
+  "source_definition_pin": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN2_RAN5/loop57_RAN2_comeback_exact_schema_gate/source_packet_manifest.json",
+    "bytes": 15725,
+    "sha256": "14b022fd17a6d0b9b36b55243a15c6c6a63eb369d3de5bf583224cf5133f4766"
+  },
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "validation_status": "prospective_definition_one_child_review_only_pending_root_independent_native_SQL_scorer_gate",
+  "not_model_performance": true,
+  "repair_sha256": "59abc20c9f7da50b8bf77b9238169a5a70e0d064f28347a7154ec882a8204abc"
+}

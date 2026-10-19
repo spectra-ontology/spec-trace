@@ -10,7 +10,10 @@ LABELS={'contract_verified':'답안 계약 검증 통과','clarification_require
         'evidence_pending':'근거·검증 미완료'}
 
 
-def build(candidate_paths):
+DEFAULT_CANDIDATE_FILES=['metric_classification_candidates.json', 'missing_input_classification_candidates.json', 'extent_classification_candidates.json', 'conflicting_entity_description_candidates.json']
+
+def build(candidate_paths=None):
+    if candidate_paths is None:candidate_paths=[HERE/name for name in DEFAULT_CANDIDATE_FILES]
     baseline=[json.loads(l) for l in (HERE/'baseline560_metadata.jsonl').open()]
     assert len(baseline)==560 and len({r['id'] for r in baseline})==560
     candidates={}
@@ -31,9 +34,14 @@ def build(candidate_paths):
             if q:assert q==r['original_question_sha256']
         else:
             category='evidence_pending';evidence='Remaining immutable nonadmitted item; this overlay does not claim irreducible ambiguity or permanent impossibility.'
-        result.append({**r,'classification':category,'classification_label_ko':LABELS[category],
-                       'classification_evidence':evidence,'diagnostic_subtype':candidate.get('subtype') if candidate else None,
-                       'benchmark_admission_changed':False})
+        item={**r,'classification':category,'classification_label_ko':LABELS[category],
+              'classification_evidence':evidence,'diagnostic_subtype':candidate.get('subtype') if candidate else None,
+              'benchmark_admission_changed':False}
+        if candidate and candidate.get('subtype')=='conflicting_entity_description':
+            assert candidate['classification_is_conditional'] is True and candidate['admission'] is False
+            item.update(classification_is_conditional=True,classification_condition=candidate['condition'],
+                        recovery_condition=candidate['recovery_condition'],remaining_answer_evidence_pending=candidate['remaining_answer_evidence_pending'])
+        result.append(item)
     counts=Counter(r['classification'] for r in result)
     assert sum(counts.values())==560
     return result,{'registered_n':560,'partition_counts':dict(counts),

@@ -1,0 +1,162 @@
+{
+  "id": "RAN5_P3_CQ5-3",
+  "status": "pass",
+  "reviewer": "RAN1_RAN3_RAN4 child AI independent secondary semantic judgment",
+  "reviewer_type": "AI, nonblind",
+  "review_scope": "Exact question/source semantic derivation mapped to canonical definition; not native execution or benchmark admission",
+  "created_utc": "2026-10-19T04:47:30.810702+00:00",
+  "repair_sha256": "e1f0a96c217ea562955d1fff24f4535daf3287f2c75c144d498ad031c5cd4a14",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "original_question_sha256": "5aaefefd53c0ea9e538e2ab5877d6067448811eab5f3f507559276cd3c80a0d1",
+  "reference_query_sha256": "6ba37d639d9254db3dafd4d948a1c2a39363d1849daaf54052aa53437de14d30",
+  "definition_file_sha256": "b68b266efeba1b1ab9ca84be0444ba1d81f0e1034ee40e321f8a50bd144442b2",
+  "semantic_evidence": {
+    "requested answer roles and fields": {
+      "assessment": "pass",
+      "status": "pass",
+      "independent_derivation": "A release-level map associates each release identifier with the set of RAN5 specification identities changed in that release. Required roles are releaseName and a duplicate-free collection of specNumber, or an equivalent complete release/spec relation together with its release domain. The question does not request CR counts, document titles, version identifiers or proof of physical TS incorporation. Extra fields may be explanations but are not mandatory answer roles.",
+      "source_evidence": [
+        "original unchanged English: each release; release-level change map",
+        "phase3 L202-205: CQ5-3 is changed TS list for a release",
+        "phase1 L677: modifies target is a requested-change specification",
+        "phase3 L328-333: retained Spec, CR and Release classes"
+      ],
+      "original_quote": "Which RAN5 specs were changed in each release? (release-level change map)",
+      "query_evidence": "RETURN rel.releaseName AS releaseName, collect(DISTINCT sp.specNumber) AS specNumbers exactly returns the release identity and set of spec identities. required_fields fixes non-null string releaseName and non-null array-of-string specNumbers; nested set semantics and outer set match the requested map. crCount is not required."
+    },
+    "population and source context": {
+      "assessment": "pass",
+      "status": "pass",
+      "independent_derivation": "Use the preserved RAN5 graph-relative domain: Phase1/2 instances remain available. RAN5 specification domain is 38.5xx with the 38.591 series excluded. The Phase3 DOCX/parser inclusion list and its release-final structural editions do not independently authorize deleting retained Phase1 CR targets or earlier Release instances from an integrated CQ5 change map. The domain of releases is all valid recorded Release entities in the scoped frozen source, rather than only releases with positive qualifying matches. Input Type CR/draftCR/pCR supplies the original CR class; this is a source-defined membership, not a declaration that every physical document whose body looks like a CR must be admitted. Exact source population and completeness remain execution gates.",
+      "source_evidence": [
+        "phase3 L49-52 and L279-283: all Phase1/2 classes, relations and instances retained",
+        "phase3 L80-81: structural TS parser/final-edition scope",
+        "phase3 L96 and L239: exclude 38.591; RAN5 38.5xx domain",
+        "phase3 L317-333: CQ5 integrates retained Phase1 CR, Spec and Release",
+        "phase1 L368 and L594-603: CR Type source and Release source",
+        "phase1 L648: target Release is sourced from the Tdoc register"
+      ],
+      "query_evidence": "MATCH (rel:Release) starts with the full recorded Release axis. OPTIONAL MATCH uses retained CR -> Spec and targetRelease relations. The scoped specification filter is STARTS WITH '38.5' AND NOT STARTS WITH '38.591'; it does not impose the narrower structural DOCX input list, or remove earlier retained Release nodes. Source-class CR membership is the preserved Phase1 Type-family class."
+    },
+    "filters and relationship meaning": {
+      "assessment": "pass",
+      "status": "pass",
+      "independent_derivation": "Within the original graph context, changed can be implemented as a recorded CR requested-target relation: a source-defined CR targets a release and modifies the specification. Phase1 explicitly defines modifies as the specification for which a change is requested. Phase3 CQ3 uses this CR-to-Spec path, whereas CQ4 adds Resolution approval separately. Therefore no approval, actual version-creation, physical editorial incorporation, or later TS body-diff filter is independently mandatory for this CQ5 map. This supports a recorded change-request map, not a causal or practical claim that a proposal was accepted or incorporated. The ordinary-language past-tense changed and practical impact motivations are real opposing evidence; the graph-relative interpretation must remain explicit.",
+      "source_evidence": [
+        "phase1 L677: CR이 변경을 요청하는 대상 기술 규격",
+        "phase1 L648: targetRelease from Release column",
+        "phase3 L174-196: CQ3 CR paths versus CQ4 approved Resolution paths",
+        "phase3 L357-361: retained modifies and targetRelease relationships",
+        "phase3 L204: CQ5-3 changed TS list",
+        "phase3 L27-37: practical modification/standard-reflection motivations are opposing context"
+      ],
+      "query_evidence": "OPTIONAL MATCH (rel)<-[:TARGET_RELEASE]-(cr:CR)-[:MODIFIES]->(sp:Spec) implements the recorded requested-target relation independently derived from Phase1 L677 and Phase3 CQ3/CQ4. No approval/status/created-version filter is added. The independently exposed approved-version diagnostic66 versus all recorded69 is a different relation and cannot decide this semantic contract."
+    },
+    "counting unit and join multiplicity": {
+      "assessment": "pass",
+      "status": "pass",
+      "independent_derivation": "This is a set-valued map, not a requested numeric CR statistic. Each release/specification-number membership appears once even if multiple CR documents or release-specific Spec nodes support it. Source workbook versions, duplicate paths, repeated CRs, and physical TS editions cannot multiply requested set entries. If CR counts are used only to serialize according to the generic CQ5 presentation rule, their unique identity and join unit must be justified independently and must not become an additional required field.",
+      "source_evidence": [
+        "original English asks which specs, not how many CRs",
+        "phase3 L81: same spec number may have multiple release-aware Spec nodes",
+        "phase3 L219: generic Count DESC presentation rule",
+        "criteria scoring_evidence: no extra unrequested projection becomes a required answer"
+      ],
+      "query_evidence": "collect(DISTINCT sp.specNumber) groups by rel.releaseName, reducing repeated CR support, duplicate graph paths and Spec-edition nodes to one requested specification-family identity per release. It does not count CRs or editions as required answers. Same-named Release nodes denote the same requested release identity; native/source gates must confirm field validity."
+    },
+    "cardinality and completeness": {
+      "assessment": "pass",
+      "status": "pass",
+      "independent_derivation": "The explicit each release asks for the complete map across the preserved recorded Release domain. For each release, include every qualifying distinct spec identity within the original source scope. Generic default Limit 10 at phase3 L225 is genuine contrary evidence: it is attached to the original single-release CQ5-3 list and cannot be silently ignored or used to truncate an explicitly all-release map. A future query must either avoid any loss while retaining the complete requested map, or leave this contract unresolved if the default actually truncates release/spec membership. No observed result cardinality has been used here.",
+      "source_evidence": [
+        "original English: each release, release-level change map",
+        "phase3 L204: original single-release CQ5-3 list",
+        "phase3 L221-228: CQ5-1 through CQ5-3 generic default list limit10",
+        "phase3 L52 and L281-283: retained prior domain"
+      ],
+      "query_evidence": "MATCH all Release plus OPTIONAL MATCH retains unmatched releases; collect excludes missing specification values and returns an empty set for them. There is no LIMIT. The exact question each release specifies the complete map rather than a top-N sample. Generic single-release list default10 is preserved as contrary context but cannot justify losing explicitly requested memberships. Exact source/full native gates remain separately required."
+    },
+    "ordering and ties when requested": {
+      "assessment": "pass",
+      "status": "pass",
+      "independent_derivation": "The English asks for a map and which specifications, with no top-N, rank or ordinal role. Membership sets per release are therefore the requested semantic objects. The preserved generic CQ5 Count DESC/TS number ASC is a presentation constraint/opposing context and should be retained if a row serialization claims original default ordering. It does not turn incidental counts into required fields or authorize dropping members. This differs from RAN4 top10, where rank determines requested membership and original sorting is indispensable. A representation-independent set-map contract should explicitly explain its relationship to the old default, rather than silently calling every serialization equivalent.",
+      "source_evidence": [
+        "original English: release-level change map, no top/rank",
+        "phase3 L211-219: generic CQ5 Count DESC then TS ASC",
+        "phase3 L225-226: distinction between list and Top-N CQ types"
+      ],
+      "query_evidence": "ORDER BY releaseName ASC is deterministic serialization only; outer collection=set and nested_array_semantics $=set require full release/spec membership without ordinal roles. Generic CQ5 CountDESC/TSASC is retained as opposing default context, but the unchanged English release-level map requests no rank; no count or arbitrary first ten are introduced as answer roles."
+    },
+    "unverified additional inputs or external interpretation": {
+      "assessment": "pass",
+      "status": "pass",
+      "independent_derivation": "No external user fixture or actual-version creation premise is needed for a recorded requested-target map once the frozen source and complete valid Release domain are pinned. However exact backend population, source/identifier bindings, field/scorer typing, completeness, and mapping of these independently derived units to a proposed repaired query must still be verified. A domain-complete map with explicit empty collections and a positive-pairs-only relation are information-equivalent only if the latter also declares the full release domain and explicitly defines omitted domain members as empty. Without that domain/empty convention, absent releases are unspecified, so the two outputs are not automatically equivalent. Empty means no qualifying recorded relation in this dataset, not proof that the release underwent no real-world changes.",
+      "source_evidence": [
+        "phase1 L375 and L648: recorded Release domain",
+        "phase3 L52: retained Phase1/2 instances",
+        "criteria pass_requires: independently derive then map to actual query/contract",
+        "original English: each release requires coverage of the release domain"
+      ],
+      "query_evidence": "The exact definition adopts an explicit full-axis representation, not an implicit sparse encoding: each recorded release has its specNumbers array, including empty. It adds no external user fixture, actual approval premise, or physical-incorporation proof. Canonical field/scoring and query mapping are established here; full captured native output, independently executed SQL/source equality, generic and nested-set scoring controls, and equal method input/replay remain root-owned admission gates."
+    }
+  },
+  "exposure": {
+    "prior_source_only_derivation": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/loop63_RAN5_release_change_map_independent_original_source_semantics/independent_seven_unit_source_only_review.json",
+      "bytes": 12250,
+      "sha256": "cbbd548787a9ece64c09c9021ff93b420b75f223ac31d7667278b42b50416b74"
+    },
+    "prior_derivation_read_original_or_proposed_query": false,
+    "now_read_original_and_proposed_query": true,
+    "now_exposed_parent_source_diagnostic_recorded_pairs": 69,
+    "now_exposed_parent_different_approved_created_version_pairs": 66,
+    "read_native_output_or_model_predictions_for_this_case": false,
+    "source_diagnostic_counts_not_used_to_choose_requested_relation": true,
+    "root_contract_was_proposed_before_this_exact_secondary_mapping": true
+  },
+  "counterinterpretations_preserved": [
+    "Past were changed and practical standard-change usage may instead require subsequently enacted version creation. If original context does not uniquely settle that, keep pending.",
+    "Original default list limit10/count sort is contrary evidence, though inherited generic defaults cannot remove expressly requested each-release membership.",
+    "Each release could refer only to observed changed releases rather than the entire11 original Release axis. Full-axis and sparse-default forms cannot be declared equivalent without a defined scoring representation."
+  ],
+  "limits": [
+    "Past changed is interpreted only in explicitly preserved recorded requested-target graph context; no real-world approval/incorporation claim.",
+    "Generic default10/CountDESC conflict is disclosed; this source-context semantic judgment chooses the explicit each-release complete map rather than truncation.",
+    "All recorded Release identifiers and nested specification strings must still be checked against complete captured native/source output; no gold is created here.",
+    "Two AI judgments do not constitute domain-expert or human-author validation."
+  ],
+  "source_pins": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/root_RAN5_release_map_pair_closure/original_requested_target_scope_contract_for_independent_challenge.json",
+      "bytes": 4110,
+      "sha256": "df4d95234208aeaf599476e584b65c7ed95119ba542d36820497435afaf5d3ad"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/loop63_RAN5_release_change_map_independent_original_source_semantics/independent_seven_unit_source_only_review.json",
+      "bytes": 12250,
+      "sha256": "cbbd548787a9ece64c09c9021ff93b420b75f223ac31d7667278b42b50416b74"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/root_RAN5_release_map_pair_closure/actual_whole_metadata19_CRDB_projection_receipt.json",
+      "bytes": 49714,
+      "sha256": "ccbbbf41825a65fb7311f5552bb682b132627b9cd433a6847db789a5fd910c19"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/criteria.json",
+      "bytes": 3382,
+      "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+    }
+  ],
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "new_admissions": 0,
+  "API_calls": 0,
+  "native_graph_calls": 0,
+  "central_or_public_changes": 0,
+  "reviewer_kind": "independent_child_AI_semantic_review",
+  "original_review_pin": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/loop66_RAN5_release_change_map_exact_definition_and_secondary_review/independent_exact_secondary_seven_unit_review.json",
+    "bytes": 15727,
+    "sha256": "788acc2dcb76e8c6159e0ccd309bace8d975c51cc712188a739ef132c978af51"
+  }
+}
