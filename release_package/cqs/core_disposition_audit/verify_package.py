@@ -21,7 +21,7 @@ def main():
     stored=[json.loads(l) for l in (HERE/'partition/classification_overlay560.jsonl').open()]
     assert rows==stored
     assert summary==json.loads((HERE/'partition/summary.json').read_text())
-    assert summary['partition_counts']=={'contract_verified':475,'clarification_required':10,'evidence_pending':75}
+    assert summary['partition_counts']=={'contract_verified':476,'clarification_required':10,'evidence_pending':74}
     print(json.dumps({'verification':'PASS','files_verified':len(manifest['files_SHA256']),
         'SQLite_and_independent_set_recounts':'MATCH','partition':summary,
         'new_admissions':0,'expert_validation_n':0},ensure_ascii=False))

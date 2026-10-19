@@ -1,0 +1,131 @@
+{
+  "id": "RAN1_P3_CQ001",
+  "checked_utc": "2026-10-19T02:33:02.672784+00:00",
+  "status": "pass",
+  "reviewer_kind": "separate AI source-first semantic judgment; not human or expert review",
+  "reviewer_identity": "/root/unresolved_loop_ran1_ran3_ran4",
+  "exposure": "Nonblind: original query, preserved source, prior pending interpretations, root source-context observations and actual frozen rows were seen. No model prediction or score was used to choose the contract.",
+  "original_question_sha256": "7c67e66e27d22b9b6b8fb7b614e5b22085d99cb4fc74b33d49d7a5db52a759d9",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "42b55e6702c348dad4d5faeaad61507ce1fe3e83aaf5de2f44485c44e0376039",
+  "chosen_query_sha256": "ebe01b7ad1317470d4d3ac858c70a21741f55b65eb10c3a338763ab5f66c6f38",
+  "repair_class": "query_and_scorer",
+  "required_fields": [
+    {
+      "name": "specRelease",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "specRelease"
+    },
+    {
+      "name": "sectionNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "sectionNumber"
+    },
+    {
+      "name": "sectionTitle",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "sectionTitle"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all",
+    "notes": "All retained release-final formal top-level Section observations, explicitly attributed to their release; no single edition is selected and no row cap is introduced."
+  },
+  "semantic_evidence": {
+    "requested answer roles and fields": {
+      "status": "pass",
+      "original_quote": "Return the top-level table of contents of TS 38.214 (locating DL-scheduling content).",
+      "independent_derivation": "Formal top-level Section number and title constitute the requested TOC in preserved TS structure context. Release attribution distinguishes the five retained TOCs; specVersion is useful source metadata, not an independently mandatory requested field.",
+      "query_evidence": "MATCH (sp:Spec {specNumber: '38.214'})-[:HAS_SECTION]->(sec:Section) RETURN sp.specRelease AS specRelease, sec.sectionNumber AS sectionNumber, sec.sectionTitle AS sectionTitle ORDER BY specRelease, sectionNumber",
+      "assessment": "Pass: Section number/title provide the formal TOC; release attribution preserves which retained TOC each heading belongs to without requiring redundant version or internal IDs."
+    },
+    "population and source context": {
+      "status": "pass",
+      "original_quote": "Return the top-level table of contents of TS 38.214 (locating DL-scheduling content).",
+      "independent_derivation": "The named TS has five release-qualified Spec nodes, each linked to its own retained release-final body. Return every matching edition with explicit labels; neither latest-only choice nor unknown external editions are implied.",
+      "query_evidence": "MATCH (sp:Spec {specNumber: '38.214'})-[:HAS_SECTION]->(sec:Section) RETURN sp.specRelease AS specRelease, sec.sectionNumber AS sectionNumber, sec.sectionTitle AS sectionTitle ORDER BY specRelease, sectionNumber",
+      "assessment": "Pass: all retained release-final source documents are included; no arbitrary latest edition, window or external collection is substituted."
+    },
+    "filters and relationship meaning": {
+      "status": "pass",
+      "original_quote": "Return the top-level table of contents of TS 38.214 (locating DL-scheduling content).",
+      "independent_derivation": "Section is explicitly body plus Annex; HAS_SECTION links only level1 formal Sections. The dataset category TS_구조탐색 matches the design CQ1 TS structure exploration and the selected top-level body relation. The actual unnumbered Foreword is preserved as contrary literal-TOC evidence but is outside this formal Section task scope.",
+      "query_evidence": "MATCH (sp:Spec {specNumber: '38.214'})-[:HAS_SECTION]->(sec:Section) RETURN sp.specRelease AS specRelease, sec.sectionNumber AS sectionNumber, sec.sectionTitle AS sectionTitle ORDER BY specRelease, sectionNumber",
+      "assessment": "Pass: the actual category and preserved body+Annex/level1/HAS_SECTION definitions support formal top-level Sections. Literal unnumbered Foreword remains source evidence outside this graph task scope."
+    },
+    "counting unit and join multiplicity": {
+      "status": "pass",
+      "original_quote": "Return the top-level table of contents of TS 38.214 (locating DL-scheduling content).",
+      "independent_derivation": "One release-attributed Section observation is the record unit, not a unique number/title pair across editions. Actual independent native-source and relational sets both have46 records, all level1.",
+      "query_evidence": "MATCH (sp:Spec {specNumber: '38.214'})-[:HAS_SECTION]->(sec:Section) RETURN sp.specRelease AS specRelease, sec.sectionNumber AS sectionNumber, sec.sectionTitle AS sectionTitle ORDER BY specRelease, sectionNumber",
+      "assessment": "Pass: source SQL equality is checked on all46 release-attributed observations, preserving their edition identity rather than flattening to11 pairs."
+    },
+    "cardinality and completeness": {
+      "status": "pass",
+      "original_quote": "Return the top-level table of contents of TS 38.214 (locating DL-scheduling content).",
+      "independent_derivation": "All seven/nine/ten/ten/ten formal headings are returned for the five retained editions. Explicit top-level TOC and preserved whole-Section KO defeat default pagination; there is no arbitrary window or edition selection.",
+      "query_evidence": "MATCH (sp:Spec {specNumber: '38.214'})-[:HAS_SECTION]->(sec:Section) RETURN sp.specRelease AS specRelease, sec.sectionNumber AS sectionNumber, sec.sectionTitle AS sectionTitle ORDER BY specRelease, sectionNumber",
+      "assessment": "Pass: the whole top-level TOC request is implemented by an uncapped relation expansion covering all five retained formal heading sets."
+    },
+    "ordering and ties when requested": {
+      "status": "pass",
+      "original_quote": "Return the top-level table of contents of TS 38.214 (locating DL-scheduling content).",
+      "independent_derivation": "Section identities encode structural position. Grouping by release and displaying formal section order is appropriate; no temporal rank/tie or arbitrary group order is made a requested score role. Actual headings are1 through at most9 followed by AnnexA, so current lexical display is also natural within these five sets.",
+      "query_evidence": "MATCH (sp:Spec {specNumber: '38.214'})-[:HAS_SECTION]->(sec:Section) RETURN sp.specRelease AS specRelease, sec.sectionNumber AS sectionNumber, sec.sectionTitle AS sectionTitle ORDER BY specRelease, sectionNumber",
+      "assessment": "Pass: structural identities and grouped release attribution preserve TOC positions; no artificial temporal-rank group order is required by the set scorer."
+    },
+    "unverified additional inputs or external interpretation": {
+      "status": "pass",
+      "original_quote": "Return the top-level table of contents of TS 38.214 (locating DL-scheduling content).",
+      "independent_derivation": "No focal release input is needed for an exhaustive, explicitly attributed answer over all retained release finals. The answer does not claim a single mixed-version edition, global latest standard or full minor-version history.",
+      "query_evidence": "MATCH (sp:Spec {specNumber: '38.214'})-[:HAS_SECTION]->(sec:Section) RETURN sp.specRelease AS specRelease, sec.sectionNumber AS sectionNumber, sec.sectionTitle AS sectionTitle ORDER BY specRelease, sectionNumber",
+      "assessment": "Pass: exhaustive labeled retained editions require no hidden focal-release binding; no global latest or complete minor-version-history claim is made."
+    }
+  },
+  "preserved_semantic_and_source_review": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/RAN1_CQ001_formal_Section_all_retained_release_attribution_review/independent_formal_Section_semantics_and_prospective_contract.json",
+    "bytes": 16061,
+    "sha256": "3b335a2e2b8c90fe39abbcf95cab029a963995966e2d6f28e915d7ea6d8a3234"
+  },
+  "full_source_SQL_controls": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/RAN1_CQ001_formal_Section_all_retained_release_attribution_review/full_release_attributed_source_SQL_and_controls.json",
+    "bytes": 40674,
+    "sha256": "600220db405f3aaa02c80e80bcd2a27018c73f23a74cde85080c60cafe2d5d7b"
+  },
+  "original_design_legacy_provenance": {
+    "Git_revision": "HEAD",
+    "Git_path": "docs/RAN/formal/RAN1/phase-3/design-spec/tdoc_ontology_specs(TS).md",
+    "bytes": 91106,
+    "SHA256": "ca283a9c8b49adef315df96b2594d07db738de1ce0effb0767da95dd473d7505",
+    "equal_to_INDEX_snapshot": true,
+    "last_path_commit_and_committer_timestamp": "06bd1b5b2598fa2e4404de7fc0a82f99eb7a541e\t2026-07-16T00:40:13+09:00",
+    "history_limit": "This verifies retained HEAD/history context, not every past evaluation environment or file."
+  },
+  "bare_Spec_node_interpretation": "Editionless reference node has null release/version and no HAS_SECTION; not an actual sixth document edition or proof of an empty TOC. All retained physical release-final documents5 are checked. No added filter changes the original relation expansion.",
+  "not_a_public_admission": true,
+  "remaining_nonsemantic_gates": [
+    "Root independent judgment for this exact repairSHA",
+    "Root exact native query full-output receipt + independent SQL comparison",
+    "Production typed requested-field scorer/negative controls",
+    "API/model evaluation as authorized and controlled by root",
+    "Public integration/replay by root only"
+  ],
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "new_API_calls": 0,
+  "public_central_mutations": 0,
+  "format_correction": {
+    "prior_review": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/RAN1_CQ001_prospective_standard_definition_source_only/independent_seven_unit_exact_repair_review.json",
+      "bytes": 8836,
+      "sha256": "96e6d0d4d6108298fa6eb807e50bd08005ef7e83cb48b0b6b35773313819adda"
+    },
+    "change": "Added each author judgment in required assessment slot. Original derivations, query, criteria and exact repair digest unchanged."
+  }
+}
