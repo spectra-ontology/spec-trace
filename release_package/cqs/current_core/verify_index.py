@@ -52,7 +52,10 @@ def main():
             assert t['supersedes_repair_sha256']==frozen['original_core_repair'][t['id']]['repair_sha256']
         else:assert 'supersedes_repair_sha256' not in t
     by_id={r['id']:r for r in tasks}
+    resolutions=manifest.get('source_factuality_resolutions',{})
+    assert set(resolutions) <= {'RAN5_P1_CQ6-3'}
     quarantine=manifest.get('source_factuality_quarantines')
+    assert not resolutions or quarantine
     if quarantine:
         qb=root/quarantine['bundle']; qm=json.loads((qb/'manifest.json').read_text())
         assert sha(qb/'manifest.json')==manifest['cohort_manifest_pins'][qb.name]
@@ -61,9 +64,41 @@ def main():
         entries=json.loads(registry.read_text())['entries']
         assert {r['id'] for r in entries}==set(quarantine['ids']) and len(entries)==quarantine['n']
         disposition={r['id']:r for r in ledger}
+        assert set(resolutions) <= {entry['id'] for entry in entries}
         for entry in entries:
-            ident=entry['id']; assert ident not in by_id and disposition[ident]['status']=='pending'
-            assert disposition[ident]['repair_sha256']==entry['repair_sha256']
+            ident=entry['id']
+            if ident in resolutions:
+                resolution=resolutions[ident]
+                assert ident=='RAN5_P1_CQ6-3'
+                assert resolution['quarantined_repair_sha256']==entry['repair_sha256']=='39f514a89a1981bfb4685c45e0a53671d92738f2d546d87602b3f2fefbae7944'
+                new='1fea2e469078260e6542ecd49a411e43b27cc92518bc5200b298202d47b96f3f'
+                assert resolution['new_repair_sha256']==new
+                assert resolution['new_bundle']=='release_package/cqs/original_core_overnight_repairs18'
+                assert resolution['resolution_kind']=='new_query_and_scorer_same_population_source_context'
+                assert resolution['historical_quarantine_evidence_preserved'] is True
+                assert resolution['old_reference_gold_restored'] is False
+                active=by_id[ident]; current=disposition[ident]
+                assert active['repair_sha256']==current['repair_sha256']==new
+                assert current['status']=='pass' and active['repair_class']=='query_and_scorer'
+                assert active['bundle']==resolution['new_bundle']
+                scope=Path(active['bundle']).name; nb=root/active['bundle']
+                assert resolution['new_bundle_manifest_sha256']==manifest['cohort_manifest_pins'][scope]==sha(nb/'manifest.json')
+                nm=json.loads((nb/'manifest.json').read_text())
+                assert nm['cohort_ids']==[ident] and nm['actual_scorer_controls']==10
+                sp='source_population/manifest.json'
+                assert resolution['source_population_manifest']==str(Path(active['bundle'])/sp)
+                digest='476b80fd1979fc30d212a50b58f19d03eb6559c569189e368e46c315225c531f'
+                assert resolution['source_population_manifest_sha256']==nm['source_population_manifest_sha256']==nm['files'][sp]==sha(nb/sp)==digest
+                pm=json.loads((nb/sp).read_text())
+                assert pm['id']==ident and pm['repair_sha256']==new
+                for name,pin in pm['files'].items():
+                    path=(nb/'source_population'/name).resolve()
+                    assert path.is_relative_to((nb/'source_population').resolve())
+                    assert path.stat().st_size==pin['bytes'] and sha(path)==pin['sha256']
+                    assert nm['files']['source_population/'+name]==pin['sha256']
+            else:
+                assert ident not in by_id and disposition[ident]['status']=='pending'
+                assert disposition[ident]['repair_sha256']==entry['repair_sha256']
             for name in ('source_receipt','root_adjudication','independent_review'):
                 rel='source_factuality/'+ident+'/'+name+'.json'
                 assert sha(qb/rel)==qm['files'][rel]

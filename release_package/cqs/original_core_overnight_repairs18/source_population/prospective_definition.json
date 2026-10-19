@@ -1,0 +1,54 @@
+{
+  "id": "RAN5_P1_CQ6-3",
+  "question_en": "Compare the total TDoc count against the CR count (CR proportion).",
+  "original_question_sha256": "dfabf8e45740ae0e4dc4ced0699b8acd43d921db4e44f51e7450c337dd04dea2",
+  "original_query": "MATCH (t:Tdoc) WITH count(t) AS total MATCH (cr:CR) RETURN total, count(cr) AS crs",
+  "reference_query": "MATCH (t:Tdoc)\nRETURN count(DISTINCT t.tdocNumber) AS total,\n       count(DISTINCT CASE WHEN t.type IN ['CR', 'draftCR', 'pCR'] THEN t.tdocNumber END) AS crs",
+  "required_fields": [
+    {
+      "name": "total",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "count of distinct TDoc identifiers in the original TDocList-backed population"
+    },
+    {
+      "name": "crs",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "count of the same original TDocList identifiers with authored Type in CR,draftCR,pCR"
+    }
+  ],
+  "collection": {
+    "kind": "multiset"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 1
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "query_change": "Count the original TDocList-backed record population and its documentary CR Type subset in one scan. Do not scan later CR-only class stubs as an independent population.",
+  "source_context_interpretation": "The current frozen Tdoc metadata population, exhaustively and exactly bound to the original declared35 TDocList sources, is the comparison cohort. Its documentary CR Type subset supplies the numerator. This is an explicit source-context inference from the original input scope plus validation-dataset link and exact loaded-population certificate, not an English-only historical cutoff, phase metadata alone or a claim of undocumented author intent. Independently loaded CR-only stubs do not enlarge this certified metadata population.",
+  "source_scope_receipt": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN2_RAN5/loop49_original35_file_scope_population_binding/original35_file_scope_population_binding_receipt.json",
+    "bytes": 58527,
+    "sha256": "3fa735ab6fcf211bafa1fb329cc1d2148ccf60b1b16260966ed82238824f7b00"
+  },
+  "exhaustive_original_input_provenance": {
+    "compressed": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN2_RAN5/loop49_original35_file_scope_population_binding/whole_original35_identifier_type_provenance.jsonl.gz",
+      "bytes": 4173392,
+      "sha256": "be79df0d2bb7692d5972b9ed25510f5c4027420414ed63594362cf3389760e29"
+    },
+    "rows_n": 62069,
+    "uncompressed_bytes": 28992897,
+    "uncompressed_sha256": "5e7d90a0fb8213f2675fb3f631fdc6e9be16322a19ce1edc90329e0b6158c44b"
+  },
+  "cohort_certificate": "Original declared file families and meeting range were fixed before observing counts. The whole identifier set from those originals equals the whole frozen Tdoc identifier set; native Tdoc is therefore a certified materialization of this input population, not an assumed class-role authority.",
+  "source_defects_preserved": "Four original7digit metadata identifiers are retained literally despite the original constructor6digit guard. The query counts observed source metadata records, does not certify official physical document IDs and does not collapse or invent aliases.",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "validation_status": "pending_root_independent_semantic_native_scorer_integration",
+  "semantic_review_status": "pass_by_this_child_source_context_AI_judgment",
+  "not_model_performance": true,
+  "repair_sha256": "1fea2e469078260e6542ecd49a411e43b27cc92518bc5200b298202d47b96f3f"
+}
