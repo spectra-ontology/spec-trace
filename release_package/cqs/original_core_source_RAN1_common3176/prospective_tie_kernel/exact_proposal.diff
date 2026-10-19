@@ -1,0 +1,79 @@
+--- pinned_original_scorer.py
++++ prospective_original_scorer.py
+@@ -8,6 +8,37 @@
+ from collections import Counter
+ from decimal import Decimal
+ import scorer as typed
++
++
++def validate_top_k_reachable_record_uniqueness(contract, groups):
++    """Preserve every captured row; reject duplicate records that can enter top-k.
++
++    Duplicate requested records wholly in strictly lower groups cannot affect
++    any permissible top-k answer. They remain in the complete population and
++    are never deduplicated. A duplicate touching ANY member of a reachable
++    boundary group fails, including a lower duplicate of an eligible record.
++    This is an infrastructure policy, not a question-meaning judgment.
++    """
++    limit = contract['collection'].get('value')
++    if type(limit) is not int or limit <= 0:
++        raise ValueError('top-k size must be an explicitly declared positive integer')
++    fields = contract['required_fields']
++    rows_before, reachable, locations = 0, set(), {}
++    for index, group in enumerate(groups):
++        is_reachable = rows_before < limit
++        for row in group:
++            token = typed.record_token(row, fields)
++            locations.setdefault(token, []).append(index)
++            if is_reachable:
++                reachable.add(token)
++        rows_before += len(group)
++    duplicates = {token: ranks for token, ranks in locations.items() if len(ranks) > 1}
++    if any(token in reachable for token in duplicates):
++        raise ValueError('top-k reachable population contains duplicate requested records')
++    return {'complete_population_rows': rows_before,
++            'reachable_distinct_records': len(reachable),
++            'preserved_strictly_lower_duplicate_records': len(duplicates),
++            'deduplicated_rows': 0}
+ 
+ 
+ def make_order_groups(contract, native_rows, projected_rows):
+@@ -51,17 +82,17 @@
+             groups.append([])
+         groups[-1].append(projected)
+         prior = native
+-    # A visible answer record cannot belong to two distinct ordering groups.
+-    # Otherwise the visible answer lacks enough identity to assign its rank.
+-    seen = {}
+-    for index, group in enumerate(groups):
+-        for row in group:
+-            token = typed.record_token(row, contract['required_fields'])
+-            if token in seen and seen[token] != index:
+-                raise ValueError('requested record has ambiguous native rank')
+-            if token in seen and kind == 'top_k_boundary_ties':
+-                raise ValueError('top-k population contains duplicate requested records')
+-            seen[token] = index
++    if kind == 'top_k_boundary_ties':
++        validate_top_k_reachable_record_uniqueness(contract, groups)
++    else:
++        # Existing ordered multiset policy remains unchanged.
++        seen = {}
++        for index, group in enumerate(groups):
++            for row in group:
++                token = typed.record_token(row, contract['required_fields'])
++                if token in seen and seen[token] != index:
++                    raise ValueError('requested record has ambiguous native rank')
++                seen[token] = index
+     return groups
+ 
+ 
+@@ -93,8 +124,7 @@
+     if not fields or len({f['name'] for f in fields}) != len(fields):
+         raise ValueError('required field names must be nonempty and unique')
+     tokens, _ = typed.project(gold_rows, fields, gold=True)
+-    if len(tokens) != len(set(tokens)):
+-        raise ValueError('top-k population contains duplicate requested records')
++    validate_top_k_reachable_record_uniqueness(contract, order_groups)
+     observed, errors = typed.project(predicted_rows, fields)
+     counts = Counter(observed)
+     ng, np = min(limit, len(tokens)), len(observed)

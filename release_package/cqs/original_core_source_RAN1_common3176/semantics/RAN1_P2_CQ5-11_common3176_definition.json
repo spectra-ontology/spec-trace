@@ -1,0 +1,34 @@
+{
+  "id": "RAN1_P2_CQ5-11",
+  "question_en": "List the agreements on DMRS patterns (DMRS pattern decisions).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'DMRS' AND a.content CONTAINS 'pattern' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+  "reference_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE coalesce(a.sourceRecordWindowText, a.content) CONTAINS 'DMRS' AND coalesce(a.sourceRecordWindowText, a.content) CONTAINS 'pattern' RETURN m.meetingNumber, a.resolutionId, coalesce(a.sourceRecordWindowText, a.content) AS content, m.meetingNumberInt AS meetingNumberInt ORDER BY m.meetingNumberInt DESC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "a.resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": false
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}
