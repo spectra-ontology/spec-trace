@@ -1,0 +1,10 @@
+--- preserved_original_query.cypher
++++ separate_source_variant_query.cypher
+@@ -1 +1,7 @@
+-MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumberInt: 93}) WITH a MATCH (a)-[:REFERENCES]->(t:Tdoc) WHERE t.summaryOfChange IS NOT NULL RETURN t.tdocNumber AS tdocNumber, t.summaryOfChange AS summary ORDER BY t.tdocNumber DESC LIMIT 10+MATCH (d:SourceMeetingDocument)
++WHERE d.meetingNumberInt = 93
++  AND d.sourceType IN ['CR','draftCR','pCR']
++  AND d.finalDocumentaryStatus IN ['agreed','approved','endorsed']
++WITH d ORDER BY d.tdocNumber ASC LIMIT 10
++OPTIONAL MATCH (d)-[:SOURCE_HAS_OWN_SUMMARY]->(s:SourceOwnCRSummary)
++RETURN s.sourceSummary AS summary

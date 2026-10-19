@@ -1,0 +1,1 @@
+MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumberInt: 93}) WITH a MATCH (a)-[:REFERENCES]->(t:Tdoc) WHERE t.summaryOfChange IS NOT NULL RETURN t.tdocNumber AS tdocNumber, t.summaryOfChange AS summary ORDER BY t.tdocNumber DESC LIMIT 10

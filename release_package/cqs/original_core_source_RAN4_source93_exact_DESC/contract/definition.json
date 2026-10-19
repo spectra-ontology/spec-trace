@@ -1,0 +1,57 @@
+{
+  "id": "RAN4_P4_CQ4-5",
+  "question_en": "List the change summaries of CRs approved at meeting #93 (meeting-scoped change review).",
+  "original_question_sha256": "a546f9a18c4636bde0fb1bf14376701620ce1cb0567fd914be90b2bfaa98a513",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumberInt: 93}) WITH a MATCH (a)-[:REFERENCES]->(t:Tdoc) WHERE t.summaryOfChange IS NOT NULL RETURN t.tdocNumber AS tdocNumber, t.summaryOfChange AS summary ORDER BY t.tdocNumber DESC LIMIT 10",
+  "reference_query": "MATCH (d:SourceMeetingDocument)-[:SOURCE_HAS_OWN_SUMMARY]->(s:SourceOwnCRSummary)\nWHERE d.meetingNumberInt = 93\n  AND d.sourceType IN ['CR','draftCR','pCR']\n  AND d.finalDocumentaryStatus IN ['agreed','approved','endorsed']\n  AND s.sourceSummary IS NOT NULL\nRETURN d.tdocNumber AS tdocNumber, s.sourceSummary AS summary\nORDER BY d.tdocNumber DESC LIMIT 10",
+  "original_query_sha256": "4bd3f2e20f49f49c8a41be53fe72744bb4e76d47a1445e0200138ffe41836023",
+  "reference_query_sha256": "20bede49564f447abebfb45b02d1a41a0b027aedd5c090394a3680a60666d152",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "d.tdocNumber"
+    },
+    {
+      "name": "summary",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "s.sourceSummary"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 10
+  },
+  "repair_class": "query_and_scorer",
+  "data_repair_class": "separate_additive_documentary_source_snapshot",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "reference_graph_kind": "separate_full_RAN4_source93_snapshot",
+  "new_snapshot_sha256": "d2a66b1f2ecd60301a39b2102a0145aa6e4f2791cd5b5a2726b2185b612ffc8f",
+  "new_SQLite_sha256": "14aaa5bab66b89df9782525c9c6f5ba64dd9fcc5153bf3ae533eea786d858d0b",
+  "source_variant_population": "All3112 own original final meeting93 register identities and1858 CR/draftCR/pCR observations; source-first own-summary facts are additive, not overrides of original CR fields.",
+  "approval_scope": "Final documentary WG acceptance at the recorded meeting, supported by the original own TDoc Status field. No physical-week event, TSG approval, normative incorporation or equivalence of all statuses in every setting is asserted. Every requested selected10 is independently recorded agreed; all alternative relevant status/type subsets select the same10.",
+  "selection_policy": "Preserve specific authored tdocNumber DESC LIMIT10 over generic group ASC default. Preserve original explicit nonnull summary predicate against its authentic source field. All3112 identities and1858 observations establish a complete finite source selection in this snapshot.",
+  "summary_policy": "Both TDoc identity and literal own CR-form Summary of change are mandatory answer fields. No ID-only projection, summary deduplication or generated paraphrase supplies reference truth.",
+  "legacy_CFB_assurance_limit": "Five source fields use exact-member existing CFB-to-DOCX derivatives. Original main-story field-result text corroborates all five; live deletion story is unavailable for two. Original CFB strike formatting is not decoded. There is no observed discrepant summary sentence; that assurance limit is not advertised as direct native binary rendering certification.",
+  "source_proof_sha256": "13fe47eac44b930d8804ceda08f26ad27a05402023e0becb37d5ef0330bf608d",
+  "old_ASC_package_manifest_sha256": "80ee20cf1e335f6231ee35850a81c3ec684d49dc3130de73db321c344f3e9565",
+  "old_ASC_package_unchanged": true,
+  "original560_pass_increment": 0,
+  "status": "LOCAL_PROSPECTIVE_SEPARATE_SOURCE_VARIANT_NOT_ADMITTED",
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "new_API_native_SQL_calls": 0,
+  "public_mutations": 0,
+  "integration_gates": [
+    "Independent second exact-DESC two-field semantic judgment",
+    "Root exact-DESC isolated native and independent typed SQL, source fields and complete-prefix equality",
+    "Two-field controls, schema/DDL and common whole-graph source input replay",
+    "Pre-call protocol freeze and authorized first attempts; report separately from prior cohorts and original560"
+  ],
+  "repair_sha256": "7957b2aafd2de27129500c98ae5190bd630e63dc6cdfecba248a92fced97e42d"
+}
