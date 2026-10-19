@@ -1,0 +1,96 @@
+{
+  "original_logical_path": "scripts/tsg/RAN/formal/common/docx_text.py",
+  "original_whole_file_sha256": "466065578d584300368c9c1729406e3b99317b0afaa07205778787e36e37c4e0",
+  "fragments": [
+    {
+      "names": [
+        "_ATOM"
+      ],
+      "source_line1": 834,
+      "source_line_end": 834,
+      "text": "_ATOM = re.compile(r\"(?:[^\\W_]|[\\u0300-\\u036f\\u20d0-\\u20ff′″‴'*∗∞.])+\")"
+    },
+    {
+      "names": [
+        "_PAIRS"
+      ],
+      "source_line1": 835,
+      "source_line_end": 835,
+      "text": "_PAIRS = {\"(\": \")\", \"[\": \"]\", \"{\": \"}\", \"⌊\": \"⌋\", \"⌈\": \"⌉\", \"〈\": \"〉\", \"⟨\": \"⟩\", \"|\": \"|\", \"‖\": \"‖\"}"
+    },
+    {
+      "names": [
+        "_BASE_BREAK"
+      ],
+      "source_line1": 837,
+      "source_line_end": 837,
+      "text": "_BASE_BREAK = re.compile(r\"[\\s+\\-−=<>≤≥≠±·×÷/,;:→←↔⇒∈∉∑∏\\u222b]\")"
+    },
+    {
+      "names": [
+        "_INVISIBLE"
+      ],
+      "source_line1": 839,
+      "source_line_end": 839,
+      "text": "_INVISIBLE = str.maketrans(\"\", \"\", \"\\u2061\\u2062\\u2063\\u2064\")"
+    },
+    {
+      "names": [
+        "_OPEN"
+      ],
+      "source_line1": 842,
+      "source_line_end": 842,
+      "text": "_OPEN = \"\\x01\""
+    },
+    {
+      "names": [
+        "_OPEN_GAP"
+      ],
+      "source_line1": 843,
+      "source_line_end": 843,
+      "text": "_OPEN_GAP = re.compile(_OPEN + r\"(?=[^\\W_])\")"
+    },
+    {
+      "names": [
+        "_bracketed"
+      ],
+      "source_line1": 859,
+      "source_line_end": 874,
+      "text": "def _bracketed(s: str) -> bool:\n    \"\"\"`s` 전체가 한 쌍의 괄호로 감싸였는가 — `(a,b)` 는 참, `(a)(b)` 는 거짓.\"\"\"\n    close = _PAIRS.get(s[:1])\n    if close is None or len(s) < 2 or s[-1] != close:\n        return False\n    if close == s[0]:\n        return s.count(close) == 2\n    depth = 0\n    for i, ch in enumerate(s):\n        if ch == s[0]:\n            depth += 1\n        elif ch == close:\n            depth -= 1\n            if depth == 0:\n                return i == len(s) - 1\n    return False"
+    },
+    {
+      "names": [
+        "_open"
+      ],
+      "source_line1": 877,
+      "source_line_end": 879,
+      "text": "def _open(s: str) -> str:\n    \"\"\"짜임 글이 글자 · 숫자로 끝나면(괄호로 묶지 않은 끝 조각) `_OPEN` 을 붙인다.\"\"\"\n    return s + _OPEN if s[-1:].isalnum() else s"
+    },
+    {
+      "names": [
+        "_grp"
+      ],
+      "source_line1": 882,
+      "source_line_end": 884,
+      "text": "def _grp(s: str) -> str:\n    \"\"\"첨자 · 분자 · 분모 글 — 한 덩어리(`_ATOM`)이거나 이미 괄호로 감싼 글이 아니면 `( )` 로 묶는다.\"\"\"\n    return s if not s or _ATOM.fullmatch(s) or _bracketed(s) else f\"({s})\""
+    },
+    {
+      "names": [
+        "_base"
+      ],
+      "source_line1": 887,
+      "source_line_end": 889,
+      "text": "def _base(s: str) -> str:\n    \"\"\"첨자가 붙는 밑글 — 공백 · 연산 기호가 들고 괄호로 감싸지 않았으면 `( )` 로 묶는다.\"\"\"\n    return f\"({s})\" if _BASE_BREAK.search(s) and not _bracketed(s) else s"
+    },
+    {
+      "names": [
+        "_seq"
+      ],
+      "source_line1": 1032,
+      "source_line_end": 1043,
+      "text": "def _seq(parts: list[str], sep: str) -> str:\n    \"\"\"칸 · 줄을 `sep` 로 잇는다. 앞 조각이 이미 `,` · `;` 로 끝나면 한 칸만 띄우고, 뒤 조각이 `,` · `;` 로 시작하면\n    그대로 붙인다 — 식과 조건을 칸으로 나눈 자리(38.211 `e^jαn r̅_(u,v)(n),` · `0≤n<M_ZC`, 38.901 τ_n 의 조건 칸\n    `,for NLOS`)에서 구분 글자가 겹치지 않게 한다. 끝 · 시작의 빈칸은 건너 보고 잰다(38.521-2 `v_(n,m)=…),` 줄은 쉼표\n    뒤에 빈칸 글자를 하나 더 둔다).\"\"\"\n    out: list[str] = []\n    for i, s in enumerate(parts):\n        if i:\n            out.append(\" \" if parts[i - 1].rstrip()[-1:] in (\",\", \";\") else \"\" if s.lstrip()[:1] in (\",\", \";\")\n                       else sep)\n        out.append(s)\n    return \"\".join(out)"
+    }
+  ],
+  "included_helper_sha256": "df82659fcfae63de009272f7d1db5a028ab7e402b7d58e0bd612d46360511c86",
+  "limit": "Only grouping/spacing helpers needed for MTEF/preview replay. No whole DOCX text/rendering implementation is included or certified."
+}
