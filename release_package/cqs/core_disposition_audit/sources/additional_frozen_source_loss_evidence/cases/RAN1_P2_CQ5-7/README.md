@@ -1,0 +1,3 @@
+Run `python3 -B -I /absolute/path/verify_evidence.py` from any directory.
+
+Bounded own-record evidence for unchanged MIMO-codebook question: necessary latest #123 Agreement is absent from the frozen content operation. Two nonblind AI reviews, expert validation0. This is not corrected gold, an inherently impossible question, a complete physical source inventory, a parser-defect attribution or new model evaluation. The included original DOCX and finite projection are replayed offline; exhaustive165418-node scan is pinned saved actual evidence, not rerun from a complete database here. Original graph-table-cell storage exclusions and related positive frozen matches remain disclosed.
