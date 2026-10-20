@@ -1,0 +1,31 @@
+{
+  "id": "RAN2_P2_CQ2-6",
+  "wg": "RAN2",
+  "query_sha256": "460461381df467354858219f9ed5d2c32f7f48dc84c06af9c64deedcf90e583c",
+  "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting)\nWHERE a.content CONTAINS 'FFS'\nWITH a,m,reduce(state={lines:[],stopped:false}, line IN split(a.content,'\\n') |\n CASE WHEN state.stopped OR line =~ '^R2-[0-9]{6,}\\\\t.*'\n THEN {lines:state.lines,stopped:true}\n ELSE {lines:state.lines+[line],stopped:false} END) AS own\nWITH a,m,[line IN own.lines WHERE line CONTAINS 'FFS' | split(line,'FFS')] AS segmented\nWITH a,m,[parts IN segmented | [i IN range(0,size(parts)-2) |\n {before:reduce(s='',j IN range(0,i) | s+parts[j]+CASE WHEN j<i THEN 'FFS' ELSE '' END),\n after:reduce(s='',j IN range(i+1,size(parts)-1) | s+CASE WHEN j>i+1 THEN 'FFS' ELSE '' END+parts[j])}]] AS perLine\nWHERE any(markers IN perLine WHERE any(marker IN markers WHERE NOT (\n (((marker.before+'FFS') =~ '(?is).*\\\\bFFS$') AND marker.after =~ '(?is)^\\\\s+(?:(?:can|may|shall|will|should|must)\\\\s+be\\\\s+)?(?:deleted|removed|closed|resolved)\\\\b.*')\n OR ((marker.before =~ '(?is).*\\\\b(?:remove|delete|close|resolve)\\\\s+(?:(?:the|corresponding|this|that)\\\\s+)*$') AND ('FFS'+marker.after) =~ '(?is)^FFS\\\\b.*')\n)))\nWITH DISTINCT a,m\nRETURN a.resolutionId AS resolutionId,m.meetingNumberInt AS meetingRank,a.sequence AS sequenceRank\nORDER BY meetingRank DESC,sequenceRank ASC",
+  "started_utc": "2026-10-20T00:35:13.767911+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN2_P2_CQ2-6/460461381df467354858219f9ed5d2c32f7f48dc84c06af9c64deedcf90e583c.jsonl",
+  "columns": [
+    "resolutionId",
+    "meetingRank",
+    "sequenceRank"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 1002,
+  "bytes_retained": 28763,
+  "rows_sha256": "99d3b42b10c6f402398303a1ea85fc9308e8c5a5175ae619193f0916290bd126",
+  "finished_utc": "2026-10-20T00:35:16.831714+00:00",
+  "elapsed_s": 3.0638,
+  "full_rows_available": true
+}

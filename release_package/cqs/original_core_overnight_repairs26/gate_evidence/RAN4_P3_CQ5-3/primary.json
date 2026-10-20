@@ -1,0 +1,228 @@
+{
+  "id": "RAN4_P3_CQ5-3",
+  "status": "pass",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "2f482b98ddf3c81294c0f1d25fc4acfd30099386faccd5b9a9288d80f3d5f504",
+  "original_question": "List the top 10 specs changed in Rel-18 (release change scope).",
+  "question_sha256": "e7fe68b62dda94385ce4f857481b1e961caa11a4cf31df88927cfbca77d23516",
+  "original_query_sha256": "7943cb496bd83fd0755c2417694b54e5ea91399b0c47577a4fe6c78df00dad73",
+  "reviewer": "priority71_fast_closure primary source/semantic reviewer",
+  "review_role": "primary; not a second independent judgment",
+  "status_scope": "Seven-unit primary original-question/source judgment only; no native/admission/model-performance claim",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "top 10 specs",
+      "finding": "The requested answer objects are specification identities. 'List the top 10 specs' does not ask the respondent to report CR counts, titles, changed clauses, versions, or formal approval evidence. Phase-1 Spec.specNumber is the required technical-specification identity and Phase-3 CQ5-3 asks for a release-specific TS list. The count is used to select the requested identities, not made a second required answer field merely because it appears in RETURN. This follows the unchanged criteria's explicit rule against extra unrequested query projections. Required answer: specNumber:string, nonnull. The real frozen/source count discrepancies are retained as factual defects and are not silently certified.",
+      "query_clauses": [
+        "RETURN sp.specNumber, count(cr) AS crCount",
+        "ORDER BY crCount DESC",
+        "LIMIT 10"
+      ],
+      "source_locators": [
+        "original_phase-1_design.md:L817,1056",
+        "original_phase-3_design.md:L200-209",
+        "criteria.json:scoring_evidence"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "in Rel-18 (release change scope)",
+      "finding": "The preserved WG/phase context is the captured RAN4 technical-specification graph and its documentary CR distribution, not the whole history of incorporated normative text. Phase-1 defines modifies as the technical specification whose change the CR requests. Phase-3 CQ4 treats approval separately; CQ5-3 is the release-specific change list. The dependency audit includes every frozen Tdoc OR CR node (167442:167017 Tdoc plus425 CR-only), not the earlier incomplete Tdoc-only population. All425 newly relevant keys have actual original register rows, and all148 retained workbook versions/362236 Tdoc rows were physically reopened. This does not restore the old58 input manifest or claim completeness for absent documents outside the pinned frozen node population.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release {releaseName: 'Rel-18'})",
+        "(cr)-[:MODIFIES]->(sp:Spec)"
+      ],
+      "source_locators": [
+        "original_phase-1_design.md:L714-725",
+        "original_phase-3_design.md:L193-209,239-241",
+        "actual_all148_raw_predicate_reopen.json",
+        "actual_complete_label_union_source_bounds.json"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "specs changed in Rel-18",
+      "finding": "Keep exactly the authored CR label, Rel-18 TARGET_RELEASE, requested-target MODIFIES role, and RAN4 38.1 prefix. A CR's affected-spec mention, own-cover CR role, approved status, and actual later TS incorporation are different roles and are not substituted. Raw register Type values CR/draftCR/pCR, Release and Spec are the original relationship inputs. Every original9797 positive graph path has retained register support. The raw Release alias defect (#82bis raw Rel versus cached NULL) affects1117 nonempty cells but produces zero qualifying Rel18/38.1 rows; it therefore does not change the bound, while remaining a disclosed source-projection defect.",
+      "query_clauses": [
+        "(rel:Release {releaseName: 'Rel-18'})",
+        "(cr)-[:MODIFIES]->(sp:Spec)",
+        "WHERE sp.specNumber STARTS WITH '38.1'"
+      ],
+      "source_locators": [
+        "original_phase-1_design.md:L363,691,714-725,1416-1436",
+        "actual_complete_label_union_source_bounds.json:frozen_pairs_without_retained_source_support",
+        "actual_all148_raw_predicate_reopen.json:saved_Release_alias_defect_rows,actual_Rel_alias_positive_changes"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "top 10",
+      "finding": "The ranking statistic is the original path count count(cr), grouped by the returned specNumber. No DISTINCT, accepted-only filter, per-company deduplication, CR-number deduplication, or release-version vote is introduced. Phase-3's CQ5 default Count DESC supplies the statistic's context in addition to the exact authored count expression. Actual independent SQL checks original path joins and reports both original output columns for all24 groups and selected10; the9797 frozen qualifying path rows are also9797 distinct (CR-node,specNumber) pairs in this snapshot. The source-completion bound counts the same captured record identities, not the number of duplicate historical XLSX observations.",
+      "query_clauses": [
+        "RETURN sp.specNumber, count(cr) AS crCount",
+        "ORDER BY crCount DESC"
+      ],
+      "source_locators": [
+        "original_phase-3_design.md:L213-223",
+        "independent_SQL_all24.sql",
+        "actual_complete_label_union_source_bounds.json:frozen_qualifying_path_rows"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "top 10",
+      "finding": "Exactly10 specification identities are required by the explicit English top10 and original LIMIT10. This is not an inherited default selected to hide a defect. Existing source omissions are not ignored:67 earlier Tdoc-source paths plus97 CR-only paths and up to7 identity-bridge paths are bounded. Allowing every subset of these retained-source-supported missing pairs, each original selected identity has at least151 records while every outsider has at most146. Thus the requested membership is invariant even though numerical counts are wrong. The proof is finite and conditional on the captured node population and preserved register-role rules; it is not universal completeness of all possible 3GPP documents.",
+      "query_clauses": [
+        "ORDER BY crCount DESC",
+        "LIMIT 10"
+      ],
+      "source_locators": [
+        "actual_complete_label_union_source_bounds.json:source_extra_pairs_lower,source_extra_pairs_upper,arbitrary_subset_completion_selected_lower,arbitrary_subset_completion_outsider_upper",
+        "all33_identity_cutoff_bound_audit.jsonl"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "List the top 10 specs",
+      "finding": "Top10 requires rank-based selection, which the unchanged reference implements with count DESC. It does not explicitly ask for rank-position fields or for serialization in descending order. The answer collection is therefore a set of the10 selected spec identities. Counterauthority is preserved: Phase-3 defines a default Count DESC/TS ASC display order and the original query orders by count; that supports selection and a conventional display, but does not by itself add ordered-response scoring to the English identity-list request. Internal8/9 ties or reordering cannot change top10 membership. There is no tenth/eleventh boundary tie: frozen151>144 and conservative all-completion151>146. Independent ROOT review may reject this answer-set interpretation; this primary review alone cannot admit it.",
+      "query_clauses": [
+        "ORDER BY crCount DESC",
+        "LIMIT 10"
+      ],
+      "source_locators": [
+        "original_phase-3_design.md:L213-234",
+        "criteria.json:scoring_evidence",
+        "actual_complete_label_union_source_bounds.json:ordering_caveat"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "release change scope",
+      "finding": "No present-day source, current standard text, hidden task selector, approval-to-incorporation inference, or author-company normalization is injected. Retained original XLSX bytes independently support only documentary Type/Release/Spec roles. The identity33 bridges are bounded even if their historical producer origin remains unknown; all qualifying bridges can affect selected identities only. Raw/source fixtures and prospective identity records remain local validation inputs, not extra model prompts. No model scores were inspected for this selection; prior identities and diagnostic ranks were visible, so the work is explicitly nonblind. Expert validation0; API0; native0; public changes0; admission0. A separate independent semantic judgment and actual native/full-output equality are still required.",
+      "query_clauses": [
+        "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release {releaseName: 'Rel-18'})",
+        "(cr)-[:MODIFIES]->(sp:Spec)"
+      ],
+      "source_locators": [
+        "actual_all148_raw_predicate_reopen.json:limits",
+        "all33_identity_cutoff_bound_audit.jsonl",
+        "criteria.json:independent_review,reference_evidence"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/criteria.json",
+      "bytes": 3382,
+      "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/definition.json",
+      "bytes": 1023,
+      "sha256": "1ece3104c916bcaf600031211c3e350ad1ea3e2a8ab15da0ef8a07a10431c081"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/original_query.cypher",
+      "bytes": 212,
+      "sha256": "7943cb496bd83fd0755c2417694b54e5ea91399b0c47577a4fe6c78df00dad73"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/original_phase-1_design.md",
+      "bytes": 70530,
+      "sha256": "c5857b9c29862cc0287bbfc838302df5df03f3a772723c7ab4f4c7106200d248"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/original_phase-3_design.md",
+      "bytes": 75023,
+      "sha256": "87c7d2293d03e7b872fbf588cc87b30413030e146ba7a1f63d4fdf9d494442a1"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/actual_complete_label_union_source_bounds.json",
+      "bytes": 8947,
+      "sha256": "011882db12b179ed55c05984925f6e84717ae67b0852d89a1ccbc2ee21c60d85"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/actual_all148_raw_predicate_reopen.json",
+      "bytes": 21371,
+      "sha256": "42a92ba27bd4e37c6f4bca7e2c7002d140889d7b7fa25a1d89f59f6101fd42f9"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/all148_physical_workbook_and_sheet_pins.json",
+      "bytes": 162972,
+      "sha256": "3ef5ce45e894e428a5b58b6bd4dee24530e1e24923abe9a302de093caafa95e1"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/all425_physical_original_register_rows.jsonl",
+      "bytes": 649630,
+      "sha256": "27f17b9e0dc17e6b200095497bcfa5400bafe8d94b51d6fad08652c053446f91"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/missing_old_Release_alias_actual_raw_Rel_cells.jsonl",
+      "bytes": 257135,
+      "sha256": "dd280cea3d568a45eced640fb41e598f841169f70f590877d74f629e6627a313"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/all33_identity_cutoff_bound_audit.jsonl",
+      "bytes": 17537,
+      "sha256": "58c48394286025756fc5ce57a1dfea8661a1eea445d3abc783c01692a46b4875"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/all425_CR_only_source_predicate_audit.jsonl",
+      "bytes": 52976,
+      "sha256": "74a84ad4ccbba67ffabfe3b65c535536505c84a84652ada03f38db3d4f4f3924"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/independent_SQL_original10_two_columns.jsonl",
+      "bytes": 427,
+      "sha256": "7495e70f9e6c9f0c0e3a0af6f8a43900a662ff149f796565ace011a878c0ce1f"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/independent_SQL_all24_two_columns.jsonl",
+      "bytes": 995,
+      "sha256": "d1b727c29c8ddc6ddd8c07b7e41432702eb61a5b1768396c9b4492fd03b8182b"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/prospective_dependency_test_plan.json",
+      "bytes": 2319,
+      "sha256": "0a17bc7480c00b683d00d9531de2f2776ec861da7889c70beaced8f77831ad82"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/actual_original_count_path_and_Spec_target_multiplicity.json",
+      "bytes": 23779,
+      "sha256": "888a0bbd69714ca9c7cb83d9f2788f96fb4a60bba125e73bd42f8a42ac3dc8e3"
+    }
+  ],
+  "counterpolicies": [
+    "If changed is interpreted as actual normative incorporation rather than original documentary requested-target scope, this proof does not establish that different task.",
+    "Counts are not source-factual; requiring crCount as an answer would fail this source gate rather than be rescued by frozen SQL equality.",
+    "Original58 input capture is not reconstructed; retained148 versions are only evidence for the frozen captured-node dependency proof.",
+    "Default display order is opposing context for the set answer policy; ROOT must independently adjudicate it, not inherit this primary choice.",
+    "The finite upper bound does not cover newly introduced CR records absent from the frozen CR/Tdoc population."
+  ],
+  "remaining_operational_gates": [
+    "Independent ROOT seven-unit review with exact repair pin",
+    "Actual native exact original selected10 and whole24 original two-column output versus independent SQL",
+    "Native source inventory/query/full-output pins and source guard",
+    "Final native-derived requested identity records and admission/prompt protocol gates"
+  ],
+  "expert_validation_n": 0,
+  "API_calls": 0,
+  "native_calls": 0,
+  "public_changes": 0,
+  "admissions": 0,
+  "created_utc": "2026-10-20T00:26:52.144894+00:00",
+  "supersedes": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/lane_RAN4/primary_exact_original_top10_identity_seven_unit_review.json",
+    "bytes": 16016,
+    "sha256": "1059721a54c62fa666caacc2ddcec412daa29ed22611cb098c6c607f6434c2bc"
+  },
+  "correction": "Explanation only: frozen path total is9797, not older source-positive9864. Original source receipts, SQL, definition, actual membership bounds and policies are unchanged. Original v1 is retained."
+}

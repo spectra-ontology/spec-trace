@@ -1,0 +1,38 @@
+{
+  "id": "RAN2_P2_CQ2-6",
+  "question_en": "List the agreements containing open FFS items (further-study backlog).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'FFS' RETURN a.resolutionId, m.canonicalMeetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+  "reference_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting)\nWHERE a.content CONTAINS 'FFS'\nWITH a,m,reduce(state={lines:[],stopped:false}, line IN split(a.content,'\\n') |\n CASE WHEN state.stopped OR line =~ '^R2-[0-9]{6,}\\\\t.*'\n THEN {lines:state.lines,stopped:true}\n ELSE {lines:state.lines+[line],stopped:false} END) AS own\nWITH a,m,[line IN own.lines WHERE line CONTAINS 'FFS' | split(line,'FFS')] AS segmented\nWITH a,m,[parts IN segmented | [i IN range(0,size(parts)-2) |\n {before:reduce(s='',j IN range(0,i) | s+parts[j]+CASE WHEN j<i THEN 'FFS' ELSE '' END),\n after:reduce(s='',j IN range(i+1,size(parts)-1) | s+CASE WHEN j>i+1 THEN 'FFS' ELSE '' END+parts[j])}]] AS perLine\nWHERE any(markers IN perLine WHERE any(marker IN markers WHERE NOT (\n (((marker.before+'FFS') =~ '(?is).*\\\\bFFS$') AND marker.after =~ '(?is)^\\\\s+(?:(?:can|may|shall|will|should|must)\\\\s+be\\\\s+)?(?:deleted|removed|closed|resolved)\\\\b.*')\n OR ((marker.before =~ '(?is).*\\\\b(?:remove|delete|close|resolve)\\\\s+(?:(?:the|corresponding|this|that)\\\\s+)*$') AND ('FFS'+marker.after) =~ '(?is)^FFS\\\\b.*')\n)))\nWITH DISTINCT a,m\nRETURN a.resolutionId AS resolutionId,m.meetingNumberInt AS meetingRank,a.sequence AS sequenceRank\nORDER BY meetingRank DESC,sequenceRank ASC",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": false,
+    "source_order_keys": [
+      {
+        "source_column": "meetingRank",
+        "direction": "desc"
+      },
+      {
+        "source_column": "sequenceRank",
+        "direction": "asc"
+      }
+    ]
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}
