@@ -1,0 +1,60 @@
+[
+  {
+    "pin": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/loop85_RAN1_technical_topics_original_authority_and_dependencies/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "spans": [
+      {
+        "first_line": 159,
+        "last_line": 180,
+        "text": "    ## 3. Scope 정의\n    \n    ### 3.1 포함 (In Scope)\n    \n    | 구분 | 포함 대상 | 비고 |\n    | --- | --- | --- |\n    | **Resolution** | Agreement, Conclusion, Working Assumption | CQ1~3, CQ6 |\n    | **Role** | Moderator, Ad-hoc Chair | CQ4 |\n    | **Embedded Content** | Figure, Table, Chart, Equation | CQ 대상 아님, Resolution 완결성 위해 포함 |\n    | **데이터 소스** | Final Report 본문 | Annex 제외 |\n    \n    ### 3.2 제외 (Out of Scope)\n    \n    | 제외 대상 | 이유 |\n    | --- | --- |\n    | 본문의 `**Decision:**` 패턴 | Resolution과 용어 혼동 방지 |\n    | Annex (B, C, D, E, F) | 본문만 파싱 원칙 |\n    | Resolution 의미/내용 검색 | Vector DB 영역 (향후 확장) |\n    | CQ5 (후속 조치) | Annex 의존 |\n    | RAN1 Chair | 고정 역할 |\n    | Figure 이미지 콘텐츠 | 별도 저장소에서 관리, Graph DB는 메타데이터만 |\n    | Table 셀 데이터 | 별도 저장소에서 관리, Graph DB는 메타데이터와 수식만 |"
+      },
+      {
+        "first_line": 625,
+        "last_line": 640,
+        "text": "    \n    ## 4. Phase-2 신규 클래스\n    \n    ### 4.1 Resolution 계층\n    \n    | 클래스 | 정의 | 인스턴스 수 (샘플) |\n    | --- | --- | --- |\n    | **Resolution** (abstract) | 회의에서 도출된 기술적 결의 | - |\n    | **├─ Agreement** | 기술적 합의 사항 | Appendix A [P2-V01] 참조 |\n    | **├─ Conclusion** | 논의 결론 | Appendix A [P2-V02] 참조 |\n    | **└─ WorkingAssumption** | 잠정 가정 (추후 Agreement로 확정 가능) | Appendix A [P2-V03] 참조 |\n    \n    **Resolution을 상위 클래스로 만드는 이유**:\n    \n    - 세 하위 클래스가 공통 속성(content, note 등)과 공통 관계(references, madeAt, resolutionBelongsTo)를 가짐\n    - CQ에서 \"특정 조건의 Resolution\"을 조회할 때 세 유형을 통합 조회 가능"
+      },
+      {
+        "first_line": 765,
+        "last_line": 785,
+        "text": "    **Data Property**\n    \n    | Property | Type | Description |\n    | --- | --- | --- |\n    | resolutionId | String | Resolution 고유 식별자 (예: AGR-112-8.1-001) |\n    | content | String | Resolution 본문 텍스트 (수식을 `[EQUATION]` 마커로 대체). **Text-to-Cypher 검색용**. |\n    | contentWithEquations | String | Resolution 본문 텍스트 (수식 LaTeX 인라인 포함). **LLM 답변 생성 및 UI 렌더링용**. |\n    | sequence | Integer | 같은 Agenda 내 순서 |\n    | sessionContext | String | 세션 정보 (예: \"Thursday session\", \"Online\") |\n    | note | String | 부가 설명 (Note: ...) |\n    \n    **Object Property**\n    \n    | Property | Range | Description |\n    | --- | --- | --- |\n    | references | Tdoc | Resolution이 참조하는 Tdoc |\n    | madeAt | Meeting | Resolution이 도출된 회의. Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo | AgendaItem | Resolution이 속한 Agenda |\n    | hasFigure | Figure | Resolution이 참조하는 Figure |\n    | hasTable | Table | Resolution이 참조하는 Table |\n    | hasChart | Chart | Resolution이 참조하는 Chart |"
+      },
+      {
+        "first_line": 968,
+        "last_line": 1003,
+        "text": "    ## 8. content vs contentWithEquations 사용 규칙\n    \n    Resolution 검색 및 답변 생성 시 두 필드의 역할이 다름.\n    \n    ### 8.1 필드별 용도\n    \n    | Phase | 사용 필드 | 이유 |\n    | --- | --- | --- |\n    | **검색 (Text-to-Cypher)** | content | `[EQUATION]` 마커로 노이즈 제거, 텍스트 매칭 정확도 향상 |\n    | **답변 생성 (LLM context)** | contentWithEquations | 수식 포함 완전한 정보로 정확한 답변 |\n    | **UI 렌더링** | contentWithEquations | LaTeX 수식 렌더링 |\n    \n    ### 8.2 처리 흐름\n    \n    ```\n    1. 사용자 질문 → Text-to-Cypher 생성\n    2. Cypher 쿼리에서 content 필드로 Resolution 검색\n    3. 검색된 Resolution의 contentWithEquations를 LLM context로 전달\n    4. LLM이 contentWithEquations 기반으로 답변 생성\n    5. UI에서 contentWithEquations의 LaTeX 렌더링\n    \n    ```\n    \n    ### 8.3 예시\n    \n    **검색 Cypher**:\n    \n    ```\n    MATCH (r:Agreement)\n    WHERE r.content CONTAINS 'processing time'\n    RETURN r.resolutionId, r.contentWithEquations\n    LIMIT 5\n    \n    ```\n    \n    *Note: WHERE 조건은 `content`, RETURN은 `contentWithEquations`*"
+      },
+      {
+        "first_line": 1053,
+        "last_line": 1060,
+        "text": "    | Property | Type | Cardinality | Required | Description |\n    | --- | --- | --- | --- | --- |\n    | resolutionId | String | 1 | ✅ | PK, 패턴: `{TYPE}-{meeting}-{agenda}-{seq}` |\n    | content | String | 1 | ✅ | Resolution 본문 (수식을 `[EQUATION]` 마커로 대체, 검색/쿼리용) |\n    | contentWithEquations | String | 0..1 | ❌ | Resolution 본문 (수식 LaTeX 포함, 렌더링용). 수식이 없는 Resolution에서는 null. 수식 포함 비율은 Appendix A [P2-V09] 참조 |\n    | sequence | Integer | 1 | ✅ | 같은 Agenda 내 순서. *Note: resolutionId에서 추출 가능 (예: AGR-112-8.1-001의 001)* |\n    | sessionContext | String | 0..1 | ❌ | 세션 정보 (예: \"Thursday session\", \"Online\") |\n    | note | String | 0..1 | ❌ | 부가 설명 |"
+      },
+      {
+        "first_line": 1482,
+        "last_line": 1499,
+        "text": "    ### 4.11 Null 값 처리 규칙\n    \n    | 속성/관계 | 상황 | 처리 | 로그 레벨 |\n    | --- | --- | --- | --- |\n    | content | 파싱 실패 | Resolution 인스턴스 미생성 | ERROR |\n    | contentWithEquations | 수식 없음 | null 유지 (정상) | - |\n    | contentWithEquations | 수식 변환 실패 | null + 로그 기록 | WARNING |\n    | references | Tdoc 번호가 Phase-1 인스턴스에 없음 | 해당 참조만 스킵 (§4.1 참조) | WARNING |\n    | references | Tdoc 번호 파싱 실패 | 해당 참조만 스킵 | WARNING |\n    | caption (Figure/Table) | 캡션 없음 | null 유지 (정상) | - |\n    | moderatedBy | Company 매칭 실패 | Summary 인스턴스 미생성 | ERROR |\n    | chairedBy | Company 매칭 실패 | SessionNotes 인스턴스 미생성 | ERROR |\n    \n    **처리 원칙:**\n    \n    - `content`(Resolution), `moderatedBy`(Summary), `chairedBy`(SessionNotes)는 필수 속성(Cardinality: 1)이므로 값을 채울 수 없으면 인스턴스 자체를 생성하지 않음\n    - `contentWithEquations`, `caption`은 선택 속성(Cardinality: 0..1)이므로 null이 정상\n    - moderatedBy/chairedBy는 필수 속성(Cardinality: 1)이므로 매칭 실패 시 Summary/SessionNotes 인스턴스 자체가 생성되지 않는다. 즉 생성된 인스턴스는 정의상 매칭 성공 상태다. 매칭 실패는 파싱 오류로 간주하며, 실측 통계는 파싱 로그에서 확인한다."
+      }
+    ]
+  },
+  {
+    "pin": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN1_RAN3_RAN4/loop85_RAN1_technical_topics_original_authority_and_dependencies/validation_HEAD.md",
+      "bytes": 8613,
+      "sha256": "b6be960f3c5bebd439161059ed4e61940b5d656fc54d87bcebbb87870bd3fcbd"
+    },
+    "spans": [
+      {
+        "first_line": 68,
+        "last_line": 89,
+        "text": "## Spec §8: content vs contentWithEquations 사용 규칙\n\nCQ 쿼리에서 Resolution 본문을 다룰 때 Spec §8 규칙을 준수:\n\n| 단계 | 필드 | 이유 |\n|------|------|------|\n| **검색 (WHERE)** | `content` | `[EQUATION]` 마커로 노이즈 제거, 텍스트 매칭 정확도 향상 |\n| **답변/렌더링 (RETURN)** | `contentWithEquations` | 수식 LaTeX 인라인 포함, 완전한 정보 |\n\n### COALESCE 패턴\n\n`contentWithEquations`가 NULL인 Resolution(수식 미포함)을 안전하게 처리:\n\n```cypher\n-- Spec §8 준수: WHERE=content, RETURN=COALESCE(contentWithEquations, content)\nMATCH (a:Agreement)-[:MADE_AT]->(m:Meeting)\nWHERE m.meetingNumber = 'RAN1#112'\n  AND a.content CONTAINS 'MIMO'\nRETURN a.resolutionId, COALESCE(a.contentWithEquations, a.content)\n```\n\nCQ 데이터셋 v3.0 34개 쿼리 중 24개가 Resolution 본문(`content`)을 RETURN하며, 나머지 10개는 집계/카운트 쿼리. Text2Cypher에서는 COALESCE 패턴을 Few-shot 예시로 제공하여 LLM이 적절히 사용하도록 유도."
+      },
+      {
+        "first_line": 94,
+        "last_line": 115,
+        "text": "\n- `SCHEMA_INFO`: `content` vs `contentWithEquations` 용도 설명 및 예시\n- `CYPHER_EXAMPLES`: 30개 Few-shot 예시 모두 COALESCE 패턴 사용\n\n## 테스트 데이터셋 v3.0 설계\n\n### 페르소나\n\n3가지 업무 페르소나 기반 시나리오:\n- **전략/기획팀**: 회의 결과 파악, 기술 트렌드 분석, 경쟁사 동향\n- **IP/특허팀**: 기고의 표준 반영 여부, 기여 증거 확보\n- **표준화 엔지니어**: 특정 기술 결정사항 추적, 후속 작업 파악\n\n### 질문 카테고리 (5종, 34개)\n\n| 카테고리 | 수 | 주요 검증 포인트 |\n|----------|-----|-----------------|\n| CQ1_Resolution조회 | 7 | 회의별/Agenda별 Resolution 조회, 타입별 필터링 |\n| CQ2_Tdoc-Resolution추적 | 5 | Tdoc↔Resolution 관계 추적, 참조 검색 |\n| CQ3_회사기여도 | 6 | 회사별 기여 집계, Resolution 참여 분석 |\n| CQ4_기술주도권분석 | 3 | 기술 영역별 주도 회사 식별 |\n| CQ5_기술트렌드 | 13 | 시계열 기술 변화, 키워드 기반 추세 분석 |"
+      }
+    ]
+  }
+]
