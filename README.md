@@ -1,88 +1,72 @@
-# SPECTRA: the 3GPP RAN standardization-process dataset
+# SPECTRA: tracing the 3GPP standardization process
 
-SPECTRA organizes public contributions, meeting decisions, change requests and
-specification structure across the five RAN working groups. The released graph
-snapshot contains 966,859 nodes and 4,908,850 relationships. SpectraCQ contains
-624 released questions with executable reference queries and graph-derived answer
-sets, from 654 authored questions. See the [counts manifest](release_package/MANIFEST.md)
-for the per-group totals and the distinction between graph replay and question validity.
+SPECTRA connects technical contributions, recorded meeting decisions, change
+requests, and specification structure across all five 3GPP RAN working groups.
+Its shared process model makes relationships spread across document registers,
+meeting reports, and specification metadata available to executable queries.
 
-## Start here
+The released snapshot contains **966,859 nodes, 4,908,850 relationships, and
+12,931,842 RDF triples**. SpectraCQ supplies **624 released questions** with
+executable references, including a **560-question Core register** and **497
+audited original-question contracts**. The [counts manifest](release_package/MANIFEST.md)
+links dataset totals to their artifacts and measurement procedures.
 
-- [Current original Core index](release_package/cqs/current_core/README.md): 497 of 560 original questions passed the stated repair checks; 63 are nonadmitted. The index links all current contracts and evidence. Ten existing IDs use full ranking pools without adding IDs.
-- [All-560 disposition audit](release_package/cqs/core_disposition_audit/README.md): a separate question-first audit partitions the register into 497 contract-verified, 18 requiring specification or input clarification, 4 lacking necessary source facts in the pinned frozen data, and 41 with evidence verification incomplete. Conditional ranking/trend counterexamples, three source-pinned conflicting study descriptions, one agenda-description conflict, one pack-scope conflict, two source-availability scope conflicts, four bounded frozen-source-loss diagnoses, and portable replay accompany the classification; it adds no benchmark passes or model scores.
-- [Finite CSI metadata and recorded TS Agreement-count repairs](release_package/cqs/original_core_overnight_repairs29/README.md) and [separate first evaluation](release_package/cqs/original_core_overnight_evaluation29/README.md): two unchanged questions give 497 active contracts. The original finite20 multiset and an eight-TS count table retain source counterevidence, two AI reviews per question, 28 native/SQL rows and 33 portable controls. All first responses, errors and abstentions are preserved separately; no quality rerolls or expert certification.
-- [RAN5 per-spec contributor ranking repair](release_package/cqs/original_core_overnight_repairs28/README.md) and [separate evaluation](release_package/cqs/original_core_overnight_evaluation28/README.md): one unchanged question gives495 active contracts. Source-own reference boundaries, distinct-Tdoc company ranks, three complete native/SQL records and19 portable controls are retained. All four methods abstained in five first-response stages ($0.150200). Pre-call adapter compatibility recovery and original failures are preserved; no quality rerolls or approval claims.
-- [SSB content and recent-document repairs](release_package/cqs/original_core_overnight_repairs27/README.md) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation27/README.md): three unchanged questions give 494 active contracts, with source checks, full typed native/SQL equality and 204 portable controls. Recorded SSB content and meeting-recency document lists retain their original source context.
-- [RAN4 top-ten specification and RAN2 recorded-FFS repairs](release_package/cqs/original_core_overnight_repairs26/) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation26/README.md): two original questions give491 active contracts, with exact source/native/SQL checks and39 portable controls. Source bounds establish RAN4 top-ten membership, not all ranks or incorporation. RAN2 FFS is recorded content, not current open lifecycle.
-- [CR-to-spec mapping and DMRS Agreement repairs](release_package/cqs/original_core_overnight_repairs25/README.md) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation25/README.md): two unchanged questions give 489 active contracts. Two AI reviews per item, exact native/SQL equality, source checks and 348 portable controls accompany all ten first calls and eight method outcomes. DMRS native 10 and source eligibility 11 are distinguished; target mappings do not certify approval or incorporation.
-- [Three named metadata lookup repairs](release_package/cqs/original_core_overnight_repairs24/README.md) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation24/README.md): three unchanged original questions and authored queries give 487 active contracts. Complete finite header-field multisets retain typed nullable company/spec values and source-role distinctions. Two nonblind AI reviews per item, two new and one archived exact native capture, full requested-field SQL equality and 201 scorer controls are retained. All first attempts and twelve method outcomes are preserved separately; failures and abstentions remain visible. No Office Company normalization, approval/incorporation, graphwide factuality or human/expert assessment is claimed.
-- [Formal Resolution TS-identity repair](release_package/cqs/original_core_overnight_repairs23/README.md) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation23/README.md): one unchanged original question and full authored query give484 active contracts. The complete TS identity set is required; incidental count values are unscored. The finite source boundary (482 fixed-WI CRs, four target TSs,61 retained report streams and eight excluded fourth-target contexts) and actual normative incorporation witnesses for the three returned TSs are retained. Two nonblind AI reviews, three native rows, full typed three-column SQL, seven generic and nine identity-set controls are recorded. Whole-table/version differences and the first native host-probe failure remain disclosed. No incidental-count fidelity, exclusive causality or human/expert assessment is claimed. All five first calls and four outcomes remain a separate cohort; verification fixtures were not extra model inputs.
-- [Named RAN1#121 Conclusion identity repair](release_package/cqs/original_core_overnight_repairs22/README.md) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation22/README.md): one unchanged question and original query give483 active contracts. Its original first15 Conclusion IDs use set scoring; all64 source candidates/63 active records and frozen operands preserve the selected boundary and inactive counterevidence. Two nonblind AI judgments,15 native rows, full typed two-column SQL,7 generic and4 identity-set controls are retained. All5 first calls and4 outcomes remain separate; failures and abstentions are visible. No present-day latest/open-status or authentic optional-content claim is made, and verification fixtures were not extra model inputs. Earlier cohorts retain their original results.
-- [Recorded FFS Agreement identity repair](release_package/cqs/original_core_overnight_repairs21/README.md) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation21/README.md): one unchanged question and byte-identical original query give482 active contracts. The original fifteen Agreement identities use set scoring; reference content and meeting context, recorded marker versus open-backlog interpretations and source-boundary counterevidence remain disclosed. Two nonblind AI judgments, fifteen native rows, full typed SQL, seven generic and four identity-set controls accompany five first-call requests and four outcomes; failures remain visible. Source verification fixtures were not extra model inputs. This cohort stays separate from prior scores.
-- [RAN3#123 approved-record summary repair](release_package/cqs/original_core_overnight_repairs20/README.md) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation20/README.md): one unchanged question gives481 active contracts. The approved report/register/own-decision boundary and inherited first10 source selection preserve ten summary occurrences as a multiset, including seven distinct values. Two nonblind AI judgments, ten native rows, full typed SQL, seven generic and five multiplicity/order controls accompany five first-call requests and four outcomes; every failure remains visible. Source verification fixtures were not extra model inputs, and physical-session alternatives and post-meeting decisions remain disclosed.
-- [Two-question source-context repairs](release_package/cqs/original_core_overnight_repairs19/README.md) and [separate four-method evaluation](release_package/cqs/original_core_overnight_evaluation19/README.md): two unchanged questions give 480 active contracts. Recorded comeback-flag identities and a RAN5 specification/release change map retain their original source context, historical counterevidence and complete boundary checks. Two separate AI judgments per question, 21 native reference rows, typed SQL agreement and 16 scorer controls accompany ten first-call responses and eight separate outcomes; failures remain visible.
-- [Same-population TDoc/CR comparison repair](release_package/cqs/original_core_overnight_repairs18/README.md) and its [four-method evaluation](release_package/cqs/original_core_overnight_evaluation18/README.md): one unchanged question gives 478 active contracts. The original 35 TDocList sources bind the whole current TDoc metadata population and its CR Type subset; four seven-digit source defects and old CR-only counterexamples are preserved. Two nonblind AI judgments, 10 scorer controls, all five first-call responses and four outcomes remain separately recorded.
-- [Recorded LTM baseline membership repair](release_package/cqs/original_core_overnight_repairs17/README.md) and its [four-method evaluation](release_package/cqs/original_core_overnight_evaluation17/README.md): one unchanged question gives 477 active contracts; historical IE-role errors, the fixture not supplied to the model, five first-call responses and every outcome are disclosed.
-- [Release-attributed formal Section repair](release_package/cqs/original_core_overnight_repairs16/README.md) and its [four-method evaluation](release_package/cqs/original_core_overnight_evaluation16/README.md): one additional unchanged question gives 476 active contracts; five first-call responses and every outcome are preserved.
-- [Twelve additional original-question repairs](release_package/cqs/original_core_overnight_repairs15/README.md) and their [four-method evaluation](release_package/cqs/original_core_overnight_evaluation15/README.md): twelve additions and four source factuality quarantines yielded the preceding 475-pass snapshot; native/SQL evidence, scorer controls and all 60 first-call responses are retained.
-- [RAN2#132 CR summaries](release_package/cqs/original_core_source_RAN2_CR_summary240_evaluation/README.md) and [RAN3#123 CR summaries](release_package/cqs/original_core_source_RAN3_CR_summary202_evaluation/README.md): separate additive source snapshots require all 240 and 202 authored summary occurrences. Each retains its own four-method evaluation and adds zero frozen-Core passes.
-- [Source-table corrections](release_package/cqs/original_core_source_table_correction5/README.md), [authored CR clause observations](release_package/cqs/original_core_source_authored_clause168_evaluation/README.md), and [Agreement source-calendar evaluation](release_package/cqs/original_core_source_Meeting_calendar60_FFS_Agreement_evaluation/README.md): separate source experiments, with their actual information access, failures and scoring limits stated in each package.
-- [Additional source evidence and evaluations](release_package/cqs/source_supplements_README.md): separately versioned source snapshots, first-attempt results and offline replay. These supplements add zero questions to the original frozen-graph count.
-- [Evaluation scopes](release_package/cqs/contract_repair_v1/README_evaluation_scopes.md) and [saved source-access diagnostic](release_package/cqs/source_access_diagnostic/README.md): how current and historical analyses relate; graph/text coverage equivalence is unestablished.
-- [Release package](release_package/README.md), [historical benchmark](release_package/cqs/spectra_cq_v2.0/README.md), [reproduction commands](release_package/tests/README.md), and [artifact walkthrough](release_package/ARTIFACT.md).
+## What the release provides
 
-## Evaluation evidence
+- **A queryable process model.** The [32-class ontology](release_package/ontology/spectra.ttl)
+  represents submissions, resolutions, liaison routing, CR metadata, and
+  specification targets. Explicit document references, shared-meeting context,
+  and declared clause targets retain their distinct meanings.
+- **Executable process questions.** The [current Core index](release_package/cqs/current_core/README.md)
+  links each admitted question to its original wording, requested fields and
+  types, collection and ranking rules, reference records, and verification evidence.
+- **Reproducible method evaluation.** Released cohorts preserve model inputs,
+  generated Cypher and SQL, retrieval responses, execution results, and
+  complete-record scoring. Offline tools replay saved results without model calls.
 
-| Analysis | What it evaluates | Scope |
-| --- | --- | --- |
-| [Preserved original-question repairs](release_package/cqs/original_core_repair/README.md) | 371 repaired contracts retaining the exact original English questions; 119 keep the original query and 252 repair it | AI-assisted semantic checks, 776,873 captured native rows and 3,130 scorer controls; reference evidence and scorer checks; its frozen ledger has 189 pending and 0 blocked originals |
-| [New original-question evaluation](release_package/cqs/original_core_evaluation/README.md) | Generated Cypher, generated SQL, single retrieval and two-round retrieval on the disjoint frozen 350+21 cohorts | One model; all 371 IDs per method; failures retained, paired uncertainty, and separate original-attempt/transport-recovery records; SQL generation and text-access limitations apply |
-| [Additional original-question evaluation](release_package/cqs/original_core_additional_evaluation/README.md) | Seven further original questions with separately fixed repairs and newly generated four-method predictions | The preserved seven-item phase recorded a then-current union of 378 IDs; all seven additional IDs per method; original SQL interface retained; AI-assisted checks, no completed human/expert validation |
-| [Current original Core](release_package/cqs/current_core/README.md) | 497 unchanged original questions and all 560 dispositions; 127 retain their original queries, 370 repair queries and scoring | Separate AI reviews, pinned native references and actual scorer controls; 63 nonadmitted; no completed human/expert validation |
-| [Core disposition audit](release_package/cqs/core_disposition_audit/README.md) | An exhaustive, disjoint overlay: 497 contract-verified, 18 clarification-required, 4 with necessary source facts missing from the frozen data, 41 evidence-pending | Five unspecified metrics, five missing focal inputs, one missing recent-result extent, three conflicting TR study descriptions, one agenda-description conflict, one pack-scope conflict and two source-availability scope conflicts under the question-first audit criteria; the four description cases retain conditional numeric-ID-first correction and separate pending answer-evidence gates; original query-defined contracts are preserved as counterevidence; four bounded necessary-source-loss diagnoses and portable conditional arithmetic; no new admissions or scores |
-| [RAN2#132 source summaries](release_package/cqs/original_core_source_RAN2_CR_summary240_evaluation/README.md) and [RAN3#123 source summaries](release_package/cqs/original_core_source_RAN3_CR_summary202_evaluation/README.md) | One original question per separate source snapshot, requiring 240 and 202 authored summary occurrences | Four methods per question; all first responses and failures retained; exact literal multiset scoring, two AI development judgments and 21 scorer controls per case; zero frozen-Core additions |
-| [Explicit named Agreement repair](release_package/cqs/original_core_named_agreement_repairs/README.md) | One further unchanged original question with its named draft-CR agreement decision checked in the original meeting report | Two separate AI reviews, two full native rows identifying one Agreement, and seven strict scorer controls; [four-method predictions](release_package/cqs/original_core_named_agreement_evaluation/README.md) are retained separately; text identifier access differs |
-| [Resolution-to-CR-to-spec ranking repair](release_package/cqs/original_core_path_top5_repairs/README.md) | One further unchanged original question with a complete 139-spec pool | The requested five spec identities agree across four counting units; numerical counts and order differ. Two separate AI reviews, complete native rows and nine scorer controls; [four-method predictions](release_package/cqs/original_core_RAN3_path_evaluation/README.md) are retained separately |
-| [Eight further original questions](release_package/cqs/original_core_followup_evaluation/README.md) | A separate four-method cohort with eight repaired original questions | All IDs and failures retained; earlier SQL schema interface; source uncertainty is explicit |
-| [Five source-supported questions](release_package/cqs/original_core_source_evaluation/README.md) | Three responsibility-grounded questions and two named-catalog checks | Four methods receive the same whole sources, adding 62,603 input characters; strict JSON-envelope failures are preserved; this is a separate information intervention |
-| [Six natural-identifier questions](release_package/cqs/original_core_natural_evaluation/README.md) | Tables/sections whose requested natural answers agree across all five collected editions | Fresh four-method predictions with actual SQL DDL; edition invariance within the frozen graph is not full-archive validation |
-| [Three final original repairs and predictions](release_package/cqs/original_core_final_evaluation/README.md) | An ordered clause breadcrumb, a complete RAN4 CR-ranking pool and approval-qualified per-meeting RAN5 specification sets | Source-linked native execution and scorer controls; all three IDs per method; a pre-API sequence adapter correction and its first calls are preserved separately |
-| [SQL interface intervention](release_package/cqs/original_core_sql_interface_evaluation/README.md) | Full 378-item rerun with actual physical DDL | F1 0.609694; 215/378 exact; 32 failures; paired uncertainty and unchanged-payload operational recovery; old contracts preserved |
-| [Top-k replacements](release_package/cqs/original_core_topk_replacements/README.md) | Ten existing IDs retain full eligible pools for boundary-tie scoring | Corrects known boundary-choice rejection; adds zero original IDs; [fresh predictions](release_package/cqs/original_core_topk_evaluation/README.md) retain all ten IDs per method and preserve the earlier definitions/results |
-| [Revised Core contracts](release_package/cqs/canonical_core/README.md) | 560 revised definitions with complete native reference outputs and requested-field scoring | 383 proposed clarifications; 177 substantive variants; author semantic review pending; no new model results |
-| [31 original questions](release_package/cqs/contract_repair_v1/original_source_aligned/README.md) | Retained predictions on unchanged questions admitted by two AI contract checks and complete saved reference execution | Nine models, legacy answer-column scoring; no multihop item or independent expert validation |
-| [36 formal task variants](release_package/cqs/contract_repair_v1/matched_retrieval_measurement/README.md) | Explicit named-field, typed complete-record scoring of single-pass text, two-round text and generated Cypher | Separate tasks; unequal graph/text access and unverified source-cutoff equivalence |
-| [Core 560 and historical subsets](paper/baseline/README.md) | Original scores, whole-row sensitivity and retained SQL/Cypher reanalysis | The complete original question/scoring contract remains unfinished |
+## Start with the current benchmark
 
-The preserved [original-question repair bundle](release_package/cqs/original_core_repair/README.md)
-defines the earlier task set for a new requested-field evaluation. Use the
-[current index](release_package/cqs/current_core/README.md) for the latest contracts
-and full 560-ID disposition ledger. The preserved bundle's 371 items include
-all 31 historical diagnostic IDs and 340 others, but use repaired scoring
-contracts. Earlier model scores remain under their original scopes and cannot be
-transferred to these contracts. Two AI judgments are required per admitted repair;
-human and independent domain-expert validation have not been completed.
-The frozen 350-item scientific cohort and the further 21-item extension have
-separate input pins; adding repair definitions does not silently extend an
-existing experiment. The repair bundle's offline verifier and 46 regression
-tests check its stored evidence and scoring behavior.
-The [evaluation companion](release_package/cqs/original_core_evaluation/README.md)
-contains new predictions under these contracts. It reports SQL relationship-table
-naming failures and unequal text/structured information access rather than treating
-the observed gap as a causal advantage of graph storage. The retained scores can
-be replayed offline without credentials; fresh retrieval requires the pinned corpus.
+Use [current_tasks.jsonl](release_package/cqs/current_core/current_tasks.jsonl)
+to select the 497 current contracts and their pinned evidence bundles. The
+[index manifest](release_package/cqs/current_core/index_manifest.json) connects
+the active definitions to their original repair and evaluation cohorts.
 
-The historical 45-question diagnostic and the current 31-question diagnostic use
-different criteria; they overlap on 15 IDs and neither contains the other. The
-36 variants share no original-question IDs with the 31. Their scores must remain
-separate. AI checks and query-derived answers do not provide independent expert
-validation. Missing-information abstention and transfer outside RAN remain untested.
+The [all-560 disposition register](release_package/cqs/core_disposition_audit/README.md)
+accounts for every original Core ID: **497 contract-verified, 18 requiring
+clarification, 4 unsupported by the pinned frozen data, and 41 awaiting completed
+evidence checks**. Historical definitions and results remain available alongside
+the current register.
 
-The [scope guide](release_package/cqs/contract_repair_v1/README_evaluation_scopes.md)
-also distinguishes graph Section structure from retained text excerpts, direct
-links from contextual joins, liaison-count populations, historical Table 14
-results from later replays, and text-body passage limits from metadata.
+| Explore | Released resource |
+| --- | --- |
+| Ontology, graph data, and construction | [Release package](release_package/README.md), [body graphs](release_package/kg/per_wg/README.md), [pipeline](release_package/pipeline/README.md) |
+| Question contracts and reference answers | [Current Core](release_package/cqs/current_core/README.md), [original collection](release_package/cqs/spectra_cq_v2.0/README.md) |
+| Four-method evaluation | [Twelve-question cohort](release_package/cqs/original_core_overnight_evaluation15/README.md), [named-record cohort](release_package/cqs/original_core_overnight_evaluation24/README.md), cohort links in the [current index](release_package/cqs/current_core/index_manifest.json) |
+| Source-linked extensions and diagnostics | [Source evidence guide](release_package/cqs/source_supplements_README.md), [RAN2 summaries](release_package/cqs/original_core_source_RAN2_CR_summary240_evaluation/README.md), [RAN3 summaries](release_package/cqs/original_core_source_RAN3_CR_summary202_evaluation/README.md) |
+| Retained experiments and scoring definitions | [Evaluation scope guide](release_package/cqs/contract_repair_v1/README_evaluation_scopes.md), [historical analyses](paper/baseline/README.md) |
+| Run and inspect the artifacts | [Reproduction guide](release_package/tests/README.md), [artifact walkthrough](release_package/ARTIFACT.md) |
+
+## Evaluation examples
+
+The four-method protocol compares generated queries over SPECTRA's structured
+records with single and two-round retrieval over bounded text contexts. The
+following two separately registered cohorts illustrate the released evaluation;
+each retains its own questions, inputs, and denominator.
+
+| Method | Twelve-question macro F1 | Named-record macro F1 (N=3) |
+| --- | ---: | ---: |
+| Text2Cypher | 0.5833 | 1.0000 |
+| Text2SQL | 0.4333 | 1.0000 |
+| Single retrieval | 0.0000 | 0.0000 |
+| Two-round retrieval | 0.0833 | 0.3333 |
+
+In the named-record cohort, both structured methods return the complete requested
+records for all three questions. The twelve-question cohort has exact outputs
+on five questions for Cypher and four for SQL. Every method retains all cohort
+items in its denominator, including errors and abstentions. The linked packages
+provide the actual prompts, source access, reference contracts, first responses,
+and score replays. These are cohort results; the 497-contract index records
+benchmark definitions and their evidence.
 
 ## Get the data
 
