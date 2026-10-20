@@ -1,0 +1,3 @@
+# Two original metadata and recorded-count repairs
+
+Run `python3 -B -S verify_additions.py --bundle .`. Both item-specific compact verifiers run without live databases or API calls. Original English, query identities, separate nonblind AI reviews, complete native values, SQL operands and typed controls are preserved. Expert validation remains zero. Source counterevidence is included: a non-caption CSI parameter table and missing documentary CR citations. The bounded accepted operations do not certify all CSI tables, complete physical-source citations or consensus quality. Original and repaired native captures retain their respective provenance; no synthetic fresh native capture is asserted.

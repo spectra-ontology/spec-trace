@@ -1,0 +1,55 @@
+{
+  "id": "RAN1_P3_CQ025",
+  "question_en": "Summarize the number of agreements per TS (which spec sees the most consensus).",
+  "original_query": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] RETURN sp.specNumber, count(DISTINCT agr) AS agrCount ORDER BY agrCount DESC",
+  "reference_query": "MATCH (sp:Spec)\nWHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291']\nWITH DISTINCT sp.specNumber AS specNumber\nOPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(target:Spec)\nWHERE target.specNumber = specNumber\nRETURN specNumber, count(DISTINCT agr) AS agrCount\nORDER BY agrCount DESC, specNumber ASC",
+  "required_fields": [
+    {
+      "name": "specNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "specNumber"
+    },
+    {
+      "name": "agrCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "agrCount"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "1b34342bbca25d16847a744ff5f35b086ea87298262a7239d898ac5452584206",
+  "reference_query_sha256": "cdf51324e11e04056fad6fa72e7ef87b781be8e6e9959559ba7b6785c5dafed5",
+  "validation_status": "primary_semantic_pass_pending_ROOT_review_and_exact_repaired_native",
+  "source_context_interpretation": "The original category-bound documentary operation counts distinct captured Agreement identities per logical TS through the recorded REFERENCES-to-CR/MODIFIES paths. The original source design explicitly defines this partial graph process; it is not an estimate of all agreements substantively concerning a TS or all physical final-CR citations.",
+  "population_scope": "All eight original RAN1 Phase3 specNumber families, grouped across their captured Spec identities; preserve zero counts for a family with no recorded documentary path.",
+  "source_counterevidence_not_removed": [
+    "AGR-116-8.5-005 directly adopts a TP for38.213 without a CR reference. It belongs to a broader substantive association scope, not this source-defined documentary path.",
+    "AGR-123-7-011 own source has two later FinalCR capture citations omitted by the frozen graph. Adding that source evidence changes493 to494; no all-source citation completeness or source-faithful consensus total is certified by this definition.",
+    "Its frozen own content retains TS38.213 and endorsed, but not FinalCR identities. This is relevant to a distinct source-enriched association reconstruction, not silently injected into the original recorded-path operation."
+  ],
+  "scope_limits": [
+    "No approval/incorporation causality is inferred from REFERENCES.",
+    "No new nodes, edges, body-text selector or source-derived patch is used.",
+    "No claim of complete worldwide or same-report documentary citation counts.",
+    "Old native6 is verified as6; the repaired8-row query still needs ROOT native8.",
+    "Canonical criteria/scorer/kernel are unchanged; nonblind AI interpretation, human expert0."
+  ],
+  "previous_exact_definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN1/CQ025_original_category_documentary_count_v1/source_only_independent_review_v1/canonical_source_only_definition.json",
+    "bytes": 1440,
+    "sha256": "31e01f2c0fa8a1dca5759eb921fc86fa84dc3ff266ab389be3526dbfd3f25272"
+  },
+  "criteria": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/criteria.json",
+    "bytes": 3382,
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  }
+}

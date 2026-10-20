@@ -1,0 +1,85 @@
+{
+  "status": "PASS",
+  "id": "RAN1_P3_CQ025",
+  "observed_utc": "2026-10-20T10:19:53.716419+00:00",
+  "repair_sha256": "1b34342bbca25d16847a744ff5f35b086ea87298262a7239d898ac5452584206",
+  "raw_own_source_reopens": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-123.docx",
+      "sha256": "0fc4f4da372d682fef7585d8f72d2e5ebac3f46e41f8205658e8742b48e11b71",
+      "own_blocks_compared": 19,
+      "selected_counterevidence": [
+        {
+          "index": 487,
+          "text": "The following TPs for TS38.213 for Rel.18 are endorsed."
+        },
+        {
+          "index": 494,
+          "text": "Final CRs capturing the above TPs for 38.213 for Rel-18 and Rel-19 (mirror) are in:"
+        },
+        {
+          "index": 495,
+          "text": "R1-2509603CR for TS 38.213 on RACH-less handoverNEC, vivo, Samsung, Ericsson"
+        },
+        {
+          "index": 497,
+          "text": "R1-2509604CR for TS 38.213 on RACH-less handoverNEC, vivo, Samsung, Ericsson"
+        }
+      ]
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-116.docx",
+      "sha256": "2ceac98a65f75a6bcbdd453ee29fad5b53eb5913c70d4eb64458f1b156733c81",
+      "own_blocks_compared": 19,
+      "selected_counterevidence": []
+    }
+  ],
+  "independent_ROOT_SQL": "WITH scope AS (\n SELECT DISTINCT json_extract(properties_json,'$.specNumber') AS specNumber FROM _node_record\n WHERE EXISTS (SELECT 1 FROM json_each(_node_record.labels_json) WHERE value='Spec')\n AND json_extract(properties_json,'$.specNumber') IN ('38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291')\n ), paths AS (\n SELECT DISTINCT a.node_id agr, json_extract(s.properties_json,'$.specNumber') specNumber\n FROM _node_record a JOIN edge e ON e.src_id=a.node_id AND e.rel_type='REFERENCES'\n JOIN _node_record cr ON cr.node_id=e.dst_id\n JOIN edge m ON m.src_id=cr.node_id AND m.rel_type='MODIFIES'\n JOIN _node_record s ON s.node_id=m.dst_id\n WHERE EXISTS (SELECT 1 FROM json_each(a.labels_json) WHERE value='Agreement')\n AND EXISTS (SELECT 1 FROM json_each(cr.labels_json) WHERE value='CR')\n AND EXISTS (SELECT 1 FROM json_each(s.labels_json) WHERE value='Spec')\n )\n SELECT scope.specNumber, count(DISTINCT paths.agr) agrCount\n FROM scope LEFT JOIN paths ON scope.specNumber=paths.specNumber\n GROUP BY scope.specNumber ORDER BY agrCount DESC,scope.specNumber ASC",
+  "all_eight_typed_rows": [
+    {
+      "specNumber": "38.213",
+      "agrCount": 493
+    },
+    {
+      "specNumber": "38.214",
+      "agrCount": 407
+    },
+    {
+      "specNumber": "38.212",
+      "agrCount": 110
+    },
+    {
+      "specNumber": "38.211",
+      "agrCount": 69
+    },
+    {
+      "specNumber": "38.215",
+      "agrCount": 14
+    },
+    {
+      "specNumber": "38.202",
+      "agrCount": 5
+    },
+    {
+      "specNumber": "38.201",
+      "agrCount": 0
+    },
+    {
+      "specNumber": "38.291",
+      "agrCount": 0
+    }
+  ],
+  "native_rows_file": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN1_P3_CQ025/ROOT_actual_native_capture_v1/reference_outputs/RAN1_P3_CQ025/cdf51324e11e04056fad6fa72e7ef87b781be8e6e9959559ba7b6785c5dafed5.jsonl",
+    "sha256": "4a78d68a34e39e7040c27379710f09f194b0d3c631885ebba58b65d367fae33f"
+  },
+  "native_receipt_file": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN1_P3_CQ025/ROOT_actual_native_capture_v1/reference_outputs/RAN1_P3_CQ025/cdf51324e11e04056fad6fa72e7ef87b781be8e6e9959559ba7b6785c5dafed5.json",
+    "sha256": "af089506e767c8667f0c34e955367af656ab7b56933c2f58a93b918ab4a27558"
+  },
+  "native_source_unchanged": true,
+  "fresh_SQL_equals_exact_native_all8": true,
+  "new_model_calls": 0,
+  "source_faithful_citation_completeness_certified": false,
+  "expert_validation_n": 0
+}
