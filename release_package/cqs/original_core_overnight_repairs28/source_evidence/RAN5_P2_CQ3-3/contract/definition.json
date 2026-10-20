@@ -1,0 +1,37 @@
+{
+  "id": "RAN5_P2_CQ3-3",
+  "question_en": "Rank the main contributors to each spec's resolutions (spec contributor ranking).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec) MATCH (t)-[:SUBMITTED_BY]->(c:Company) WITH s.specNumber AS spec, c.companyName AS company, count(DISTINCT t) AS tdoc_count ORDER BY tdoc_count DESC LIMIT 10 RETURN spec, company, tdoc_count",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec)\nMATCH (t)-[:SUBMITTED_BY]->(c:Company)\nWHERE split(coalesce(r.content, ''), '\\nDecision:')[0] CONTAINS t.tdocNumber\nWITH s.specNumber AS spec, c.companyName AS company, count(DISTINCT t) AS tdoc_count\nORDER BY spec ASC, tdoc_count DESC, company ASC\nWITH spec, collect(company)[..10] AS contributors\nRETURN spec, contributors ORDER BY spec ASC",
+  "required_fields": [
+    {
+      "name": "spec",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "spec"
+    },
+    {
+      "name": "contributors",
+      "type": "json",
+      "nullable": false,
+      "json_schema": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "nested_array_semantics": {
+        "$": "sequence"
+      },
+      "source_column_or_expression": "contributors"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}

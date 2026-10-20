@@ -1,0 +1,69 @@
+{
+  "id": "RAN5_P2_CQ3-3",
+  "question_en": "Rank the main contributors to each spec's resolutions (spec contributor ranking).",
+  "question_sha256": "625746453e575689e2c994682dc621ebcce124760bd4be380521b3a90c8c349c",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec) MATCH (t)-[:SUBMITTED_BY]->(c:Company) WITH s.specNumber AS spec, c.companyName AS company, count(DISTINCT t) AS tdoc_count ORDER BY tdoc_count DESC LIMIT 10 RETURN spec, company, tdoc_count",
+  "original_query_sha256": "1cbd0bd1007ed061c6d8b9f6a0cb1bc48111d77c2e8141b31cb27b8f0d09982d",
+  "criteria": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/criteria.json",
+    "bytes": 3382,
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  },
+  "original_benchmark": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/provenance/original_benchmark.jsonl",
+    "bytes": 399565,
+    "sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef"
+  },
+  "design": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/continued_root11/RAN5_original_Phase2_HEAD_design.md",
+    "bytes": 55992,
+    "sha256": "9fae170884a05c77a68ea2eebe21036adfe2e837f5f222634bc027b092d57c68"
+  },
+  "design_spans": [
+    {
+      "lines": [
+        36,
+        52
+      ],
+      "text": "    - 회사별 기여도 파악 — 누가 표준화에 기여했는가\n    \n    ### 1.3 Who will use and maintain the ontology?\n    \n    | 사용자 | 핵심 니즈 |\n    | --- | --- |\n    | **전략/기획** | 회의 결과 파악, 기술 트렌드 분석, 경쟁사 동향 |\n    | **IP/특허** | 기고의 표준 반영 여부, 기여 증거 확보 |\n    \n    ### 1.4 데이터 소스\n    \n    | Phase | 데이터 소스 | 비고 |\n    | --- | --- | --- |\n    | Phase-1 | Tdoc_list (Excel) | 구축 완료 |\n    | **Phase-2** | **Final Report 본문 (Word)** | Annex 제외 |\n    \n    - 대상: RAN5#76 ~ RAN5#110 Final Report"
+    },
+    {
+      "lines": [
+        136,
+        143
+      ],
+      "text": "    ### CQ3. 회사별 기여도\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 3-1 | 특정 회사 Tdoc이 Resolution으로 이어진 비율은? |\n    | 3-2 | 특정 기술(Work Item)에서 회사별 Resolution 기여도는? |\n    | 3-3 | 특정 Spec의 주요 contributor 순위는? |\n    | 3-4 | 두 회사 간 기여도 비교는? |"
+    },
+    {
+      "lines": [
+        178,
+        195
+      ],
+      "text": "    ### 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort | 구현 속성 |\n    | --- | --- | --- | --- |\n    | CQ1. Resolution 조회 | Meeting 번호 DESC | Agenda 번호 ASC, Sequence ASC | `meetingNumberInt DESC` |\n    | CQ2. Tdoc ↔ Resolution | Meeting 번호 DESC | Sequence ASC | `meetingNumberInt DESC` |\n    | CQ3. 회사별 기여도 | Count DESC | Company 이름 ASC | `count DESC` |\n    | CQ6. 트렌드/비교 | Meeting 번호 ASC (시계열) | — | `meetingNumberInt ASC` |\n    \n    // ★ 최신 우선 원칙: 명시적 요청 없으면 항상 DESC (CQ6 제외 — 시계열)\n    \n    ### 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-5, CQ2 |\n    | Top N 조회 | 10 | CQ1-6, CQ3 |\n    | 트렌드 조회 | 전체 | CQ6 |"
+    },
+    {
+      "lines": [
+        288,
+        295
+      ],
+      "text": "    | **Tdoc** | CQ2 (Tdoc ↔ Resolution 추적) | ✅ 필수 |\n    | **Meeting** | CQ1 (특정 회의의 Resolution) | ✅ 필수 |\n    | **AgendaItem** | CQ1-2 (Agenda별 Resolution) | ✅ 필수 |\n    | **Company** | CQ3 (기여도) | ✅ 필수 |\n    | **Release** | CQ1-3 (Release별 Resolution) | ✅ 필수 |\n    | **Spec** | CQ1-4, CQ3-3 (Spec별 Resolution) | ✅ 필수 |\n    | **WorkItem** | CQ1-5, CQ3-2 (WI별 Resolution) | ✅ 필수 |\n    | CR | (Spec 연결 시 간접 사용) | ⚠️ 간접 |"
+    },
+    {
+      "lines": [
+        1074,
+        1101
+      ],
+      "text": "    \n    ### 4.1 Resolution 매핑\n    \n    **소스**: Final Report 본문\n    \n    | 관계 | 소스 | 변환 규칙 |\n    | --- | --- | --- |\n    | references → Tdoc | content 내 참조 | `R5-\\\\d{6}` 패턴 추출 (6자리) |\n    | madeAt → Meeting | 문서 메타 | 파일명에서 회의 번호 추출 후 Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo → AgendaItem | 섹션 헤더 | Agenda 번호 추출. **같은 미팅 내의 AgendaItem과 매칭** (madeAt으로 결정된 Meeting의 AgendaItem) |\n    | hasTable → Table | content 내 참조 | `Table X.Y.Z-N` 패턴 → 같은 미팅 내 TBL 인스턴스 연결 |\n    \n    > RAN5 TDoc 참조 패턴: `R5-\\\\d{6}` (6자리)\n    \n    **references → Tdoc 매칭 규칙 (Tdoc / CR / LS 모두 대상):**\n    \n    > Phase-1은 `R5-\\d{6}` TDoc 번호를 **Tdoc / CR / LS 세 클래스**로 분류 적재한다. Resolution의 references는 세 클래스 모두를 대상으로 하며, 매칭 우선순위는 아래와 같다.\n    \n    | 순서 | 매칭 대상 | 조건 | 처리 |\n    | --- | --- | --- | --- |\n    | 1 | Tdoc 클래스 | Phase-1 Tdoc 인스턴스에 `tdocNumber` 일치 | references 관계 생성 |\n    | 2 | CR 클래스 (Tdoc 하위 클래스) | Phase-1 CR 인스턴스에 `tdocNumber` 일치 | references 관계 생성 |\n    | 3 | LS 클래스 (Tdoc 하위 클래스) | Phase-1 LS 인스턴스에 `tdocNumber` 일치 | references 관계 생성 |\n    | 4 | 세 클래스 중 어디에도 없음 | Phase-1에 미존재 | 관계 생성 안 함 + WARNING 로그 |\n    \n    *구현 상세: Phase-1의 `Tdoc`이 상위(추상) 클래스이고 CR/LS가 하위 클래스로 정의되어 있으므로, Cypher 상에서는 `MATCH (t:Tdoc {tdocNumber: $num})`만으로도 CR·LS 인스턴스가 매칭된다 (Neo4j의 라벨 상속). 따라서 references의 Range는 Tdoc이지만 실제 매칭 대상에는 CR·LS도 포함된다.*\n    \n    *참고: Resolution 본문에서 추출된 `R5-\\d{6}` 패턴이 Phase-1 Tdoc/CR/LS 어디에도 존재하지 않을 수 있음. 이 경우 동적 생성하지 않고 관계를 생략함.*"
+    },
+    {
+      "lines": [
+        1382,
+        1395
+      ],
+      "text": "    > Spec Step 1의 CQ는 온톨로지 **설계 근거**이다.\n    아래는 구현에서 사용하는 **검증 CQ**로, 설계 CQ를 포함하되 구현 검증용으로 확장/재구성되었다.\n    >\n    \n    | 항목 | 설계 CQ (Spec) | 검증 CQ (구현) |\n    | --- | --- | --- |\n    | 데이터셋 | 16개 (CQ1×6, CQ2×4, CQ3×4, CQ6×2) | Phase-2 CQ 데이터셋 |\n    | 검증 결과 | - | **16/16 PASS** |\n    | 결과 파일 | - | Phase-2 CQ Cypher 결과 |\n    \n    ---"
+    }
+  ],
+  "legacy_gold_metadata_was_exposed_during_baseline_read": true,
+  "not_blind": true,
+  "expert_validation_n": 0
+}

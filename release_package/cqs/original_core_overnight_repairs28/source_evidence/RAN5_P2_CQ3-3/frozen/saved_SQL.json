@@ -1,0 +1,110 @@
+{
+  "status": "PASS",
+  "id": "RAN5_P2_CQ3-3",
+  "repair_sha256": "32fa5a317cf6940f5e87fb0e2647665cf889ca58151a1e167ddbe06209a87b48",
+  "connection": "mode=ro&immutable=1; PRAGMA query_only=ON",
+  "database": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN5.sqlite",
+    "bytes": 612614144,
+    "sha256_inherited_from_prior_actual_full_hash": "f26624efee1327477d4a1139be4b15ef9696adf7611f0805c9f5d79f83403b8b",
+    "full_database_rehashed_in_this_small_step": false
+  },
+  "all_qualifying_join_path_SQL": "SELECT r.node_id AS resolution_node,r.resolutionId,\n t.node_id AS tdoc_node,t.tdocNumber,s.node_id AS spec_node,s.specNumber AS spec,\n co.node_id AS company_node,co.companyName AS company FROM Resolution r JOIN rel_REFERENCES rr ON rr.src_id=r.node_id\n JOIN Tdoc t ON t.node_id=rr.dst_id JOIN rel_MODIFIES mm ON mm.src_id=t.node_id\n JOIN Spec s ON s.node_id=mm.dst_id JOIN rel_SUBMITTED_BY sb ON sb.src_id=t.node_id\n JOIN Company co ON co.node_id=sb.dst_id\n WHERE instr((CASE WHEN instr(coalesce(r.content,''),char(10)||'Decision:')=0 THEN coalesce(r.content,'') ELSE substr(r.content,1,instr(r.content,char(10)||'Decision:')-1) END),t.tdocNumber)>0\n ORDER BY spec,company,t.node_id,r.node_id",
+  "all_qualifying_join_paths": [
+    {
+      "resolution_node": 3124,
+      "resolutionId": "CON-77-6.5.7.5-001",
+      "tdoc_node": 150825,
+      "tdocNumber": "R5-176584",
+      "spec_node": 214894,
+      "spec": "34.229-1",
+      "company_node": 214830,
+      "company": "Intel"
+    },
+    {
+      "resolution_node": 3124,
+      "resolutionId": "CON-77-6.5.7.5-001",
+      "tdoc_node": 150825,
+      "tdocNumber": "R5-176584",
+      "spec_node": 214894,
+      "spec": "34.229-1",
+      "company_node": 214989,
+      "company": "Keysight"
+    },
+    {
+      "resolution_node": 3126,
+      "resolutionId": "CON-78-5.4-001",
+      "tdoc_node": 150885,
+      "tdocNumber": "R5-181652",
+      "spec_node": 214983,
+      "spec": "36.521-1",
+      "company_node": 213781,
+      "company": "SPRINT Corporation"
+    },
+    {
+      "resolution_node": 3183,
+      "resolutionId": "CON-94-6.6.8.2-001",
+      "tdoc_node": 155474,
+      "tdocNumber": "R5-221411",
+      "spec_node": 212444,
+      "spec": "51.010-2",
+      "company_node": 214890,
+      "company": "Bureau Veritas"
+    }
+  ],
+  "group_SQL": "SELECT s.specNumber AS spec,co.companyName AS company,\n count(DISTINCT t.node_id) AS tdoc_count FROM Resolution r JOIN rel_REFERENCES rr ON rr.src_id=r.node_id\n JOIN Tdoc t ON t.node_id=rr.dst_id JOIN rel_MODIFIES mm ON mm.src_id=t.node_id\n JOIN Spec s ON s.node_id=mm.dst_id JOIN rel_SUBMITTED_BY sb ON sb.src_id=t.node_id\n JOIN Company co ON co.node_id=sb.dst_id\n WHERE instr((CASE WHEN instr(coalesce(r.content,''),char(10)||'Decision:')=0 THEN coalesce(r.content,'') ELSE substr(r.content,1,instr(r.content,char(10)||'Decision:')-1) END),t.tdocNumber)>0\n GROUP BY s.specNumber,co.companyName\n ORDER BY s.specNumber,tdoc_count DESC,co.companyName",
+  "all_source_own_groups": [
+    {
+      "spec": "34.229-1",
+      "company": "Intel",
+      "tdoc_count": 1
+    },
+    {
+      "spec": "34.229-1",
+      "company": "Keysight",
+      "tdoc_count": 1
+    },
+    {
+      "spec": "36.521-1",
+      "company": "SPRINT Corporation",
+      "tdoc_count": 1
+    },
+    {
+      "spec": "51.010-2",
+      "company": "Bureau Veritas",
+      "tdoc_count": 1
+    }
+  ],
+  "projection": "Group by spec; preserve count DESC, company ASC SQL order; take first ten company names per spec.",
+  "expected_columns": [
+    "spec",
+    "contributors"
+  ],
+  "records": [
+    {
+      "spec": "34.229-1",
+      "contributors": [
+        "Intel",
+        "Keysight"
+      ]
+    },
+    {
+      "spec": "36.521-1",
+      "contributors": [
+        "SPRINT Corporation"
+      ]
+    },
+    {
+      "spec": "51.010-2",
+      "contributors": [
+        "Bureau Veritas"
+      ]
+    }
+  ],
+  "native_execution_performed": false,
+  "source_binding": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN5_P2_CQ3-3/actual_boundary_recovery_and_company_spec_roles.json",
+    "bytes": 39998,
+    "sha256": "54112eb25ad55a0a38bdf920b7b3f523952fd14f3b46e1485edbed7dbebf083f"
+  }
+}

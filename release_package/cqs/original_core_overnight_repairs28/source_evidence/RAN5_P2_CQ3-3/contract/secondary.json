@@ -1,0 +1,109 @@
+{
+  "id": "RAN5_P2_CQ3-3",
+  "status": "pass",
+  "repair_sha256": "32fa5a317cf6940f5e87fb0e2647665cf889ca58151a1e167ddbe06209a87b48",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "review_role": "ROOT separate second AI source-semantic judgment",
+  "independence": "Different agent from primary author; nonblind to proposal, reference records and primary review. Not a blind or expert assessment.",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Rank the main contributors",
+      "query_clauses": [
+        "RETURN spec, contributors",
+        "collect(company)[..10] AS contributors"
+      ],
+      "finding": "The requested answer is a ranked list of submitting companies for each qualifying spec. Names and associated spec are required; numerical contribution counts are the original sorting metric and are not an additional requested answer role. An ID-only answer or an unpartitioned company list loses a requested role."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "each spec's resolutions",
+      "query_clauses": [
+        "(r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s:Spec)",
+        "WITH spec, collect(company)[..10] AS contributors"
+      ],
+      "finding": "Each in the exact English establishes per-spec coverage. The preserved original design explicitly calls CQ3-3 Spec-specific and defines Spec별 paths, not a global competition among specs. Original global LIMIT10 is concrete contrary implementation evidence; it omits qualifying51.010-2. Repairing the partition implements the stated question rather than adopting that omission."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "resolutions",
+      "query_clauses": [
+        "split(coalesce(r.content, ''), '\\nDecision:')[0] CONTAINS t.tdocNumber",
+        "(t)-[:SUBMITTED_BY]->(c:Company)"
+      ],
+      "finding": "The original mapping means a Tdoc identifier in the own Resolution content, not in the next report item. ROOT reopened all35 reports and83 frozen content rows: the four own literal-reference positives occur before their document Decision fields, while absorbed later records create spurious REFERENCES paths. A generic existing-content boundary removes that contamination without hardcoding IDs or importing ABOUT_TDOC. A rejected CR reference remains a documentary contribution; approval and causality are not asserted."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "contributors",
+      "query_clauses": [
+        "count(DISTINCT t) AS tdoc_count",
+        "WITH s.specNumber AS spec, c.companyName AS company"
+      ],
+      "finding": "The authored query explicitly counts distinct Tdoc nodes per spec/company. Preserve that operational documentary metric and joint submission credit. Repeated Resolution paths do not increase a Tdoc count; changing to Resolution count, accepted CR count, or mere mention count would require a different contract."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "each spec",
+      "query_clauses": [
+        "WITH spec, collect(company)[..10] AS contributors",
+        "RETURN spec, contributors"
+      ],
+      "finding": "All positive spec groups are returned; the authored CQ3 TopN default10 is applied within each group. The original schema supplies no independent full universe of zero-contribution specs for this inner join question. ROOT all83 prefixes and broad89 raw markers identify four own references; the discussion reference lacking MODIFIES remains excluded under the original path. This is complete for that declared source/query population, not a whole-source approval census."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Rank",
+      "query_clauses": [
+        "ORDER BY spec ASC, tdoc_count DESC, company ASC",
+        "collect(company)[..10]"
+      ],
+      "finding": "The preserved original CQ3 default requires descending Count and ascending company name. The nested list is a sequence, so equal-count ties are deterministic rather than arbitrary; outer spec records are a set. The observed Intel/Keysight tie follows this rule. No global top-ten or unsourced tie preference replaces it."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "spec contributor ranking",
+      "query_clauses": [
+        "WHERE split(coalesce(r.content, ''), '\\nDecision:')[0] CONTAINS t.tdocNumber",
+        "count(DISTINCT t)"
+      ],
+      "finding": "The repair uses existing frozen content and edges only. Raw reports verify ownership/roles and are not model answer inputs. ROOT directly read the four positive source/header panels, all83 own prefixes, the source-role evidence and default style/edit-ancestor addendum. No positive normative adoption, all-marker certification, current lifecycle, corporate causal influence or human expert judgment is inferred."
+    }
+  ],
+  "source_evidence": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN5_P2_CQ3-3/original_question_and_authority.json",
+      "bytes": 7164,
+      "sha256": "214ad57ccfb0f8bdc6cc0e43e9d4cb3910133807ac065fbc2b754093d6935067"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN5_P2_CQ3-3/ROOT_actual_fresh_source_and_SQL_replay.json",
+      "bytes": 37282,
+      "sha256": "3f1ff997c1c441934d7db86f134f1d5068fec463f823462c9d6ebebba14f40b5"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN5_P2_CQ3-3/actual_boundary_recovery_and_company_spec_roles.json",
+      "bytes": 39998,
+      "sha256": "54112eb25ad55a0a38bdf920b7b3f523952fd14f3b46e1485edbed7dbebf083f"
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN5_P2_CQ3-3/actual_reference_default_styles_and_edit_ancestors_addendum_v1.json",
+      "bytes": 16323,
+      "sha256": "b414292b426e5c474af0b91fef814cb5ffe65408b72fc2455c088ec8818e1beb"
+    }
+  ],
+  "API_calls": 0,
+  "public_admissions": 0,
+  "expert_validation_n": 0,
+  "limits": [
+    "Semantic judgment is separate from native/scoring and public admission.",
+    "89 broad lexical markers are not89 independently certified Conclusions; local watched OOXML operations are not whole-report rendering."
+  ]
+}
