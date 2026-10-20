@@ -25,7 +25,7 @@ def main():
     assert summary==json.loads((HERE/'partition/summary.json').read_text())
     baseline=[json.loads(line) for line in (HERE/'baseline560_metadata.jsonl').open()]
     verified_n=sum(row['immutable_public_status']=='pass' for row in baseline)
-    assert summary['partition_counts']=={'contract_verified':verified_n,'clarification_required':16,'evidence_pending':560-verified_n-16}
+    assert summary['partition_counts']=={'contract_verified':verified_n,'clarification_required':18,'evidence_pending':560-verified_n-18}
     description=__import__('subprocess').run([sys.executable,str(HERE/'sources/conflicting_TR_description_evidence/reproduce.py')],capture_output=True,text=True,check=True)
     description_result=json.loads(description.stdout)
     assert description_result['cases_verified_n']==3 and description_result['root_secondary_seven_unit_reviews_verified_n']==3
@@ -37,8 +37,11 @@ def main():
     pack=__import__('subprocess').run([sys.executable,'-B','-I','-S',str(HERE/'sources/conflicting_pack_scope_evidence/verify_evidence.py')],capture_output=True,text=True,check=True)
     pack_result=json.loads(pack.stdout)
     assert pack_result['status']=='PASS' and pack_result['classification']=='clarification_required' and pack_result['new_admissions']==0
+    availability=__import__('subprocess').run([sys.executable,'-B','-I','-S',str(HERE/'sources/conflicting_source_availability_evidence/verify_evidence.py')],capture_output=True,text=True,check=True)
+    availability_result=json.loads(availability.stdout)
+    assert availability_result['status']=='PASS' and len(availability_result['cases'])==2 and availability_result['new_admissions']==0
     print(json.dumps({'verification':'PASS','files_verified':len(manifest['files_SHA256']),
-        'SQLite_and_independent_set_recounts':'MATCH','conflicting_TR_description_check':description_result,'conflicting_agenda_description_check':agenda_result,'conflicting_pack_scope_check':pack_result,'conditional_recent_meeting_extent':extent,'partition':summary,
+        'SQLite_and_independent_set_recounts':'MATCH','conflicting_TR_description_check':description_result,'conflicting_agenda_description_check':agenda_result,'conflicting_pack_scope_check':pack_result,'conflicting_source_availability_check':availability_result,'conditional_recent_meeting_extent':extent,'partition':summary,
         'new_admissions':0,'expert_validation_n':0},ensure_ascii=False))
 
 
