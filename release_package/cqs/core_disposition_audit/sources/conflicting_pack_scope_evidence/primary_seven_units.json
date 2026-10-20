@@ -1,0 +1,217 @@
+{
+  "id": "RAN5_P4_CQ3-1",
+  "artifact_type": "primary_exact_seven_unit_scope_classification_review",
+  "reviewer_lineage": "/root/verify_public467_readonly; main_B; same persistent AI as prior continued_root11 review",
+  "reviewer_kind": "nonblind_AI_development_adjudication",
+  "independent_reviewer_count_claimed": 1,
+  "expert_validation_n": 0,
+  "local_recommendation": "clarification_required",
+  "canonical_criteria_status": "pending",
+  "definition": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN5_P4_CQ3-1/original_scope_definition_for_adjudication.json",
+    "bytes": 3916,
+    "sha256": "9d1f19e8bcb0d96e6e654fe69be5c7f4da6543bc51b0d50621e83a57ece816ac"
+  },
+  "original_question_en": "List the CRs in a CR pack with their change summaries (pack contents).",
+  "original_question_sha256": "d0546d700ddc1ef7670027a1b492d86cf5370819429ad626d6e03c45cdca44b0",
+  "original_query": "MATCH (pack:CRPack)-[:HAS_CR]->(c:CR) WITH pack, c ORDER BY c.tdocNumber LIMIT 10 RETURN pack.crPackId AS crPackId, c.tdocNumber AS tdocNumber, c.summaryOfChange AS summary",
+  "original_query_sha256": "66f6207044ad4a7c7538a73da04fbb802745aa8712d5f0bb083dee4769e2ed48",
+  "criteria": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/criteria.json",
+    "bytes": 3382,
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  },
+  "semantic_units": [
+    {
+      "unit": "requested answer roles and fields",
+      "decision": "requested_roles_supported_scope_unresolved",
+      "original_basis": [
+        "English: CRs ... with their change summaries (pack contents)",
+        "design:L128,L307-316,L502,L337-344"
+      ],
+      "query_mapping": "RETURN c.tdocNumber AS tdocNumber, c.summaryOfChange AS summary; pack.crPackId AS crPackId provides grouping context.",
+      "positive_finding": "CR identity and its paired change summary are requested. Pack identity can identify the chosen grouping; no arbitrary title/spec/approval fields are required.",
+      "counterinterpretation": "CRPack crPackId is the old primary column, but it does not replace the requested CR and summary roles. Optional summary cardinality does not turn this into an ID-only task.",
+      "remaining_condition": "After scope is fixed, audit each selected summary including legitimate null source fields under a typed all-requested-field contract."
+    },
+    {
+      "unit": "population and source context",
+      "decision": "clarification_required_actual_population_conflict",
+      "original_basis": [
+        "design:L23,L124-130,L976-991",
+        "validation:L22",
+        "original exact query/full row",
+        "actual_scope_replay:global_first10_pack_n,bound_single_pack_counterexamples"
+      ],
+      "query_mapping": "Unbound MATCH (pack:CRPack)-[:HAS_CR]->(c:CR) selects across every matching pack before global LIMIT10.",
+      "positive_finding": "Own design and validation describe a specific pack. English also permits an any-valid-one-pack reading. Fresh global10 spans six packs; two coherent single-pack10 sets are disjoint.",
+      "counterinterpretation": "The exact authored query plus A.2 implementation reconstruction are substantial positive evidence for a generic global-mapping operational task, not an irrelevant implementation detail.",
+      "why_counter_does_not_resolve": "For CQ3-1 the preserved text still names one pack in both design and validation, while A.2 expressly documents CQ3-3 global substitution and CQ4-2 simplification but no CQ3-1 mapping override. The original runner only checks nonempty output. It does not declare that multiple packs are an answer to pack contents.",
+      "remaining_condition": "Author-level choice between specified single pack, any valid single pack, or global mapping, with the corresponding extent."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "decision": "documentary_membership_role_supported_for_witnesses",
+      "original_basis": [
+        "design:L337-344,L507-532,L703-715",
+        "original register sheet1 A1=TDoc/Z1=TSG CR Pack; rows56,89,228",
+        "actual_header_role_reopen"
+      ],
+      "query_mapping": "HAS_CR is the pack-to-CR membership relation; a focal pack filter is absent.",
+      "positive_finding": "Original raw workbook associates R5-184054/R5-184087 with RP-181570 and R5-184226 with RP-181571. Swapping these source witness associations fails the bounded checks.",
+      "counterinterpretation": "A missing WHERE is not automatically a bug: it can intentionally implement the global mapping reading. Conversely no focal pack may be invented as a repair.",
+      "remaining_condition": "Once population is authorized, validate its necessary memberships and summary source roles; do not add TSG approval or physical submission-time requirements."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "decision": "observed_match_row_unit_preserved_no_count_request",
+      "original_basis": [
+        "original exact query",
+        "actual_scope_replay:full_match_inventory,exact_original_SQL",
+        "design:L511,L532"
+      ],
+      "query_mapping": "One result per matched HAS_CR path; no count, DISTINCT or grouping aggregation is authored.",
+      "positive_finding": "Fresh immutable SQL counts 23,262 match rows / 1,220 pack nodes and preserves full original selected rows, including pack and CR node IDs in the diagnostic receipt.",
+      "counterinterpretation": "The question does not request pack counts, a distinct global pack list, or one representative CR per pack. These cannot be made mandatory substitutes for requested contents.",
+      "remaining_condition": "No new count policy is needed to demonstrate the scope conflict. If a pass contract is later proposed, its duplicate/path semantics must be explicit and tested."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "decision": "selection_extent_not_silently_repaired",
+      "original_basis": [
+        "original exact LIMIT10",
+        "design:L128,L976-991",
+        "actual_scope_replay:bound_single_pack_counterexamples"
+      ],
+      "query_mapping": "LIMIT10 occurs after global WITH/ORDER and before RETURN; it is not a per-pack limit.",
+      "positive_finding": "Even holding the original ten-row extent fixed, one-pack and global answers differ. RP-181570 has 83 frozen matches and RP-181571 has 68; ten-row witnesses are not asserted to be complete physical packs.",
+      "counterinterpretation": "List the CRs can suggest full contents, but the authored LIMIT10 is strong implementation context. Requiring all members by fiat would create another unsupported gate.",
+      "remaining_condition": "Clarify the answer unit first and explicitly retain or revise the extent under author authority; no all-members requirement or old-gold-driven pack selection is imposed here."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "decision": "ordering_does_not_resolve_population",
+      "original_basis": [
+        "original ORDER BY c.tdocNumber",
+        "design:L144-153"
+      ],
+      "query_mapping": "Specific authored c.tdocNumber ASC is held fixed in every diagnostic alternative; generic CQ3 tsgMeetingDESC/crPackIdASC does not supply a focal pack.",
+      "positive_finding": "Scope witnesses differ without changing the sort, adding a pack key, or using incidental serialization as an answer criterion. English does not explicitly request ranked serialization.",
+      "counterinterpretation": "The exact authored order may legitimately take priority over the generic CQ3 table. That resolves a sort precedence question, not whether six packs equal contents of one pack.",
+      "remaining_condition": "A future pass scorer must validate the authorized LIMIT cutoff and ties if relevant. This classification does not claim full typed tie/scorer completion."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "decision": "no_hidden_input_or_scope_choice_authorized",
+      "original_basis": [
+        "original full row keys",
+        "runner:L65-81 exact session.run(query), no parameter dictionary",
+        "design:L794-826 example instance",
+        "prior_callsite_probe"
+      ],
+      "query_mapping": "No $parameter, crPackId predicate, driver parameter map, or original-row context supplies a focal pack.",
+      "positive_finding": "A specifically named pack is not bound in the registered row/callsite. English a CR pack does not itself prove that naming one is compulsory; any valid single-pack answer remains a serious alternative.",
+      "counterinterpretation": "The §9 RP-250233 schema example is not a CQ3-1 input. The exact unbound query can also be regarded as the author-provided global rule, but that reading conflicts with the preserved one-pack wording and was not explicitly reconciled in own authority.",
+      "remaining_condition": "Clarify the scope rule. No public question, canonical criteria, original query, fixed scorer, graph or source bytes are changed by this recommendation."
+    }
+  ],
+  "evidence": {
+    "criteria": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/criteria.json",
+      "bytes": 3382,
+      "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+    },
+    "original_benchmark": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/provenance/original_benchmark.jsonl",
+      "bytes": 399565,
+      "sha256": "8fca9e16b39b387590e04d44d6e2bb6aa2189e5ab1745d7b7729c431e18af2ef",
+      "locator": "line 602; exact ID and complete row"
+    },
+    "own_original_design": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/continued_root11/RAN5_original_Phase4_INDEX_design.md",
+      "bytes": 37804,
+      "sha256": "262a3159b571d8240cdfbea5e0292320591bcbb078a09b1a7163fd54605ec8e4"
+    },
+    "own_original_validation": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/continued_root11/RAN5_original_Phase4_INDEX_validation.md",
+      "bytes": 1957,
+      "sha256": "2d944d6595816ca91c09f6f08c6464905ce0527f103a652416b5e456e67342db"
+    },
+    "own_original_runner": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/continued_root11/RAN5_original_Phase4_INDEX_runner.py",
+      "bytes": 4515,
+      "sha256": "761b757a067e072490996d14b89d0eb23bb9335c9dc18974532e1dc82fe31597"
+    },
+    "actual_scope_replay": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN5_P4_CQ3-1/actual_original_pack_scope_and_two_source_memberships.json",
+      "bytes": 22323,
+      "sha256": "151d0c9497e53e4e5d12c5273341cf074a58bcfd1ec9b0635e417fb28cbaa923"
+    },
+    "actual_reader": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN5_P4_CQ3-1/replay_original_pack_scope_and_source.py",
+      "bytes": 7806,
+      "sha256": "0a99a1d05ca0805ba79fab24ddedae6c79e0559353f6dd55791a5107c4d861ad"
+    },
+    "prior_same_lineage_review": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/continued_root11/RAN5_P4_CQ3-1_primary_seven_unit.json",
+      "bytes": 7914,
+      "sha256": "7d71405ca654ff42ee755236a332b7b5020ef835371fa699d7bfa3a9aaa66944"
+    },
+    "prior_callsite_probe": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/RAN2_RAN5/loop62_RAN5_pack_original_callsite_binding_probe/actual_original_callsite_binding_probe_pending.json",
+      "bytes": 18657,
+      "sha256": "d8025847707d00e7e797aae42e29a56d4b4baed86eea0b14adf996203b3d23ed"
+    },
+    "original_register": {
+      "path": "/home/sihyeon/workspace/spectra/data/corpus/tsg/RAN/formal/meetings/RAN5/source/TSGR5_80_Gothenburg/Docs/TDoc_List_Meeting_RAN5#80.xlsx",
+      "bytes": 488407,
+      "sha256": "a2884a6872ab7d7bd5c61f13101540058df75ab930bfafd1091d51571dbbe10e"
+    },
+    "frozen_SQL": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN5.sqlite",
+      "bytes": 612614144,
+      "sha256": "f26624efee1327477d4a1139be4b15ef9696adf7611f0805c9f5d79f83403b8b",
+      "verification_role": "Full SHA was checked in actual_scope_replay, not rehashed by this writer"
+    },
+    "frozen_SQL_manifest": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN5.manifest.json",
+      "bytes": 28676,
+      "sha256": "bd027ded631d03614c6c3fc165145ed416b93cfbb70f80adc9935fae702b5786"
+    },
+    "actual_header_role_reopen": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN5_P4_CQ3-1/actual_original_register_header_role.json",
+      "bytes": 1548,
+      "sha256": "094a180e1bc4bdb79cbabb25a519e294581d40a19fffad7ff33b6e2313048a38"
+    }
+  },
+  "strongest_opposite": "Authored unbound MATCH, explicit pack ID RETURN, global LIMIT10 and own A.2 implementation reconstruction could be treated as a fully specified global operational task. This remains a possible author decision. The present recommendation does not infer intent merely from generic design; it relies on the repeated own CQ3-1 single-pack wording, absence of a documented CQ3-1 override within the inspected A.2, and an actual one-pack/global answer disagreement.",
+  "why_not_pass_local": "Accepting the global mapping as the question answer, binding a particular pack, or allowing any single pack would select the disputed answer population. The original question cannot be certified under one of these choices without an author scope rule.",
+  "why_not_unsupported_frozen_data": "No necessary fact loss is proved. Existing frozen pack memberships and summaries can support concrete answers after scope is chosen; a null summary alone is not a data-loss proof under own optional source-field facet.",
+  "supersedes_same_lineage_prior_status": {
+    "prior": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/continued_root11/RAN5_P4_CQ3-1_primary_seven_unit.json",
+      "bytes": 7914,
+      "sha256": "7d71405ca654ff42ee755236a332b7b5020ef835371fa699d7bfa3a9aaa66944"
+    },
+    "old_recommendation": "evidence_pending",
+    "reason": "The scope counterpolicies have now been directly compared with own original authority and actual source-supported membership witnesses. This is a final local classification recommendation, while independent ROOT decision remains outstanding."
+  },
+  "limits": [
+    "This is one nonblind AI reviewer lineage, including its prior continued_root11 review. A separate ROOT seven-unit judgment remains required.",
+    "Fresh SQLite is an immutable read-only projection; no new Neo4j execution or native read was performed.",
+    "Eight actual controls are scope diagnostics, not canonical scientific scorer controls or question admission.",
+    "The original register proves three documentary membership rows. Counts 83/68 are frozen memberships and workbook row counts, not a certified reconstruction of every physical RP payload.",
+    "No claim of full active change-summary fidelity, all 1,220 pack source certification, TSG approval, normative incorporation or intrinsic unanswerability.",
+    "Old gold values were encountered as part of the unchanged original row and not used to choose a scope, a focal pack or a new answer."
+  ],
+  "scorer_modified": false,
+  "criteria_modified": false,
+  "question_modified": false,
+  "query_modified": false,
+  "API_calls": 0,
+  "native_calls": 0,
+  "DB_mutations": 0,
+  "public_mutations": 0,
+  "admitted": false,
+  "original560_pass_increment": 0
+}
