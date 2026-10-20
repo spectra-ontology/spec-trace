@@ -1,0 +1,327 @@
+{
+  "status": "COMPLETED_READ_ONLY_SCIENTIFIC_INPUT_ADEQUACY_REVIEW",
+  "scope": "AUTH30 first frozen protocol only; original source-grounded local contracts and observed scientific outputs remain unchanged",
+  "cases": [
+    {
+      "id": "RAN3_P3_CQ5-3",
+      "question_en": "Return CR density (CRs per section) for each spec (change-intensity metric).",
+      "actual_public_task": {
+        "id": "RAN3_P3_CQ5-3",
+        "wg": "RAN3",
+        "repair_sha256": "7e87afba8d5a79ab6a1cbf5789588c5ae775c4a85b371196529bf68bf3215480",
+        "question_en": "Return CR density (CRs per section) for each spec (change-intensity metric).",
+        "required_fields": [
+          {
+            "name": "specNumber",
+            "nullable": false,
+            "type": "string"
+          },
+          {
+            "name": "density",
+            "nullable": false,
+            "type": "number"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        },
+        "cardinality_policy": {
+          "mode": "all"
+        }
+      },
+      "request": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/authorized_incremental30_OpenRouter_release/evaluation/first_trial/calls/RAN3_P3_CQ5-3_Text2Cypher.request.json",
+        "sha256": "178782b5c412d3479862cf0ee2fd7ea98de064c84952d24e2e0c14437aa63a16",
+        "bytes": 15075
+      },
+      "user_payload_keys": [
+        "output_format",
+        "question",
+        "schema"
+      ],
+      "schema_keys": [
+        "auxiliary_identity_codec",
+        "directed_relationships",
+        "labels",
+        "properties_by_label"
+      ],
+      "declared_required_fields": [
+        {
+          "name": "specNumber",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "density",
+          "nullable": false,
+          "type": "number"
+        }
+      ],
+      "definition": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/portable_pair30_v2/release_package/cqs/original_core_overnight_repairs30/definitions/RAN3_P3_CQ5-3.json",
+        "sha256": "cd785fed54451a447e35e09b81fb1109b72c8eddfe6c42e68e1db24f825e1839",
+        "bytes": 1570
+      },
+      "reference_query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCnt, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCnt, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub, crCnt, count(s) AS secCnt RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density ORDER BY density DESC",
+      "system_restricts_external_facts": true,
+      "original_query_not_in_payload": true,
+      "source_design_not_in_payload": true,
+      "needed_paths_are_available": [
+        [
+          "CR",
+          "MODIFIES",
+          "Spec"
+        ],
+        [
+          "Spec",
+          "IN_RELEASE_OF",
+          "Spec"
+        ],
+        [
+          "Section",
+          "BELONGS_TO_SPEC",
+          "Spec"
+        ],
+        [
+          "Spec",
+          "HAS_SECTION",
+          "Section"
+        ],
+        [
+          "Section",
+          "MODIFIED_BY_CR",
+          "CR"
+        ]
+      ],
+      "missing_disambiguating_contract_information": [
+        {
+          "choice": "logical spec hub population",
+          "reference": "hub.specRelease IS NULL",
+          "provided": "Spec label/properties only; no instruction equating spec to null-release hub"
+        },
+        {
+          "choice": "edition selection",
+          "reference": "highest numeric retained specRelease through IN_RELEASE_OF",
+          "provided": "IN_RELEASE_OF and specRelease exist but no latest-edition rule"
+        },
+        {
+          "choice": "numerator and denominator roles",
+          "reference": "count CR MODIFIES hub paths / Section BELONGS_TO_SPEC latest edition",
+          "provided": "both hub/edition and section-linked CR alternatives are schema-legal; operational role is not explained"
+        },
+        {
+          "choice": "zero / missing edition population",
+          "reference": "mandatory CR, retained-edition and Section matches exclude 94 positive hubs without retained edition",
+          "provided": "each spec/all output, no explicit inner-match eligibility definition"
+        },
+        {
+          "choice": "numeric precision",
+          "reference": "round(ratio,2)",
+          "provided": "number only, no precision/tolerance rule in output format"
+        }
+      ],
+      "actual_generated_query_issue": "Cypher groups all section-bearing editions and counts CRs against those editions; SQL counts Section.MODIFIED_BY_CR CR identities per edition. Both execute, but neither reconstructs the chosen hub/latest recipe or round2. No causal apportionment of zero score among these issues is claimed."
+    },
+    {
+      "id": "RAN1_P3_CQ040",
+      "question_en": "Compare CR counts against agreement counts per TS (which spec changes most relative to consensus).",
+      "actual_public_task": {
+        "id": "RAN1_P3_CQ040",
+        "wg": "RAN1",
+        "repair_sha256": "5190dbce5c32071f9074398d5f37c9f2038eb8690eb439431bbc6aaa476edead",
+        "question_en": "Compare CR counts against agreement counts per TS (which spec changes most relative to consensus).",
+        "required_fields": [
+          {
+            "name": "ts",
+            "nullable": false,
+            "type": "string"
+          },
+          {
+            "name": "crCnt",
+            "nullable": false,
+            "type": "integer"
+          },
+          {
+            "name": "agrCnt",
+            "nullable": false,
+            "type": "integer"
+          }
+        ],
+        "collection": {
+          "kind": "set"
+        },
+        "cardinality_policy": {
+          "mode": "all"
+        }
+      },
+      "request": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/authorized_incremental30_OpenRouter_release/evaluation/first_trial/calls/RAN1_P3_CQ040_Text2Cypher.request.json",
+        "sha256": "c4320629c6115c608836720249cec7e78b38a6765014e3e74e7df290590113b9",
+        "bytes": 17636
+      },
+      "user_payload_keys": [
+        "output_format",
+        "question",
+        "schema"
+      ],
+      "schema_keys": [
+        "auxiliary_identity_codec",
+        "directed_relationships",
+        "labels",
+        "properties_by_label"
+      ],
+      "declared_required_fields": [
+        {
+          "name": "ts",
+          "nullable": false,
+          "type": "string"
+        },
+        {
+          "name": "crCnt",
+          "nullable": false,
+          "type": "integer"
+        },
+        {
+          "name": "agrCnt",
+          "nullable": false,
+          "type": "integer"
+        }
+      ],
+      "definition": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/portable_pair30_v2/release_package/cqs/original_core_overnight_repairs30/definitions/RAN1_P3_CQ040.json",
+        "sha256": "248a602c45909d0bd5ece82d3b6c613a0754671cc73f418a5f2e6d15a44897a1",
+        "bytes": 1570
+      },
+      "reference_query": "MATCH (sp:Spec)\nWHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291']\nWITH DISTINCT sp.specNumber AS ts\nOPTIONAL MATCH (cr:CR)-[:MODIFIES]->(crTarget:Spec)\nWHERE crTarget.specNumber = ts\nWITH ts, count(DISTINCT cr) AS crCnt\nOPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(agrTarget:Spec)\nWHERE agrTarget.specNumber = ts\nRETURN ts, crCnt, count(DISTINCT agr) AS agrCnt\nORDER BY crCnt DESC, ts ASC",
+      "system_restricts_external_facts": true,
+      "original_query_not_in_payload": true,
+      "source_design_not_in_payload": true,
+      "gold_domain_literal_values_absent_from_entire_structured_user_payload": [
+        "38.201",
+        "38.202",
+        "38.211",
+        "38.212",
+        "38.213",
+        "38.214",
+        "38.215",
+        "38.291"
+      ],
+      "missing_disambiguating_contract_information": [
+        {
+          "choice": "eligible TS domain",
+          "reference": "eight literal TS families chosen from own Phase3 design, broader than original explicit-five query",
+          "provided": "per TS/all and value-free schema contain no eight-family domain"
+        },
+        {
+          "choice": "agreement association",
+          "reference": "Agreement REFERENCES CR MODIFIES Spec recorded path",
+          "provided": "schema contains route, but NL does not explicitly define count as this captured relation rather than all meeting agreement scope"
+        }
+      ],
+      "strong_counterauthority": "Source-only review accepted eight based on own design/Korean/separate operands context and preserved specific authored five as counterauthority. Neither context nor five query is supplied to model. A schema-wide all-TS count is a plausible literal question reading and is not the fixed eight table.",
+      "actual_outcome": "Both structured models explicitly abstain. Retrieval receives zero context documents. These cannot establish ignorance of the eight-family author domain or a storage advantage."
+    }
+  ],
+  "observed_results": {
+    "text2cypher": {
+      "n": 2,
+      "requested_complete_record_macro_f1": 0.0,
+      "exact_output_rate": 0.0,
+      "exact_outputs": 0,
+      "execution_status_counts": {
+        "OK": 1,
+        "ABSTAIN": 1
+      },
+      "failed_n": 1,
+      "self_reported_partial_n": 0,
+      "matched_requested_records": 0,
+      "gold_answer_records": 31,
+      "predicted_records": 23
+    },
+    "text2sql": {
+      "n": 2,
+      "requested_complete_record_macro_f1": 0.0,
+      "exact_output_rate": 0.0,
+      "exact_outputs": 0,
+      "execution_status_counts": {
+        "OK": 1,
+        "ABSTAIN": 1
+      },
+      "failed_n": 1,
+      "self_reported_partial_n": 0,
+      "matched_requested_records": 0,
+      "gold_answer_records": 31,
+      "predicted_records": 64
+    },
+    "single_retrieval": {
+      "n": 2,
+      "requested_complete_record_macro_f1": 0.0,
+      "exact_output_rate": 0.0,
+      "exact_outputs": 0,
+      "execution_status_counts": {
+        "ABSTAINED": 2
+      },
+      "failed_n": 2,
+      "self_reported_partial_n": 0,
+      "matched_requested_records": 0,
+      "gold_answer_records": 31,
+      "predicted_records": 0
+    },
+    "iterative_retrieval": {
+      "n": 2,
+      "requested_complete_record_macro_f1": 0.0,
+      "exact_output_rate": 0.0,
+      "exact_outputs": 0,
+      "execution_status_counts": {
+        "ABSTAINED": 2
+      },
+      "failed_n": 2,
+      "self_reported_partial_n": 0,
+      "matched_requested_records": 0,
+      "gold_answer_records": 31,
+      "predicted_records": 0
+    }
+  },
+  "evidence": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/authorized_incremental30_OpenRouter_release/evaluation/first_trial/public_tasks.jsonl",
+      "sha256": "0a66fcd0108bb5c54e721234033255f8f4b8901ee163d7e41c3fcc7e5c44cc5e",
+      "bytes": 927
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/authorized_incremental30_OpenRouter_release/evaluation/first_trial/analysis.json",
+      "sha256": "0747b23f0da732a8c9ec52ecfd2751c94e3b483b9cbc270ada77e6a2eba8e7e9",
+      "bytes": 18717
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/authorized_incremental30_OpenRouter_release/evaluation/first_trial/protocol.json",
+      "sha256": "97803aff6d9759cc55c638fd040f0fdf33622430207258551f569df5d7f90ceb",
+      "bytes": 14987
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/portable_pair30_v2/release_package/cqs/original_core_overnight_repairs30/tasks.jsonl",
+      "sha256": "f66bd306f44b38619d90f1d64790acb9c257952687cd32487da410b2472af63a",
+      "bytes": 4708
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/portable_pair30_v2/release_package/cqs/original_core_overnight_repairs30/manifest.json",
+      "sha256": "afe691a4e0b3ef146edd4322f45022fde1b5bd0feb93228f966ff5e95420a124",
+      "bytes": 28531
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/AUTH30_preparation/independent_saved_first10_audit/actual_independent_saved_first10_audit.json",
+      "sha256": "4c5c4a36c3a960175f9afc49370a1697bb997f6f0f7553333d345e015b1f302d",
+      "bytes": 54861
+    }
+  ],
+  "conclusion": {
+    "raw_replay_integrity": "Saved request/response/parser/scorer audit passed; no model retries or query changes. This is separate from input adequacy.",
+    "comparison_limit": "A source-supported canonical contract can be defensible under author context while its unique answer is underdetermined from the actual NL+schema prompt. The observed scores are valid first-protocol outcomes against that fixed reference, but do not isolate model reasoning, ontology benefit, or graph-storage advantage.",
+    "causal_limit": "Unprovided contract choices are documented design limitations, not a measured cause explaining all failures. Genuine generated path errors and explicit abstentions remain.",
+    "publication_interpretation": "Report unchanged N2/10firstcalls/cost0.351280/allfour F1zero as protocol-limited failure cohort. Do not pool into public497 performance or claim ontology superiority.",
+    "not_authorized": "No prompt fixes, rerolls, reference/scorer changes, new API/native execution, public writes or source-contract re-adjudication."
+  },
+  "nonblind_AI": true,
+  "human_expert_n": 0,
+  "new_calls": 0
+}

@@ -1,0 +1,3 @@
+# Two sealed original recorded-operation repairs
+
+Run `python3 -B -S verify_additions.py --bundle .`. Both strict item-specific offline verifiers run without live databases, API or native calls. Original English and authored queries, separate nonblind AI reviews, all native columns, SQL operands and typed controls are retained. RAN3 requires specNumber and density over23 retained latest editions; CQ040 requires both documentary counts over8 named logical families. Numerator/source attribution limits, physical-outline alternatives, the authored-five counterauthority and493-to494 documentary counterexample remain explicit. Expert validation and new public admissions remain zero. No source evidence is added to model input.

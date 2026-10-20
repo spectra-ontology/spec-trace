@@ -1,0 +1,228 @@
+{
+  "id": "RAN3_P3_CQ5-3",
+  "status": "pass",
+  "review_role": "primary_AI_semantic_judgment",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "9a4b4bd106f1452ef8faca7994817e32e2eb53189ec8bd681c5c28a36b7cdaa0",
+  "question_en": "Return CR density (CRs per section) for each spec (change-intensity metric).",
+  "definition": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/definition_original_recorded_density_v1.json",
+    "bytes": 1443,
+    "sha256": "df9a43982fe44d4c62cce21aabe711e1a4e872298f1f0e363ab94cbc0ffdbdd6"
+  },
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "CR density (CRs per section)",
+      "finding": "The answer must associate each returned specification with the numeric density; specNumber and density are both mandatory. An ID-only list would lose the explicitly requested ratio. crCnt/secCnt are transparent intermediate operands in the original RETURN, checked in the native/SQL reference, but the English does not request them as additional fields. Density has number type and exact saved decimal value; no tolerance or integer-only coercion is introduced.",
+      "query_clauses": [
+        "RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density"
+      ],
+      "source_authority_refs": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_authority_direct_read_excerpts.json",
+          "bytes": 14373,
+          "sha256": "11639f32a5989f7c844bba4b0018136b87468af1087e7991af1f62b109926996"
+        }
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "for each spec (change-intensity metric)",
+      "finding": "The Phase3 graph-relative integrated-analysis example asks this same documentary metric. Original design explicitly names Section sources as styled TS document headings (Heading1–5, defensive6/7, Annex8), with lexical identity generation, and release-final Spec instances. Latest-rk selection is the exact authored instance in this release-aware source context. Actual original-styled identity replay across all23 latest DOCX equals all4017 frozen denominator identities. This supports the recorded Section-inventory metric, not an externally complete count of all physical clauses, a normalized cross-release rate, or proof of normative change impact. The broad Clause synonym and two real outline-only headings are explicit counterauthority, addressed below rather than hidden.",
+      "query_clauses": [
+        "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC",
+        "collect(rk)[0] AS latestRk",
+        "MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section)"
+      ],
+      "source_authority_refs": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_authority_direct_read_excerpts.json",
+          "bytes": 14373,
+          "sha256": "11639f32a5989f7c844bba4b0018136b87468af1087e7991af1f62b109926996"
+        }
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "CRs per section",
+      "finding": "Use the original CR-labelled MODIFIES-to-abstract-Spec relationship for the numerator and latest retained edition incoming BELONGS_TO_SPEC Section paths for the denominator. No approval, meeting, author, company, reason/body, or CR-release filter is requested. MODIFIES is a recorded requested-target relationship, not proof every CR was accepted. Exact inner MATCH excludes94 of117 positive hubs without retained release editions;23 release-linked positive hubs yield23 nonempty latest inventories. The question is not silently completed with zero/undefined rows.",
+      "query_clauses": [
+        "WHERE hub.specRelease IS NULL",
+        "count(cr) AS crCnt",
+        "(rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "(latestRk)<-[:BELONGS_TO_SPEC]-(s:Section)"
+      ],
+      "source_authority_refs": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_authority_direct_read_excerpts.json",
+          "bytes": 14373,
+          "sha256": "11639f32a5989f7c844bba4b0018136b87468af1087e7991af1f62b109926996"
+        }
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "CRs per section",
+      "finding": "The numerator counts CR relationship paths before edition expansion, and the denominator counts Section membership paths after one latest edition is selected. Fresh SQL finds19537 paths across117 positive hubs; within every hub path count equals distinct CR-node count and distinct tdocNumber count, and every counted CR also has Tdoc role. All23 denominator path counts equal distinct node/Section-ID counts. Every retained latest release has a unique maximum edition, so collect[0] has no actual tie ambiguity. The original round(...,2) is retained. These are recorded document/path counts, not a count of unique CR-number families or approved revisions.",
+      "query_clauses": [
+        "WITH hub, count(cr) AS crCnt",
+        "WITH hub, crCnt, collect(rk)[0] AS latestRk",
+        "WITH hub, crCnt, count(s) AS secCnt",
+        "round(1.0 * crCnt / secCnt, 2) AS density"
+      ],
+      "source_authority_refs": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_authority_direct_read_excerpts.json",
+          "bytes": 14373,
+          "sha256": "11639f32a5989f7c844bba4b0018136b87468af1087e7991af1f62b109926996"
+        }
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "for each spec",
+      "finding": "Each output record has one spec-specific density. The original source context defines finite list queries and the exact authored instance selects5 after ordering. This is the original bounded integrated-analysis result, not a new five-spec whitelist: all23 candidate groups are computed before the unchanged LIMIT5. The universal reading of each as an unbounded demand for all23 is a real counterinterpretation, but the preserved authored finite query in the original finite metadata-list context supplies its extent; replacing it with an all-edition/all23 contract would add a different evaluated task. All requested5 values are complete in the retained native output and fresh SQL. No source-positive styled identity was removed to obtain this cap.",
+      "query_clauses": [
+        "RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density",
+        "ORDER BY density DESC LIMIT 5"
+      ],
+      "source_authority_refs": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_authority_direct_read_excerpts.json",
+          "bytes": 14373,
+          "sha256": "11639f32a5989f7c844bba4b0018136b87468af1087e7991af1f62b109926996"
+        }
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Return CR density",
+      "finding": "Density DESC determines selection, and latest release DESC selects the denominator edition. The English does not separately ask the response to be serialized as a ranking, so named spec-density mappings form a set; presentation reversal is accepted. The actual fifth value4.97 is strictly above sixth4.00 and all five selected densities differ, making the selected membership invariant to unspecified within-equal-density order. No extra alphabetical or numeric tie breaker is injected.",
+      "query_clauses": [
+        "ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC",
+        "ORDER BY density DESC LIMIT 5"
+      ],
+      "source_authority_refs": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_authority_direct_read_excerpts.json",
+          "bytes": 14373,
+          "sha256": "11639f32a5989f7c844bba4b0018136b87468af1087e7991af1f62b109926996"
+        }
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "change-intensity metric",
+      "finding": "The operative meaning is the documented graph-relative recorded-Section metric, derived from original question, schema/source mapping and actual23-source denominator evidence. No external approval, physical all-clause census, causal impact, whole-CR-cover completeness or present-day edition certification is asserted. The physical outline-only counterpolicy changes two requested values and is disclosed; it is not adopted silently. No source enrichment, new KG, changed English, model outputs, new native run or paid call is used in this repair. Exact old native output is reused only through its archived-query/whole-source provenance checker.",
+      "query_clauses": [
+        "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR)",
+        "MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section)",
+        "round(1.0 * crCnt / secCnt, 2) AS density"
+      ],
+      "source_authority_refs": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_authority_direct_read_excerpts.json",
+          "bytes": 14373,
+          "sha256": "11639f32a5989f7c844bba4b0018136b87468af1087e7991af1f62b109926996"
+        }
+      ]
+    }
+  ],
+  "required_fields": [
+    {
+      "name": "specNumber",
+      "nullable": false,
+      "source_column_or_expression": "specNumber",
+      "type": "string"
+    },
+    {
+      "name": "density",
+      "nullable": false,
+      "source_column_or_expression": "density",
+      "type": "number"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 5
+  },
+  "repair_class": "scorer_only",
+  "query_choice": "original",
+  "recommendation": "pass_local_candidate_pending_separate_ROOT_semantic_review_and_portable_completion",
+  "counterinterpretations": [
+    {
+      "claim": "Section/Clause synonym could require every real physical clause, regardless of Word style.",
+      "evidence": "Original design L110–129 and physical38.460§9/38.470§5.2.17 own source headings; absent as exact same-spec frozen Section identities.",
+      "actual_effect": "38.460 3→4 would change density36.67→27.50;38.470 68→69 changes5.21→5.13. These are true physical-coverage limitations, not numeric equality.",
+      "judgment": "Original explicit Section source-entry mapping L1524–1547 plus same density validation example L87–95 licenses the recorded styled-identity inventory for this original graph metric. A complete physical-clause variant would need an explicitly separate denominator/source repair; it is not what this candidate claims."
+    },
+    {
+      "claim": "Each spec could demand an uncapped all23 output or every release.",
+      "evidence": "Original English plus release-aware source schema, versus original authored latest-rk/LIMIT5 and original finite list/default policy.",
+      "judgment": "The task is the preserved finite5 per-Spec mapping over latest retained denominator editions. Each is the grouping unit, not a new all-release outer-completion requirement. This semantic choice is independently reviewable; if ROOT disagrees the item remains pending rather than a forced pass."
+    },
+    {
+      "claim": "Small-TS Heading warnings mean saved Section counts can never be used.",
+      "evidence": "Original validation L94–103 warns of38.460/.462/.463.",
+      "judgment": "Warnings are not themselves proof of a missing original styled identity. Actual full23 own-source styled identity equality resolves that specific source-fidelity gate. The broader physical-clause limitation remains explicitly disclosed."
+    },
+    {
+      "claim": "Returning only specification IDs is sufficient.",
+      "judgment": "Rejected: CR density is the requested substantive numeric attribute; spec+density are required. Extra unrequested numerator/denominator RETURN columns cannot be made mandatory."
+    }
+  ],
+  "actual_checks": {
+    "source_full_latest23_styled_identity": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/actual_all_23_latest_source_identity_replay.json",
+      "bytes": 10809240,
+      "sha256": "bc4ff76e422ce194f50596c352e889c328f8149cc04b29d9e6cf93f504a692bf"
+    },
+    "cover_version_addendum": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/actual_all23_cover_version_metadata_addendum.json",
+      "bytes": 66199,
+      "sha256": "b68f832f0f9a3e720356e93dda088e9fc801d3cc43266ee662bb4358b4e1763a"
+    },
+    "native_SQL_and_multiplicity": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/actual_original_native_SQL_multiplicity_and_version_binding.json",
+      "bytes": 30672,
+      "sha256": "fe2a350b126ca75f6dd28dfee5539e38508e0f38290998a75cf90cb5f2448285"
+    },
+    "positive_hub_funnel": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/actual_full_positive_hub_inner_match_funnel.json",
+      "bytes": 20570,
+      "sha256": "e49506295045286151318060c27b59dee605f96f83f0c0ee5667362ee4ea620a"
+    },
+    "typed_controls": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/actual_typed_scorer_controls.json",
+      "bytes": 29798,
+      "sha256": "b829874097ce107f70f914f395e28f1affee96ce72779a3685315230ec3afcd2"
+    },
+    "frozen_alternate_search": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/actual_outline_counterexamples_all_frozen_alternate_search.json",
+      "bytes": 12934,
+      "sha256": "294aaf5367baf6846ebc3dada27535930bc90bd83ede2ba0e74fcb4e01f00cb7"
+    }
+  },
+  "source_scope": "All23 latest original DOCX style+single-identity Section rule,4017 identities; not all physical clauses or complete old-version/CR-cover extraction.",
+  "nonblind": true,
+  "legacy_gold_and_native_rows_previously_visible": true,
+  "model_scores_used_for_selection": false,
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "API_calls": 0,
+  "new_native_executions": 0,
+  "public_changes": 0
+}

@@ -1,0 +1,32 @@
+{
+  "id": "RAN3_P3_CQ5-3",
+  "wg": "RAN3",
+  "query_sha256": "bcfc0c7a0eab89d2c12e530db5c9c45ab1fec25b118776893aa837afff0eb56f",
+  "query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCnt, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCnt, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub, crCnt, count(s) AS secCnt RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density ORDER BY density DESC",
+  "started_utc": "2026-10-20T21:48:14.685173+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN3_P3_CQ5-3/bcfc0c7a0eab89d2c12e530db5c9c45ab1fec25b118776893aa837afff0eb56f.jsonl",
+  "columns": [
+    "specNumber",
+    "crCnt",
+    "secCnt",
+    "density"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 23,
+  "bytes_retained": 520,
+  "rows_sha256": "4451e00067fb3aae469500e54913a309fb7c249e94622b94e0eac814383a0751",
+  "finished_utc": "2026-10-20T21:48:17.171179+00:00",
+  "elapsed_s": 2.486,
+  "full_rows_available": true
+}

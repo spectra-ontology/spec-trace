@@ -1,0 +1,200 @@
+{
+  "id": "RAN3_P3_CQ5-3",
+  "status": "PASS_BOUNDED_NUMERATOR_ROLE_AUDIT",
+  "authority": [
+    {
+      "file": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_phase1_design_actual_INDEX.md",
+        "bytes": 66767,
+        "sha256": "b2dc1656ae5c30c384ea018069d399d8b117210e4ad21aa75bf3eb0f4cbb1d4b"
+      },
+      "excerpts": [
+        {
+          "first_line": 359,
+          "last_line": 389,
+          "text": "    \n    ## 3. 용어 나열\n    \n    ### 3.1 클래스 후보\n    \n    | 용어 | 데이터 소스 | 채울 수 있나? | 비고 |\n    | --- | --- | --- | --- |\n    | Tdoc | TDoc 컬럼 | ✅ | 상위 클래스 |\n    | CR | Type 컬럼 (CR, draftCR, pCR) | ✅ | Tdoc 하위 클래스 |\n    | LS | Type 컬럼 (LS in, LS out) | ✅ | Tdoc 하위 클래스 |\n    | Meeting | 파일명에서 추출 | ✅ | RAN3#{N} 패턴 |\n    | Company | Source 컬럼 | ✅ | 파싱/정규화 필요 (복합 값, §9.3 참조) |\n    | Contact | Contact 컬럼 | ✅ | 빈값 존재 (§9.3 참조) |\n    | WorkItem | Related WIs 컬럼 | ✅ | 파싱 필요 |\n    | AgendaItem | Agenda item 컬럼 | ✅ | 빈값 존재 (§9.3 참조) |\n    | Release | Release 컬럼 | ✅ | Rel-12~20 범위 |\n    | Spec | Spec 컬럼 | ✅ | |\n    | WorkingGroup | To, Cc에서 추출 | ✅ | 파싱 필요 |\n    \n    ### 3.2 Object Property 후보\n    \n    | 용어 | 데이터 소스 | 설명 | 채울 수 있나? |\n    | --- | --- | --- | --- |\n    | submittedBy | Source | Tdoc → Company | ✅ |\n    | hasContact | Contact | Tdoc → Contact | ✅ |\n    | relatedTo | Related WIs | Tdoc → WorkItem (다대다) | ✅ |\n    | belongsTo | Agenda item | Tdoc → AgendaItem | ✅ |\n    | targetRelease | Release | Tdoc → Release | ✅ |\n    | modifies | Spec | CR → Spec | ✅ |\n    | presentedAt | 파일명 | Tdoc → Meeting | ✅ |\n    | isRevisionOf | Is revision of | Tdoc → Tdoc | ✅ |"
+        },
+        {
+          "first_line": 605,
+          "last_line": 641,
+          "text": "    ---\n    \n    ## 5. 하위 클래스 판단 근거\n    \n    ### 5.1 CR (Change Request)\n    \n    | 기준 | 충족 여부 | 내용 |\n    | --- | --- | --- |\n    | 추가 속성 | ✅ | crNumber, crCategory, crRevision, clausesAffected, tsgCRPack, affectsUICC, affectsME, affectsRAN, affectsCN |\n    | 다른 관계 | ✅ | modifies → Spec |\n    | 해당 Type | - | 'CR', 'draftCR', 'pCR' |\n    \n    **RAN3 특성**: crRevision 13.5% (CR 대비). CR 비중 28.5%로 WG 중 가장 높음. crCategory는 F/A/B/C/D + 레거시 1/2/3 (26건, 사전 스캔 [P1-V02] TDoc List 전수 집계 기준).\n    \n    ### 5.2 LS (Liaison Statement)\n    \n    | 기준 | 충족 여부 | 내용 |\n    | --- | --- | --- |\n    | 추가 속성 | ✅ | direction ('in' / 'out') |\n    | 다른 관계 | ✅ | sentTo → WorkingGroup, ccTo → WorkingGroup, originalLS → Tdoc |\n    | 해당 Type | - | 'LS out', 'LS in' |\n    \n    ---\n    \n    ## 6. Type별 클래스 매핑\n\n    | Type 값 | 클래스 | 구분 속성 |\n    | --- | --- | --- |\n    | discussion | Tdoc | type = 'discussion' |\n    | **CR** | **CR** | — |\n    | other | Tdoc | type = 'other' |\n    | draftCR | CR | crNumber가 null |\n    | pCR | CR | crNumber가 null |\n    | LS out | LS | direction = 'out' |\n    | LS in | LS | direction = 'in' |\n    | response | Tdoc | type = 'response' |\n    | Work Plan | Tdoc | type = 'Work Plan' |"
+        },
+        {
+          "first_line": 722,
+          "last_line": 738,
+          "text": "    ## 4. CR 클래스 속성 (Tdoc 상속 + 추가)\n    \n    ### 4.1 추가 Object Property\n    \n    | 속성명 | Range | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | modifies | Spec | Spec | CR이 변경을 요청하는 대상 기술 규격 (예: 38.401) |\n    \n    ### 4.2 추가 Data Property\n    \n    | 속성명 | Type | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | crNumber | String | CR | CR의 공식 번호. draftCR/pCR은 이 값이 없음 |\n    | crCategory | String (Enum) | CR category | CR의 카테고리 (F/A/B/C/D + 레거시 1/2/3) |\n    | crRevision | String | CR revision | CR의 수정 횟수 (RAN3 비중은 RAN1보다 유의미 — 정량은 Appendix A) |\n    | clausesAffected | String | TDoc List (36컬럼 파일) 또는 Phase-4 | 영향받는 조항 번호 |\n    | tsgCRPack | String | TSG CR Pack | TSG에 제출되는 CR Pack 번호 |"
+        },
+        {
+          "first_line": 987,
+          "last_line": 1005,
+          "text": "    \n    ### 4.1 Object Property\n    \n    | 속성명 | Domain | Range | Cardinality | 필수 | 근거 |\n    | --- | --- | --- | --- | --- | --- |\n    | modifies | CR | Spec | 0..* | ❌ | draftCR/pCR 일부 Spec null(하한 0). 한 CR이 복수 Spec 병기(TDoc List Spec 칼럼 다중값) — 모델·실데이터 모두 다중값 (ontology tdoc:modifies 다중값) |\n    \n    ### 4.2 Data Property\n    \n    | 속성명 | Domain | Type | Cardinality | 필수 | 근거 |\n    | --- | --- | --- | --- | --- | --- |\n    | crNumber | CR | String | 0..1 | ❌ | draftCR은 CR 번호 미부여 |\n    | crCategory | CR | String (Enum) | 0..1 | ❌ | 일부 미지정 (F/A/B/C/D + 레거시 1/2/3) |\n    | crRevision | CR | String | 0..1 | ❌ | 13.5% 보유 |\n    | clausesAffected | CR | String | 0..1 | ❌ | 36컬럼 파일 + Phase-4 |\n    | tsgCRPack | CR | String | 0..1 | ❌ | 승인된 CR만 |\n    | affectsUICC | CR | Boolean | 0..1 | ❌ | 36컬럼 파일만 |\n    | affectsME | CR | Boolean | 0..1 | ❌ | 36컬럼 파일만 |\n    | affectsRAN | CR | Boolean | 0..1 | ❌ | 36컬럼 파일만 |"
+        },
+        {
+          "first_line": 1409,
+          "last_line": 1436,
+          "text": "    | revisedTo | Revised to | Tdoc | tdocNumber 참조 |\n    | replyTo | Reply to | Tdoc | tdocNumber 참조 |\n    | replyIn | Reply in | Tdoc | tdocNumber 참조 |\n    \n    ### 6.10 CR (Tdoc 하위 클래스)\n    \n    **생성 조건**: Type이 'CR', 'draftCR', 'pCR' 중 하나\n    \n    **추가 속성** (Tdoc 속성 상속 + 아래 추가):\n    \n    | 속성 | 소스 | 변환 |\n    | --- | --- | --- |\n    | crNumber | CR | 그대로 (draftCR/pCR은 null) |\n    | crCategory | CR category | F/A/B/C/D + 레거시 1/2/3 그대로 저장 |\n    | crRevision | CR revision | 그대로 (빈값 허용) |\n    | clausesAffected | Clauses Affected (36컬럼) | 그대로 (31컬럼 파일은 null) |\n    | tsgCRPack | TSG CR Pack | 그대로 |\n    | affectsUICC | UICC (36컬럼) | Boolean 변환 |\n    | affectsME | ME (36컬럼) | Boolean 변환 |\n    | affectsRAN | RAN (36컬럼) | Boolean 변환 |\n    | affectsCN | CN (36컬럼) | Boolean 변환 |\n    \n    **추가 Object Property**:\n    \n    | 관계 | 소스 | 대상 | 변환 |\n    | --- | --- | --- | --- |\n    | modifies | Spec | Spec | specNumber 매칭 |\n    "
+        },
+        {
+          "first_line": 1477,
+          "last_line": 1484,
+          "text": "    \n    ### 7.3 클래스 판별\n    \n    | Type 값 | 클래스 | 판별 규칙 |\n    | --- | --- | --- |\n    | CR, draftCR, pCR | CR | `type in ('CR', 'draftCR', 'pCR')` |\n    | LS out, LS in | LS | `type in ('LS out', 'LS in')` |\n    | 기타 | Tdoc | 위 조건에 해당하지 않는 모든 Type |"
+        },
+        {
+          "first_line": 1631,
+          "last_line": 1639,
+          "text": "    \n    | 규칙 | 설명 |\n    | --- | --- |\n    | tdocNumber 유일성 | 동일 tdocNumber 중복 불가 |\n    | ID 패턴 매칭 | R3-\\d{6} (6자리) |\n    | 참조 무결성 | isRevisionOf/revisedTo 대상이 존재 |\n    | 타입 일관성 | CR은 반드시 type∈{CR, draftCR, pCR} |\n    \n    ### 11.2 통계 검증"
+        }
+      ]
+    },
+    {
+      "file": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/original_phase4_design_actual_INDEX.md",
+        "bytes": 48110,
+        "sha256": "504516b9aa09b2c239f4a326b9427812dfb1e86b50355434544931f777fea908"
+      },
+      "excerpts": [
+        {
+          "first_line": 43,
+          "last_line": 49,
+          "text": "    ### 1.5 전제 조건\n    \n    > 본 온톨로지는 Phase-1~3 온톨로지의 확장이다.\n    > \n    > - Phase-1~3의 모든 클래스, 관계, 인스턴스는 그대로 유지\n    > - Phase-4는 CR 문서 본문 정보를 추가하고 기존 데이터와 연결\n    > - 기존 CQ는 모두 답변 가능 유지"
+        },
+        {
+          "first_line": 374,
+          "last_line": 381,
+          "text": "    ### 1.5 기존 연결 관련 (Phase-1~3 재사용)\n    \n    | 용어 | 설명 | 출처 | 관련 CQ |\n    | --- | --- | --- | --- |\n    | modifies | CR → Spec | Phase-1 | CQ2-2, CQ4 |\n    | submittedBy | CR → Company | Phase-1 | CQ4-4 |\n    | relatedTo | CR → WorkItem | Phase-1 | CQ3-2, CQ4-3 |\n    | presentedAt | CR → Meeting | Phase-1 | CQ4-5 |"
+        }
+      ]
+    }
+  ],
+  "original_scope_reasoning": "Original Phase1 defines CR class as Type CR/pCR/draftCR and MODIFIES from the TDoc-list Spec field (0..*); Phase3 inherits those metadata facts. The density numerator counts recorded requested-target contribution paths, not formal-approved/implemented CRs only. Tdoc inheritance alone is not source-truth evidence.",
+  "actual_SQL": "SELECT c.type,COUNT(*) paths,COUNT(DISTINCT c.node_id) nodes FROM CR c\nJOIN rel_MODIFIES m ON m.src_id=c.node_id JOIN Spec h ON h.node_id=m.dst_id\nWHERE h.specRelease IS NULL GROUP BY c.type ORDER BY c.type",
+  "all19537_counted_paths_types": [
+    {
+      "type": "CR",
+      "paths": 13961,
+      "nodes": 13961
+    },
+    {
+      "type": "draftCR",
+      "paths": 2693,
+      "nodes": 2693
+    },
+    {
+      "type": "pCR",
+      "paths": 2883,
+      "nodes": 2883
+    }
+  ],
+  "known_source_counterexamples_and_same_frozen_roles": [
+    {
+      "identity": "R3-260686",
+      "frozen_records": [
+        {
+          "node_id": 66117,
+          "tdocNumber": "R3-260686",
+          "type": null,
+          "crNumber": null,
+          "crRevision": null,
+          "title": null,
+          "Tdoc_role_type": null
+        }
+      ],
+      "MODIFIES_targets": [],
+      "counted_by_literal_density_numerator": false,
+      "no_formal_truth_implied_by_labels": true
+    },
+    {
+      "identity": "R3-197688",
+      "frozen_records": [
+        {
+          "node_id": 56332,
+          "tdocNumber": "R3-197688",
+          "type": "other",
+          "crNumber": null,
+          "crRevision": null,
+          "title": "(TP to BL CR for TS 38.455): Support for UL Positioning Measurements in NG-RAN",
+          "Tdoc_role_type": "other"
+        }
+      ],
+      "MODIFIES_targets": [],
+      "counted_by_literal_density_numerator": false,
+      "no_formal_truth_implied_by_labels": true
+    },
+    {
+      "identity": "R3-205808",
+      "frozen_records": [
+        {
+          "node_id": 71409,
+          "tdocNumber": "R3-205808",
+          "type": "CR",
+          "crNumber": "8",
+          "crRevision": "18",
+          "title": "Introduction of NR Positioning in NRPPa",
+          "Tdoc_role_type": "CR"
+        }
+      ],
+      "MODIFIES_targets": [
+        {
+          "edge_id": 346941,
+          "node_id": 87833,
+          "id": "tdoc:spec/38_455",
+          "specNumber": "38.455",
+          "specRelease": null,
+          "specVersion": null
+        }
+      ],
+      "counted_by_literal_density_numerator": true,
+      "no_formal_truth_implied_by_labels": true
+    }
+  ],
+  "R3_260686_own_raw_form_reopened_now": {
+    "archive": {
+      "path": "data/corpus/tsg/RAN/formal/change-requests/RAN3/source/Rel-19/TSG/RP-260271.zip",
+      "bytes": 883183,
+      "sha256": "e8dcfd817735fba8d14ab0aef5892809ac48a899a40c4242b58a7f8d2d5f4221"
+    },
+    "member": "38423_CR1668r1_(Rel-19)_R3-260686.docx",
+    "member_bytes": 47905,
+    "member_sha256": "aa8d05f5b11e53976cb3615d42d2f4dbd5a2109848bfd21cf7379c54875f711f",
+    "member_CRC": 3582766852,
+    "document_xml_sha256": "06c7b42bfacd442b7e397557e3dcc0c1e53ca4ac523e0ce688d2a0d36ab38b8d",
+    "styles_xml_sha256": "c25704ec7d3fdbd1618f0727a47c8cf16a6b99e728ed78416c10635fcc570a0a",
+    "own_actual_form_row": {
+      "direct_table_index": 0,
+      "row_index": 3,
+      "cells": [
+        "",
+        "38.423",
+        "CR",
+        "1668",
+        "Rev",
+        "1",
+        "Current version:",
+        "19.1.0",
+        ""
+      ],
+      "XML": "<ns0:tr xmlns:ns0=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:ns1=\"http://schemas.microsoft.com/office/word/2010/wordml\" ns0:rsidR=\"001E41F3\" ns1:paraId=\"3999489E\" ns1:textId=\"77777777\" ns0:rsidTr=\"00547111\"><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"142\" ns0:type=\"dxa\" /><ns0:tcBorders><ns0:left ns0:val=\"single\" ns0:sz=\"4\" ns0:space=\"0\" ns0:color=\"auto\" /></ns0:tcBorders></ns0:tcPr><ns0:p ns1:paraId=\"4DDA7F40\" ns1:textId=\"77777777\" ns0:rsidR=\"001E41F3\" ns0:rsidRDefault=\"001E41F3\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:spacing ns0:after=\"0\" /><ns0:jc ns0:val=\"right\" /><ns0:rPr><ns0:noProof /></ns0:rPr></ns0:pPr></ns0:p></ns0:tc><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"1559\" ns0:type=\"dxa\" /><ns0:shd ns0:val=\"pct30\" ns0:color=\"FFFF00\" ns0:fill=\"auto\" /></ns0:tcPr><ns0:p ns1:paraId=\"52508B66\" ns1:textId=\"0E911A5C\" ns0:rsidR=\"001E41F3\" ns0:rsidRPr=\"00410371\" ns0:rsidRDefault=\"007856E5\" ns0:rsidP=\"00E13F3D\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:spacing ns0:after=\"0\" /><ns0:jc ns0:val=\"right\" /><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /><ns0:lang ns0:eastAsia=\"zh-CN\" /></ns0:rPr></ns0:pPr><ns0:r><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>38.4</ns0:t></ns0:r><ns0:r ns0:rsidR=\"005F2A2C\"><ns0:rPr><ns0:rFonts ns0:hint=\"eastAsia\" /><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /><ns0:lang ns0:eastAsia=\"zh-CN\" /></ns0:rPr><ns0:t>23</ns0:t></ns0:r></ns0:p></ns0:tc><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"709\" ns0:type=\"dxa\" /></ns0:tcPr><ns0:p ns1:paraId=\"77009707\" ns1:textId=\"77777777\" ns0:rsidR=\"001E41F3\" ns0:rsidRDefault=\"001E41F3\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:spacing ns0:after=\"0\" /><ns0:jc ns0:val=\"center\" /><ns0:rPr><ns0:noProof /></ns0:rPr></ns0:pPr><ns0:r><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>CR</ns0:t></ns0:r></ns0:p></ns0:tc><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"1276\" ns0:type=\"dxa\" /><ns0:shd ns0:val=\"pct30\" ns0:color=\"FFFF00\" ns0:fill=\"auto\" /></ns0:tcPr><ns0:p ns1:paraId=\"6CAED29D\" ns1:textId=\"5FB00EC8\" ns0:rsidR=\"001E41F3\" ns0:rsidRPr=\"00F53048\" ns0:rsidRDefault=\"00F53048\" ns0:rsidP=\"00F53048\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:spacing ns0:after=\"0\" /><ns0:jc ns0:val=\"center\" /><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr></ns0:pPr><ns0:r ns0:rsidRPr=\"00F53048\"><ns0:rPr><ns0:rFonts ns0:hint=\"eastAsia\" /><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>1668</ns0:t></ns0:r></ns0:p></ns0:tc><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"709\" ns0:type=\"dxa\" /></ns0:tcPr><ns0:p ns1:paraId=\"09D2C09B\" ns1:textId=\"441E48AC\" ns0:rsidR=\"001E41F3\" ns0:rsidRDefault=\"00197915\" ns0:rsidP=\"0051580D\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:tabs><ns0:tab ns0:val=\"right\" ns0:pos=\"625\" /></ns0:tabs><ns0:spacing ns0:after=\"0\" /><ns0:jc ns0:val=\"center\" /><ns0:rPr><ns0:noProof /></ns0:rPr></ns0:pPr><ns0:r><ns0:rPr><ns0:b /><ns0:bCs /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>R</ns0:t></ns0:r><ns0:r ns0:rsidR=\"001E41F3\"><ns0:rPr><ns0:b /><ns0:bCs /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>ev</ns0:t></ns0:r></ns0:p></ns0:tc><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"992\" ns0:type=\"dxa\" /><ns0:shd ns0:val=\"pct30\" ns0:color=\"FFFF00\" ns0:fill=\"auto\" /></ns0:tcPr><ns0:p ns1:paraId=\"7533BF9D\" ns1:textId=\"1A025B52\" ns0:rsidR=\"001E41F3\" ns0:rsidRPr=\"00410371\" ns0:rsidRDefault=\"002456A0\" ns0:rsidP=\"001A1BA6\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:spacing ns0:after=\"0\" /><ns0:jc ns0:val=\"center\" /><ns0:rPr><ns0:b /><ns0:noProof /></ns0:rPr></ns0:pPr><ns0:r><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>1</ns0:t></ns0:r></ns0:p></ns0:tc><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"2410\" ns0:type=\"dxa\" /></ns0:tcPr><ns0:p ns1:paraId=\"5D4AEAE9\" ns1:textId=\"77777777\" ns0:rsidR=\"001E41F3\" ns0:rsidRDefault=\"001E41F3\" ns0:rsidP=\"0051580D\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:tabs><ns0:tab ns0:val=\"right\" ns0:pos=\"1825\" /></ns0:tabs><ns0:spacing ns0:after=\"0\" /><ns0:jc ns0:val=\"center\" /><ns0:rPr><ns0:noProof /></ns0:rPr></ns0:pPr><ns0:r ns0:rsidRPr=\"006B46FB\"><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /><ns0:szCs ns0:val=\"28\" /></ns0:rPr><ns0:t>Current version:</ns0:t></ns0:r></ns0:p></ns0:tc><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"1701\" ns0:type=\"dxa\" /><ns0:shd ns0:val=\"pct30\" ns0:color=\"FFFF00\" ns0:fill=\"auto\" /></ns0:tcPr><ns0:p ns1:paraId=\"1E22D6AC\" ns1:textId=\"606F7FE6\" ns0:rsidR=\"001E41F3\" ns0:rsidRPr=\"00410371\" ns0:rsidRDefault=\"007856E5\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:spacing ns0:after=\"0\" /><ns0:jc ns0:val=\"center\" /><ns0:rPr><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr></ns0:pPr><ns0:r><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>19.</ns0:t></ns0:r><ns0:r ns0:rsidR=\"0076116B\"><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>1</ns0:t></ns0:r><ns0:r><ns0:rPr><ns0:b /><ns0:noProof /><ns0:sz ns0:val=\"28\" /></ns0:rPr><ns0:t>.0</ns0:t></ns0:r></ns0:p></ns0:tc><ns0:tc><ns0:tcPr><ns0:tcW ns0:w=\"143\" ns0:type=\"dxa\" /><ns0:tcBorders><ns0:right ns0:val=\"single\" ns0:sz=\"4\" ns0:space=\"0\" ns0:color=\"auto\" /></ns0:tcBorders></ns0:tcPr><ns0:p ns1:paraId=\"399238C9\" ns1:textId=\"77777777\" ns0:rsidR=\"001E41F3\" ns0:rsidRDefault=\"001E41F3\"><ns0:pPr><ns0:pStyle ns0:val=\"CRCoverPage\" /><ns0:spacing ns0:after=\"0\" /><ns0:rPr><ns0:noProof /></ns0:rPr></ns0:pPr></ns0:p></ns0:tc></ns0:tr>"
+    },
+    "same_raw_header_own_id": true
+  },
+  "known_TP_source_counterexample": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_overnight_repairs15/source_factuality/RAN3_P4_CQ2-3/root_adjudication.json",
+    "bytes": 6167,
+    "sha256": "eecebf1d7f1c6909aff1d939f60cbad30d1561333ffb030d52e9a10c96ac27a6"
+  },
+  "known_TP_counterexample_interpretation": "Own R3-197688 Other/TP versus its CR-labelled affected-role is a real documented source-role problem. Its frozen MODIFIES set is empty, so this particular contaminated role contributes zero to the density numerator. R3-260686 is a formal CR for38.423 but has MODIFIES0 and contributes zero. Its missing Phase4 affected38.473 edge does not affect the density query: MODIFIES and AFFECTS_* are distinct. These observations do not prove all source completeness.",
+  "limitations": [
+    "No complete raw TDoc-list recensus was performed for every19537 counted path. Type-property consistency with the original metric rule is not independent formal-CR authenticity of every document.",
+    "The metric inherits historical metadata coverage, including absent MODIFIES for Phase4-only subjects. It is not total physical-corpus CR frequency, approval probability or causal impact.",
+    "Adding missing MODIFIES38.423 for R3-260686 would be separate source enrichment, not a silent repair of this frozen metric."
+  ],
+  "preserved_reader_failure": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN3_P3_CQ5-3/preserved_numerator_cover_form_first_row_assumption_failure.json",
+    "bytes": 235,
+    "sha256": "2b24cb7bef2baf5a7d3b7623b9492cb9fdc55b7964f494ccb2f27afa1610e64a"
+  },
+  "API_calls": 0,
+  "new_native_executions": 0,
+  "source_changes": 0,
+  "expert_validation_n": 0
+}

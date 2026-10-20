@@ -1,0 +1,34 @@
+{
+  "id": "RAN1_P3_CQ040",
+  "question_en": "Compare CR counts against agreement counts per TS (which spec changes most relative to consensus).",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.211','38.212','38.213','38.214','38.215'] WITH sp.specNumber AS ts, count(cr) AS crCnt OPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(sp2:Spec) WHERE sp2.specNumber = ts RETURN ts, crCnt, count(DISTINCT agr) AS agrCnt ORDER BY crCnt DESC",
+  "reference_query": "MATCH (sp:Spec)\nWHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291']\nWITH DISTINCT sp.specNumber AS ts\nOPTIONAL MATCH (cr:CR)-[:MODIFIES]->(crTarget:Spec)\nWHERE crTarget.specNumber = ts\nWITH ts, count(DISTINCT cr) AS crCnt\nOPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(agrTarget:Spec)\nWHERE agrTarget.specNumber = ts\nRETURN ts, crCnt, count(DISTINCT agr) AS agrCnt\nORDER BY crCnt DESC, ts ASC",
+  "required_fields": [
+    {
+      "name": "ts",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "ts"
+    },
+    {
+      "name": "crCnt",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "crCnt"
+    },
+    {
+      "name": "agrCnt",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "agrCnt"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}

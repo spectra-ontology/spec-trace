@@ -1,0 +1,239 @@
+{
+  "status": "PASS",
+  "query": "WITH specs AS (\n SELECT n.node_id,json_extract(n.properties_json,'$.specNumber')specNumber,\n json_extract(n.properties_json,'$.specRelease')specRelease,\n json_extract(n.properties_json,'$.specVersion')specVersion\n FROM _node_record n WHERE EXISTS(SELECT 1 FROM json_each(n.labels_json)WHERE value='Spec')),\n numer AS (\n SELECT h.node_id AS hub_id,h.specNumber,count(*) AS crCnt\n FROM specs h JOIN edge m ON m.dst_id=h.node_id AND m.rel_type='MODIFIES'\n JOIN _node_record cr ON cr.node_id=m.src_id\n WHERE h.specRelease IS NULL AND EXISTS(SELECT 1 FROM json_each(cr.labels_json)WHERE value='CR')\n GROUP BY h.node_id),\n editions AS (\n SELECT n.hub_id,s.*,CAST(REPLACE(s.specRelease,'Rel-','') AS INTEGER) AS release_number\n FROM numer n JOIN edge i ON i.dst_id=n.hub_id AND i.rel_type='IN_RELEASE_OF'\n JOIN specs s ON s.node_id=i.src_id),\n latest AS (\n SELECT e.* FROM editions e WHERE e.release_number=(SELECT max(x.release_number)FROM editions x WHERE x.hub_id=e.hub_id)),\n denom AS (\n SELECT l.*,count(*)secCnt FROM latest l JOIN edge b ON b.dst_id=l.node_id AND b.rel_type='BELONGS_TO_SPEC'\n JOIN _node_record sec ON sec.node_id=b.src_id\n WHERE EXISTS(SELECT 1 FROM json_each(sec.labels_json)WHERE value='Section')\n GROUP BY l.hub_id,l.node_id)\n SELECT n.specNumber,n.crCnt,d.secCnt,ROUND(1.0*n.crCnt/d.secCnt,2)density,\n d.node_id AS edition_node_id,d.specRelease,d.specVersion\n FROM numer n JOIN denom d ON d.hub_id=n.hub_id\n ORDER BY density DESC,n.specNumber",
+  "rows": [
+    {
+      "specNumber": "38.463",
+      "crCnt": 697,
+      "secCnt": 4,
+      "density": 174.25,
+      "edition_node_id": 80598,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.460",
+      "crCnt": 110,
+      "secCnt": 3,
+      "density": 36.67,
+      "edition_node_id": 77663,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.462",
+      "crCnt": 45,
+      "secCnt": 4,
+      "density": 11.25,
+      "edition_node_id": 80595,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.470",
+      "crCnt": 354,
+      "secCnt": 68,
+      "density": 5.21,
+      "edition_node_id": 87423,
+      "specRelease": "Rel-19",
+      "specVersion": "19.1.0"
+    },
+    {
+      "specNumber": "38.401",
+      "crCnt": 1193,
+      "secCnt": 240,
+      "density": 4.97,
+      "edition_node_id": 87723,
+      "specRelease": "Rel-19",
+      "specVersion": "19.2.0"
+    },
+    {
+      "specNumber": "38.472",
+      "crCnt": 44,
+      "secCnt": 11,
+      "density": 4.0,
+      "edition_node_id": 84932,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.423",
+      "crCnt": 2992,
+      "secCnt": 829,
+      "density": 3.61,
+      "edition_node_id": 87882,
+      "specRelease": "Rel-19",
+      "specVersion": "19.2.0"
+    },
+    {
+      "specNumber": "38.412",
+      "crCnt": 39,
+      "secCnt": 11,
+      "density": 3.55,
+      "edition_node_id": 84923,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.473",
+      "crCnt": 2818,
+      "secCnt": 1053,
+      "density": 2.68,
+      "edition_node_id": 87916,
+      "specRelease": "Rel-19",
+      "specVersion": "19.2.0"
+    },
+    {
+      "specNumber": "38.413",
+      "crCnt": 2642,
+      "secCnt": 1050,
+      "density": 2.52,
+      "edition_node_id": 87914,
+      "specRelease": "Rel-19",
+      "specVersion": "19.2.0"
+    },
+    {
+      "specNumber": "38.425",
+      "crCnt": 256,
+      "secCnt": 111,
+      "density": 2.31,
+      "edition_node_id": 87561,
+      "specRelease": "Rel-19",
+      "specVersion": "19.1.0"
+    },
+    {
+      "specNumber": "38.410",
+      "crCnt": 183,
+      "secCnt": 82,
+      "density": 2.23,
+      "edition_node_id": 87489,
+      "specRelease": "Rel-19",
+      "specVersion": "19.2.0"
+    },
+    {
+      "specNumber": "38.422",
+      "crCnt": 21,
+      "secCnt": 11,
+      "density": 1.91,
+      "edition_node_id": 84928,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.420",
+      "crCnt": 140,
+      "secCnt": 84,
+      "density": 1.67,
+      "edition_node_id": 87493,
+      "specRelease": "Rel-19",
+      "specVersion": "19.1.0"
+    },
+    {
+      "specNumber": "38.455",
+      "crCnt": 447,
+      "secCnt": 302,
+      "density": 1.48,
+      "edition_node_id": 87769,
+      "specRelease": "Rel-19",
+      "specVersion": "19.1.0"
+    },
+    {
+      "specNumber": "38.474",
+      "crCnt": 14,
+      "secCnt": 12,
+      "density": 1.17,
+      "edition_node_id": 85140,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.415",
+      "crCnt": 93,
+      "secCnt": 89,
+      "density": 1.04,
+      "edition_node_id": 87507,
+      "specRelease": "Rel-19",
+      "specVersion": "19.1.0"
+    },
+    {
+      "specNumber": "38.414",
+      "crCnt": 11,
+      "secCnt": 12,
+      "density": 0.92,
+      "edition_node_id": 85130,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.424",
+      "crCnt": 9,
+      "secCnt": 12,
+      "density": 0.75,
+      "edition_node_id": 85135,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.461",
+      "crCnt": 6,
+      "secCnt": 8,
+      "density": 0.75,
+      "edition_node_id": 84122,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.421",
+      "crCnt": 4,
+      "secCnt": 7,
+      "density": 0.57,
+      "edition_node_id": 83695,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.411",
+      "crCnt": 2,
+      "secCnt": 7,
+      "density": 0.29,
+      "edition_node_id": 83690,
+      "specRelease": "Rel-19",
+      "specVersion": "19.0.0"
+    },
+    {
+      "specNumber": "38.471",
+      "crCnt": 2,
+      "secCnt": 7,
+      "density": 0.29,
+      "edition_node_id": 83702,
+      "specRelease": "Rel-19",
+      "specVersion": null
+    }
+  ],
+  "all7_output_columns_match_first_SQL": true,
+  "all23_spec_groups": true,
+  "original_styled_Section_total": 4017,
+  "numerator_type_query": "SELECT json_extract(cr.properties_json,'$.type')type,count(*)path_count\n FROM _node_record cr JOIN edge m ON m.src_id=cr.node_id AND m.rel_type='MODIFIES'\n JOIN _node_record h ON h.node_id=m.dst_id\n WHERE EXISTS(SELECT 1 FROM json_each(cr.labels_json)WHERE value='CR')\n AND EXISTS(SELECT 1 FROM json_each(h.labels_json)WHERE value='Spec')\n AND json_extract(h.properties_json,'$.specRelease')IS NULL GROUP BY type ORDER BY type",
+  "numerator_type_rows": [
+    {
+      "type": "CR",
+      "path_count": 13961
+    },
+    {
+      "type": "draftCR",
+      "path_count": 2693
+    },
+    {
+      "type": "pCR",
+      "path_count": 2883
+    }
+  ],
+  "database": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN3.sqlite",
+    "bytes": 248152064,
+    "sha256": "ff55fe57ee9435c25b59e1d90c5ee09ee0ff167696c4afeb05f21e367f4c6a29"
+  },
+  "read_only": true,
+  "access": "generic_node/edge independent SQL; immutable query_only",
+  "new_native_or_API_calls": 0
+}

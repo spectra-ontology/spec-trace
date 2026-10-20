@@ -7,7 +7,7 @@ meeting reports, and specification metadata available to executable queries.
 
 The released snapshot contains **966,859 nodes, 4,908,850 relationships, and
 12,931,842 RDF triples**. SpectraCQ supplies **624 released questions** with
-executable references, including a **560-question Core register** and **497
+executable references, including a **560-question Core register** and **499
 audited original-question contracts**. The [counts manifest](release_package/MANIFEST.md)
 links dataset totals to their artifacts and measurement procedures.
 
@@ -27,13 +27,13 @@ links dataset totals to their artifacts and measurement procedures.
 ## Start with the current benchmark
 
 Use [current_tasks.jsonl](release_package/cqs/current_core/current_tasks.jsonl)
-to select the 497 current contracts and their pinned evidence bundles. The
+to select the 499 current contracts and their pinned evidence bundles. The
 [index manifest](release_package/cqs/current_core/index_manifest.json) connects
 the active definitions to their original repair and evaluation cohorts.
 
 The [all-560 disposition register](release_package/cqs/core_disposition_audit/README.md)
-accounts for every original Core ID: **497 contract-verified, 18 requiring
-clarification, 4 unsupported by the pinned frozen data, and 41 awaiting completed
+accounts for every original Core ID: **499 contract-verified, 18 requiring
+clarification, 4 unsupported by the pinned frozen data, and 39 awaiting completed
 evidence checks**. Historical definitions and results remain available alongside
 the current register.
 
@@ -65,7 +65,7 @@ records for all three questions. The twelve-question cohort has exact outputs
 on five questions for Cypher and four for SQL. Every method retains all cohort
 items in its denominator, including errors and abstentions. The linked packages
 provide the actual prompts, source access, reference contracts, first responses,
-and score replays. These are cohort results; the 497-contract index records
+and score replays. These are cohort results; the 499-contract index records
 benchmark definitions and their evidence.
 
 ## Get the data

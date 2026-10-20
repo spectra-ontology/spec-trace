@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "ts": "38.213",
+      "crCnt": 3041,
+      "agrCnt": 493
+    },
+    {
+      "ts": "38.214",
+      "crCnt": 2423,
+      "agrCnt": 407
+    },
+    {
+      "ts": "38.212",
+      "crCnt": 654,
+      "agrCnt": 110
+    },
+    {
+      "ts": "38.211",
+      "crCnt": 468,
+      "agrCnt": 69
+    },
+    {
+      "ts": "38.215",
+      "crCnt": 161,
+      "agrCnt": 14
+    },
+    {
+      "ts": "38.202",
+      "crCnt": 73,
+      "agrCnt": 5
+    },
+    {
+      "ts": "38.201",
+      "crCnt": 17,
+      "agrCnt": 0
+    },
+    {
+      "ts": "38.291",
+      "crCnt": 4,
+      "agrCnt": 0
+    }
+  ],
+  "typed_values": 24,
+  "query": "WITH specs AS (SELECT n.node_id,json_extract(n.properties_json,'$.specNumber') AS ts FROM _node_record n WHERE EXISTS(SELECT 1 FROM json_each(n.labels_json) WHERE value='Spec')),\ndomain AS (SELECT DISTINCT ts FROM specs WHERE ts IN (?,?,?,?,?,?,?,?)),\ncrs AS (SELECT DISTINCT s.ts,n.node_id FROM _node_record n JOIN edge e ON e.src_id=n.node_id AND e.rel_type='MODIFIES' JOIN specs s ON s.node_id=e.dst_id WHERE EXISTS(SELECT 1 FROM json_each(n.labels_json) WHERE value='CR')),\nagrs AS (SELECT DISTINCT crs.ts,a.node_id FROM _node_record a JOIN edge e ON e.src_id=a.node_id AND e.rel_type='REFERENCES' JOIN crs ON crs.node_id=e.dst_id WHERE EXISTS(SELECT 1 FROM json_each(a.labels_json) WHERE value='Agreement'))\nSELECT ts,(SELECT count(*) FROM crs WHERE crs.ts=domain.ts) AS crCnt,(SELECT count(*) FROM agrs WHERE agrs.ts=domain.ts) AS agrCnt FROM domain ORDER BY crCnt DESC,ts ASC",
+  "parameters": [
+    "38.201",
+    "38.202",
+    "38.211",
+    "38.212",
+    "38.213",
+    "38.214",
+    "38.215",
+    "38.291"
+  ],
+  "database": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+    "sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af"
+  },
+  "access": "ro immutable query_only; generic node/edge correlated identity-set aggregates",
+  "new_native_or_API_calls": 0
+}

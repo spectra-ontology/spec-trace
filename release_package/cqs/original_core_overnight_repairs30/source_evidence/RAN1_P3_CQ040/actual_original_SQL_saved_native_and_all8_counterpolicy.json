@@ -1,0 +1,489 @@
+{
+  "status": "PASS_EXACT_ORIGINAL_FIVE_NATIVE_AND_COMPLETE_EIGHT_OPERAND_RECOUNT",
+  "original_question": "Compare CR counts against agreement counts per TS (which spec changes most relative to consensus).",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.211','38.212','38.213','38.214','38.215'] WITH sp.specNumber AS ts, count(cr) AS crCnt OPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(sp2:Spec) WHERE sp2.specNumber = ts RETURN ts, crCnt, count(DISTINCT agr) AS agrCnt ORDER BY crCnt DESC",
+  "source_SQLite": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/relational/RAN1.sqlite",
+    "bytes": 503873536,
+    "sha256": "aef09592ac92a89b901ef1b8b5432b8737e22e0c94d6cd7685de21ab23fba4af"
+  },
+  "query_only": true,
+  "SQL": "WITH crs AS (\nSELECT s.specNumber AS ts,count(c.node_id) AS crCnt,count(DISTINCT c.node_id) AS distinctCR\nFROM CR c JOIN edge m ON m.src_id=c.node_id AND m.rel_type='MODIFIES'\nJOIN Spec s ON s.node_id=m.dst_id GROUP BY s.specNumber\n), agreements AS (\nSELECT s.specNumber AS ts,count(DISTINCT a.node_id) AS agrCnt\nFROM Agreement a JOIN edge r ON r.src_id=a.node_id AND r.rel_type='REFERENCES'\nJOIN CR c ON c.node_id=r.dst_id\nJOIN edge m ON m.src_id=c.node_id AND m.rel_type='MODIFIES'\nJOIN Spec s ON s.node_id=m.dst_id GROUP BY s.specNumber\n)\nSELECT crs.ts,crs.crCnt,COALESCE(agreements.agrCnt,0) AS agrCnt,crs.distinctCR\nFROM crs LEFT JOIN agreements ON agreements.ts=crs.ts ORDER BY crs.crCnt DESC,crs.ts ASC\n",
+  "all51_aggregate_count_vs_distinct": [
+    {
+      "ts": "38.213",
+      "crCnt": 3041,
+      "agrCnt": 493,
+      "distinctCR": 3041
+    },
+    {
+      "ts": "38.214",
+      "crCnt": 2423,
+      "agrCnt": 407,
+      "distinctCR": 2423
+    },
+    {
+      "ts": "36.213",
+      "crCnt": 1908,
+      "agrCnt": 68,
+      "distinctCR": 1908
+    },
+    {
+      "ts": "36.211",
+      "crCnt": 762,
+      "agrCnt": 26,
+      "distinctCR": 762
+    },
+    {
+      "ts": "38.212",
+      "crCnt": 654,
+      "agrCnt": 110,
+      "distinctCR": 654
+    },
+    {
+      "ts": "38.211",
+      "crCnt": 468,
+      "agrCnt": 69,
+      "distinctCR": 468
+    },
+    {
+      "ts": "36.212",
+      "crCnt": 382,
+      "agrCnt": 13,
+      "distinctCR": 382
+    },
+    {
+      "ts": "37.213",
+      "crCnt": 201,
+      "agrCnt": 18,
+      "distinctCR": 201
+    },
+    {
+      "ts": "38.900",
+      "crCnt": 169,
+      "agrCnt": 0,
+      "distinctCR": 169
+    },
+    {
+      "ts": "38.215",
+      "crCnt": 161,
+      "agrCnt": 14,
+      "distinctCR": 161
+    },
+    {
+      "ts": "38.901",
+      "crCnt": 91,
+      "agrCnt": 13,
+      "distinctCR": 91
+    },
+    {
+      "ts": "38.202",
+      "crCnt": 73,
+      "agrCnt": 5,
+      "distinctCR": 73
+    },
+    {
+      "ts": "36.214",
+      "crCnt": 53,
+      "agrCnt": 3,
+      "distinctCR": 53
+    },
+    {
+      "ts": "36.873",
+      "crCnt": 46,
+      "agrCnt": 0,
+      "distinctCR": 46
+    },
+    {
+      "ts": "36.201",
+      "crCnt": 28,
+      "agrCnt": 4,
+      "distinctCR": 28
+    },
+    {
+      "ts": "25.214",
+      "crCnt": 22,
+      "agrCnt": 0,
+      "distinctCR": 22
+    },
+    {
+      "ts": "38.811",
+      "crCnt": 21,
+      "agrCnt": 1,
+      "distinctCR": 21
+    },
+    {
+      "ts": "37.885",
+      "crCnt": 17,
+      "agrCnt": 3,
+      "distinctCR": 17
+    },
+    {
+      "ts": "38.201",
+      "crCnt": 17,
+      "agrCnt": 0,
+      "distinctCR": 17
+    },
+    {
+      "ts": "25.212",
+      "crCnt": 15,
+      "agrCnt": 0,
+      "distinctCR": 15
+    },
+    {
+      "ts": "36.300",
+      "crCnt": 15,
+      "agrCnt": 0,
+      "distinctCR": 15
+    },
+    {
+      "ts": "38.802",
+      "crCnt": 14,
+      "agrCnt": 0,
+      "distinctCR": 14
+    },
+    {
+      "ts": "38.821",
+      "crCnt": 12,
+      "agrCnt": 2,
+      "distinctCR": 12
+    },
+    {
+      "ts": "37.985",
+      "crCnt": 8,
+      "agrCnt": 1,
+      "distinctCR": 8
+    },
+    {
+      "ts": "38.300",
+      "crCnt": 7,
+      "agrCnt": 2,
+      "distinctCR": 7
+    },
+    {
+      "ts": "25.707",
+      "crCnt": 6,
+      "agrCnt": 0,
+      "distinctCR": 6
+    },
+    {
+      "ts": "36.885",
+      "crCnt": 6,
+      "agrCnt": 0,
+      "distinctCR": 6
+    },
+    {
+      "ts": "36.814",
+      "crCnt": 5,
+      "agrCnt": 0,
+      "distinctCR": 5
+    },
+    {
+      "ts": "25.211",
+      "crCnt": 4,
+      "agrCnt": 0,
+      "distinctCR": 4
+    },
+    {
+      "ts": "25.215",
+      "crCnt": 4,
+      "agrCnt": 0,
+      "distinctCR": 4
+    },
+    {
+      "ts": "38.291",
+      "crCnt": 4,
+      "agrCnt": 0,
+      "distinctCR": 4
+    },
+    {
+      "ts": "38.885",
+      "crCnt": 4,
+      "agrCnt": 0,
+      "distinctCR": 4
+    },
+    {
+      "ts": "38.769",
+      "crCnt": 3,
+      "agrCnt": 0,
+      "distinctCR": 3
+    },
+    {
+      "ts": "38.858",
+      "crCnt": 3,
+      "agrCnt": 0,
+      "distinctCR": 3
+    },
+    {
+      "ts": "38.864",
+      "crCnt": 3,
+      "agrCnt": 1,
+      "distinctCR": 3
+    },
+    {
+      "ts": "25.766",
+      "crCnt": 2,
+      "agrCnt": 0,
+      "distinctCR": 2
+    },
+    {
+      "ts": "25.996",
+      "crCnt": 2,
+      "agrCnt": 0,
+      "distinctCR": 2
+    },
+    {
+      "ts": "38.306",
+      "crCnt": 2,
+      "agrCnt": 0,
+      "distinctCR": 2
+    },
+    {
+      "ts": "38.843",
+      "crCnt": 2,
+      "agrCnt": 0,
+      "distinctCR": 2
+    },
+    {
+      "ts": "38.912",
+      "crCnt": 2,
+      "agrCnt": 0,
+      "distinctCR": 2
+    },
+    {
+      "ts": "28.552",
+      "crCnt": 1,
+      "agrCnt": 0,
+      "distinctCR": 1
+    },
+    {
+      "ts": "36.302",
+      "crCnt": 1,
+      "agrCnt": 0,
+      "distinctCR": 1
+    },
+    {
+      "ts": "36.306",
+      "crCnt": 1,
+      "agrCnt": 0,
+      "distinctCR": 1
+    },
+    {
+      "ts": "36.331",
+      "crCnt": 1,
+      "agrCnt": 0,
+      "distinctCR": 1
+    },
+    {
+      "ts": "36.763",
+      "crCnt": 1,
+      "agrCnt": 1,
+      "distinctCR": 1
+    },
+    {
+      "ts": "36.802",
+      "crCnt": 1,
+      "agrCnt": 0,
+      "distinctCR": 1
+    },
+    {
+      "ts": "36.976",
+      "crCnt": 1,
+      "agrCnt": 1,
+      "distinctCR": 1
+    },
+    {
+      "ts": "38.331",
+      "crCnt": 1,
+      "agrCnt": 0,
+      "distinctCR": 1
+    },
+    {
+      "ts": "38.830",
+      "crCnt": 1,
+      "agrCnt": 0,
+      "distinctCR": 1
+    },
+    {
+      "ts": "38.855",
+      "crCnt": 1,
+      "agrCnt": 0,
+      "distinctCR": 1
+    },
+    {
+      "ts": "38.859",
+      "crCnt": 1,
+      "agrCnt": 1,
+      "distinctCR": 1
+    }
+  ],
+  "original_five_records": [
+    {
+      "ts": "38.213",
+      "crCnt": 3041,
+      "agrCnt": 493
+    },
+    {
+      "ts": "38.214",
+      "crCnt": 2423,
+      "agrCnt": 407
+    },
+    {
+      "ts": "38.212",
+      "crCnt": 654,
+      "agrCnt": 110
+    },
+    {
+      "ts": "38.211",
+      "crCnt": 468,
+      "agrCnt": 69
+    },
+    {
+      "ts": "38.215",
+      "crCnt": 161,
+      "agrCnt": 14
+    }
+  ],
+  "eight_original_design_domain_records": [
+    {
+      "ts": "38.213",
+      "crCnt": 3041,
+      "agrCnt": 493
+    },
+    {
+      "ts": "38.214",
+      "crCnt": 2423,
+      "agrCnt": 407
+    },
+    {
+      "ts": "38.212",
+      "crCnt": 654,
+      "agrCnt": 110
+    },
+    {
+      "ts": "38.211",
+      "crCnt": 468,
+      "agrCnt": 69
+    },
+    {
+      "ts": "38.215",
+      "crCnt": 161,
+      "agrCnt": 14
+    },
+    {
+      "ts": "38.202",
+      "crCnt": 73,
+      "agrCnt": 5
+    },
+    {
+      "ts": "38.201",
+      "crCnt": 17,
+      "agrCnt": 0
+    },
+    {
+      "ts": "38.291",
+      "crCnt": 4,
+      "agrCnt": 0
+    }
+  ],
+  "saved_original_five_native": {
+    "receipt": {
+      "path": "/home/sihyeon/workspace/spectra/logs/publication/paper/under-review/kdd-2027-datasets-benchmarks/baseline-runs/_source_contract_expansion_v1/receipts/RAN1_P3_CQ040.json",
+      "bytes": 5745,
+      "sha256": "a4eb6cc79b5edba94ff5834be11774e076d9d78450b54c0566ec1d18e438ddfc"
+    },
+    "rows": {
+      "path": "/home/sihyeon/workspace/spectra/logs/publication/paper/under-review/kdd-2027-datasets-benchmarks/baseline-runs/_source_contract_expansion_v1/rows/RAN1_P3_CQ040.jsonl",
+      "bytes": 95,
+      "sha256": "0097f60ac6d86d4bc000fe3e4dad2b66ff596057efcccff97c6e4edeeb83e1df"
+    },
+    "input_manifest": {
+      "path": "/home/sihyeon/workspace/spectra/logs/publication/paper/under-review/kdd-2027-datasets-benchmarks/baseline-runs/_source_contract_expansion_v1/input_manifest.json",
+      "bytes": 2165175,
+      "sha256": "afe7a63937b02f8eac2aeb71abdef953760e03e8c8ddf926e4c1ec695b98a488"
+    },
+    "frozen_manifest": {
+      "path": "/home/sihyeon/workspace/spectra/logs/publication/paper/under-review/kdd-2027-datasets-benchmarks/baseline-runs/_source_contract_expansion_v1/frozen_manifest.json",
+      "bytes": 106208,
+      "sha256": "0546ef8967134832dc3b271db3982266c41fe186dceccb53b9b2e87b1966fc7b"
+    },
+    "original_full_run_report": {
+      "path": "/home/sihyeon/workspace/spectra/logs/publication/paper/under-review/kdd-2027-datasets-benchmarks/baseline-runs/_source_contract_expansion_v1/source_contract_observation_summary_v1.json",
+      "bytes": 121544,
+      "sha256": "01d4b23248ae7318c38795fc121915b9be1e3327ef587a5d43df24330c807243"
+    },
+    "full15_typed_values_equal": true
+  },
+  "independent_Python_unfiltered_operands": {
+    "Agreement": 21058,
+    "CR": 10715,
+    "Spec": 127,
+    "REFERENCES": 19454,
+    "MODIFIES": 10671
+  },
+  "independent_Python_records": [
+    {
+      "ts": "38.213",
+      "crCnt": 3041,
+      "agrCnt": 493
+    },
+    {
+      "ts": "38.214",
+      "crCnt": 2423,
+      "agrCnt": 407
+    },
+    {
+      "ts": "38.212",
+      "crCnt": 654,
+      "agrCnt": 110
+    },
+    {
+      "ts": "38.211",
+      "crCnt": 468,
+      "agrCnt": 69
+    },
+    {
+      "ts": "38.215",
+      "crCnt": 161,
+      "agrCnt": 14
+    },
+    {
+      "ts": "38.202",
+      "crCnt": 73,
+      "agrCnt": 5
+    },
+    {
+      "ts": "38.201",
+      "crCnt": 17,
+      "agrCnt": 0
+    },
+    {
+      "ts": "38.291",
+      "crCnt": 4,
+      "agrCnt": 0
+    }
+  ],
+  "CR_unique_nonnull_tdocNumber": true,
+  "all51_CR_pathcount_equals_distinctCR": true,
+  "alternative_scope_actual_added_rows": [
+    {
+      "ts": "38.202",
+      "crCnt": 73,
+      "agrCnt": 5
+    },
+    {
+      "ts": "38.201",
+      "crCnt": 17,
+      "agrCnt": 0
+    },
+    {
+      "ts": "38.291",
+      "crCnt": 4,
+      "agrCnt": 0
+    }
+  ],
+  "semantic_scope_not_established_by_native_or_count": true,
+  "new_native_calls": 0,
+  "new_API_calls": 0,
+  "source_augmentation_used": false
+}

@@ -1,0 +1,97 @@
+{
+  "original_dataset": {
+    "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN1/phase-3/cq_test_dataset.json",
+    "bytes": 33191,
+    "sha256": "a746bc5ae143c64f286246bfd8184b54a2c52b54a5d95ced9ca240bb2f4c3b3e"
+  },
+  "relevant_original_rows": [
+    {
+      "id": "CQ019",
+      "category": "CR_TS_변경추적",
+      "persona": "전략기획",
+      "question": "8개 TS별로 CR이 얼마나 발생했는지 비교해줘. 표준화 활동이 가장 집중된 TS를 파악하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] RETURN sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC",
+      "original_id": "CQ039"
+    },
+    {
+      "id": "CQ025",
+      "category": "Resolution_TS_의사결정",
+      "persona": "표준화엔지니어",
+      "question": "TS별로 관련된 Agreement 수를 요약해줘. 합의가 가장 많이 이루어진 TS가 어디인지 파악하고 싶어",
+      "cypher": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] RETURN sp.specNumber, count(DISTINCT agr) AS agrCount ORDER BY agrCount DESC",
+      "original_id": "CQ060"
+    },
+    {
+      "id": "CQ036",
+      "category": "통합분석",
+      "persona": "전략기획",
+      "question": "CR이 가장 많이 발생한 TS Top 5와 각 TS의 Section 수를 비교해줘. 복잡도와 변경 빈도의 상관관계를 보고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291'] WITH sp.specNumber AS ts, count(cr) AS crCount ORDER BY crCount DESC LIMIT 5 MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp2:Spec {specNumber: ts}) RETURN ts, crCount, count(sec) AS sectionCount ORDER BY crCount DESC",
+      "original_id": "CQ086"
+    },
+    {
+      "id": "CQ037",
+      "category": "통합분석",
+      "persona": "전략기획",
+      "question": "회사별로 8개 TS에 제출한 전체 CR 건수를 보여줘. 주요 플레이어가 누구인지 파악하고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.211','38.212','38.213','38.214','38.215','38.201','38.202','38.291'] MATCH (cr)-[:SUBMITTED_BY]->(co:Company) RETURN co.companyName, count(cr) AS crCount ORDER BY crCount DESC LIMIT 15",
+      "original_id": "CQ087"
+    },
+    {
+      "id": "CQ040",
+      "category": "통합분석",
+      "persona": "전략기획",
+      "question": "TS별 CR 건수와 Agreement 건수를 비교해줘. 어떤 TS가 합의 대비 변경이 많은지 보고 싶어",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.211','38.212','38.213','38.214','38.215'] WITH sp.specNumber AS ts, count(cr) AS crCnt OPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(sp2:Spec) WHERE sp2.specNumber = ts RETURN ts, crCnt, count(DISTINCT agr) AS agrCnt ORDER BY crCnt DESC",
+      "original_id": "CQ092"
+    }
+  ],
+  "historical_execution_derived_sample": {
+    "source": {
+      "path": "/home/sihyeon/workspace/spectra/logs/tsg/RAN/formal/RAN1/phase-3/cq_cypher_results.json",
+      "bytes": 83842,
+      "sha256": "49771b32184693060f345147781e9424fc0df8d5cddf19d3b1afad59f32d61aa"
+    },
+    "row": {
+      "id": "CQ040",
+      "category": "통합분석",
+      "question": "TS별 CR 건수와 Agreement 건수를 비교해줘. 어떤 TS가 합의 대비 변경이 많은지 보고 싶어",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 5,
+      "sample_answers": [
+        {
+          "ts": "38.213",
+          "crCnt": 3082,
+          "agrCnt": 389
+        },
+        {
+          "ts": "38.214",
+          "crCnt": 2471,
+          "agrCnt": 314
+        },
+        {
+          "ts": "38.212",
+          "crCnt": 664,
+          "agrCnt": 85
+        },
+        {
+          "ts": "38.211",
+          "crCnt": 482,
+          "agrCnt": 55
+        },
+        {
+          "ts": "38.215",
+          "crCnt": 164,
+          "agrCnt": 12
+        }
+      ]
+    },
+    "not_independent_semantic_scope_authority": true
+  },
+  "scope_decision_not_chosen_from_answer_values": true,
+  "five_argument": "The exact original query explicitly selects five; it can be an authored operational extent even though absent from the English and Korean. The independent primary must not ignore it.",
+  "eight_argument": "The independent Scope2.1 and constraints6 enumerate eight and the same original separate-operand and integrated analyses use them; per-TS has no stated subset. The five explicit filter can therefore be a repairable mismatch rather than an instruction to suppress the other three.",
+  "all_Phase1_opposite": "All Phase1/2 classes and instances remain available, and integrated analysis uses them. This supports retained operations, but does not itself override the same design explicit Phase3 TS-scope constraint.",
+  "display_default_not_scope_default": "This argument does not give generic sort priority over authored exact sort; the eight-family domain is an explicit Scope/constraint, not a default pagination/sort preference."
+}

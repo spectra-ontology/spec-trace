@@ -1,0 +1,31 @@
+{
+  "id": "RAN1_P3_CQ040",
+  "wg": "RAN1",
+  "query_sha256": "ba011a4f8789ff15985379ac92b2f4e8e9c1c184cbe7a35e8f81ff24490c45b9",
+  "query": "MATCH (sp:Spec)\nWHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291']\nWITH DISTINCT sp.specNumber AS ts\nOPTIONAL MATCH (cr:CR)-[:MODIFIES]->(crTarget:Spec)\nWHERE crTarget.specNumber = ts\nWITH ts, count(DISTINCT cr) AS crCnt\nOPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(agrTarget:Spec)\nWHERE agrTarget.specNumber = ts\nRETURN ts, crCnt, count(DISTINCT agr) AS agrCnt\nORDER BY crCnt DESC, ts ASC",
+  "started_utc": "2026-10-20T21:50:58.379674+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN1_P3_CQ040/ba011a4f8789ff15985379ac92b2f4e8e9c1c184cbe7a35e8f81ff24490c45b9.jsonl",
+  "columns": [
+    "ts",
+    "crCnt",
+    "agrCnt"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 8,
+  "bytes_retained": 142,
+  "rows_sha256": "658f6040282abd865de2c3b7d18dc10fa7fa53e532b49785bffb11b7e81698d2",
+  "finished_utc": "2026-10-20T21:51:01.876410+00:00",
+  "elapsed_s": 3.4967,
+  "full_rows_available": true
+}

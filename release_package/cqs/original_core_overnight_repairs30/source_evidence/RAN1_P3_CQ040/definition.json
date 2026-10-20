@@ -1,0 +1,52 @@
+{
+  "id": "RAN1_P3_CQ040",
+  "question_en": "Compare CR counts against agreement counts per TS (which spec changes most relative to consensus).",
+  "original_query": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber IN ['38.211','38.212','38.213','38.214','38.215'] WITH sp.specNumber AS ts, count(cr) AS crCnt OPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(sp2:Spec) WHERE sp2.specNumber = ts RETURN ts, crCnt, count(DISTINCT agr) AS agrCnt ORDER BY crCnt DESC",
+  "reference_query": "MATCH (sp:Spec)\nWHERE sp.specNumber IN ['38.201','38.202','38.211','38.212','38.213','38.214','38.215','38.291']\nWITH DISTINCT sp.specNumber AS ts\nOPTIONAL MATCH (cr:CR)-[:MODIFIES]->(crTarget:Spec)\nWHERE crTarget.specNumber = ts\nWITH ts, count(DISTINCT cr) AS crCnt\nOPTIONAL MATCH (agr:Agreement)-[:REFERENCES]->(cr2:CR)-[:MODIFIES]->(agrTarget:Spec)\nWHERE agrTarget.specNumber = ts\nRETURN ts, crCnt, count(DISTINCT agr) AS agrCnt\nORDER BY crCnt DESC, ts ASC",
+  "required_fields": [
+    {
+      "name": "ts",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "ts"
+    },
+    {
+      "name": "crCnt",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "crCnt"
+    },
+    {
+      "name": "agrCnt",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "agrCnt"
+    }
+  ],
+  "collection": {
+    "kind": "set"
+  },
+  "cardinality_policy": {
+    "mode": "all"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "repair_sha256": "5190dbce5c32071f9074398d5f37c9f2038eb8690eb439431bbc6aaa476edead",
+  "reference_query_sha256": "ba011a4f8789ff15985379ac92b2f4e8e9c1c184cbe7a35e8f81ff24490c45b9",
+  "validation_status": "primary_semantic_pass_pending_ROOT_independent_review_and_exact_eight_native",
+  "source_context_interpretation": "Compare the two recorded documentary identity counts for every logical TS in the original RAN1 Phase3 eight-family scope. Agreement association is the preserved REFERENCES-to-CR/MODIFIES operation, not all substantive consensus or normative change incorporation.",
+  "scope_argument": "The unchanged English per TS and own Korean TS별 request a per-family comparison without an announced five-family subset. Own design Scope2.1 and constraints6 name eight RAN1 families. Same original dataset CQ019 and CQ025 separately aggregate the two operands over those eight, and CQ036/CQ037 integrated analyses use the same domain. The five-family filter is an authored counterauthority, but no five-family restriction occurs in CQ040 English/Korean/CSV or the own scope clauses. I read that omission as a repairable extra query filter, not choose eight from result values.",
+  "strong_counterauthority": "The exact authored query explicitly lists five families and the design retains all Phase1/2 instances. Five cannot be dismissed as a generic default. The proposed acceptance applies the explicit own Phase3 TS scope rather than giving every generic rule priority over a specific query. Retention of all instances enables Phase3 and prior CQs, but does not remove the stated Phase3 TS-scope restriction. ROOT must independently judge this conflict before native or admission.",
+  "recorded_operation_limits": [
+    "No body-based technical association, approval causality, incorporation or real consensus quality is inferred.",
+    "Two source FinalCR citations omitted by frozen REFERENCES are preserved; adding both changes one Agreement count493to494. This task does not certify complete same-report source citations.",
+    "Old exact-query native output is five rows/15values, not native eight. The new query needs ROOT native only after separate semantic acceptance.",
+    "No source-added graph,32-family enriched corpus or whole-Phase1 all51 count domain is substituted.",
+    "Canonical criteria/scorer/typed kernel remain unchanged; nonblind AI development judgment, expert0."
+  ],
+  "criteria": {
+    "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_repair/criteria.json",
+    "bytes": 3382,
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  }
+}
