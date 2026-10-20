@@ -10,7 +10,7 @@ LABELS={'contract_verified':'답안 계약 검증 통과','clarification_require
         'evidence_pending':'근거·검증 미완료'}
 
 
-DEFAULT_CANDIDATE_FILES=['metric_classification_candidates.json', 'missing_input_classification_candidates.json', 'extent_classification_candidates.json', 'conflicting_entity_description_candidates.json']
+DEFAULT_CANDIDATE_FILES=['metric_classification_candidates.json', 'missing_input_classification_candidates.json', 'extent_classification_candidates.json', 'conflicting_entity_description_candidates.json', 'conflicting_agenda_description_candidates.json']
 
 def build(candidate_paths=None):
     if candidate_paths is None:candidate_paths=[HERE/name for name in DEFAULT_CANDIDATE_FILES]
