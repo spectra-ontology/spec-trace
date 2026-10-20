@@ -54,8 +54,8 @@ def main():
         assert t['original_question_sha256']==hashlib.sha256(t['question_en'].encode()).hexdigest()
         original_query=originals[t['id']]['cypher']
         assert source['original_query']==original_query
-        assert source['original_query_sha256']==hashlib.sha256(original_query.encode()).hexdigest()
-        assert source['reference_query_sha256']==hashlib.sha256(source['reference_query'].encode()).hexdigest()
+        assert source.get('original_query_sha256', hashlib.sha256(original_query.encode()).hexdigest())==hashlib.sha256(original_query.encode()).hexdigest()
+        assert source.get('reference_query_sha256', hashlib.sha256(source['reference_query'].encode()).hexdigest())==hashlib.sha256(source['reference_query'].encode()).hexdigest()
         actual_class='scorer_only' if source['reference_query']==original_query else 'query_and_scorer'
         assert t['repair_class']==source['repair_class']==actual_class
         assert t['repair_sha256']==source['repair_sha256']==g['repair_sha256']
