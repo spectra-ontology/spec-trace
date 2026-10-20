@@ -1,0 +1,160 @@
+{
+  "id": "RAN2_P3_CQ5-3",
+  "status": "pending",
+  "local_recommendation": "unsupported_frozen_data",
+  "subtype": "confirmed_same_edition_own_Heading4_role_loss_affects_requested_density",
+  "original_question_en": "Return CR density (CRs per section) by spec (change-hotspot metric).",
+  "original_question_sha256": "17e2bd7058d434f51fcef2f6ae700f31b79ff4a792968de93d82e51f3c02f9de",
+  "original_query": "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCnt MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCnt, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCnt, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) WITH hub, crCnt, count(s) AS secCnt RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density ORDER BY density DESC LIMIT 5",
+  "original_query_sha256": "8a353b2881c4fc96bed7c8c4db6cbb26a6acc50ce330f10ffce9e5fdc806ba28",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "diagnostic_9key_sha256": "5f7adc159f600430f149dbcd125570feb1ee64993c031910143ea80439af43dc",
+  "diagnostic_is_not_validated_repair": true,
+  "reviewer_kind": "nonblind_AI_development_primary_source_support_reassessment",
+  "reviewer_agent": "/root/verify_public467_readonly",
+  "reviewer_lineage": "Persistent main_B. Earlier source7 reviews by this same agent and this reassessment are one reviewer lineage, never independent2.",
+  "human_author_review_completed": false,
+  "expert_validation_n": 0,
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "CR density (CRs per section)",
+      "finding": "The original English expressly requests spec-associated numerical density. Spec identity and quotient are required. crCnt/secCnt are not automatically required merely because the query projects them. Losing own Section membership affects the expressly requested quotient even under this minimal field contract.",
+      "query_clauses": [
+        "RETURN hub.specNumber AS specNumber, crCnt, secCnt, round(1.0 * crCnt / secCnt, 2) AS density"
+      ],
+      "source_locators": [
+        "Original benchmark exact row; actual_requested_density_typed_negative_controls.json; own design L955-L976"
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "status": "missing_required_frozen_role",
+      "original_quote": "by spec",
+      "finding": "Use the captured original RAN2 Phase3 Spec/CR/Section dependency population. Fresh full native-equivalent SQL has72 positiveCR hubs,57 no-release exclusions, one latestSection0 exclusion and14 positive metric rows. Sameedition source19.2.0 exactly matches retained38.331 Rel19. This does not import the separately evaluated current64 metadata or different CR population. Own design explicitly includes ASN.1 Section metadata and excludes only bodies. Seven positively observed own headings are lost from the retained Section population, not merely absent from a chosen query result.",
+      "query_clauses": [
+        "MATCH (hub:Spec)<-[:MODIFIES]-(cr:CR) WHERE hub.specRelease IS NULL",
+        "MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub)",
+        "MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section)"
+      ],
+      "source_locators": [
+        "Own tracked design L75-L105; actual full metric dependency receipt; exact source19.2.0 own7"
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "missing_required_frozen_role",
+      "original_quote": "per section",
+      "finding": "Section is the original own heading/level role, including ASN.1 headings. Original design L92 and Heading4 mapping L972 are positive authority; excluding all scalar ASN.1 headings contradicts that schema. Exact own names survive as RRCParameter and only definedInSection→parent6.3.2. No heading flag, edition-specific ownSection identity or alternate exact-own Section record is retained. All properties/all classes and every incident relation for each exact node were checked. A stored ASN.1 parent link says where a type is defined; it does not turn every2171 type into an own Heading4.",
+      "query_clauses": [
+        "MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section)"
+      ],
+      "source_locators": [
+        "Own design L89-L104/L955-L976; source own7 and full retained search; finer ASN1 counterpolicies"
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "missing_required_frozen_role",
+      "original_quote": "CRs per section",
+      "finding": "Keep original count(cr) and count(s) path arithmetic rather than silently switching to distinct values, allrelease union or inferred ASN.1 type counts. Every retained38.331 edition has equal Section paths/nodes/numbers; duplicate join paths do not explain seven lost roles. Frozen numerator10599 and denominator1499 produce7.07. Adding only the7 directly confirmed sameedition Section roles yields1506 and7.04 with that same numerator. This is an isolating counterfactual, not certification that10599 is complete real-world CR coverage or that7.04 is final semantic gold.",
+      "query_clauses": [
+        "WITH hub, count(cr) AS crCnt",
+        "WITH hub, crCnt, count(s) AS secCnt",
+        "round(1.0 * crCnt / secCnt, 2) AS density"
+      ],
+      "source_locators": [
+        "Actual full dependency/native4col20typed agreement; raw7; all-edition path/node counts"
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "bounded_diagnostic_not_admission",
+      "original_quote": "Return",
+      "finding": "Preserve the exact authored LIMIT5 for the diagnostic. Full pool14 and strict cutoff3.31 are computed;38.331 is necessary in every valid authored top5, so the defect is not in an irrelevant lower row. Broad generic CQ5 defaults10 and broad CQ5-3 release-list wording differ from the later exact density task; neither is used to invent a new required extent. If the English is read as all returned positive specs,38.331 remains included, so a larger answer extent does not remove this required-density support defect. No admitted cardinality contract or gold is certified.",
+      "query_clauses": [
+        "ORDER BY density DESC LIMIT 5"
+      ],
+      "source_locators": [
+        "Fresh full14 pool and allcutoffties; own generic design L186-L214; original exact query"
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass_for_original_diagnostic",
+      "original_quote": "change-hotspot metric",
+      "finding": "The same-item authored query supplies latest numeric retained release and densityDESC selection. Full release choice is unique for each included hub; cutoff group has only38.300 at3.31.38.331 is rank4 at7.07 and remains necessary; its heading-only diagnostic7.04 stays above3.31. No spec-id tiebreaker or output rank requirement is invented. Generic CountDESC/TSASC does not replace this specific density expression. Successful order reproduction does not certify the missing source denominator.",
+      "query_clauses": [
+        "ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC",
+        "ORDER BY density DESC LIMIT 5"
+      ],
+      "source_locators": [
+        "Full dependency receipt; original exact query; own generic defaults counterauthority"
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "missing_required_frozen_role",
+      "original_quote": "per section",
+      "finding": "An executable graph-recorded metric is the strongest pass counterinterpretation. It would treat the known omitted ownHeading4 roles as intentionally outside the task, but no original rule excludes these source-positive Section roles; own original schema says they belong. A source-derived list of seven names would add factual role distinctions, not merely repair a join over already retained heading evidence. Four generic repairs were tested:1839,1839,82,52 candidates retain7 true roles plus1832,1832,75,45 non-heading candidates. Allrelease Section union1500 recovers none. Universal unanswerability is not claimed; external/source enrichment can repair the omission in a separate cohort. This judgment is limited to source-faithful certification from the pinned original retained graph.",
+      "query_clauses": [
+        "MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section)"
+      ],
+      "source_locators": [
+        "Finer property counterpolicies; global360hit role catalog; own design L92; currentposthoc union counterpolicy"
+      ]
+    }
+  ],
+  "what_is_complete": "The bounded data-loss witness, full original arithmetic reproduction, global retained alternative search and meaningful narrower repair countertests are complete. No original-question pass is claimed.",
+  "why_not_merely_wrong_edge": "No exact ownHeading4/Section role survives in an alternate property or relation of any seven exact name nodes. Query repairs may recover retained facts; they cannot assert these7 source-only distinctions from an undifferentiated52- or1839-parameter pool without adding evidence.",
+  "why_not_forced_clarification": "The original English expressly needs density and the own original schema positively includes these headings. Broader extent/version counterpolicies are preserved, but no alternative metric is adopted or ambiguity label manufactured to avoid confirmed source-role loss.",
+  "opposing_evidence_and_limits": [
+    "Native arithmetic over recorded Section nodes is genuinely executable and preserved. It is not itself proof that the question is source-faithfully answered.",
+    "The7 names and their broad parentSection are present, not deleted. Tested finer generic predicates are refuted; no claim excludes every conceivable inference or externally known standard structure.",
+    "Broad original designCQ5-3 is a release-list task, not the exact later density English; its defaults are countercontext rather than proof of every exact metric choice.",
+    "The complete1506 product is reused existing provenance. Only the exact7 own headings, original documentfullHeading4 pool and all frozen property/incident alternatives are freshly source-checked here.",
+    "Other current64 CR/Spec source additions and the published separate density experiment are not original frozen admissions and do not supply this numerator.",
+    "Bounded unsupported means specific necessary source-role evidence absent from this pinned original graph; not worldwide, information-theoretic or all-retrieval-corpora impossibility."
+  ],
+  "pins": {
+    "source_replay": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN2_P3_CQ5-3/actual_source_role_alternative_and_full_metric_replay.json",
+      "bytes": 73171,
+      "sha256": "da7639f3c7143a8e574908cb144ee77de0fa384673dfe6daf48c8c9b31bb74fe"
+    },
+    "native_SQL": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN2_P3_CQ5-3/actual_full_original_metric_and_saved_native_typed_agreement.json",
+      "bytes": 27683,
+      "sha256": "d3f9527fba867012321115cc5af77e7d1d6c1d08edfe54512fc03c3bf1bb7775"
+    },
+    "alternate_recovery": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN2_P3_CQ5-3/actual_finer_retained_ASN1_role_recovery_counterpolicies.json",
+      "bytes": 1007688,
+      "sha256": "4fcc76333e3d6cc1b3eee90753931060d7e620839338c30919a630715c3c86f0"
+    },
+    "retained_text_and_other_editions": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN2_P3_CQ5-3/actual_retained_text_role_and_all_edition_union_challenge.json",
+      "bytes": 22276,
+      "sha256": "ce1e7a77a948528d2cd6427864a3960fc91b0a6e59d08264b2de2fd59491c107"
+    },
+    "typed_controls": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN2_P3_CQ5-3/actual_requested_density_typed_negative_controls.json",
+      "bytes": 30825,
+      "sha256": "3a0d0a44f29abc86b46f67b373e0a4b051f39a230f1b35f9de7ffb851b4e3144"
+    },
+    "diagnostic_definition": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_B/RAN2_P3_CQ5-3/recorded_arithmetic_diagnostic_definition.json",
+      "bytes": 2358,
+      "sha256": "e10643508135ddccc390d4ed72c778d1973c1ef0ee8a2c383dfe55696d8e47f5"
+    }
+  },
+  "public_change_supported": {
+    "new_admission": false,
+    "bounded_data_support_disposition_recommended_for_ROOT_review": true
+  },
+  "ROOT_separate_judgment_still_required": true,
+  "API_calls": 0,
+  "native_calls": 0,
+  "original560_admission_increment": 0
+}

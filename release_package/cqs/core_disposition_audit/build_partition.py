@@ -4,13 +4,18 @@ from collections import Counter
 import hashlib
 import json
 from pathlib import Path
+import sys
+
+if sys.flags.optimize != 0:
+    raise SystemExit("Verification requires assertions; Python -O and -OO are refused.")
 
 HERE=Path(__file__).resolve().parent
 LABELS={'contract_verified':'답안 계약 검증 통과','clarification_required':'명세 보완 필요',
-        'evidence_pending':'근거·검증 미완료'}
+        'evidence_pending':'근거·검증 미완료',
+        'unsupported_frozen_data':'동결 데이터의 필수 원문 근거 부족'}
 
 
-DEFAULT_CANDIDATE_FILES=['metric_classification_candidates.json', 'missing_input_classification_candidates.json', 'extent_classification_candidates.json', 'conflicting_entity_description_candidates.json', 'conflicting_agenda_description_candidates.json', 'completed_scope_classification_candidates.json']
+DEFAULT_CANDIDATE_FILES=['metric_classification_candidates.json', 'missing_input_classification_candidates.json', 'extent_classification_candidates.json', 'conflicting_entity_description_candidates.json', 'conflicting_agenda_description_candidates.json', 'completed_scope_classification_candidates.json', 'unsupported_classification_candidates.json']
 
 def build(candidate_paths=None):
     if candidate_paths is None:candidate_paths=[HERE/name for name in DEFAULT_CANDIDATE_FILES]
@@ -29,7 +34,15 @@ def build(candidate_paths=None):
             assert candidate is None, 'Do not overwrite a current pass with a diagnostic candidate'
             category='contract_verified';evidence='Pinned immutable current-core pass record and its referenced repair bundle.'
         elif candidate:
-            category='clarification_required';evidence=candidate.get('evidence',candidate.get('why_original_query_does_not_close_contract'))
+            category=candidate.get('proposed_partition','clarification_required')
+            if category=='additional_criteria_required':
+                category='clarification_required'
+            assert category in {'clarification_required','unsupported_frozen_data'}, 'Unknown candidate classification'
+            if category=='unsupported_frozen_data':
+                assert candidate['admission'] is False and candidate['new_answer_gold'] is False
+                assert candidate['two_separate_nonblind_AI_reviews'] is True and candidate['expert_validation_n']==0
+                assert candidate['evidence']['portable_package'].startswith('sources/')
+            evidence=candidate.get('evidence',candidate.get('why_original_query_does_not_close_contract'))
             q=candidate.get('question_sha256')
             if q:assert q==r['original_question_sha256']
         else:

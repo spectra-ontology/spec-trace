@@ -1,0 +1,136 @@
+[
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "line_range": [
+      145,
+      180
+    ],
+    "text": "    *참고: \"Meeting 번호\" 정렬은 Phase-1 Meeting 클래스의 `meetingNumberInt` 속성 사용 (숫자 기반 정렬 보장)*\n    \n    ### 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-7, CQ2, CQ4 |\n    | Top N 조회 | 10 | CQ1-8, CQ3 |\n    | 트렌드 조회 | 전체 | CQ6 |\n    \n    *참고: Limit은 쿼리 시 파라미터로 조정 가능*\n    \n    ---\n    \n    ## 3. Scope 정의\n    \n    ### 3.1 포함 (In Scope)\n    \n    | 구분 | 포함 대상 | 비고 |\n    | --- | --- | --- |\n    | **Resolution** | Agreement, Conclusion, Working Assumption | CQ1~3, CQ6 |\n    | **Role** | Moderator, Ad-hoc Chair | CQ4 |\n    | **Embedded Content** | Figure, Table, Chart, Equation | CQ 대상 아님, Resolution 완결성 위해 포함 |\n    | **데이터 소스** | Final Report 본문 | Annex 제외 |\n    \n    ### 3.2 제외 (Out of Scope)\n    \n    | 제외 대상 | 이유 |\n    | --- | --- |\n    | 본문의 `**Decision:**` 패턴 | Resolution과 용어 혼동 방지 |\n    | Annex (B, C, D, E, F) | 본문만 파싱 원칙 |\n    | Resolution 의미/내용 검색 | Vector DB 영역 (향후 확장) |\n    | CQ5 (후속 조치) | Annex 의존 |\n    | RAN1 Chair | 고정 역할 |\n    | Figure 이미지 콘텐츠 | 별도 저장소에서 관리, Graph DB는 메타데이터만 |\n    | Table 셀 데이터 | 별도 저장소에서 관리, Graph DB는 메타데이터와 수식만 |"
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "line_range": [
+      629,
+      640
+    ],
+    "text": "    \n    | 클래스 | 정의 | 인스턴스 수 (샘플) |\n    | --- | --- | --- |\n    | **Resolution** (abstract) | 회의에서 도출된 기술적 결의 | - |\n    | **├─ Agreement** | 기술적 합의 사항 | Appendix A [P2-V01] 참조 |\n    | **├─ Conclusion** | 논의 결론 | Appendix A [P2-V02] 참조 |\n    | **└─ WorkingAssumption** | 잠정 가정 (추후 Agreement로 확정 가능) | Appendix A [P2-V03] 참조 |\n    \n    **Resolution을 상위 클래스로 만드는 이유**:\n    \n    - 세 하위 클래스가 공통 속성(content, note 등)과 공통 관계(references, madeAt, resolutionBelongsTo)를 가짐\n    - CQ에서 \"특정 조건의 Resolution\"을 조회할 때 세 유형을 통합 조회 가능"
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "line_range": [
+      654,
+      666
+    ],
+    "text": "    \n    ### 4.3 Embedded Content 클래스\n    \n    | 클래스 | 정의 | Graph DB 저장 | 별도 저장소 |\n    | --- | --- | --- | --- |\n    | **Figure** | 문서 내 삽입된 이미지 | ID, caption, filePath | 원본 이미지 파일 |\n    | **Table** | 문서 내 삽입된 테이블 | ID, caption, filePath, equations | 원본 HTML |\n    | **Chart** | 문서 내 삽입된 차트 | ID, caption, chartPath, chartType | 원본 XML 파일 |\n    \n    **클래스 정의 이유**:\n    \n    - Figure, Table, Chart 모두 여러 인스턴스를 가지며 Resolution과 참조 관계를 가짐\n    - 기술적 Figure/Table/Chart 대상 (포맷팅용 제외). 캡션 유무와 무관하게 Resolution 본문에 포함된 실질적 콘텐츠를 추출하며, 식별 기준은 Step 7에서 정의."
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "line_range": [
+      766,
+      785
+    ],
+    "text": "    \n    | Property | Type | Description |\n    | --- | --- | --- |\n    | resolutionId | String | Resolution 고유 식별자 (예: AGR-112-8.1-001) |\n    | content | String | Resolution 본문 텍스트 (수식을 `[EQUATION]` 마커로 대체). **Text-to-Cypher 검색용**. |\n    | contentWithEquations | String | Resolution 본문 텍스트 (수식 LaTeX 인라인 포함). **LLM 답변 생성 및 UI 렌더링용**. |\n    | sequence | Integer | 같은 Agenda 내 순서 |\n    | sessionContext | String | 세션 정보 (예: \"Thursday session\", \"Online\") |\n    | note | String | 부가 설명 (Note: ...) |\n    \n    **Object Property**\n    \n    | Property | Range | Description |\n    | --- | --- | --- |\n    | references | Tdoc | Resolution이 참조하는 Tdoc |\n    | madeAt | Meeting | Resolution이 도출된 회의. Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo | AgendaItem | Resolution이 속한 Agenda |\n    | hasFigure | Figure | Resolution이 참조하는 Figure |\n    | hasTable | Table | Resolution이 참조하는 Table |\n    | hasChart | Chart | Resolution이 참조하는 Chart |"
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "line_range": [
+      968,
+      1003
+    ],
+    "text": "    ## 8. content vs contentWithEquations 사용 규칙\n    \n    Resolution 검색 및 답변 생성 시 두 필드의 역할이 다름.\n    \n    ### 8.1 필드별 용도\n    \n    | Phase | 사용 필드 | 이유 |\n    | --- | --- | --- |\n    | **검색 (Text-to-Cypher)** | content | `[EQUATION]` 마커로 노이즈 제거, 텍스트 매칭 정확도 향상 |\n    | **답변 생성 (LLM context)** | contentWithEquations | 수식 포함 완전한 정보로 정확한 답변 |\n    | **UI 렌더링** | contentWithEquations | LaTeX 수식 렌더링 |\n    \n    ### 8.2 처리 흐름\n    \n    ```\n    1. 사용자 질문 → Text-to-Cypher 생성\n    2. Cypher 쿼리에서 content 필드로 Resolution 검색\n    3. 검색된 Resolution의 contentWithEquations를 LLM context로 전달\n    4. LLM이 contentWithEquations 기반으로 답변 생성\n    5. UI에서 contentWithEquations의 LaTeX 렌더링\n    \n    ```\n    \n    ### 8.3 예시\n    \n    **검색 Cypher**:\n    \n    ```\n    MATCH (r:Agreement)\n    WHERE r.content CONTAINS 'processing time'\n    RETURN r.resolutionId, r.contentWithEquations\n    LIMIT 5\n    \n    ```\n    \n    *Note: WHERE 조건은 `content`, RETURN은 `contentWithEquations`*"
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "line_range": [
+      1054,
+      1060
+    ],
+    "text": "    | --- | --- | --- | --- | --- |\n    | resolutionId | String | 1 | ✅ | PK, 패턴: `{TYPE}-{meeting}-{agenda}-{seq}` |\n    | content | String | 1 | ✅ | Resolution 본문 (수식을 `[EQUATION]` 마커로 대체, 검색/쿼리용) |\n    | contentWithEquations | String | 0..1 | ❌ | Resolution 본문 (수식 LaTeX 포함, 렌더링용). 수식이 없는 Resolution에서는 null. 수식 포함 비율은 Appendix A [P2-V09] 참조 |\n    | sequence | Integer | 1 | ✅ | 같은 Agenda 내 순서. *Note: resolutionId에서 추출 가능 (예: AGR-112-8.1-001의 001)* |\n    | sessionContext | String | 0..1 | ❌ | 세션 정보 (예: \"Thursday session\", \"Online\") |\n    | note | String | 0..1 | ❌ | 부가 설명 |"
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "line_range": [
+      1304,
+      1316
+    ],
+    "text": "    ### 4.1 Resolution 매핑\n    \n    **소스**: Final Report 본문\n    \n    | 관계 | 소스 | 변환 규칙 |\n    | --- | --- | --- |\n    | references → Tdoc | content 내 참조 | `R1-\\\\d{7}` 패턴 추출 |\n    | madeAt → Meeting | 문서 메타 | 파일명에서 회의 번호 추출 후 Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo → AgendaItem | 섹션 헤더 | Agenda 번호 추출 |\n    | hasFigure → Figure | content 내 참조 | `Figure N` 패턴 → 같은 미팅 내 FIG 인스턴스 연결 |\n    | hasTable → Table | content 내 참조 | `Table X.Y.Z-N` 패턴 → 같은 미팅 내 TBL 인스턴스 연결 |\n    | hasChart → Chart | content 내 참조 | Chart의 Figure 번호 매칭 → 같은 미팅 내 CHT 인스턴스 연결 |\n    "
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/design_HEAD.md",
+      "bytes": 70135,
+      "sha256": "f414f22f296888e870ffc71d60ad86c484f8dfd3bfb4b58db17a97bd5a45a9e5"
+    },
+    "line_range": [
+      1751,
+      1770
+    ],
+    "text": "    ### A.2 구현 CQ 검증 결과\n    \n    > Spec Step 1의 CQ는 온톨로지 **설계 근거**이다.\n    아래는 구현에서 사용하는 **검증 CQ**로, 설계 CQ를 포함하되 구현 검증용으로 확장/재구성되었다.\n    > \n    \n    | 항목 | 설계 CQ (Spec) | 검증 CQ (구현) |\n    | --- | --- | --- |\n    | 데이터셋 | - | cq_test_dataset.json v3.0 |\n    | 검증 결과 | - | PASS |\n    \n    검증 CQ 카테고리 매핑:\n    \n    | 구현 카테고리 | 대응 Spec CQ |\n    | --- | --- |\n    | CQ1 (Resolution 조회) | CQ1 |\n    | CQ2 (Tdoc-Resolution 추적) | CQ2 |\n    | CQ3 (회사별 기여도) | CQ3 |\n    | CQ4 (기술주도권분석) | CQ4 (역할) |\n    | CQ5 (기술트렌드) | CQ6 (트렌드/비교) |"
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/validation_HEAD.md",
+      "bytes": 8613,
+      "sha256": "b6be960f3c5bebd439161059ed4e61940b5d656fc54d87bcebbb87870bd3fcbd"
+    },
+    "line_range": [
+      68,
+      89
+    ],
+    "text": "## Spec §8: content vs contentWithEquations 사용 규칙\n\nCQ 쿼리에서 Resolution 본문을 다룰 때 Spec §8 규칙을 준수:\n\n| 단계 | 필드 | 이유 |\n|------|------|------|\n| **검색 (WHERE)** | `content` | `[EQUATION]` 마커로 노이즈 제거, 텍스트 매칭 정확도 향상 |\n| **답변/렌더링 (RETURN)** | `contentWithEquations` | 수식 LaTeX 인라인 포함, 완전한 정보 |\n\n### COALESCE 패턴\n\n`contentWithEquations`가 NULL인 Resolution(수식 미포함)을 안전하게 처리:\n\n```cypher\n-- Spec §8 준수: WHERE=content, RETURN=COALESCE(contentWithEquations, content)\nMATCH (a:Agreement)-[:MADE_AT]->(m:Meeting)\nWHERE m.meetingNumber = 'RAN1#112'\n  AND a.content CONTAINS 'MIMO'\nRETURN a.resolutionId, COALESCE(a.contentWithEquations, a.content)\n```\n\nCQ 데이터셋 v3.0 34개 쿼리 중 24개가 Resolution 본문(`content`)을 RETURN하며, 나머지 10개는 집계/카운트 쿼리. Text2Cypher에서는 COALESCE 패턴을 Few-shot 예시로 제공하여 LLM이 적절히 사용하도록 유도."
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra-public/spec-trace/release_package/cqs/original_core_source_RAN1_common3176/semantics/validation_HEAD.md",
+      "bytes": 8613,
+      "sha256": "b6be960f3c5bebd439161059ed4e61940b5d656fc54d87bcebbb87870bd3fcbd"
+    },
+    "line_range": [
+      100,
+      115
+    ],
+    "text": "### 페르소나\n\n3가지 업무 페르소나 기반 시나리오:\n- **전략/기획팀**: 회의 결과 파악, 기술 트렌드 분석, 경쟁사 동향\n- **IP/특허팀**: 기고의 표준 반영 여부, 기여 증거 확보\n- **표준화 엔지니어**: 특정 기술 결정사항 추적, 후속 작업 파악\n\n### 질문 카테고리 (5종, 34개)\n\n| 카테고리 | 수 | 주요 검증 포인트 |\n|----------|-----|-----------------|\n| CQ1_Resolution조회 | 7 | 회의별/Agenda별 Resolution 조회, 타입별 필터링 |\n| CQ2_Tdoc-Resolution추적 | 5 | Tdoc↔Resolution 관계 추적, 참조 검색 |\n| CQ3_회사기여도 | 6 | 회사별 기여 집계, Resolution 참여 분석 |\n| CQ4_기술주도권분석 | 3 | 기술 영역별 주도 회사 식별 |\n| CQ5_기술트렌드 | 13 | 시계열 기술 변화, 키워드 기반 추세 분석 |"
+  },
+  {
+    "input": {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/main_A/RAN1_P2_CQ5-3/actual_original_source_and_frozen_reopen/original_indexed_decision_extractor.py",
+      "bytes": 26776,
+      "sha256": "244e88134710cdceb8c4b53a8fb089f3f49798752cd46cdc2f3dc5fdf0b12e0e"
+    },
+    "git_locator": ":scripts/tsg/RAN/formal/RAN1/phase-2/report-parser/decision_extractor.py",
+    "line_range": [
+      455,
+      510
+    ],
+    "text": "    def _extract_content(\n        self,\n        paragraphs: list,\n        start_index: int,\n        end_index: int\n    ) -> str:\n        \"\"\"Extract and join content paragraphs + embedded tables.\n\n        Spec §3.1: content 필드 — 수식을 [EQUATION] 마커로 대체 (검색/쿼리용)\n\n        Body-aware extraction: paragraph 범위 사이에 끼어있는 w:tbl도\n        pipe-delimited 텍스트로 변환하여 포함. body_children이 없으면\n        기존 paragraph-only 로직으로 fallback.\n        \"\"\"\n        content_parts = []\n        tbl_tag = f'{{{_W_NS}}}tbl'\n        p_tag = f'{{{_W_NS}}}p'\n\n        if self._body_children and start_index in self._para_to_body:\n            # Body-aware: paragraph 범위에 대응하는 body 구간 순회\n            body_start = self._para_to_body[start_index]\n            body_end = self._para_to_body.get(end_index, len(self._body_children))\n\n            # para_idx 매핑을 역산: body_idx → para_idx\n            body_to_para: dict[int, int] = {}\n            for pi, bi in self._para_to_body.items():\n                body_to_para[bi] = pi\n\n            for body_idx in range(body_start, body_end):\n                child = self._body_children[body_idx]\n                if child.tag == p_tag:\n                    para_idx = body_to_para.get(body_idx)\n                    if para_idx is not None and para_idx < len(paragraphs):\n                        if build_text_with_markers:\n                            text = build_text_with_markers(\n                                paragraphs[para_idx]._element\n                            ).strip()\n                        else:\n                            text = paragraphs[para_idx].text.strip()\n                        if text:\n                            content_parts.append(text)\n                elif child.tag == tbl_tag:\n                    table_text = self._table_to_text(child)\n                    if table_text:\n                        content_parts.append(table_text)\n        else:\n            # Fallback: 기존 paragraph-only 로직 (DOCM 또는 body_map 미지원)\n            for idx in range(start_index, end_index):\n                if build_text_with_markers:\n                    text = build_text_with_markers(paragraphs[idx]._element).strip()\n                else:\n                    text = paragraphs[idx].text.strip()\n                if text:\n                    content_parts.append(text)\n\n        return '\\n'.join(content_parts)",
+    "limitation": "Original indexed authoring rule, not a proven executable provenance for the frozen build."
+  }
+]
