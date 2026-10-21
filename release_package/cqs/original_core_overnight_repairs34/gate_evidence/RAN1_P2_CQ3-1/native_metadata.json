@@ -1,0 +1,32 @@
+{
+  "id": "RAN1_P2_CQ3-1",
+  "wg": "RAN1",
+  "query_sha256": "70be13e4f11b15489292f065051765b3cd179dc3a03f943e7654e0f90275b92c",
+  "query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (a)-[:MADE_AT]->(m:Meeting)\nWITH a,t,c,m,[line IN split(coalesce(a.content,\"\"),\"\\n\") WHERE trim(line)<>\"\"] AS lines\nWITH a,t,c,m,lines,reduce(s={stopped:false,own:[],previous:\"\",previousHeaderRule:\"\",finalSeen:false},i IN CASE WHEN size(lines)=0 THEN [] ELSE range(0,size(lines)-1) END |\n  CASE WHEN s.stopped THEN s\n  WHEN lines[i] =~ \"R1-[0-9]{7}\\\\t.*\" THEN\n    CASE\n    WHEN (s.previous =~ \"(?i)^.*\\\\bfinal\\\\s+CRs?\\\\b.*(?:in|:)\\\\s*:?$\" OR (s.previous =~ \"\\\\(Rel-[0-9]+,.*\\\\bCR[0-9]+.*\\\\) is (?:agreed|endorsed)\\\\.\" AND s.finalSeen)) AND i+1<size(lines) AND lines[i+1] =~ \"\\\\(Rel-[0-9]+,.*\\\\bCR[0-9]+.*\\\\) is (?:agreed|endorsed)\\\\.\"\n      THEN {stopped:false,own:s.own+[lines[i]],previous:lines[i],previousHeaderRule:\"final_CR\",finalSeen:true}\n    WHEN s.previous =~ \"(?i)^.*\\\\bfollowing\\\\s+Tdocs?\\\\b.*$\" OR s.previousHeaderRule=\"explicit_following_Tdocs\"\n      THEN {stopped:false,own:s.own+[lines[i]],previous:lines[i],previousHeaderRule:\"explicit_following_Tdocs\",finalSeen:s.finalSeen}\n    WHEN s.previous =~ \"(?i)^.*\\\\bcomeback\\\\s+for\\\\s+draft\\\\s+LS\\\\b.*$\" AND i+1<size(lines) AND lines[i+1] CONTAINS substring(lines[i],0,10) AND lines[i+1] =~ \"(?i).*\\\\b(?:endorsed|approved|agreed)\\\\b.*\"\n      THEN {stopped:false,own:s.own+[lines[i]],previous:lines[i],previousHeaderRule:\"draft_LS_comeback\",finalSeen:s.finalSeen}\n    ELSE {stopped:true,own:s.own,previous:s.previous,previousHeaderRule:s.previousHeaderRule,finalSeen:s.finalSeen} END\n  ELSE {stopped:false,own:s.own+[lines[i]],previous:lines[i],previousHeaderRule:\"\",finalSeen:s.finalSeen} END) AS ownRecord\nWHERE any(line IN ownRecord.own WHERE line =~ (\".*\"+t.tdocNumber+\"(?![0-9]).*\"))\nRETURN t.tdocNumber,t.title,a.resolutionId,m.meetingNumber\nORDER BY m.meetingNumberInt DESC,t.tdocNumber,a.resolutionId LIMIT 15",
+  "started_utc": "2026-10-21T01:53:15.049080+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN1_P2_CQ3-1/70be13e4f11b15489292f065051765b3cd179dc3a03f943e7654e0f90275b92c.jsonl",
+  "columns": [
+    "t.tdocNumber",
+    "t.title",
+    "a.resolutionId",
+    "m.meetingNumber"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 15,
+  "bytes_retained": 1616,
+  "rows_sha256": "2fd7a4656d3e014b7aff51490bf0a5a64ab3ec7839e8a0c43da9b6593a0bb8d8",
+  "finished_utc": "2026-10-21T01:53:17.845274+00:00",
+  "elapsed_s": 2.7962,
+  "full_rows_available": true
+}
