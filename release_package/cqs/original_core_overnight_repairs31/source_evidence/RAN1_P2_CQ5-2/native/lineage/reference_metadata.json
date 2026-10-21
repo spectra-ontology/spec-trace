@@ -1,0 +1,31 @@
+{
+  "id": "RAN1_P2_CQ5-2",
+  "wg": "RAN1",
+  "query_sha256": "4e4d078154c6a98c630e0dfa89d4355a655a0249e85445854943b38670724c84",
+  "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting)\nWHERE a.content CONTAINS 'HARQ' AND a.content CONTAINS 'feedback'\nWITH a,m,split(a.content,'\\n') AS lines\nWITH a,m,lines,head([i IN range(0,size(lines)-1) WHERE trim(lines[i]) =~ 'R1-[0-9]{6,8}\\\\t[^\\\\t]+\\\\t.+' | i]) AS headerAt\nWITH a,m,CASE WHEN headerAt IS NULL THEN lines ELSE lines[0..headerAt] END AS ownPrefixLines\nWHERE any(line IN ownPrefixLines WHERE line CONTAINS 'HARQ')\n  AND any(line IN ownPrefixLines WHERE line CONTAINS 'feedback')\nRETURN m.meetingNumber, a.resolutionId, a.content\nORDER BY m.meetingNumberInt DESC LIMIT 10",
+  "started_utc": "2026-10-20T23:06:07.926067+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN1_P2_CQ5-2/4e4d078154c6a98c630e0dfa89d4355a655a0249e85445854943b38670724c84.jsonl",
+  "columns": [
+    "m.meetingNumber",
+    "a.resolutionId",
+    "a.content"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 10,
+  "bytes_retained": 18070,
+  "rows_sha256": "268c657dafbc2a1f38cc55c29e3d9635e39412e3acdb3942529a495fd8cb8ac9",
+  "finished_utc": "2026-10-20T23:06:09.574378+00:00",
+  "elapsed_s": 1.6483,
+  "full_rows_available": true
+}

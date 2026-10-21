@@ -1,0 +1,5 @@
+# Source-grounded HARQ and BWP agreement records
+
+These two original questions provide executable agreement-list and substantive decision-content tasks, with unchanged English questions and authored queries, exact query repairs, separate nonblind AI reviews, and saved full-column native/SQL comparisons. Run `python3 -B -S verify_additions.py --bundle .` to replay both independently sealed source verifiers and the shared typed scoring checks offline.
+
+HARQ scores agreement identities with the original latest10 boundary policy: nine mandatory records and any one of six records tied at the cutoff. The15 source-derived eligible records remain separate from the actual10 native rows; preserved full421 alias/order diagnostics are outside this bounded bridge. BWP requires all ten recorded decision contents, including explicitly attributed same-meeting/same-feature CR text recovered from the frozen graph. All original returned columns and source locators remain available. No source excerpt is added to model input; this package makes no new model calls or public admissions.

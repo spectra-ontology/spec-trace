@@ -1,0 +1,34 @@
+{
+  "id": "RAN1_P2_CQ5-2",
+  "question_en": "List the agreements on HARQ feedback (HARQ decisions).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'HARQ' AND a.content CONTAINS 'feedback' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+  "reference_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting)\nWHERE a.content CONTAINS 'HARQ' AND a.content CONTAINS 'feedback'\nWITH a,m,split(a.content,'\\n') AS lines\nWITH a,m,lines,head([i IN range(0,size(lines)-1) WHERE trim(lines[i]) =~ 'R1-[0-9]{6,8}\\\\t[^\\\\t]+\\\\t.+' | i]) AS headerAt\nWITH a,m,CASE WHEN headerAt IS NULL THEN lines ELSE lines[0..headerAt] END AS ownPrefixLines\nWHERE any(line IN ownPrefixLines WHERE line CONTAINS 'HARQ')\n  AND any(line IN ownPrefixLines WHERE line CONTAINS 'feedback')\nRETURN m.meetingNumber, a.resolutionId, a.content\nORDER BY m.meetingNumberInt DESC LIMIT 10",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "a.resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "source_order_keys": [
+      {
+        "source_column": "meetingNumberInt",
+        "direction": "desc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": false
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}
