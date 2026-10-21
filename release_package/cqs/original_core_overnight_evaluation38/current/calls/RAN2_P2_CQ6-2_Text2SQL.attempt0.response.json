@@ -1,0 +1,53 @@
+{
+  "request_id": "RAN2_P2_CQ6-2_Text2SQL",
+  "attempt": 0,
+  "http_status": 200,
+  "elapsed_seconds": 6.518266086990479,
+  "received_utc": "2026-10-21T06:01:53.243479+00:00",
+  "response": {
+    "id": "gen-1792562534-WCsZ3poaKY0pv7MIeQ9i",
+    "object": "chat.completion",
+    "created": 1792562534,
+    "model": "anthropic/claude-opus-4.8",
+    "provider": "Anthropic",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "end_turn",
+        "message": {
+          "role": "assistant",
+          "content": "{\"query\":\"WITH huawei AS (SELECT node_id FROM Company WHERE companyName='Huawei'), meeting_tdocs AS (SELECT m.canonicalMeetingNumber AS mnum, COUNT(DISTINCT p.src_id) AS total FROM rel_PRESENTED_AT p JOIN Meeting m ON m.node_id=p.dst_id JOIN rel_SUBMITTED_BY s ON s.src_id=p.src_id JOIN huawei h ON h.node_id=s.dst_id GROUP BY m.canonicalMeetingNumber), meeting_res AS (SELECT m.canonicalMeetingNumber AS mnum, COUNT(DISTINCT r.src_id) AS contrib FROM rel_REFERENCES r JOIN Resolution res ON res.node_id=r.src_id JOIN rel_MADE_AT ma ON ma.src_id=res.node_id JOIN Meeting m ON m.node_id=ma.dst_id JOIN rel_SUBMITTED_BY s ON s.src_id=r.dst_id JOIN huawei h ON h.node_id=s.dst_id GROUP BY m.canonicalMeetingNumber) SELECT mt.mnum AS canonicalMeetingNumber, CAST(COALESCE(mr.contrib,0) AS REAL)/mt.total AS ratio FROM meeting_tdocs mt LEFT JOIN meeting_res mr ON mr.mnum=mt.mnum WHERE mt.total>0 ORDER BY mt.mnum\",\"abstain\":false}",
+          "refusal": null,
+          "reasoning": null
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 10748,
+      "completion_tokens": 555,
+      "total_tokens": 11303,
+      "cost": 0.067615,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.067615,
+        "upstream_inference_prompt_cost": 0.05374,
+        "upstream_inference_completions_cost": 0.013875
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  }
+}

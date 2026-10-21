@@ -1,0 +1,36 @@
+{
+  "id": "RAN2_P2_CQ6-2",
+  "question_en": "Track how Huawei's resolution-contribution rate changed over meetings (influence trend).",
+  "original_query": "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting) WITH m, count(r) AS total MATCH (r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (r2)-[:MADE_AT]->(m) WITH m, total, count(DISTINCT r2) AS huaweiCount RETURN m.canonicalMeetingNumber, m.meetingNumberInt, huaweiCount, total, round(100.0 * huaweiCount / total, 1) AS ratio ORDER BY m.meetingNumberInt ASC",
+  "reference_query": "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting) WITH m, count(r) AS total MATCH (r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (r2)-[:MADE_AT]->(m) WITH m, total, count(DISTINCT r2) AS huaweiCount RETURN m.canonicalMeetingNumber, m.meetingNumberInt, huaweiCount, total, round(100.0 * huaweiCount / total, 1) AS ratio ORDER BY m.meetingNumberInt ASC",
+  "required_fields": [
+    {
+      "name": "canonicalMeetingNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "m.canonicalMeetingNumber"
+    },
+    {
+      "name": "ratio",
+      "type": "number",
+      "nullable": false,
+      "source_column_or_expression": "ratio"
+    }
+  ],
+  "collection": {
+    "kind": "native_ordered_ties",
+    "source_order_keys": [
+      {
+        "source_column": "m.meetingNumberInt",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_order_within_equal_keys"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 52
+  },
+  "repair_class": "scorer_only",
+  "original_question_preserved": true
+}

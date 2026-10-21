@@ -1,0 +1,156 @@
+{
+  "id": "RAN2_P2_CQ6-2",
+  "status": "pass",
+  "judgment_scope": "Separate primary AI semantic review of exact scorer_only 9-key definition; not a full local admission or performance result",
+  "reviewer": "main_A /root/priority71_fast_closure",
+  "independent_from_ROOT_review": true,
+  "question_en": "Track how Huawei's resolution-contribution rate changed over meetings (influence trend).",
+  "question_sha256": "63a0abf878638f1b3eb1761661f638ff2def8463d1da312b893ee0cf0569df88",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "2e686158064dfef7f6e830e55ef1e1c8f342a2b37f402a3165068be957e5ca35",
+  "definition": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/authored_documentary_metric_v24/definition.json",
+    "bytes": 1663,
+    "sha256": "9081125b44f1cda5364890eaa9dd5b9f3338226b438c807a65e64bba1f66dc4a"
+  },
+  "original_query_sha256": "5b9b9b05344dd1747ec164ad908670bca166457ac7c8f1ad085846ff9f0b340d",
+  "reference_query_sha256": "5b9b9b05344dd1747ec164ad908670bca166457ac7c8f1ad085846ff9f0b340d",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "resolution-contribution rate",
+      "query_clauses": [
+        "RETURN m.canonicalMeetingNumber, m.meetingNumberInt, huaweiCount, total, round(100.0 * huaweiCount / total, 1) AS ratio"
+      ],
+      "finding": "A named meeting and its numeric percentage are the requested answer roles. Required fields are canonicalMeetingNumber:string and ratio:number. Preserve every original five-column native row as evidence. Integer meeting key and numerator/denominator are audit helpers, not separately requested answer attributes. There is no request to reproduce each Resolution or to determine a causal company effect.",
+      "original_source_derivation": "Original Korean CQ6-2 is '특정 회사의 기여율 변화는?' (P2 L154), same contribution family CQ3 at L496-506. Exact item query specifies rate=100*count(DISTINCT r2)/count(r) with one-decimal rounding. Criteria scoring_evidence forbids requiring extra unrequested query projections.",
+      "strongest_counterargument_and_resolution": "The parenthetical 'influence trend' and P2 research motivation could suggest real influence. These do not independently establish a causal estimand or external outcome. The authored CQ family and concrete source-mapped query positively define documentary reference participation. The candidate does not claim the measure quantifies actual causal or normative influence."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "over meetings",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting) WITH m, count(r) AS total",
+        "MATCH (r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (r2)-[:MADE_AT]->(m)"
+      ],
+      "finding": "Use the fixed recorded Resolution graph domain, including Agreement, Conclusion and Working Assumption. On the pinned frozen graph it has 3773 one-MADE_AT records across 58 meetings. The exact inner second MATCH emits the 52 meetings with a Huawei-linked recorded Resolution; six recorded meetings without that path are not outer-joined as zero rows. The domain is not silently enlarged to every physical decision or newly reconstructed document.",
+      "original_source_derivation": "P2 L192 defines the Resolution union; L1117-1143 maps body-derived records and filename/canonical meeting identity. CQ6 inherits CQ1/CQ3+madeAt (L506). The concrete original item query is inner-positive, has no LIMIT, and is more specific than an invented universal zero-meeting series.",
+      "strongest_counterargument_and_resolution": "An all-58 zero-filled trend is a plausible redesigned display. It is not an implicit requirement that overrides the authored inner query. Actual zero exclusion and the original denominator are disclosed in evidence; no new outer MATCH, chronological secondary order, Annex expansion or physical enumeration is introduced."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Huawei's",
+      "query_clauses": [
+        "(r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'})"
+      ],
+      "finding": "Huawei is matched by its retained formal Company role. REFERENCES is the original operating relation: full seven-digit R2 literals extracted from captured content and joined to existing Phase1 Tdocs, then their formal submittedBy companies. Original Source rows for all 1716 distinct Huawei Tdoc targets have been independently reopened; coauthorship and multiple paths do not require sole ownership or approval. No first-header exclusion, transitive follow-up expansion, short-number correction, Office Company substitution or actual-contribution inference is added.",
+      "original_source_derivation": "P2 L314 and L871 name submittedBy for CQ3; L500/506 connects company contribution to REFERENCES→Phase1 Tdoc/Company. L1121/1126 specifies the full-seven-digit content literal extraction, L1132-1135 existing-Tdoc-only mapping. Pinned original INDEX extractor has next decision/Heading/MiniHeading/two-blank boundaries, not a Tdoc/email/SubHeading stop.",
+      "strongest_counterargument_and_resolution": "Recorded content can contain later catalogues, plural conclusions containers and wrong-year literals (AGR101 ZTE/Huawei example). Those are retained counterevidence about document intent and precision. The original source mapping positively defines a literal documentary proxy and does not authorize correcting these by intended year/company or cutting all later entries. Earlier narrow92/clarification proposals imposed an unproven exclusive-technical-owner boundary and are superseded, not re-used as source truth."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "rate",
+      "query_clauses": [
+        "WITH m, count(r) AS total",
+        "WITH m, total, count(DISTINCT r2) AS huaweiCount",
+        "round(100.0 * huaweiCount / total, 1) AS ratio"
+      ],
+      "finding": "Denominator is the original first MATCH path count, with one actual MADE_AT per recorded Resolution on this graph. Numerator is distinct Resolution r2 per same meeting after REFERENCES→Tdoc→Huawei. Multiple cited Tdocs, duplicate company join paths and coauthorship do not multiply the numerator. Fresh literal-target reconstruction, generic SQL and independent set/Decimal aggregation agree on all 742 positive records, 1764 paths and 52 returned rates.",
+      "original_source_derivation": "The authored query explicitly gives count(r), count(DISTINCT r2), same-m pairing and one-decimal percentage. P2 identifies Resolution as the CQ2/CQ3 counting entity and content mapping as its reference source. v18 reconstructs every existing target set for all 3773 contents and finds zero differences from REFERENCES.",
+      "strongest_counterargument_and_resolution": "Raw reference paths (1764), unique Huawei Tdocs (1716), and source record/container counts measure different units. None replaces distinct Resolution or total recorded Resolution. Whole physical body formula/table token equality is not a new rate-answer requirement; actual citation/record-unit mismatches would still block if found."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Track",
+      "query_clauses": [
+        "RETURN m.canonicalMeetingNumber, m.meetingNumberInt, huaweiCount, total, round(100.0 * huaweiCount / total, 1) AS ratio"
+      ],
+      "finding": "The result is the complete unbounded original inner-positive series: all 52 records on this pinned graph. No latest-ten/default cap is applied. Exact52 is a data-bound cardinality, not a new question restriction; native complete output must be retained and compared to independently complete SQL. Distinct meeting identity and nonnull rate are enforced.",
+      "original_source_derivation": "Own P2 default-result rule L180 is trend='전체'; original query has no LIMIT. The generic SQL source sweep covers all3773/58 and all literal matches, rather than matching a selected old gold prefix.",
+      "strongest_counterargument_and_resolution": "The old benchmark gold exposed meeting identities and legacy projections; this review is explicitly nonblind. It derives completeness from exact query/source domain and exhaustive joins, not from a desired old score. A full physical report census or all-eight event-followup reconstruction is not substituted for the fixed recorded domain."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "changed over meetings",
+      "query_clauses": [
+        "ORDER BY m.meetingNumberInt ASC"
+      ],
+      "finding": "Chronological display is exactly the original numeric MeetingInt ascending groups. The helper column remains in full native rows but is absent from required answer fields. Use the unchanged original_scorer native_ordered_ties wrapper with source_order_keys m.meetingNumberInt ASC. Any permutation within an equal numeric key, including bis siblings, is valid; moving a visible meeting/rate record across numeric groups is invalid. There is no calendar or canonical-string secondary tie-break.",
+      "original_source_derivation": "P2 L170 explicitly assigns CQ6 meetingNumberInt ASC and no secondary, L172 ties it to the Phase1 numeric attribute. The exact item query confirms that order. Existing public original_scorer.make_order_groups binds native helper values to projected requested records without requiring the helper as an answer field.",
+      "strongest_counterargument_and_resolution": "Integer meeting collisions do not make the whole series incomplete: every row is returned, and original equal-key order is unconstrained. A calendar-aware repair would add a secondary policy not requested by this original CQ6 context. The scorer rejects visible answer tokens spanning distinct native numeric groups, rather than guessing their rank."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "(influence trend).",
+      "query_clauses": [
+        "MATCH (r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'})",
+        "round(100.0 * huaweiCount / total, 1) AS ratio"
+      ],
+      "finding": "No new facts, source-enriched graph, external judgment, expert endorsement, causal model, actual contribution ranking or corrected intended reference is introduced. Original English/query bytes, fixed graph and existing typed/original scorer kernels are preserved. This is a local exact-contract semantic judgment only; a separate AI review, exact native52/full5-column SQL equality, strict requested-field/order controls and isolated portable replay remain execution gates before pass_local.",
+      "original_source_derivation": "Question-first criteria bfefc447 explicitly requires contextual derivation, two AI reviews and all named requested-field checks. Original P2 source mapping and item query jointly provide the affirmative operating context; native success alone is not semantic proof.",
+      "strongest_counterargument_and_resolution": "Source audit normalization ignores only declared representation separators for location and keeps raw differences and citations. It does not certify active rendering, intended corrected document identities, physical completeness, human authorship validation or measured model performance. All prior diagnostic/failed proposals remain byte-preserved and explicitly superseded where contrary."
+    }
+  ],
+  "authority_and_counterauthority": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/authored_documentary_metric_v24/preserved_original_authority_and_counterauthority.json",
+    "bytes": 12217,
+    "sha256": "035f218eec0e32ea3845f74475f0ae64e3fc59f130597cb32de6b24138a5f589"
+  },
+  "preserved_supersession": {
+    "supersedes_as_final_recommendation": [
+      {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/primary_original_scope_seven_unit_review_v17.json",
+        "bytes": 23376,
+        "sha256": "949a07f4cf729bdf756a4e9224f05dd2a47b7c2ee77e922242c54adacb356db8"
+      }
+    ],
+    "reason": "v17 promoted exclusive technical-own boundary and intended company correction into a required contribution semantics despite stronger positive original literal REFERENCES/body rules; original bytes and source diagnostics are retained. Neither v5 narrow92 nor v17 clarification is adopted as gold."
+  },
+  "evidence": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_authored_literal_original_metric_receipt_v18.json",
+      "bytes": 3099,
+      "sha256": "74fb10074ecfd56e95101ac6bc6217091fadcd9efb26aa8371f3e9eb8319b331"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_source_to_full_captured_content_receipt_v19.json",
+      "bytes": 4013,
+      "sha256": "dabc13be9d5a877352955d9ba4bff6e38cb8864ce066e87f9fe0a8852f55b245"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_source_content_serialization_refinement_receipt_v20.json",
+      "bytes": 2078,
+      "sha256": "5e2a64e7f5d407c6b1ddf9ab89dc067e699c16697c28620b5d5e31c1aa65829e"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_two_original_source_Huawei_citation_panels_v22.json",
+      "bytes": 25503,
+      "sha256": "781d9cf231447026e20a9588b6786c865f0bbeb55b606bbda57411857b112207"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_all_original_Huawei_formal_Source_receipt_v4.json",
+      "bytes": 14817,
+      "sha256": "91df148f8e281e89800b23799414346ea14704320f3017552b184dcdd92479fc"
+    }
+  ],
+  "pending_execution_gates": [
+    "ROOT independent exact seven-unit review",
+    "Completed recorded-unit source-marker association receipt",
+    "Exact original native52 full5-column capture and complete typed SQL equality",
+    "Unchanged typed/original scorer requested2field numeric-order adverse controls",
+    "Closed portable source/native/SQL replay"
+  ],
+  "nonblind": true,
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "API_calls": 0,
+  "native_calls_in_this_review": 0,
+  "new_admissions": 0
+}

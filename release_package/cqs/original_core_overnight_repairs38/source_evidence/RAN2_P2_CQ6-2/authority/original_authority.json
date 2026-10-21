@@ -1,0 +1,110 @@
+{
+  "id": "RAN2_P2_CQ6-2",
+  "question_en": "Track how Huawei's resolution-contribution rate changed over meetings (influence trend).",
+  "question_sha256": "63a0abf878638f1b3eb1761661f638ff2def8463d1da312b893ee0cf0569df88",
+  "query": "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting) WITH m, count(r) AS total MATCH (r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (r2)-[:MADE_AT]->(m) WITH m, total, count(DISTINCT r2) AS huaweiCount RETURN m.canonicalMeetingNumber, m.meetingNumberInt, huaweiCount, total, round(100.0 * huaweiCount / total, 1) AS ratio ORDER BY m.meetingNumberInt ASC",
+  "query_sha256": "5b9b9b05344dd1747ec164ad908670bca166457ac7c8f1ad085846ff9f0b340d",
+  "authority_spans": [
+    {
+      "role": "CQ6 requested-company trend",
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+        "bytes": 54914,
+        "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+      },
+      "line_start": 149,
+      "line_end": 180,
+      "exact_text": "    ### CQ6. 트렌드/비교\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 6-1 | 특정 기술(Work Item)의 Resolution 수 추이는? |\n    | 6-2 | 특정 회사의 기여율 변화는? |\n    \n    > Moderator 담당 추이 관련 CQ는 CQ4 미정의에 따라 함께 제외.\n    >\n    \n    ---\n    \n    ### CQ 결과 규칙\n    \n    ### 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort | 구현 속성 |\n    | --- | --- | --- | --- |\n    | CQ1. Resolution 조회 | Meeting 번호 DESC (최신 먼저) | Agenda 번호 ASC, Sequence ASC | `meetingNumberInt DESC` |\n    | CQ2. Tdoc ↔ Resolution | Meeting 번호 DESC | Sequence ASC | `meetingNumberInt DESC` |\n    | CQ3. 회사별 기여도 | Count DESC (많은 순) | Company 이름 ASC | `count DESC` |\n    | CQ6. 트렌드/비교 | Meeting 번호 ASC (시계열) | - | `meetingNumberInt ASC` |\n    \n    *참고: \"Meeting 번호\" 정렬은 Phase-1 Meeting 클래스의 `meetingNumberInt` 속성 사용 (숫자 기반 정렬 보장)*\n    \n    ### 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-7, CQ2 |\n    | Top N 조회 | 10 | CQ1-8, CQ3 |\n    | 트렌드 조회 | 전체 | CQ6 |"
+    },
+    {
+      "role": "Phase1 company role",
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+        "bytes": 54914,
+        "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+      },
+      "line_start": 305,
+      "line_end": 315,
+      "exact_text": "    \n    ---\n    \n    ## 3. Phase-1 관계 재사용 검토\n    \n    ### 3.1 CQ 기반 필요성 분석\n    \n    | Phase-1 관계 | 관련 CQ | 필요성 |\n    | --- | --- | --- |\n    | **submittedBy** (Tdoc → Company) | CQ3 (회사별 기여도) | ✅ 필수 |\n    | **belongsTo** (Tdoc → AgendaItem) | CQ1-4 (Agenda별 조회) | ✅ 필수 |"
+    },
+    {
+      "role": "relationships/content/note",
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+        "bytes": 54914,
+        "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+      },
+      "line_start": 433,
+      "line_end": 455,
+      "exact_text": "    ### 3.3 Relationship 관련\n    \n    | Term | Meaning | Related CQ |\n    | --- | --- | --- |\n    | **references** | Resolution이 Tdoc을 참조 | CQ2-1, CQ2-2 |\n    | **madeAt** | Resolution이 Meeting에서 도출 | CQ1-1, CQ1-2, CQ1-3 |\n    | **resolutionBelongsTo** | Resolution이 AgendaItem에 속함 | CQ1-4 |\n    | **hasTable** | Resolution이 Table을 참조 | - |\n    | **containedIn** | Table이 Meeting에 포함 | - |\n    \n    *참고: Phase-1 `belongsTo`(Tdoc → AgendaItem)와 구분하기 위해 `resolutionBelongsTo` 사용*\n    \n    > RAN2 미정의: moderatedBy, chairedBy (CQ4 미정의), hasFigure, hasChart (데이터 없음)\n    \n    ### 3.4 Property 관련\n    \n    | Term | Meaning | Related CQ |\n    | --- | --- | --- |\n    | **content** | Resolution 본문 텍스트 | CQ2-3 (comeback 패턴) |\n    | **resolutionId** | Resolution 고유 식별자 | 전체 |\n    | **sequence** | 같은 Agenda 내 순서 | CQ1 |\n    | **sessionContext** | 세션 정보 | - |\n    | **note** | Resolution 부가 설명 | - |"
+    },
+    {
+      "role": "CQ6 uses CQ1/CQ3+madeAt",
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+        "bytes": 54914,
+        "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+      },
+      "line_start": 496,
+      "line_end": 506,
+      "exact_text": "    ### CQ3: 회사별 기여도\n    \n    | CQ | Required Terms |\n    | --- | --- |\n    | 3-1 ~ 3-4 | Resolution, references (→ Phase-1 Tdoc, Company, WorkItem, Spec) |\n    \n    ### CQ6: 트렌드/비교\n    \n    | CQ | Required Terms |\n    | --- | --- |\n    | 6-1 ~ 6-2 | CQ1, CQ3 용어 + madeAt (시계열) |"
+    },
+    {
+      "role": "content-derived full7digit existingTdoc rule",
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+        "bytes": 54914,
+        "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+      },
+      "line_start": 1113,
+      "line_end": 1143,
+      "exact_text": "    ## 4. 데이터 소스 매핑\n    \n    ### 4.1 Resolution 매핑\n    \n    **소스**: Final Report 본문\n    \n    | 관계 | 소스 | 변환 규칙 |\n    | --- | --- | --- |\n    | references → Tdoc | content 내 참조 | `R2-\\\\d{7}` 패턴 추출 |\n    | madeAt → Meeting | 문서 메타 | 파일명에서 회의 번호 추출 후 Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo → AgendaItem | 섹션 헤더 | Agenda 번호 추출. **같은 미팅 내의 AgendaItem과 매칭** (madeAt으로 결정된 Meeting의 AgendaItem) |\n    | hasTable → Table | content 내 참조 | `Table X.Y.Z-N` 패턴 → 같은 미팅 내 TBL 인스턴스 연결 |\n    \n    > TDoc 패턴: `R2-\\\\d{7}`\n    \n    **references → Tdoc 매칭 실패 시 처리 규칙:**\n    \n    | 조건 | 처리 |\n    | --- | --- |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 존재 | 기존 인스턴스에 references 관계 생성 |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 없음 (다른 WG 문서 등) | references 관계 생성 안 함 + 로그 기록 |\n    \n    *참고: Resolution 본문에서 추출된 `R2-\\\\d{7}` 패턴이 Phase-1 Tdoc 인스턴스에 존재하지 않을 수 있음. 이 경우 동적 생성하지 않고 관계를 생략함*\n    \n    **Meeting 연결 규칙:**\n    \n    | Final Report 파일명 | 추출된 회의 번호 | 매칭 대상 (Phase-1) |\n    | --- | --- | --- |\n    | Final_Report_RAN2-132.docx | RAN2#132 | canonicalMeetingNumber = \"RAN2#132\" |\n    | Final_Report_RAN2-101bis.docx | RAN2#101bis | canonicalMeetingNumber = \"RAN2#101bis\" |\n    | Final_Report_RAN2-109_e.docx | RAN2#109 | canonicalMeetingNumber = \"RAN2#109\" |"
+    },
+    {
+      "role": "SubHeading remains body",
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+        "bytes": 54914,
+        "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+      },
+      "line_start": 1203,
+      "line_end": 1219,
+      "exact_text": "    ### 4.6 Heading 스타일 매핑 규칙\n    \n    > RAN2 Final Report에는 표준 Heading 1~6 외에 추가 Heading 스타일이 존재.\n    > Agenda Item 추출 시 이들도 매핑해야 함.\n    \n    | Heading 스타일 | 매핑 |\n    | --- | --- |\n    | Heading 1 | Agenda Level 1 |\n    | Heading 2 | Agenda Level 2 |\n    | Heading 3 | Agenda Level 3 |\n    | Heading 4 | Agenda Level 4 |\n    | Heading 5 | Agenda Level 5 |\n    | Heading 6 | Agenda Level 6 |\n    | Heading 8 | 무시 (구조적 의미 없음) |\n    | **Heading 9** | **Agenda 하위 레벨로 매핑** |\n    | **MiniHeading** | **Agenda 하위 레벨로 매핑** |\n    | **SubHeading** | **본문 텍스트로 처리 (Agenda 아님)** |"
+    }
+  ],
+  "INDEX_extractor": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/original_INDEX_decision_extractor_scope_v16.py.txt",
+    "bytes": 14219,
+    "sha256": "ae3c9003e26b0d1db74d9ad9da90cb45d748dfa66ef7af1dda6d617ee3879adb"
+  },
+  "strongest_counterauthority": [
+    {
+      "claim": "Practical influence cannot be replaced by a count by fiat",
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+        "bytes": 3382,
+        "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+      },
+      "response": "The original CQ6 is explicitly in the same schema/company contribution family as CQ3. Exact authored query names its 100*distinct referenced-Resolution/total recorded-Resolution operating metric. The preserved P2 mapping explicitly defines its source references as full7digit content literals joined only to existing Phase1 Tdocs. This is documentary reference participation, not independently measured causal influence."
+    },
+    {
+      "claim": "Captured body may contain later document catalogues and source wrong-year literals",
+      "examples": [
+        "AGR-101-4.1-001 literal R2-1703833 vs intended ZTE R2-1803833",
+        "AGR-104-11.4.2.2-001 explicit above-agreements backreference",
+        "CON-106-11.12-001 plural conclusions and subsequent email discussions"
+      ],
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_source_unit_scope_counterwitness_receipt_v16.json",
+        "bytes": 3795,
+        "sha256": "5fd0eb76ecdd710a9b580a587c59ce65da006f42b8e01e22915bb0b6a97cfc32"
+      },
+      "response": "The original content/REFERENCES mapping and INDEX body boundaries do not impose a first Tdoc or email stop. A metadata shape or typo cannot by itself change the authored literal-join metric. Intended identity and physical technical authorship are preserved diagnostics, not silently substituted answer membership."
+    },
+    {
+      "claim": "All five query projections are requested",
+      "response": "Only named meetings and their rate are needed to express change. Native count/total and integer ordering are retained as complete source/evaluation evidence but not required answer fields. The unchanged scorer wrapper derives time groups from helper-only numeric native columns."
+    }
+  ],
+  "source_scope": "Fixed recorded Resolution domain, body/content-derived reference participation. Not all physical report decisions, causal or normative impact, corrected intended references, or active rendered text certification."
+}

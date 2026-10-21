@@ -1,0 +1,292 @@
+{
+  "id": "RAN2_P2_CQ6-2",
+  "reviewer": "main_A / priority71_fast_closure",
+  "review_type": "classification_source_review",
+  "criteria": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/original_repair/criteria.json",
+    "bytes": 3382,
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  },
+  "question_en": "Track how Huawei's resolution-contribution rate changed over meetings (influence trend).",
+  "question_sha256": "63a0abf878638f1b3eb1761661f638ff2def8463d1da312b893ee0cf0569df88",
+  "original_query": "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting) WITH m, count(r) AS total MATCH (r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (r2)-[:MADE_AT]->(m) WITH m, total, count(DISTINCT r2) AS huaweiCount RETURN m.canonicalMeetingNumber, m.meetingNumberInt, huaweiCount, total, round(100.0 * huaweiCount / total, 1) AS ratio ORDER BY m.meetingNumberInt ASC",
+  "original_query_sha256": "5b9b9b05344dd1747ec164ad908670bca166457ac7c8f1ad085846ff9f0b340d",
+  "recommendation": "clarification_required",
+  "status": "SOURCE_UNIT_CONFLICT_DEMONSTRATED_NO_QUERY_OR_GOLD_ADMISSION",
+  "semantic_units": [
+    {
+      "unit": "requested answer roles and fields",
+      "original_quote": "Track how Huawei's resolution-contribution rate changed over meetings",
+      "query_clauses": [
+        "RETURN m.canonicalMeetingNumber, m.meetingNumberInt, huaweiCount, total, round(100.0 * huaweiCount / total, 1) AS ratio"
+      ],
+      "judgment": "The requested result is a meeting-associated Huawei contribution-rate series, not only meeting IDs. A causal influence effect or approved/adopted authorship is not a new answer requirement. Auxiliary counts explain the rate; no scoring contract is admitted here.",
+      "gate_status": "answer_role_supported",
+      "evidence": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/original_benchmark_row.json",
+          "bytes": 1685,
+          "sha256": "a5cb78a6d707809fbefc59f606166088abba9562d57eea565410771aba21991b"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+          "bytes": 54914,
+          "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+        }
+      ]
+    },
+    {
+      "unit": "population and source context",
+      "original_quote": "over meetings",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting)",
+        "WITH m, count(r) AS total"
+      ],
+      "judgment": "Retain all3773 recorded Resolution nodes over58 meetings for the denominator. The original second inner MATCH yields52 positive meetings. The shared default Top10 and an amended linked-only denominator are not allowed to replace this item. The disputed issue is the documentary reference ownership within a recorded Resolution content unit, not requiring an exhaustive new physical Resolution census. In CON106 the original own label is plural conclusions, followed by an initial CMCC TP and separately headed MDT and Huawei L1/L2 email presentations. Whole-container versus one-presentation ownership is a real source-unit distinction.",
+      "gate_status": "reference_unit_requires_clarification",
+      "evidence": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+          "bytes": 54914,
+          "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_CON106_plural_container_and_successor_units_v16.json",
+          "bytes": 6250,
+          "sha256": "b58adc8ccaabf29b2847986b8f29dc226546ddc6348cc1ede6da4b13325dd972"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_all650_Huawei_occurrence_roles_receipt_v15.json",
+          "bytes": 2327,
+          "sha256": "5073c8fc49bf253c5afc56ceb8d8c446fd36eb89e5188a4c85c0f3de043260fd"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_fresh_frozen_rate_diagnostic_receipt.json",
+          "bytes": 1586,
+          "sha256": "0c44ce5abdd8aac068256d29835beaf09903bbb5116c9ea326d61476352ad1ce"
+        }
+      ]
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "original_quote": "Huawei's resolution-contribution rate",
+      "query_clauses": [
+        "(r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'})",
+        "(r2)-[:MADE_AT]->(m)"
+      ],
+      "judgment": "The original P2 documentary proxy is supported: content full7digit R2 references join to existing Phase1 Tdocs and their formal Source company. All1716 referenced Huawei documents were checked in retained original formal registers. This does not authorize adding causality, endorsement or approval. However the source unit to which a successor presentation belongs cannot be decided from metadata shape alone. Original INDEX extraction lacks a Tdoc/email terminator, strongly supporting the broad captured-body interpretation. A first-entry cutoff rejects explicit above-agreement references in three #104 source witnesses. Conversely #100 contains a distinct later uplink-TA presentation after an RNTI decision, and #101 has a literal old-year number resolving to an unrelated Huawei CR although own prose names a ZTE LS and the matching ZTE LS is retained. Literal full-body extraction and intended own-reference interpretation therefore are not interchangeable source claims.",
+      "gate_status": "scope_and_referent_binding_clarification",
+      "evidence": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+          "bytes": 54914,
+          "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_original_INDEX_content_reference_authority_v16.json",
+          "bytes": 2127,
+          "sha256": "0127cf2a60e3bd68e92352cfadc683bc8a6876f6ff4fb2fddf6c3c110244ad6a"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_source_unit_scope_counterwitnesses_v16.json",
+          "bytes": 72034,
+          "sha256": "6a42137855b78972648866f21b366a0bfb02517c302693307014fc1f395e69b9"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_conflicting_own_reference_two_original_documents_v7.json",
+          "bytes": 71991,
+          "sha256": "5568aa5e858eff02e1b2ae89a28666d0d67d32aa110a06d06efa7e46c347ffda"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_all_original_Huawei_formal_Source_receipt_v4.json",
+          "bytes": 14817,
+          "sha256": "91df148f8e281e89800b23799414346ea14704320f3017552b184dcdd92479fc"
+        }
+      ]
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "original_quote": "resolution-contribution rate",
+      "query_clauses": [
+        "count(r) AS total",
+        "count(DISTINCT r2) AS huaweiCount",
+        "round(100.0 * huaweiCount / total, 1) AS ratio"
+      ],
+      "judgment": "The unit is DISTINCT Resolution per company, not referenced-Tdoc count or path count. The unchanged original graph has742 Huawei-positive Resolutions and1764 paths. Changing the disputed CON106 membership alone changes #106 from17/72=23.6% to16/72=22.2%; the denominator stays72. These are one-witness counterfactuals, not validated whole alternative series. No candidate92/107 is adopted.",
+      "gate_status": "counting_formula_supported_membership_not_fixed",
+      "evidence": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_fresh_frozen_rate_diagnostic_receipt.json",
+          "bytes": 1586,
+          "sha256": "0c44ce5abdd8aac068256d29835beaf09903bbb5116c9ea326d61476352ad1ce"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_source_unit_scope_counterwitnesses_v16.json",
+          "bytes": 72034,
+          "sha256": "6a42137855b78972648866f21b366a0bfb02517c302693307014fc1f395e69b9"
+        }
+      ]
+    },
+    {
+      "unit": "cardinality and completeness",
+      "original_quote": "changed over meetings",
+      "query_clauses": [
+        "MATCH (r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'})",
+        "RETURN m.canonicalMeetingNumber, m.meetingNumberInt, huaweiCount, total, round(100.0 * huaweiCount / total, 1) AS ratio"
+      ],
+      "judgment": "The authored item has no LIMIT and an inner-positive meeting domain. No invented zero-filled outer series is required for this classification. The complete finite742-positive frontier was enumerated;650 tentative exclusions were all located/reconciled at the literal-role level, including105 cases with225 nonmetadata full-ID lines in43 original reports, and545 metadata/heading-only cases. This is completed exploration of occurrence locations, not proof that650 are foreign. A unique whole-series answer is not claimed until the scope rule resolves the demonstrated membership ambiguity.",
+      "gate_status": "complete_location_frontier_scope_unresolved",
+      "evidence": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_all650_Huawei_occurrence_roles_receipt_v15.json",
+          "bytes": 2327,
+          "sha256": "5073c8fc49bf253c5afc56ceb8d8c446fd36eb89e5188a4c85c0f3de043260fd"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_all650_original_boundary_location_receipt_v12.json",
+          "bytes": 2851,
+          "sha256": "9c8ce31429fadf265a2f453897aa084c64a5cc9bef753e967eec42b6a8baf38b"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_original_field_and_table_serialization_receipt_v14.json",
+          "bytes": 2392,
+          "sha256": "18d929a119bcb7052c346af24e7e172763b31c90af5a7c58d43d607c7da9c7e3"
+        }
+      ]
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "original_quote": "changed over meetings",
+      "query_clauses": [
+        "ORDER BY m.meetingNumberInt ASC"
+      ],
+      "judgment": "Retain the authored ascending meeting-number order. Same-integer meetings do not acquire an invented secondary key here, and incidental ordering inside a tied number is not a new failure. No TopK/cutoff can settle the reference ownership issue because this series is uncapped.",
+      "gate_status": "not_the_blocking_unit",
+      "evidence": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/original_benchmark_row.json",
+          "bytes": 1685,
+          "sha256": "a5cb78a6d707809fbefc59f606166088abba9562d57eea565410771aba21991b"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+          "bytes": 54914,
+          "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+        }
+      ]
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "original_quote": "(influence trend)",
+      "query_clauses": [
+        "(r2:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'})"
+      ],
+      "judgment": "Interpret influence as the authored documentary contribution proxy, not a measured causal effect. Neither broad generation body nor semantic own-presentation scope may be silently selected as a new gold merely because it produces executable counts. Data contains the source alternatives and formal company roles, so this is not a claim of permanent impossibility or a proven missing source fact. Clarification must state the reference ownership unit and literal-number versus explicit-role conflict handling before a source-faithful repaired rate is adopted.",
+      "gate_status": "clarification_required_not_external_model_or_runtime_failure",
+      "evidence": [
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+          "bytes": 54914,
+          "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_original_INDEX_content_reference_authority_v16.json",
+          "bytes": 2127,
+          "sha256": "0127cf2a60e3bd68e92352cfadc683bc8a6876f6ff4fb2fddf6c3c110244ad6a"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_CON106_plural_container_and_successor_units_v16.json",
+          "bytes": 6250,
+          "sha256": "b58adc8ccaabf29b2847986b8f29dc226546ddc6348cc1ede6da4b13325dd972"
+        },
+        {
+          "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_conflicting_own_reference_two_original_documents_v7.json",
+          "bytes": 71991,
+          "sha256": "5568aa5e858eff02e1b2ae89a28666d0d67d32aa110a06d06efa7e46c347ffda"
+        }
+      ]
+    }
+  ],
+  "precise_required_clarification": [
+    "Does a recorded Resolution contribute references from the entire original parser-captured body, including separately headed successor presentations, or from the individual technical-decision/presentation unit plus explicitly connected followups?",
+    "When a literal R2 number contradicts an explicit own Source/LS role and the intended same-LS successor is retained, should the metric remain literal citation identity or follow the source referent? A generic, source-backed rule is required; no ID-specific year correction is adopted."
+  ],
+  "lawful_interpretations_and_opposition": [
+    {
+      "interpretation": "Original captured-body literal documentary measure",
+      "positive_authority": "P2 references content full R2 seven-digit numbers; original exact query uses all REFERENCES; original INDEX extractor does not stop at Tdoc/email/SubHeading. Plural CON106 conclusions can be a broad container.",
+      "consequence": "Original742-positive,52-meeting typed diagnostic can be reproduced; includes CON106 Huawei L1/L2 successor.",
+      "strongest_opposition": "The question says resolution-contribution rather than any successor metadata mention; explicit ZTE-LS/old-year Huawei-CR contradiction and distinct-successor topics prevent treating all resulting edges as independently certified own-contribution truth."
+    },
+    {
+      "interpretation": "Own technical/presentation references with explicit same-agreement continuation",
+      "positive_authority": "The schema calls REFERENCES a reference by the Resolution and content the Resolution body; source units and explicit above-agreements continuations distinguish own technical acts from separately introduced presentations.",
+      "consequence": "CON106 initial MDT carrier can be distinguished from separately headed L1/L2 email; its Huawei membership changes, while explicit #104 above-agreement continuations must remain.",
+      "strongest_opposition": "No original exclusive terminator or antecedent policy authorizes a universal first-entry cutoff; original parser and SubHeading-body authority favor broader content, and the plural conclusions marker is a real counterargument. The full corrected series is not claimed."
+    }
+  ],
+  "what_was_actually_completed": {
+    "frozen_full_Resolution_nodes": 3773,
+    "denominator_meetings": 58,
+    "original_positive_Resolution_nodes": 742,
+    "original_positive_meetings": 52,
+    "original_Huawei_paths": 1764,
+    "original_Huawei_Tdoc_formal_Source_checked": 1716,
+    "tentative_exclusion_frontier_occurrence_roles_checked": 650,
+    "nonempty_source_own_boundary_locations_confirmed": 649,
+    "empty_own_prefix_plural_Conclusion_case": 1,
+    "metadata_or_heading_only_cases_not_declared_foreign": 545,
+    "nonmetadata_Huawei_literal_cases": 105,
+    "nonmetadata_Huawei_literal_lines": 225,
+    "original_reports_reopened_for_boundary_frontier": 52,
+    "original_reports_reopened_for_all_prose_occurrences": 43,
+    "fresh_v16_original_native_reports": 3
+  },
+  "counterevidence_and_limits": [
+    "The first-entry cutoff79/78/92 and broad-email107 diagnostics remain unadopted; they are not previous semantic PASS results.",
+    "650 case locations and225 literal lines are real-source evidence, not650 completed semantic negative ownership verdicts.",
+    "v16 source_positive_Huawei_documents names formal Source matches of the quoted documents; it does not certify own-Resolution ownership.",
+    "CFB retained-text matching in v12-v16 does not by itself certify active formatting. This classification does not depend on treating deleted text as an adopted decision.",
+    "The historical52 meeting-ID gold was already visible; this is nonblind and not model-score-driven.",
+    "No required approval, causal influence, transitive short-ID lookup or exhaustive external physical completeness is introduced.",
+    "Native execution is not necessary to demonstrate this semantic membership conflict; no new native or OpenRouter invocation has been made for this item."
+  ],
+  "same_frozen_alternatives_attempted": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_all_original_Huawei_formal_Source_receipt_v4.json",
+      "bytes": 14817,
+      "sha256": "91df148f8e281e89800b23799414346ea14704320f3017552b184dcdd92479fc"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_conflicting_own_reference_two_original_documents_v7.json",
+      "bytes": 71991,
+      "sha256": "5568aa5e858eff02e1b2ae89a28666d0d67d32aa110a06d06efa7e46c347ffda"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_direct_reference_vs_followup_source_role_addendum_v10.json",
+      "bytes": 17743,
+      "sha256": "f4536e70a09e34e43e9c6de3295fa51075d6c4f715f9b078030a8127565a5c74"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_all650_Huawei_occurrence_roles_receipt_v15.json",
+      "bytes": 2327,
+      "sha256": "5073c8fc49bf253c5afc56ceb8d8c446fd36eb89e5188a4c85c0f3de043260fd"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P2_CQ6-2/actual_source_unit_scope_counterwitness_receipt_v16.json",
+      "bytes": 3795,
+      "sha256": "5fd0eb76ecdd710a9b580a587c59ce65da006f42b8e01e22915bb0b6a97cfc32"
+    }
+  ],
+  "scientific_class": "reference_ownership_scope_and_source_referent_binding",
+  "not_model_query_failure": true,
+  "not_ontology_expressivity_impossibility": true,
+  "not_proven_unrecoverable_frozen_data_loss": true,
+  "public_change_supported": "Only after independent ROOT classification review; no whole-series query admission or new model result.",
+  "expert_validation_n": 0,
+  "human_author_review_completed": false,
+  "API_calls": 0,
+  "native_calls": 0,
+  "new_admissions": 0,
+  "independent_secondary_review_pending": true
+}

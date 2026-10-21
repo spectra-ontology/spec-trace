@@ -1,0 +1,53 @@
+{
+  "request_id": "RAN2_P2_CQ6-2_Text2Cypher",
+  "attempt": 0,
+  "http_status": 200,
+  "elapsed_seconds": 6.601384066976607,
+  "received_utc": "2026-10-21T06:01:46.438802+00:00",
+  "response": {
+    "id": "gen-1792562527-bnLaxI8pbpKiXAZH8qci",
+    "object": "chat.completion",
+    "created": 1792562527,
+    "model": "anthropic/claude-opus-4.8",
+    "provider": "Anthropic",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "end_turn",
+        "message": {
+          "role": "assistant",
+          "content": "{\"query\":\"MATCH (m:Meeting)\\nOPTIONAL MATCH (res:Resolution)-[:MADE_AT]->(m)\\nWITH m, collect(DISTINCT res) AS resList\\nWITH m, size(resList) AS totalRes,\\n     size([r IN resList WHERE EXISTS {\\n       MATCH (r)-[:REFERENCES]->(d)-[:SUBMITTED_BY]->(c:Company)\\n       WHERE toLower(c.companyName) CONTAINS 'huawei'\\n          OR any(a IN (CASE WHEN c.aliases IS NULL THEN [] WHEN c.aliases='' THEN [] ELSE (CASE WHEN valueType(c.aliases)='LIST<STRING NOT NULL>' THEN c.aliases ELSE [c.aliases] END) END) WHERE toLower(a) CONTAINS 'huawei')\\n     }]) AS huaweiRes\\nWHERE totalRes > 0\\nRETURN m.canonicalMeetingNumber AS canonicalMeetingNumber,\\n       toFloat(huaweiRes)/totalRes AS ratio\\nORDER BY m.meetingNumberInt\",\"abstain\":false}",
+          "refusal": null,
+          "reasoning": null
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 7311,
+      "completion_tokens": 430,
+      "total_tokens": 7741,
+      "cost": 0.047305,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.047305,
+        "upstream_inference_prompt_cost": 0.036555,
+        "upstream_inference_completions_cost": 0.01075
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    }
+  }
+}
