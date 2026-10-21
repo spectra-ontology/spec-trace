@@ -1,0 +1,82 @@
+{
+  "current_question": {
+    "id": "RAN2_P3_CQ4-2",
+    "question_en": "Which resolutions approved the CRs that modify spec 38.331 (approval trace)?",
+    "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.331'}) RETURN r.resolutionId, cr.tdocNumber ORDER BY r.resolutionId DESC LIMIT 10"
+  },
+  "sources": [
+    {
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_approval38331_original10_own_source_tail_v1/original_indexed_Phase3_design.md",
+        "bytes": 96135,
+        "sha256": "50b36effff81952779b8ae8e577d9f297390ab377541606b89ffecfee3fafe62"
+      },
+      "line_numbering": "1-based lines in the included preserved indexed source text",
+      "spans": [
+        {
+          "lo": 175,
+          "hi": 184,
+          "text": "    ### CQ4. Resolution → TS 연결\n    \n    | # | Competency Question | 경로 |\n    | --- | --- | --- |\n    | 4-1 | 특정 Resolution이 승인한 CR이 수정한 TS는? | Resolution → CR → Spec |\n    | 4-2 | 특정 TS를 수정한 CR을 승인한 Resolution 목록은? | Spec ← CR ← Resolution |\n    | 4-3 | 특정 회의에서 승인된 CR이 수정한 TS 목록은? | Meeting → Resolution → CR → Spec |\n    | 4-4 | 특정 Work Item의 Resolution이 반영된 TS 목록은? | WorkItem → CR ← Resolution, CR → Spec |\n    \n    *CQ4 제약사항: Resolution이 CR을 references하는 경우만 (Appendix A [P3-V06] 참조)*"
+        },
+        {
+          "lo": 199,
+          "hi": 214,
+          "text": "    ### 5.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |"
+        },
+        {
+          "lo": 2204,
+          "hi": 2215,
+          "text": "    | P3-V01 | Section 총 수 | 3,835 | 14 TS 파싱 결과 (latest-only). Phase 10/11 증분 적재 반영 (이전 3,834, +1) |\n    | P3-V02 | TSTable 총 수 | 254 | 14 TS 파싱 결과 |\n    | P3-V03 | TSFigure 총 수 | 545 | 14 TS 파싱 결과 |\n    | P3-V04 | orphan Section 수 (Section 기준) | 0 | BELONGS_TO_SPEC 누락 0건. **정의**: Spec 노드에 연결되지 않은 Section. CR의 clausesAffected 매칭 실패 건(MODIFIES_SECTION 미생성)은 P3-V05 커버리지로 별도 추적하며 \"orphan\"에 포함하지 않음. |\n    | P3-V05 | clausesAffected 커버리지 | 4,219 / 5,663 (74.5%) | Phase-1 매칭 확장 CR(P4-V04=5,663) 중 MODIFIES_SECTION 관계 있는 CR. Phase-4 구현 후 역측정 (Neo4j 실측, RAN2 전체 CR 34,622 중에서는 12.2%. 이전 4,135 / 5,545 = 74.6%는 집계, P4-V04 분모 변동 반영) |\n    | P3-V06 | Resolution→CR 커버리지 | 474 / 3,773 (12.6%) | Resolution 전체(P2 AGR+CON+WA = 3,773) 중 (:Resolution)-[:REFERENCES]->(:CR) 관계 있는 Resolution. Tdoc 전반 참조는 1,643건 (43.5%). Neo4j 재실측 (값 동일) |\n\n    ### A.1.2 v2.0 + v2.1 Ontology classType 분포 (update — Flywheel ⑦)\n\n    Phase-3 TS Structure ontology에 v2.0 + v2.1 6 신규 클래스 추가. RAN2 phase-3 영향 영역:\n\n    | classType | RAN2 분포 | 의미 |"
+        }
+      ]
+    },
+    {
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+        "bytes": 54914,
+        "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+      },
+      "line_numbering": "1-based lines in the included preserved indexed source text",
+      "spans": [
+        {
+          "lo": 1113,
+          "hi": 1135,
+          "text": "    ## 4. 데이터 소스 매핑\n    \n    ### 4.1 Resolution 매핑\n    \n    **소스**: Final Report 본문\n    \n    | 관계 | 소스 | 변환 규칙 |\n    | --- | --- | --- |\n    | references → Tdoc | content 내 참조 | `R2-\\\\d{7}` 패턴 추출 |\n    | madeAt → Meeting | 문서 메타 | 파일명에서 회의 번호 추출 후 Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo → AgendaItem | 섹션 헤더 | Agenda 번호 추출. **같은 미팅 내의 AgendaItem과 매칭** (madeAt으로 결정된 Meeting의 AgendaItem) |\n    | hasTable → Table | content 내 참조 | `Table X.Y.Z-N` 패턴 → 같은 미팅 내 TBL 인스턴스 연결 |\n    \n    > TDoc 패턴: `R2-\\\\d{7}`\n    \n    **references → Tdoc 매칭 실패 시 처리 규칙:**\n    \n    | 조건 | 처리 |\n    | --- | --- |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 존재 | 기존 인스턴스에 references 관계 생성 |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 없음 (다른 WG 문서 등) | references 관계 생성 안 함 + 로그 기록 |\n    \n    *참고: Resolution 본문에서 추출된 `R2-\\\\d{7}` 패턴이 Phase-1 Tdoc 인스턴스에 존재하지 않을 수 있음. 이 경우 동적 생성하지 않고 관계를 생략함*"
+        }
+      ]
+    },
+    {
+      "source": {
+        "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_canonical_target_and_Section_recipe_v2/original_INDEX_Phase1_Tdoc_list_design.md",
+        "bytes": 73900,
+        "sha256": "5cb9f1c4056f0e658aeaf3933bad7c7bad0195d71d430d91877479c964d65be0"
+      },
+      "line_numbering": "1-based lines in the included preserved indexed source text",
+      "spans": [
+        {
+          "lo": 112,
+          "hi": 118,
+          "text": "    | 1-1 | 특정 회의에서 특정 Work Item 관련 Tdoc 목록은? |\n    | 1-2 | 특정 회의에서 특정 Agenda Item 관련 Tdoc 목록은? |\n    | 1-3 | 특정 회의에서 특정 회사가 제출한 Tdoc 목록은? |\n    | 1-4 | 특정 Release에서 논의된 Tdoc 목록은? |\n    | 1-5 | 특정 회의에서 승인/합의된 Tdoc 목록은? |\n    | 1-6 | 특정 Tdoc의 결정 결과(Status)는? |\n    | 1-7 | 특정 Tdoc의 목적(For)은? |"
+        },
+        {
+          "lo": 698,
+          "hi": 722,
+          "text": "    | 속성명 | Type | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | tdocNumber | String | TDoc | Tdoc의 고유 식별자 (예: R2-2500001). 형식: R2-YYNNNNN |\n    | title | String | Title | Tdoc의 제목. 문서 내용을 요약하는 짧은 설명 |\n    | abstract | String | Abstract | Tdoc의 요약. 문서 내용의 상세 설명 (대부분 비어있음) |\n    | type | String (Enum) | Type | Tdoc의 유형 |\n    | status | String (Enum) | TDoc Status | 회의에서의 결정 결과 |\n    | for | String (Enum) | For | Tdoc의 목적/용도 |\n    | reservationDate | DateTime | Reservation date | Tdoc 번호 예약 일시 |\n    | uploadedDate | DateTime | Uploaded | Tdoc 파일 업로드 일시 |\n    | secretaryRemarks | String | Secretary Remarks | 회의 비서의 메모 (예: \"Late contribution\", \"Revised in session\") |\n    \n    **RAN2 차이**: tdocNumber 형식이 R2-YYNNNNN (RAN1은 R1-YYNNNNN)\n    \n    ---\n    \n    ## 4. CR 클래스 속성 (Tdoc 상속 + 추가)\n    ### 4.1 추가 Object Property\n    \n    | 속성명 | Range | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | modifies | Spec | Spec | CR이 변경을 요청하는 대상 기술 규격 (예: 38.331) |\n    \n    ### 4.2 추가 Data Property\n    "
+        },
+        {
+          "lo": 1115,
+          "hi": 1135,
+          "text": "    ### 8.2 status (결정 상태)\n    \n    | 값 | 설명 |\n    | --- | --- |\n    | available | 접수됨 (회의 전 상태) |\n    | noted | 참고로 접수됨 |\n    | not treated | 회의에서 다루지 않음 |\n    | revised | 수정되어 새 버전으로 대체됨 |\n    | agreed | 합의됨 |\n    | endorsed | 지지/승인됨 |\n    | postponed | 다음 회의로 연기됨 |\n    | withdrawn | 제출자가 철회함 |\n    | reserved | 예약됨 (번호만 할당) |\n    | not pursued | 더 이상 추진하지 않음 |\n    | approved | 공식 승인됨 |\n    | merged | 다른 문서와 병합됨 |\n    | treated | 처리됨 |\n    | not concluded | 결론 미도출 |\n    | conditionally agreed | 조건부 합의 |\n    | reissued | 재발행됨 (RAN2 추가) |\n    | rejected | 거부됨 (RAN2 추가) |"
+        }
+      ]
+    }
+  ],
+  "same_WG_original_approval_lookup_context": {
+    "id": "RAN2_P1_CQ1-5",
+    "question_en": "List the TDocs approved or agreed at meeting RAN2#131 (meeting outcome review).",
+    "cypher": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#131'})<-[:PRESENTED_AT]-(t:Tdoc) WHERE t.status IN ['approved', 'agreed'] RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY t.tdocNumber ASC LIMIT 10"
+  },
+  "same_WG_context_role": "Companion CQ is contextual contrast only. Its explicit approved/agreed pair does not exclude endorsed from the current CQ, whose own approval relation is the requested role.",
+  "counterauthority": "Current own CQ4-2 asks approval trace; Phase1 status vocabulary calls endorsed support/approval and conditionally agreed conditional agreement. Actual same-CR Agreed-in-principle/Endorsed source outcomes demonstrate why approved/agreed alone is insufficient. Original REFERENCES is broad content-derived metadata, so status alone is not an assertion that every returned helper CR pair was approved by that Resolution.",
+  "direct_source_event_authority": "Current approved-the-CRs role is tied to the source event in the recorded Resolution content. A later revised status neither erases a directly Endorsed event nor proves an old revision was approved by this Resolution."
+}

@@ -1,0 +1,18 @@
+--- verify_prepared_source_payload_v1.py
++++ verify_prepared_source_payload_v2.py
+@@ -115,7 +115,7 @@
+   header={name:col for col,name in cells(register['header_row_XML']).items()}
+   for row in register['rows']:
+    raw=cells(row['row_XML']);decoded={name:raw.get(header.get(name,''),'') for name in row['expected_fields']};assert decoded==row['expected_fields']
+-   assert decoded['Spec'].strip()=='38.331';tdoc=decoded['TDoc'];assert tdoc not in fields;fields[tdoc]=decoded
++   assert decoded['Spec'].strip()=='38.331';tdoc=decoded['TDoc'];assert tdoc not in fields or fields[tdoc]==decoded;fields[tdoc]=decoded
+  assert set(fields)=={r['tdocNumber'] for r in prefix}
+  for p in prefix:
+   f=fields[p['tdocNumber']];assert f['TDoc Status']==p['status'] and f['Title']==p['title']
+@@ -140,5 +140,5 @@
+     runs=format_runs(E.fromstring(h['XML']),style);supported.append({'source_raw_body_child':h['raw_body_child'],'literal':e['literal'],'runs_n':len(runs)})
+   assert supported,(row,'original active outcome not bound')
+   active.append({'resolutionId':row['resolutionId'],'tdocNumber':row['tdocNumber'],'scope':'Original OOXML own event paragraph/direct+inherited strike/deletion/hidden checked','evidence':supported})
+- return {'status':'PASS_PREPARED_SOURCE_ONLY','id':definition['id'],'repair_sha256':repair,'original_paths':857,'source_prefix_paths':45,'source_prefix_Resolution_n':19,'original_OOXML_members':8,'original_CFB_members':2,'direct_source_prefix_event_paths':sum(positive(p['retained_content'],r['path']['tdocNumber']) for p in source.values() for r in p['source_roles']),'selected_rows':10,'requested_Resolution_identity_n':8,'active_selected_source_evidence':active,'source_native_CFB_scope':'native lexical fullbody and formal agreed status, not rendering certification','source_metadata_scope':'Included fragments/field projections and immutable input pins; optional full archives remain separate','native_gate':'pending actual Java/Cypher execution and full typed SQL binding','semantic_secondary':'pending independent ROOT judgment','API_calls':0,'native_calls':0,'new_admissions':0}
++ return {'status':'PASS_PREPARED_SOURCE_ONLY','id':definition['id'],'repair_sha256':repair,'original_paths':857,'source_prefix_paths':45,'source_prefix_Resolution_n':19,'original_OOXML_members':8,'original_CFB_members':2,'direct_source_prefix_event_paths':sum(positive(p['retained_content'],r['path']['tdocNumber']) for p in source.values() for r in p['source_roles']),'selected_rows':10,'requested_Resolution_identity_n':8,'active_selected_source_evidence':active,'source_native_CFB_scope':'native lexical fullbody and formal agreed status, not rendering certification','source_metadata_scope':'Included fragments/field projections and immutable input pins; optional full archives remain separate','formal_register_row_occurrences':sum(len(r['rows']) for r in registers),'formal_unique_CR_rows':len(fields),'native_gate':'pending actual Java/Cypher execution and full typed SQL binding','semantic_secondary':'pending independent ROOT judgment','API_calls':0,'native_calls':0,'new_admissions':0}
+ if __name__=='__main__':print(json.dumps(main(),ensure_ascii=False))

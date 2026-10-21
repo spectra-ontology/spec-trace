@@ -4,13 +4,13 @@ SPECTRA accounts for **all 560 original Core questions** through a disjoint, sou
 
 | Classification | Questions | Evidence recorded |
 | --- | ---: | --- |
-| Contract verified | 512 | Original question, typed answer contract, source witnesses, native/SQL records, two separate AI reviews and scorer checks |
+| Contract verified | 513 | Original question, typed answer contract, source witnesses, native/SQL records, two separate AI reviews and scorer checks |
 | Clarification required | 21 | Completed, conditional diagnostics identifying the input, metric or scope choice to state |
 | Unsupported by pinned frozen data | 11 | Completed checks locating the required source role and the corresponding frozen-input gap |
-| Evidence pending | 16 | Original identity and current adjudication history retained for continuing verification |
+| Evidence pending | 15 | Original identity and current adjudication history retained for continuing verification |
 | **Total** | **560** | [Machine-readable partition](partition/classification_overlay560.jsonl) |
 
-[current_tasks.jsonl](../current_core/current_tasks.jsonl) selects the 512 active contracts. The legacy binary index records 512 admitted and 48 nonadmitted; this overlay distinguishes the completed diagnostic classifications from checks still pending. Classification updates keep answer admission and model scores separate.
+[current_tasks.jsonl](../current_core/current_tasks.jsonl) selects the 513 active contracts. The legacy binary index records 513 admitted and 47 nonadmitted; this overlay distinguishes the completed diagnostic classifications from checks still pending. Classification updates keep answer admission and model scores separate.
 
 ## Reproduce the register
 
@@ -32,7 +32,7 @@ The question-first review policy derives requested meaning from the original Eng
 | --- | --- |
 | RAN3 company contribution paths | Nokia has 161 distinct cited TDocs and 54 citing Resolutions; ZTE has 181 and 52. The unit determines their relative rank. |
 | RAN4 company contribution paths | Qualcomm has 40 TDocs and 15 Resolutions; LG Electronics has 36 and 17. The top-ten membership also depends on the stated unit. |
-| RAN3#93bis → #94 | ZTE’s Resolution count rises 16 → 19; its share among all Resolutions changes 16/126 → 19/214. |
+| RAN3#93bis → #94 | ZTE’s Resolution count rises 15 → 19; its share among all Resolutions changes 15/126 → 19/214. |
 | RAN4#87 → #88 | Samsung’s Resolution count rises 5 → 9; its all-Resolution share changes 5/51 → 9/95 and its TDoc-linked-Resolution share changes 5/40 → 9/49. |
 | Direct Section/Table operands | Explicit area-weight choices change top-ten membership while preserving the operand population. |
 

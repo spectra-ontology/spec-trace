@@ -1,0 +1,155 @@
+{
+  "id": "RAN2_P3_CQ4-2",
+  "status": "pass",
+  "reviewer": "main_A /root/priority71_fast_closure",
+  "judgment_scope": "Primary AI semantic judgment of v3 direct same-CR approval-event repair; ROOT independent judgment/native/portable pending",
+  "question_en": "Which resolutions approved the CRs that modify spec 38.331 (approval trace)?",
+  "question_sha256": "77e05908ddbc495a08f61154fba9871ff47b8ef0c0d4ab082ddba86f11171f14",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "repair_sha256": "e932ae9fdc67fc5ce77fbd321a52a0d55e6933721618262aebf6fd446c66aad0",
+  "definition": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/direct_outcome_trace_identity_v3/definition.json",
+    "bytes": 1449,
+    "sha256": "13aa26718a05a3fc5f476ef50aba406b6816442ae822b99b60727d196bb88cb7"
+  },
+  "original_query_sha256": "62249bde1be943d65cc7d814dfb8b6222f9d0bd79f4b563eba8b06f0cdab3388",
+  "reference_query_sha256": "94d01624567cc156ee284ab75e594141b37b28ba6164ab29aa67215a7b8d7111",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Which resolutions",
+      "query_clauses": [
+        "RETURN r.resolutionId, cr.tdocNumber"
+      ],
+      "finding": "The requested role is Resolution identity. Require resolutionId:string nonnull as a set. Preserve both actual returned columns for CR trace verification, while CR identity is supporting evidence rather than an additional scored answer field.",
+      "original_source_derivation": "Original English and own P3 CQ4-2 L180 ask the Resolution list; fixed scoring_evidence forbids automatically requiring unrequested projections.",
+      "strongest_counterargument_and_resolution": "Approval trace requires an actual positive relationship, not merely matching an ID. Each selected Resolution is backed by at least one direct same-target-CR positive source event, and full native two-column comparison remains a separate pending execution gate."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "the CRs that modify spec 38.331",
+      "query_clauses": [
+        "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.331'})"
+      ],
+      "finding": "Preserve the original recorded REFERENCES→CR→MODIFIES domain, with exact requested target38.331. Fresh immutable SQL reproduces all857 paths/233 identities; the proposed predicate yields160 paths/92 identities. No source enrichment or missing physical-record census is introduced.",
+      "original_source_derivation": "Own P3 CQ4 L184/225 expressly limits the task to Resolution records referencing CRs, and P2 L1121/1132-1135 maps content literals to existing Phase1 Tdocs. MODIFIES is the CR requested-target field.",
+      "strongest_counterargument_and_resolution": "The parenthetical does not establish physical normative incorporation. Conversely, recorded REFERENCES is only a content-derived association and cannot alone assert approval. The repair therefore checks the existing content event while preserving this domain."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "approved the CRs",
+      "query_clauses": [
+        "WHERE (r.content =~ ('(?ims).*^' + cr.tdocNumber + '\\\\t[^\\\\r\\\\n]*\\\\r?\\\\n(?:(?!R2-[0-9]{7}\\\\t)[^\\\\r\\\\n]*\\\\r?\\\\n)*?[ \\\\t]*(?:=>[ \\\\t]*)?(?:agreed(?:[ \\\\t]+in[ \\\\t]+principle)?|endorsed|approved|the[ \\\\t]+CR[ \\\\t]+is[ \\\\t]+agreed)(?=[ \\\\t.,!(;]|$)(?![^\\\\r\\\\n]*R2-[0-9]{7})[^\\\\r\\\\n]*(?:\\\\r?\\\\n.*)?') OR r.content =~ ('(?ims).*^[ \\\\t]*(?:=>[ \\\\t]*)?(?:agreed(?:[ \\\\t]+in[ \\\\t]+principle)?|endorsed|approved|the[ \\\\t]+CR[ \\\\t]+is[ \\\\t]+agreed)(?=[ \\\\t.,!(;]|$)[^\\\\r\\\\n]*' + cr.tdocNumber + '[^\\\\r\\\\n]*(?:\\\\r?\\\\n.*)?'))"
+      ],
+      "finding": "Bind a positive approval event to the same CR: either an outcome attached to its own Tdoc header before the next full header, with no different explicit target in that outcome, or a positive outcome that explicitly names this CR. Preserve Agreed, Agreed-in-principle, Endorsed and Approved actual formulations. Current formal final status is not an eligibility condition. Original complete45-path/19-identity prefix has ten direct positive event paths; all15 revised paths in that prefix were read against original source.",
+      "original_source_derivation": "Current own CQ4-2 requires approval of the CR, and own status vocabulary calls endorsed support/approval. The actual132 event Endorsed for8864 survives later revised status; the prior7943 reference has no own positive event. P2 content supplies the recorded event association.",
+      "strongest_counterargument_and_resolution": "Strongest contrary cases are1904635 (merged; remove bit sizes in the rapporteur CR),2507488 (individual PropAgree/implemented review entries with PropReject alternatives), and2504911–14 (CRs attached to an Approved LS but explicitly still to be reviewed/agreed by email). These are preserved as technical-change/proposal/other-object counterevidence. They do not themselves assert whole-target-CR approval. This does not require final unconditional ratification: Agreed in principle and Endorsed with changes are included. Generic source-event patterns, not status whitelists or ID exceptions, implement that distinction. ROOT independent semantic judgment remains required."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "resolutions",
+      "query_clauses": [
+        "RETURN r.resolutionId, cr.tdocNumber",
+        "LIMIT 10"
+      ],
+      "finding": "Keep the original path-row multiplicity and LIMIT10 before projecting the requested Resolution set8. Two CRs for132 and two for130 remain separate native rows. The filter is evaluated per existing Resolution/CR path, so an event for a different revision cannot consume a path slot.",
+      "original_source_derivation": "The authored query has no DISTINCT before LIMIT. Source qualification changes eligibility but leaves path counting and selected native two-column projection intact.",
+      "strongest_counterargument_and_resolution": "V2 happened to yield the same ID set while assigning one132 row to the wrong CR. That coincidence is explicitly rejected as a justification: v3 removes7943 and adds actual endorsed8864 before selection. No dedup-before-LIMIT or ten-distinct-ID rewrite is adopted."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Which resolutions",
+      "query_clauses": [
+        "ORDER BY r.resolutionId DESC LIMIT 10"
+      ],
+      "finding": "Require the eight distinct Resolution identities obtained from the first ten eligible original-domain paths. Complete unfiltered lexical prefix through tenthAGR-129bis-8-005 consists of45 paths/19 identities, all source-role reviewed. The eleventh eligibleAGR-129bis-8-003 is strictly lower. The complete857-path scan and independently implemented SQL regex yield the same160 eligible rows and selected10.",
+      "original_source_derivation": "The exact instance LIMIT10 and own list default10 implement finite output; English has no all/each quantifier. Selection is determined from the original frozen domain before scoring.",
+      "strongest_counterargument_and_resolution": "No all160-pair source-approval certification is claimed. The audited45-path upper prefix establishes inclusion/exclusion of every path capable of changing the requested finite answer. Past narrower status-only candidates, legacy gold and accidental same8 answer do not set this membership."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Which resolutions",
+      "query_clauses": [
+        "ORDER BY r.resolutionId DESC LIMIT 10"
+      ],
+      "finding": "Keep authored lexicographic Resolution-ID DESC selection and set scoring. Ties between CRs of the same Resolution have no requested secondary order, and strict tenth/eleventh identity separation makes requested membership invariant to those ties.",
+      "original_source_derivation": "The specific authored query orders r.resolutionId DESC; the shared meeting-based default does not replace this explicit clause.",
+      "strongest_counterargument_and_resolution": "Full typed output is compared as a two-column multiset together with monotonic ID DESC. An arbitrary CR-within-ID order is not made a required answer. No chronology or secondary CR sort is invented."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "approval trace",
+      "query_clauses": [
+        "WHERE (r.content =~ ('(?ims).*^' + cr.tdocNumber + '\\\\t[^\\\\r\\\\n]*\\\\r?\\\\n(?:(?!R2-[0-9]{7}\\\\t)[^\\\\r\\\\n]*\\\\r?\\\\n)*?[ \\\\t]*(?:=>[ \\\\t]*)?(?:agreed(?:[ \\\\t]+in[ \\\\t]+principle)?|endorsed|approved|the[ \\\\t]+CR[ \\\\t]+is[ \\\\t]+agreed)(?=[ \\\\t.,!(;]|$)(?![^\\\\r\\\\n]*R2-[0-9]{7})[^\\\\r\\\\n]*(?:\\\\r?\\\\n.*)?') OR r.content =~ ('(?ims).*^[ \\\\t]*(?:=>[ \\\\t]*)?(?:agreed(?:[ \\\\t]+in[ \\\\t]+principle)?|endorsed|approved|the[ \\\\t]+CR[ \\\\t]+is[ \\\\t]+agreed)(?=[ \\\\t.,!(;]|$)[^\\\\r\\\\n]*' + cr.tdocNumber + '[^\\\\r\\\\n]*(?:\\\\r?\\\\n.*)?'))",
+        "RETURN r.resolutionId, cr.tdocNumber"
+      ],
+      "finding": "The candidate uses existing frozen Resolution.content and original REFERENCES/CR/MODIFIES facts, unchanged original English, criteria and scorer modules. Raw report/register material is audit evidence. The reference query contains no ID whitelist or injected positive labels. SQLite/Python scanner parity is actual; Java/Cypher regex execution, independent review and final portable replay remain pending.",
+      "original_source_derivation": "Original same-CQ approval role, original positive-outcome vocabulary and exact fullbody source/field reopens ground the predicate. Direct wording is an event association within the recorded documentary task, not a claim of causal influence or physical implementation.",
+      "strongest_counterargument_and_resolution": "Preserve native CFB lexical-reading scope for105bis/106 and original/loader distinctions. Whole19 retained bodies are source-locatable, but general Word rendering or all-report truth is not certified. Source-status/formula-independent approval event is not inferred from downstream score. API/native/new admissions remain0 in this primary preparation."
+    }
+  ],
+  "source_evidence": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/direct_outcome_trace_identity_v3/exact_original_authority_spans.json",
+      "bytes": 10365,
+      "sha256": "139d7e743379036213f42dbd0330c788bea3c2d29ddf2da672e5aeb130ec2df6"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/actual_original_unfiltered45_prefix_reopen_receipt_v1.json",
+      "bytes": 4184,
+      "sha256": "530b4354f64db8e78125b44465d8a9842e80c2af14938ae75b19cdbf340e2160"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/actual_unfiltered45_prefix_source_role_review_v3.json",
+      "bytes": 142660,
+      "sha256": "78500c71a6505319ce9e73fffae94bdba62d92ab6f0d8bdc4fc6ee2e349c8b48"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/actual_membership_changing_endorsed_source_witnesses_v1.json",
+      "bytes": 51386,
+      "sha256": "134ef27e62b24ce33dc10f135a30ac15da26b75b787901427ad86994ae0d812d"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/direct_outcome_trace_identity_v3/actual_readonly_SQL_full_and_selected_two_column_receipt.json",
+      "bytes": 3334,
+      "sha256": "851a4ba9c77f2c9972ab4b779120c29fc5b0953e64c3462f405ec98dac6ebdd1"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/direct_outcome_trace_identity_v3/actual_direct_source_event_predicate_controls.json",
+      "bytes": 21945,
+      "sha256": "c87aed7b1e2b0a601fd33ad1106b281bc880f382a3c8ef93fd50b522d113becf"
+    }
+  ],
+  "counterevidence": [
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/direct_outcome_trace_identity_v3/v2_supersession_by_source_event_counterexample.json",
+      "bytes": 2302,
+      "sha256": "0318960426a9e5901e68ecbbcf8704e78d81a9f74e41f938abcee71585633cf6"
+    },
+    {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN2_P3_CQ4-2/approved_state_v1_supersession_by_actual_endorsed_source_v1.json",
+      "bytes": 2425,
+      "sha256": "40a8c0618f790ce2a6c0e67f83a8655908458dbfa63f90d416085842c2920059"
+    }
+  ],
+  "source_review_scope": {
+    "all_original_paths": 857,
+    "unfiltered_membership_changing_prefix_paths": 45,
+    "prefix_Resolution_identities": 19,
+    "source_reports": 10,
+    "eligible_paths_by_proposed_predicate": 160,
+    "selected_path_rows": 10,
+    "requested_Resolution_identity_set_n": 8
+  },
+  "API_calls": 0,
+  "native_calls": 0,
+  "new_admissions": 0,
+  "expert_validation_n": 0
+}
