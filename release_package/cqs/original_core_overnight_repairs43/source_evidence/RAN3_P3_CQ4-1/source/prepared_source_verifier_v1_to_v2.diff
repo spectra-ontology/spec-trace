@@ -1,0 +1,12 @@
+--- verify_recorded_trace_portable_template_v1.py
++++ verify_recorded_trace_portable_template_v2.py
+@@ -179,7 +179,8 @@
+         assert end<part['next_Tdoc_header_p_ordinal']
+         own=[x for x in frag if start<=x['p_ordinal']<=end]
+         assert [x['p_ordinal'] for x in own]==list(range(start,end+1))
+-        assert own[0]['text'].startswith(td+'\t') and sp in own[0]['text']
++        assert own[0]['text'].startswith(td+'\t')
++        assert any(sp in p['text'] for p in own[:-1]),'same-CR header metadata lacks target Spec'
+         assert all(not re.match(r'^R3-\d{6}[\t ]',x['text']) for x in own[1:])
+         assert re.search(r'Decision:\s*The document was '+outcome+r'\.',own[-1]['text'])
+         for p in frag:assert word_text(E.fromstring(p['XML']))==p['text']

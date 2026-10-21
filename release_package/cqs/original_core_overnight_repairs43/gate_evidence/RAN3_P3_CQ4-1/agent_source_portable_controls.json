@@ -1,0 +1,99 @@
+{
+  "status": "PASS",
+  "id": "RAN3_P3_CQ4-1",
+  "manifest_sha256": "4f52bb186ce50182d61a73f543cc5b9f1d52bea85f4a34133696b2ca0e3c4b8d",
+  "inventory_sha256": "00632900d3909ff693542b26e941c944da357b14501cff8a1acaf8346f479f11",
+  "verifier_sha256": "8e6e31f31881cff35b3043d5a010bc34436ea6a099deae210db3d7b27c65829d",
+  "package_files": 57,
+  "package_bytes": 1495628,
+  "positive_n": 2,
+  "adverse_n": 3,
+  "tests": [
+    {
+      "name": "relocated_standard_library",
+      "expected": "PASS",
+      "actual": {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "-I",
+          "-S",
+          "/tmp/a46-portable-external-d39y81xw/positive/reproduce.py"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"status\": \"PASS\", \"cases\": [{\"id\": \"RAN3_P3_CQ4-1\", \"repair_sha256\": \"bf274789ab96effb5b4582b419851b0a2d32b8bc3a8e6692f3706ff1790661f3\", \"requested_fields\": [\"specNumber\"], \"collection\": \"set\", \"rows\": 10, \"recorded_paths\": 3778, \"recorded_Resolution_records\": 428, \"CR_identities\": 3459, \"full_Spec_population\": 57, \"explicit_positive_identity_witnesses\": 10, \"original_CFB_active_header_outcome_CP\": 633, \"native_full_columns\": 2, \"scoring_controls\": 16}], \"new_admissions\": 0, \"API_calls\": 0, \"source_replay_scope\": \"Saved complete recorded frontier plus exact finite source XML/register fragments; original source audits and scope are pinned separately.\"}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "relocated_no_private_fallback",
+      "expected": "PASS",
+      "actual": {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "-I",
+          "-S",
+          "-c",
+          "import sys,pathlib,runpy,json\np=pathlib.Path(sys.argv[1]).absolute();root=p.parent\nstdlib=pathlib.Path(sys.base_prefix)/'lib'/('python'+str(sys.version_info.major)+'.'+str(sys.version_info.minor))\nevents={'private_open':0,'DB_network_process':0,'package_reads':0,'stdlib_reads':0}\ndef audit(event,args):\n    if event=='open' and not isinstance(args[0],int):\n        target=pathlib.Path(args[0]).absolute()\n        if target.is_relative_to(root):events['package_reads']+=1\n        elif target.is_relative_to(stdlib):events['stdlib_reads']+=1\n        else:\n            events['private_open']+=1;raise RuntimeError('external host read refused: '+str(target))\n    if event in {'sqlite3.connect','socket.__new__','subprocess.Popen','os.system'}:\n        events['DB_network_process']+=1;raise RuntimeError('external execution refused')\nsys.addaudithook(audit)\nrunpy.run_path(str(p),run_name='__main__')\nprint(json.dumps({'audit_events':events}))\n",
+          "/tmp/a46-portable-external-d39y81xw/positive/reproduce.py"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"status\": \"PASS\", \"cases\": [{\"id\": \"RAN3_P3_CQ4-1\", \"repair_sha256\": \"bf274789ab96effb5b4582b419851b0a2d32b8bc3a8e6692f3706ff1790661f3\", \"requested_fields\": [\"specNumber\"], \"collection\": \"set\", \"rows\": 10, \"recorded_paths\": 3778, \"recorded_Resolution_records\": 428, \"CR_identities\": 3459, \"full_Spec_population\": 57, \"explicit_positive_identity_witnesses\": 10, \"original_CFB_active_header_outcome_CP\": 633, \"native_full_columns\": 2, \"scoring_controls\": 16}], \"new_admissions\": 0, \"API_calls\": 0, \"source_replay_scope\": \"Saved complete recorded frontier plus exact finite source XML/register fragments; original source audits and scope are pinned separately.\"}\n{\"audit_events\": {\"private_open\": 0, \"DB_network_process\": 0, \"package_reads\": 152, \"stdlib_reads\": 27}}\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "source_outcome_repin",
+      "expected": "REJECT",
+      "actual": {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "-I",
+          "-S",
+          "/tmp/a46-portable-external-d39y81xw/source_outcome_repin/reproduce.py"
+        ],
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/tmp/a46-portable-external-d39y81xw/source_outcome_repin/reproduce.py\", line 263, in <module>\n    if __name__=='__main__':main()\n  File \"/tmp/a46-portable-external-d39y81xw/source_outcome_repin/reproduce.py\", line 251, in main\n    verify_inventory()\n  File \"/tmp/a46-portable-external-d39y81xw/source_outcome_repin/reproduce.py\", line 69, in verify_inventory\n    assert type(entry['bytes']) is int and entry['bytes']==len(raw)\nAssertionError\n"
+      }
+    },
+    {
+      "name": "native_count_repin",
+      "expected": "REJECT",
+      "actual": {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "-I",
+          "-S",
+          "/tmp/a46-portable-external-d39y81xw/native_count_repin/reproduce.py"
+        ],
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/tmp/a46-portable-external-d39y81xw/native_count_repin/reproduce.py\", line 263, in <module>\n    if __name__=='__main__':main()\n  File \"/tmp/a46-portable-external-d39y81xw/native_count_repin/reproduce.py\", line 251, in main\n    verify_inventory()\n  File \"/tmp/a46-portable-external-d39y81xw/native_count_repin/reproduce.py\", line 69, in verify_inventory\n    assert type(entry['bytes']) is int and entry['bytes']==len(raw)\nAssertionError\n"
+      }
+    },
+    {
+      "name": "false_new_admission",
+      "expected": "REJECT",
+      "actual": {
+        "argv": [
+          "/usr/bin/python3",
+          "-B",
+          "-I",
+          "-S",
+          "/tmp/a46-portable-external-d39y81xw/false_new_admission/reproduce.py"
+        ],
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/tmp/a46-portable-external-d39y81xw/false_new_admission/reproduce.py\", line 263, in <module>\n    if __name__=='__main__':main()\n  File \"/tmp/a46-portable-external-d39y81xw/false_new_admission/reproduce.py\", line 251, in main\n    verify_inventory()\n  File \"/tmp/a46-portable-external-d39y81xw/false_new_admission/reproduce.py\", line 72, in verify_inventory\n    assert canonical(manifest)==canonical({\nAssertionError\n"
+      }
+    }
+  ],
+  "original_package_byte_unchanged": true,
+  "new_native_executions": 0,
+  "API_calls": 0,
+  "new_admissions": 0
+}
