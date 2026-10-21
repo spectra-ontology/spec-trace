@@ -28,7 +28,7 @@ def main():
     assert summary==json.loads((HERE/'partition/summary.json').read_text())
     baseline=[json.loads(line) for line in (HERE/'baseline560_metadata.jsonl').open()]
     verified_n=sum(row['immutable_public_status']=='pass' for row in baseline)
-    assert summary['partition_counts']=={'contract_verified':verified_n,'clarification_required':18,'unsupported_frozen_data':9,'evidence_pending':560-verified_n-18-9}
+    assert summary['partition_counts']=={'contract_verified':verified_n,'clarification_required':19,'unsupported_frozen_data':10,'evidence_pending':560-verified_n-19-10}
     description=__import__('subprocess').run([sys.executable,str(HERE/'sources/conflicting_TR_description_evidence/reproduce.py')],capture_output=True,text=True,check=True)
     description_result=json.loads(description.stdout)
     assert description_result['cases_verified_n']==3 and description_result['root_secondary_seven_unit_reviews_verified_n']==3
@@ -66,13 +66,34 @@ def main():
     assert uci_result['status']=='PASS' and len(uci_result['cases'])==1 and uci_result['new_admissions']==0
     source_loss_results.append(uci_result)
     uci_expected=json.loads((HERE/'sources/UCI_source_amendment_status_evidence/classification_candidate_records.json').read_text())
-    uci_actual=json.loads((HERE/'unsupported_classification_candidates.json').read_text())['cases'][8:]
+    uci_actual=json.loads((HERE/'unsupported_classification_candidates.json').read_text())['cases'][8:9]
     assert len(uci_actual)==len(uci_expected)==1
     uci_candidate=__import__('copy').deepcopy(uci_actual[0])
     assert uci_candidate['evidence'].pop('inventory_sha256')==hashlib.sha256((HERE/'sources/UCI_source_amendment_status_evidence/immutable_inventory.json').read_bytes()).hexdigest()
     assert uci_candidate==uci_expected[0]
+    completed_classifications=[]
+    sealed=__import__('subprocess').run([sys.executable,'-B','-I','-S',str(HERE/'sources/DCI_source_amendment_status_evidence'/'reproduce.py')],capture_output=True,text=True,check=True)
+    sealed_result=json.loads(sealed.stdout)
+    assert sealed_result['status']=='PASS' and len(sealed_result['cases'])==1 and sealed_result['new_admissions']==0
+    completed_classifications.append(sealed_result)
+    expected_sealed=json.loads((HERE/'sources/DCI_source_amendment_status_evidence'/'classification_candidate_records.json').read_text())
+    actual_sealed=json.loads((HERE/'unsupported_classification_candidates.json').read_text())['cases'][9:10]
+    assert len(actual_sealed)==len(expected_sealed)==1
+    candidate_copy=__import__('copy').deepcopy(actual_sealed[0])
+    assert candidate_copy['evidence'].pop('inventory_sha256')==hashlib.sha256((HERE/'sources/DCI_source_amendment_status_evidence'/'immutable_inventory.json').read_bytes()).hexdigest()
+    assert candidate_copy==expected_sealed[0]
+    sealed=__import__('subprocess').run([sys.executable,'-B','-I','-S',str(HERE/'sources/cross_meeting_agenda_scope_evidence'/'reproduce.py')],capture_output=True,text=True,check=True)
+    sealed_result=json.loads(sealed.stdout)
+    assert sealed_result['status']=='PASS' and len(sealed_result['cases'])==1 and sealed_result['new_admissions']==0
+    completed_classifications.append(sealed_result)
+    expected_sealed=json.loads((HERE/'sources/cross_meeting_agenda_scope_evidence'/'classification_candidate_records.json').read_text())
+    actual_sealed=json.loads((HERE/'completed_scope_classification_candidates.json').read_text())['cases'][3:4]
+    assert len(actual_sealed)==len(expected_sealed)==1
+    candidate_copy=__import__('copy').deepcopy(actual_sealed[0])
+    assert candidate_copy['evidence'].pop('inventory_sha256')==hashlib.sha256((HERE/'sources/cross_meeting_agenda_scope_evidence'/'immutable_inventory.json').read_bytes()).hexdigest()
+    assert candidate_copy==expected_sealed[0]
     print(json.dumps({'verification':'PASS','files_verified':len(manifest['files_SHA256']),
-        'SQLite_and_independent_set_recounts':'MATCH','conflicting_TR_description_check':description_result,'conflicting_agenda_description_check':agenda_result,'conflicting_pack_scope_check':pack_result,'conflicting_source_availability_check':availability_result,'bounded_frozen_source_loss_checks':source_loss_results,'conditional_recent_meeting_extent':extent,'partition':summary,
+        'SQLite_and_independent_set_recounts':'MATCH','conflicting_TR_description_check':description_result,'conflicting_agenda_description_check':agenda_result,'conflicting_pack_scope_check':pack_result,'conflicting_source_availability_check':availability_result,'bounded_frozen_source_loss_checks':source_loss_results,'completed_sealed_classification_checks':completed_classifications,'conditional_recent_meeting_extent':extent,'partition':summary,
         'new_admissions':0,'expert_validation_n':0},ensure_ascii=False))
 
 
