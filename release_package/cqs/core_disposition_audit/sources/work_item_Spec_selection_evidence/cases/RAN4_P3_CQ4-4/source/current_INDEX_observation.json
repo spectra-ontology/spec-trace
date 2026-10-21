@@ -1,0 +1,38 @@
+{
+  "status": "ACTUAL_ROOT_PRESERVED_RAN4_AUTHORITY_AND_SEPARATE_INDEX_INSPECTION",
+  "original_P2": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_original_approval_vs_references_operation_authority_source_frontier_v1/Phase2_INDEX_original_design.md",
+    "bytes": 57716,
+    "sha256": "2aa9abf53a42c7dc1203f4109b8ba0162920bc2980ffadcadfcf1251daa129b1"
+  },
+  "original_P2_excerpt": {
+    "source_start_line1": 1068,
+    "source_end_line1": 1091,
+    "text": "    \n    ### 4.1 Resolution 매핑\n    \n    **소스**: Final Report 본문\n    \n    | 관계 | 소스 | 변환 규칙 |\n    | --- | --- | --- |\n    | references → Tdoc | content 내 참조 | `R4-\\\\d{7}` 패턴 추출 (7자리). 실측 매칭 수: [P2-V07] |\n    | madeAt → Meeting | 문서 메타 | 파일명에서 회의 번호 추출 후 Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo → AgendaItem | 섹션 헤더 | Agenda 번호 추출. **같은 미팅 내의 AgendaItem과 매칭** (madeAt으로 결정된 Meeting의 AgendaItem) |\n    | hasTable → Table | content 내 참조 | `Table X.Y.Z-N` 패턴 → 같은 미팅 내 TBL 인스턴스 연결. 실측 매칭 수: [P2-V08] |\n    \n    > RAN4 TDoc 패턴: `R4-\\\\d{7}` (7자리)\n    \n    **references → Tdoc 매칭 실패 시 처리 규칙:**\n    \n    | 조건 | 처리 |\n    | --- | --- |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 존재 | 기존 인스턴스에 references 관계 생성 |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 없음 (다른 WG 문서 등) | references 관계 생성 안 함 + 로그 기록 |\n    \n    *참고: Resolution 본문에서 추출된 `R4-\\\\d{7}` 패턴이 Phase-1 Tdoc 인스턴스에 존재하지 않을 수 있음. 이 경우 동적 생성하지 않고 관계를 생략함*\n    \n    **Meeting 연결 규칙:**"
+  },
+  "current_INDEX_git_blob": "268630d0375e1c4150b7843dde5b13962d61db82",
+  "current_INDEX_bytes": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_D/RAN4_P3_CQ4-4/ROOT_observed_current_INDEX_RAN4_decision_extractor.py.txt",
+    "bytes": 18428,
+    "sha256": "28fe0d7d36cc1fec82d30306b85a2d170d3dd2c17b1b687fd86b758c0fe55f4a"
+  },
+  "current_INDEX_boundary_method": {
+    "start_line1": 319,
+    "end_line1": 352,
+    "exact_text": "    def _find_content_boundary(\n        self, start_index: int, paragraphs: list, max_index: int\n    ) -> int:\n        \"\"\"Find where decision content ends.\"\"\"\n        blank_count = 0\n\n        for idx in range(start_index + 1, max_index):\n            para = paragraphs[idx]\n            text = para.text.strip()\n            style = _fast_style_id(para)\n\n            # Heading stops content\n            if style.startswith('heading'):\n                return idx\n\n            if ANNEX_PATTERN.match(text):\n                return idx\n\n            for pattern in DECISION_PATTERNS_HEADER.values():\n                if pattern.match(text):\n                    return idx\n\n            for pattern in DECISION_PATTERNS_INLINE.values():\n                if pattern.match(text):\n                    return idx\n\n            if not text:\n                blank_count += 1\n                if blank_count >= 2:\n                    return idx - 1\n            else:\n                blank_count = 0\n\n        return max_index\n"
+  },
+  "observations": [
+    "Preserved original P2 source mapping extracts full R4-7digit literals inside content and creates REFERENCES only to existing Phase1 Tdocs.",
+    "Inspected CURRENT INDEX method stops at heading, Annex, another decision marker or two blank paragraphs; it does not stop at a Tdoc/email entry solely for being such an entry."
+  ],
+  "historical_binding": {
+    "current_INDEX_is_proven_frozen_RDF_generator": false,
+    "original_preserved_P2_is_content_identity_proof": false,
+    "RAN2_boundary_authority_transferred": false
+  },
+  "scope": "Positive source definition and separately observed code only; native, full raw source alignment and semantic admission not certified by this receipt.",
+  "API_calls": 0,
+  "native_calls": 0,
+  "public_mutations": 0,
+  "human_validation_n": 0
+}

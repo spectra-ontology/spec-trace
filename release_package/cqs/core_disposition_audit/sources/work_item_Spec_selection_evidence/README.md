@@ -1,0 +1,3 @@
+# Source-grounded original-question status
+
+The original Work Item outcome trace links all809 CRs to source-verified Work Item, target Spec and CR-type fields in11 original ZIP-contained registers. Its818 recorded references and14 Spec groups are reproducible with the original question, preserved source rules and two independent AI judgments. The plain list question requires an explicit rule for choosing distinct Spec groups under the original limit10; the authored count-ranked interpretation remains available. Run `python3 -B -I -S reproduce.py` offline. The ROOT seal binds the completed classification to its original wording, evidence, portable replay and retained counterinterpretations.
