@@ -40,7 +40,7 @@ eight original source archives, ten cover fields and a
 
 A [decision-to-Spec replay](release_package/cqs/original_core_overnight_evaluation43/README.md)
 connects ten requested Spec identities to active same-CR source outcomes and
-formal-register targets. Complete native output, the57-Spec selection frontier
+formal-register targets. Complete native output, the 57-Spec selection frontier
 and all five saved first responses make identity recovery and selection
 precision directly reproducible.
 
