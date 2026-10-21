@@ -18,6 +18,7 @@ HERE=Path(__file__).resolve().parent
 def main():
     manifest=json.loads((HERE/'manifest.json').read_text())
     for name,expected in manifest['files_SHA256'].items():
+        assert '__pycache__' not in Path(name).parts and Path(name).suffix not in ('.pyc','.pyo'),name
         assert hashlib.sha256((HERE/name).read_bytes()).hexdigest()==expected,name
     actual=reproduce()
     assert actual==json.loads((HERE/'diagnostic_results.json').read_text())
