@@ -1,0 +1,64 @@
+{
+  "item_id": "RAN1_P2_CQ3-4",
+  "validation_status": "pending_ROOT_native_and_independent_review",
+  "question_en": "List Qualcomm's 10 most recent agreements.",
+  "question_sha256": "80a9662dbfc89d9a251087d97e7889446117b1be28e631364b12bfd8542f84d9",
+  "reference_query_sha256": "3a0e92911ff7812777bd9a79b5acb6bb92f95503ed12eff21823e670f2959cc0",
+  "required_fields": [
+    {
+      "name": "t.tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "role": "minimum qualifying own-reference Tdoc under original ascending tie key"
+    },
+    {
+      "name": "a.resolutionId",
+      "type": "string",
+      "nullable": false,
+      "role": "distinct Agreement identity"
+    },
+    {
+      "name": "a.content",
+      "type": "string",
+      "nullable": false,
+      "role": "source-own operative decision with CW/body and Note equivalent context"
+    },
+    {
+      "name": "m.meetingNumber",
+      "type": "string",
+      "nullable": false,
+      "role": "actual latest Meeting of Agreement"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "source_order_keys": [
+      {
+        "source_column": "__source_order_meetingNumberInt",
+        "direction": "desc"
+      },
+      {
+        "source_column": "__source_order_bis",
+        "direction": "desc"
+      },
+      {
+        "source_column": "t.tdocNumber",
+        "direction": "asc"
+      },
+      {
+        "source_column": "a.resolutionId",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": true
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "boundary_evidence_scope": "Latest123 and122b contain exactly10 source-validated own Qualcomm-associated Agreements. Original Tdoc and resolution tie keys make all10 rank groups singletons; no favorable alternate subset is selected."
+}

@@ -1,0 +1,11 @@
+--- frozen_bundle/score_predictions.py
++++ score_predictions_optional_order_groups.py
+@@ -38,7 +38,7 @@
+                 or gold[id].get('repair_sha256') != task['repair_sha256']):
+             raise ValueError('prediction/gold belongs to a different or unvalidated contract: ' + id)
+         result = original_scorer.score(task, gold[id]['records'], prediction['records'],
+-                                        order_groups=gold[id]['order_groups'])
++                                        order_groups=gold[id].get('order_groups'))
+         outcomes.append(dict(id=id, repair_sha256=task['repair_sha256'], **result))
+     return {'kind': 'Supplied predictions scored against exact admitted repaired contracts; no historical-score transfer',
+             'admitted_n': len(tasks), 'predicted_n': len(predictions),

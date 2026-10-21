@@ -1,0 +1,239 @@
+{
+  "metadata": {
+    "version": "3.0",
+    "created": "2026-02-03",
+    "description": "Phase-2 CQ 34개 — 페르소나 시나리오 기반 Resolution/회의 결정 분석",
+    "spec": "tdoc_ontology_specs(Final_report).md §2",
+    "categories": [
+      "CQ1_Resolution조회",
+      "CQ2_Tdoc-Resolution추적",
+      "CQ3_회사기여도",
+      "CQ5_기술트렌드",
+      "CQ4_기술주도권분석"
+    ],
+    "neo4j_version": "5.x",
+    "ontology_version": "3.0.0",
+    "sort_rules": {
+      "CQ1": "Meeting 번호 DESC, Agenda ASC, Sequence ASC",
+      "CQ2": "Meeting 번호 DESC, Sequence ASC",
+      "CQ3": "Count DESC, Company ASC",
+      "CQ4": "Meeting 번호 DESC, Agenda ASC",
+      "CQ5": "Meeting 번호 ASC (시계열)"
+    },
+    "personas": [
+      "전략/기획팀: 회의 결과 파악, 기술 트렌드 분석, 경쟁사 동향",
+      "IP/특허팀: 기고의 표준 반영 여부, 기여 증거 확보",
+      "표준화 엔지니어: 특정 기술 결정사항 추적, 후속 작업 파악"
+    ],
+    "design_cqs": 24,
+    "total_cqs": 34,
+    "active_cqs": 34,
+    "defer_cqs": 0
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "category": "CQ1_Resolution조회",
+      "question": "RAN1#115 회의에서 NR MIMO 의제(의제 설명에 MIMO 가 들어간 의제와 그 하위 의제) 관련 합의(Agreement) 목록은? (MIMO 기술 회의 결과 파악용)",
+      "cypher": "MATCH (p:AgendaItem {meetingNumber: '115'}) WHERE toLower(p.agendaDescription) CONTAINS 'mimo' MATCH (ai:AgendaItem {meetingNumber: '115'}) WHERE ai.meetingNumber = p.meetingNumber AND (ai.agendaNumber = p.agendaNumber OR ai.agendaNumber STARTS WITH p.agendaNumber + '.') WITH DISTINCT ai MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai), (a)-[:MADE_AT]->(:Meeting {canonicalMeetingNumber: 'RAN1#115'}) RETURN a.resolutionId, a.content, ai.agendaNumber ORDER BY ai.agendaNumber, a.sequence LIMIT 15"
+    },
+    {
+      "id": "CQ1-2",
+      "category": "CQ1_Resolution조회",
+      "question": "RAN1#100 회의에서 UL Tx switching(Agenda 5.1) 관련 합의 내용은? (UL switching 기술 결정사항)",
+      "cypher": "MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '5.1'}), (a)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN1#100'}) RETURN a.resolutionId, a.content ORDER BY a.sequence LIMIT 10"
+    },
+    {
+      "id": "CQ1-3",
+      "category": "CQ1_Resolution조회",
+      "question": "최근 회의(RAN1#121)에서 도출된 Conclusion(결론) 목록은? (미결 이슈 현황 파악)",
+      "cypher": "MATCH (c:Conclusion)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN1#121'}) RETURN c.resolutionId, c.content ORDER BY c.sequence LIMIT 15"
+    },
+    {
+      "id": "CQ1-4",
+      "category": "CQ1_Resolution조회",
+      "question": "RAN1#115 회의의 Working Assumption(잠정 합의) 목록은? (향후 재논의 가능 안건 파악)",
+      "cypher": "MATCH (wa:WorkingAssumption)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN1#115'}) RETURN wa.resolutionId, wa.content ORDER BY wa.sequence LIMIT 15"
+    },
+    {
+      "id": "CQ1-5",
+      "category": "CQ1_Resolution조회",
+      "question": "FFS(Further For Study) 마커가 포함된 최근 Agreement 목록은? (추가 검토 필요 안건)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.hasFFS = true RETURN a.resolutionId, a.content, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 15"
+    },
+    {
+      "id": "CQ1-6",
+      "category": "CQ1_Resolution조회",
+      "question": "PDCCH blind decoding 관련 합의 내용은? (PDCCH 기술 결정사항 추적)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'PDCCH' AND a.content CONTAINS 'blind' RETURN a.resolutionId, m.meetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ1-7",
+      "category": "CQ1_Resolution조회",
+      "question": "beam management 관련 합의 내용은? (빔 관리 기술 결정사항)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'beam' AND (a.content CONTAINS 'management' OR a.content CONTAINS 'indication') RETURN a.resolutionId, m.meetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ2-1",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "Agreement AGR-100-e-6.1-001이 참조한 Tdoc 목록은? (CR 승인 관련 원본 문서 추적)",
+      "cypher": "MATCH (a:Agreement {resolutionId: 'AGR-100-e-6.1-001'})-[:REFERENCES]->(t:Tdoc) RETURN a.resolutionId, a.content, t.tdocNumber, t.title"
+    },
+    {
+      "id": "CQ2-2",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "Tdoc R1-2001110이 어떤 Agreement로 이어졌는가? (기고문의 표준 반영 결과 추적)",
+      "cypher": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc {tdocNumber: 'R1-2001110'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, a.resolutionId, a.content, m.meetingNumber"
+    },
+    {
+      "id": "CQ2-3",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "RAN1#115 회의에서 CR이 승인된 Agreement 목록은? (Spec 변경 결정 추적)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN1#115'}) WHERE a.content CONTAINS 'CR' AND (a.content CONTAINS 'agreed' OR a.content CONTAINS 'approved') RETURN a.resolutionId, a.content ORDER BY a.sequence LIMIT 15"
+    },
+    {
+      "id": "CQ2-4",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "Resolution이 가장 많은 Agenda Item Top 10은? (핫 이슈 영역 파악)",
+      "cypher": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) RETURN ai.agendaNumber, count(r) AS resolutionCount ORDER BY resolutionCount DESC LIMIT 10"
+    },
+    {
+      "id": "CQ2-5",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "TS 38.211 변경 관련 Resolution 목록은? (38.211 개정 이력 추적)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS '38.211' RETURN a.resolutionId, m.meetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 15"
+    },
+    {
+      "id": "CQ3-1",
+      "category": "CQ3_회사기여도",
+      "question": "Huawei가 제출한 Tdoc이 Agreement로 이어진 목록은? (회사별 표준 기여 추적)",
+      "cypher": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, a.resolutionId, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 15"
+    },
+    {
+      "id": "CQ3-2",
+      "category": "CQ3_회사기여도",
+      "question": "Samsung이 Agreement에 기여한 Tdoc 수와 비율은? (표준 기여 성과 분석)",
+      "cypher": "MATCH (c:Company {companyName: 'Samsung'})<-[:SUBMITTED_BY]-(t:Tdoc) WITH c, count(t) AS totalTdocs OPTIONAL MATCH (a:Agreement)-[:REFERENCES]->(t2:Tdoc)-[:SUBMITTED_BY]->(c) WITH c, totalTdocs, count(DISTINCT t2) AS agreementLinkedTdocs, count(DISTINCT a) AS agreementCount RETURN c.companyName, totalTdocs, agreementLinkedTdocs, agreementCount, round(100.0 * agreementLinkedTdocs / totalTdocs, 1) AS contributionRate"
+    },
+    {
+      "id": "CQ3-3",
+      "category": "CQ3_회사기여도",
+      "question": "NR MIMO 의제(의제 설명에 MIMO 가 들어간 의제와 그 하위 의제)에서 회사별 Resolution 기여도 Top 10은?",
+      "cypher": "MATCH (p:AgendaItem) WHERE toLower(p.agendaDescription) CONTAINS 'mimo' MATCH (ai:AgendaItem) WHERE ai.meetingNumber = p.meetingNumber AND (ai.agendaNumber = p.agendaNumber OR ai.agendaNumber STARTS WITH p.agendaNumber + '.') WITH DISTINCT ai MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai) MATCH (a)-[:REFERENCES]->(:Tdoc)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT a) AS contributionCount ORDER BY contributionCount DESC, c.companyName ASC LIMIT 10"
+    },
+    {
+      "id": "CQ3-4",
+      "category": "CQ3_회사기여도",
+      "question": "Qualcomm이 Agreement에 참여한 최근 10건은?",
+      "cypher": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Qualcomm'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, a.resolutionId, a.content, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ3-5",
+      "category": "CQ3_회사기여도",
+      "question": "Ericsson과 Nokia의 Resolution 기여도 비교는?",
+      "cypher": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company) WHERE c.companyName IN ['Ericsson', 'Nokia'] RETURN c.companyName, count(DISTINCT a) AS contributionCount ORDER BY contributionCount DESC"
+    },
+    {
+      "id": "CQ3-6",
+      "category": "CQ3_회사기여도",
+      "question": "ZTE가 제출한 Tdoc 중 approved 상태인 것은? (승인 성과)",
+      "cypher": "MATCH (t:Tdoc {status: 'approved'})-[:SUBMITTED_BY]->(c:Company {companyName: 'ZTE'}) RETURN t.tdocNumber, t.title ORDER BY t.tdocNumber DESC LIMIT 15"
+    },
+    {
+      "id": "CQ4-1",
+      "category": "CQ4_기술주도권분석",
+      "question": "NR MIMO 의제(의제 설명에 MIMO 가 들어간 의제와 그 하위 의제)의 FL Summary를 가장 많이 담당한 회사 Top 5는? (기술 주도권 분석)",
+      "cypher": "MATCH (p:AgendaItem) WHERE toLower(p.agendaDescription) CONTAINS 'mimo' MATCH (ai:AgendaItem) WHERE ai.meetingNumber = p.meetingNumber AND (ai.agendaNumber = p.agendaNumber OR ai.agendaNumber STARTS WITH p.agendaNumber + '.') WITH DISTINCT ai MATCH (t:Tdoc)-[:BELONGS_TO]->(ai) WHERE t.summaryType = 'FL' MATCH (t)-[:MODERATED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT t) AS flCount ORDER BY flCount DESC, c.companyName ASC LIMIT 5"
+    },
+    {
+      "id": "CQ4-2",
+      "category": "CQ4_기술주도권분석",
+      "question": "Huawei가 FL Summary를 담당한 Agenda Item 목록은? (기술 영역 주도 현황)",
+      "cypher": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem), (t)-[:MODERATED_BY]->(c:Company {companyName: 'Huawei'})\nWHERE t.summaryType = 'FL'\nRETURN DISTINCT ai.agendaNumber, count(t) AS flCount ORDER BY flCount DESC LIMIT 15"
+    },
+    {
+      "id": "CQ4-3",
+      "category": "CQ4_기술주도권분석",
+      "question": "회사별 FL Summary 담당 건수 Top 10은? (기술 주도권 순위)",
+      "cypher": "MATCH (t:Tdoc)-[:MODERATED_BY]->(c:Company)\nWHERE t.summaryType = 'FL'\nRETURN c.companyName, count(t) AS flCount ORDER BY flCount DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-1",
+      "category": "CQ5_기술트렌드",
+      "question": "CSI-RS 관련 합의 내용 시간순 추이는? (CSI-RS 기술 진화 추적, 최신 회의부터)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'CSI-RS' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC, a.resolutionId ASC LIMIT 15"
+    },
+    {
+      "id": "CQ5-2",
+      "category": "CQ5_기술트렌드",
+      "question": "HARQ feedback 관련 합의 목록은? (HARQ 기술 결정사항)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'HARQ' AND a.content CONTAINS 'feedback' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-3",
+      "category": "CQ5_기술트렌드",
+      "question": "SRS configuration 관련 합의 목록은? (SRS 설정 관련 표준화 결정)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'SRS' AND a.content CONTAINS 'configuration' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-4",
+      "category": "CQ5_기술트렌드",
+      "question": "DCI format 관련 합의 내용은? (DCI 포맷 표준화 결정)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'DCI' AND a.content CONTAINS 'format' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-5",
+      "category": "CQ5_기술트렌드",
+      "question": "PUSCH repetition 관련 합의 내용은? (PUSCH 반복 기술 결정)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'PUSCH' AND a.content CONTAINS 'repetition' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-6",
+      "category": "CQ5_기술트렌드",
+      "question": "RAN1#100부터 RAN1#121까지 회의별 Agreement 수 추이는?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121 WITH m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS n, count(a) AS agreementCount RETURN meeting, agreementCount ORDER BY n, meeting"
+    },
+    {
+      "id": "CQ5-7",
+      "category": "CQ5_기술트렌드",
+      "question": "MIMO codebook 관련 합의 목록은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'MIMO' AND a.content CONTAINS 'codebook' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-8",
+      "category": "CQ5_기술트렌드",
+      "question": "BWP switching 관련 합의 내용은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'BWP' AND a.content CONTAINS 'switch' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-9",
+      "category": "CQ5_기술트렌드",
+      "question": "slot aggregation 관련 합의 목록은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'slot' AND a.content CONTAINS 'aggregation' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-10",
+      "category": "CQ5_기술트렌드",
+      "question": "UCI multiplexing 관련 합의 내용은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'UCI' AND a.content CONTAINS 'multiplex' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-11",
+      "category": "CQ5_기술트렌드",
+      "question": "DMRS pattern 관련 합의 목록은? (DMRS 패턴 표준화 결정)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'DMRS' AND a.content CONTAINS 'pattern' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-12",
+      "category": "CQ5_기술트렌드",
+      "question": "SSB burst set 관련 합의 내용은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'SSB' AND a.content CONTAINS 'burst' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ5-13",
+      "category": "CQ5_기술트렌드",
+      "question": "PUCCH resource 관련 합의 목록은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'PUCCH' AND a.content CONTAINS 'resource' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    }
+  ]
+}

@@ -1,10 +1,12 @@
 # Current original Core contract index
 
-All 560 original IDs are retained: **504 pass the stated repair checks and 56 remain pending**. Original English questions are unchanged. Ten admitted IDs use separate full-ranking-pool replacements without adding IDs.
+All 560 original IDs are retained: **506 pass the stated repair checks and 54 remain pending**. Original English questions are unchanged. Ten admitted IDs use separate full-ranking-pool replacements without adding IDs.
 
 `current_tasks.jsonl` routes each admitted question to its immutable definition, reference records, requested fields, scorer and evidence. `all_core_dispositions.jsonl` retains every pending ID and its reasons. Historical bundles, gold and model results retain their original bytes.
 
-The latest [Huawei contribution-tracing contract](../original_core_overnight_repairs34/README.md) and [separate first evaluation](../original_core_overnight_evaluation34/README.md) add one original question. TDoc, Company, Agreement and Meeting links preserve the original fifteen-row witness boundary and the requested TDoc identity set. Two separate AI reviews, own-reference source replay and seven typed scorer controls accompany all four native context columns. The N1 evaluation retains five first responses and all four method outcomes.
+The latest [recent TS 38.213 and Qualcomm agreement contracts](../original_core_overnight_repairs35/README.md) and [separate first evaluation](../original_core_overnight_evaluation35/README.md) add two original questions. Ontology links preserve source-owned Agreement, TDoc, Company, CR, Specification and Meeting context while scoring the requested recent agreement identities. Two separate AI reviews per question, original-source replay and sixteen typed scorer controls accompany all four native context columns. The N2 evaluation retains ten first responses and eight method outcomes.
+
+The earlier [Huawei contribution-tracing contract](../original_core_overnight_repairs34/README.md) and [separate first evaluation](../original_core_overnight_evaluation34/README.md) add one original question. TDoc, Company, Agreement and Meeting links preserve the original fifteen-row witness boundary and the requested TDoc identity set. Two separate AI reviews, own-reference source replay and seven typed scorer controls accompany all four native context columns. The N1 evaluation retains five first responses and all four method outcomes.
 
 The earlier [PUSCH repetition decision contract](../original_core_overnight_repairs33/README.md) and [separate first evaluation](../original_core_overnight_evaluation33/README.md) add one original question. Agreement/Meeting links preserve all 532 joined rows and 16 eligible latest-meeting records under the original top-ten boundary rule. Two separate AI reviews, 83 operative source bindings and 15 typed scorer controls accompany the source replay. The N1 evaluation retains five first responses and all four method outcomes.
 
@@ -65,7 +67,7 @@ python3 -B -S release_package/cqs/original_core_overnight_evaluation15/runtime/v
 
 Pass means two AI semantic judgments, pinned stored-source consistency, captured native executions, independent SQL agreement and actual scorer checks. Human and independent domain-expert reviews remain incomplete. These checks do not establish causal adoption, complete raw-archive coverage, calendar chronology, or physical-source truth for the entire graph.
 
-Each cohort keeps its actual model, inputs, information access and denominator. Scores are not transferred to later contracts. The public source-order protocol differs from the first 37-question cohort; inherited exact-share hooks are inactive for the twelve ordinary tasks. Source-enriched experiments remain separate from these 504 frozen-graph contracts.
+Each cohort keeps its actual model, inputs, information access and denominator. Scores are not transferred to later contracts. The public source-order protocol differs from the first 37-question cohort; inherited exact-share hooks are inactive for the twelve ordinary tasks. Source-enriched experiments remain separate from these 506 frozen-graph contracts.
 
 The index manifest links every historical cohort. The compact [review evidence archive](review_evidence.tar.gz), [Core402 archive](latest_additions.tar.gz) and [observed-trend archive](observed_trend.tar.gz) preserve the 400-, 402- and 404-item historical snapshots respectively. They do not contain the complete current index. Their original inventories, manifests and download verifiers are unchanged. Use this Git checkout and its pinned cohort files to replay the current contracts.
 

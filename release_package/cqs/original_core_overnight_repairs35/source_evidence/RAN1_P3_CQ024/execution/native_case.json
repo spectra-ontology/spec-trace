@@ -1,0 +1,32 @@
+{
+  "id": "RAN1_P3_CQ024",
+  "wg": "RAN1",
+  "query_sha256": "5abb5ae3f8222158aa866c07fb7e50341c629f842ca9fe946da929e749495d8d",
+  "query": "MATCH (agr:Agreement)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.213'}) MATCH (agr)-[:MADE_AT]->(m:Meeting)\nWITH agr,cr,sp,m,[line IN split(coalesce(agr.content,\"\"),\"\\n\") WHERE trim(line)<>\"\"] AS lines\nWITH agr,cr,sp,m,lines,reduce(s={stopped:false,own:[],previous:\"\",previousHeaderRule:\"\",finalSeen:false},i IN CASE WHEN size(lines)=0 THEN [] ELSE range(0,size(lines)-1) END |\n  CASE WHEN s.stopped THEN s\n  WHEN lines[i] =~ \"R1-[0-9]{7}\\\\t.*\" THEN\n    CASE\n    WHEN (s.previous =~ \"(?i)^.*\\\\bfinal\\\\s+CRs?\\\\b.*(?:in|:)\\\\s*:?$\" OR (s.previous =~ \"\\\\(Rel-[0-9]+,.*\\\\bCR[0-9]+.*\\\\) is (?:agreed|endorsed)\\\\.\" AND s.finalSeen)) AND i+1<size(lines) AND lines[i+1] =~ \"\\\\(Rel-[0-9]+,.*\\\\bCR[0-9]+.*\\\\) is (?:agreed|endorsed)\\\\.\"\n      THEN {stopped:false,own:s.own+[lines[i]],previous:lines[i],previousHeaderRule:\"final_CR\",finalSeen:true}\n    WHEN s.previous =~ \"(?i)^.*\\\\bfollowing\\\\s+Tdocs?\\\\b.*$\" OR s.previousHeaderRule=\"explicit_following_Tdocs\"\n      THEN {stopped:false,own:s.own+[lines[i]],previous:lines[i],previousHeaderRule:\"explicit_following_Tdocs\",finalSeen:s.finalSeen}\n    WHEN s.previous =~ \"(?i)^.*\\\\bcomeback\\\\s+for\\\\s+draft\\\\s+LS\\\\b.*$\" AND i+1<size(lines) AND lines[i+1] CONTAINS substring(lines[i],0,10) AND lines[i+1] =~ \"(?i).*\\\\b(?:endorsed|approved|agreed)\\\\b.*\"\n      THEN {stopped:false,own:s.own+[lines[i]],previous:lines[i],previousHeaderRule:\"draft_LS_comeback\",finalSeen:s.finalSeen}\n    ELSE {stopped:true,own:s.own,previous:s.previous,previousHeaderRule:s.previousHeaderRule,finalSeen:s.finalSeen} END\n  ELSE {stopped:false,own:s.own+[lines[i]],previous:lines[i],previousHeaderRule:\"\",finalSeen:s.finalSeen} END) AS ownRecord\nWHERE any(line IN ownRecord.own WHERE line =~ (\".*\"+cr.tdocNumber+\"(?![0-9]).*\"))\nRETURN DISTINCT agr.resolutionId, COALESCE(agr.contentWithEquations, agr.content) AS content, m.meetingNumber, m.meetingNumberInt\nORDER BY m.meetingNumberInt DESC, m.meetingNumber DESC, agr.resolutionId LIMIT 10",
+  "started_utc": "2026-10-21T02:43:33.184654+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN1_P3_CQ024/5abb5ae3f8222158aa866c07fb7e50341c629f842ca9fe946da929e749495d8d.jsonl",
+  "columns": [
+    "agr.resolutionId",
+    "content",
+    "m.meetingNumber",
+    "m.meetingNumberInt"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 10,
+  "bytes_retained": 5728,
+  "rows_sha256": "56edd4d0ecb626d700cc3e4d798682fb7cabb3fa9ad9393982f8c58914401764",
+  "finished_utc": "2026-10-21T02:43:35.698437+00:00",
+  "elapsed_s": 2.5138,
+  "full_rows_available": true
+}
