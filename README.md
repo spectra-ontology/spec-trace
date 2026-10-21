@@ -33,7 +33,7 @@ the active definitions to their original repair and evaluation cohorts.
 
 The [all-560 disposition register](release_package/cqs/core_disposition_audit/README.md)
 accounts for every original Core ID: **504 contract-verified, 20 requiring
-clarification, 10 unsupported by the pinned frozen data, and 26 awaiting completed
+clarification, 11 unsupported by the pinned frozen data, and 25 awaiting completed
 evidence checks**. Historical definitions and results remain available alongside
 the current register.
 
