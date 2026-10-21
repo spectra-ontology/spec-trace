@@ -1,0 +1,40 @@
+{
+  "id": "RAN4_P3_CQ4-1",
+  "question_en": "List the resolutions and the approved CRs that modify spec 38.133 (decision-to-change trace).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.133'}) RETURN r.resolutionId, cr.tdocNumber ORDER BY r.resolutionId DESC LIMIT 10",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.133'}) WHERE toLower(trim(coalesce(cr.status, ''))) IN ['agreed', 'approved', 'endorsed'] RETURN r.resolutionId, cr.tdocNumber ORDER BY r.resolutionId DESC LIMIT 10",
+  "required_fields": [
+    {
+      "name": "resolutionId",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "r.resolutionId"
+    },
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "cr.tdocNumber"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": true,
+    "source_order_keys": [
+      {
+        "source_column": "r.resolutionId",
+        "direction": "desc"
+      }
+    ]
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 10,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}
