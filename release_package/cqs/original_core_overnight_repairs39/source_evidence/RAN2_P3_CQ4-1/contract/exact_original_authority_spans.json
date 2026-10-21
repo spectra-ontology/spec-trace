@@ -1,0 +1,72 @@
+[
+  {
+    "role": "Phase1",
+    "file": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_density_canonical_target_and_Section_recipe_v2/original_INDEX_Phase1_Tdoc_list_design.md",
+      "bytes": 73900,
+      "sha256": "5cb9f1c4056f0e658aeaf3933bad7c7bad0195d71d430d91877479c964d65be0"
+    },
+    "spans": [
+      {
+        "first_line": 695,
+        "last_line": 725,
+        "text": "    \n    ### 3.2 Data Property\n    \n    | 속성명 | Type | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | tdocNumber | String | TDoc | Tdoc의 고유 식별자 (예: R2-2500001). 형식: R2-YYNNNNN |\n    | title | String | Title | Tdoc의 제목. 문서 내용을 요약하는 짧은 설명 |\n    | abstract | String | Abstract | Tdoc의 요약. 문서 내용의 상세 설명 (대부분 비어있음) |\n    | type | String (Enum) | Type | Tdoc의 유형 |\n    | status | String (Enum) | TDoc Status | 회의에서의 결정 결과 |\n    | for | String (Enum) | For | Tdoc의 목적/용도 |\n    | reservationDate | DateTime | Reservation date | Tdoc 번호 예약 일시 |\n    | uploadedDate | DateTime | Uploaded | Tdoc 파일 업로드 일시 |\n    | secretaryRemarks | String | Secretary Remarks | 회의 비서의 메모 (예: \"Late contribution\", \"Revised in session\") |\n    \n    **RAN2 차이**: tdocNumber 형식이 R2-YYNNNNN (RAN1은 R1-YYNNNNN)\n    \n    ---\n    \n    ## 4. CR 클래스 속성 (Tdoc 상속 + 추가)\n    ### 4.1 추가 Object Property\n    \n    | 속성명 | Range | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | modifies | Spec | Spec | CR이 변경을 요청하는 대상 기술 규격 (예: 38.331) |\n    \n    ### 4.2 추가 Data Property\n    \n    | 속성명 | Type | 데이터 소스 | 설명 |\n    | --- | --- | --- | --- |\n    | crNumber | String | CR | CR의 공식 번호 (예: 0693). draftCR은 이 값이 없음 |"
+      },
+      {
+        "first_line": 1115,
+        "last_line": 1133,
+        "text": "    ### 8.2 status (결정 상태)\n    \n    | 값 | 설명 |\n    | --- | --- |\n    | available | 접수됨 (회의 전 상태) |\n    | noted | 참고로 접수됨 |\n    | not treated | 회의에서 다루지 않음 |\n    | revised | 수정되어 새 버전으로 대체됨 |\n    | agreed | 합의됨 |\n    | endorsed | 지지/승인됨 |\n    | postponed | 다음 회의로 연기됨 |\n    | withdrawn | 제출자가 철회함 |\n    | reserved | 예약됨 (번호만 할당) |\n    | not pursued | 더 이상 추진하지 않음 |\n    | approved | 공식 승인됨 |\n    | merged | 다른 문서와 병합됨 |\n    | treated | 처리됨 |\n    | not concluded | 결론 미도출 |\n    | conditionally agreed | 조건부 합의 |"
+      }
+    ]
+  },
+  {
+    "role": "Phase2",
+    "file": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_CQ6_2_original_denominator_authority_v1/design_original_index.md",
+      "bytes": 54914,
+      "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+    },
+    "spans": [
+      {
+        "first_line": 1113,
+        "last_line": 1141,
+        "text": "    ## 4. 데이터 소스 매핑\n    \n    ### 4.1 Resolution 매핑\n    \n    **소스**: Final Report 본문\n    \n    | 관계 | 소스 | 변환 규칙 |\n    | --- | --- | --- |\n    | references → Tdoc | content 내 참조 | `R2-\\\\d{7}` 패턴 추출 |\n    | madeAt → Meeting | 문서 메타 | 파일명에서 회의 번호 추출 후 Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo → AgendaItem | 섹션 헤더 | Agenda 번호 추출. **같은 미팅 내의 AgendaItem과 매칭** (madeAt으로 결정된 Meeting의 AgendaItem) |\n    | hasTable → Table | content 내 참조 | `Table X.Y.Z-N` 패턴 → 같은 미팅 내 TBL 인스턴스 연결 |\n    \n    > TDoc 패턴: `R2-\\\\d{7}`\n    \n    **references → Tdoc 매칭 실패 시 처리 규칙:**\n    \n    | 조건 | 처리 |\n    | --- | --- |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 존재 | 기존 인스턴스에 references 관계 생성 |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 없음 (다른 WG 문서 등) | references 관계 생성 안 함 + 로그 기록 |\n    \n    *참고: Resolution 본문에서 추출된 `R2-\\\\d{7}` 패턴이 Phase-1 Tdoc 인스턴스에 존재하지 않을 수 있음. 이 경우 동적 생성하지 않고 관계를 생략함*\n    \n    **Meeting 연결 규칙:**\n    \n    | Final Report 파일명 | 추출된 회의 번호 | 매칭 대상 (Phase-1) |\n    | --- | --- | --- |\n    | Final_Report_RAN2-132.docx | RAN2#132 | canonicalMeetingNumber = \"RAN2#132\" |"
+      }
+    ]
+  },
+  {
+    "role": "Phase3",
+    "file": {
+      "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/priority71_fast_closure/RAN2_approval38331_original10_own_source_tail_v1/original_indexed_Phase3_design.md",
+      "bytes": 96135,
+      "sha256": "50b36effff81952779b8ae8e577d9f297390ab377541606b89ffecfee3fafe62"
+    },
+    "spans": [
+      {
+        "first_line": 175,
+        "last_line": 185,
+        "text": "    ### CQ4. Resolution → TS 연결\n    \n    | # | Competency Question | 경로 |\n    | --- | --- | --- |\n    | 4-1 | 특정 Resolution이 승인한 CR이 수정한 TS는? | Resolution → CR → Spec |\n    | 4-2 | 특정 TS를 수정한 CR을 승인한 Resolution 목록은? | Spec ← CR ← Resolution |\n    | 4-3 | 특정 회의에서 승인된 CR이 수정한 TS 목록은? | Meeting → Resolution → CR → Spec |\n    | 4-4 | 특정 Work Item의 Resolution이 반영된 TS 목록은? | WorkItem → CR ← Resolution, CR → Spec |\n    \n    *CQ4 제약사항: Resolution이 CR을 references하는 경우만 (Appendix A [P3-V06] 참조)*\n    "
+      },
+      {
+        "first_line": 201,
+        "last_line": 215,
+        "text": "    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1. 구조 탐색 | Section 번호 ASC | - |\n    | CQ2. 참조 분석 | 참조 횟수 DESC | Section 번호 ASC |\n    | CQ3. CR 연결 | Meeting 번호 DESC | CR 번호 ASC |\n    | CQ4. Resolution 연결 | Meeting 번호 DESC | Resolution ID ASC |\n    | CQ5. 통합 분석 | Count DESC | TS 번호 ASC |\n    \n    ### 5.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 | 적용 CQ |\n    | --- | --- | --- |\n    | 목록 조회 | 10 | CQ1-1~1-10, CQ2-1~2-2, CQ3-1~3-6, CQ4, CQ5-1~5-3 |\n    | Top N 조회 | 10 | CQ2-3~2-4, CQ5-4 |\n    | 단일 조회 | 1 | CQ1-7 |"
+      },
+      {
+        "first_line": 220,
+        "last_line": 226,
+        "text": "    ## 6. 제약사항\n    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | release별 final 버전 (Rel-15~19 각 1개). 각 release final 버전을 specVersion에 기록 | intra-release draft 히스토리(한 release 내 중간 버전)는 미지원. specVersion은 Phase-1에서 정의된 기존 속성이며, Phase-3에서 release별 Spec 노드마다 값을 채운다 |"
+      },
+      {
+        "first_line": 633,
+        "last_line": 640,
+        "text": "    ### CQ4: Resolution → TS 연결\n    \n    | CQ | 필요 용어 |\n    | --- | --- |\n    | 4-1 | Resolution, references, CR, modifies, Spec |\n    | 4-2 | Spec, modifies, CR, references, Resolution |\n    | 4-3 | Meeting, Resolution, references, CR, modifies, Spec |\n    | 4-4 | WorkItem, CR, references, Resolution, modifies, Spec |"
+      },
+      {
+        "first_line": 2198,
+        "last_line": 2210,
+        "text": "    > **🔴 release-aware 전환 중**: 아래 A.1.1 P3-V01~V06은 **재설계 이전 latest-only(spec당 최신 1버전) Neo4j 적재 상태** 수치이다. release-aware 파서가 산출한 신규 baseline(spec×release)은 **A.1.3**에 있으며, Neo4j 재적재(Stage 5)는 완료되었으며(A.1.1 latest-only는 historical 보존, 현 Neo4j 실측은 release-aware-migration/migration_report.json), Qdrant 재적재는 §3.6 게이트로 보류 중이다. 현 시점 §10.2 통계 검증은 `parse_summary_release.json`을 권위로 사용한다.\n\n    ### A.1.1 latest-only 적재 baseline (재설계 이전, 교체 예정)\n\n    | ID | 항목 | 기준값 | 비고 |\n    | --- | --- | --- | --- |\n    | P3-V01 | Section 총 수 | 3,835 | 14 TS 파싱 결과 (latest-only). Phase 10/11 증분 적재 반영 (이전 3,834, +1) |\n    | P3-V02 | TSTable 총 수 | 254 | 14 TS 파싱 결과 |\n    | P3-V03 | TSFigure 총 수 | 545 | 14 TS 파싱 결과 |\n    | P3-V04 | orphan Section 수 (Section 기준) | 0 | BELONGS_TO_SPEC 누락 0건. **정의**: Spec 노드에 연결되지 않은 Section. CR의 clausesAffected 매칭 실패 건(MODIFIES_SECTION 미생성)은 P3-V05 커버리지로 별도 추적하며 \"orphan\"에 포함하지 않음. |\n    | P3-V05 | clausesAffected 커버리지 | 4,219 / 5,663 (74.5%) | Phase-1 매칭 확장 CR(P4-V04=5,663) 중 MODIFIES_SECTION 관계 있는 CR. Phase-4 구현 후 역측정 (Neo4j 실측, RAN2 전체 CR 34,622 중에서는 12.2%. 이전 4,135 / 5,545 = 74.6%는 집계, P4-V04 분모 변동 반영) |\n    | P3-V06 | Resolution→CR 커버리지 | 474 / 3,773 (12.6%) | Resolution 전체(P2 AGR+CON+WA = 3,773) 중 (:Resolution)-[:REFERENCES]->(:CR) 관계 있는 Resolution. Tdoc 전반 참조는 1,643건 (43.5%). Neo4j 재실측 (값 동일) |\n"
+      }
+    ]
+  }
+]
