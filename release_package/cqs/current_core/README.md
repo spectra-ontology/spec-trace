@@ -1,6 +1,6 @@
 # Current original Core contract index
 
-SPECTRA provides **518 verified executable contracts** within the original **560-question Core register**. Each contract connects the unchanged English question to its ontology paths, requested fields, answer types, collection rules, source evidence and reference records. The [all-560 register](../core_disposition_audit/README.md) records **518 contract-verified, 21 clarification-required, 11 unsupported by the pinned frozen data and 10 evidence-pending** questions.
+SPECTRA provides **518 verified executable contracts** within the original **560-question Core register**. Each contract connects the unchanged English question to its ontology paths, requested fields, answer types, collection rules, source evidence and reference records. The [all-560 register](../core_disposition_audit/README.md) records **518 contract-verified, 21 clarification-required, 12 unsupported by the pinned frozen data and 9 evidence-pending** questions.
 
 Start with [current_tasks.jsonl](current_tasks.jsonl). Each row selects one active immutable contract and its evidence bundle. [index_manifest.json](index_manifest.json) pins the source snapshots, current rows and historical cohorts; [all_core_dispositions.jsonl](all_core_dispositions.jsonl) preserves every original ID and its adjudication history. Ten original IDs use full-ranking-population replacements within the same register.
 
@@ -61,7 +61,7 @@ The following cohorts illustrate how the shared ontology supports source tracing
 | 19 | Comeback-flag Agreements and specification/release changes | [Contracts](../original_core_overnight_repairs19/README.md) · [Evaluation](../original_core_overnight_evaluation19/README.md) |
 | 18 | Same-population TDoc/CR comparison | [Contract](../original_core_overnight_repairs18/README.md) · [Evaluation](../original_core_overnight_evaluation18/README.md) |
 | 17 | Recorded LTM baseline membership | [Contract](../original_core_overnight_repairs17/README.md) · [Evaluation](../original_core_overnight_evaluation17/README.md) |
-| 15 | Release-attributed formal Section records | [Contract](../original_core_overnight_repairs16/README.md) · [Evaluation](../original_core_overnight_evaluation16/README.md) |
+| 16 | Release-attributed formal Section records | [Contract](../original_core_overnight_repairs16/README.md) · [Evaluation](../original_core_overnight_evaluation16/README.md) |
 | 15 | Twelve original process questions | [Contracts](../original_core_overnight_repairs15/README.md) · [Evaluation](../original_core_overnight_evaluation15/README.md) |
 
 ## Replay and interpret a contract

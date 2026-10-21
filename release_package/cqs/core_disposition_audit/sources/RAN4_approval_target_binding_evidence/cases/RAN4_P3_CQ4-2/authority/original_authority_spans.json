@@ -1,0 +1,79 @@
+{
+  "id": "RAN4_P3_CQ4-2",
+  "original_question_en": "How many resolutions approved CRs that modify spec 38.133? (decision volume for a spec).",
+  "question_sha256": "c4bb53e46e8ebb35bc1596af0b23d4138f66bf1f3e3d67215165c712d0d1cbc9",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.133'}) RETURN count(DISTINCT r) AS resolutionCount",
+  "original_query_sha256": "ec1b35eaa2ff59fe6bcd340725cf2263088230790076b5e11e591111b5b756bf",
+  "criteria": {
+    "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_A/RAN4_P3_CQ4-1/recorded_approved_pair_contract_v1/portable_evidence_v2/authority/criteria.json",
+    "bytes": 3382,
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  },
+  "sources": [
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_original_approval_vs_references_operation_authority_source_frontier_v1/Phase2_INDEX_original_design.md",
+      "bytes": 57716,
+      "sha256": "2aa9abf53a42c7dc1203f4109b8ba0162920bc2980ffadcadfcf1251daa129b1",
+      "spans": [
+        {
+          "first_line": 17,
+          "last_line": 24,
+          "text": "    ### 1.1 What is the domain?\n    \n    **3GPP RAN4 Final Report 본문에 기록된 Resolution(결의) 정보**\n    \n    RAN4 Final Report는 **Resolution 텍스트 블록**(`Agreement:`, `Conclusion:`, `Working Assumption:`)과 **Decision 패턴**(`Decision: The document was agreed.`)이 공존하는 구조를 가진다.\n    \n    - Resolution: 기술적 합의 내용 원문 (Agreement + Conclusion + Working Assumption)\n    - Decision: 문서 단위 처리 결과 — Phase-1 status와 중복이므로 Phase-2 Scope 밖"
+        },
+        {
+          "first_line": 85,
+          "last_line": 98,
+          "text": "    ### 1.7 RAN4 Phase-2 Resolution과 Decision의 관계\n    \n    RAN4 Final Report에서 **Resolution과 Decision은 서로 다른 레벨의 정보**이다:\n    \n    ```\n    [TDoc] R4-2401234 CB:#6_RRM (discussion)\n      Decision: The document was noted.     ← TDoc 단위 처리 결과 (Phase-1 status)\n      Agreement: The test tolerance...      ← 기술적 합의 내용 (Resolution 원문)\n      Agreement: For band n104, the...      ← 기술적 합의 내용 (Resolution 원문)\n    ```\n    \n    - **하나의 TDoc 논의에서 여러 Resolution이 도출**될 수 있음\n    - Decision이 `noted`여도 그 안에서 기술적 Agreement가 도출됨\n    - Phase-2는 **Resolution 텍스트 블록만 추출** (Decision은 Phase-1 status로 커버)"
+        },
+        {
+          "first_line": 208,
+          "last_line": 235,
+          "text": "    | 구분 | 포함 대상 | 비고 |\n    | --- | --- | --- |\n    | **Resolution** | Agreement, Conclusion, Working Assumption | CQ1~3, CQ6 |\n    | **Embedded Content** | Table | Resolution 완결성 위해 포함. RF 측정 테이블 다수 |\n    | **데이터 소스** | Final Report 본문 | Annex 제외 |\n    \n    ### 3.2 제외 (Out of Scope)\n    \n    | 제외 대상 | 이유 |\n    | --- | --- |\n    | `Decision:` 패턴 | Phase-1 status와 중복. Resolution이 아닌 문서 처리 결과 |\n    | Summary (Moderator) | Moderator 0건. 구조화 패턴 없음 |\n    | SessionNotes (Chair) | 0건 |\n    | Rapporteur | 구조화 어려움 |\n    | Annex (B, C, D, E, F) | 본문만 파싱 원칙 |\n    | ~~Figure~~ | **v2**: 50KB+ 구조적 필터 기반 포함으로 변경 — Appendix A [P2-V05] 참조 |\n    | ~~Chart/Equation~~ | **v2**: Chart/Equation(OMML) 포함으로 변경 — Chart 수는 Appendix A [P2-V06] 참조 |\n    | ~~contentWithEquations~~ | **v2**: 수식 포함 Resolution에 한하여 생성 |\n    | CQ4 (역할) | Moderator 0건 |\n    | CQ5 (후속 조치) | Annex 의존 |\n    \n    ### 3.3 용어 구분\n    \n    | 용어 | 정의 | 비고 |\n    | --- | --- | --- |\n    | **Resolution** | `Agreement:`/`Conclusion:`/`WA:` 시작 텍스트 블록 | 온톨로지 추출 대상 |\n    | **Decision** | `Decision: The document was ...` 한 줄 패턴 | Phase-1 status 대응. 추출 대상 아님 |\n    "
+        },
+        {
+          "first_line": 1075,
+          "last_line": 1090,
+          "text": "    | references → Tdoc | content 내 참조 | `R4-\\\\d{7}` 패턴 추출 (7자리). 실측 매칭 수: [P2-V07] |\n    | madeAt → Meeting | 문서 메타 | 파일명에서 회의 번호 추출 후 Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo → AgendaItem | 섹션 헤더 | Agenda 번호 추출. **같은 미팅 내의 AgendaItem과 매칭** (madeAt으로 결정된 Meeting의 AgendaItem) |\n    | hasTable → Table | content 내 참조 | `Table X.Y.Z-N` 패턴 → 같은 미팅 내 TBL 인스턴스 연결. 실측 매칭 수: [P2-V08] |\n    \n    > RAN4 TDoc 패턴: `R4-\\\\d{7}` (7자리)\n    \n    **references → Tdoc 매칭 실패 시 처리 규칙:**\n    \n    | 조건 | 처리 |\n    | --- | --- |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 존재 | 기존 인스턴스에 references 관계 생성 |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 없음 (다른 WG 문서 등) | references 관계 생성 안 함 + 로그 기록 |\n    \n    *참고: Resolution 본문에서 추출된 `R4-\\\\d{7}` 패턴이 Phase-1 Tdoc 인스턴스에 존재하지 않을 수 있음. 이 경우 동적 생성하지 않고 관계를 생략함*\n    "
+        }
+      ]
+    },
+    {
+      "path": "/home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN3_RAN4/RAN4_original_approval_vs_references_operation_authority_source_frontier_v1/Phase3_INDEX_original_design.md",
+      "bytes": 75023,
+      "sha256": "87c7d2293d03e7b872fbf588cc87b30413030e146ba7a1f63d4fdf9d494442a1",
+      "spans": [
+        {
+          "first_line": 17,
+          "last_line": 28,
+          "text": "    ### 1.1 What is the domain?\n    \n    **3GPP RAN4 Technical Specification(TS) 문서의 구조와 참조 관계**\n    \n    ### 1.2 For what are we going to use the ontology?\n    \n    **Phase-1~2 온톨로지를 확장**하여 다음을 지원:\n    \n    - TS 구조 탐색 — Section 계층 네비게이션\n    - TS 간 참조 분석 — 문서 간 참조 관계 파악\n    - CR → TS 연결 — CR이 어떤 TS/Section을 수정했는지 추적\n    - Resolution → TS 연결 — Resolution이 승인한 CR의 TS 수정 추적"
+        },
+        {
+          "first_line": 189,
+          "last_line": 198,
+          "text": "    ### CQ4. Resolution → TS 연결\n    \n    | # | Competency Question | 경로 |\n    | --- | --- | --- |\n    | 4-1 | 특정 Resolution이 승인한 CR이 수정한 TS는? | Resolution → CR → Spec |\n    | 4-2 | 특정 TS를 수정한 CR을 승인한 Resolution 목록은? | Spec ← CR ← Resolution |\n    | 4-3 | 특정 회의에서 승인된 CR이 수정한 TS 목록은? | Meeting → Resolution → CR → Spec |\n    | 4-4 | 특정 Work Item의 Resolution이 반영된 TS 목록은? | WorkItem → CR ← Resolution, CR → Spec |\n    \n    *CQ4 제약사항: Resolution이 CR을 references하는 경우만 (Appendix A [P3-V06] 참조)*"
+        },
+        {
+          "first_line": 235,
+          "last_line": 241,
+          "text": "    \n    | 항목 | 제약 | 비고 |\n    | --- | --- | --- |\n    | **CR → Section 직접 연결** | Appendix A [P3-V05] 참조 | clausesAffected 필드 있는 CR만 |\n    | **Resolution → CR 연결** | Appendix A [P3-V06] 참조 | Resolution이 CR을 references하는 경우만 |\n    | **TS 버전** | release-aware: **release별 final 버전** (Rel-15~19) 각각 별개 Spec 노드. 각 release final 버전을 specVersion에 기록 | release 내 intra-release draft 히스토리는 미지원 |\n    | **TS 범위** | RAN4 38.1xx 계열 (Step 3 §1.1 목록 참조) | 38.173 TR 제외 |"
+        },
+        {
+          "first_line": 384,
+          "last_line": 391,
+          "text": "    \n    ### 3.2 Phase-2 관계 - 전체 유지\n    \n    | 관계 | Domain → Range | Phase-3 CQ 사용 | 비고 |\n    | --- | --- | --- | --- |\n    | **references** | Resolution → Tdoc | ✅ CQ4 | 핵심 경로 |\n    | **madeAt** | Resolution → Meeting | ✅ CQ4 | |\n    | resolutionBelongsTo | Resolution → AgendaItem | ⚪ | 기존 유지 |"
+        },
+        {
+          "first_line": 1483,
+          "last_line": 1488,
+          "text": "    | P3-V02 | TSTable 총 수 | **13,860** | RF/EMC 측정표 |\n    | P3-V03 | TSFigure 총 수 | **861** | 시험 구성도 |\n    | P3-V04 | orphan Section 수 | **0** | BELONGS_TO_SPEC 23,410 전수 |\n    | P3-V05 | clausesAffected 커버리지 | **5,904 / 74,347** (7.94%) | CR 전체 중 clausesAffected 비어있지 않은 CR 수. 분모 74,347 = :CR 라벨 전수 (P1-V02). Phase-3 분석 초기 분모 64,689 → 재적재(+8,181) → backfill(+1,001) 누적 반영. 분자는 텍스트 속성 채워진 CR 한정으로 변동 적음. |\n    | P3-V06 | Resolution→CR 커버리지 | **3,166** edges / 1,985 Resolution, 74,347 CR | Resolution REFERENCES CR. 분모 74,347 = P1-V02 갱신 후 수치. |\n    | P3-V07 | Void Section 수 | **544** | 전체 Section의 2.32% (분모 갱신: 23,410) |"
+        }
+      ]
+    }
+  ],
+  "distinctions": [
+    "The original active verb approved and P3 Resolution-approves-CR wording require an approval-object role. No final-only or formal-cover-only condition is imposed.",
+    "P3 references-only coverage restricts the recorded graph domain. P2 defines REFERENCES as a literal body citation, not an approval relation.",
+    "P2 explicitly distinguishes technical Agreement content from document Decision/status. A Noted document may contain technical agreements; document status alone neither proves nor disproves this requested role.",
+    "A49 uses an English conjunction; its accepted joint documentary trace is a counterinterpretation, not this item's approval-agency definition."
+  ]
+}

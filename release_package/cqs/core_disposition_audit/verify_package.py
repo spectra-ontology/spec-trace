@@ -29,7 +29,7 @@ def main():
     assert summary==json.loads((HERE/'partition/summary.json').read_text())
     baseline=[json.loads(line) for line in (HERE/'baseline560_metadata.jsonl').open()]
     verified_n=sum(row['immutable_public_status']=='pass' for row in baseline)
-    assert summary['partition_counts']=={'contract_verified':verified_n,'clarification_required':21,'unsupported_frozen_data':11,'evidence_pending':560-verified_n-21-11}
+    assert summary['partition_counts']=={'contract_verified':verified_n,'clarification_required':21,'unsupported_frozen_data':12,'evidence_pending':560-verified_n-21-12}
     description=__import__('subprocess').run([sys.executable,str(HERE/'sources/conflicting_TR_description_evidence/reproduce.py')],capture_output=True,text=True,check=True)
     description_result=json.loads(description.stdout)
     assert description_result['cases_verified_n']==3 and description_result['root_secondary_seven_unit_reviews_verified_n']==3
@@ -122,6 +122,16 @@ def main():
     assert len(actual_sealed)==len(expected_sealed)==1
     candidate_copy=__import__('copy').deepcopy(actual_sealed[0])
     assert candidate_copy['evidence'].pop('inventory_sha256')==hashlib.sha256((HERE/'sources/work_item_Spec_selection_evidence'/'immutable_inventory.json').read_bytes()).hexdigest()
+    assert candidate_copy==expected_sealed[0]
+    sealed=__import__('subprocess').run([sys.executable,'-B','-I','-S',str(HERE/'sources/RAN4_approval_target_binding_evidence'/'reproduce.py')],capture_output=True,text=True,check=True)
+    sealed_result=json.loads(sealed.stdout)
+    assert sealed_result['status']=='PASS' and len(sealed_result['cases'])==1 and sealed_result['new_admissions']==0
+    completed_classifications.append(sealed_result)
+    expected_sealed=json.loads((HERE/'sources/RAN4_approval_target_binding_evidence'/'classification_candidate_records.json').read_text())
+    actual_sealed=json.loads((HERE/'unsupported_classification_candidates.json').read_text())['cases'][11:12]
+    assert len(actual_sealed)==len(expected_sealed)==1
+    candidate_copy=__import__('copy').deepcopy(actual_sealed[0])
+    assert candidate_copy['evidence'].pop('inventory_sha256')==hashlib.sha256((HERE/'sources/RAN4_approval_target_binding_evidence'/'immutable_inventory.json').read_bytes()).hexdigest()
     assert candidate_copy==expected_sealed[0]
     print(json.dumps({'verification':'PASS','files_verified':len(manifest['files_SHA256']),
         'SQLite_and_independent_set_recounts':'MATCH','conflicting_TR_description_check':description_result,'conflicting_agenda_description_check':agenda_result,'conflicting_pack_scope_check':pack_result,'conflicting_source_availability_check':availability_result,'bounded_frozen_source_loss_checks':source_loss_results,'completed_sealed_classification_checks':completed_classifications,'conditional_recent_meeting_extent':extent,'partition':summary,
