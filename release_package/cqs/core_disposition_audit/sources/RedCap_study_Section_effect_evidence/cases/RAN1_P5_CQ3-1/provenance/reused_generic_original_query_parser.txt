@@ -1,0 +1,30 @@
+def parse_original_query(cypher):
+ """Exact generic three-node path grammar, including either edge direction."""
+ ident=r'[A-Za-z_][A-Za-z0-9_]*'
+ node=r'\(('+ident+r'):('+ident+r')(?:\s*\{('+ident+r'):\s*\'([^\']*)\'\})?\)'
+ edge=r'(<-|-)[\[]:('+ident+r')\](->|-)'
+ m=re.fullmatch(r'MATCH\s+'+node+edge+node+edge+node+r'\s+RETURN\s+(.+?)\s+ORDER BY\s+('+ident+r'\.'+ident+r')',cypher)
+ assert m,'Original query outside exact generic path grammar'
+ g=m.groups();nodes=[]
+ for offset in [0,7,14]:
+  v,label,k,value=g[offset:offset+4];nodes.append({'variable':v,'label':label,'properties':{k:value} if k else {}})
+ fields=[x.strip() for x in g[18].split(',')];order=g[19]
+ aliases={x['variable']:x['label'] for x in nodes}
+ assert len(aliases)==3 and len(fields)==len(set(fields))
+ for f in fields+[order]:
+  v,k=f.split('.');assert v in aliases and re.fullmatch(ident,k)
+ relations=[];sql='SELECT '+','.join(f'{f} AS "{f}"' for f in fields)+' FROM "'+nodes[0]['label']+'" '+nodes[0]['variable']
+ params=[]
+ for i,offset in enumerate([4,11]):
+  left,kind,right=g[offset:offset+3];assert (left,right) in {('-','->'),('<-','-')}
+  av=nodes[i]['variable'];bv=nodes[i+1]['variable'];forward=left=='-'
+  first,last=('src_id','dst_id') if forward else ('dst_id','src_id')
+  src,dst=(av,bv) if forward else (bv,av)
+  relations.append({'source':src,'type':kind,'target':dst})
+  sql+=f' JOIN edge e{i} ON e{i}.{first}={av}.node_id AND e{i}.rel_type=? JOIN "{nodes[i+1]["label"]}" {bv} ON {bv}.node_id=e{i}.{last}'
+  params.append(kind)
+ where=[]
+ for n in nodes:
+  for k,v in n['properties'].items():where.append(n['variable']+'."'+k+'"=?');params.append(v)
+ sql+=' WHERE '+' AND '.join(where)+' ORDER BY '+order
+ return {'nodes':nodes,'relationships':relations,'projections':fields,'order_by':order},sql,params

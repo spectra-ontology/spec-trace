@@ -1,6 +1,6 @@
 # Current original Core contract index
 
-SPECTRA provides **521 verified executable contracts** within the original **560-question Core register**. Each contract connects the unchanged English question to its ontology paths, requested fields, answer types, collection rules, source evidence and reference records. The [all-560 register](../core_disposition_audit/README.md) records **521 contract-verified, 21 clarification-required, 14 unsupported by the pinned frozen data and 4 evidence-pending** questions.
+SPECTRA provides **521 verified executable contracts** within the original **560-question Core register**. Each contract connects the unchanged English question to its ontology paths, requested fields, answer types, collection rules, source evidence and reference records. The [all-560 register](../core_disposition_audit/README.md) records **521 contract-verified, 21 clarification-required, 15 unsupported by the pinned frozen data and 3 evidence-pending** questions.
 
 Start with [current_tasks.jsonl](current_tasks.jsonl). Each row selects one active immutable contract and its evidence bundle. [index_manifest.json](index_manifest.json) pins the source snapshots, current rows and historical cohorts; [all_core_dispositions.jsonl](all_core_dispositions.jsonl) preserves every original ID and its adjudication history. Ten original IDs use full-ranking-population replacements within the same register.
 
