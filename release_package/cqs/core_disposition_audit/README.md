@@ -6,8 +6,8 @@ SPECTRA accounts for **all 560 original Core questions** through a disjoint, sou
 | --- | ---: | --- |
 | Contract verified | 519 | Original question, typed answer contract, source witnesses, native/SQL records, two separate AI reviews and scorer checks |
 | Clarification required | 21 | Completed, conditional diagnostics identifying the input, metric or scope choice to state |
-| Unsupported by pinned frozen data | 12 | Completed checks locating the required source role and the corresponding frozen-input gap |
-| Evidence pending | 8 | Original identity and current adjudication history retained for continuing verification |
+| Unsupported by pinned frozen data | 13 | Completed checks locating the required source role and the corresponding frozen-input gap |
+| Evidence pending | 7 | Original identity and current adjudication history retained for continuing verification |
 | **Total** | **560** | [Machine-readable partition](partition/classification_overlay560.jsonl) |
 
 [current_tasks.jsonl](../current_core/current_tasks.jsonl) selects the 519 active contracts. The legacy binary index records 519 admitted and 41 nonadmitted; this overlay distinguishes the completed diagnostic classifications from checks still pending. Classification updates keep answer admission and model scores separate.
@@ -38,7 +38,7 @@ The question-first review policy derives requested meaning from the original Eng
 
 The trend diagnostics retain Resolution as the requested unit and vary normalization. Company matching is literal. The released witnesses comprise the full emitted finite diagnostic projections: 4,160 rank paths, 18,577 trend paths and 3,942 Section-to-Spec operands, with their typed section edges.
 
-The 21 clarification cases cover five metric choices, five required inputs, one result extent, three named study descriptions, one agenda description, one pack scope, two source-availability scopes, two cross-meeting agenda/technology scopes and one distinct-Spec selection rule. The 12 frozen-input cases identify a necessary recorded source role that the pinned inputs do not supply under the reviewed contract. These classifications are bounded to their stated snapshots and policies.
+The 21 clarification cases cover five metric choices, five required inputs, one result extent, three named study descriptions, one agenda description, one pack scope, two source-availability scopes, two cross-meeting agenda/technology scopes and one distinct-Spec selection rule. The 13 frozen-input cases identify a necessary recorded source role that the pinned inputs do not supply under the reviewed contract. These classifications are bounded to their stated snapshots and policies.
 
 ## Inspect a completed classification
 
@@ -58,3 +58,5 @@ For an optional full-graph comparison, [reproduce_full_sqlite.py](reproduce_full
 The full register preserves useful distinctions between a verified answer, an explicit specification choice, a bounded input dependency and verification still in progress. Earlier evidence and model outcomes remain reproducible in their original cohorts.
 
 [Approval-target tracing](sources/RAN4_approval_target_binding_evidence/) connects the original 38.133 Resolution-count question to its complete 216-member recorded frontier, operative source evidence and successful count-level recovery alternatives. Its sealed classification preserves the original query and both semantic reviews.
+
+[NR-U study-to-section tracing](sources/NRU_new_section_role_evidence/) preserves original study, implementation CR and release-aware section identities, including source-specific new-clause evidence and the exact original question.
