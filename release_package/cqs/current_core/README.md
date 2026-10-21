@@ -1,8 +1,10 @@
 # Current original Core contract index
 
-SPECTRA provides **520 verified executable contracts** within the original **560-question Core register**. Each contract connects the unchanged English question to its ontology paths, requested fields, answer types, collection rules, source evidence and reference records. The [all-560 register](../core_disposition_audit/README.md) records **520 contract-verified, 21 clarification-required, 14 unsupported by the pinned frozen data and 5 evidence-pending** questions.
+SPECTRA provides **521 verified executable contracts** within the original **560-question Core register**. Each contract connects the unchanged English question to its ontology paths, requested fields, answer types, collection rules, source evidence and reference records. The [all-560 register](../core_disposition_audit/README.md) records **521 contract-verified, 21 clarification-required, 14 unsupported by the pinned frozen data and 4 evidence-pending** questions.
 
 Start with [current_tasks.jsonl](current_tasks.jsonl). Each row selects one active immutable contract and its evidence bundle. [index_manifest.json](index_manifest.json) pins the source snapshots, current rows and historical cohorts; [all_core_dispositions.jsonl](all_core_dispositions.jsonl) preserves every original ID and its adjudication history. Ten original IDs use full-ranking-population replacements within the same register.
+
+The latest [source-grounded Agreement activity count](../original_core_overnight_repairs50/README.md) connects technical Agreement acts, directly referenced CRs and TS38.214 targets to one complete integer answer. All 407 Agreements in the original referenced-CR population are traced through 35 meeting reports and 21 current CR/proposal originals; the retained-field query, independent SQL and complete native membership agree on 368 qualifying Agreements. Two separate fixed-seven-unit AI reviews, seven generic typed controls and ten scalar controls reproduce source identity, same-object adoption and distinct counting. Its [saved four-method evaluation](../original_core_overnight_evaluation50/README.md) preserves actual first responses, model-visible contracts and strict complete-record scores. Both structured first responses return 407 by counting the REFERENCES/MODIFIES paths. The source-grounded contract establishes 368 Agreements with current adoption of the same referenced CR or a concrete component of its current amendment. The 39-Agreement difference makes reference identity, adoption acts and exact aggregation directly auditable through the source ledger and executable membership/count contracts.
 
 The latest [decision-linked CR change review](../original_core_overnight_repairs49/README.md) connects current technical Agreement adoption to five complete CR identifier, reason and summary records. All 34 earlier CR originals, 68 cover fields and 110 same-event technical Agreement acts establish the complete selection frontier and eight adopted-change objects. Native/SQL equality, two separate fixed-seven-unit AI reviews, 43 source-child controls and 15 generic controls reproduce source roles, ascending selection and complete metadata; overlapping control scopes remain explicit. The retained projection contains 1,905 Agreements and 12,300 eligible CRs, with 15 diagnostic native records and the selected five preserved. Its [saved four-method evaluation](../original_core_overnight_evaluation49/README.md) retains all five actual first responses and their strict complete-record scores.
 
@@ -34,6 +36,7 @@ The following cohorts illustrate how the shared ontology supports source tracing
 
 | Cohort | Executable process task | Contract and saved evaluation |
 | --- | --- | --- |
+| 50 | Source-grounded Agreement adoption and exact activity count | [Contract](../original_core_overnight_repairs50/README.md) · [Evaluation](../original_core_overnight_evaluation50/README.md) |
 | 49 | Current Agreement adoption and complete CR change records | [Contract](../original_core_overnight_repairs49/README.md) · [Evaluation](../original_core_overnight_evaluation49/README.md) |
 | 48 | Source-certified cross-spec fields and joint count/sample answer | [Contract](../original_core_overnight_repairs48/README.md) · [Evaluation](../original_core_overnight_evaluation48/README.md) |
 | 47 | Source-defined CR census and exact requested count | [Contract](../original_core_overnight_repairs47/README.md) · [Evaluation](../original_core_overnight_evaluation47/README.md) |
@@ -78,7 +81,7 @@ Run from the repository root with Python 3:
 python3 -B -I release_package/cqs/verify_current_release.py
 ```
 
-The launcher checks the current index, the complete disposition register and saved evaluations 23–49. It needs no credentials or database execution. Individual cohort READMEs provide their standalone replay commands and evidence inventories.
+The launcher checks the current index, the complete disposition register and saved evaluations 23–50. It needs no credentials or database execution. Individual cohort READMEs provide their standalone replay commands and evidence inventories.
 
 Contract verification combines the original question and preserved design context, two separate nonblind AI semantic reviews, source witnesses, complete captured native records, independent SQL agreement and scorer controls. Review provenance records human/expert review n=0. Each pinned bundle states its exact source population and requested answer roles. Recorded references, CR targets and source decision roles are evaluated according to that item’s contract.
 
