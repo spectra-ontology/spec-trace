@@ -1,0 +1,32 @@
+{
+  "id": "RAN2_P3_CQ4-3",
+  "wg": "RAN2",
+  "query_sha256": "95b0a8f8caa22a2c7f4ea2ea01177e9eadb4cae1cbf7483e35194b3358397e44",
+  "query": "MATCH (r:Resolution)-[:REFERENCES]->(cr:CR)\nWHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> ''\nMATCH (cr)-[:MODIFIES]->(sp:Spec)\nWITH r, cr, sp, split(coalesce(r.content, ''), '\\n') AS lines\nWITH r, cr, sp, lines,\n  [i IN range(0, size(lines)-1) WHERE\n    (i > 0 AND trim(lines[i]) =~ '(?i)Proposal\\\\s+[0-9]+([.\\\\s:\\\\[\\\\-].*)?') OR\n    (trim(lines[i]) =~ 'R2-[0-9]{7}\\\\t.*' AND NOT (\n      coalesce(last([p IN lines[0..i] WHERE trim(p) <> '']), '') =~ '(?i).*\\\\bCRs?\\\\s*' AND\n      coalesce(head([p IN lines[i+1..] WHERE trim(p) <> '']), '') =~ '(?i)(can|are|is)\\\\b.*'))\n  ] AS boundaries,\n  [i IN range(0, size(lines)-1) WHERE trim(lines[i]) =~ 'R2-[0-9]{7}\\\\t.*'] AS headers\nWITH r, cr, sp, lines, headers,\n  lines[0..coalesce(head(boundaries), size(lines))] AS ownLines,\n  head(headers) AS firstHeader\nWITH r, cr, sp, lines, ownLines, firstHeader,\n  CASE WHEN firstHeader IS NULL THEN [] ELSE split(trim(lines[firstHeader]), '\\t') END AS firstCells,\n  [token IN split(toLower(replace(replace(replace(replace(replace(\n    reduce(s = '', p IN ownLines | s + ' ' + p), '(', ' '), ')', ' '), ',', ' '), '.', ' '), ':', ' ')), ' ')\n    WHERE token =~ 'case-[0-9]+'] AS ownCaseTokens\nWITH r, cr, sp, lines, ownLines, firstHeader, firstCells, ownCaseTokens,\n  [i IN range(0, size(lines)-1) WHERE toLower(lines[i]) STARTS WITH 'scope:'\n    AND any(token IN ownCaseTokens WHERE toLower(lines[i]) CONTAINS\n      'taking the conclusion for ' + token + ' into account')] AS ownConclusionScopes\nWHERE\n  any(line IN ownLines WHERE line =~ '(?s).*(?<![A-Za-z0-9])' + cr.tdocNumber + '(?![0-9]).*')\n  OR (firstHeader IS NOT NULL\n      AND none(i IN range(1, firstHeader-1) WHERE trim(lines[i]) =~ '(?i)Proposal\\\\s+[0-9]+([.\\\\s:\\\\[\\\\-].*)?')\n      AND size(firstCells) >= 4 AND toLower(firstCells[3]) IN ['cr', 'draftcr', 'pcr']\n      AND cr.title = firstCells[1])\n  OR coalesce(any(scope IN ownConclusionScopes WHERE cr.title =\n      split(trim(lines[head([j IN range(scope+1, size(lines)-1)\n        WHERE trim(lines[j]) =~ 'R2-[0-9]{7}\\\\t.*'\n          AND size(split(trim(lines[j]), '\\t')) >= 4\n          AND toLower(split(trim(lines[j]), '\\t')[3]) IN ['cr', 'draftcr', 'pcr']])]), '\\t')[1]), false)\nRETURN r.resolutionId, cr.tdocNumber, cr.clausesAffected, sp.specNumber\nORDER BY r.resolutionId, cr.tdocNumber, sp.specNumber\nLIMIT 10\n",
+  "started_utc": "2026-10-21T03:59:39.433127+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN2_P3_CQ4-3/95b0a8f8caa22a2c7f4ea2ea01177e9eadb4cae1cbf7483e35194b3358397e44.jsonl",
+  "columns": [
+    "r.resolutionId",
+    "cr.tdocNumber",
+    "cr.clausesAffected",
+    "sp.specNumber"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 10,
+  "bytes_retained": 695,
+  "rows_sha256": "ce3be28ac0941cbb65cebf4308da9764218133835f302393bfc15aded95fdd3f",
+  "finished_utc": "2026-10-21T03:59:40.568912+00:00",
+  "elapsed_s": 1.1358,
+  "full_rows_available": true
+}
