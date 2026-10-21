@@ -1,0 +1,9 @@
+{
+  "status": "INTEGRATION_FIX_BEFORE_PUBLICATION",
+  "reason": "Same permanent audit hook isolation as preflight; preserve source validator and run it fully in a child.",
+  "before_sha256": "a95493312b5aa812b3d14c31460022c88da59231b12bad27fe79a2b71b3fabaf",
+  "after_sha256": "c8100ee7a90c2dea7f086b2f27a305c506aad3fc9466c1d572d85452180eda8c",
+  "diff": "--- \n+++ \n@@ -121,11 +121,13 @@\n             raise ValueError('saved evidence invariant failed')\n     if not sha(bundle / 'manifest.json') == manifest['bundle_manifest_sha256']:\n         raise ValueError('saved evidence invariant failed')\n-    sys.path.insert(0, str(bundle))\n-    spec = importlib.util.spec_from_file_location('authorized_incremental40_public_contract_verify', bundle / 'verify_additions.py')\n-    validator = importlib.util.module_from_spec(spec)\n-    spec.loader.exec_module(validator)\n-    proof = validator.verify(bundle)\n+    import subprocess\n+    checked = subprocess.run([sys.executable, '-B', '-I', '-S',\n+        str(bundle/'verify_additions.py'), '--bundle', str(bundle)],\n+        capture_output=True, text=True, timeout=240)\n+    if checked.returncode:\n+        raise ValueError('Isolated full contract verification failed: '+checked.stderr[-3000:])\n+    proof = json.loads(checked.stdout)\n     if not (proof['status'] == 'PASS' and proof['local_validated_n'] == proof['candidate_n'] == 1 and (proof['new_public_admissions'] == 0)):\n         raise ValueError('saved evidence invariant failed')\n     tasks = unique(rows(bundle / 'tasks.jsonl'))\n",
+  "scientific_trial_or_source_bundle_changed": false,
+  "API_calls": 0
+}

@@ -1,0 +1,39 @@
+{
+  "id": "RAN1_P2_CQ2-3",
+  "question_en": "List the agreements at meeting RAN1#115 that approved a CR (tracing spec-change decisions).",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumber: 'RAN1#115'}) WHERE a.content CONTAINS 'CR' AND (a.content CONTAINS 'agreed' OR a.content CONTAINS 'approved') RETURN a.resolutionId, a.content ORDER BY a.sequence, a.resolutionId LIMIT 15",
+  "reference_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumber: 'RAN1#115'})\nWHERE (a.content CONTAINS 'CR' AND (a.content CONTAINS 'agreed' OR a.content CONTAINS 'approved'))\n   OR (a.content =~ '(?is).*\\\\b(?:agree(?:d)?|approv(?:ed|e)|endors(?:ed|e)|adopt(?:ed)?|adapt(?:ed)?)\\\\b.*'\n       AND a.content =~ '(?is).*\\\\b(?:TPs?|text\\\\s+proposals?)\\\\b.*'\n       AND (a.content =~ '(?is).*\\\\bTS\\\\s*\\\\d{2}\\\\.\\\\d{3}\\\\b.*'\n            OR a.content =~ '(?is).*\\\\b(?:TPs?|text\\\\s+proposals?)\\\\s+\\\\d+(?:\\\\.\\\\d+)*(?:-\\\\d+)?(?:\\\\s*\\\\([^)]*\\\\))?.*\\\\bsection\\\\s+\\\\d+(?:\\\\.\\\\d+)+.*\\\\bR1-\\\\d{7}\\\\b.*'))\nRETURN a.resolutionId, a.content\nORDER BY a.sequence, a.resolutionId\nLIMIT 15",
+  "required_fields": [
+    {
+      "name": "a.resolutionId",
+      "type": "string",
+      "nullable": false,
+      "role": "distinct identity of an Agreement at RAN1#115 approving an actual CR proposal, including draft/proposed or inline/named CR-form proposals and explicit amendments",
+      "source_column_or_expression": "a.resolutionId"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 15,
+    "source_order_keys": [
+      {
+        "source_column": "__source_order_sequence",
+        "direction": "asc"
+      },
+      {
+        "source_column": "a.resolutionId",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": false
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 15,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}

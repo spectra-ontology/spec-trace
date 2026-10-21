@@ -1,0 +1,12 @@
+{
+  "status": "ISOLATED_VALIDATOR_BEFORE_FIRST_PREDICTION",
+  "previous_failure": "Permanent offline audit hook escaped its intended bundle scope when imported into controller. Failure preserved before run.mkdir and before paid calls.",
+  "before_sha256": "871b74d72aa85a0600ffa1d09d08f1a401575defbfca923327e0ee42adc4a6d4",
+  "after_sha256": "037946895552710b62eb5e2322f7cf25bacd08e449c4bb00a82fda6eb3d93ed6",
+  "diff": "--- \n+++ \n@@ -81,11 +81,13 @@\n     memory = available_memory()\n     if memory < RESERVE_BYTES + 1024**3:\n         raise RuntimeError('Cannot retain 26GiB host reserve plus retrieval-worker allowance')\n-    sys.path.insert(0,str(bundle))\n-    spec = importlib.util.spec_from_file_location('authorized_incremental40_bundle_validator', bundle/'verify_additions.py')\n-    validator = importlib.util.module_from_spec(spec)\n-    spec.loader.exec_module(validator)\n-    proof = validator.verify(bundle)\n+    import subprocess\n+    child = subprocess.run([sys.executable, '-B', '-I', '-S',\n+        str(bundle/'verify_additions.py'), '--bundle', str(bundle)],\n+        capture_output=True, text=True, timeout=240)\n+    if child.returncode:\n+        raise RuntimeError('Isolated full offline validator failed: '+child.stderr[-3000:])\n+    proof = json.loads(child.stdout)\n     if proof.get('status') != 'PASS' or proof.get('local_validated_n') != 1 or proof.get('candidate_n') != 1 or proof.get('new_public_admissions') != 0:\n         raise ValueError('Need full offline 2-review/native/SQL/scorer validation before model calls')\n     groups = sorted({t['id'].split('_')[0] for t in tasks})\n",
+  "identical_validator_executed_in_child": true,
+  "validator_and_bundle_modified": false,
+  "model_adapter_prompt_token_retry_parser_scorer_changed": false,
+  "new_API_calls": 0,
+  "failed_attempt_preserved": true
+}

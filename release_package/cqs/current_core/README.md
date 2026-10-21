@@ -1,10 +1,12 @@
 # Current original Core contract index
 
-SPECTRA provides **510 verified executable contracts** within the original **560-question Core register**. Each contract connects the unchanged English question to its ontology paths, requested fields, answer types, collection rules, source evidence and reference records. The [all-560 register](../core_disposition_audit/README.md) records **510 contract-verified, 21 clarification-required, 11 unsupported by the pinned frozen data and 18 evidence-pending** questions.
+SPECTRA provides **511 verified executable contracts** within the original **560-question Core register**. Each contract connects the unchanged English question to its ontology paths, requested fields, answer types, collection rules, source evidence and reference records. The [all-560 register](../core_disposition_audit/README.md) records **511 contract-verified, 21 clarification-required, 11 unsupported by the pinned frozen data and 17 evidence-pending** questions.
 
 Start with [current_tasks.jsonl](current_tasks.jsonl). Each row selects one active immutable contract and its evidence bundle. [index_manifest.json](index_manifest.json) pins the source snapshots, current rows and historical cohorts; [all_core_dispositions.jsonl](all_core_dispositions.jsonl) preserves every original ID and its adjudication history. Ten original IDs use full-ranking-population replacements within the same register.
 
-The latest [decision-to-standard trace](../original_core_overnight_repairs39/README.md) links Resolution, CR and Specification records to ten requested Specification identities. The complete 34-Spec selection frontier, ten own active agreed-CR witnesses, full two-column native output, independent SQL agreement, two separate AI reviews and 23 controls support the contract. The [first four-method evaluation](../original_core_overnight_evaluation39/README.md) preserves all five first responses and reports complete-record F1 of 0.4545 for both structured-query methods and 0 for both retrieval methods.
+The latest [CR-proposal approval trace](../original_core_overnight_repairs40/README.md) reproduces fifteen Agreement identities at RAN1#115 under the original sequence/identity selection. The complete unfiltered prefix of 44 records, an additional 55-role original-source comparison, both native output columns, independent SQL agreement, two separate AI reviews and fourteen controls support the contract. Its [first four-method evaluation](../original_core_overnight_evaluation40/README.md) preserves all five first responses: Cypher recovers one of the fifteen requested identities, SQL three, and both retrieval methods abstain. The benchmark makes the approval role and selection extent inspectable from the retained source evidence.
+
+The [decision-to-standard trace](../original_core_overnight_repairs39/README.md) links Resolution, CR and Specification records to ten requested Specification identities. The complete 34-Spec selection frontier, ten own active agreed-CR witnesses, full two-column native output, independent SQL agreement, two separate AI reviews and 23 controls support the contract. The [first four-method evaluation](../original_core_overnight_evaluation39/README.md) preserves all five first responses and reports complete-record F1 of 0.4545 for both structured-query methods and 0 for both retrieval methods.
 
 The [documentary company-contribution trend](../original_core_overnight_repairs38/README.md) connects meeting decisions, TDoc references and submitting companies across 58 meetings. Its 52 returned meeting records retain the original contribution percentages and numeric meeting-order tie groups. Original-source replay, independent SQL/native equality across all five execution columns, two separate AI reviews and 37 controls support the contract. The [first four-method evaluation](../original_core_overnight_evaluation38/README.md) preserves all five first responses, method outcomes and complete-record scoring.
 
@@ -14,6 +16,7 @@ The following cohorts illustrate how the shared ontology supports source tracing
 
 | Cohort | Executable process task | Contract and saved evaluation |
 | --- | --- | --- |
+| 40 | Source-verified CR-proposal approval Agreements | [Contract](../original_core_overnight_repairs40/README.md) · [Evaluation](../original_core_overnight_evaluation40/README.md) |
 | 39 | Resolution–CR–Specification decision traces | [Contract](../original_core_overnight_repairs39/README.md) · [Evaluation](../original_core_overnight_evaluation39/README.md) |
 | 38 | Documentary company-contribution trends across meetings | [Contract](../original_core_overnight_repairs38/README.md) · [Evaluation](../original_core_overnight_evaluation38/README.md) |
 | 37 | Work Item company rankings and nested boundary ties | [Contract](../original_core_overnight_repairs_auth37/README.md) · [Evaluation](../original_core_overnight_evaluation_auth37/README.md) |
@@ -48,7 +51,7 @@ Run from the repository root with Python 3:
 python3 -B -I release_package/cqs/verify_current_release.py
 ```
 
-The launcher checks the current index, the complete disposition register and saved evaluations 23–39. It needs no credentials or database execution. Individual cohort READMEs provide their standalone replay commands and evidence inventories.
+The launcher checks the current index, the complete disposition register and saved evaluations 23–40. It needs no credentials or database execution. Individual cohort READMEs provide their standalone replay commands and evidence inventories.
 
 Contract verification combines the original question and preserved design context, two separate nonblind AI semantic reviews, source witnesses, complete captured native records, independent SQL agreement and scorer controls. Review provenance records human/expert review n=0. Each pinned bundle states its exact source population and requested answer roles. Recorded references, CR targets and source decision roles are evaluated according to that item’s contract.
 
@@ -58,4 +61,4 @@ Saved evaluations preserve every first-response outcome, including errors and ab
 
 Immutable bundles retain earlier definitions, source counterexamples, model results and local preparation declarations. Current admission is established by this index and its pinned verification evidence. The [source factuality registry](../original_core_overnight_repairs15/source_factuality/quarantines.json) records four historical reassessments: three original IDs remain outside the verified set, and RAN5_P1_CQ6-3 has a separate verified same-population contract in cohort 18. Their complete evidence remains linked from the [all-560 register](../core_disposition_audit/README.md).
 
-The [review evidence archive](review_evidence.tar.gz), [Core402 archive](latest_additions.tar.gz) and [observed-trend archive](observed_trend.tar.gz) preserve the 400-, 402- and 404-contract snapshots. Use the current Git checkout and index for the 510 active contracts. Publication and anonymous-download verification are recorded separately from local preparation.
+The [review evidence archive](review_evidence.tar.gz), [Core402 archive](latest_additions.tar.gz) and [observed-trend archive](observed_trend.tar.gz) preserve the 400-, 402- and 404-contract snapshots. Use the current Git checkout and index for the 511 active contracts. Publication and anonymous-download verification are recorded separately from local preparation.
