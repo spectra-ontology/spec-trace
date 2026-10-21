@@ -1,0 +1,51 @@
+{
+  "id": "RAN1_P4_CQ2-3",
+  "question_en": "How many CRs list TS 38.214 as a cross-spec impact target, and which are representative?",
+  "original_query": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec {specNumber: '38.214'}) WITH sp, collect(cr.tdocNumber) AS crList, count(cr) AS crCount RETURN sp.specNumber, crCount, crList[..10] AS sampleCRs",
+  "reference_query": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec {specNumber: '38.214'}) WHERE NOT (toLower(coalesce(cr.reasonForChange, '')) CONTAINS 'other core') WITH sp, collect(cr.tdocNumber) AS crList, count(cr) AS crCount RETURN sp.specNumber, crCount, crList[..10] AS sampleCRs",
+  "required_fields": [
+    {
+      "name": "specNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "sp.specNumber",
+      "role": "requested target specification anchor"
+    },
+    {
+      "name": "crCount",
+      "type": "integer",
+      "nullable": false,
+      "source_column_or_expression": "crCount",
+      "role": "requested incoming path count"
+    },
+    {
+      "name": "sampleCRs",
+      "type": "json",
+      "nullable": false,
+      "source_column_or_expression": "sampleCRs",
+      "json_schema": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "nested_array_semantics": {
+        "$": "multiset"
+      },
+      "role": "requested unordered representative CR identifiers"
+    }
+  ],
+  "collection": {
+    "kind": "one_record_with_unordered_sample",
+    "value": 10,
+    "tie_policy": "any_distinct_members_of_complete_pool",
+    "within_tie_order": "any",
+    "require_rank_order": false
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 1
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}

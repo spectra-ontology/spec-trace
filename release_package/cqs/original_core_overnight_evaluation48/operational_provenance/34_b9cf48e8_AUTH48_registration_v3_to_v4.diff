@@ -1,0 +1,23 @@
+--- register_and_prepare_AUTH48_v3.py
++++ register_and_prepare_AUTH48_v4.py
+@@ -53,6 +53,7 @@
+     parser.add_argument('--bundle', type=Path, required=True)
+     parser.add_argument('--proof', type=Path, required=True)
+     parser.add_argument('--expected-baseline', type=int, required=True)
++    parser.add_argument('--credit-observation', type=Path, required=True)
+     args = parser.parse_args()
+     bundle, proof_path = args.bundle.absolute(), args.proof.absolute()
+     require(not NEW.exists(), 'Preserve previous registration')
+@@ -67,8 +68,11 @@
+     tasks = [json.loads(line) for line in (bundle / 'tasks.jsonl').read_bytes().splitlines() if line.strip()]
+     require({row['id']: row['repair_sha256'] for row in tasks} == EXPECTED, 'Exact original-question task')
+     require(sha(bundle / 'criteria.json') == 'bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4', 'Original criteria unchanged')
+-    credit_path = PREP / 'actual_credit_and_model_price_before_registration.json'
++    credit_path = args.credit_observation.absolute()
++    require(credit_path.is_file() and not credit_path.is_symlink(), 'Actual private credit observation')
++    require((credit_path.stat().st_mode & 0o777) == 0o600, 'Credit observation private0600')
+     credit = load(credit_path)
++    require(credit['model']['id'] == 'anthropic/claude-opus-4.8' and credit['new_paid_calls'] == 0, 'Fresh free observation of the unchanged model')
+     available = min(Decimal(credit['account_remaining_credit_usd']), Decimal(str(credit['key']['limit_remaining']))) - Decimal('5')
+     require(available >= Decimal('1'), 'Account and key USD5 floor plus this cohortUSD1 cap')
+     prices = credit['model']['pricing']
