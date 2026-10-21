@@ -1,0 +1,49 @@
+{
+  "id": "RAN2_P4_CQ4-2",
+  "question_en": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+  "original_query": "MATCH (a:Agreement)-[:REFERENCES]->(c:CR) WHERE c.reasonForChange IS NOT NULL WITH DISTINCT c ORDER BY c.tdocNumber LIMIT 5 RETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason, c.summaryOfChange AS summary",
+  "reference_query": "MATCH (a:Agreement)-[:REFERENCES]->(c:CR) WHERE c.reasonForChange IS NOT NULL WITH DISTINCT c ORDER BY c.tdocNumber LIMIT 5 RETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason, c.summaryOfChange AS summary",
+  "required_fields": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "role": "CR record identity associating each requested change reason with its own summary",
+      "source_column_or_expression": "c.tdocNumber"
+    },
+    {
+      "name": "reason",
+      "type": "string",
+      "nullable": false,
+      "role": "The requested CR change-reason source metadata field, not an identity-only substitute",
+      "source_column_or_expression": "c.reasonForChange"
+    },
+    {
+      "name": "summary",
+      "type": "string",
+      "nullable": false,
+      "role": "The requested CR summary-of-change source metadata field",
+      "source_column_or_expression": "c.summaryOfChange"
+    }
+  ],
+  "collection": {
+    "kind": "top_k_boundary_ties",
+    "value": 5,
+    "source_order_keys": [
+      {
+        "source_column": "tdocNumber",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": false
+  },
+  "cardinality_policy": {
+    "mode": "top_k",
+    "value": 5,
+    "tie_policy": "any_subset_at_boundary"
+  },
+  "repair_class": "scorer_only",
+  "original_question_preserved": true
+}

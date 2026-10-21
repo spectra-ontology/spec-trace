@@ -4,13 +4,13 @@ SPECTRA accounts for **all 560 original Core questions** through a disjoint, sou
 
 | Classification | Questions | Evidence recorded |
 | --- | ---: | --- |
-| Contract verified | 511 | Original question, typed answer contract, source witnesses, native/SQL records, two separate AI reviews and scorer checks |
+| Contract verified | 512 | Original question, typed answer contract, source witnesses, native/SQL records, two separate AI reviews and scorer checks |
 | Clarification required | 21 | Completed, conditional diagnostics identifying the input, metric or scope choice to state |
 | Unsupported by pinned frozen data | 11 | Completed checks locating the required source role and the corresponding frozen-input gap |
-| Evidence pending | 17 | Original identity and current adjudication history retained for continuing verification |
+| Evidence pending | 16 | Original identity and current adjudication history retained for continuing verification |
 | **Total** | **560** | [Machine-readable partition](partition/classification_overlay560.jsonl) |
 
-[current_tasks.jsonl](../current_core/current_tasks.jsonl) selects the 511 active contracts. The legacy binary index records 511 admitted and 49 nonadmitted; this overlay distinguishes the completed diagnostic classifications from checks still pending. Classification updates keep answer admission and model scores separate.
+[current_tasks.jsonl](../current_core/current_tasks.jsonl) selects the 512 active contracts. The legacy binary index records 512 admitted and 48 nonadmitted; this overlay distinguishes the completed diagnostic classifications from checks still pending. Classification updates keep answer admission and model scores separate.
 
 ## Reproduce the register
 

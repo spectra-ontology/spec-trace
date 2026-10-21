@@ -1,0 +1,87 @@
+{
+  "id": "RAN2_P4_CQ4-2",
+  "reviewer": "/root",
+  "reviewer_kind": "nonblind_AI_independent_secondary",
+  "status": "pass",
+  "repair_sha256": "ea553590c21a113107322044a7c6bbc7647a9f16a638b5923767316feb5b10b8",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "question_en": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+  "semantic_evidence": [
+    {
+      "unit": "requested answer roles and fields",
+      "status": "pass",
+      "original_quote": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+      "query_clauses": [
+        "RETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason, c.summaryOfChange AS summary"
+      ],
+      "finding": "The original requests both substantive metadata fields for CRs. A CR identifier binds each reason to its own summary. All ten fields for the selected five were directly reread from original binary piece tables or original OOXML, with only whitespace normalization. Identity-only predictions cannot satisfy the three-field record."
+    },
+    {
+      "unit": "population and source context",
+      "status": "pass",
+      "original_quote": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(c:CR)",
+        "WHERE c.reasonForChange IS NOT NULL"
+      ],
+      "finding": "The original P4 design explicitly extends a subset of existing P1 CRs from the RP-input documents (section6.1), and makes these captured reason/summary fields CQ-visible (section2.3). This supports the authored captured-metadata gate without treating all 7023 metadata-null pre-cutoff records as source-empty. The fixed 104 metadata prefix and 374 captured-reference prefix are distinct; their intersection is the original five."
+    },
+    {
+      "unit": "filters and relationship meaning",
+      "status": "pass",
+      "original_quote": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+      "query_clauses": [
+        "MATCH (a:Agreement)-[:REFERENCES]->(c:CR)"
+      ],
+      "finding": "REFERENCES alone is documentary and cannot universally mean approval. For the actual returned five, report101 CP660156 explicitly Agreed in3854 closes its weak immediate revision/future-update mention; CP569069/580610 closes4120; report102 CP1124692 Agreed in9043 closes Intended outcome; report103 CP277088/275105 directly Agreed closes1636/2116. Original P2 keeps body/subheading and original P4 CQ explicitly uses that link. These finite source witnesses support the selected CR identities, without certifying all162 candidate paths or TSG incorporation."
+    },
+    {
+      "unit": "counting unit and join multiplicity",
+      "status": "pass",
+      "original_quote": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+      "query_clauses": [
+        "WITH DISTINCT c"
+      ],
+      "finding": "The English asks for CR reason/summary records; the original DISTINCT c precedes ranking. Independent SQL EXISTS preserves one record per CR despite repeated documentary references. All162 candidate identities are distinct, so no duplicate-ID collision or join-path weighting changes the first five."
+    },
+    {
+      "unit": "cardinality and completeness",
+      "status": "pass",
+      "original_quote": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+      "query_clauses": [
+        "WHERE c.reasonForChange IS NOT NULL",
+        "ORDER BY c.tdocNumber",
+        "LIMIT 5"
+      ],
+      "finding": "The original per-item authored query defines five records within the fixed P4 captured source-property population. The full pre-cutoff7127 and metadata104 inventories expose the filter dependency; the retained3413 Agreement content/note scan finds exactly the same five104-target mentions and no hidden earlier additional mention. All five selected approval roles and both non-null metadata fields were checked, rather than extrapolating approval to the full162 diagnostic population."
+    },
+    {
+      "unit": "ordering and ties when requested",
+      "status": "pass",
+      "original_quote": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+      "query_clauses": [
+        "ORDER BY c.tdocNumber",
+        "LIMIT 5"
+      ],
+      "finding": "Use the exact item-specific tdoc ASC five selection in preference to generic list defaults. The actual candidate identities are unique, with four below the fifth and one at its boundary. The English requests records without a ranked serialization requirement, so reversing all five complete records must preserve credit; changing membership must fail."
+    },
+    {
+      "unit": "unverified additional inputs or external interpretation",
+      "status": "pass",
+      "original_quote": "Return the change reasons and summaries of CRs approved by agreements (approved-change review).",
+      "query_clauses": [
+        "c.reasonForChange",
+        "c.summaryOfChange"
+      ],
+      "finding": "Original P4 specifies source-field text extraction and separately excludes normative Track Changes blocks from this graph task. R2-1803854 literal summary retains the struck phrase to be transmitted alongside built; that active-edited alternative is explicit provenance, not silently promoted into a final normative sentence. The original byte-exact query uses no injected IDs/source values and is a captured archival metadata review. No global source enrichment, final ratification or source-world completeness is asserted."
+    }
+  ],
+  "nonblind": true,
+  "human_expert_n": 0,
+  "expert_review_n": 0,
+  "ROOT_seal": false,
+  "native_pending": true,
+  "source_replay": "actual_ROOT_fresh_eight_archives_ten_fields_replay_v1.json",
+  "strongest_counterreading": "original_minimum_contract_and_strongest_counterreadings_v1.json",
+  "review_does_not_certify_full162_source_approval": true
+}

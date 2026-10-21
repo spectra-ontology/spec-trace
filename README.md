@@ -7,7 +7,7 @@ meeting reports, and specification metadata available to executable queries.
 
 The released snapshot contains **966,859 nodes, 4,908,850 relationships, and
 12,931,842 RDF triples**. SpectraCQ supplies **624 released questions** with
-executable references, including a **560-question Core register** and **511
+executable references, including a **560-question Core register** and **512
 audited original-question contracts**. The [counts manifest](release_package/MANIFEST.md)
 links dataset totals to their artifacts and measurement procedures.
 
@@ -30,18 +30,21 @@ decision trace links 2,351 recorded paths to ten requested Specification
 identities; and a CR-approval query reproduces fifteen Agreement identities
 from an original-source-checked selection prefix. The current index connects
 these tasks to their full reference records, source witnesses, independent
-SQL/native comparisons and saved four-method evaluations.
+SQL/native comparisons and saved four-method evaluations. The approved-change
+metadata case links five CR identifiers to complete reasons and summaries, with
+eight original source archives, ten cover fields and a
+[saved four-method replay](release_package/cqs/original_core_overnight_evaluation41/README.md).
 
 ## Start with the current benchmark
 
 Use [current_tasks.jsonl](release_package/cqs/current_core/current_tasks.jsonl)
-to select the 511 current contracts and their pinned evidence bundles. The
+to select the 512 current contracts and their pinned evidence bundles. The
 [index manifest](release_package/cqs/current_core/index_manifest.json) connects
 the active definitions to their original repair and evaluation cohorts.
 
 The [all-560 disposition register](release_package/cqs/core_disposition_audit/README.md)
-accounts for every original Core ID: **511 contract-verified, 21 requiring
-clarification, 11 unsupported by the pinned frozen data, and 17 awaiting completed
+accounts for every original Core ID: **512 contract-verified, 21 requiring
+clarification, 11 unsupported by the pinned frozen data, and 16 awaiting completed
 evidence checks**. Historical definitions and results remain available alongside
 the current register.
 
@@ -73,7 +76,7 @@ records for all three questions. The twelve-question cohort has exact outputs
 on five questions for Cypher and four for SQL. Every method retains all cohort
 items in its denominator, including errors and abstentions. The linked packages
 provide the actual prompts, source access, reference contracts, first responses,
-and score replays. These are cohort results; the 511-contract index records
+and score replays. These are cohort results; the 512-contract index records
 benchmark definitions and their evidence.
 
 ## Get the data
@@ -82,8 +85,9 @@ The Git repository includes the ontology, benchmark, metadata-only process graph
 construction code and retained evaluation inputs and outputs. The five larger
 `RAN{1..5}-body.ttl` graphs are distributed separately in the
 [archived release](https://doi.org/10.5281/zenodo.21504833), version 2.0.0.
-The [body-graph inventory](release_package/kg/per_wg/README.md) explains placement,
-counts and known data-quality issues. The full text-ranking corpus is not deposited.
+The [body-graph inventory](release_package/kg/per_wg/README.md) documents graph placement,
+counts, and source-quality annotations. Evaluation cohorts preserve selected retrieval
+passages and source identifiers.
 
 The [concept DOI](https://doi.org/10.5281/zenodo.20034871) locates the latest
 archived version. Later Git additions are separate from those frozen archives;
@@ -111,11 +115,12 @@ python3 -B release_package/cqs/contract_repair_v1/matched_retrieval_measurement/
 ```
 
 The quick gate checks the Git-only release without a database. Five additional
-checks require the body-graph deposit. The score replays read retained outputs;
-they make no model or database calls and do not reproduce the full text-ranking
-stage. Use a new output filename for the strict-record replay, which refuses to
-overwrite an existing report. Full graph replay requires a scratch database;
-follow the [test guide](release_package/tests/README.md) before running it.
+checks require the body-graph deposit. The score replays use retained outputs and
+saved contexts and make no model or database calls. Re-running passage ranking
+requires the original full-text corpus, which is outside the deposited artifacts.
+Use a new output filename for the strict-record replay, which refuses to overwrite
+an existing report. Full graph replay requires a scratch database; follow the
+[test guide](release_package/tests/README.md) before running it.
 
 ## Citation and license
 
