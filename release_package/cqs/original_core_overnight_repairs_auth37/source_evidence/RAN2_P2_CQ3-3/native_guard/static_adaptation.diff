@@ -1,0 +1,49 @@
+--- native_preparation_v2/ROOT_guarded_native_capture.py
++++ native_preparation_v3/ROOT_guarded_native_capture.py
+@@ -8,8 +8,8 @@
+ import capture_native
+ from fresh_windows_memory import host_guard
+ sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+-assert sha(D/'definition.json')=='9032e81749f0c709a7579d432561de66a6b714a788524dee802aea3ffce59c02'
+-assert sha(D/'requested_repaired_native_input.jsonl')=='391d633ab6e7189f61b45ff75bcae978af5f922a0f288c7c14ce83a2cf3b5f12'
++assert sha(D/'definition.json')=='ad84ac8293386d13c8544e6eaf20841303c2f181e67b40ab77d7663d9d8d6d52'
++assert sha(D/'requested_repaired_native_input.jsonl')=='b45d4183c9b7e80b3701796cdffa989a6ca6f67fd70a9f07c1ab344c9d2265f5'
+ def observed_26GiB(output):
+  host_guard(output)
+  import json
+--- native_preparation_v2/ROOT_outer_native_reserve_guard.py
++++ native_preparation_v3/ROOT_outer_native_reserve_guard.py
+@@ -19,7 +19,7 @@
+ B = next(p for p in HERE.parents if p.name == 'overnight_reaudit')
+ A = Path(__file__).resolve().parent
+ GIB = 1024 ** 3
+-SCOPE = '9032e81749f0c709a7579d432561de66a6b714a788524dee802aea3ffce59c02'
++SCOPE = 'ad84ac8293386d13c8544e6eaf20841303c2f181e67b40ab77d7663d9d8d6d52'
+ 
+ 
+ def sha(p):
+--- native_preparation_v2/ROOT_run_native_coordinator.py
++++ native_preparation_v3/ROOT_run_native_coordinator.py
+@@ -14,11 +14,11 @@
+ B = next(p for p in HERE.parents if p.name == 'overnight_reaudit')
+ A = HERE
+ guard = A / 'ROOT_outer_native_reserve_guard.py'
+-assert hashlib.sha256(guard.read_bytes()).hexdigest() == 'bf940ef4ded6b3262f4643b0b3885453a4b9cc38ce3b29030202662e5d842bd9'
++assert hashlib.sha256(guard.read_bytes()).hexdigest() == '9f6d145ab4ddd48db20b496a6e829d4973dbeb7fa5207157cb25a155a823a5c6'
+ assert not (A / 'ROOT_actual_guarded_persistent_cim_execute_RAN2').exists()
+ assert not (A / 'ROOT_actual_native_capture_v1').exists()
+ input_file = A / 'requested_repaired_native_input.jsonl'
+-assert hashlib.sha256(input_file.read_bytes()).hexdigest() == '391d633ab6e7189f61b45ff75bcae978af5f922a0f288c7c14ce83a2cf3b5f12'
++assert hashlib.sha256(input_file.read_bytes()).hexdigest() == 'b45d4183c9b7e80b3701796cdffa989a6ca6f67fd70a9f07c1ab344c9d2265f5'
+ sys.path.insert(0, str(B / 'authorized_incremental29_OpenRouter_release/operational_guards'))
+ from fresh_windows_memory import Broker
+ broker = Broker(HERE / 'actual_fresh_memory_session_v1')
+@@ -29,7 +29,7 @@
+     code = subprocess.run([sys.executable, '-B', str(guard), 'execute_RAN2']).returncode
+     if code != 0:
+         raise RuntimeError('Native guard failed; preserve its receipt')
+-    assert hashlib.sha256(input_file.read_bytes()).hexdigest() == '391d633ab6e7189f61b45ff75bcae978af5f922a0f288c7c14ce83a2cf3b5f12'
++    assert hashlib.sha256(input_file.read_bytes()).hexdigest() == 'b45d4183c9b7e80b3701796cdffa989a6ca6f67fd70a9f07c1ab344c9d2265f5'
+     receipt['status'] = 'NATIVE_WRAPPER_PASS_PENDING_SCIENTIFIC_BINDING'
+ except BaseException as exc:
+     receipt['status'] = 'FAIL_PRESERVED'

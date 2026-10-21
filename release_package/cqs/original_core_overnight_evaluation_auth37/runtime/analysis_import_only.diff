@@ -1,0 +1,14 @@
+--- unchanged_AUTH36/analyze_predictions.py
++++ explicit_partitioned/analyze_predictions_partitioned.py
+@@ -66,7 +66,10 @@
+ 
+ def run(bundle,run_dir):
+     sys.path.insert(0,str(bundle))
+-    import score_predictions
++    reader_path = bundle / 'score_predictions_partitioned_reader.py'
++    reader_spec = importlib.util.spec_from_file_location('declared_partitioned_score_reader', reader_path)
++    score_predictions = importlib.util.module_from_spec(reader_spec)
++    reader_spec.loader.exec_module(score_predictions)
+     tasks=unique(read(bundle/'tasks.jsonl'))
+     gold=unique(read(bundle/'reference_gold.jsonl'))
+     all_results={}

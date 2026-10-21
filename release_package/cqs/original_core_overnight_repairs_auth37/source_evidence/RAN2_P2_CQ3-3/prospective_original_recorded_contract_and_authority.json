@@ -1,0 +1,94 @@
+{
+  "id": "RAN2_P2_CQ3-3",
+  "status": "prospective_source_derived_contract_not_admission",
+  "question_en": "Return the top companies by resolution contribution per work item (technology leadership).",
+  "question_en_sha256": "991198037211f71925bedb9decf17079c3ce64943bd62ab7cd0e3b57c2ec93f6",
+  "original_Korean": {
+    "id": "CQ3-3",
+    "category": "CQ3_회사기여도",
+    "question": "특정 기술(Work Item)에서 회사별 Resolution 기여도는?",
+    "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi, c, count(DISTINCT r) AS cnt ORDER BY cnt DESC WITH wi, collect({company: c.companyName, count: cnt})[0..5] AS topCompanies RETURN wi.workItemCode, topCompanies LIMIT 5",
+    "expected_min_rows": 1
+  },
+  "definition": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_C/RAN2_P2_CQ3-3/prospective_recorded_reference_gate_v6/definition.json",
+    "bytes": 2858,
+    "sha256": "ad84ac8293386d13c8544e6eaf20841303c2f181e67b40ab77d7663d9d8d6d52"
+  },
+  "repair_sha256": "bdf997f06492063fce39de80bca72378d557151ff81f0b1df846c9a9ec0e9a07",
+  "source_authority": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/RAN2_RAN5/RAN2_P2_CQ3_3_WorkItem_Resolution_rank_source_only_v2/Phase2_actual_git_INDEX_snapshot.md",
+    "bytes": 54914,
+    "sha256": "7cfeb6a3802a7d0ce9193c19cf659dd03ee260177e2625eb3cb621fedb1b46a9"
+  },
+  "Korean_dataset": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_C/RAN2_P2_CQ3-3/source_portable_v2/authority/original_Korean_CQ_dataset.json",
+    "bytes": 11799,
+    "sha256": "185e70cf75dbff89986bc037beed3a519e7c5cfa21eb59e7f884e9f0cf4621aa"
+  },
+  "criteria": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_C/RAN2_P2_CQ3-3/source_portable_v2/criteria.json",
+    "bytes": 3382,
+    "sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4"
+  },
+  "authority_derivation": [
+    {
+      "locator": "L21, L26–36",
+      "finding": "Resolution denotes recorded Agreement/Conclusion/WorkingAssumption in Final Report bodies. The use-case phrasing includes standardization contribution; it does not itself establish causal leadership."
+    },
+    {
+      "locator": "L116–122; L496–500; L867–871",
+      "finding": "The CQ3 family explicitly answers company Resolution contribution through references→Phase1 Tdoc→Company/WorkItem. This is original task-specific operational authority, rather than a new raw-count replacement for an external question."
+    },
+    {
+      "locator": "L743–758; L1117–1135",
+      "finding": "content is the Resolution body; references is a Tdoc reference extracted by the exact R2-seven-digit pattern and linked only to an existing Phase1 Tdoc. No approval, adoption, same-thread BFS, or first-Tdoc-header exclusion is specified."
+    },
+    {
+      "locator": "L188–202; L1219",
+      "finding": "Bodies and embedded tables are in scope, Annex and semantic/vector search are excluded, SubHeading is body. Earlier exclusive own-presentation truncation is not authoritative and was refuted by explicit after-header references/plural Conclusion containers."
+    },
+    {
+      "locator": "Original Korean questions[id=CQ3-3].cypher; exact original English cypher",
+      "finding": "count(DISTINCT r) is the contribution quantity for each WI and submitting-company node. topCompanies includes both company and integer count. The instantiated English query additionally fixes outer WI-code ASC LIMIT5."
+    },
+    {
+      "locator": "L169 and L174–182; exact original inner ORDER BY cnt DESC/collect[..5]",
+      "finding": "Generic Company ASC/default10 is contrary context. The concrete authored query explicitly slices five by count alone and the exact English query fixes five WI codes. Adding Company ASC would silently reject lawful query ties. No output ordinal field is requested."
+    }
+  ],
+  "scope": "The fixed recorded Resolution/Phase1 graph domain; not all physical decisions, all companies, real-world causal leadership or normative incorporation.",
+  "minimum_answer": "Five complete WI rows: workItemCode and an array of up to five {company, count} objects. Counts are required contribution values; no extra causal/approval field or company ordinal.",
+  "source_frontier": {
+    "path": "logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_C/RAN2_P2_CQ3-3/prospective_recorded_reference_gate_v6/actual_original_recorded_reference_source_frontier_v1.json",
+    "bytes": 1149643,
+    "sha256": "a4d5b1fafd469ec679432a3c3aa4b5c69cb3ac3e0b2daca7c8f28517eb872add"
+  },
+  "first5_source_coverage": {
+    "Resolution_full_contents": 12,
+    "paths": 358,
+    "Tdocs": 294,
+    "original_XLSX": 11,
+    "scope": "Complete finite dependency of the original selected five WIs; not a raw-body audit of every one of 3773 resolutions."
+  },
+  "admissible_output_policy": "Use all1939 company-count groups across223 WIs as separate SQL eligibility; original first5 have36 groups. Last WI has4 mandatory count5 companies and5 count4 companies for1 slot: five lawful nested answers. This is not limited native gold.",
+  "counterevidence": [
+    "English technology leadership and source use-case standardized contribution are stronger in ordinary language. The original CQ3-specific references/count mapping warrants only recorded documentary contribution, not causal influence.",
+    "Generic Company ASC/default10 conflicts with the exact count-only slice5. Both authorities remain visible; the exact original query is preserved and the evaluator accepts its lawful boundary alternatives.",
+    "V4 first-header cut excluded actual direct after-header revision/adoption references and plural Conclusion containers. Its semantic endorsement is held/superseded, with all historical bytes preserved.",
+    "Broad retained record units can contain discussion, revision metadata, multiple presentations and provisional WA content. They are not relabeled as one adopted technical decision per physical proposition.",
+    "Generalized six/eight-digit and Annex alternatives are diagnostics. The original seven-digit operational relation is preserved; none of the checked alternatives changes these first5 WIs.",
+    "Prior parser INDEX is evidence of a compatible original rule, not proof of the retained snapshot historical generator."
+  ],
+  "remaining_gates": [
+    "Independent exact seven-unit review for this new identity",
+    "Fresh exact original limited5 and full1939 native captures with typed SQL bridge",
+    "Declared original-kernel per-WI production dispatch and all5 lawful alternatives/adverse checks",
+    "Relocatable fixed-inventory source/native/scorer packet and ROOT final acceptance"
+  ],
+  "nonblind_AI": true,
+  "expert_validation_n": 0,
+  "API_calls": 0,
+  "native_calls": 0,
+  "new_public_admissions": 0
+}

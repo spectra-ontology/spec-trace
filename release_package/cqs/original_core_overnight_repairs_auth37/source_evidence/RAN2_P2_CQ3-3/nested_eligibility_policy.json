@@ -1,0 +1,146 @@
+{
+  "id": "RAN2_P2_CQ3-3",
+  "status": "prospective_original_recorded_reference_contract_not_native_gold",
+  "outer_required_fields": [
+    {
+      "name": "workItemCode",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "wi.workItemCode"
+    },
+    {
+      "name": "topCompanies",
+      "type": "json",
+      "nullable": false,
+      "source_column_or_expression": "topCompanies",
+      "json_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "company": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "company",
+            "count"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "nested_array_semantics": {
+        "$": "set"
+      }
+    }
+  ],
+  "outer_WI_contract": {
+    "required_fields": [
+      {
+        "name": "workItemCode",
+        "type": "string",
+        "nullable": false,
+        "source_column_or_expression": "wi.workItemCode"
+      }
+    ],
+    "collection": {
+      "kind": "set"
+    },
+    "cardinality_policy": {
+      "mode": "exact",
+      "value": 5
+    }
+  },
+  "per_partition_contract": {
+    "required_fields": [
+      {
+        "name": "company",
+        "type": "string",
+        "nullable": false
+      },
+      {
+        "name": "count",
+        "type": "integer",
+        "nullable": false
+      }
+    ],
+    "collection": {
+      "kind": "top_k_boundary_ties",
+      "value": 5,
+      "tie_policy": "any_subset_at_boundary",
+      "source_order_keys": [
+        {
+          "source_column": "count",
+          "direction": "desc"
+        }
+      ],
+      "within_tie_order": "any",
+      "require_rank_order": false
+    },
+    "cardinality_policy": {
+      "mode": "top_k",
+      "value": 5,
+      "tie_policy": "any_subset_at_boundary"
+    }
+  },
+  "outer_selection": {
+    "field": "workItemCode",
+    "direction": "asc",
+    "value": 5
+  },
+  "scientific_rules": [
+    "Original untruncated REFERENCES paths; DISTINCT Resolution node per WI/company, with separate joint-submitter incidence credit. No causal, approval or exclusive-authorship assertion.",
+    "Nested full population is a separate eligibility witness, not a prediction and not the limited native gold.",
+    "Actual limited native output must separately equal immutable SQL limited output up to legal ties and source-bound field values.",
+    "Validate schema before normalization. Duplicated company selection is invalid even if nested set tokens deduplicate.",
+    "Per-WI min(5, population size) required; no missing/extra WI, lower company or incorrect numerical count.",
+    "Source/full witness is supplied independently, never derived from prediction or selected alpha exemplar.",
+    "Canonical scientific modules unmodified; supplemental partition composition is mandatory and explicit. Generic set scorer alone is insufficient."
+  ],
+  "public_generic_verify_status": "Unchanged plain nested-set scoring binds one limited native exemplar. All lawful inner boundary choices require this declared per-WI canonical composition; integration is explicit and remains a pre-admission execution gate.",
+  "definition_collection_must_include_explicit_supplement": {
+    "partition_field": "workItemCode",
+    "members_field": "topCompanies",
+    "outer_selection": {
+      "field": "workItemCode",
+      "direction": "asc",
+      "value": 5
+    },
+    "member_contract": {
+      "required_fields": [
+        {
+          "name": "company",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "count",
+          "type": "integer",
+          "nullable": false
+        }
+      ],
+      "collection": {
+        "kind": "top_k_boundary_ties",
+        "value": 5,
+        "tie_policy": "any_subset_at_boundary",
+        "source_order_keys": [
+          {
+            "source_column": "count",
+            "direction": "desc"
+          }
+        ],
+        "within_tie_order": "any",
+        "require_rank_order": false
+      },
+      "cardinality_policy": {
+        "mode": "top_k",
+        "value": 5,
+        "tie_policy": "any_subset_at_boundary"
+      }
+    },
+    "supplement_required": true
+  }
+}

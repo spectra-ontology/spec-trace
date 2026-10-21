@@ -88,6 +88,11 @@ def main():
             "--evidence", "original_core_overnight_evaluation36",
             "--bundle", "original_core_overnight_repairs36",
         ]),
+        ("AUTH37_saved_evaluation", [
+            "original_core_overnight_evaluation_auth37/runtime/verify_authorized_incremental37_evaluation.py",
+            "--evidence", "original_core_overnight_evaluation_auth37",
+            "--bundle", "original_core_overnight_repairs_auth37",
+        ]),
     ]
     # Child interpreters use a clean environment and disable site packages; the explicit parent guard runs before package files open.
     environment = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
@@ -105,7 +110,7 @@ def main():
             print(json.dumps({"status": "FAIL", "commands": completed}, sort_keys=True))
             raise SystemExit(result.returncode if result.returncode > 0 else 1)
     print(json.dumps({"status": "PASS", "commands": completed,
-                      "scope": "Included bytes, contract partition and saved AUTH23, AUTH24, AUTH25, AUTH26, AUTH27, AUTH28, AUTH29, AUTH30, AUTH31, AUTH32, AUTH33, AUTH34, AUTH35 and AUTH36 output replay only.",
+                      "scope": "Included bytes, contract partition and saved AUTH23, AUTH24, AUTH25, AUTH26, AUTH27, AUTH28, AUTH29, AUTH30, AUTH31, AUTH32, AUTH33, AUTH34, AUTH35, AUTH36 and AUTH37 output replay only.",
                       "fresh_source_extraction": False,
                       "new_model_calls": 0, "new_database_executions": 0,
                       "human_expert_validation": False}, sort_keys=True))

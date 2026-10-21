@@ -1,0 +1,200 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-03-30",
+    "description": "RAN2 Phase-2 CQ 25개 — Resolution/회의 결정 분석 검증",
+    "spec": "docs/tsg/RAN/formal/RAN2/phase-2/design-spec/tdoc_ontology_specs(Final_report).md §2",
+    "categories": [
+      "CQ1_Resolution조회",
+      "CQ2_Tdoc-Resolution추적",
+      "CQ3_회사기여도",
+      "CQ6_트렌드비교"
+    ],
+    "neo4j_uri": "bolt://localhost:7688",
+    "sort_rules": {
+      "CQ1": "Meeting 번호 DESC, Agenda ASC, Sequence ASC",
+      "CQ2": "Meeting 번호 DESC, Sequence ASC",
+      "CQ3": "Count DESC, Company ASC",
+      "CQ6": "Meeting 번호 DESC (최신 먼저), 같은 번호는 Meeting 이름 DESC"
+    },
+    "total_cqs": 25
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "category": "CQ1_Resolution조회",
+      "question": "RAN2#117 회의에서 합의된 Agreement 목록은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN2#117'}) OPTIONAL MATCH (a)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) RETURN a.resolutionId, a.content, ai.agendaNumber ORDER BY ai.agendaNumber, a.sequence LIMIT 15",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ1-2",
+      "category": "CQ1_Resolution조회",
+      "question": "RAN2#121 회의에서 도출된 Conclusion 목록은?",
+      "cypher": "MATCH (c:Conclusion)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN2#121'}) RETURN c.resolutionId, c.content, c.hasConsensus ORDER BY c.sequence LIMIT 10",
+      "expected_min_rows": 1,
+      "note": "2026-04-22 CQ 꼼수 감사 정정: 실측 1건(CON-121-8.15-001) 존재 확인 → min_rows=0 → 1로 정상화"
+    },
+    {
+      "id": "CQ1-3",
+      "category": "CQ1_Resolution조회",
+      "question": "RAN2#115 회의의 Working Assumption 목록은?",
+      "cypher": "MATCH (wa:WorkingAssumption)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN2#115'}) RETURN wa.resolutionId, wa.content ORDER BY wa.sequence LIMIT 15",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-4",
+      "category": "CQ1_Resolution조회",
+      "question": "Agenda Item 8.11(RAN2#117)에서의 Resolution 목록은?",
+      "cypher": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) WHERE (ai.agendaNumber = '8.11' OR ai.agendaNumber STARTS WITH '8.11.') AND ai.meetingNumber = '117' MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, labels(r) AS type, r.content ORDER BY r.sequence LIMIT 15",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ1-5",
+      "category": "CQ1_Resolution조회",
+      "question": "Rel-18 관련 Resolution 목록은?",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:TARGET_RELEASE]->(rel:Release {releaseName: 'Rel-18'}), (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, m.canonicalMeetingNumber, r.content ORDER BY m.meetingNumberInt DESC, r.sequence LIMIT 10",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ1-6",
+      "category": "CQ1_Resolution조회",
+      "question": "38.331 Spec을 변경하는 Resolution 목록은?",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.331'}), (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, m.canonicalMeetingNumber, r.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ1-7",
+      "category": "CQ1_Resolution조회",
+      "question": "특정 Work Item의 Resolution 목록은? (RELATED_TO 경유)",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (r)-[:MADE_AT]->(m:Meeting) WITH wi, r, m RETURN wi.workItemCode AS workItemId, r.resolutionId, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-8",
+      "category": "CQ1_Resolution조회",
+      "question": "Resolution이 가장 많은 Agenda Item Top 10은?",
+      "cypher": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) WHERE ai.agendaNumber <> 'UNKNOWN' RETURN ai.agendaNumber, ai.meetingNumber, count(r) AS resolutionCount ORDER BY resolutionCount DESC LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ2-1",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "특정 Tdoc이 어떤 Resolution으로 이어졌나? (R2-2508373)",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc {tdocNumber: 'R2-2508373'}) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, r.resolutionId, labels(r) AS type, m.canonicalMeetingNumber, r.content",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-2",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "특정 Resolution이 참조한 Tdoc 목록은?",
+      "cypher": "MATCH (a:Agreement {resolutionId: 'AGR-132-8.13.2-004'})-[:REFERENCES]->(t:Tdoc) RETURN a.resolutionId, a.content, t.tdocNumber, t.title",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-3",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "Comeback 결정된 Tdoc 목록은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'comeback' RETURN a.resolutionId, m.canonicalMeetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-4",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "결정이 참조한 Tdoc이 어떤 Spec에 반영됐나? (최신 회의 순)",
+      "cypher": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, sp.specNumber, a.resolutionId, m.canonicalMeetingNumber, a.content ORDER BY m.meetingNumberInt DESC, a.sequence LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-1",
+      "category": "CQ3_회사기여도",
+      "question": "특정 회사(Huawei) Tdoc이 Resolution으로 이어진 비율은?",
+      "cypher": "MATCH (c:Company {companyName: 'Huawei'})<-[:SUBMITTED_BY]-(t:Tdoc) WITH count(t) AS totalTdocs MATCH (c:Company {companyName: 'Huawei'})<-[:SUBMITTED_BY]-(t:Tdoc)<-[:REFERENCES]-(r:Resolution) WITH totalTdocs, count(DISTINCT t) AS resolvedTdocs RETURN totalTdocs, resolvedTdocs, round(100.0 * resolvedTdocs / totalTdocs, 1) AS ratio",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-2",
+      "category": "CQ3_회사기여도",
+      "question": "38.331 Spec의 주요 contributor 순위는?",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.331'}), (t)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT r) AS contributions ORDER BY contributions DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-3",
+      "category": "CQ3_회사기여도",
+      "question": "특정 기술(Work Item)에서 회사별 Resolution 기여도는?",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi, c, count(DISTINCT r) AS cnt ORDER BY cnt DESC WITH wi, collect({company: c.companyName, count: cnt})[0..5] AS topCompanies RETURN wi.workItemCode, topCompanies LIMIT 5",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-4",
+      "category": "CQ3_회사기여도",
+      "question": "두 회사 간 기여도 비교 (Huawei vs Ericsson)?",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company) WHERE c.companyName IN ['Huawei', 'Ericsson'] RETURN c.companyName, count(DISTINCT r) AS resolutionCount ORDER BY resolutionCount DESC",
+      "expected_min_rows": 2
+    },
+    {
+      "id": "CQ6-1",
+      "category": "CQ6_트렌드비교",
+      "question": "Rel-18 관련 Resolution 수 추이는? (최신 회의부터)",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:TARGET_RELEASE]->(rel:Release {releaseName: 'Rel-18'}), (r)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS mNum, count(DISTINCT r) AS resCount ORDER BY mNum DESC, meeting DESC",
+      "expected_min_rows": 3
+    },
+    {
+      "id": "CQ6-2",
+      "category": "CQ6_트렌드비교",
+      "question": "Huawei의 Resolution 기여율 변화는? (회의별 Tdoc 이 이어진 Resolution 중 Huawei 기고가 이어진 비율, 최신 회의부터)",
+      "cypher": "MATCH (r2:Resolution)-[:REFERENCES]->(:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}) MATCH (r2)-[:MADE_AT]->(m:Meeting) WITH c, m, count(DISTINCT r2) AS companyCount MATCH (r:Resolution)-[:MADE_AT]->(m) WITH c, m, companyCount, count(DISTINCT r) AS total, count(DISTINCT CASE WHEN EXISTS { (r)-[:REFERENCES]->(:Tdoc) } THEN r END) AS linked RETURN c.companyName AS company, m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS mNum, companyCount, linked, total, round(100.0 * companyCount / linked, 1) AS shareOfLinked ORDER BY mNum DESC, meeting DESC",
+      "expected_min_rows": 3
+    },
+    {
+      "id": "CQ1-9",
+      "category": "CQ1_Resolution조회",
+      "question": "Resolution 유형별(Agreement/Conclusion/WorkingAssumption) 총 통계는?",
+      "cypher": "MATCH (r:Resolution) RETURN CASE WHEN r:Agreement THEN 'Agreement' WHEN r:Conclusion THEN 'Conclusion' WHEN r:WorkingAssumption THEN 'WorkingAssumption' END AS type, count(r) AS cnt ORDER BY cnt DESC",
+      "expected_min_rows": 3
+    },
+    {
+      "id": "CQ1-10",
+      "category": "CQ1_Resolution조회",
+      "question": "RAN2#132 회의에서 Resolution 유형별 수량은?",
+      "cypher": "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN2#132'}) RETURN CASE WHEN r:Agreement THEN 'Agreement' WHEN r:Conclusion THEN 'Conclusion' WHEN r:WorkingAssumption THEN 'WorkingAssumption' END AS type, count(r) AS cnt ORDER BY cnt DESC",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-5",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "특정 Tdoc(R2-2600228)이 어떤 Resolution으로 이어졌나?",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc {tdocNumber: 'R2-2600228'}), (r)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, r.resolutionId, labels(r) AS type, m.canonicalMeetingNumber, r.content",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-6",
+      "category": "CQ2_Tdoc-Resolution추적",
+      "question": "FFS(Further For Study) 포함 Agreement 목록은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'FFS' RETURN a.resolutionId, m.canonicalMeetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ3-5",
+      "category": "CQ3_회사기여도",
+      "question": "Resolution 참조 Tdoc 기준 회사별 기여 순위 Top 10은?",
+      "cypher": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company), (r)-[:MADE_AT]->(m:Meeting) RETURN c.companyName, count(DISTINCT r) AS resolutionCount ORDER BY resolutionCount DESC LIMIT 10",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ6-3",
+      "category": "CQ6_트렌드비교",
+      "question": "회의별 Agreement 수 추이는? (최신 회의부터)",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS mNum, count(a) AS agrCount ORDER BY mNum DESC, meeting DESC",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ6-4",
+      "category": "CQ6_트렌드비교",
+      "question": "회의별 Conclusion 수 추이는? (최신 회의부터)",
+      "cypher": "MATCH (c:Conclusion)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS mNum, count(c) AS conCount ORDER BY mNum DESC, meeting DESC",
+      "expected_min_rows": 5
+    }
+  ]
+}

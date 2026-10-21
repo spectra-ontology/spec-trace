@@ -1,0 +1,20 @@
+--- preserved_initial_saved_template.py
++++ verify_authorized_incremental37_evaluation.template.py
+@@ -323,10 +323,13 @@
+     if not (sha(bundle/'score_predictions_partitioned_reader.py')==declared['bundle_effective_reader_sha256'] and sha(bundle/'dispatch_declaration.json')==declared['dispatch_declaration_sha256']):
+         raise ValueError('Effective scorer declaration differs')
+     receipt=load(runtime/'runtime_source_copy_receipt.json')
+-    if not receipt['scientific_runtime_nine_byte_exact'] is True or receipt['canonical9_changed_n']!=0:
+-        raise ValueError('Original scientific runtime differs')
+-    for item in receipt['scientific_runtime_nine']:
+-        if sha(runtime/item['file'])!=item['sha256']:raise ValueError('Scientific runtime changed')
++    scientific_nine={'add_loader_identity.py','analyze_predictions.py','build_frozen_sqlite.py','credit_floor_guard.py','execute_ready.py','openrouter_client.py','retrieval_adapter.py','run_evaluation.py','structured_adapter.py'}
++    copied=receipt['scientific_runtime_nine']
++    if not (len(copied)==9 and {item['file'] for item in copied}==scientific_nine and receipt['canonical_kernel_or_sys_modules_monkeypatch'] is False):
++        raise ValueError('Original scientific runtime inventory differs')
++    for item in copied:
++        if not (item['copy_byte_exact'] is True and type(item['bytes']) is int and len((runtime/item['file']).read_bytes())==item['bytes'] and sha(runtime/item['file'])==item['sha256']):
++            raise ValueError('Scientific runtime changed')
+     original_analyzer=runtime/'analyze_predictions.py'
+     compatible_analyzer=runtime/'analyze_predictions_partitioned.py'
+     direct_import=("    reader_path = bundle / 'score_predictions_partitioned_reader.py'\n"

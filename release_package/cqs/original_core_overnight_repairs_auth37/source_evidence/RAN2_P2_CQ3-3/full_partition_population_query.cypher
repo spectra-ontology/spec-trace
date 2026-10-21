@@ -1,0 +1,1 @@
+MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) RETURN wi.workItemCode AS workItemCode, c.companyName AS company, count(DISTINCT r) AS count

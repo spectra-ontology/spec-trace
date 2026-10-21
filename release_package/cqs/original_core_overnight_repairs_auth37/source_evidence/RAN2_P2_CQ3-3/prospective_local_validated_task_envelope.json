@@ -1,0 +1,95 @@
+{
+  "id": "RAN2_P2_CQ3-3",
+  "question_en": "Return the top companies by resolution contribution per work item (technology leadership).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi, c, count(DISTINCT r) AS cnt ORDER BY cnt DESC WITH wi, collect({company: c.companyName, count: cnt})[0..5] AS topCompanies RETURN wi.workItemCode, topCompanies ORDER BY wi.workItemCode LIMIT 5",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi, c, count(DISTINCT r) AS cnt ORDER BY cnt DESC WITH wi, collect({company: c.companyName, count: cnt})[0..5] AS topCompanies RETURN wi.workItemCode, topCompanies ORDER BY wi.workItemCode LIMIT 5",
+  "required_fields": [
+    {
+      "name": "workItemCode",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "wi.workItemCode"
+    },
+    {
+      "name": "topCompanies",
+      "type": "json",
+      "nullable": false,
+      "source_column_or_expression": "topCompanies",
+      "json_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "company": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "company",
+            "count"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "nested_array_semantics": {
+        "$": "set"
+      }
+    }
+  ],
+  "collection": {
+    "kind": "set",
+    "partitioned_top_k": {
+      "partition_field": "workItemCode",
+      "members_field": "topCompanies",
+      "outer_selection": {
+        "field": "workItemCode",
+        "direction": "asc",
+        "value": 5
+      },
+      "member_contract": {
+        "required_fields": [
+          {
+            "name": "company",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "count",
+            "type": "integer",
+            "nullable": false
+          }
+        ],
+        "collection": {
+          "kind": "top_k_boundary_ties",
+          "value": 5,
+          "tie_policy": "any_subset_at_boundary",
+          "source_order_keys": [
+            {
+              "source_column": "count",
+              "direction": "desc"
+            }
+          ],
+          "within_tie_order": "any",
+          "require_rank_order": false
+        },
+        "cardinality_policy": {
+          "mode": "top_k",
+          "value": 5,
+          "tie_policy": "any_subset_at_boundary"
+        }
+      },
+      "supplement_required": true
+    }
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 5
+  },
+  "repair_class": "scorer_only",
+  "original_question_preserved": true,
+  "repair_sha256": "bdf997f06492063fce39de80bca72378d557151ff81f0b1df846c9a9ec0e9a07",
+  "validation_status": "validated"
+}

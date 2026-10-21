@@ -1,0 +1,107 @@
+{
+  "id": "RAN2_P2_CQ3-3",
+  "question_en": "Return the top companies by resolution contribution per work item (technology leadership).",
+  "original_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi, c, count(DISTINCT r) AS cnt ORDER BY cnt DESC WITH wi, collect({company: c.companyName, count: cnt})[0..5] AS topCompanies RETURN wi.workItemCode, topCompanies ORDER BY wi.workItemCode LIMIT 5",
+  "reference_query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi, c, count(DISTINCT r) AS cnt ORDER BY cnt DESC WITH wi, collect({company: c.companyName, count: cnt})[0..5] AS topCompanies RETURN wi.workItemCode, topCompanies ORDER BY wi.workItemCode LIMIT 5",
+  "required_fields": [
+    {
+      "name": "workItemCode",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "wi.workItemCode"
+    },
+    {
+      "name": "topCompanies",
+      "type": "json",
+      "nullable": false,
+      "source_column_or_expression": "topCompanies",
+      "json_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "company": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "company",
+            "count"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "nested_array_semantics": {
+        "$": "set"
+      }
+    }
+  ],
+  "collection": {
+    "kind": "set",
+    "partitioned_top_k": {
+      "partition_field": "workItemCode",
+      "members_field": "topCompanies",
+      "outer_selection": {
+        "field": "workItemCode",
+        "direction": "asc",
+        "value": 5
+      },
+      "member_contract": {
+        "required_fields": [
+          {
+            "name": "company",
+            "type": "string",
+            "nullable": false
+          },
+          {
+            "name": "count",
+            "type": "integer",
+            "nullable": false
+          }
+        ],
+        "collection": {
+          "kind": "top_k_boundary_ties",
+          "value": 5,
+          "tie_policy": "any_subset_at_boundary",
+          "source_order_keys": [
+            {
+              "source_column": "count",
+              "direction": "desc"
+            }
+          ],
+          "within_tie_order": "any",
+          "require_rank_order": false
+        },
+        "cardinality_policy": {
+          "mode": "top_k",
+          "value": 5,
+          "tie_policy": "any_subset_at_boundary"
+        }
+      },
+      "supplement_required": true
+    }
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 5
+  },
+  "repair_class": "scorer_only",
+  "original_question_preserved": true,
+  "repair_sha256": "bdf997f06492063fce39de80bca72378d557151ff81f0b1df846c9a9ec0e9a07",
+  "original_question_sha256": "991198037211f71925bedb9decf17079c3ce64943bd62ab7cd0e3b57c2ec93f6",
+  "original_query_sha256": "31c1f38e36a297f4719146b6baa13d7721aac1edeb74a46fe792394e57ae93cb",
+  "criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "validation_status": "validated",
+  "admitted": false,
+  "nonblind_AI": true,
+  "human_expert_n": 0,
+  "human_author_review_completed": false,
+  "native_execution_completed": true,
+  "native_rows": 5,
+  "model_calls": 0,
+  "ROOT_final_disposition_sha256": "4c9e3e578cda0fc4a4a222ae90b819450899bc5199d625b22a31356327ab11b0",
+  "validation_provenance": "ROOT sealed local pass; public and API registration remain separate"
+}
