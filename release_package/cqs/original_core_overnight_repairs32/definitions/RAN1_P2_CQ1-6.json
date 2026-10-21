@@ -1,0 +1,23 @@
+{
+  "id": "RAN1_P2_CQ1-6",
+  "question_en": "What was agreed on PDCCH blind decoding? (PDCCH decisions)",
+  "original_query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'PDCCH' AND a.content CONTAINS 'blind' RETURN a.resolutionId, m.meetingNumber, a.content ORDER BY m.meetingNumberInt DESC, a.resolutionId LIMIT 10",
+  "reference_query": "MATCH (a:Agreement)-[r:MADE_AT]->(m:Meeting)\nWHERE a.content CONTAINS 'PDCCH' AND a.content CONTAINS 'blind'\nWITH a,r,m,split(a.content,\"\\n\") AS filterLines,split(coalesce(a.contentWithEquations,a.content),\"\\n\") AS bodyLines\nWITH a,r,m,filterLines,bodyLines,[i IN range(0,size(filterLines)-1) WHERE filterLines[i] =~ \"R1-[0-9]{7}\\\\t.*\" AND NOT CASE WHEN i+1<size(filterLines) THEN trim(filterLines[i+1]) =~ \"\\\\(Rel-[0-9]+,.*\\\\bCR[0-9]+.*\\\\) is agreed\\\\.\" AND any(previous IN filterLines[..i] WHERE previous =~ \"(?i).*(?:final\\\\s+CRs?\\\\s+in|comeback\\\\s+for\\\\s+final\\\\s+CR).*\") ELSE false END] AS filterStops,[i IN range(0,size(bodyLines)-1) WHERE bodyLines[i] =~ \"R1-[0-9]{7}\\\\t.*\" AND NOT CASE WHEN i+1<size(bodyLines) THEN trim(bodyLines[i+1]) =~ \"\\\\(Rel-[0-9]+,.*\\\\bCR[0-9]+.*\\\\) is agreed\\\\.\" AND any(previous IN bodyLines[..i] WHERE previous =~ \"(?i).*(?:final\\\\s+CRs?\\\\s+in|comeback\\\\s+for\\\\s+final\\\\s+CR).*\") ELSE false END] AS bodyStops\nWITH a,r,m,coalesce(reduce(s=null,line IN filterLines[..coalesce(head(filterStops),size(filterLines))] | CASE WHEN s IS NULL THEN line ELSE s+\"\\n\"+line END),\"\") AS ownFilter,coalesce(reduce(s=null,line IN bodyLines[..coalesce(head(bodyStops),size(bodyLines))] | CASE WHEN s IS NULL THEN line ELSE s+\"\\n\"+line END),\"\") AS ownBody\nWHERE ownFilter CONTAINS 'PDCCH' AND ownFilter CONTAINS 'blind'\nRETURN a.resolutionId,m.meetingNumber,ownBody+CASE WHEN a.note IS NULL OR a.note=\"\" THEN \"\" ELSE \"\\n\"+a.note END AS content\nORDER BY m.meetingNumberInt DESC,a.resolutionId LIMIT 10",
+  "required_fields": [
+    {
+      "name": "content",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "content"
+    }
+  ],
+  "collection": {
+    "kind": "multiset"
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 10
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true
+}
