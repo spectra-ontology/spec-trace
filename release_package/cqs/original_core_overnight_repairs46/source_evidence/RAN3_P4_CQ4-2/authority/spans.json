@@ -1,0 +1,93 @@
+{
+  "preserved_authority": "Previously preserved P2 INDEX + actual P4 INDEX. Original applicable clauses are pinned; later overlays elsewhere are not certified as historical generators.",
+  "spans": [
+    {
+      "file": "authority/original_phase2_design_INDEX.md",
+      "file_sha256": "26512e239eabfe4d1499e3db4380659a2466c607085d819093b8628c3c0397e0",
+      "first_line": 19,
+      "last_line": 36,
+      "text": "    **3GPP RAN3 Final Report 본문에 기록된 Resolution(결의) 정보 및 역할 정보**\n    \n    > **용어 사전 (Final Report 표기 통일)**: 3GPP 공식 문서 제목은 \"**Final Minutes Report**\"이지만, 본 프로젝트 전반(Phase-1~2, Phase-6~9 포함)에서는 약칭으로 \"**Final Report**\"를 사용한다. Phase-6 §2.5.1의 \"Final Minutes Report\" 표기 및 외부 3GPP 문서 인용 문맥에서는 공식 명칭이 그대로 등장할 수 있으나, 본 Spec의 모든 설명·CQ·속성 정의는 \"Final Report\"로 통일되어 있다. 양자는 동일 문서를 지칭한다.\n    \n    RAN3 Final Report는 **Resolution 텍스트 블록**(`Agreement:`, `Conclusion:`, `Working Assumption:`/`WA:`)과 **Decision 패턴**(`Decision: The document was agreed.`)이 공존하는 구조를 가진다.\n    \n    > **용어 사전 (Working Assumption 표기 통일)**: 본 Spec 전반에서 세 표기는 동일 개념의 서로 다른 레이어를 지칭하는 것으로 고정한다.\n    > - `WorkingAssumption` — **OWL 클래스명** (코드·TTL·JSON-LD `@type`)\n    > - `Working Assumption` — **자연어/개념 명칭** (본문 설명용)\n    > - `WA` — **원문 축약 패턴** (Final Report 본문에 `WA:` 헤더로 등장). 파서 정규식 매칭 대상\n    > \n    > Step 3 §3.1과 Step 7 §6.2의 \"`Working Assumption:` 및 `WA:` 통합\"은 원문 패턴 두 가지(`Working Assumption:`, `WA:`) 모두 같은 `WorkingAssumption` 인스턴스로 적재한다는 의미이며, 세 표기는 이 규칙에 따라 일관되게 사용된다.\n    \n    - Resolution: 기술적 합의 내용 원문 (Agreement + Conclusion + WA. 실측치는 Appendix A [P2-V01], [P2-V02], [P2-V03], [P2-V08] 참조)\n    - Decision: 문서 단위 처리 결과 — Phase-1 status와 중복이므로 Phase-2 Scope 밖\n    - Moderator: 논의 진행자 역할 (구조화. 실측치는 Appendix A [P2-V05] 참조)\n    \n    ### 1.2 For what are we going to use the ontology?\n",
+      "text_sha256": "ab0b309f718cf7f29bb09efc63c48108c41a10d589d0a98c6ac82ac4e038fd01"
+    },
+    {
+      "file": "authority/original_phase2_design_INDEX.md",
+      "file_sha256": "26512e239eabfe4d1499e3db4380659a2466c607085d819093b8628c3c0397e0",
+      "first_line": 89,
+      "last_line": 104,
+      "text": "    > 본 §1.7이 Phase-2 Spec 내 Resolution vs Decision 구분의 **권위 정의**이다. Step 3 §3.2 \"제외 대상\" 표, Step 5 §6.3 \"RAN3 클래스 포함/제외 결정\" 등 이후 나오는 유사 서술은 본 절을 반복 근거로 하며, 상세 설명은 §1.7를 참조한다.\n    \n    RAN3 Final Report에서 **Resolution과 Decision은 서로 다른 레벨의 정보**이다:\n    \n    ```\n    [TDoc] R3-242126 CB:#6_LTM (discussion)\n      Decision: The document was noted.     ← TDoc 단위 처리 결과 (Phase-1 status)\n      Agreement: TA validity assurance...   ← 기술적 합의 내용 (Resolution 원문)\n      Agreement: gNB-CU assigns the...      ← 기술적 합의 내용 (Resolution 원문)\n      WA: gNB-CU indicates the IDs...       ← 잠정 합의 (Resolution 원문)\n    ```\n    \n    - **하나의 TDoc 논의에서 여러 Resolution이 도출**될 수 있음\n    - Decision이 `noted`여도 그 안에서 기술적 Agreement가 도출됨\n    - Phase-2는 **Resolution 텍스트 블록만 추출** (Decision은 Phase-1 status로 커버)\n    \n",
+      "text_sha256": "61d8e23fe3fda0a245f98a2eb26617bb377224e34c704c0854c796327b65ebfd"
+    },
+    {
+      "file": "authority/original_phase2_design_INDEX.md",
+      "file_sha256": "26512e239eabfe4d1499e3db4380659a2466c607085d819093b8628c3c0397e0",
+      "first_line": 1135,
+      "last_line": 1155,
+      "text": "    **소스**: Final Report 본문\n    \n    | 관계 | 소스 | 변환 규칙 |\n    | --- | --- | --- |\n    | references → Tdoc | content 내 참조 | `R3-\\\\d{6}` 패턴 추출 (6자리) |\n    | madeAt → Meeting | 문서 메타 | 파일명에서 회의 번호 추출 후 Phase-1 Meeting의 `canonicalMeetingNumber`와 매칭 |\n    | resolutionBelongsTo → AgendaItem | 섹션 헤더 | Agenda 번호 추출. **같은 미팅 내의 AgendaItem과 매칭** (madeAt으로 결정된 Meeting의 AgendaItem) |\n    | hasTable → Table | content 내 참조 | `Table X.Y.Z-N` 패턴 → 같은 미팅 내 TBL 인스턴스 연결 |\n    \n    > TDoc 패턴: `R3-\\\\d{6}` (**RAN3은 6자리**)\n    \n    **references → Tdoc 매칭 실패 시 처리 규칙:**\n    \n    | 조건 | 처리 |\n    | --- | --- |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 존재 | 기존 인스턴스에 references 관계 생성 |\n    | 추출된 Tdoc 번호가 Phase-1 인스턴스에 없음 | references 관계 생성 안 함 + 로그 기록 |\n    \n    *참고: Resolution 본문에서 추출된 `R3-\\\\d{6}` 패턴이 Phase-1 Tdoc 인스턴스에 존재하지 않을 수 있음. 이 경우 동적 생성하지 않고 관계를 생략함*\n    \n    **Meeting 연결 규칙:**\n",
+      "text_sha256": "4ea7f8069cdceb711bcd31b18ed8ac8120431730bfe2f44a2e7f1f9c74a53c50"
+    },
+    {
+      "file": "authority/original_phase2_design_INDEX.md",
+      "file_sha256": "26512e239eabfe4d1499e3db4380659a2466c607085d819093b8628c3c0397e0",
+      "first_line": 1241,
+      "last_line": 1249,
+      "text": "    | --- | --- | --- |\n    | Heading 2 | Agenda Level 1 | 표준 |\n    | Heading 3 | Agenda Level 2 | 표준 |\n    | Heading 4 | Agenda Level 3 | 표준 |\n    | Heading 5 | Agenda Level 4 | 표준 |\n    | toc 2~5 | **Heading N과 동일 레벨로 매핑** | RAN3 고유: Heading 스타일 대신 toc 사용 |\n    | **Proposal** | **본문 텍스트로 처리 (Agenda 아님)** | RAN3 고유 커스텀 스타일 |\n    | Normal5 | 본문 텍스트로 처리 | 커스텀 (일부 보고서) |\n    | FP, TH, TT | 본문 텍스트로 처리 | 커스텀 소수 |\n",
+      "text_sha256": "3987ac6b99c147c305abeb41e5370dee64f6d9cf05239e1af768bae9bb824ef8"
+    },
+    {
+      "file": "authority/original_phase4_design_INDEX.md",
+      "file_sha256": "504516b9aa09b2c239f4a326b9427812dfb1e86b50355434544931f777fea908",
+      "first_line": 43,
+      "last_line": 51,
+      "text": "    ### 1.5 전제 조건\n    \n    > 본 온톨로지는 Phase-1~3 온톨로지의 확장이다.\n    > \n    > - Phase-1~3의 모든 클래스, 관계, 인스턴스는 그대로 유지\n    > - Phase-4는 CR 문서 본문 정보를 추가하고 기존 데이터와 연결\n    > - 기존 CQ는 모두 답변 가능 유지\n    \n    ### 1.6 RAN3 CR 데이터 특성\n",
+      "text_sha256": "6588bbcba83a838203f75a936ebd6c55f1c188fe2408a856ba3199af0634541f"
+    },
+    {
+      "file": "authority/original_phase4_design_INDEX.md",
+      "file_sha256": "504516b9aa09b2c239f4a326b9427812dfb1e86b50355434544931f777fea908",
+      "first_line": 69,
+      "last_line": 107,
+      "text": "    ### 2. Scope 정의\n    \n    ### 2.1 포함 (In Scope)\n    \n    | 구분 | 포함 대상 | Phase 1 대비 |\n    | --- | --- | --- |\n    | CR 변경 근거 | Reason for change | **신규** |\n    | CR 변경 요약 | Summary of change | **신규** |\n    | CR 미승인 영향 | Consequences if not approved | **신규** |\n    | Cross-Spec 관계 | Other Specs Affected (Core/Test/O&M) | **신규** |\n    | CR Pack 구조 | Cover Sheet 기반 CR 그룹핑 | **상세화** |\n    | Clauses Affected | CR → Section 연결 | **향상** |\n    \n    ### 2.2 제외 (Out of Scope)\n    \n    | 제외 대상 | 이유 |\n    | --- | --- |\n    | Track Changes 변경 블록 | Vector DB 영역 |\n    | 기술 테이블 셀 데이터 | Vector DB 영역 |\n    | ASN.1 코드 본문 | Vector DB 영역 (Phase-3과 동일 방침) |\n    \n    ### 2.3 Graph DB vs Vector DB 경계\n    \n    | Graph DB (Phase-4) | Vector DB |\n    | --- | --- |\n    | CR 메타데이터 (reasonForChange, summaryOfChange, consequencesIfNotApproved) | Track Changes 변경 블록 |\n    | CRPack 구조 (ID, TSG Meeting, CR 목록) | 기술 테이블 셀 데이터 |\n    | Cross-Spec 영향 관계 | ASN.1 코드 본문 |\n    | CR → Section 연결 | |\n    \n    **연결 키**: tdocNumber (예: `R3-241234`)\n    \n    **Graph DB 저장 근거:**\n    \n    - reasonForChange/summaryOfChange/consequencesIfNotApproved는 1~5문장의 짧은 메타데이터\n    - CQ 답변에 직접 노출되는 속성 (Text-to-Cypher 조회 대상)\n    - Phase-3 sectionTitle과 동일한 성격\n    \n    ---\n",
+      "text_sha256": "6990027856b6b0b617fd95d8e4f75708e33a767f48975d10ff493998266d5f76"
+    },
+    {
+      "file": "authority/original_phase4_design_INDEX.md",
+      "file_sha256": "504516b9aa09b2c239f4a326b9427812dfb1e86b50355434544931f777fea908",
+      "first_line": 136,
+      "last_line": 170,
+      "text": "    ### CQ4: Phase 1-3 연계 분석\n    \n    | # | Competency Question |\n    | --- | --- |\n    | 4-1 | 특정 Section을 수정하는 CR의 변경 이유 목록은? |\n    | 4-2 | 특정 Resolution이 승인한 CR의 변경 이유와 요약은? |\n    | 4-3 | 특정 Work Item 관련 CR이 수정하는 Section 목록은? |\n    | 4-4 | 특정 회사의 CR이 영향주는 다른 Spec 목록은? |\n    | 4-5 | 특정 회의에서 승인된 CR의 변경 요약 목록은? |\n    \n    ---\n    \n    ### 4. CQ 결과 규칙\n    \n    ### 4.1 정렬 기준 (Default Sort Order)\n    \n    | CQ 그룹 | Primary Sort | Secondary Sort |\n    | --- | --- | --- |\n    | CQ1 | tdocNumber DESC | - |\n    | CQ2 | Count DESC | Spec ASC |\n    | CQ3 | tsgMeeting DESC | crPackId ASC |\n    | CQ4 | meetingNumberInt DESC | tdocNumber ASC |\n    \n    ### 4.2 결과 개수 (Default Limit)\n    \n    | CQ 유형 | 기본값 |\n    | --- | --- |\n    | 단일 CR 조회 | 1 |\n    | 목록 조회 | 10 |\n    | Top N 조회 | 10 |\n    \n    ---\n    \n    ### 5. CQ 요약\n    \n",
+      "text_sha256": "7f6efaab71c60bd1c7052b0049b0deb2077d5f7f503178d520645d48304dac66"
+    },
+    {
+      "file": "authority/original_phase4_design_INDEX.md",
+      "file_sha256": "504516b9aa09b2c239f4a326b9427812dfb1e86b50355434544931f777fea908",
+      "first_line": 819,
+      "last_line": 829,
+      "text": "    \n    ---\n    \n    ### 2. CR 확장 Data Property Facet\n    \n    | Property | Type | Cardinality | Required | 근거 |\n    | --- | --- | --- | --- | --- |\n    | reasonForChange | String | 0..1 | ❌ | 일부 CR은 해당 필드 비어있음 |\n    | summaryOfChange | String | 0..1 | ❌ | 일부 CR은 해당 필드 비어있음 |\n    | consequencesIfNotApproved | String | 0..1 | ❌ | 일부 CR은 해당 필드 비어있음 |\n    \n",
+      "text_sha256": "d90d9bcd01d5db2d7070d87a35a4a7bfeaea6971ebb5b65c08c1124c426803a7"
+    },
+    {
+      "file": "authority/original_phase4_design_INDEX.md",
+      "file_sha256": "504516b9aa09b2c239f4a326b9427812dfb1e86b50355434544931f777fea908",
+      "first_line": 924,
+      "last_line": 949,
+      "text": "    > \n    \n    ---\n    \n    ### 1. 데이터 소스\n    \n    | 소스 | 형식 | 수량 | 용도 |\n    | --- | --- | --- | --- |\n    | CR 문서 | Word (.docx/.doc) | [P4-V01]개 | CR 확장 속성 |\n    | Cover Sheet | Word (.docx/.doc) | [P4-V02]개 | CRPack 인스턴스 |\n    \n    ---\n    \n    ### 2. 파싱 대상 CR 선정 기준\n    \n    **Phase-4 파싱 대상:**\n    \n    - TSG 하위 RP 폴더에 포함된 CR 문서 대상\n    - Cover Sheet 기반 CRPack 생성 + CR 문서 메타데이터 확장\n    \n    **CR Pack 순수 커버 문서 제외 규칙:**\n    \n    - `RP-XXXXXX.docx` 패턴의 순수 CR Pack 커버 문서는 개별 CR 파싱 대상에서 제외한다\n    - CR Pack 커버 문서 본문에 참조된 R2 번호를 개별 CR의 tdocNumber로 잘못 추출하는 것을 방지하기 위함\n    - 이 규칙은 기존 `_cover.docx` 제외 규칙과 별도로 적용\n    \n",
+      "text_sha256": "1736900e3d792dbe7eff9ef949d164e40bcca420aac5a230cd7384a70e356d1b"
+    },
+    {
+      "file": "authority/original_phase4_design_INDEX.md",
+      "file_sha256": "504516b9aa09b2c239f4a326b9427812dfb1e86b50355434544931f777fea908",
+      "first_line": 961,
+      "last_line": 985,
+      "text": "    \n    ### 4. CR 문서 파싱 규칙 (RAN3 고유)\n    \n    ### 4.1 Heading 스타일 매핑\n    \n    > **RAN3 핵심**: RAN3 CR은 `Heading 4`가 주도하는 Heading 스타일 분포를 보인다.\n    \n    > 이하 매핑은 사전 스캔 결과 기준이며, 구현 시 전수 스캔으로 확정 필요.\n    \n    | Heading 스타일 | 역할 (추정) |\n    | --- | --- |\n    | Heading 4 | CR Cover Sheet 필드 제목 (Reason for change, Summary 등) |\n    | Heading 3 | 상위 섹션 구분 |\n    | Heading 5 | 하위 필드 |\n    | Heading 2 | 문서 대제목 |\n    | Heading 1 | 최상위 제목 |\n    | H6, Heading 6, Heading 8 | 기타 |\n    | Header | 머리글 |\n    \n    **파싱 전략:**\n    \n    1. CR 문서에서 `Heading 4` 스타일의 텍스트를 필드 제목으로 인식\n    2. \"Reason for change\", \"Summary of change\", \"Consequences if not approved\" 등 키워드 매칭\n    3. 해당 Heading 이후 ~ 다음 Heading 이전까지의 텍스트를 필드 값으로 추출\n    \n",
+      "text_sha256": "4fc5355c7774a4f70d6285c7705acbb5da79a611e730ea8fca7f766687a6d905"
+    },
+    {
+      "file": "authority/original_phase4_design_INDEX.md",
+      "file_sha256": "504516b9aa09b2c239f4a326b9427812dfb1e86b50355434544931f777fea908",
+      "first_line": 1038,
+      "last_line": 1064,
+      "text": "    3. hasCR 관계 생성\n    \n    ---\n    \n    ### 6. CR 인스턴스 확장\n    \n    ### 6.1 기존 인스턴스 활용\n    \n    - Phase-1에서 생성된 CR 인스턴스 중 [P4-V04]개 (unique tdocNumber 기준)에 대해 속성 추가\n    - 새 인스턴스 생성이 아닌 **기존 인스턴스 확장**\n    \n    ### 6.2 CR 문서 → Phase-1 CR 매칭 규칙\n    \n    1. CR 문서 내 \"Tdoc #\" 또는 문서 헤더에서 tdocNumber 추출\n    2. 패턴: `R3-\\d{6}`\n    3. Phase-1 CR 인스턴스와 tdocNumber로 매칭\n    4. 매칭 실패 시 오류 로그\n    \n    ### 6.3 Data Property 매핑\n    \n    | 속성 | 소스 위치 | 변환 규칙 | 커버리지 |\n    | --- | --- | --- | --- |\n    | reasonForChange | \"Reason for change:\" 필드 | 텍스트 추출, 빈 값이면 null | [P4-V07] |\n    | summaryOfChange | \"Summary of change:\" 필드 | 텍스트 추출, 빈 값이면 null | — |\n    | consequencesIfNotApproved | \"Consequences if not approved:\" 필드 | 텍스트 추출, 빈 값이면 null | — |\n    \n    ### 6.4 Object Property 매핑\n",
+      "text_sha256": "91277ac39b1cf88984471bfdf696d838b581fce9b8089348b8927dae65d6c2a6"
+    }
+  ]
+}

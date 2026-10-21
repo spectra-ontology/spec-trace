@@ -1,0 +1,92 @@
+{
+  "id": "RAN3_P4_CQ4-2",
+  "original_EN": "Return the reasons and summaries of CRs approved by agreements (decision-linked change review).",
+  "original_Korean": "특정 Resolution이 승인한 CR의 변경 이유와 요약은?",
+  "original_query": "MATCH (a:Agreement)-[:REFERENCES]->(c:CR) WHERE c.reasonForChange IS NOT NULL WITH DISTINCT c ORDER BY c.tdocNumber LIMIT 5 RETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason, c.summaryOfChange AS summary",
+  "query_repair": "MATCH (a:Agreement)-[:REFERENCES]->(c:CR)\nWHERE c.reasonForChange IS NOT NULL\nWITH a, c, reduce(s = {open: true, lines: []}, line IN split(coalesce(a.content, ''), '\\n') |\n  CASE WHEN NOT s.open OR line =~ '(?i)^\\\\s*(?:Decision\\\\s*:|R3-[0-9]{6}[\\\\t ]+\\\\S).*'\n    THEN {open: false, lines: s.lines}\n    ELSE {open: true, lines: s.lines + [line]}\n  END) AS technical\nWHERE any(line IN technical.lines WHERE\n  (line =~ ('(?i).*\\\\b(?:agree|approve|endorse|adopt)\\\\s+(?:(?!\\\\b(?:CRs?|and|or|but|to|if|unless|until)\\\\b|R3-[0-9]{6})[^,.;:!?\\\\n])*?\\\\bCRs?\\\\b\\\\s*(?:in\\\\s*)?\\\\(?(?:R3-[0-9]{6}\\\\s*(?:,|and|or)\\\\s*)*' + c.tdocNumber + '\\\\b.*')\n   OR line =~ ('(?i).*\\\\b' + c.tdocNumber + '\\\\b(?:\\\\s*(?:,|and)\\\\s*R3-[0-9]{6}\\\\b)*(?:\\\\s*\\\\([^.;:!?\\\\n]*\\\\))?\\\\s*(?:(?:is|are|was|were)\\\\s+)?(?:agreed|approved|endorsed|adopted)\\\\b.*'))\n  AND NOT line =~ ('(?i).*(?:\\\\b(?:revision\\\\s+of|replaces?|was|revised\\\\s+from)\\\\s+' + c.tdocNumber + '\\\\b|\\\\b' + c.tdocNumber + '\\\\s+(?:rev\\\\s+in|revised\\\\s+to)\\\\b).*')\n  AND NOT line =~ '(?i).*(?:\\\\b(?:not|never)\\\\b[^.;]*\\\\b(?:agree|agreed|approve|approved|endorse|endorsed|adopt|adopted)\\\\b|^\\\\s*no\\\\s+CRs?\\\\b).*'\n  AND NOT line =~ '(?i)^\\\\s*(?:if|unless|until)\\\\b.*')\nWITH DISTINCT c ORDER BY c.tdocNumber LIMIT 5\nRETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason, c.summaryOfChange AS summary",
+  "unchanged_criteria_sha256": "bfefc447de02b451da33e0c85afb2708cf6ca7a201fedf07ec4d5b984d492fa4",
+  "minimum_roles": [
+    {
+      "name": "tdocNumber",
+      "type": "string",
+      "nullable": false,
+      "role": "CR identity binding each requested reason and summary to its own change proposal",
+      "source_column_or_expression": "c.tdocNumber"
+    },
+    {
+      "name": "reason",
+      "type": "string",
+      "nullable": false,
+      "role": "Requested substantive CR reason-for-change metadata",
+      "source_column_or_expression": "c.reasonForChange"
+    },
+    {
+      "name": "summary",
+      "type": "string",
+      "nullable": true,
+      "role": "Requested substantive CR summary-of-change metadata; original source blank maps to null",
+      "source_column_or_expression": "c.summaryOfChange"
+    }
+  ],
+  "collection_contract": {
+    "kind": "top_k_boundary_ties",
+    "value": 5,
+    "source_order_keys": [
+      {
+        "source_column": "tdocNumber",
+        "direction": "asc"
+      }
+    ],
+    "tie_policy": "any_subset_at_boundary",
+    "within_tie_order": "any",
+    "require_rank_order": false
+  },
+  "meaning": "Return complete reason and summary values paired to the CR identity. Approved BY agreements requires adoption of the CR proposal or its identifiable current amendment by the technical Agreement object, not merely later agreed document status somewhere in retained context.",
+  "approval_stage": "Proposal-stage CR/draftCR inclusion is retained. No plenary, final, all-changes, causal or numbered-only test is introduced.",
+  "strongest_competing_authority": [
+    {
+      "authority": "P4 item explicitly maps REFERENCES plus reason/summary; EN parenthetical says decision-linked change review; P2 retains content R3-token references to existing Phase1 instances.",
+      "resolution": "Keep all those graph edges, source context and original metadata domain. The mapping supports documentary retrieval but does not declare REFERENCES equivalent to approval BY the technical Agreement. P2 explicit Resolution-vs-Decision definition and original Korean preserve the approving object role."
+    },
+    {
+      "authority": "The original technical Agreement can adopt a substantive provision that is later captured in a CR, and the later same-CR document can be agreed.",
+      "resolution": "Keep that lineage evidence. Do not infer approval of the CR object from topical similarity or adoption of an unbound provision. Read the actual37 original technical objects and independent succeeding document records; explicit current CR adoptions supply five entrants."
+    },
+    {
+      "authority": "Original P2 extraction can retain text beyond a later Tdoc header; there is no universal first-header terminator in the original content authority.",
+      "resolution": "No graph-body deletion or universal source-boundary claim is made. The semantic query repair identifies the technical approval statement in the retained body. Exact original source windows certify scope agreement for all37 objects needed by the current ASC5 boundary, with original full contexts preserved."
+    },
+    {
+      "authority": "Preserving every Phase1 CR might require new metadata on earlier graph-null records.",
+      "resolution": "Original P4 subset metadata extension and reason-nonnull authored predicate remain. Missing frozen values are not claimed source-empty; the query does not add an uncaptured corpus expansion."
+    },
+    {
+      "authority": "Original summary is optional and original query does not require nonnull summary.",
+      "resolution": "Keep nullable summary and explicit key; old source-blank witness remains preserved. The repaired selectedfive happen to have ten nonempty original values, which is an observation rather than an eligibility filter."
+    },
+    {
+      "authority": "Generic default CQ4 uses meetingDESC and list10.",
+      "resolution": "Item-specific DISTINCT CR, tdocASC5 and requested fields remain. English Return does not require output serialization order."
+    }
+  ],
+  "frontier": {
+    "path": "actual_technical_approval_full142_145path_source_matrix_v5.json",
+    "bytes": 117735,
+    "sha256": "1110ce4f09d45db792c8c67e00b1d790b74ce2dfcd1828df336c177b8c9c6fd0"
+  },
+  "source_CR_fields": {
+    "path": "actual_provisional_repair_five_original_CR_ten_fields_v2.json",
+    "bytes": 176784,
+    "sha256": "0512463053e7c1951546c8b1aea0db5166c1ea843d016396ebb5702fc2dfe56e"
+  },
+  "source_reports": {
+    "path": "actual_original_technical_approval_frontier_v4.json",
+    "bytes": 11010,
+    "sha256": "1fd7cee966a0144cfe89915ba2845ea0834c4a35f2bee33fd97d05d00b4d5698"
+  },
+  "primary_nonblind_AI": true,
+  "human_expert_n": 0,
+  "new_model_output_exposure": false,
+  "native_API_calls": 0,
+  "ROOT_seal": false
+}

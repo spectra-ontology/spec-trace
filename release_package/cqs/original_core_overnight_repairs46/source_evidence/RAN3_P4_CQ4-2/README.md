@@ -1,0 +1,5 @@
+SPECTRA technical decision and change metadata
+
+This case links five CRs explicitly adopted by technical Agreements to their complete captured reasons and summaries. Fifteen original source members reproduce ten metadata fields and the source objects needed to verify the ASC-five boundary across 142 CR candidates, 145 reference paths and 37 Agreements. The replay connects original documentary references, technical CR-object approval, complete three-field native records, 30 typed controls and two distinct nonblind AI reviews. Metadata follows the authored cover-cell paragraph extraction policy; full original members retain the nested-table witness.
+
+Run `python3 -B -I -S /absolute/path/to/verify.py` from any directory. The packet uses the Python standard library and includes saved source and native evidence. Source certification covers the requested five records and their selection frontier; model calls: 0, human reviews: 0. ROOT final admission and method evaluation are recorded separately.

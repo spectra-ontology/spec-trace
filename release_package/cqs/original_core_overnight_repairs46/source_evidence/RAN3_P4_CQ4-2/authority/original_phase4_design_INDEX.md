@@ -1,0 +1,1305 @@
+- **phase-4: Ontology 101 기반 HW/SW 엔지니어 타겟으로 확장-2 (CR)**
+    
+    ## Step 1: Domain과 Scope 결정
+    
+    > Ontology 101 원칙
+    > 
+    > 
+    > *"We suggest starting the development of an ontology by defining its domain and scope."*
+    > 
+    
+    ---
+    
+    ### 1. 기본 질문에 대한 답변
+    
+    ### 1.1 What is the domain?
+    
+    **3GPP RAN3 Change Request(CR) 문서의 본문 내용과 Spec 간 영향 관계**
+    
+    ### 1.2 For what are we going to use the ontology?
+    
+    - CR 변경 근거 추적 — 왜 이 변경이 필요했는가
+    - Cross-Spec 영향 분석 — CR이 다른 Spec에 미치는 파급 효과
+    - CR Pack 단위 분석 — TSG 제출 단위로 CR 그룹 분석
+    - Phase 1-3 연계 — Resolution → CR → TS Section 전체 추적
+    
+    ### 1.3 Who will use and maintain the ontology?
+    
+    | 사용자 | 핵심 니즈 |
+    | --- | --- |
+    | 표준화 엔지니어 | 유사 CR의 변경 근거 참조, 영향 범위 사전 파악 |
+    | HW/SW 엔지니어 | 특정 Section 변경의 이유와 배경 이해 |
+    | 전략/기획 | 기술 트렌드 분석 (어떤 이유로 변경이 많은가) |
+    | IP/특허 | 기술 기여 증거 (변경 이유, 요약 텍스트) |
+    
+    ### 1.4 데이터 소스
+    
+    | 항목 | 내용 |
+    | --- | --- |
+    | CR 문서 | Word 형식 (.docx), [P4-V01]개 |
+    | Cover Sheet | Word 형식, [P4-V02]개 (Rel-15 ~ Rel-19) |
+    | 팩 디렉토리 | TSG 하위 RP 폴더 |
+    
+    ### 1.5 전제 조건
+    
+    > 본 온톨로지는 Phase-1~3 온톨로지의 확장이다.
+    > 
+    > - Phase-1~3의 모든 클래스, 관계, 인스턴스는 그대로 유지
+    > - Phase-4는 CR 문서 본문 정보를 추가하고 기존 데이터와 연결
+    > - 기존 CQ는 모두 답변 가능 유지
+    
+    ### 1.6 RAN3 CR 데이터 특성
+    
+    | 항목 | RAN3 | 근거 |
+    | --- | --- | --- |
+    | CR 문서 수 | **[P4-V01]** | 사전 스캔 (전부 .docx) |
+    | **Heading 스타일** | **Heading 2~4** | 사전 스캔 샘플 |
+    | 최다 Spec CR | **38.473** | 파일명 기반 (§8 분포 참조) |
+    | .doc 비율 | **0%** (전부 .docx) | 사전 스캔 |
+    | Cover Sheet | **[P4-V02]** | 구현 후 확인 |
+    | 고유 Spec | **38.4xx 중심** | 파일명 기반 |
+    | ASN.1 포함 CR | **있음** (38.413/423/473 CR 중심) | 사전 스캔 추정 |
+    | TDoc 접두사 | **R3-NNNNNN (6자리)** | |
+    | CR-Form | **전부 포함 (샘플 확인)** | 사전 스캔 |
+    
+    > **RAN3 CR 특성**: 전부 .docx (변환 불필요), 3대 프로토콜 TS(38.473/423/413)에 집중.
+    
+    ---
+    
+    ### 2. Scope 정의
+    
+    ### 2.1 포함 (In Scope)
+    
+    | 구분 | 포함 대상 | Phase 1 대비 |
+    | --- | --- | --- |
+    | CR 변경 근거 | Reason for change | **신규** |
+    | CR 변경 요약 | Summary of change | **신규** |
+    | CR 미승인 영향 | Consequences if not approved | **신규** |
+    | Cross-Spec 관계 | Other Specs Affected (Core/Test/O&M) | **신규** |
+    | CR Pack 구조 | Cover Sheet 기반 CR 그룹핑 | **상세화** |
+    | Clauses Affected | CR → Section 연결 | **향상** |
+    
+    ### 2.2 제외 (Out of Scope)
+    
+    | 제외 대상 | 이유 |
+    | --- | --- |
+    | Track Changes 변경 블록 | Vector DB 영역 |
+    | 기술 테이블 셀 데이터 | Vector DB 영역 |
+    | ASN.1 코드 본문 | Vector DB 영역 (Phase-3과 동일 방침) |
+    
+    ### 2.3 Graph DB vs Vector DB 경계
+    
+    | Graph DB (Phase-4) | Vector DB |
+    | --- | --- |
+    | CR 메타데이터 (reasonForChange, summaryOfChange, consequencesIfNotApproved) | Track Changes 변경 블록 |
+    | CRPack 구조 (ID, TSG Meeting, CR 목록) | 기술 테이블 셀 데이터 |
+    | Cross-Spec 영향 관계 | ASN.1 코드 본문 |
+    | CR → Section 연결 | |
+    
+    **연결 키**: tdocNumber (예: `R3-241234`)
+    
+    **Graph DB 저장 근거:**
+    
+    - reasonForChange/summaryOfChange/consequencesIfNotApproved는 1~5문장의 짧은 메타데이터
+    - CQ 답변에 직접 노출되는 속성 (Text-to-Cypher 조회 대상)
+    - Phase-3 sectionTitle과 동일한 성격
+    
+    ---
+    
+    ### 3. Competency Questions
+    
+    ### CQ1: CR 변경 근거 분석
+    
+    | # | Competency Question |
+    | --- | --- |
+    | 1-1 | 특정 CR의 변경 이유(reasonForChange)는? |
+    | 1-2 | 특정 CR의 변경 요약(summaryOfChange)은? |
+    | 1-3 | 특정 CR의 미승인 영향(consequencesIfNotApproved)은? |
+    
+    ### CQ2: Cross-Spec 영향 분석
+    
+    | # | Competency Question |
+    | --- | --- |
+    | 2-1 | 특정 CR이 영향주는 다른 Spec (Core/Test/O&M) 목록은? |
+    | 2-2 | 특정 Spec을 수정하는 CR 중 다른 Spec에도 영향주는 CR은? |
+    | 2-3 | 특정 Spec을 영향 받는 Spec으로 참조하는 CR 목록은? |
+    | 2-4 | Cross-Spec 영향이 가장 많은 CR Top N은? |
+    
+    ### CQ3: CR Pack 분석
+    
+    | # | Competency Question |
+    | --- | --- |
+    | 3-1 | 특정 CR Pack에 포함된 CR 목록과 변경 요약은? |
+    | 3-2 | 특정 Work Item 관련 CR이 속한 Pack 목록은? |
+    | 3-3 | 특정 TSG 회의에 제출된 CR Pack 목록은? |
+    
+    ### CQ4: Phase 1-3 연계 분석
+    
+    | # | Competency Question |
+    | --- | --- |
+    | 4-1 | 특정 Section을 수정하는 CR의 변경 이유 목록은? |
+    | 4-2 | 특정 Resolution이 승인한 CR의 변경 이유와 요약은? |
+    | 4-3 | 특정 Work Item 관련 CR이 수정하는 Section 목록은? |
+    | 4-4 | 특정 회사의 CR이 영향주는 다른 Spec 목록은? |
+    | 4-5 | 특정 회의에서 승인된 CR의 변경 요약 목록은? |
+    
+    ---
+    
+    ### 4. CQ 결과 규칙
+    
+    ### 4.1 정렬 기준 (Default Sort Order)
+    
+    | CQ 그룹 | Primary Sort | Secondary Sort |
+    | --- | --- | --- |
+    | CQ1 | tdocNumber DESC | - |
+    | CQ2 | Count DESC | Spec ASC |
+    | CQ3 | tsgMeeting DESC | crPackId ASC |
+    | CQ4 | meetingNumberInt DESC | tdocNumber ASC |
+    
+    ### 4.2 결과 개수 (Default Limit)
+    
+    | CQ 유형 | 기본값 |
+    | --- | --- |
+    | 단일 CR 조회 | 1 |
+    | 목록 조회 | 10 |
+    | Top N 조회 | 10 |
+    
+    ---
+    
+    ### 5. CQ 요약
+    
+    | CQ 그룹 | CQ 수 |
+    | --- | --- |
+    | CQ1 (변경 근거) | 3 |
+    | CQ2 (Cross-Spec) | 4 |
+    | CQ3 (CR Pack) | 3 |
+    | CQ4 (Phase 1-3 연계) | 5 |
+    
+    ---
+    
+    ## Step 2: 기존 온톨로지 재사용 검토
+    
+    > Ontology 101 원칙
+    > 
+    > 
+    > *"It is almost always worth considering what someone else has done and checking if we can refine and extend existing sources."*
+    > 
+    
+    ---
+    
+    ### 1. 재사용 검토 대상
+    
+    ### 1.1 기본 전제
+    
+    Phase-4는 Phase-1~3의 확장. 기존 모든 클래스/관계/인스턴스를 그대로 활용.
+    
+    ### 1.2 Phase-1~3 온톨로지 현황
+    
+    | Phase | 클래스 |
+    | --- | --- |
+    | Phase-1 | Tdoc, CR, LS, Meeting, Company, Contact, WorkItem, AgendaItem, Release, Spec, WorkingGroup |
+    | Phase-2 | Resolution, Agreement, Conclusion, WorkingAssumption, Summary, Table |
+    | Phase-3 | Section, TSTable, TSFigure |
+    
+    > RAN3 Phase-2에는 Summary(Moderator) 포함, SessionNotes/Figure/Chart 없음.
+    
+    ### 1.3 외부 표준 온톨로지
+    
+    | 온톨로지 | Phase-4 필요성 | 결정 |
+    | --- | --- | --- |
+    | Dublin Core | 기존 유지 | ✅ |
+    | FOAF | 기존 유지 | ✅ |
+    | 추가 온톨로지 | 불필요 | ❌ |
+    
+    ---
+    
+    ### 2. CQ 기반 클래스 사용 분석
+    
+    | Phase-1 클래스 | CQ | 필요 |
+    | --- | --- | --- |
+    | CR | CQ 전체 | ✅ 핵심 (확장 대상) |
+    | Spec | CQ2, CQ4 | ✅ 필수 |
+    | Meeting | CQ4-5 | ✅ |
+    | Company | CQ4-4 | ✅ |
+    | WorkItem | CQ3-2, CQ4-3 | ✅ |
+    
+    | Phase-2 클래스 | CQ | 필요 |
+    | --- | --- | --- |
+    | Resolution | CQ4-2, CQ4-5 | ✅ |
+    
+    | Phase-3 클래스 | CQ | 필요 |
+    | --- | --- | --- |
+    | Section | CQ4-1, CQ4-3 | ✅ |
+    
+    ---
+    
+    ### 3. CQ 기반 관계 사용 분석
+    
+    ### 3.1 Phase-1 관계
+    
+    | 관계 | CQ | 필요 |
+    | --- | --- | --- |
+    | submittedBy (Tdoc→Company) | CQ4-4 | ✅ |
+    | relatedTo (Tdoc→WorkItem) | CQ3-2, CQ4-3 | ✅ |
+    | modifies (CR→Spec) | CQ4-1, CQ4-3 | ✅ |
+    
+    ### 3.2 Phase-2 관계
+    
+    | 관계 | CQ | 필요 |
+    | --- | --- | --- |
+    | references (Resolution→Tdoc) | CQ4-2 | ✅ |
+    | madeAt (Resolution→Meeting) | CQ4-5 | ✅ |
+    
+    ### 3.3 Phase-3 관계
+    
+    | 관계 | CQ | 필요 |
+    | --- | --- | --- |
+    | belongsToSpec (Section→Spec) | CQ4-1, CQ4-3 | ✅ |
+    
+    ---
+    
+    ### 4. CR 클래스 확장 분석
+    
+    ### 4.1 Phase-1 CR 기존 정의
+    
+    **기존 Data Property:**
+    
+    | Property | Type | 설명 |
+    | --- | --- | --- |
+    | crNumber | String | CR 번호 |
+    | crCategory | Enum | 카테고리 (F/A/B/C/D + 레거시 1/2/3) |
+    | clausesAffected | String | 영향 Section |
+    | tsgCRPack | String | TSG CR Pack 번호 |
+    | crRevision | String | CR의 수정 횟수 |
+    | affectsUICC~affectsCN | Boolean | 영향 범위 |
+    
+    **기존 Object Property:**
+    
+    | Property | Range | 설명 |
+    | --- | --- | --- |
+    | modifies | Spec | CR이 수정하는 TS |
+    
+    ### 4.2 Phase-4에서 추가할 속성
+    
+    **신규 Data Property:**
+    
+    | Property | Type | CQ |
+    | --- | --- | --- |
+    | reasonForChange | String | CQ1-1, CQ4-1, CQ4-2, CQ4-3 |
+    | summaryOfChange | String | CQ1-2, CQ3-1, CQ4-2, CQ4-5 |
+    | consequencesIfNotApproved | String | CQ1-3 |
+    
+    **신규 Object Property:**
+    
+    | Property | Range | CQ | 설명 |
+    | --- | --- | --- | --- |
+    | belongsToCRPack | CRPack | CQ3 전체 | CR이 속한 CR Pack |
+    | affectsCoreSpec | Spec | CQ2, CQ4-4 | 영향받는 Core Spec |
+    | affectsTestSpec | Spec | CQ2, CQ4-4 | 영향받는 Test Spec |
+    | affectsOMSpec | Spec | CQ2, CQ4-4 | 영향받는 O&M Spec |
+    | modifiesSection | Section | CQ4-1, CQ4-3 | CR이 수정하는 Section |
+    
+    ---
+    
+    ### 5. Phase-4 신규 클래스
+    
+    ### 5.1 CRPack
+    
+    | 항목 | 내용 |
+    | --- | --- |
+    | 정의 | TSG 회의에 제출되는 CR 묶음 단위 |
+    | 상위 클래스 | 없음 (독립) |
+    | 데이터 소스 | Cover Sheet + Phase-1 CR.tsgCRPack |
+    
+    ---
+    
+    ### 6. 요약
+    
+    | 구분 | 대상 |
+    | --- | --- |
+    | **Phase-1 재사용** | CR, Spec, Meeting, Company, WorkItem |
+    | **Phase-2 재사용** | Resolution |
+    | **Phase-3 재사용** | Section |
+    | **Phase-4 신규** | CRPack |
+    | **Phase-4 확장** | CR (DP 3개 + OP 5개), Section (OP 1개) |
+    
+    ---
+    
+    ## Step 3: 중요 용어 나열
+    
+    > Ontology 101 원칙
+    > 
+    > 
+    > *"It is useful to write down a list of all terms we would like either to make statements about or to explain to a user."*
+    > 
+    
+    ---
+    
+    ### 1. 용어 나열
+    
+    ### 1.1 CR 본문 정보 관련
+    
+    | 용어 | 설명 | 데이터 소스 | 관련 CQ |
+    | --- | --- | --- | --- |
+    | **reasonForChange** | 변경이 필요한 이유 | CR 문서 "Reason for change" 필드 | CQ1-1, CQ4 |
+    | **summaryOfChange** | 변경 내용 요약 | CR 문서 "Summary of change" 필드 | CQ1-2, CQ3-1, CQ4 |
+    | **consequencesIfNotApproved** | 미승인 시 영향 | CR 문서 "Consequences if not approved" 필드 | CQ1-3 |
+    
+    ### 1.2 Cross-Spec 영향 관련
+    
+    | 용어 | 설명 | 데이터 소스 | 관련 CQ |
+    | --- | --- | --- | --- |
+    | **affectsCoreSpec** | CR이 영향주는 Core Spec | CR 문서 "Other specs affected: Core Specifications" | CQ2-1, CQ2-2, CQ2-4, CQ4-4 |
+    | **affectsTestSpec** | CR이 영향주는 Test Spec | CR 문서 "Other specs affected: Test Specifications" | CQ2-1, CQ2-2, CQ2-4, CQ4-4 |
+    | **affectsOMSpec** | CR이 영향주는 O&M Spec | CR 문서 "Other specs affected: O&M Specifications" | CQ2-1, CQ2-2, CQ2-4, CQ4-4 |
+    | **affectedByCR** | 특정 Spec을 영향주는 CR 목록 | 위 관계의 역방향 | CQ2-3 |
+    
+    ### 1.3 CR-Section 연결 관련
+    
+    | 용어 | 설명 | 관련 CQ |
+    | --- | --- | --- |
+    | **modifiesSection** | CR이 수정하는 Section | CQ4-3 |
+    | **modifiedByCR** | Section을 수정하는 CR (역관계) | CQ4-1 |
+    
+    ### 1.4 CR Pack 관련
+    
+    | 용어 | 설명 | 관련 CQ |
+    | --- | --- | --- |
+    | **CRPack** | TSG에 제출되는 CR 묶음 | CQ3 |
+    | **crPackId** | CR Pack 고유 식별자 (RP-NNNNNN) | CQ3 |
+    | **tsgMeeting** | Pack이 제출된 TSG 회의 | CQ3-3 |
+    | **hasCR** | Pack에 포함된 CR | CQ3-1 |
+    | **belongsToCRPack** | CR이 속한 Pack (hasCR 역관계) | CQ3-2 |
+    
+    ### 1.5 기존 연결 관련 (Phase-1~3 재사용)
+    
+    | 용어 | 설명 | 출처 | 관련 CQ |
+    | --- | --- | --- | --- |
+    | modifies | CR → Spec | Phase-1 | CQ2-2, CQ4 |
+    | submittedBy | CR → Company | Phase-1 | CQ4-4 |
+    | relatedTo | CR → WorkItem | Phase-1 | CQ3-2, CQ4-3 |
+    | presentedAt | CR → Meeting | Phase-1 | CQ4-5 |
+    | references | Resolution → Tdoc | Phase-2 | CQ4-2, CQ4-5 |
+    | madeAt | Resolution → Meeting | Phase-2 | CQ4-5 |
+    | belongsToSpec | Section → Spec | Phase-3 | CQ4-1, CQ4-3 |
+    
+    ---
+    
+    ### 2. CQ별 필요 용어 매핑
+    
+    | CQ | 필요 용어 |
+    | --- | --- |
+    | 1-1 | reasonForChange |
+    | 1-2 | summaryOfChange |
+    | 1-3 | consequencesIfNotApproved |
+    | 2-1~2-4 | affectsCoreSpec, affectsTestSpec, affectsOMSpec |
+    | 3-1 | CRPack, hasCR, summaryOfChange |
+    | 3-2 | belongsToCRPack, relatedTo (Phase-1) |
+    | 3-3 | CRPack, tsgMeeting |
+    | 4-1 | modifiedByCR, reasonForChange |
+    | 4-2 | references (Phase-2), reasonForChange, summaryOfChange |
+    | 4-3 | relatedTo (Phase-1), modifiesSection |
+    | 4-4 | submittedBy (Phase-1), affectsCoreSpec/TestSpec/OMSpec |
+    | 4-5 | madeAt (Phase-2), references, summaryOfChange |
+    
+    ---
+    
+    ### 3. 요약
+    
+    ### 3.1 용어 목록
+    
+    | 카테고리 | 용어 |
+    | --- | --- |
+    | **클래스 후보** | CRPack |
+    | **CR 본문 속성** | reasonForChange, summaryOfChange, consequencesIfNotApproved |
+    | **Cross-Spec 관계** | affectsCoreSpec, affectsTestSpec, affectsOMSpec, affectedByCR |
+    | **CR-Section 관계** | modifiesSection, modifiedByCR |
+    | **CRPack 속성** | crPackId, tsgMeeting |
+    | **CRPack 관계** | hasCR, belongsToCRPack |
+    | **Phase-1~3 재사용** | modifies, submittedBy, relatedTo, presentedAt, references, madeAt, belongsToSpec |
+    
+    ### 3.2 신규 vs 재사용 구분
+    
+    | 구분 | 용어 |
+    | --- | --- |
+    | **Phase-4 신규** | CRPack, reasonForChange, summaryOfChange, consequencesIfNotApproved, affectsCoreSpec, affectsTestSpec, affectsOMSpec, affectedByCR, modifiesSection, modifiedByCR, crPackId, tsgMeeting, hasCR, belongsToCRPack |
+    | **Phase-1~3 재사용** | modifies, submittedBy, relatedTo, presentedAt, references, madeAt, belongsToSpec |
+    
+    ### 3.3 검증
+    
+    | 검증 항목 | 결과 |
+    | --- | --- |
+    | 모든 용어가 Step 1 Scope 내? | ✅ |
+    | 모든 용어가 CQ 답변에 필요? | ✅ |
+    | CR 문서/Cover Sheet에서 추출 가능? | ✅ |
+    | Step 2 결정과 일관성? | ✅ |
+    | 역관계 용어 포함? | ✅ |
+    
+    ---
+    
+    ## Step 4: 클래스와 계층 구조 정의
+    
+    > Ontology 101 원칙
+    > 
+    > 
+    > *"Define the classes and the class hierarchy."*
+    > 
+    
+    ---
+    
+    ### 1. 클래스 판단 기준
+    
+    | 질문 | 클래스 여부 |
+    | --- | --- |
+    | 여러 개의 인스턴스를 가질 수 있는가? | ✅ 클래스 |
+    | 독립적으로 존재하는 객체인가? | ✅ 클래스 |
+    | 다른 객체의 속성/값인가? | ❌ Property |
+    
+    ---
+    
+    ### 2. Step 3 용어 → 클래스 판단
+    
+    ### 2.1 클래스 후보 용어
+    
+    | 용어 | 여러 인스턴스? | 독립 객체? | 클래스 여부 |
+    | --- | --- | --- | --- |
+    | **CRPack** | ✅ (여러 Pack 존재) | ✅ (CR과 독립) | ✅ 클래스 |
+    
+    ### 2.2 속성 관련 용어
+    
+    | 용어 | 클래스 여부 | 처리 |
+    | --- | --- | --- |
+    | reasonForChange, summaryOfChange, consequencesIfNotApproved | ❌ | Step 5 Data Property |
+    | crPackId, tsgMeeting | ❌ | Step 5 Data Property |
+    
+    ### 2.3 관계 관련 용어
+    
+    | 용어 | 클래스 여부 | 처리 |
+    | --- | --- | --- |
+    | affectsCoreSpec, affectsTestSpec, affectsOMSpec | ❌ | Step 5 Object Property |
+    | affectedByCR | ❌ | Step 5 Object Property (쿼리로 처리) |
+    | modifiesSection, modifiedByCR | ❌ | Step 5 Object Property |
+    | hasCR, belongsToCRPack | ❌ | Step 5 Object Property |
+    
+    ---
+    
+    ### 3. Phase-4 신규 클래스
+    
+    ### 3.1 CRPack
+    
+    | 항목 | 내용 |
+    | --- | --- |
+    | 정의 | TSG 회의에 제출되는 CR 묶음 단위 |
+    | 상위 클래스 | 없음 (독립) |
+    | 하위 클래스 | 없음 |
+    | 데이터 소스 | Cover Sheet + Phase-1 CR.tsgCRPack |
+    
+    ---
+    
+    ### 4. 기존 클래스 확장
+    
+    | 클래스 | 확장 내용 |
+    | --- | --- |
+    | CR | DP 3개 + OP 5개 추가 (Step 5 참조) |
+    | Section | OP 1개 추가 (modifiedByCR) |
+    
+    **CR 확장 판단 근거:**
+    
+    - CR 본문 정보는 **추가 속성**이지, 별도 클래스가 아님
+    - 모든 CR이 동일한 구조를 가짐 (하위 클래스 불필요)
+    - 속성 값의 유무는 Cardinality로 처리 (0..1)
+    
+    ---
+    
+    ### 5. 계층 구조 검토
+    
+    ### 5.1 CRPack 하위 클래스 필요성
+    
+    | 기준 | 판단 |
+    | --- | --- |
+    | 추가 속성이 있는 하위 유형? | ❌ 없음 |
+    | 다른 제약조건? | ❌ 없음 |
+    | 다른 관계? | ❌ 없음 |
+    
+    **결론:** CRPack 하위 클래스 불필요
+    
+    ### 5.2 CR 하위 클래스 필요성 (재검토)
+    
+    Phase-1에서 CR은 Tdoc의 하위 클래스로 정의됨.
+    
+    | 후보 | 추가 속성? | 다른 관계? | 판단 |
+    | --- | --- | --- | --- |
+    | CR with Cross-Spec | ❌ (동일 속성) | ❌ | 불필요 |
+    | CR without Cross-Spec | ❌ (동일 속성) | ❌ | 불필요 |
+    
+    **결론:** CR 하위 클래스 불필요. 속성 값 유무로 구분.
+    
+    ---
+    
+    ### 6. 전체 클래스 계층 다이어그램
+    
+    ```
+    ┌─────────────────────────────────────────────────────────────────┐
+    │                    RAN3 CR Document Ontology (Phase-4)          │
+    ├─────────────────────────────────────────────────────────────────┤
+    │                                                                 │
+    │  [Phase-1 기존]                                                 │
+    │  Tdoc                                                           │
+    │  ├── CR ◄─── 속성 확장 (Phase-4)                               │
+    │  └── LS                                                         │
+    │  Meeting  Company  WorkItem  Release  Spec  ...                 │
+    │                                                                 │
+    ├─────────────────────────────────────────────────────────────────┤
+    │  [Phase-2 기존]                                                 │
+    │  Resolution (Agreement, Conclusion, WorkingAssumption)          │
+    │  Table                                                          │
+    │                                                                 │
+    ├─────────────────────────────────────────────────────────────────┤
+    │  [Phase-3 기존]                                                 │
+    │  Section ◄─── 역관계 추가 (modifiedByCR)                       │
+    │  TSTable  TSFigure                                              │
+    │                                                                 │
+    ├─────────────────────────────────────────────────────────────────┤
+    │  [Phase-4 신규]                                                 │
+    │  CRPack ⭐                                                     │
+    │                                                                 │
+    └─────────────────────────────────────────────────────────────────┘
+    ```
+    
+    > RAN3 Phase-2에는 Summary(Moderator) 포함. SessionNotes/Figure/Chart 없음.
+    
+    ---
+    
+    ### 7. 요약
+    
+    ### 7.1 Phase-4 신규 클래스
+    
+    | 클래스 | 상속 | 설명 |
+    | --- | --- | --- |
+    | CRPack | 없음 (독립) | TSG 제출 CR 묶음 |
+    
+    ### 7.2 기존 클래스 확장
+    
+    | 클래스 | 확장 내용 |
+    | --- | --- |
+    | CR | Step 5 참조 (DP, OP 확장) |
+    
+    ### 7.3 클래스로 정의하지 않은 용어
+    
+    | 용어 | 이유 | 처리 |
+    | --- | --- | --- |
+    | reasonForChange, summaryOfChange, consequencesIfNotApproved | 속성값 | Step 5 Data Property |
+    | crPackId, tsgMeeting | 속성값 | Step 5 Data Property |
+    | affectsCoreSpec 등 | 관계 | Step 5 Object Property |
+    | modifiesSection, modifiedByCR | 관계 | Step 5 Object Property |
+    | hasCR, belongsToCRPack | 관계 | Step 5 Object Property |
+    
+    ### 7.4 누적 클래스 현황
+    
+    | Phase | 클래스 |
+    | --- | --- |
+    | Phase-1 | Tdoc, CR, LS, Meeting, Company, Contact, WorkItem, AgendaItem, Release, Spec, WorkingGroup |
+    | Phase-2 | Resolution, Agreement, Conclusion, WorkingAssumption, Summary, Table |
+    | Phase-3 | Section, TSTable, TSFigure |
+    | **Phase-4** | **CRPack** |
+    
+    ---
+    
+    ## Step 5: 속성(Slot) 정의
+    
+    > Ontology 101 원칙
+    > 
+    > 
+    > *"Define the properties of classes—slots... Properties describe attributes of instances of a class and relations to other instances."*
+    > 
+    
+    ---
+    
+    ### 1. 속성의 종류
+    
+    | 종류 | 설명 | 예시 |
+    | --- | --- | --- |
+    | **Data Property** | 객체의 속성값 | reasonForChange, crPackId |
+    | **Object Property** | 다른 객체와의 관계 | affectsCoreSpec, hasCR |
+    | **Inverse Property** | 역방향 관계 | hasCR ↔ belongsToCRPack |
+    
+    ---
+    
+    ### 2. CR 클래스 확장 속성
+    
+    ### 2.1 신규 Data Property
+    
+    | Property | Type | Description | 데이터 소스 |
+    | --- | --- | --- | --- |
+    | reasonForChange | String | 변경이 필요한 이유 | CR 문서 "Reason for change" 필드 |
+    | summaryOfChange | String | 변경 내용 요약 | CR 문서 "Summary of change" 필드 |
+    | consequencesIfNotApproved | String | 미승인 시 영향 | CR 문서 "Consequences if not approved" 필드 |
+    
+    ### 2.2 신규 Object Property
+    
+    | Property | Range | Inverse | Description |
+    | --- | --- | --- | --- |
+    | belongsToCRPack | CRPack | hasCR | CR이 속한 CR Pack |
+    | affectsCoreSpec | Spec | — | CR이 영향주는 Core Spec |
+    | affectsTestSpec | Spec | — | CR이 영향주는 Test Spec |
+    | affectsOMSpec | Spec | — | CR이 영향주는 O&M Spec |
+    | modifiesSection | Section | modifiedByCR | CR이 수정하는 Section (clausesAffected 구조화) |
+    
+    *참고: affectsCoreSpec/TestSpec/OMSpec의 역방향 탐색(CQ2-3)은 별도 역관계 property 없이 쿼리로 해결 (섹션 7 참조)*
+    
+    ---
+    
+    ### 3. CRPack 클래스 속성
+    
+    ### 3.1 Data Property
+    
+    | Property | Type | Description | 데이터 소스 |
+    | --- | --- | --- | --- |
+    | crPackId | String | CR Pack 고유 식별자 | Cover Sheet (예: "RP-250233") |
+    | tsgMeeting | String | Pack이 제출된 TSG 회의 | Cover Sheet (예: "RAN#103") |
+    
+    ### 3.2 Object Property
+    
+    | Property | Range | Inverse | Description |
+    | --- | --- | --- | --- |
+    | hasCR | CR | belongsToCRPack | Pack에 포함된 CR |
+    
+    ---
+    
+    ### 4. Section 역관계 추가
+    
+    | Property | Range | Inverse | Description |
+    | --- | --- | --- | --- |
+    | modifiedByCR | CR | modifiesSection | 이 Section을 수정하는 CR 목록 |
+    
+    ---
+    
+    ### 5. modifiesSection과 clausesAffected 관계
+    
+    | 속성 | 타입 | 출처 | 용도 |
+    | --- | --- | --- | --- |
+    | clausesAffected | String | Phase-1 CR | 원본 데이터 보존 (예: "5.1.3.2, 7.4") |
+    | modifiesSection | Object Property | Phase-4 확장 | Section 노드와 구조화된 연결 |
+    
+    **처리 방식:**
+    
+    - 두 속성은 동일한 정보의 다른 표현
+    - clausesAffected 문자열 파싱 → modifiesSection 관계 생성
+    - Phase-1 호환성 유지를 위해 clausesAffected 원본 데이터도 보존
+    
+    ---
+    
+    ### 6. 전체 Object Property 목록 (Phase-4 신규)
+    
+    | # | Property | Domain | Range | Inverse | Description |
+    | --- | --- | --- | --- | --- | --- |
+    | 1 | belongsToCRPack | CR | CRPack | hasCR | CR이 속한 Pack |
+    | 2 | hasCR | CRPack | CR | belongsToCRPack | Pack에 포함된 CR |
+    | 3 | affectsCoreSpec | CR | Spec | — | 영향받는 Core Spec |
+    | 4 | affectsTestSpec | CR | Spec | — | 영향받는 Test Spec |
+    | 5 | affectsOMSpec | CR | Spec | — | 영향받는 O&M Spec |
+    | 6 | modifiesSection | CR | Section | modifiedByCR | CR이 수정하는 Section |
+    | 7 | modifiedByCR | Section | CR | modifiesSection | Section을 수정하는 CR |
+    
+    **총 신규 OP: 7개**
+    
+    ---
+    
+    ### 7. 전체 Data Property 목록 (Phase-4 신규)
+    
+    | # | Property | Domain | Type | Description |
+    | --- | --- | --- | --- | --- |
+    | 1 | reasonForChange | CR | String | 변경 이유 |
+    | 2 | summaryOfChange | CR | String | 변경 요약 |
+    | 3 | consequencesIfNotApproved | CR | String | 미승인 영향 |
+    | 4 | crPackId | CRPack | String | Pack 식별자 |
+    | 5 | tsgMeeting | CRPack | String | TSG 회의 |
+    
+    **총 신규 DP: 5개**
+    
+    ---
+    
+    ### 8. Inverse Property 정리
+    
+    > **용어 통일 (Phase-3 §9 주석과 동일)**: 본 Spec에서 "Inverse Property", "역관계", "역방향"은 모두 동일 개념이다. OWL 공식 명칭은 `owl:inverseOf` (Inverse Property)이며 한글 설명문에서는 "역관계"와 "역방향"을 문맥에 따라 사용한다.
+    
+    | 정방향 | 역방향 | Domain ↔ Range |
+    | --- | --- | --- |
+    | hasCR | belongsToCRPack | CRPack ↔ CR |
+    | modifiesSection | modifiedByCR | CR ↔ Section |
+    
+    ---
+    
+    ### 9. Cross-Spec 역방향 탐색 (affectedByCR 처리)
+    
+    Step 3에서 나열한 `affectedByCR`는 별도 property로 정의하지 않음.
+    
+    **이유:**
+    
+    - affectsCoreSpec, affectsTestSpec, affectsOMSpec 세 관계의 공통 역관계가 필요
+    - OWL에서 하나의 property가 여러 property의 inverse가 될 수 없음
+    - 역관계 3개를 별도 정의하면 복잡성 증가 (coreSpecAffectedByCR, testSpecAffectedByCR, omSpecAffectedByCR)
+    
+    **해결:**
+    CQ2-3 ("특정 Spec을 영향 받는 Spec으로 참조하는 CR 목록")은 쿼리로 해결:
+    
+    ```cypher
+    MATCH (s:Spec)<-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]-(cr:CR)
+    WHERE s.specNumber = $specNumber
+    RETURN cr
+    ```
+    
+    ---
+    
+    ### 10. Phase-1~3 재사용 관계 (CQ 답변에 필요)
+    
+    | Property | Domain | Range | 출처 | 관련 CQ |
+    | --- | --- | --- | --- | --- |
+    | modifies | CR | Spec | Phase-1 | CQ2-2, CQ4 |
+    | submittedBy | Tdoc | Company | Phase-1 | CQ4-4 |
+    | relatedTo | Tdoc | WorkItem | Phase-1 | CQ3-2, CQ4-3 |
+    | presentedAt | Tdoc | Meeting | Phase-1 | CQ4-5 |
+    | references | Resolution | Tdoc | Phase-2 | CQ4-2, CQ4-5 |
+    | madeAt | Resolution | Meeting | Phase-2 | CQ4-5 |
+    | belongsToSpec | Section | Spec | Phase-3 | CQ4-1, CQ4-3 |
+    
+    ---
+    
+    ### 11. 클래스별 속성 요약
+    
+    | 클래스 | Data Property | Object Property |
+    | --- | --- | --- |
+    | CR (확장) | reasonForChange, summaryOfChange, consequencesIfNotApproved | belongsToCRPack, affectsCoreSpec, affectsTestSpec, affectsOMSpec, modifiesSection |
+    | CRPack (신규) | crPackId, tsgMeeting | hasCR |
+    | Section (역관계 추가) | — | modifiedByCR |
+    
+    ---
+    
+    ### 12. CQ 답변 가능성 검증
+    
+    | CQ | 필요 속성 | 정의 여부 |
+    | --- | --- | --- |
+    | CQ1-1~1-3 | reasonForChange, summaryOfChange, consequencesIfNotApproved | ✅ |
+    | CQ2-1~2-4 | affectsCoreSpec, affectsTestSpec, affectsOMSpec | ✅ |
+    | CQ3-1~3-3 | CRPack, hasCR, belongsToCRPack, tsgMeeting | ✅ |
+    | CQ4-1~4-5 | modifiesSection, references, submittedBy, madeAt | ✅ |
+    
+    **모든 CQ 답변 가능** ✅
+    
+    ---
+    
+    ## Step 6: 제약조건(Facet) 정의
+    
+    > Ontology 101 원칙
+    > 
+    > 
+    > *"Define the facets of the slots."*
+    > 
+    
+    ---
+    
+    ### 1. Facet 종류
+    
+    | Facet | 설명 | 예시 |
+    | --- | --- | --- |
+    | **Cardinality** | 속성값 개수 | 0..1, 1, 0..*, 1..* |
+    | **Required** | 필수 여부 | ✅ / ❌ |
+    | **Functional** | 단일값만 허용 | ✅ (최대 1개) |
+    | **InverseFunctional** | 역관계가 Functional | hasCR (각 CR은 최대 1개 Pack에서 참조) |
+    | **Inverse** | 역관계 | hasCR ↔ belongsToCRPack |
+    
+    ### Cardinality 표기법
+    
+    | 표기 | 의미 | Required | Functional |
+    | --- | --- | --- | --- |
+    | 1 | 정확히 1개 | ✅ | ✅ |
+    | 0..1 | 0개 또는 1개 | ❌ | ✅ |
+    | 1..* | 1개 이상 | ✅ | ❌ |
+    | 0..* | 0개 이상 | ❌ | ❌ |
+    
+    ---
+    
+    ### 2. CR 확장 Data Property Facet
+    
+    | Property | Type | Cardinality | Required | 근거 |
+    | --- | --- | --- | --- | --- |
+    | reasonForChange | String | 0..1 | ❌ | 일부 CR은 해당 필드 비어있음 |
+    | summaryOfChange | String | 0..1 | ❌ | 일부 CR은 해당 필드 비어있음 |
+    | consequencesIfNotApproved | String | 0..1 | ❌ | 일부 CR은 해당 필드 비어있음 |
+    
+    ---
+    
+    ### 3. CR 확장 Object Property Facet
+    
+    | Property | Domain | Range | Cardinality | Functional | Inverse | 근거 |
+    | --- | --- | --- | --- | --- | --- | --- |
+    | belongsToCRPack | CR | CRPack | 0..1 | ✅ | hasCR | CR은 최대 1개 Pack에만 속함 |
+    | affectsCoreSpec | CR | Spec | 0..* | ❌ | — | 여러 Core Spec 영향 가능 |
+    | affectsTestSpec | CR | Spec | 0..* | ❌ | — | 여러 Test Spec 영향 가능 |
+    | affectsOMSpec | CR | Spec | 0..* | ❌ | — | 여러 O&M Spec 영향 가능 |
+    | modifiesSection | CR | Section | 0..* | ❌ | modifiedByCR | clausesAffected 없는 CR은 0개 |
+    
+    ---
+    
+    ### 4. CRPack Data Property Facet
+    
+    | Property | Type | Cardinality | Required | 근거 |
+    | --- | --- | --- | --- | --- |
+    | crPackId | String | 1 | ✅ | PK, 패턴: `RP-\d{6}` |
+    | tsgMeeting | String | 0..1 | ❌ | Cover Sheet 없는 팩은 tsgMeeting 없음 |
+    
+    ---
+    
+    ### 5. CRPack Object Property Facet
+    
+    | Property | Domain | Range | Cardinality | Functional | InverseFunctional | Inverse |
+    | --- | --- | --- | --- | --- | --- | --- |
+    | hasCR | CRPack | CR | 1..* | ❌ | ✅ | belongsToCRPack |
+    
+    ---
+    
+    ### 6. Section 역관계 Facet
+    
+    | Property | Domain | Range | Cardinality | Functional | Inverse |
+    | --- | --- | --- | --- | --- | --- |
+    | modifiedByCR | Section | CR | 0..* | ❌ | modifiesSection |
+    
+    ---
+    
+    ### 7. Cross-Spec Range 처리
+    
+    affectsCoreSpec, affectsTestSpec, affectsOMSpec의 Range는 Spec 클래스.
+    
+    **처리 규칙:**
+    
+    - 참조되는 Spec이 Phase-1 인스턴스에 존재하면 해당 인스턴스에 연결
+    - 존재하지 않으면 Step 7에서 최소 Spec 인스턴스 생성
+    
+    **동적 생성 Spec 최소 속성:**
+    
+    | 속성 | 필수 | 설명 |
+    | --- | --- | --- |
+    | specNumber | ✅ | Spec 번호 (예: "38.423") |
+    | specTitle | ❌ | Spec 제목 (가능하면 조회) |
+    
+    **예시:**
+    
+    - CR 문서에 "36.413" 참조 → Phase-1 인스턴스에 없음 → specNumber="36.413"인 Spec 인스턴스 동적 생성
+    
+    ---
+    
+    ### 8. 필수 속성 요약
+    
+    | Class | Required Data | Required Object |
+    | --- | --- | --- |
+    | CR (확장) | — (모두 선택) | — (모두 선택) |
+    | CRPack | crPackId | hasCR (1..*) |
+    
+    ---
+    
+    ### 9. Functional / InverseFunctional 요약
+    
+    | Property | Functional | InverseFunctional |
+    | --- | --- | --- |
+    | belongsToCRPack | ✅ | — |
+    | hasCR | — | ✅ |
+    
+    ---
+    
+    ### 10. Inverse Property 요약
+    
+    | Property | Inverse | Domain ↔ Range |
+    | --- | --- | --- |
+    | hasCR | belongsToCRPack | CRPack ↔ CR |
+    | modifiesSection | modifiedByCR | CR ↔ Section |
+    
+    ---
+    
+    ## Step 7: 인스턴스 생성 명세
+    
+    > Ontology 101 원칙
+    > 
+    > 
+    > *"The last step is creating individual instances of classes in the hierarchy."*
+    > 
+    
+    ---
+    
+    ### 1. 데이터 소스
+    
+    | 소스 | 형식 | 수량 | 용도 |
+    | --- | --- | --- | --- |
+    | CR 문서 | Word (.docx/.doc) | [P4-V01]개 | CR 확장 속성 |
+    | Cover Sheet | Word (.docx/.doc) | [P4-V02]개 | CRPack 인스턴스 |
+    
+    ---
+    
+    ### 2. 파싱 대상 CR 선정 기준
+    
+    **Phase-4 파싱 대상:**
+    
+    - TSG 하위 RP 폴더에 포함된 CR 문서 대상
+    - Cover Sheet 기반 CRPack 생성 + CR 문서 메타데이터 확장
+    
+    **CR Pack 순수 커버 문서 제외 규칙:**
+    
+    - `RP-XXXXXX.docx` 패턴의 순수 CR Pack 커버 문서는 개별 CR 파싱 대상에서 제외한다
+    - CR Pack 커버 문서 본문에 참조된 R2 번호를 개별 CR의 tdocNumber로 잘못 추출하는 것을 방지하기 위함
+    - 이 규칙은 기존 `_cover.docx` 제외 규칙과 별도로 적용
+    
+    ---
+    
+    ### 3. ID 생성 규칙
+    
+    | 클래스 | ID 속성 | 패턴 | 예시 |
+    | --- | --- | --- | --- |
+    | CRPack | crPackId | `RP-\d{6}` | RP-250233 |
+    | CR | tdocNumber (Phase-1 기존) | `R3-\d{6}` | R3-241234 |
+    | Spec | specNumber (Phase-1 기존) | `\d{2}\.\d{3}` | 38.423 |
+    
+    ---
+    
+    ### 4. CR 문서 파싱 규칙 (RAN3 고유)
+    
+    ### 4.1 Heading 스타일 매핑
+    
+    > **RAN3 핵심**: RAN3 CR은 `Heading 4`가 주도하는 Heading 스타일 분포를 보인다.
+    
+    > 이하 매핑은 사전 스캔 결과 기준이며, 구현 시 전수 스캔으로 확정 필요.
+    
+    | Heading 스타일 | 역할 (추정) |
+    | --- | --- |
+    | Heading 4 | CR Cover Sheet 필드 제목 (Reason for change, Summary 등) |
+    | Heading 3 | 상위 섹션 구분 |
+    | Heading 5 | 하위 필드 |
+    | Heading 2 | 문서 대제목 |
+    | Heading 1 | 최상위 제목 |
+    | H6, Heading 6, Heading 8 | 기타 |
+    | Header | 머리글 |
+    
+    **파싱 전략:**
+    
+    1. CR 문서에서 `Heading 4` 스타일의 텍스트를 필드 제목으로 인식
+    2. "Reason for change", "Summary of change", "Consequences if not approved" 등 키워드 매칭
+    3. 해당 Heading 이후 ~ 다음 Heading 이전까지의 텍스트를 필드 값으로 추출
+    
+    > **주의**: 이 매핑은 사전 스캔 샘플 기반. 구현 시 더 많은 샘플로 검증 필요.
+    
+    ### 4.2 TDoc 번호 추출
+    
+    | 패턴 | 정규식 | 예시 |
+    | --- | --- | --- |
+    | RAN3 TDoc | `R3-\d{6}` | R3-241234 |
+    
+    ### 4.3 Other Specs Affected 파싱
+    
+    ```
+    Other specs affected:  Other core specifications  →  [Spec 목록]
+                           Test specifications        →  [Spec 목록]
+                           O&M Specifications         →  [Spec 목록]
+    ```
+    
+    각 → 이후 텍스트에서 specNumber 패턴 `\d{2}\.\d{3}` 추출.
+    
+    ### 4.4 modifiesSection 생성
+    
+    **입력:**
+    - Phase-1 CR.clausesAffected (String): "5.1.3.2, 7.4"
+    - Phase-1 CR.modifies → Spec: 38.423
+    
+    **처리:**
+    1. clausesAffected 쉼표 분리
+    2. sectionId 생성: `{specNumber}-{sectionNumber}`
+    3. Phase-3 Section 인스턴스와 매칭
+    4. 매칭되면 modifiesSection 관계 생성
+    
+    ### 4.5 ASN.1 포함 CR 처리
+    
+    38.413/423/473 CR에 ASN.1 코드가 포함. CR 메타데이터(reasonForChange 등)는 정상 추출. ASN.1 코드 본문은 Graph DB에 저장하지 않음 (Phase-3과 동일 방침).
+    
+    ### 4.6 .doc 파일 처리
+    
+    .doc 파일은 `data_transformed/`에서 .docx로 변환된 파일 사용. 변환 확인 후 파싱.
+    
+    ---
+    
+    ### 5. CRPack 인스턴스 생성
+    
+    **소스**: Cover Sheet (.docx)
+    
+    | 속성 | 소스 위치 | 변환 규칙 |
+    | --- | --- | --- |
+    | crPackId | 문서 제목/본문 | `RP-\d{6}` 패턴 추출 |
+    | tsgMeeting | 본문 "for TSG RAN#XXX" | `(TSG\s+)?RAN#\d+` 패턴 추출 |
+    
+    **CR 목록 추출:**
+    1. Cover Sheet 테이블에서 `R3-\d{6}` 패턴 추출
+    2. Phase-1 CR 인스턴스와 매칭
+    3. hasCR 관계 생성
+    
+    ---
+    
+    ### 6. CR 인스턴스 확장
+    
+    ### 6.1 기존 인스턴스 활용
+    
+    - Phase-1에서 생성된 CR 인스턴스 중 [P4-V04]개 (unique tdocNumber 기준)에 대해 속성 추가
+    - 새 인스턴스 생성이 아닌 **기존 인스턴스 확장**
+    
+    ### 6.2 CR 문서 → Phase-1 CR 매칭 규칙
+    
+    1. CR 문서 내 "Tdoc #" 또는 문서 헤더에서 tdocNumber 추출
+    2. 패턴: `R3-\d{6}`
+    3. Phase-1 CR 인스턴스와 tdocNumber로 매칭
+    4. 매칭 실패 시 오류 로그
+    
+    ### 6.3 Data Property 매핑
+    
+    | 속성 | 소스 위치 | 변환 규칙 | 커버리지 |
+    | --- | --- | --- | --- |
+    | reasonForChange | "Reason for change:" 필드 | 텍스트 추출, 빈 값이면 null | [P4-V07] |
+    | summaryOfChange | "Summary of change:" 필드 | 텍스트 추출, 빈 값이면 null | — |
+    | consequencesIfNotApproved | "Consequences if not approved:" 필드 | 텍스트 추출, 빈 값이면 null | — |
+    
+    ### 6.4 Object Property 매핑
+    
+    | 관계 | 소스 | 변환 규칙 |
+    | --- | --- | --- |
+    | belongsToCRPack → CRPack | Cover Sheet | CR이 포함된 Pack의 crPackId로 연결 |
+    | affectsCoreSpec → Spec | "Other core specifications →" 필드 | §4.3 참조 |
+    | affectsTestSpec → Spec | "Test specifications →" 필드 | §4.3 참조 |
+    | affectsOMSpec → Spec | "O&M Specifications →" 필드 | §4.3 참조 |
+    | modifiesSection → Section | Phase-1 clausesAffected + modifies | §4.4 참조 |
+    
+    ---
+    
+    ### 7. Spec 동적 생성
+    
+    ### 7.1 필요 상황
+    
+    CR 문서의 "Other Specs Affected"에서 Phase-1 Spec 인스턴스에 없는 Spec 참조 시
+    
+    ### 7.2 생성 규칙
+    
+    | 속성 | 값 |
+    | --- | --- |
+    | specNumber | 추출된 Spec 번호 (예: "38.423") |
+    | specVersion | null (버전 정보 없음) |
+    
+    ### 7.3 동적 생성 Spec의 제약사항
+    
+    | 항목 | 내용 |
+    | --- | --- |
+    | hasSection 관계 | **없음** (Phase-3 Section과 연결 없음) |
+    | 용도 | Cross-Spec 영향 분석 (CQ2)에서 참조 대상으로만 사용 |
+    | 향후 확장 | 해당 Spec의 TS 문서 파싱 시 Section 연결 가능 |
+    
+    ---
+    
+    ### 8. Spec별 CR 분포 (사전 스캔 결과)
+    
+    RAN3 CR은 주요 프로토콜 Spec에 집중되는 분포를 보인다. 주요 대상 Spec 카테고리:
+    
+    | Spec |
+    | --- |
+    | 38.473 (F1AP) |
+    | 38.423 (XnAP) |
+    | 38.413 (NGAP) |
+    | 38.455 (NRPPa) |
+    | 38.401 (Architecture) |
+    | 38.463 (E1) |
+    | 38.470 (F1 general) |
+    | 기타 38.4xx |
+    
+    ---
+    
+    ### 9. 예시 인스턴스
+    
+    ### 9.1 CRPack 예시
+    
+    ```json
+    {
+      "@type": "CRPack",
+      "@id": "tdoc:crpack/RP-250233",
+      "crPackId": "RP-250233",
+      "tsgMeeting": "TSG RAN#107",
+      "hasCR": [
+        { "@id": "tdoc:R3-241234" },
+        { "@id": "tdoc:R3-241235" }
+      ]
+    }
+    ```
+    
+    ### 9.2 CR 확장 예시
+    
+    ```json
+    {
+      "@type": "CR",
+      "@id": "tdoc:R3-253336",
+      "tdocNumber": "R3-253336",
+      "reasonForChange": "Support for NG-RAN node assisted positioning with gNB-side model in NGAP, AI/ML assisted positioning (Case 3a).",
+      "summaryOfChange": "Introduce NGAP signalling enhancements to convey gNB-side AI/ML model output for positioning, including new IEs in NG-RAN node initiated procedures.",
+      "consequencesIfNotApproved": "Ambiguity in NG-RAN node behavior for AI/ML assisted positioning.",
+      "belongsToCRPack": { "@id": "tdoc:crpack/RP-250233" },
+      "affectsCoreSpec": [{ "@id": "tdoc:spec/38_413" }],
+      "modifiesSection": [
+        { "@id": "tdoc:section/38.423-8.2.2" }
+      ]
+    }
+    ```
+    
+    ---
+    
+    ### 10. 생성 순서
+    
+    ```
+    [1단계] Phase-1~3 인스턴스 확인
+    │
+    ▼
+    [2단계] CRPack 생성 (Cover Sheet 파싱)
+    │
+    ▼
+    [3단계] Spec 동적 생성 (Other Specs Affected에서 누락 Spec)
+    │
+    ▼
+    [4단계] CR 확장 (reasonForChange, summaryOfChange, Cross-Spec, modifiesSection)
+    │
+    ▼
+    [5단계] 역관계 생성 (hasCR ← belongsToCRPack, modifiedByCR ← modifiesSection)
+    ```
+    
+    ---
+    
+    ### 11. 역관계 자동 생성
+    
+    | 정방향 생성 시 | 역방향 자동 생성 |
+    | --- | --- |
+    | CR -[BELONGS_TO_CR_PACK]-> CRPack | CRPack -[HAS_CR]-> CR |
+    | CR -[MODIFIES_SECTION]-> Section | Section -[MODIFIED_BY_CR]-> CR |
+    
+    **Neo4j 구현:**
+    
+    ```cypher
+    // belongsToCRPack 생성 시 hasCR 자동 생성
+    MATCH (cr:CR)-[:BELONGS_TO_CR_PACK]->(pack:CRPack)
+    MERGE (pack)-[:HAS_CR]->(cr)
+    
+    // modifiesSection 생성 시 modifiedByCR 자동 생성
+    MATCH (cr:CR)-[:MODIFIES_SECTION]->(sec:Section)
+    MERGE (sec)-[:MODIFIED_BY_CR]->(cr)
+    ```
+    
+    ---
+    
+    ### 12. 인스턴스 현황
+    
+    | Phase | 클래스 | 인스턴스 수 | 상태 |
+    | --- | --- | --- | --- |
+    | Phase-1 | CR | — | ✅ 기존 |
+    | Phase-1 | Spec | — | ✅ 기존 |
+    | Phase-3 | Section | — | ✅ 기존 |
+    | **Phase-4** | **CRPack** | **[P4-V03]** | 🔶 신규 |
+    | **Phase-4** | **CR 확장** | **[P4-V04]** | 🔶 기존 인스턴스 확장 |
+    | **Phase-4** | **Spec (동적 생성)** | **[P4-V05]** | 🔶 Cross-Spec 참조 시 |
+    | **Phase-4** | **Section (modifiesSection)** | **[P4-V06]** | 🔶 clausesAffected → Section 매칭 |
+    
+    ---
+    
+    ### 13. 검증 규칙
+    
+    ### 13.1 무결성 검증
+    
+    | 검증 항목 | 규칙 | 오류 처리 |
+    | --- | --- | --- |
+    | CRPack ID 중복 | crPackId 유일 | 오류 로그 + 스킵 |
+    | CRPack ID 패턴 | `RP-\d{6}` | 오류 로그 |
+    | tsgMeeting 패턴 | `(TSG\s+)?RAN#\d+` | 오류 로그 |
+    | hasCR 최소 1개 | CRPack당 최소 1개 CR | 오류 로그 |
+    | CR 존재 확인 | hasCR 대상 CR이 Phase-1에 존재 | 오류 로그 |
+    | CR 중복 참조 | 같은 CR이 여러 Pack에 속함 | 오류 로그 (Functional 위반) |
+    | Spec 존재 확인 | affectsXXXSpec 대상 확인 | 없으면 동적 생성 |
+    | Section 존재 확인 | modifiesSection 대상 확인 | 없으면 관계 미생성, 로그 |
+    | CR 매칭 실패 | CR 문서의 tdocNumber가 Phase-1에 없음 | 오류 로그 |
+    
+    ### 13.2 통계 검증
+    
+    | 클래스 | ID 패턴 | 데이터 소스 | 인스턴스 수 |
+    | --- | --- | --- | --- |
+    | CRPack | `RP-\d{6}` | Cover Sheet | [P4-V03] (unique) |
+    | CR (확장) | `R3-\d{6}` (기존) | CR 문서 | [P4-V04] (unique) |
+    | Spec (동적) | `\d{2}\.\d{3}` | CR 문서 Cross-Spec | [P4-V05] |
+    | Section (modifiesSection) | — | clausesAffected 파싱 | [P4-V06] |
+    
+    **추가 커버리지 검증**:
+    
+    - reasonForChange/summaryOfChange/consequencesIfNotApproved 추출 커버리지: [P4-V07] (CR 총 [P4-V01] 중 추출 성공 비율)
+    - clausesAffected → Section 매칭 unique Section 수: [P4-V08] (중복 제거 후 MODIFIES_SECTION 대상 Section 수)
+    
+    ---
+    
+    ### 14. 요약
+    
+    ### 14.1 인스턴스 생성 명세
+    
+    | 클래스 | ID 패턴 | 데이터 소스 | 인스턴스 수 |
+    | --- | --- | --- | --- |
+    | CRPack | `RP-\d{6}` | Cover Sheet | [P4-V03] (unique) |
+    | CR (확장) | `R3-\d{6}` (기존) | CR 문서 | [P4-V04] (unique) |
+    | Spec (동적) | `\d{2}\.\d{3}` | CR 문서 Cross-Spec | [P4-V05] |
+    | Section (modifiesSection) | — | clausesAffected 파싱 | [P4-V06] |
+    
+    ### 14.2 관계 생성 요약
+    
+    | 관계 | 소스 | 대상 | 역관계 |
+    | --- | --- | --- | --- |
+    | belongsToCRPack | CR | CRPack | hasCR |
+    | hasCR | CRPack | CR | belongsToCRPack |
+    | affectsCoreSpec | CR | Spec | — |
+    | affectsTestSpec | CR | Spec | — |
+    | affectsOMSpec | CR | Spec | — |
+    | modifiesSection | CR | Section | modifiedByCR |
+    | modifiedByCR | Section | CR | modifiesSection |
+    
+    ### 14.3 누적 인스턴스 현황
+    
+    | Phase | 클래스 |
+    | --- | --- |
+    | Phase-1 | Tdoc, CR, LS, Meeting, Company, Contact, WorkItem, AgendaItem, Release, Spec, WorkingGroup |
+    | Phase-2 | Resolution, Agreement, Conclusion, WorkingAssumption, Summary, Table |
+    | Phase-3 | Section, TSTable, TSFigure |
+    | **Phase-4** | **CRPack ([P4-V03]), CR 확장 ([P4-V04]), Spec 동적 ([P4-V05]), Section 매칭 ([P4-V06])** |
+    
+    ---
+    
+    ## Phase-4 온톨로지 설계 완료
+    
+    | 항목 | 내용 |
+    | --- | --- |
+    | **신규 클래스** | CRPack |
+    | **확장 클래스** | CR (DP 3 + OP 5), Section (OP 1) |
+    | **신규 OP** | 7개 |
+    | **신규 DP** | 5개 |
+    | **CQ** | 15개 |
+    
+    ---
+    
+    ## Appendix A: 기준 수치
+    
+    > 이 테이블이 Spec의 수치 권위 소스이다.
+    > 
+    
+    > 새 미팅 데이터 추가 시 이 테이블만 수정한다.
+    > 
+    
+    > **구현 완료 후 실측치로 작성한다.** (구현 전 미측정 껍데기 금지)
+    
+    | ID | 항목 | 기준값 | 비고 |
+    | --- | --- | --- | --- |
+    | P4-V01 | CR 문서 수 (파싱) | 2,959 | unique tdocNumber (입력 2,992, 중복 33 제거) |
+    | P4-V02 | Cover Sheet 수 | 442 | TSG 하위 발견 |
+    | P4-V03 | CRPack 인스턴스 (unique) | 433 | Phase-1 매칭 CR ≥1 (갱신: backfill 후 +28) |
+    | P4-V04 | CR 확장 인스턴스 | 2,956 | Phase-1 매칭 CR (갱신: 389건 backfill 후 매칭 — 미매칭 389→0). Neo4j CR 노드 총 19,974 중 CRPack 연결분 |
+    | P4-V05 | Spec 동적 생성 수 | 12 | Cross-Spec 참조 (36.xxx, 37.xxx 등) |
+    | P4-V06 | Section 매칭 (modifiesSection) | 8,552 | CR→Section 관계 수 (갱신: backfill 후 +864) |
+    | P4-V07 | reasonForChange 커버리지 | 2,950/2,959 (99.7%) | summaryOfChange 2,951, consequences 2,943 |
+    | P4-V08 | clausesAffected 매칭 Section | 1,928 | MODIFIES_SECTION unique Section 수 |

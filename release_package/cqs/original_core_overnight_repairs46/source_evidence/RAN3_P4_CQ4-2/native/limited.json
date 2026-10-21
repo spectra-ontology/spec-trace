@@ -1,0 +1,31 @@
+{
+  "id": "RAN3_P4_CQ4-2",
+  "wg": "RAN3",
+  "query_sha256": "61dd46dfc9d32f0e6ed421030dbb1f70187bc236fa709e723ed190f14df39c45",
+  "query": "MATCH (a:Agreement)-[:REFERENCES]->(c:CR)\nWHERE c.reasonForChange IS NOT NULL\nWITH a, c, reduce(s = {open: true, lines: []}, line IN split(coalesce(a.content, ''), '\\n') |\n  CASE WHEN NOT s.open OR line =~ '(?i)^\\\\s*(?:Decision\\\\s*:|R3-[0-9]{6}[\\\\t ]+\\\\S).*'\n    THEN {open: false, lines: s.lines}\n    ELSE {open: true, lines: s.lines + [line]}\n  END) AS technical\nWHERE any(line IN technical.lines WHERE\n  (line =~ ('(?i).*\\\\b(?:agree|approve|endorse|adopt)\\\\s+(?:(?!\\\\b(?:CRs?|and|or|but|to|if|unless|until)\\\\b|R3-[0-9]{6})[^,.;:!?\\\\n])*?\\\\bCRs?\\\\b\\\\s*(?:in\\\\s*)?\\\\(?(?:R3-[0-9]{6}\\\\s*(?:,|and|or)\\\\s*)*' + c.tdocNumber + '\\\\b.*')\n   OR line =~ ('(?i).*\\\\b' + c.tdocNumber + '\\\\b(?:\\\\s*(?:,|and)\\\\s*R3-[0-9]{6}\\\\b)*(?:\\\\s*\\\\([^.;:!?\\\\n]*\\\\))?\\\\s*(?:(?:is|are|was|were)\\\\s+)?(?:agreed|approved|endorsed|adopted)\\\\b.*'))\n  AND NOT line =~ ('(?i).*(?:\\\\b(?:revision\\\\s+of|replaces?|was|revised\\\\s+from)\\\\s+' + c.tdocNumber + '\\\\b|\\\\b' + c.tdocNumber + '\\\\s+(?:rev\\\\s+in|revised\\\\s+to)\\\\b).*')\n  AND NOT line =~ '(?i).*(?:\\\\b(?:not|never)\\\\b[^.;]*\\\\b(?:agree|agreed|approve|approved|endorse|endorsed|adopt|adopted)\\\\b|^\\\\s*no\\\\s+CRs?\\\\b).*'\n  AND NOT line =~ '(?i)^\\\\s*(?:if|unless|until)\\\\b.*')\nWITH DISTINCT c ORDER BY c.tdocNumber LIMIT 5\nRETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason, c.summaryOfChange AS summary",
+  "started_utc": "2026-10-21T10:19:48.805391+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN3_P4_CQ4-2/61dd46dfc9d32f0e6ed421030dbb1f70187bc236fa709e723ed190f14df39c45.jsonl",
+  "columns": [
+    "tdocNumber",
+    "reason",
+    "summary"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 5,
+  "bytes_retained": 5010,
+  "rows_sha256": "097ea2a2a38f5240bd22ae025115ca279bc8a029b039c4f282d3c24a677b31f5",
+  "finished_utc": "2026-10-21T10:19:49.268475+00:00",
+  "elapsed_s": 0.4631,
+  "full_rows_available": true
+}
