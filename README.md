@@ -32,8 +32,8 @@ to select the 503 current contracts and their pinned evidence bundles. The
 the active definitions to their original repair and evaluation cohorts.
 
 The [all-560 disposition register](release_package/cqs/core_disposition_audit/README.md)
-accounts for every original Core ID: **503 contract-verified, 19 requiring
-clarification, 10 unsupported by the pinned frozen data, and 28 awaiting completed
+accounts for every original Core ID: **503 contract-verified, 20 requiring
+clarification, 10 unsupported by the pinned frozen data, and 27 awaiting completed
 evidence checks**. Historical definitions and results remain available alongside
 the current register.
 
