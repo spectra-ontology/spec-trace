@@ -1,0 +1,1 @@
+This packet replays the original RAN4 CR-count contract against its preserved source authority, complete frozen memberships, actual two-column native result, independent SQL and requested-field scorer controls. Run `python3 -B -I -S verify.py`. It makes no model or database calls. Final ROOT admission is recorded separately.

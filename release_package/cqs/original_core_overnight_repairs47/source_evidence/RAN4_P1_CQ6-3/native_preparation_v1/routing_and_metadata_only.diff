@@ -1,0 +1,69 @@
+--- /home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_D/RAN3_P4_CQ4-2/native_preparation_v3/ROOT_guarded_native_capture.py
++++ /home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_D/RAN4_P1_CQ6-3/native_preparation_v1/ROOT_guarded_native_capture.py
+@@ -8,13 +8,13 @@
+ import capture_native
+ from fresh_windows_memory import host_guard
+ sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+-assert sha(D/'definition.json')=='9461b9d183329039b8cfcf3ee6d301d893abf6f8509806008f7980172a61ca3f'
+-assert sha(D/'requested_repaired_native_input.jsonl')=='d8cd1efab10b8719ddc70d2ec63d89f9b273e2e3b49d6dfad4db6b0c2c9761f4'
++assert sha(D/'definition.json')=='fd5b58749e6caf807f9df91ec267887b99c4e4c58fb45c3541d16a966b481e1b'
++assert sha(D/'requested_repaired_native_input.jsonl')=='77c047a741897acb2fb9057c56d20ed1307b300833d44ce417567990c176c80d'
+ def observed_26GiB(output):
+  host_guard(output)
+  import json
+  x=json.loads((output/'resource_checks.jsonl').read_text().splitlines()[-1])
+  assert min(x['linux_available_bytes'],x['windows_available_bytes'])>=26*1024**3
+ capture_native.host_guard=observed_26GiB
+-sys.argv=[str(B/'capture_native.py'),'--wg','RAN3','--input',str(D/'requested_repaired_native_input.jsonl'),'--output',str(D/'ROOT_actual_native_capture_v1')]
++sys.argv=[str(B/'capture_native.py'),'--wg','RAN4','--input',str(D/'requested_repaired_native_input.jsonl'),'--output',str(D/'ROOT_actual_native_capture_v1')]
+ capture_native.main()
+--- /home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_D/RAN3_P4_CQ4-2/native_preparation_v3/ROOT_outer_native_reserve_guard.py
++++ /home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_D/RAN4_P1_CQ6-3/native_preparation_v1/ROOT_outer_native_reserve_guard.py
+@@ -19,7 +19,7 @@
+ B = next(p for p in HERE.parents if p.name == 'overnight_reaudit')
+ A = Path(__file__).resolve().parent
+ GIB = 1024 ** 3
+-SCOPE = '9461b9d183329039b8cfcf3ee6d301d893abf6f8509806008f7980172a61ca3f'
++SCOPE = 'fd5b58749e6caf807f9df91ec267887b99c4e4c58fb45c3541d16a966b481e1b'
+ 
+ 
+ def sha(p):
+@@ -42,7 +42,7 @@
+ 
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('stage', choices=['execute_RAN3'])
++    parser.add_argument('stage', choices=['execute_RAN4'])
+     args = parser.parse_args()
+     assert sha(A / 'definition.json') == SCOPE
+     out = HERE / ('ROOT_actual_guarded_persistent_cim_' + args.stage)
+--- /home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_D/RAN3_P4_CQ4-2/native_preparation_v3/ROOT_run_native_coordinator.py
++++ /home/sihyeon/workspace/spectra/logs/pending-tasks/spectracq-core-contract-2026-10-13/empirical/overnight_reaudit/root_evidence/two_agent_unresolved_loop/adjudication62/resumed_deep_verification/sequential_two_main/local_only41/main_D/RAN4_P1_CQ6-3/native_preparation_v1/ROOT_run_native_coordinator.py
+@@ -14,11 +14,11 @@
+ B = next(p for p in HERE.parents if p.name == 'overnight_reaudit')
+ A = HERE
+ guard = A / 'ROOT_outer_native_reserve_guard.py'
+-assert hashlib.sha256(guard.read_bytes()).hexdigest() == 'cfddeee8e0745973589f428415058abac4037757f3783e8d31ec859f332353a0'
+-assert not (A / 'ROOT_actual_guarded_persistent_cim_execute_RAN3').exists()
++assert hashlib.sha256(guard.read_bytes()).hexdigest() == 'e33740cc07bdbd6fb3fa60396bc9c48263f675745ef4a2233b4bd8ebc0397188'
++assert not (A / 'ROOT_actual_guarded_persistent_cim_execute_RAN4').exists()
+ assert not (A / 'ROOT_actual_native_capture_v1').exists()
+ input_file = A / 'requested_repaired_native_input.jsonl'
+-assert hashlib.sha256(input_file.read_bytes()).hexdigest() == 'd8cd1efab10b8719ddc70d2ec63d89f9b273e2e3b49d6dfad4db6b0c2c9761f4'
++assert hashlib.sha256(input_file.read_bytes()).hexdigest() == '77c047a741897acb2fb9057c56d20ed1307b300833d44ce417567990c176c80d'
+ sys.path.insert(0, str(B / 'authorized_incremental29_OpenRouter_release/operational_guards'))
+ from fresh_windows_memory import Broker
+ broker = Broker(HERE / 'actual_fresh_memory_session_v1')
+@@ -26,10 +26,10 @@
+ code = None
+ try:
+     broker.start()
+-    code = subprocess.run([sys.executable, '-B', str(guard), 'execute_RAN3']).returncode
++    code = subprocess.run([sys.executable, '-B', str(guard), 'execute_RAN4']).returncode
+     if code != 0:
+         raise RuntimeError('Native guard failed; preserve its receipt')
+-    assert hashlib.sha256(input_file.read_bytes()).hexdigest() == 'd8cd1efab10b8719ddc70d2ec63d89f9b273e2e3b49d6dfad4db6b0c2c9761f4'
++    assert hashlib.sha256(input_file.read_bytes()).hexdigest() == '77c047a741897acb2fb9057c56d20ed1307b300833d44ce417567990c176c80d'
+     receipt['status'] = 'NATIVE_WRAPPER_PASS_PENDING_SCIENTIFIC_BINDING'
+ except BaseException as exc:
+     receipt['status'] = 'FAIL_PRESERVED'

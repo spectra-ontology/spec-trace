@@ -1,0 +1,1 @@
+SELECT (SELECT count(*) FROM node_label WHERE label='Tdoc') AS total, (SELECT count(*) FROM node_label WHERE label='CR') AS crs

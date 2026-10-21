@@ -1,0 +1,53 @@
+{
+  "source": {
+    "path": "authority/original_preserved_Phase1_INDEX.md",
+    "bytes": 70530,
+    "sha256": "c5857b9c29862cc0287bbfc838302df5df03f3a772723c7ab4f4c7106200d248"
+  },
+  "historical_frozen_build_generator_identity_proven": false,
+  "authority_use": "Preserved original author design and its explicit final census definition; historical displayed counts are not transferred to the current frozen snapshot.",
+  "spans": [
+    {
+      "first_line": 47,
+      "last_line": 84,
+      "text": "    ### 1.4 데이터 소스\n    \n    | Phase | 데이터 소스 | 범위 |\n    | --- | --- | --- |\n    | **Phase-1** | **Tdoc_list (Excel)** | Meeting [P1-V04]개, TDoc [P1-V01] (dedup 기준) |\n    \n    데이터 경로: TDoc List Excel 파일 (미팅별 `.xlsx`)\n    \n    ### 1.5 전제 조건\n    \n    - **R-J1**: Phase-1은 **TDoc List Excel 파일만** 입력으로 사용한다. Phase-0 Step-6의 DOC→DOCX 변환(Phase-6 TDoc 본문 대상)은 Phase-1의 선행 조건이 아니다. 따라서 Phase-1 재현 시 Phase-0 Step-6 완료를 기다릴 필요 없이 Excel 파일 배치만 확인하면 된다.\n    - Phase-0 Step 중 Phase-1 필수 선행: **TDoc List Excel 수집(Step-2 Excel 다운로드) 완료 상태**\n    - TDoc List Excel 파일 배치 완료 (대상 Meeting 수: [P1-V04])\n    - Final Report 파일 배치 완료 (Phase-2에서 사용 — Phase-1은 해당 파일을 읽지 않음)\n    \n    ### 1.6 RAN4 데이터 특성\n    \n    | 항목 | **RAN4** |\n    | --- | --- |\n    | TDoc 접두사 | **R4-NNNNNNN (7자리)** |\n    | 미팅 폴더 | **TSGR4_{N}** |\n    | 미팅 범위 | **#78~#117 + bis 변종 (TDoc List 및 Final Report 파일, 총 58 미팅 [P1-V04])** |\n    | bis 접미사 | **bis 6변종: Bis, bis, bis-e, bis_e, -bis-e, _eBis** |\n    | TDoc List 컬럼 | **시기별 변동 (표준 분포 + 비표준 변종 일부; 분포는 [P1-V18] 참조)** |\n    | TDoc 총 수 | [P1-V01] (dedup) |\n    | CR 비중 | CR 수([P1-V02]) / TDoc 수([P1-V01]) 비율 |\n    | 핵심 TS | **38.1xx (RF, EMC, Conformance)** |\n    | Source 복합값 | 비중 높음 (Company 정규화 필요) |\n    | CR revision | 부분 보유 (CR 대비 일부) |\n    \n    **RAN4 고유 특성**:\n    - **TDoc 번호 7자리**: `R4-\\d{7}` 전용 패턴 사용\n    - **discussion 비중 높음**: 논의 중심 문서 비중이 다른 WG 대비 크다\n    - **Status 값 풍부**: noted, available, revised, agreed, endorsed 등 다수 값 공존\n    - **For: Endorsement/Decision**: RAN4에서 유의미한 Enum 값\n    - **bis 6변종**: Bis, bis, bis-e, bis_e, -bis-e, _eBis → 정규화 필수 (소문자 통일 + 구분자 제거)\n    - **비표준 컬럼 파일 2개**: 8컬럼(#107Bis-e), 12컬럼 → 파서에서 <10컬럼 스킵\n    - **Backfill 이력**: Phase-1 backfill [P1-V17] (신규 미팅 + 누락 Tdoc 보완), Phase-4 backfill [P1-V16] (Phase-1 Tdoc List 미존재 CR 추가) — Phase-4 [P4-V09]에서 backfill 별건 명시\n",
+      "sha256": "e988c6d72f5b97ec4e4e08730fdb8c050f347a3244cdbc38cfd15d1c8823e432"
+    },
+    {
+      "first_line": 358,
+      "last_line": 364,
+      "text": "    ### 3.1 클래스 후보\n    \n    | 용어 | 데이터 소스 | 채울 수 있나? | 비고 |\n    | --- | --- | --- | --- |\n    | Tdoc | TDoc 컬럼 | ✅ | 상위 클래스 |\n    | CR | Type 컬럼 (CR, draftCR, pCR) | ✅ | Tdoc 하위 클래스 |\n    | LS | Type 컬럼 (LS in, LS out) | ✅ | Tdoc 하위 클래스 |\n",
+      "sha256": "01ae77dfc7b4965fac4888fe554aa7df120be084a6ede5995d12b2da66946958"
+    },
+    {
+      "first_line": 619,
+      "last_line": 646,
+      "text": "    ## 6. Type별 클래스 매핑\n    \n    | Type 값 | 클래스 | 구분 속성 |\n    | --- | --- | --- |\n    | discussion | Tdoc | type = 'discussion' |\n    | **CR** | **CR** | — |\n    | other | Tdoc | type = 'other' |\n    | draftCR | CR | crNumber가 null |\n    | pCR | CR | crNumber가 null |\n    | LS out | LS | direction = 'out' |\n    | LS in | LS | direction = 'in' |\n    | response | Tdoc | type = 'response' |\n    | Work Plan | Tdoc | type = 'Work Plan' |\n    | draft TR | Tdoc | type = 'draft TR' |\n    | report | Tdoc | type = 'report' |\n    | draft TS | Tdoc | type = 'draft TS' |\n    | agenda | Tdoc | type = 'agenda' |\n    | WID new | Tdoc | type = 'WID new' |\n    \n    ### 인스턴스 분포 요약\n    \n    | 클래스 | 기준 수치 |\n    | --- | --- |\n    | Tdoc (직접) | Appendix A 참조 ([P1-V01]에서 CR·LS 제외한 나머지) |\n    | CR | [P1-V02] |\n    | LS | [P1-V03] |\n    \n    *CR = CR + draftCR + pCR. LS = LS out + LS in. 총합은 [P1-V01].*\n",
+      "sha256": "0e959ac12b731baee403c02479bb3237453ac6a017ba98b300936de355d4d44d"
+    },
+    {
+      "first_line": 1414,
+      "last_line": 1425,
+      "text": "    ### 6.10 CR (Tdoc 하위 클래스)\n    \n    **생성 조건**: Type이 'CR', 'draftCR', 'pCR' 중 하나\n    \n    **추가 속성** (Tdoc 속성 상속 + 아래 추가):\n    \n    | 속성 | 소스 | 변환 |\n    | --- | --- | --- |\n    | crNumber | CR | 그대로 (draftCR/pCR은 null) |\n    | crCategory | CR category | F/A/B/C/D + 레거시 1/2/3 그대로 저장 |\n    | crRevision | CR revision | 그대로 (빈값 허용) |\n    | clausesAffected | Clauses Affected (36컬럼) | 그대로 (31컬럼 파일은 null) |\n",
+      "sha256": "8b386067d8ce5a36b60be96e3afa812e5ae938c92b4c14e4ccb311223cad328f"
+    },
+    {
+      "first_line": 1479,
+      "last_line": 1485,
+      "text": "    ### 7.3 클래스 판별\n    \n    | Type 값 | 클래스 | 판별 규칙 |\n    | --- | --- | --- |\n    | CR, draftCR, pCR | CR | `type in ('CR', 'draftCR', 'pCR')` |\n    | LS out, LS in | LS | `type in ('LS out', 'LS in')` |\n    | 기타 | Tdoc | 위 조건에 해당하지 않는 모든 Type |\n",
+      "sha256": "f5981f0ec68293c823844434d430c896d83ca0df42ebe38ba8e2f5e2157a349b"
+    },
+    {
+      "first_line": 1629,
+      "last_line": 1650,
+      "text": "    ## 11. 검증 규칙\n    \n    ### 11.1 무결성 검증\n    \n    | 규칙 | 설명 |\n    | --- | --- |\n    | tdocNumber 유일성 | 동일 tdocNumber 중복 불가 |\n    | ID 패턴 매칭 | R4-\\d{7} (7자리) |\n    | 참조 무결성 | isRevisionOf/revisedTo 대상이 존재 |\n    | 타입 일관성 | CR은 반드시 type∈{CR, draftCR, pCR} |\n    \n    ### 11.2 통계 검증\n    \n    | 항목 | 기대 | 검증 방법 |\n    | --- | --- | --- |\n    | TDoc 총 수 | [P1-V01] | dedup 후 count |\n    | CR 수 | [P1-V02] | type 필터 count |\n    | LS 수 | [P1-V03] | type 필터 count |\n    | Meeting 수 | [P1-V04] | 파일명 dedup count |\n    | Neo4j 총 노드 | [P1-V12] | Phase-1~5 적재 후 `MATCH (n) RETURN count(n)` |\n    | Neo4j 총 관계 | [P1-V13] | Phase-1~5 적재 후 `MATCH ()-[r]->() RETURN count(r)` |\n    | CQ PASS 수 | [P1-V14] | `01_validate_cq_cypher.py` 실행 |\n",
+      "sha256": "0f7e2701b9f7f118bf0ae8663c7677e027ca6859a119f9c89ddff4db35ccf723"
+    },
+    {
+      "first_line": 1720,
+      "last_line": 1756,
+      "text": "    ### 13.3 Cross-Phase 참조 원칙\n    \n    - 각 Phase Appendix는 자기 Phase가 \"소유\"하는 수치만 V-ID를 가진다.\n    - 다른 Phase 수치의 복사본을 자기 Appendix에 두지 않는다.\n    - 다른 Phase 수치가 필요하면 원본 Phase의 V-ID를 직접 참조한다.\n    예: Phase-6에서 Phase-1 총 Tdoc 수 참조 시 → [P1-V01]\n    \n    ### 13.4 RAN4 Phase-1 V-ID 소유 수치\n    \n    Phase-1이 소유하는 V-ID는 Appendix A에 기재. 다른 Phase에서 RAN4 TDoc 수치 참조 시 [P1-V01] 등으로 참조.\n    \n    ---\n    \n    ## Appendix A: 기준 수치\n    \n    > **구현 완료 후 실측치로 작성한다.** 구현 전에는 작성하지 않는다.\n    \n    | ID | 항목 | 값 | 비고 |\n    | --- | --- | --- | --- |\n    | P1-V01 | 총 TDoc 수 (dedup) | 167,017 | Tdoc(only) 88,665 + Tdoc:CR(dual) 73,346 + Tdoc:LS(dual) 5,006. Phase-1 backfill +3,527 반영 (165,490 → 167,017) |\n    | P1-V02 | CR 수 | 74,929 | :CR 라벨 전수. CR ZIP recovery 후 정본. 직전 74,347 (backfill 반영: 73,346 Tdoc:CR dual + 1,001 Phase-4 backfill). +582 (282 zip 안 docx 본문 복원, recovery 상세 `docs/cross-phase/baselines/recovery_2026-05-05_cr_zip.md`) |\n    | P1-V03 | LS 수 | 5,006 | LS in + LS out (Tdoc:LS dual) |\n    | P1-V04 | Meeting 수 | 58 | 입력 디렉토리 기준 |\n    | P1-V05 | Company 수 | 287 | 정규화 후 |\n    | P1-V06 | Contact 수 | 1,133 | contactId dedup |\n    | P1-V07 | WorkItem 수 | 1,248 | Related WIs dedup |\n    | P1-V08 | AgendaItem 수 | 19,763 | agendaNumber dedup (재적재 후 미팅 단위 누적) |\n    | P1-V09 | Release 수 | 14 | |\n    | P1-V10 | Spec 수 | 360 | specNumber dedup (Phase-4 backfill +3 반영) |\n    | P1-V11 | WorkingGroup 수 | 258 | wgName dedup |\n    | P1-V12 | Neo4j 총 노드 | 234,011 | Phase-1~5 누적 |\n    | P1-V13 | Neo4j 총 관계 | 1,290,837 | Phase-1~5 누적 |\n    | P1-V14 | CQ PASS 수 | 25/25 | RAN4 DB (7690) 재검증 |\n    | P1-V15 | TDoc 연결 Meeting | 58/59 | 99%. 분모 59 = 58 (P1-V04 공식 Meeting 노드) + 1 (RAN4#101-bis 고아 — TDoc이 참조하나 Meeting 노드로 생성되지 않은 정규화 이슈). 분자 58 = 실제 TDoc↔Meeting 연결 성공 미팅 수. Meeting 총수 공식 값은 [P1-V04]=58. |\n    | P1-V16 | Phase-4 backfill (CR) | +1,001 | Phase-4 CR 파싱 결과 중 Phase-1 Tdoc List에 없던 CR 1,001건 추가. CR 정의는 :CR 라벨 (74,347 - 73,346 = 1,001). Phase-1 출처(Tdoc:CR dual) 73,346과 별건 명시 |\n    | P1-V17 | Phase-1 backfill (Tdoc) | +3,527 | RAN4#118 등 신규 미팅 + 누락 Tdoc 보완 |\n    | P1-V18 | TDoc List 컬럼 분포 | 31~36개 (시기별: 31컬럼 주류, 36컬럼 최신, 32컬럼 소수, 비표준 8/12컬럼 2개) | 파서 <10컬럼 스킵 임계값 결정 근거 |\n",
+      "sha256": "5f8afb6db35f674ba71e360762ed657c2d2549e43be5929b8493b30d782206f9"
+    }
+  ]
+}

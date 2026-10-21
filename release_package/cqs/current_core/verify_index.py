@@ -67,7 +67,7 @@ def main():
         else:assert 'supersedes_repair_sha256' not in t
     by_id={r['id']:r for r in tasks}
     resolutions=manifest.get('source_factuality_resolutions',{})
-    assert set(resolutions) <= {'RAN5_P1_CQ6-3'}
+    assert set(resolutions) <= {'RAN5_P1_CQ6-3','RAN4_P1_CQ6-3'}
     quarantine=manifest.get('source_factuality_quarantines')
     assert not resolutions or quarantine
     if quarantine:
@@ -81,7 +81,7 @@ def main():
         assert set(resolutions) <= {entry['id'] for entry in entries}
         for entry in entries:
             ident=entry['id']
-            if ident in resolutions:
+            if ident == 'RAN5_P1_CQ6-3' and ident in resolutions:
                 resolution=resolutions[ident]
                 assert ident=='RAN5_P1_CQ6-3'
                 assert resolution['quarantined_repair_sha256']==entry['repair_sha256']=='39f514a89a1981bfb4685c45e0a53671d92738f2d546d87602b3f2fefbae7944'
@@ -110,6 +110,34 @@ def main():
                     assert path.is_relative_to((nb/'source_population').resolve())
                     assert path.stat().st_size==pin['bytes'] and sha(path)==pin['sha256']
                     assert nm['files']['source_population/'+name]==pin['sha256']
+            elif ident == 'RAN4_P1_CQ6-3' and ident in resolutions:
+                resolution=resolutions[ident]
+                assert entry['repair_sha256']==resolution['quarantined_repair_sha256']=='840dab34bcb247f9281f068f11154f823e0f94040f6c69c65581e692a1fde267'
+                new='fd4ae11928d21631419c20e19f089ca75130068fa8cc6816d419735f34c9f422'
+                assert resolution['new_repair_sha256']==new
+                assert resolution['new_bundle']=='release_package/cqs/original_core_overnight_repairs47'
+                assert resolution['resolution_kind']=='original_authority_final_class_census_unchanged_query_requested_integer'
+                assert resolution['historical_quarantine_evidence_preserved'] is True and resolution['old_reference_gold_restored'] is False
+                active=by_id[ident];current=disposition[ident];nb=root/resolution['new_bundle']
+                assert active['repair_sha256']==current['repair_sha256']==new and current['status']=='pass'
+                assert active['repair_class']=='scorer_only' and active['bundle']==resolution['new_bundle']
+                assert current['source_factuality_reassessment']=='resolved_by_original_authority_contract_AUTH47'
+                assert current['source_factuality_resolution']==resolution
+                assert resolution['new_bundle_manifest_sha256']==manifest['cohort_manifest_pins'][nb.name]==sha(nb/'manifest.json')=='1ea9c3920535132d9c41f473d75368903631c28c4d12c4002ed27517ecd0e240'
+                nm=json.loads((nb/'manifest.json').read_text())
+                for name,pin in nm['files'].items():
+                    path=(nb/name).resolve();assert path.is_relative_to(nb.resolve())
+                    verify_file_pin(path,pin)
+                for name,pin in resolution['completion_evidence'].items():verify_file_pin(nb/name,pin)
+                definition=json.loads((nb/('definitions/'+ident+'.json')).read_text())
+                assert definition['question_en']==originals[ident]['question_en']
+                assert definition['reference_query']==definition['original_query']==originals[ident]['cypher']
+                assert [f['name']for f in definition['required_fields']]==['crs'] and definition['collection']=={'kind':'set'} and definition['cardinality_policy']=={'mode':'exact','value':1}
+                seal=json.loads((nb/('gate_evidence/'+ident+'/ROOT_final_disposition.json')).read_text())
+                assert seal['decision']=='pass_local' and seal['repair_sha256']==new and seal['human_expert_validation_n']==0
+                assert seal['scientific_criteria_changed'] is False and seal['original_question_and_query_byte_unchanged'] is True
+                assert seal['source_scope']['universal_physical_document_classification_claim'] is False
+                assert current['historical_before_AUTH47_disposition']['status']=='pending' and current['historical_before_AUTH47_disposition']['repair_sha256']==entry['repair_sha256']
             else:
                 assert ident not in by_id and disposition[ident]['status']=='pending'
                 assert disposition[ident]['repair_sha256']==entry['repair_sha256']
