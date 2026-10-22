@@ -4,13 +4,13 @@ SPECTRA accounts for **all 560 original Core questions** through a disjoint, sou
 
 | Classification | Questions | Evidence recorded |
 | --- | ---: | --- |
-| Contract verified | 521 | Original question, typed answer contract, source witnesses, native/SQL records, two separate AI reviews and scorer checks |
+| Contract verified | 522 | Original question, typed answer contract, source witnesses, native/SQL records, two separate AI reviews and scorer checks |
 | Clarification required | 21 | Completed, conditional diagnostics identifying the input, metric or scope choice to state |
-| Unsupported by pinned frozen data | 17 | Completed checks locating the required source role and the corresponding frozen-input gap |
-| Evidence pending | 1 | Original identity and current adjudication history retained for continuing verification |
+| Frozen-input-dependent source-role diagnostics | 17 | Completed source-role checks, original witnesses and reproducible input-dependency accounts |
+| Evidence pending | 0 | Original identity and adjudication history retained |
 | **Total** | **560** | [Machine-readable partition](partition/classification_overlay560.jsonl) |
 
-[current_tasks.jsonl](../current_core/current_tasks.jsonl) selects the 521 active contracts. The legacy binary index records 521 admitted and 39 nonadmitted; this overlay distinguishes the completed diagnostic classifications from checks still pending. Classification updates keep answer admission and model scores separate.
+[current_tasks.jsonl](../current_core/current_tasks.jsonl) selects the 522 active contracts. The legacy binary index records 522 admitted and 38 nonadmitted; this overlay connects executable contracts and completed diagnostic classifications. Classification updates keep answer admission and model scores separate.
 
 ## Reproduce the register
 
@@ -32,13 +32,13 @@ The question-first review policy derives requested meaning from the original Eng
 | --- | --- |
 | RAN3 company contribution paths | Nokia has 161 distinct cited TDocs and 54 citing Resolutions; ZTE has 181 and 52. The unit determines their relative rank. |
 | RAN4 company contribution paths | Qualcomm has 40 TDocs and 15 Resolutions; LG Electronics has 36 and 17. The top-ten membership also depends on the stated unit. |
-| RAN3#93bis → #94 | ZTE’s Resolution count rises 15 → 19; its share among all Resolutions changes 15/126 → 19/214. |
+| RAN3#93bis → #94 | ZTE’s Resolution count rises 16 → 19; its share among all Resolutions changes 16/126 → 19/214. |
 | RAN4#87 → #88 | Samsung’s Resolution count rises 5 → 9; its all-Resolution share changes 5/51 → 9/95 and its TDoc-linked-Resolution share changes 5/40 → 9/49. |
 | Direct Section/Table operands | Explicit area-weight choices change top-ten membership while preserving the operand population. |
 
 The trend diagnostics retain Resolution as the requested unit and vary normalization. Company matching is literal. The released witnesses comprise the full emitted finite diagnostic projections: 4,160 rank paths, 18,577 trend paths and 3,942 Section-to-Spec operands, with their typed section edges.
 
-The 21 clarification cases cover five metric choices, five required inputs, one result extent, three named study descriptions, one agenda description, one pack scope, two source-availability scopes, two cross-meeting agenda/technology scopes and one distinct-Spec selection rule. The 17 frozen-input cases identify a necessary recorded source role that the pinned inputs do not supply under the reviewed contract. These classifications are bounded to their stated snapshots and policies.
+The 21 clarification cases cover five metric choices, five required inputs, one result extent, three named study descriptions, one agenda description, one pack scope, two source-availability scopes, two cross-meeting agenda/technology scopes and one distinct-Spec selection rule. The 17 frozen-input-dependent cases map each reviewed question to the source attribution needed for complete answer construction. They preserve original evidence, retained relationships and the additional attribution requirements as reproducible diagnostics. These classifications apply to their stated snapshots and policies.
 
 ## Inspect a completed classification
 
@@ -55,7 +55,7 @@ Each evidence package retains the original question/query identity, relevant ori
 
 For an optional full-graph comparison, [reproduce_full_sqlite.py](reproduce_full_sqlite.py) runs the standalone source queries against restored immutable RAN1, RAN3 and RAN4 databases. [reproduce_extent.py](reproduce_extent.py) can additionally verify the retained RAN4 meeting counts against a restored RAN4 database. The [body-graph guide](../../kg/per_wg/README.md) describes reconstruction inputs.
 
-The full register preserves useful distinctions between a verified answer, an explicit specification choice, a bounded input dependency and verification still in progress. Earlier evidence and model outcomes remain reproducible in their original cohorts.
+The full register connects verified answers, explicit specification choices and bounded input dependencies to completed source-linked dispositions. Earlier evidence and model outcomes remain reproducible in their original cohorts.
 
 [Approval-target tracing](sources/RAN4_approval_target_binding_evidence/) connects the original 38.133 Resolution-count question to its complete 216-member recorded frontier, operative source evidence and successful count-level recovery alternatives. Its sealed classification preserves the original query and both semantic reviews.
 

@@ -7,7 +7,7 @@ meeting reports, and specification metadata available to executable queries.
 
 The released snapshot contains **966,859 nodes, 4,908,850 relationships, and
 12,931,842 RDF triples**. SpectraCQ supplies **624 released questions** with
-executable references, including a **560-question Core register** and **521
+executable references, including a **560-question Core register** and **522
 audited original-question contracts**. The [counts manifest](release_package/MANIFEST.md)
 links dataset totals to their artifacts and measurement procedures.
 
@@ -85,17 +85,25 @@ Both structured first responses count 407 reference-linked Agreements; the
 source-grounded 368-member count exposes the role of same-CR adoption in the
 process-activity contract.
 
+A [source-certified URLLC implementation trace](release_package/cqs/original_core_overnight_evaluation51/README.md)
+connects TR38.824 through the standardization work program to detailed TS38.211
+and TS38.214 records. The complete 72-CR retained candidate census is checked
+alongside 41 original documents; 35 CRs supply 74 source text components across
+70 CR–field records. Retained-field SQL, graph interpretation and native
+execution agree on both detailed specification records and every component. The saved four-method first trial makes query generation,
+answer reconstruction and complete-record scoring independently replayable.
+
 ## Start with the current benchmark
 
 Use [current_tasks.jsonl](release_package/cqs/current_core/current_tasks.jsonl)
-to select the 521 current contracts and their pinned evidence bundles. The
+to select the 522 current contracts and their pinned evidence bundles. The
 [index manifest](release_package/cqs/current_core/index_manifest.json) connects
 the active definitions to their original repair and evaluation cohorts.
 
 The [all-560 disposition register](release_package/cqs/core_disposition_audit/README.md)
-accounts for every original Core ID: **521 contract-verified, 21 requiring
-clarification, 17 unsupported by the pinned frozen data, and 1 awaiting completed
-evidence checks**. Historical definitions and results remain available alongside
+accounts for every original Core ID: **522 contract-verified, 21 requiring
+clarification and 17 frozen-input-dependent source-role diagnostics**.
+Every original ID now has a completed disposition. Historical definitions and results remain available alongside
 the current register.
 
 | Explore | Released resource |
@@ -126,7 +134,7 @@ records for all three questions. The twelve-question cohort has exact outputs
 on five questions for Cypher and four for SQL. Every method retains all cohort
 items in its denominator, including errors and abstentions. The linked packages
 provide the actual prompts, source access, reference contracts, first responses,
-and score replays. These are cohort results; the 521-contract index records
+and score replays. These are cohort results; the 522-contract index records
 benchmark definitions and their evidence.
 
 ## Get the data

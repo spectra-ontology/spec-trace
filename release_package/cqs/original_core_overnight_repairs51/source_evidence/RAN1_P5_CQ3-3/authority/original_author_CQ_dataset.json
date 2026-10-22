@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "created": "2026-02-03",
+    "description": "Phase-5 CQ 18개 (5그룹) — 페르소나 시나리오 기반 TR→TS 영향 추적",
+    "spec": "tdoc_ontology_specs(TR).md",
+    "categories": [
+      "CQ1_TR연구현황분석",
+      "CQ2_TS반영영향추적",
+      "CQ3_기술별영향범위",
+      "CQ4_릴리스별연구영향",
+      "CQ5_TR간참조관계"
+    ],
+    "neo4j_version": "5.x",
+    "ontology_version": "5.0.0",
+    "sort_rules": {
+      "CQ1": "TR 번호 ASC",
+      "CQ2": "영향받는 TS/Section 수 DESC",
+      "CQ3": "TR 번호 ASC",
+      "CQ4": "Release 순서 DESC"
+    },
+    "personas": [
+      "표준화 전략팀: TR 연구 결과가 제품 로드맵에 미치는 영향 분석",
+      "HW/SW 개발팀: 특정 기술 연구의 TS 반영 현황 추적",
+      "IP/특허팀: 신기술 연구의 표준 반영 시점과 범위 파악",
+      "시스템 아키텍트: TR 연구에서 파생된 TS 구조 변경 이해"
+    ],
+    "design_cqs": 19,
+    "total_cqs": 18,
+    "active_cqs": 18,
+    "defer_cqs": 0,
+    "rewrite_notes": [
+      "CQ2-4: 38.211-16(NR-U, placeholder 산물) -> 38.211-Rel-19-8(Sidelink, 38.885 유래)로 schema-적응 rewrite. phase-3 CQ 5건과 동일 선례."
+    ]
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "category": "CQ1_TR연구현황분석",
+      "question": "Ambient IoT 기술 연구 TR 38.769의 연구 범위(Scope)와 최종 결론(Conclusions)은 무엇인가? (신규 IoT 제품 기획에 필요)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.769'}) RETURN tr.trNumber, tr.trTitle, tr.trStatus, tr.scope, tr.conclusions"
+    },
+    {
+      "id": "CQ1-2",
+      "category": "CQ1_TR연구현황분석",
+      "question": "NR-U(Unlicensed) 연구 TR 38.889가 완료(Completed)되어 표준에 반영 가능한지, 현재 상태와 연구 결론은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.889'}) RETURN tr.trNumber, tr.trTitle, tr.trStatus, tr.conclusions"
+    },
+    {
+      "id": "CQ1-3",
+      "category": "CQ1_TR연구현황분석",
+      "question": "현재 연구 진행 중(Draft)인 TR 목록은 무엇이며, 향후 표준 영향을 예측하기 위해 어떤 기술들이 연구되고 있는가?",
+      "cypher": "MATCH (tr:TechnicalReport {trStatus: 'Draft'}) RETURN tr.trNumber, tr.trTitle, tr.scope ORDER BY tr.trNumber"
+    },
+    {
+      "id": "CQ1-4",
+      "category": "CQ1_TR연구현황분석",
+      "question": "V2X Sidelink 기술 연구 TR 38.885의 연구 범위와 결론은? (자동차-통신 융합 제품 기획용)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.885'}) RETURN tr.trNumber, tr.trTitle, tr.trStatus, tr.scope, tr.conclusions"
+    },
+    {
+      "id": "CQ2-1",
+      "category": "CQ2_TS반영영향추적",
+      "question": "Ambient IoT 연구(TR 38.769)가 새로운 TS를 생성했는가? 생성했다면 어떤 TS이고 영향 유형(ImpactType)은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.769'})-[:HAS_TR_IMPACT]->(ti:TRImpact)-[:IMPACTS_SPEC]->(sp:Spec) RETURN tr.trNumber, tr.trTitle, ti.impactType, sp.specNumber, ti.impactDescription"
+    },
+    {
+      "id": "CQ2-2",
+      "category": "CQ2_TS반영영향추적",
+      "question": "NR-U 연구(TR 38.889)가 TS 38.211~38.214에 어떤 새로운 Section을 추가했는가? (PHY 계층 개발팀 참조용)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.889'})-[:HAS_TR_IMPACT]->(ti:TRImpact {impactType: 'NewSection'})-[:IMPACTS_SECTION]->(s:Section) RETURN tr.trNumber, ti.affectedSection, s.sectionId, ti.impactDescription ORDER BY s.sectionId"
+    },
+    {
+      "id": "CQ2-3",
+      "category": "CQ2_TS반영영향추적",
+      "question": "TS 38.211에 영향을 준 모든 TR 목록과 각각의 영향 유형은? (38.211 개정 이력 분석용)",
+      "cypher": "MATCH (sp:Spec {specNumber: '38.211'})<-[:IMPACTS_SPEC]-(ti:TRImpact)<-[:HAS_TR_IMPACT]-(tr:TechnicalReport) RETURN tr.trNumber, tr.trTitle, ti.impactType, ti.affectedSection, ti.impactDescription ORDER BY tr.trNumber"
+    },
+    {
+      "id": "CQ2-4",
+      "category": "CQ2_TS반영영향추적",
+      "question": "TS 38.211 Section 8(Sidelink)이 어느 TR 연구에서 유래했는가?",
+      "cypher": "MATCH (s:Section {sectionId: '38.211-Rel-19-8'})<-[:IMPACTS_SECTION]-(ti:TRImpact)<-[:HAS_TR_IMPACT]-(tr:TechnicalReport) RETURN tr.trNumber, tr.trTitle, ti.impactType, ti.impactDescription",
+      "note": "release-aware 전환 rewrite: 구 대상(38.211-16, NR-U)은 corpus에 부재한 섹션으로, 과거 PASS는 구 phase-5 로더의 _dynamicCreated placeholder 산물(현 로더는 MATCH-only). 동일 competency(Section의 TR 유래 추적)를 corpus 실존 사례(38.885 V2X 연구 -> 38.211 §8 Sidelink NewSection)로 보존, sectionId는 release-키 latest(Rel-19) 패턴."
+    },
+    {
+      "id": "CQ2-5",
+      "category": "CQ2_TS반영영향추적",
+      "question": "완전히 새로운 TS(NewTS)를 생성한 TR 연구 목록과 생성된 TS 번호는? (신규 표준 문서 기원 파악용)",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(ti:TRImpact {impactType: 'NewTS'})-[:IMPACTS_SPEC]->(sp:Spec) RETURN DISTINCT tr.trNumber, tr.trTitle, sp.specNumber, ti.impactDescription ORDER BY tr.trNumber"
+    },
+    {
+      "id": "CQ3-1",
+      "category": "CQ3_기술별영향범위",
+      "question": "RedCap(Reduced Capability) 연구 TR 38.875가 어떤 TS의 어떤 Section에 영향을 주었는가? (저전력 IoT 개발팀 참조)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.875'})-[:HAS_TR_IMPACT]->(ti:TRImpact)-[:IMPACTS_SECTION]->(s:Section) RETURN tr.trNumber, tr.trTitle, ti.impactType, s.sectionId, ti.impactDescription ORDER BY s.sectionId"
+    },
+    {
+      "id": "CQ3-2",
+      "category": "CQ3_기술별영향범위",
+      "question": "LP-WUS(Low-Power Wake-Up Signal) 연구 TR 38.869가 TS 38.211과 38.213에 추가한 새 Section은? (UE 전력 절감 기능 구현용)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.869'})-[:HAS_TR_IMPACT]->(ti:TRImpact {impactType: 'NewSection'})-[:IMPACTS_SECTION]->(s:Section) RETURN tr.trNumber, ti.affectedSection, s.sectionId, ti.impactDescription ORDER BY s.sectionId"
+    },
+    {
+      "id": "CQ3-3",
+      "category": "CQ3_기술별영향범위",
+      "question": "URLLC 연구 TR 38.824가 TS 38.211과 38.214에 미친 영향과 상세 내용은? (저지연 산업용 통신 구현용)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.824'})-[:HAS_TR_IMPACT]->(ti:TRImpact)-[:IMPACTS_SPEC]->(sp:Spec) RETURN tr.trNumber, sp.specNumber, ti.impactType, ti.affectedSection, ti.impactDescription ORDER BY sp.specNumber"
+    },
+    {
+      "id": "CQ4-1",
+      "category": "CQ4_릴리스별연구영향",
+      "question": "Rel-18을 타겟으로 하는 TR 연구 목록과 각 연구가 TS에 미친 영향 유형은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-18'}) OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(ti:TRImpact)-[:IMPACTS_SPEC]->(sp:Spec) RETURN DISTINCT tr.trNumber, tr.trTitle, tr.trStatus, ti.impactType, sp.specNumber ORDER BY tr.trNumber"
+    },
+    {
+      "id": "CQ4-2",
+      "category": "CQ4_릴리스별연구영향",
+      "question": "6G Radio 연구(TR 38.760-1)의 현재 진행 상태와 연구 범위는? (차세대 기술 로드맵 검토용)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.760-1'}) RETURN tr.trNumber, tr.trTitle, tr.trStatus, tr.trVersion, tr.scope"
+    },
+    {
+      "id": "CQ4-3",
+      "category": "CQ4_릴리스별연구영향",
+      "question": "52.6GHz~71GHz 주파수 대역 연구 TR 38.808의 연구 결론과 TS 반영 현황은? (mmWave 제품 기획용)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.808'}) OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(ti:TRImpact)-[:IMPACTS_SPEC]->(sp:Spec) RETURN tr.trNumber, tr.trTitle, tr.trStatus, tr.conclusions, ti.impactType, sp.specNumber"
+    },
+    {
+      "id": "CQ5-1",
+      "category": "CQ5_TR간참조관계",
+      "question": "TR 38.859(Ambient IoT for NR)가 참조하는 다른 TR 목록은? (관련 연구 전체 파악용)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.859'})-[:REFERENCES_TR]->(ref:TechnicalReport) RETURN tr.trNumber, tr.trTitle, ref.trNumber, ref.trTitle ORDER BY ref.trNumber"
+    },
+    {
+      "id": "CQ5-2",
+      "category": "CQ5_TR간참조관계",
+      "question": "TR 38.802(RedCap)를 참조하는 다른 TR 목록은? (역참조 — 후속 연구 추적용)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.802'})<-[:REFERENCES_TR]-(src:TechnicalReport) RETURN tr.trNumber, tr.trTitle, src.trNumber, src.trTitle ORDER BY src.trNumber"
+    },
+    {
+      "id": "CQ5-3",
+      "category": "CQ5_TR간참조관계",
+      "question": "가장 많이 참조되는 TR Top 5는? (핵심 기반 연구 식별용)",
+      "cypher": "MATCH (ref:TechnicalReport)<-[:REFERENCES_TR]-(src:TechnicalReport) WITH ref, count(src) AS refCount ORDER BY refCount DESC LIMIT 5 RETURN ref.trNumber, ref.trTitle, refCount"
+    }
+  ]
+}

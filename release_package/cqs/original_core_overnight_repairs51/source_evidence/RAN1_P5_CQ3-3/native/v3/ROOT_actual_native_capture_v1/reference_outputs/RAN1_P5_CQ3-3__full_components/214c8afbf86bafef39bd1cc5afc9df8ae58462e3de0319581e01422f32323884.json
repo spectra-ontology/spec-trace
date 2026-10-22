@@ -1,0 +1,33 @@
+{
+  "id": "RAN1_P5_CQ3-3__full_components",
+  "wg": "RAN1",
+  "query_sha256": "214c8afbf86bafef39bd1cc5afc9df8ae58462e3de0319581e01422f32323884",
+  "query": "// Prospective original-question repair; no source IDs, labels, source-body runtime input.\nMATCH (known:WorkItem)\nWITH collect(DISTINCT known.workItemCode) AS knownCodes\nMATCH (tr:TechnicalReport {trNumber: '38.824'})-[:RELATED_TO_WORK_ITEM]->(study:WorkItem)\nWHERE left(study.workItemCode, 3) = 'FS_'\nWITH knownCodes, tr, substring(study.workItemCode, 3) + '-Core' AS familyCode\nMATCH (family:WorkItem {workItemCode: familyCode})<-[:RELATED_TO]-(cr:CR)-[:MODIFIES]->(target:Spec)\nWHERE target.specNumber IN ['38.211', '38.214'] AND cr.status = 'agreed'\nMATCH (cr)-[:RELATED_TO]->(other:WorkItem)\nWITH knownCodes, tr, family, cr, target.specNumber AS specNumber,\n     collect(DISTINCT other.workItemCode) AS carrierCodes\nUNWIND ['reasonForChange', 'summaryOfChange'] AS field\nWITH knownCodes, tr, family, cr, specNumber, carrierCodes, field,\n     trim(coalesce(cr[field], '')) AS raw\nWITH knownCodes, tr, family, cr, specNumber, carrierCodes, field, raw,\n     [p IN split(replace(replace(replace(replace(raw,\n       '\\nIn section', '\\n\\nIn section'), '\\nIn clause', '\\n\\nIn clause'),\n       '\\nIn Section', '\\n\\nIn Section'), '\\nIn Clause', '\\n\\nIn Clause'), '\\n\\n')\n       WHERE trim(p) <> '' | trim(p)] AS chunks\nWITH knownCodes, tr, family, cr, specNumber, carrierCodes, field, raw, chunks,\n     toLower(last(split(replace(family.workItemCode, '-Core', ''), '_'))) AS topic\nWITH tr, family, cr, specNumber, carrierCodes, field,\n     CASE WHEN size(carrierCodes) = 1\n       THEN CASE WHEN raw = '' THEN [] ELSE [raw] END\n       ELSE reduce(state = {active: false, selected: []}, p IN chunks |\n         CASE WHEN size([t IN split(replace(p, '\\n', ','), ',') WHERE trim(t) <> '']) > 0\n           AND all(t IN [t IN split(replace(p, '\\n', ','), ',') WHERE trim(t) <> '' | trim(t)] WHERE t IN knownCodes)\n         THEN {active: family.workItemCode IN [t IN split(replace(p, '\\n', ','), ',') WHERE trim(t) <> '' | trim(t)], selected: state.selected}\n         WHEN state.active OR toLower(p) CONTAINS topic\n         THEN {active: state.active, selected: state.selected + [p]}\n         ELSE state END).selected END AS pieces\nWHERE size(pieces) > 0\nOPTIONAL MATCH (cr)-[:MODIFIES_SECTION]->(section:Section)\nWITH tr, cr, specNumber, carrierCodes, field, pieces,\n     CASE WHEN size(carrierCodes) = 1 OR\n       any(p IN pieces WHERE p =~ ('(?s).*(^|[^0-9.])' + replace(section.sectionNumber, '.', '\\\\.') + '([^0-9.]|$).*'))\n       THEN section.sectionNumber ELSE null END AS selectedSection\nORDER BY selectedSection\nWITH tr, cr, specNumber, field, pieces,\n     collect(DISTINCT selectedSection) AS sections\nWITH tr, cr, specNumber, field, sections, pieces,\n     reduce(description = '', p IN pieces |\n       description + CASE WHEN description = '' THEN '' ELSE '\\n\\n' END +\n       cr.tdocNumber + ' ' + field + ': ' + p) AS fieldDescription\nRETURN specNumber, cr.id AS CRid, field, sections, pieces ORDER BY specNumber, CRid, field",
+  "started_utc": "2026-10-22T00:00:36.231034+00:00",
+  "status": "OK",
+  "rows_file": "reference_outputs/RAN1_P5_CQ3-3__full_components/214c8afbf86bafef39bd1cc5afc9df8ae58462e3de0319581e01422f32323884.jsonl",
+  "columns": [
+    "specNumber",
+    "CRid",
+    "field",
+    "sections",
+    "pieces"
+  ],
+  "truncated": false,
+  "rollback_completed": true,
+  "source": "new read-only execution on owned archived TTL restoration",
+  "limits": {
+    "rows": 100000,
+    "bytes": 268435456,
+    "timeout_s": 20
+  },
+  "plan_query_type": "r",
+  "execution_query_type": "r",
+  "execution_summary_complete": true,
+  "rows_retained": 70,
+  "bytes_retained": 33356,
+  "rows_sha256": "bfc39258b9a3d92e890771ce74bc6cbeb16bd35dbfde86b16f46e98c59d1fee0",
+  "finished_utc": "2026-10-22T00:00:39.293455+00:00",
+  "elapsed_s": 3.0624,
+  "full_rows_available": true
+}

@@ -1,0 +1,53 @@
+{
+  "id": "RAN1_P5_CQ3-3",
+  "question_en": "What impact did the URLLC study TR 38.824 have on TS 38.211 and 38.214, in detail? (low-latency industrial comms)",
+  "original_query": "MATCH (tr:TechnicalReport {trNumber: '38.824'})-[:HAS_TR_IMPACT]->(ti:TRImpact)-[:IMPACTS_SPEC]->(sp:Spec) RETURN tr.trNumber, sp.specNumber, ti.impactType, ti.affectedSection, ti.impactDescription ORDER BY sp.specNumber",
+  "required_fields": [
+    {
+      "name": "tr.trNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "tr.trNumber"
+    },
+    {
+      "name": "sp.specNumber",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "sp.specNumber"
+    },
+    {
+      "name": "ti.impactType",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "ti.impactType"
+    },
+    {
+      "name": "ti.affectedSection",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "ti.affectedSection"
+    },
+    {
+      "name": "ti.impactDescription",
+      "type": "string",
+      "nullable": false,
+      "source_column_or_expression": "ti.impactDescription"
+    }
+  ],
+  "collection": {
+    "kind": "sequence",
+    "order_keys": [
+      {
+        "field": "sp.specNumber",
+        "direction": "asc"
+      }
+    ]
+  },
+  "cardinality_policy": {
+    "mode": "exact",
+    "value": 2
+  },
+  "repair_class": "query_and_scorer",
+  "original_question_preserved": true,
+  "reference_query": "// Prospective original-question repair; no source IDs, labels, source-body runtime input.\nMATCH (known:WorkItem)\nWITH collect(DISTINCT known.workItemCode) AS knownCodes\nMATCH (tr:TechnicalReport {trNumber: '38.824'})-[:RELATED_TO_WORK_ITEM]->(study:WorkItem)\nWHERE left(study.workItemCode, 3) = 'FS_'\nWITH knownCodes, tr, substring(study.workItemCode, 3) + '-Core' AS familyCode\nMATCH (family:WorkItem {workItemCode: familyCode})<-[:RELATED_TO]-(cr:CR)-[:MODIFIES]->(target:Spec)\nWHERE target.specNumber IN ['38.211', '38.214'] AND cr.status = 'agreed'\nMATCH (cr)-[:RELATED_TO]->(other:WorkItem)\nWITH knownCodes, tr, family, cr, target.specNumber AS specNumber,\n     collect(DISTINCT other.workItemCode) AS carrierCodes\nUNWIND ['reasonForChange', 'summaryOfChange'] AS field\nWITH knownCodes, tr, family, cr, specNumber, carrierCodes, field,\n     trim(coalesce(cr[field], '')) AS raw\nWITH knownCodes, tr, family, cr, specNumber, carrierCodes, field, raw,\n     [p IN split(replace(replace(replace(replace(raw,\n       '\\nIn section', '\\n\\nIn section'), '\\nIn clause', '\\n\\nIn clause'),\n       '\\nIn Section', '\\n\\nIn Section'), '\\nIn Clause', '\\n\\nIn Clause'), '\\n\\n')\n       WHERE trim(p) <> '' | trim(p)] AS chunks\nWITH knownCodes, tr, family, cr, specNumber, carrierCodes, field, raw, chunks,\n     toLower(last(split(replace(family.workItemCode, '-Core', ''), '_'))) AS topic\nWITH tr, family, cr, specNumber, carrierCodes, field,\n     CASE WHEN size(carrierCodes) = 1\n       THEN CASE WHEN raw = '' THEN [] ELSE [raw] END\n       ELSE reduce(state = {active: false, selected: []}, p IN chunks |\n         CASE WHEN size([t IN split(replace(p, '\\n', ','), ',') WHERE trim(t) <> '']) > 0\n           AND all(t IN [t IN split(replace(p, '\\n', ','), ',') WHERE trim(t) <> '' | trim(t)] WHERE t IN knownCodes)\n         THEN {active: family.workItemCode IN [t IN split(replace(p, '\\n', ','), ',') WHERE trim(t) <> '' | trim(t)], selected: state.selected}\n         WHEN state.active OR toLower(p) CONTAINS topic\n         THEN {active: state.active, selected: state.selected + [p]}\n         ELSE state END).selected END AS pieces\nWHERE size(pieces) > 0\nOPTIONAL MATCH (cr)-[:MODIFIES_SECTION]->(section:Section)\nWITH tr, cr, specNumber, carrierCodes, field, pieces,\n     CASE WHEN size(carrierCodes) = 1 OR\n       any(p IN pieces WHERE p =~ ('(?s).*(^|[^0-9.])' + replace(section.sectionNumber, '.', '\\\\.') + '([^0-9.]|$).*'))\n       THEN section.sectionNumber ELSE null END AS selectedSection\nORDER BY selectedSection\nWITH tr, cr, specNumber, field, pieces,\n     collect(DISTINCT selectedSection) AS sections\nWITH tr, cr, specNumber, field, sections,\n     reduce(description = '', p IN pieces |\n       description + CASE WHEN description = '' THEN '' ELSE '\\n\\n' END +\n       cr.tdocNumber + ' ' + field + ': ' + p) AS fieldDescription\nORDER BY specNumber, cr.id, field\nWITH tr, specNumber,\n     collect({sections: sections, description: fieldDescription}) AS entries\nUNWIND CASE WHEN size(reduce(allSections = [], e IN entries | allSections + e.sections)) = 0\n       THEN [null] ELSE reduce(allSections = [], e IN entries | allSections + e.sections) END AS selectedSection\nWITH tr, specNumber, entries, selectedSection\nORDER BY selectedSection\nWITH tr, specNumber, entries, collect(DISTINCT selectedSection) AS sections\nMATCH (tr)-[:HAS_TR_IMPACT]->(ti:TRImpact)-[:IMPACTS_SPEC]->(sp:Spec)\nWHERE sp.specNumber = specNumber\nRETURN tr.trNumber, sp.specNumber, ti.impactType,\n       reduce(sectionText = '', s IN sections |\n         sectionText + CASE WHEN sectionText = '' THEN '' ELSE ', ' END + s) AS `ti.affectedSection`,\n       reduce(description = '', e IN entries |\n         description + CASE WHEN description = '' THEN '' ELSE '\\n\\n' END + e.description) AS `ti.impactDescription`\nORDER BY sp.specNumber\n\n"
+}
