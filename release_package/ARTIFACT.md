@@ -1,145 +1,140 @@
-# SPECTRA Artifact Reproducibility Checklist
+# SPECTRA artifact walkthrough
 
-This is a reviewer-friendly checklist to verify the SPECTRA artifact in
-about ten minutes, on a vanilla Python environment, without access to
-internal 3GPP corpora.
+This guide connects the process dataset, current question contracts and measured
+model outputs to their reproducible checks. Run commands from the **repository
+root**. The [current Core index](cqs/current_core/README.md) selects **522 verified
+contracts**; the [complete register](cqs/core_disposition_audit/README.md) accounts
+for all 560 Core IDs as **522 verified, 21 clarification diagnostics, 17
+frozen-input-dependent diagnostics and 0 pending**.
 
-## Required tools
+## Choose a replay level
+
+| Goal | Released inputs | Entry point |
+| --- | --- | --- |
+| Check files, ontology and examples | Git checkout; `rdflib` and `pyshacl` | Quick release gate below |
+| Verify current contracts and saved scores | Git checkout; Python 3.10 or later | Current launcher and individual cohort replays |
+| Rebuild graph data and execute references | Archived body graphs and a scratch database | [Full reconstruction guide](tests/README.md) |
+
+## Current benchmark and measured examples
+
+The current contracts cover record/decision retrieval, process aggregation and
+decision/study-to-standard tracing. Each active definition pins the original
+question, typed answer shape, source witnesses, reference outputs, semantic
+reviews and scorer controls.
+
+```bash
+python3 -B -I release_package/cqs/verify_current_release.py
+```
+
+This launcher checks the current index, complete disposition register and saved
+evaluations 23–51. It uses released evidence without model, network or database
+execution. The [N=12 process-question cohort](cqs/original_core_overnight_evaluation15/README.md)
+and [N=3 named-record cohort](cqs/original_core_overnight_evaluation24/README.md)
+provide their exact standalone saved-score commands. Each evaluation preserves
+its own inputs, model protocol, first responses and denominator, including
+errors and abstentions. The [cohort catalogue](cqs/current_core/README.md#evidence-catalogue)
+links the complete measurement history.
+
+## File and schema fast path
 
 ```bash
 pip install rdflib pyshacl
-# Optional: Protégé (open ontology/spectra.ttl), Neo4j (run cypher/)
+python3 -B release_package/tests/verify_benchmark.py --quick --out /tmp/spectra-quick-check
 ```
 
-## Fast path: one-shot verification (recommended)
+The quick gate contains 52 checks: 48 file-level checks plus four benchmark
+checks. A Git-only checkout executes 47; the five per-WG body-text checks run
+when deposited graphs are placed in `release_package/kg/per_wg/`. Successful
+Git-only output ends with `=== QUICK: 47/47 checks passed ===`.
+
+The underlying file-only command is:
 
 ```bash
-python3 tests/verify_release.py
-# Prints one [PASS]/[FAIL] line per check and ends with a summary of the form:
-#   === Summary: <passed>/<total> checks passed ===
-# Exit code 0 only if every executed check passes. On a full checkout
-# (Zenodo body-text TTLs downloaded into kg/per_wg/) the verifier runs
-# 48 checks; on a Git-only checkout the five per-WG body-text checks in
-# section 8b print [SKIP] instead (they defer to the Zenodo deposit per
-# the GitHub/Zenodo split) and drop out of the total.
+python3 -B release_package/tests/verify_release.py
 ```
 
-This single command runs all eleven labelled check sections (1, 1b, 2, 2b,
-3, 4, 5, 6, 7, 8, 8b: ontology triples, docs-copy byte-identity, SHACL
-conformance on the instantiation snippet, SHACL conformance on the
-metadata-only process-KG union, end-to-end SPARQL, SpectraCQ benchmark
-counts and gold integrity, structural metrics, validation-manifest
-references, synthetic-instantiation sanity, release directory inventory,
-per-WG body-text and schema KGs) and returns
-exit 0 only if every executed check passes. If you only have time for one
-check, run this one.
+It writes no report and returns exit 0 when every executed check passes. Its
+eleven labelled sections (1, 1b, 2, 2b, 3, 4, 5, 6, 7, 8, 8b) cover ontology
+parsing, documentation byte identity, SHACL on synthetic and process examples,
+end-to-end SPARQL, original benchmark inventory/gold, structural metrics,
+validation references, synthetic-instance checks, release inventory and body/schema
+graphs. Body checks print `[SKIP]` in a Git-only checkout and leave the total.
 
-The remainder of this document explains the same checks individually for
-reviewers who want to inspect each step.
+## Inspect individual dataset checks
 
-## Run order
-
-### 1. Verify the ontology parses
+### Ontology and structural metrics
 
 ```bash
-python3 -c "import rdflib; g=rdflib.Graph(); g.parse('ontology/spectra.ttl', format='turtle'); print(f'Triples: {len(g)}')"
-# Expected: Triples: 914
+python3 -c "import rdflib; g=rdflib.Graph(); g.parse('release_package/ontology/spectra.ttl', format='turtle'); print(f'Triples: {len(g)}')"
+python3 -B release_package/tests/reproduce_structural_metrics.py
 ```
 
-### 2. Reproduce the structural metrics in the paper
+Expected ontology totals: 914 triples; 32 classes; 53 object properties;
+81 data properties; 20 functional and 2 inverse-functional properties;
+15 inverse pairs; 6 irreflexive and 2 asymmetric properties; 15 subclass axioms.
+The structural-metric script checks the released JSON and exits 0 on agreement.
+Protégé can open `release_package/ontology/spectra.ttl` for visual inspection.
+
+### SHACL and the synthetic traceability example
 
 ```bash
-python3 tests/reproduce_structural_metrics.py
-# Expected: every row prints ✓; exit code 0
-# Reproduces paper Table 3 (Ontology structural metrics):
-#   Classes 32 / OPs 53 / DPs 81 / Functional 20 / IFP 2 / Inverse pairs 15
-#   Irreflexive 6 / Asymmetric 2 / subclass 15 / triples 914
+pyshacl -s release_package/shapes/spectra-core.shacl.ttl release_package/examples/instantiation_snippet.ttl
+python3 -B release_package/tests/test_e2e_sparql.py
 ```
 
-### 3. Validate the SHACL shapes against the synthetic instantiation
+Expected: SHACL `Conforms: True`; the SPARQL example reports 933 triples,
+returns the expected R1-2599998 / RAN1#121 record and prints `PASS`.
+The [example directory](examples/end_to_end/README.md) contains data, queries
+and expected output. The [tutorial](TUTORIAL.md) shows how to reuse the schema.
 
-```bash
-pyshacl -s shapes/spectra-core.shacl.ttl examples/instantiation_snippet.ttl
-# Expected: "Conforms: True"
-```
+### Original question collection and stored gold
 
-### 4. Run the multi-hop traceability SPARQL on the end-to-end synthetic example
+The original `cqs/spectra_cq_v2.0/questions.json` preserves 624 released questions
+from 654 authored questions, with 30 held out and 624 stored gold statuses PASS.
+Released counts are RAN1 142, RAN2 128, RAN3 123, RAN4 117 and RAN5 114.
+The example query directories contain 15 Cypher and 6 SPARQL queries;
+MULTI_HOP_traceability is available in both.
 
-```bash
-python3 tests/test_e2e_sparql.py
-# Expected:
-#   "Total: 933 triples"
-#   "Result: {'tdocNumber': 'R1-2599998', ..., 'meetingNumber': 'RAN1#121'}"
-#   "PASS"
-```
+These original query-derived answer sets have their own snapshot. The current
+522 contracts and typed scorers are selected separately through the current index.
+[validation/cq_replay/](validation/cq_replay/) records scratch-load graph counts,
+per-WG reports, 624/624 original gold matches and 142/142 RAN1 SPARQL row-count
+parity. Full original-reference execution uses the deposited per-WG graphs and
+the [scratch-store procedure](tests/README.md). Its `--full` command wipes the
+target database, so supply a dedicated scratch instance.
 
-### 5. Inspect the SpectraCQ v2.0 scored benchmark
+## Follow quantitative evidence to its source
 
-```bash
-python3 -c "
-import json
-with open('cqs/spectra_cq_v2.0/questions.json') as f:
-    d = json.load(f)
-m = d['metadata']
-print(f'Released: {m[\"released_scored_cqs\"]} / Authored: {m[\"authored_cqs\"]} / Held out: {m[\"held_cqs\"]}')
-print(f'By WG: {m[\"released_by_wg\"]}')
-print(f'Gold PASS: {sum(1 for c in d[\"cqs\"] if c[\"gold\"][\"status\"]==\"PASS\")}')
-"
-# Expected:
-#   Released: 624 / Authored: 654 / Held out: 30
-#   By WG: {'RAN1': 142, 'RAN2': 128, 'RAN3': 123, 'RAN4': 117, 'RAN5': 114}
-#   Gold PASS: 624
-```
+[validation/validation_manifest.md](validation/validation_manifest.md) maps
+quantitative dataset claims to the released JSON fields. The validation directory
+contains 15 JSON evidence files, replay records, chart/source-fidelity notes and
+the manifest. RAN1 instance counts, cross-WG schema differences and OOPS output
+are retained build snapshots; the ontology, SHACL and synthetic SPARQL checks
+above recompute their specific released-artifact properties.
 
-### 6. Inspect 21 representative queries
+[reproduce_scenario_counts.py](tests/reproduce_scenario_counts.py) additionally
+recounts all 18 cross-WG scenarios on the archived body graphs. Seventeen agree
+with the earlier deployed snapshot. RAN3 TS38.300 CRs are 1,249 on the released
+graph versus 270 on the deployed snapshot; both populations and the difference
+are recorded in the manifest. See [tests/README.md](tests/README.md) for graph
+placement and the `--ttl-dir` option.
 
-```bash
-ls queries/cypher/  # 15 files
-ls queries/sparql/  # 6 files
-# All files non-empty; MULTI_HOP_traceability available in both formats.
-```
+Current contracts link their complete native records, independent SQL results,
+source evidence and scorer controls. Review provenance records two separate
+nonblind AI semantic reviews and human/expert n=0. The [complete disposition
+register](cqs/core_disposition_audit/README.md) reproduces source-linked
+specification diagnostics alongside executable answers.
 
-### 7. Inspect validation evidence
+## Data placement and historical measurements
 
-```bash
-ls validation/
-# 15 JSON evidence files + cq_replay/ + chart_parser_fidelity_note.md
-#   + source_fidelity_note.md + validation_manifest.md
-# Every paper number is mapped to its evidence file in validation_manifest.md.
-# validation/cq_replay/ holds the benchmark reproducibility evidence:
-# scratch-reload graph counts, per-WG load reports, 624/624 gold replay
-# results, and 142/142 SPARQL row-count parity on the released RAN1 CQs.
-```
+The [body-graph inventory](kg/per_wg/README.md) links the version 2.0.0 deposit.
+Git supplies the ontology, process metadata, contracts and retained evaluation
+artifacts; archived body graphs support full dataset reconstruction. Saved-score
+replay uses saved outputs and contexts. Fresh retrieval ranking additionally
+uses the original full-text corpus outside the deposit.
 
-## Reviewer trust path
-
-The four artifacts above (TTL parse, structural metrics, SHACL conformance,
-e2e SPARQL) reproduce the *publicly verifiable* part of the paper's
-quantitative claims (the ontology structural-metrics table, the synthetic
-multi-hop traceability example, and the SpectraCQ v2.0 benchmark contents).
-
-The remaining design-phase numbers (RAN1 instance counts, cross-WG schema
-diff, cross-WG query counts, OOPS scan output) are pre-computed snapshots
-shipped under `validation/*.json`; each has an entry in
-`validation/validation_manifest.md` mapping the paper claim to its
-JSON field. These come from the internal build pipeline and are shipped
-as evidence rather than re-derived here. The cross-WG query counts are the
-exception: `tests/reproduce_scenario_counts.py` recounts all 18 of them on
-the body-text graphs of the deposit
-(`validation/released_graph_scenario_counts.json`). 17 are the same; the
-RAN3 count of change requests on TS 38.300 is 270 on the deployed KG and
-1,249 on the released graph (`validation/validation_manifest.md`).
-
-The benchmark gold sets, by contrast, *are* re-derivable from the release
-alone: load the released per-WG TTLs into a scratch Neo4j and re-run the
-624 reference Cypher queries. `validation/cq_replay/` records exactly such
-a reload — graph counts, per-WG load reports, a 624/624 gold match, and
-142/142 SPARQL row-count parity covering all released RAN1 CQs.
-
-## Estimated time
-
-- Steps 1-4: ~3 minutes (one-time `pip install` aside)
-- Steps 5-7: ~2 minutes
-- Reading `validation_manifest.md` to spot-check 5 numbers: ~5 minutes
-
-Total: ~10 minutes.
+The [evaluation scope guide](cqs/contract_repair_v1/README_evaluation_scopes.md),
+[historical baseline documentation](../paper/baseline/README.md) and [source
+supplement guide](cqs/source_supplements_README.md) preserve earlier scorer
+families and separately declared input snapshots. Cite the actual Git commit
+and linked immutable cohort for a current contract or measured result.

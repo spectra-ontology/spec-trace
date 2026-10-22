@@ -29,7 +29,11 @@ def main():
     assert summary==json.loads((HERE/'partition/summary.json').read_text())
     baseline=[json.loads(line) for line in (HERE/'baseline560_metadata.jsonl').open()]
     verified_n=sum(row['immutable_public_status']=='pass' for row in baseline)
-    assert summary['partition_counts']=={'contract_verified':verified_n,'clarification_required':21,'unsupported_frozen_data':17,'evidence_pending':560-verified_n-21-17}
+    expected_counts={'contract_verified':verified_n,'clarification_required':21,'unsupported_frozen_data':17,'evidence_pending':560-verified_n-21-17}
+    observed_counts=summary['partition_counts']
+    assert set(observed_counts)<=set(expected_counts)
+    # Counter-derived partitions omit categories with zero members.
+    assert {key:observed_counts.get(key,0) for key in expected_counts}==expected_counts
     description=__import__('subprocess').run([sys.executable,str(HERE/'sources/conflicting_TR_description_evidence/reproduce.py')],capture_output=True,text=True,check=True)
     description_result=json.loads(description.stdout)
     assert description_result['cases_verified_n']==3 and description_result['root_secondary_seven_unit_reviews_verified_n']==3

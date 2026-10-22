@@ -1,4 +1,4 @@
-# SPECTRA — A Traceability Ontology for 3GPP RAN Standardization
+# SPECTRA: process knowledge graph and executable benchmark
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Ontology: OWL 2](https://img.shields.io/badge/Ontology-OWL_2-blue.svg)](https://www.w3.org/TR/owl2-overview/)
@@ -11,6 +11,39 @@
 **Persistent identifier**: [`https://w3id.org/spectra`](https://w3id.org/spectra) (registered via [`perma-id/w3id.org`](https://github.com/perma-id/w3id.org))
 **Zenodo DOI**: [`10.5281/zenodo.20034871`](https://doi.org/10.5281/zenodo.20034871) (concept DOI — locates the newest deposited version; each deposit's version DOI pins its archival bytes. Git-only additions also require a commit reference.)
 **Repository**: https://github.com/spectra-ontology/spec-trace
+
+## Start with the current release
+
+SPECTRA releases a shared process graph and source-linked benchmark for tracing
+3GPP submissions, recorded outcomes, CRs and specification targets. The dataset
+contains **966,859 nodes, 4,908,850 relationships and 12,931,842 RDF triples**.
+The original **624-question collection** is preserved alongside the current
+**560-question Core register: 522 verified contracts, 21 clarification diagnostics
+and 17 frozen-input-dependent source-role diagnostics**. Every Core identity has
+a completed disposition.
+
+| Goal | Entry point |
+| --- | --- |
+| Select current executable tasks | [Current Core index](cqs/current_core/README.md), organized into record/decision retrieval, process aggregation and decision/study tracing |
+| Inspect measured results | [N=12 process questions](cqs/original_core_overnight_evaluation15/README.md) and [N=3 named records](cqs/original_core_overnight_evaluation24/README.md), each with its own inputs, first responses and denominator |
+| Verify current evidence | [Artifact walkthrough](ARTIFACT.md), [current saved-evidence launcher](cqs/verify_current_release.py) and [all-560 register](cqs/core_disposition_audit/README.md) |
+| Obtain or rebuild graph data | [Body-graph inventory](kg/per_wg/README.md), [construction pipeline](pipeline/README.md) and [tests](tests/README.md) |
+
+Run from the repository root:
+
+```bash
+pip install rdflib pyshacl
+python3 -B release_package/tests/verify_benchmark.py --quick --out /tmp/spectra-quick-check
+python3 -B -I release_package/cqs/verify_current_release.py
+```
+
+The first command checks Git-distributed files and schema artifacts. The current
+launcher verifies the contract index, complete disposition register and saved
+evaluations 23–51 without model or database calls. Individual cohort READMEs
+provide exact score-replay commands. Full graph reconstruction uses the archived
+body graphs and a scratch database; fresh passage ranking uses its original
+full-text corpus. Current Git contracts and evidence have their own commit
+references alongside the frozen version 2.0.0 graph deposit.
 
 ## Two-channel distribution
 
@@ -27,7 +60,10 @@ This follows the academic two-tier distribution pattern of TSpec-LLM and GSMA te
 
 ## What this package releases
 
-This is the **publicly released** component of the SPECTRA ontology resource described in the accompanying paper *"SPECTRA: A Traceability Ontology for 3GPP Standardization"* (currently under review). Every headline count in this README (nodes, relationships, triples, CQ counts) is governed by `MANIFEST.md`, the canonical counts manifest; when a document disagrees with `MANIFEST.md`, the manifest is authoritative.
+This package accompanies *"SPECTRA: A Knowledge Graph Dataset and Benchmark for Tracing the 3GPP Standardization Process"* (currently under review). Every headline count in this README (nodes, relationships, triples, CQ counts) is governed by `MANIFEST.md`, the canonical counts manifest; `MANIFEST.md` is authoritative for those snapshot totals; the [current index](cqs/current_core/README.md) and [disposition summary](cqs/core_disposition_audit/partition/summary.json) select the current contract and classification counts.
+
+<details>
+<summary>Complete package inventory</summary>
 
 ```
 release_package/
@@ -42,6 +78,10 @@ release_package/
 │   ├── schema_overview.md             # high-level schema summary
 │   └── cq_distribution.png            # category-by-phase distribution of the 624 released CQs
 ├── cqs/
+│   ├── current_core/                 # current 522 typed contracts, pinned evidence and complete cohort catalogue
+│   ├── core_disposition_audit/       # all 560 original IDs: 522 / 21 / 17 / 0 completed dispositions
+│   ├── original_core_overnight_repairs*/    # immutable contract/source evidence cohorts
+│   ├── original_core_overnight_evaluation*/ # saved first responses and complete-record score replay
 │   ├── cq_index.md                    # index of all 624 released CQs (verbatim 3GPP company names where present)
 │   │                                  # (id, WG, phase, category, schema area)
 │   ├── representative_cqs.md          # 14 representative CQs with full text + Cypher
@@ -118,7 +158,7 @@ release_package/
 │   ├── chart_parser_fidelity_note.md  # chart-parser fidelity caveat
 │   ├── source_fidelity_note.md        # source-fidelity repairs and quarantine: state, application, reach
 │   ├── source_fidelity_repair_manifest.json # repair lists (not applied in the 2.0.0 graph)
-│   ├── source_fidelity_quarantine.json # 334 held records
+│   ├── source_fidelity_quarantine.json # 334 held entries over 332 distinct records
 │   ├── released_graph_scenario_counts.json # cross-WG query counts recounted on the released graphs
 │   └── cq_replay/                     # ★ 624-CQ benchmark reproducibility evidence (see MANIFEST.md §4)
 │       ├── graph_counts.json          # per-WG loaded node/relationship counts (966,859 / 4,908,850)
@@ -149,38 +189,43 @@ release_package/
 └── LICENSE                            # CC-BY 4.0 (Tier 1) + 3GPP attribution (Tier 2)
 ```
 
-## What is *not* in this package
+</details>
 
-The following artifacts are part of the paper's **internal validation evidence** and are *not* redistributed:
+## Reconstruction inputs and build provenance
 
-- Internal cumulative-regression run logs and per-phase intermediate KG snapshots used during the five-phase development. The scored benchmark (624 released CQs of 654 authored, 30 held out; English text + executable reference Cypher + stored query-derived answer sets) is publicly released at `cqs/spectra_cq_v2.0/`; only the regression run-history is retained internally.
-- Neo4j instance dumps (`.dump`) and VectorDB embeddings: regenerable from the released per-WG body-text KGs (`kg/per_wg/`) and sanitized parsing pipeline (`pipeline/`); not bundled because raw dumps exceed the archival package's size budget. Original 3GPP TDocs remain publicly accessible via the 3GPP portal: https://www.3gpp.org
-- Internal operational deployment glue: company-specific monitoring, authentication, and Slack/incident hooks around the parsing pipeline; the deterministic parser logic itself is released at `pipeline/`.
+The release includes the deterministic parser logic, graph serializations and
+benchmark references needed for the documented reconstruction paths. Supporting
+build and deployment records have the following scopes:
 
-## Known data quality issues
+- Internal cumulative-regression logs and per-phase intermediate KG snapshots
+  preserve development history. The public original benchmark contains 624
+  released questions from 654 authored questions, with 30 held out, English
+  questions, executable Cypher and stored query-derived answers.
+- Neo4j instance dumps (`.dump`) and VectorDB embeddings are reconstruction
+  outputs from the released per-WG body-text KGs and parsing pipeline; dump
+  sizes exceed the archival package budget. Original TDocs remain accessible
+  through the [3GPP portal](https://www.3gpp.org).
+- Company-specific deployment glue covers monitoring, authentication and
+  Slack/incident hooks. The reusable deterministic parser logic is released
+  in [pipeline/](pipeline/README.md).
 
-- **Duplicated `Contact` nodes.** 634 of the 4,935 `Contact` nodes in the
-  per-WG body-text KGs are duplicates of a contact already present (RAN3
-  181, RAN4 291, RAN5 162; RAN1 and RAN2 zero), so the graphs hold 4,301
-  distinct contacts. The cause is a float-rendered contact identifier
-  producing a second IRI for the same contact. This inflates the node
-  totals reported in `MANIFEST.md` §1 by 634 (0.066%) and makes the two
-  benchmark items that count `Contact` nodes report the node count rather
-  than the distinct-contact count. Full breakdown and effects:
-  `kg/per_wg/README.md`.
-- **Source-fidelity repairs not applied.** A content-fidelity audit flags
-  2,637 rows that a correct conversion cannot produce. Its repair lists
-  and its 334 held records ship in `validation/`, but the 2.0.0 graph
-  carries the values before repair. Gold answers are defined on the graph
-  as deposited, so the lists change no gold answer. How to apply them, what
-  they change and which benchmark items they reach:
-  `validation/source_fidelity_note.md`.
-- **One cross-WG count differs on the released graphs.** RAN3 change
-  requests on TS 38.300 number 270 on the deployed KG behind
-  `validation/cross_wg_use_evidence.json` and 1,249 on the released RAN3
-  graph (1,144 draftCR, 105 pCR); the other 17 counts of that file are the
-  same. `tests/reproduce_scenario_counts.py` recounts all 18 into
-  `validation/released_graph_scenario_counts.json`.
+## Source annotations and versioned validation
+
+- **Contact identity annotations.** The frozen body graphs contain 4,935
+  Contact nodes representing 4,301 distinct contacts. A float-rendered identifier
+  creates 634 duplicate nodes: RAN3 181, RAN4 291 and RAN5 162; RAN1/RAN2 zero.
+  These account for 0.066% of the node total. Two Contact-count items use the
+  recorded node count. [The inventory](kg/per_wg/README.md) gives the breakdown.
+- **Graph 2.0.0 and source-fidelity inventory.** The audit inventories 2,637
+  conversion-fidelity rows and 334 held entries over 332 distinct records. The deposited graph preserves
+  its pre-repair values, and its gold uses that fixed snapshot. The released
+  repair lists therefore leave the deposited gold unchanged. [The source note](validation/source_fidelity_note.md)
+  describes application, affected fields and benchmark reach.
+- **Released/deployed count provenance.** RAN3 has 1,249 recorded CRs targeting
+  TS38.300 in the released graph (1,144 draftCR and 105 pCR), compared with 270
+  in the earlier deployed snapshot. The other 17 of 18 cross-WG counts agree.
+  [reproduce_scenario_counts.py](tests/reproduce_scenario_counts.py) recounts the
+  released graph against [its recorded counts](validation/released_graph_scenario_counts.json).
 
 ## Anonymization policy (asymmetric by design)
 
@@ -204,7 +249,12 @@ The `tests/verify_release.py` anonymization check (Section 7 of the script) targ
 
 > **Entity-layer instances in the KG exports.** Beyond the 26 process-layer classes, the per-WG TTL exports carry instances of the six entity-layer classes — `Feature` (22 per WG), `Procedure` (RAN1 79 / RAN2 81 / RAN3 60), `RRCParameter` (RAN2 2,281 / RAN3 2,950), `CapabilityItem` (RAN2 86), `PerformanceRequirement` (RAN4 20,449), and `ConformanceTest` (RAN4 1,126 / RAN5 73,033). 28 of the 624 released CQs query these labels (the `P3-S8` group in `cqs/cq_index.md`). All six classes are declared in `ontology/spectra.ttl` (32 classes total). The auxiliary annotation properties the exports attach to these instances (`_definedInSection`, `_disjointWith`, `granularity`) remain undeclared annotation-layer terms; under OWL open-world semantics the exports remain valid RDF, and the export counts above match the deployed graphs exactly.
 
-## Quick start
+## Ontology and graph examples
+
+Commands in this section run from `release_package/`. Current benchmark and
+saved-score commands above run from the repository root.
+
+
 
 ### Load with RDFLib (Python)
 ```python
@@ -232,7 +282,7 @@ See `queries/cypher/` for examples executable against any Neo4j instance conform
 
 ### Run a representative SPARQL query
 
-No public SPARQL endpoint is operated. To run the bundled queries locally:
+The bundled SPARQL queries run locally using any of these options:
 
 **Option 1 — RDFLib (single Python process, no server):**
 ```python
@@ -285,48 +335,53 @@ all 624 published answer sets; it wipes the database it connects to, so
 `validation/cross_wg_use_evidence.json` on the body-text graphs of the
 deposit (standard library, no database) and compares the result with
 `validation/released_graph_scenario_counts.json`. 17 of the 18 are
-the same; the one that differs is listed under Known data quality issues.
+the same; the remaining snapshot-specific count is documented under Source annotations and versioned validation.
 
-### Strict named-record evaluation and historical scores
+## Evidence catalogue and historical evaluation scopes
 
-For complete-record comparisons, start with the [contract companion](cqs/contract_repair_v1/README.md).
-Its completed comparison uses 36 explicitly defined formal task variants from
-40 IDs fixed before generation. Required named fields, types, roles and collection
-rules determine complete-record F1 and exact output match, the primary metrics;
-partial field credit is secondary. Three references exceeded the row cap and
-one definition remained unresolved; all four dispositions are retained.
+For current typed contracts, use the [current Core index](cqs/current_core/README.md).
+Its [complete cohort catalogue](cqs/current_core/README.md#evidence-catalogue)
+retains every linked contract/evaluation bundle. The following earlier experiments
+retain their own original questions or formal variants, scorers and denominators.
 
-Replay the retained outputs from the repository root, without model or database calls:
+### Complete-record formal variants
+
+The [contract companion](cqs/contract_repair_v1/README.md) evaluates 36 formally
+defined task variants from 40 IDs fixed before generation. Requested named fields,
+types, roles and collection rules determine complete-record F1 and exact output;
+partial field credit is secondary. The remaining four retain their original
+dispositions: three references exceeded the row cap and one definition required
+further specification. The package supplies saved contexts, usage and graph-relative
+gold from deposited-TTL restorations for single-pass text, two-round text and
+generated Cypher. Its scope is this fixed variant cohort.
+
+Run from the repository root with a new output filename:
 
 ```bash
 python3 -B release_package/cqs/contract_repair_v1/matched_retrieval_measurement/matched_analysis.py \
   --require-complete --out /tmp/spectra-strict-record-replay.json
 ```
 
-Use a new output filename; the script refuses to overwrite a report. The companion
-publishes contexts, usage and graph-relative gold from deposited-TTL restorations
-for single-pass text, two-round text and generated Cypher. This bounded variant
-measurement does not certify the original questions or repair all Core 560.
-Complete graph access and short text passages are different conditions, their
-source-cutoff equivalence is unverified, and the full text ranking corpus is not
-deposited. Independent domain-expert validation remains absent.
+The replay uses saved outputs and contexts without model or database calls;
+new output filenames preserve each report.
 
-For comparisons on the original unchanged questions, start with the
-[31-item source-aligned retained-output diagnostic](cqs/contract_repair_v1/original_source_aligned/README.md)
-before interpreting full-Core or historical annotation-subset scores. Its admission
-rule was fixed before reading retained predictions: both source-evidenced AI audits
-must judge the full original scoring contract aligned, native reference execution
-must be complete, and the declared released/V1 answer-column sets must agree with
-source outputs. The fixed cohort contains 11 lookup, 13 aggregation and 7 relational
-items, with no multihop item. Native completion concerns the saved reference query;
-its original LIMIT clauses and source gaps remain. It re-scores the unchanged 27 original runs of nine
-models with the legacy canonical-string value-set scorer, without reconstructing
-named records, roles, types, order or multiplicity. V1 is primary; V2 sensitivity
-uses the whole identical cohort. This does not recover the paper's default Core/V2
-headline or replace the strict 36-variant comparison above.
+### Original-question retained-output diagnostic
 
-From the repository root, reproduce the recorded diagnostic without model,
-database or retrieval calls and without writing a report:
+The [31-item source-aligned diagnostic](cqs/contract_repair_v1/original_source_aligned/README.md)
+re-scores 27 unchanged runs of nine models. Admission was fixed before reading
+predictions: both source-evidenced AI audits must judge the full original scoring
+contract aligned, native reference execution must be complete, and released/V1
+answer-column sets must agree with source outputs. The fixed composition is 11
+lookup, 13 aggregation and 7 relational items, with multihop n=0. Saved query
+LIMITs and source availability define the operative scope. The legacy
+canonical-string value-set scorer evaluates the primary answer column; named
+records, role distinctions, types, order and multiplicity belong to the later
+typed contracts. V1 is primary; V2 sensitivity uses the identical whole cohort.
+This diagnostic retains its own denominator alongside the historical Core/V2
+analysis and 36-variant complete-record measurement.
+
+Run from the repository root; this command uses saved artifacts without model,
+database or retrieval calls and writes no report:
 
 ```bash
 python3 -I -B release_package/cqs/contract_repair_v1/original_source_aligned/score_source_aligned_retained_portable_v1.py \
@@ -335,37 +390,60 @@ python3 -I -B release_package/cqs/contract_repair_v1/original_source_aligned/sco
   --expected-manifest-sha256 ef37ec7f075c7d51d87406d20e6c55f050213ef9942eab6cf53cb27277f29813
 ```
 
-The [all-560 audit dispositions](cqs/contract_repair_v1/source_alignment_audit_v1/semantic_alignment_audit_report_v1.json)
-and [345-file audit manifest](cqs/contract_repair_v1/source_alignment_audit_v1/portable_export_manifest_v1.json)
-preserve every original item and all 112 attempts. Both audit receipts were usable
-for 480 items; 80 retain one or both unavailable raters and are excluded from cohort
-admission, without replacement or performance-based selection. Usable receipts do
-not imply alignment. Three admitted items retain differences in coarse role aliases;
-their diagnostics stay visible and the fixed 31-item cohort is not reselected.
-These are fallible AI judgments, not human/domain-expert validation, a representative
-sample or a repair of all Core questions. Gold is nonempty; missing-information
-abstention remains untested. Historical graph/text evidence access and source cutoffs
-are unequal or unverified. The [offline audit verifier and resource appendix](cqs/contract_repair_v1/source_alignment_audit_resources_v1/README.md)
-and its [verifier script](cqs/contract_repair_v1/source_alignment_audit_resources_v1/verify_semantic_alignment_audit_export_v1.py)
-explain the public checks and the retained private-capture hash commitments.
+The [original all-560 audit dispositions](cqs/contract_repair_v1/source_alignment_audit_v1/semantic_alignment_audit_report_v1.json)
+and [345-file manifest](cqs/contract_repair_v1/source_alignment_audit_v1/portable_export_manifest_v1.json)
+preserve every original item and all 112 attempts. Receipt availability covers
+480 items with both raters and 80 with one or both unavailable. Admission requires
+alignment as well as usable receipts and uses the fixed rule without replacement
+or performance-based selection. The fixed 31 retain three coarse-role-alias
+differences and their diagnostics. Its fixed denominator, nonempty reference
+answers and historical scorer define the measured task.
 
-For historical value-set evaluation, the [original benchmark](cqs/spectra_cq_v2.0/README.md)
-retains 624 released questions from 654 authored questions, executable Cypher and
-stored primary-column value sets. Its [self-replay records](validation/cq_replay/)
-check those sets against a scratch reload, without certifying question meaning
-or deterministic whole-record ordering. The benchmark is licensed CC-BY 4.0
-and has its own [citation record](cqs/spectra_cq_v2.0/citation.bib).
+Both historical protocols retain complete graph access and bounded text passages
+with their recorded source cutoffs; graph/text cutoff equivalence is unverified.
+Fresh passage ranking uses the separate original full-text corpus. Their review
+provenance records nonblind AI development judgments, human/domain-expert n=0.
+The [offline audit verifier and resource appendix](cqs/contract_repair_v1/source_alignment_audit_resources_v1/README.md)
+and [verifier script](cqs/contract_repair_v1/source_alignment_audit_resources_v1/verify_semantic_alignment_audit_export_v1.py)
+explain public checks and retained private-capture hash commitments.
 
-The [baseline documentation](../paper/baseline/README.md) preserves the original nine-model
-Core scores, the 133-item historical compatibility default, the 208 annotation
-subset, the later 67/45 AI diagnostics and retained all-Core SQL/Cypher comparison.
-These value-set analyses are separate from the strict variant measurement and do
-not supply expert gold. The SQL/Cypher difference interval includes zero and
-does not establish a graph-engine advantage. The original questions and runs
-remain unchanged. These Git additions are separate from the frozen Zenodo
-archives; cite the Git commit used for a later analysis.
+### Original collection and value-set analyses
 
-The [separate TS 38.133 source-table correction](cqs/original_core_source_table_correction10/README.md) publishes a portable ten-table additive patch and completed source/native/SQL validation. Its 80 caption identities comprise 62 actual Word tables and 18 authored Void captions; the original frozen 70-record task is preserved. Fresh model evaluation is a separate stage.
+The [original benchmark](cqs/spectra_cq_v2.0/README.md) retains 624 released
+questions from 654 authored questions, Cypher references and stored primary-column
+value sets. Its [self-replay evidence](validation/cq_replay/) checks those sets
+against a scratch reload. Current question meaning and whole-record order are
+checked through the separately versioned typed contracts. The original collection
+has its own [citation record](cqs/spectra_cq_v2.0/citation.bib) and CC BY 4.0 license.
+
+The [baseline documentation](../paper/baseline/README.md) preserves the nine-model
+Core scores, 133-item historical compatibility default, 208 annotation subset,
+later 67/45 AI diagnostics and retained all-Core SQL/Cypher comparison. These
+remain value-set analyses with their recorded AI review provenance. The retained
+SQL/Cypher interval includes zero; its interpretation is an end-to-end pipeline
+comparison under the stated access conditions. Original questions and runs remain
+unchanged. Cite the Git commit for these additions alongside the frozen archives.
+
+### Separately declared source-input experiments
+
+The [source supplement guide](cqs/source_supplements_README.md) connects changed-input
+snapshots to their own source reconstruction and four-method measurements.
+
+- The [TS38.133 ten-table additive patch](cqs/original_core_source_table_correction10/README.md)
+  supplies source/native/SQL validation. Its 80 caption identities comprise 62
+  actual Word tables and 18 authored Void captions; the frozen 70-record task is
+  preserved. The [separate source10 first-trial evaluation](cqs/original_core_source_table_correction10_evaluation/README.md)
+  retains actual responses, failures and offline replay: all four requested-record
+  F1 values are 0 on this one-question snapshot.
+- [Documentary approval and normative incorporation for 17 CRs](cqs/original_core_source_CR_incorporation17/README.md)
+  supplies original sources and reconstruction checks. In its [separate source17
+  evaluation](cqs/original_core_source_CR_incorporation17_evaluation/README.md),
+  Text2SQL returns all three requested identities with F1=1; source-predicate
+  fidelity is inspected separately because its query omits approval/incorporation.
+- The own-report Meeting calendar60 snapshot supplies [source reconstruction](cqs/original_core_source_Meeting_calendar60)
+  and [actual four-method results](cqs/original_core_source_Meeting_calendar60_evaluation).
+  Complete-record F1 measures answer recovery; source-predicate validation uses
+  the linked query and source evidence.
 
 ## Citation
 
@@ -378,11 +456,3 @@ If you reuse SPECTRA, please cite the accompanying paper (currently under review
 ## License
 
 SPECTRA-authored components (the ontology, SHACL shapes, SpectraCQ, queries, synthetic/metadata-only examples, validation scripts, parsing pipeline source, and PyLODE documentation) are released under Creative Commons Attribution 4.0 (CC-BY 4.0). 3GPP-derived text literals included in the per-WG body-text KGs are retained with explicit 3GPP attribution under the applicable ETSI/3GPP terms and are not relicensed as original SPECTRA-authored content. See `LICENSE` for the full CC-BY 4.0 text.
-
-Documentary approval and normative incorporation for17CRs are available as a [separate source snapshot](cqs/original_core_source_CR_incorporation17/README.md), with original sources and reconstruction checks.
-
-The [separate source10 four-method evaluation](cqs/original_core_source_table_correction10_evaluation/README.md) retains all actual first responses, failures and offline score replay. All four requested-record F1 values are0 for this one-question source snapshot.
-
-The [separate source17 four-method evaluation](cqs/original_core_source_CR_incorporation17_evaluation/README.md) includes actual responses and offline replay. Text2SQL returned all3 requested identities but did not implement the approval/incorporation predicate; requested-record F1=1 is not source-provenance validation.
-
-Separate own-report Meeting calendar60 correction and actual four-method results: [source and rebuild](cqs/original_core_source_Meeting_calendar60), [model evaluation](cqs/original_core_source_Meeting_calendar60_evaluation). Record F1 does not validate generated query source predicates.
