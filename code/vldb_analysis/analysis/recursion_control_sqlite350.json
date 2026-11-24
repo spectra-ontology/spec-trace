@@ -1,0 +1,243 @@
+{
+ "scope": "revision_chain reference SQL on the exported files without statistics, with the input `later` given as the recursive CTE, a one-step non-recursive CTE, or a temporary table holding the recursive result; outer joins unchanged; read-only on the files",
+ "design": {
+  "warmupPasses": 1,
+  "timedPasses": 3,
+  "perQueryTime": "median of the timed passes; tableInput times the outer query only",
+  "percentile": "linear interpolation between order statistics, position (n - 1) * q"
+ },
+ "context": {
+  "interpreter": "<REPO_ROOT>/.venv/bin/python3",
+  "python": "3.11.14",
+  "sqliteLibrary": "3.50.4",
+  "cpuAffinity": [
+   12,
+   13,
+   14,
+   15
+  ],
+  "loadAverageAtStart": [
+   4.38134765625,
+   3.36376953125,
+   2.72998046875
+  ],
+  "loadAverageAtEnd": [
+   5.4287109375,
+   3.822265625,
+   2.927734375
+  ]
+ },
+ "queries": {
+  "recursive": "WITH RECURSIVE later(id) AS ( SELECT later FROM revision WHERE earlier = :anchor UNION SELECT v.later FROM revision v JOIN later l ON v.earlier = l.id) SELECT DISTINCT doc.number, d.code, p.pack_number FROM later JOIN document doc ON doc.id = later.id JOIN disposition d ON d.target = later.id JOIN resolution r ON r.id = d.resolution_id JOIN cr_in_pack m ON m.cr = later.id JOIN cr_pack p ON p.id = m.pack_id WHERE d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+  "oneStep": "WITH later(id) AS (SELECT later FROM revision WHERE earlier = :anchor) SELECT DISTINCT doc.number, d.code, p.pack_number FROM later JOIN document doc ON doc.id = later.id JOIN disposition d ON d.target = later.id JOIN resolution r ON r.id = d.resolution_id JOIN cr_in_pack m ON m.cr = later.id JOIN cr_pack p ON p.id = m.pack_id WHERE d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+  "tableInput": "SELECT DISTINCT doc.number, d.code, p.pack_number FROM later_input later JOIN document doc ON doc.id = later.id JOIN disposition d ON d.target = later.id JOIN resolution r ON r.id = d.resolution_id JOIN cr_in_pack m ON m.cr = later.id JOIN cr_pack p ON p.id = m.pack_id WHERE d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+  "chainOnly": "WITH RECURSIVE later(id) AS ( SELECT later FROM revision WHERE earlier = :anchor UNION SELECT v.later FROM revision v JOIN later l ON v.earlier = l.id) SELECT id FROM later"
+ },
+ "conditions": {
+  "recursive": {
+   "items": 82,
+   "medianMs": 58.4024,
+   "p95Ms": 172.9,
+   "itemsWithGoldRowsInEveryPass": 82
+  },
+  "oneStep": {
+   "items": 82,
+   "medianMs": 0.0117,
+   "p95Ms": 0.0148,
+   "itemsWithGoldRowsInEveryPass": 62
+  },
+  "tableInput": {
+   "items": 82,
+   "medianMs": 59.2906,
+   "p95Ms": 173.9007,
+   "itemsWithGoldRowsInEveryPass": 82
+  }
+ },
+ "workingGroupsWithDispositionScanOutermost": {
+  "recursive": 5,
+  "oneStep": 0,
+  "tableInput": 5
+ },
+ "plans": {
+  "RAN1": {
+   "item": "RAN1-revision_chain-R1-2403693",
+   "recursive": [
+    "CO-ROUTINE later",
+    "  SETUP",
+    "    SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "  RECURSIVE STEP",
+    "    SCAN l",
+    "    SEARCH v USING INDEX revision_earlier (earlier=?)",
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "oneStep": [
+    "SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH d USING INDEX disposition_target (target=?)",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "tableInput": [
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ]
+  },
+  "RAN2": {
+   "item": "RAN2-revision_chain-R2-1818753",
+   "recursive": [
+    "CO-ROUTINE later",
+    "  SETUP",
+    "    SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "  RECURSIVE STEP",
+    "    SCAN l",
+    "    SEARCH v USING INDEX revision_earlier (earlier=?)",
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "oneStep": [
+    "SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH d USING INDEX disposition_target (target=?)",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "tableInput": [
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ]
+  },
+  "RAN3": {
+   "item": "RAN3-revision_chain-R3-255073",
+   "recursive": [
+    "CO-ROUTINE later",
+    "  SETUP",
+    "    SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "  RECURSIVE STEP",
+    "    SCAN l",
+    "    SEARCH v USING INDEX revision_earlier (earlier=?)",
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "oneStep": [
+    "SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH d USING INDEX disposition_target (target=?)",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "tableInput": [
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ]
+  },
+  "RAN4": {
+   "item": "RAN4-revision_chain-R4-2418926",
+   "recursive": [
+    "CO-ROUTINE later",
+    "  SETUP",
+    "    SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "  RECURSIVE STEP",
+    "    SCAN l",
+    "    SEARCH v USING INDEX revision_earlier (earlier=?)",
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "oneStep": [
+    "SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH d USING INDEX disposition_target (target=?)",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "tableInput": [
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ]
+  },
+  "RAN5": {
+   "item": "RAN5-revision_chain-R5-205924",
+   "recursive": [
+    "CO-ROUTINE later",
+    "  SETUP",
+    "    SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "  RECURSIVE STEP",
+    "    SCAN l",
+    "    SEARCH v USING INDEX revision_earlier (earlier=?)",
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "oneStep": [
+    "SEARCH revision USING INDEX revision_earlier (earlier=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH d USING INDEX disposition_target (target=?)",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ],
+   "tableInput": [
+    "SCAN d",
+    "SEARCH r USING COVERING INDEX sqlite_autoindex_resolution_1 (id=?)",
+    "SEARCH doc USING INDEX sqlite_autoindex_document_1 (id=?)",
+    "SEARCH m USING INDEX cr_in_pack_cr (cr=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_cr_pack_1 (id=?)",
+    "SEARCH later USING AUTOMATIC COVERING INDEX (id=?)",
+    "USE TEMP B-TREE FOR DISTINCT"
+   ]
+  }
+ }
+}

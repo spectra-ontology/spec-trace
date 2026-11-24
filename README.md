@@ -1,124 +1,98 @@
-# SPECTRA: tracing the 3GPP standardization process
+# From Contribution to Clause: Source-Bound Traceability Records and a Chain-Question Benchmark for the 3GPP Standardization Process [Experiment, Analysis & Benchmark]
 
-SPECTRA connects technical contributions, recorded meeting decisions, change
-requests and specification structure across all five 3GPP RAN working groups.
-Its shared process model turns document registers, meeting reports and
-specification metadata into executable process queries with inspectable sources.
+This package provides the query graph of five 3GPP Radio Access Network working groups in JSON-LD and SQLite, the vocabulary and constraints it instantiates, 667 admitted chain questions, stored model responses, scores, and executable build and checking tools. The graph connects contributions, target-specific dispositions, meetings, CR packs and clauses. Its measured footprint is in `sources/released_record_counts.json`.
 
-The release contains **966,859 nodes, 4,908,850 relationships and 12,931,842
-RDF triples**. SpectraCQ preserves **624 original questions**. Its complete
-560-question Core register provides **522 verified contracts**, **21
-clarification diagnostics** and **17 frozen-input-dependent source-role
-diagnostics**. Every original Core ID has a completed disposition. The
-[counts manifest](release_package/MANIFEST.md) links dataset totals to their artifacts.
+The source documents are identified by archive path, SHA-256 and locator. The package distributes their structured projection; `restore/` retrieves the cited reports and rehydrates source passages locally. Original disposition statuses describe the source graph. Local rehydration supplies the quote fields used by evidence-shape validation.
 
-Start with the [current Core index](release_package/cqs/current_core/README.md)
-for executable tasks, or the [release package](release_package/README.md) for
-the ontology, graph data and construction pipeline.
+## Contents
 
-## Three process-analysis task families
+| Path | Content |
+|---|---|
+| `records/` | 48 JSON-LD files, partitioned by phase and WG; eight large files use gzip. RAN5 pack/clause records are in `records/RAN5_graph_export/RAN5/`. |
+| `sqlite/` | Five query databases, each with 11 tables; four use gzip. `SHA256SUMS.txt` covers the database bytes before and after compression. |
+| `ontology/` | The internal 7.3.0 vocabulary and SHACL snapshots used during construction. |
+| `docs/` | The package vocabulary 1.2.0, 44 companion SHACL shapes, documentation and build provenance. Current term sets match the internal snapshot. |
+| `benchmark/` | 670 drawn main items, their 667 admitted items and gate reports; fixed anchors; 300 drawn five-hop items and 297 admitted items. |
+| `abstention/` | 160 abstention items, checks, packets, stored responses and scores, in 133 files. |
+| `responses/` | 3,052 stored response, query, score and analysis files. |
+| `diagnosis/` | 187 diagnosis files for the main and five-hop conditions. |
+| `code/` | Measurement scripts and their repository dependencies, plus analysis scripts and results. `code_manifest.json` lists each shipped source and hash. |
+| `receipts/` | Ten target-identity review receipts. |
+| `sources/competency_queries/index.json` | 25 sanitized original graph execution receipts: 644 PASS and 10 NO_DATA, with source and projected-file hashes. |
+| `sources/manifest.jsonl` | URLs and hashes for 280 cited reports and their conversions. |
+| `sources/disposition_bindings.jsonl.gz` | 358,062 text-free quote-hash receipts, decision spans and source-field locators. |
+| `restore/` | Source retrieval, passage rehydration, SHACL validation, clean benchmark rebuild/gate and stored-response rescoring. |
+| `records_redactions.jsonl`, `results_redactions.jsonl`, `code_redactions.jsonl` | Changed-file provenance and original/released hashes. |
+| `SHA256SUMS` | Package file hashes, excluding this hash list itself. |
 
-The [32-class ontology](release_package/ontology/spectra.ttl) represents submissions,
-resolutions, liaison routing, CR metadata and specification targets. Explicit
-references, shared-meeting context and declared clause targets retain distinct
-roles. Each verified contract fixes requested fields and types, collection and
-ranking rules, reference records and source-linked checks.
+## Preparation
 
-| Research task | Worked examples |
-| --- | --- |
-| **Recover records and recorded technical decisions** | [Named TDoc/CR metadata](release_package/cqs/original_core_overnight_repairs24/README.md), [PDCCH decision content](release_package/cqs/original_core_overnight_repairs32/README.md) and [complete approved-change reasons/summaries](release_package/cqs/original_core_overnight_repairs41/README.md) |
-| **Aggregate activity and compare contribution patterns** | [Exact Agreement activity count](release_package/cqs/original_core_overnight_repairs50/README.md), [Work Item company rankings with boundary ties](release_package/cqs/original_core_overnight_repairs_auth37/README.md) and [meeting-level documentary trends](release_package/cqs/original_core_overnight_repairs38/README.md) |
-| **Trace decisions and studies to standards** | [Decision-to-Spec selection](release_package/cqs/original_core_overnight_repairs39/README.md), [CR affected-clause records](release_package/cqs/original_core_overnight_repairs36/README.md), [cross-spec count/sample answers](release_package/cqs/original_core_overnight_repairs48/README.md) and [URLLC implementation details](release_package/cqs/original_core_overnight_repairs51/README.md) |
+Run commands from the package root with Python 3.11 or later. The builder, gate and scorer use the Python standard library. Source restoration uses `lxml` and LibreOffice for the reports marked for conversion; passage rehydration uses `lxml`, `python-docx` and `openpyxl`; shape validation uses `rdflib` and `pyshacl`. Additional historical analysis scripts have the dependencies listed in `code_report.md`.
 
-These examples expose complete answer shapes, selection boundaries and source
-roles. The URLLC case reconstructs two detailed specification records through the
-joint TR38.824/TR38.825 implementation program. Its complete 72-CR retained
-candidate census is checked alongside 41 original documents; 35 CRs supply 74
-source text components across 70 CR–field records. Independent SQL, graph
-interpretation and native execution agree on both records and every component.
-The [current index](release_package/cqs/current_core/README.md) connects all
-522 active contracts to their pinned evidence and available saved evaluations.
-
-## Measured evaluation examples
-
-The four-method protocol compares generated Cypher and SQL over structured
-records with single and two-round retrieval over bounded text contexts. These
-two separately registered cohorts preserve their own questions, inputs, first
-responses and denominators.
-
-| Method | Complete-record macro F1, N=12 | Complete-record macro F1, N=3 |
-| --- | ---: | ---: |
-| Text2Cypher | 0.5833 | 1.0000 |
-| Text2SQL | 0.4333 | 1.0000 |
-| Single retrieval | 0.0000 | 0.0000 |
-| Two-round retrieval | 0.0833 | 0.3333 |
-
-In the [twelve-question cohort](release_package/cqs/original_core_overnight_evaluation15/README.md),
-Cypher has five exact outputs and SQL four. In the [named-record cohort](release_package/cqs/original_core_overnight_evaluation24/README.md),
-both structured methods return all complete requested records. Every method
-retains all cohort items in its denominator, including errors and abstentions.
-The packages retain actual information access, prompts, first responses,
-execution results and complete-record score replays. These measured results
-describe their stated cohorts; the 522-contract index describes benchmark
-definitions and their evidence.
-
-## Reproduce from a Git checkout
-
-Run from the repository root. The file/schema checks need `rdflib` and
-`pyshacl`; current saved-evidence replay uses Python 3.10 or later.
-
-```bash
-pip install rdflib pyshacl
-python3 -B release_package/tests/verify_benchmark.py --quick --out /tmp/spectra-quick-check
-python3 -B -I release_package/cqs/verify_current_release.py
+```sh
+sha256sum -c SHA256SUMS
+mkdir -p work code/.git
 ```
 
-| Replay level | Entry point and inputs |
-| --- | --- |
-| File and schema checks | The quick gate checks Git-distributed files; five additional checks use the body-graph deposit. |
-| Current contracts and saved scores | The current launcher checks the index, complete disposition register and saved evaluations 23–51 without model or database calls. Individual cohort READMEs supply exact standalone replay commands, including N=12 and N=3. |
-| Rebuild graphs and execute references | The [test guide](release_package/tests/README.md) describes body-graph placement and full reference execution in a scratch database; the [pipeline](release_package/pipeline/README.md) documents construction. |
+The empty `code/.git` marker gives copied repository modules a root for their existing path discovery. It contains no repository history. To use all five SQLite databases, decompress the four compressed partitions and verify their bytes:
 
-The [artifact walkthrough](release_package/ARTIFACT.md) connects these layers to
-the released checks. Saved-score replay uses retained responses and contexts.
-Fresh passage ranking uses the original full-text corpus, which is outside the
-deposited artifacts. Use a new output filename for score replays that refuse to
-overwrite reports.
+```sh
+gzip -dk sqlite/RAN2.sqlite.gz sqlite/RAN3.sqlite.gz sqlite/RAN4.sqlite.gz sqlite/RAN5.sqlite.gz
+(cd sqlite && sha256sum -c SHA256SUMS.txt)
+```
 
-## Get the data
+## Restore sources and evidence
 
-Git includes the ontology, metadata-only process graphs, construction code,
-benchmark contracts and retained evaluation evidence. The five larger
-`RAN{1..5}-body.ttl` graphs are available in the [version 2.0.0 deposit](https://doi.org/10.5281/zenodo.21504833).
-The [body-graph inventory](release_package/kg/per_wg/README.md) gives placement,
-counts and source-quality annotations.
+```sh
+python3 restore/restore_sources.py --manifest sources/manifest.jsonl \
+  --dest work/sources --work work/downloads --report work/source_restore.json
 
-The [concept DOI](https://doi.org/10.5281/zenodo.20034871) locates archived versions.
-Later Git additions have their own commit references. The ontology is version
-1.1.1, with persistent identifier [w3id.org/spectra](https://w3id.org/spectra).
+python3 restore/restore_bindings.py --release . --source-root work/sources \
+  --limit 20 --out work/dispositions_100.jsonld --report work/bindings_100.json
 
-## Evidence catalogue and earlier experiments
+python3 restore/validate_bindings.py --release . --records work/dispositions_100.jsonld \
+  --report work/shacl_100.json
+```
 
-The [current Core catalogue](release_package/cqs/current_core/README.md#evidence-catalogue)
-retains every linked contract/evaluation cohort and detailed source populations.
-The [all-560 register](release_package/cqs/core_disposition_audit/README.md)
-connects the 522 executable contracts and 38 completed diagnostics to their
-original question identities.
+`--limit 20` checks the first 20 dispositions per WG. Removing it selects every disposition in the selected WGs; `--wg RAN1` selects a partition. Passage rehydration checks the source file SHA-256, restores accepted body blocks or the precise annex row with its governing text, and compares the recovered quote's exact SHA-256 and character count with its producer receipt before emitting it. The report separately counts agreement of the direct target-predicate reread. Target-identity reviews remain separate evidence.
 
-[Historical analyses](paper/baseline/README.md) and the [evaluation scope guide](release_package/cqs/contract_repair_v1/README_evaluation_scopes.md)
-preserve original and revised scoring definitions. The [source supplement guide](release_package/cqs/source_supplements_README.md)
-indexes changed-input experiments, including [RAN2 summaries](release_package/cqs/original_core_source_RAN2_CR_summary240_evaluation/README.md)
-and [RAN3 summaries](release_package/cqs/original_core_source_RAN3_CR_summary202_evaluation/README.md).
-Earlier retained diagnostics remain directly replayable: [31-item source-aligned outputs](release_package/cqs/contract_repair_v1/original_source_aligned/README.md)
-and [strict named-record task variants](release_package/cqs/contract_repair_v1/README.md).
-Each linked experiment retains its original snapshot, task definition and denominator.
+The local preparation check rehydrated 100/100 passages, agreed with 100/100 direct rule readings, and conformed to all 44 released node shapes for this sample. The validator normalizes RDF 1.1 simple strings and explicit `xsd:string` literals to the same representation while retaining every shape constraint. This is a sample validation; the previously measured corpus-wide locator audit remains in `responses/final/next_cycle/analysis/locator_recompute.json`.
 
-## Citation and license
+## Rebuild and gate the benchmark
 
-Use [CITATION.cff](release_package/CITATION.cff), [CodeMeta](release_package/codemeta.json)
-or the [SpectraCQ citation](release_package/cqs/spectra_cq_v2.0/citation.bib).
-SPECTRA-authored components use CC BY 4.0; derived 3GPP text retains separate
-source attribution under the [package license](release_package/LICENSE).
+After source restoration, the following command creates a clean workspace, stages only released records, rebuilds each WG sequentially from its fixed anchors, runs the independent SQL gate and compares drawn and admitted files byte for byte with their stored counterparts:
 
-Maintainer: Sihyeon Choi, Samsung Electronics. Questions and corrections:
-[repository issues](https://github.com/spectra-ontology/spec-trace/issues).
+```sh
+python3 restore/check_benchmark.py --release . --source-root work/sources \
+  --work work/benchmark_check --report work/benchmark_check.json
+```
+
+Use an empty `--work` directory. The five-hop families use the same builder with `--families clause_neighbours first_change previous_pack` and the stored five-hop anchor sets. The lower-level scripts are under `code/scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/`; `restore/rebuild_items.sh` exposes the main builder check for selected WGs.
+
+Local preparation rebuilt all 670 drawn items and independently admitted the same 667 items, byte for byte, across all five WGs. `sources/package_checks.json` records this check.
+
+The JSON-LD records and the five SQLite databases represent the same query graph. `sources/released_record_counts.json` reports table counts by WG; the forward CR links and reverse pack/clause links support independent gold derivation. These counts describe this released query projection; the wider SPECTRA process graph is a separate resource.
+
+## Rescore stored responses
+
+```sh
+python3 restore/rescore_stored.py --release . --out work/rescored.json
+```
+
+This command replays all 60 main stored score entries with the released scorer and 667 admitted items. Local preparation reproduced 60/60 entries in every field except the response path. The broader historical score-report check and its per-entry coverage are recorded in `datasheet.md`; the package preserves the original response and score bytes.
+
+## Provenance paths
+
+Stored results retain their original repository paths under `logs/publication/paper/ongoing/sigir-2027-research/`; executable commands use the current VLDB directory. For the historical log prefix, `chain_eval/` and `final/` map to `responses/`, `integration/items_final/` to `benchmark/items_final/`, `abstention3/` to `abstention/`, and the fixed anchor directories to the matching directories under `benchmark/`. `RAN5_graph_export/` maps to `records/RAN5_graph_export/`.
+
+Text copied from source documents and personal/company attributions are represented in stored results by hash-and-length withholding markers. The root-level redaction lists preserve the original and released file hashes. `datasheet.md` gives the field-level distribution policy and audit scope.
+
+## Ontology and license
+
+The packaged vocabulary and stored outcomes can be recounted with `python3 restore/recount_resources.py --release . --out work/resource_counts.json`.
+
+The original loaded-graph competency-query receipts are indexed in [sources/competency_queries/index.json](sources/competency_queries/index.json). They retain identifiers, outcomes, counts, guard checks and project-authored queries, with original-file and projected-file hashes. Their scope is the original loaded process graph; these stored outcomes are separate from the fresh benchmark gate over the released query projection. Raw answer samples and source-text fields stay in the original receipts.
+
+The namespace is `https://w3id.org/spectra#`. The first public ontology release is archived under DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872). Package version 1.2.0 retains the preceding public creator, publisher, issue date, license and namespace metadata and supplies the current 37 named classes, 86 object properties, 112 datatype properties, 44 node shapes and 16 disposition codes. `docs/ontology_build.json` records the source snapshots and their hashes. External publication of this prepared package is a separate step.
+
+The package uses CC BY 4.0 (`LICENSE`). Cite the authors and manuscript listed in `CITATION.cff`. Restored 3GPP source documents and locally rehydrated passages retain the terms of 3GPP and its Organizational Partners. Earlier archived releases remain associated with the concept DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871); this preparation creates no new DOI.

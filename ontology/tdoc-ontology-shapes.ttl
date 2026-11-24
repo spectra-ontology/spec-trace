@@ -1,0 +1,787 @@
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix tdoc:  <https://w3id.org/spectra#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix dc:    <http://purl.org/dc/elements/1.1/> .
+
+<https://w3id.org/spectra/shapes> a owl:Ontology ;
+    dc:title "SPECTRA SHACL Shapes for Ontology v7.3"@en ;
+    dc:date "2026-11-17" ;
+    owl:versionInfo "7.3.0" ;
+    owl:versionIRI <https://w3id.org/spectra/shapes/7.3.0> ;
+    owl:priorVersion <https://w3id.org/spectra/shapes/7.2.0> ;
+    owl:imports <https://w3id.org/spectra/7.3.0> ;
+    rdfs:comment "SHACL shapes tracking the SPECTRA core ontology MAJOR version. shapes 3.0.0 corresponds to core 3.0.0 (entity layer independence); shapes 4.1.0 corresponds to core 4.1.0 (release-aware hybrid Spec: abstract hub + release-keyed variants, Section 4 shapes); shapes 4.2.0 corresponds to core 4.2.0 (revisedTo / replyTo / originalLS no longer functional; no shape change); shapes 4.3.0 corresponds to core 4.3.0 (originatedFrom functional; no shape change); shapes 5.0.0 corresponds to core 5.0.0 (hasSection is top-level only and no longer the inverse of belongsToSpec, HasSectionTopLevelShape added; Procedure aligned to prov:Plan instead of prov:Activity, no shape change for it); shapes 6.0.0 corresponds to core 6.0.0 (shared identifier domains preserve independent entity types; RRCParameter includes the observed 38.355 source; Spec variants require matching hub/release metadata and unique release keys); shapes 7.0.0 corresponds to core 7.0.0 (qualified decision, feature and TR assertions, exact source evidence, and source-verified causal materialization); shapes 7.2.0 corresponds to core 7.2.0 (a Section carries exactly one specNumber equal to the specNumber of its release-keyed belongsToSpec owner)."@en .
+
+# =============================================================================
+# SPECTRA Ontology SHACL Shapes
+# =============================================================================
+# 목적: 독립 엔티티·Feature, release별 Spec·Section 소속, 출처가 연결된
+#       주장과 문서별 결정 처분의 데이터 무결성을 검사한다.
+#
+# Namespace: https://w3id.org/spectra# (ontology TTL과 일치)
+#
+# v7.3.0: Figure의 선택적 moreFilePaths 각 값은 비어 있지 않은 문자열이다.
+# 기존 figureId와 기본 filePath의 의미는 유지한다.
+#
+# v3.0 changelog vs v2.1:
+# - tdoc: namespace 정정 (http://example.com → https://w3id.org/spectra#)
+# - granularity property shape 신규 (값: item / section / sub-item)
+# - definedInSection 관계 shape 신규 (item-level entity는 minCount 1)
+# - usesIE / hasCapability / hasProcedure / hasPerfRequirement /
+#   hasConformanceTest shape 신규 (Feature → 5 entity)
+# - disjointWith shape 신규 (Feature ↔ Feature symmetric)
+# - asn1ChunkId shape 신규 (RRCParameter Qdrant FK)
+# - procedureName / perfReqName / testCaseId shape 신규 (item-level identifier)
+# - PROV-O 정렬 (Feature ⊑ prov:Entity, Procedure ⊑ prov:Plan) 영향 없음.
+#   core 5.0.0 에서 Procedure 정렬을 prov:Plan 으로 바꿨고, shapes 는 PROV 클래스를
+#   검사하지 않아 영향이 없다.
+#
+# v4.1.0 changelog vs 3.0.1:
+# - Section 4 신규 — Spec hybrid (release-aware, core v4.1) shapes 3종:
+#   SpecHybridShape (허브/release-키 상호 배타 xone) /
+#   InReleaseOfHubTargetShape (inReleaseOf 타깃 = 허브 강제) /
+#   SectionBelongsToReleaseKeyedShape (Section은 release-키 Spec에만 귀속)
+# - 결함 정정 — *DefinedInSectionShape 3종의 sh:targetNode 블랭크 노드 오용
+#   (어떤 데이터 그래프든 항상 위반 보고) → sh:targetClass + sh:or implication
+#   인코딩으로 재작성 (의미 보존)
+# - 헤더: core 4.1.0 추적 (owl:imports spectra/4.1.0)
+#
+# v4.2.0 changelog vs 4.1.0:
+# - shape 변경 없음. core 4.2.0(revisedTo · replyTo · originalLS 의 Functional 제거)
+#   추적을 위해 헤더만 올렸다. 이 shapes 에는 세 속성의 sh:maxCount 가 없다.
+# - 헤더: core 4.2.0 추적 (owl:imports spectra/4.2.0)
+#
+# v5.0.0 changelog vs 4.3.0:
+# - HasSectionTopLevelShape 신규 — hasSection 의 대상 절은 parentSection 이 없어야
+#   한다(최상위 절만). core 5.0.0 이 hasSection 과 belongsToSpec 의 역관계를 지운
+#   대신 이 제약을 shapes 가 검사한다.
+# - core 5.0.0 의 Procedure ⊑ prov:Plan 은 shape 변경이 없다. 이 shapes 에는
+#   PROV-O 클래스에 대한 제약이 없다.
+# - 헤더: core 5.0.0 추적 (owl:imports spectra/5.0.0)
+#
+# 6.0.0 changelog:
+# - Shared identifier domains preserve independent entities under inference.
+# - RRCParameter includes the observed 38.355 ASN.1 source alongside RRC and
+#   interface specifications, matching the RAN2 parser and loaded IE records.
+# - Spec hybrid checks require matching source numbers, release-node metadata
+#   and unique (specNumber, specRelease) keys.
+#
+# 7.0.0 changelog:
+# - Qualified assertions retain target, status, assessment and exact source evidence.
+# - Generic relation assertions preserve subject/object/predicate identity.
+# - Canonical TR impact edges require a source-verified causal assertion.
+# - Top-level section links and parent-child sections share their release-keyed
+#   owner, preserving separate specification identities under OWL inference.
+#
+# 7.1.0 changelog:
+# - Primary registered and actual reported agenda contexts use separate relations.
+# - EvidenceAssertion records the source-qualified reportedUnderAgenda placement.
+# - Existing Section shapes check release-keyed owner consistency across links.
+#
+# 7.2.0 changelog:
+# - SectionBelongsToReleaseKeyedShape requires exactly one Section specNumber
+#   and requires it to equal belongsToSpec/specNumber. The value is a copy of
+#   the owner relation, so a missing or diverging copy is a violation.
+#
+# 실행: validate_ontology.py --check shacl --data <RDF instance file>.
+# 실행기는 실제 focus node 수를 기록하며 focus가 없는 입력은 실패로 처리한다.
+# =============================================================================
+
+# =============================================================================
+# Section 1 — 독립 Entity 클래스 shape
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# RRCParameter Shape
+# -----------------------------------------------------------------------------
+
+tdoc:RRCParameterShape a sh:NodeShape ;
+    sh:targetClass tdoc:RRCParameter ;
+    rdfs:comment "RRCParameter는 ASN.1 IE 본질. specNumber는 실제 ASN.1 IE 입력이 있는 38.331, 38.355 및 NW interface 규격을 사용한다. Entity는 Section과 definedInSection으로 연결한다."@en ;
+    sh:property [
+        sh:path tdoc:specNumber ;
+        sh:in ( "38.331" "38.355" "38.413" "38.420" "38.423" "38.460" "38.463" "38.470" "38.473" ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "RRCParameter specNumber must be an observed ASN.1 source: 38.331, 38.355 or the listed NW interface specifications" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:ieName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "RRCParameter must have ieName (ASN.1 IE name)" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:granularity ;
+        sh:in ( "item" "section" "sub-item" ) ;
+        sh:maxCount 1 ;
+        sh:message "granularity must be one of: item (v3.0 신규) / section (legacy) / sub-item" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:asn1ChunkId ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:message "asn1ChunkId is the Qdrant FK to ran{N}_ts_asn1_chunks; optional but unique if present" ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# CapabilityItem Shape
+# -----------------------------------------------------------------------------
+
+tdoc:CapabilityItemShape a sh:NodeShape ;
+    sh:targetClass tdoc:CapabilityItem ;
+    rdfs:comment "CapabilityItem은 UE capability item. spec은 38.306 (UE-cap) / 38.101-x (UE RF cap) / 38.508-1 (test cap). v3.0: independent class."@en ;
+    sh:property [
+        sh:path tdoc:specNumber ;
+        sh:in ( "38.306" "38.101-1" "38.101-2" "38.101-3" "38.101-4" "38.101-5"
+                "38.508-1" "38.508-2" ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "CapabilityItem specNumber must be a UE-capability-defining spec" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:capabilityItemName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "CapabilityItem must have capabilityItemName (38.306 row leading token)" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:capabilityGranularity ;
+        sh:in ( "Per-UE" "Per-Band" "Per-BC" "Per-FeatureSet" ) ;
+        sh:maxCount 1 ;
+        sh:message "capabilityGranularity must be one of: Per-UE / Per-Band / Per-BC / Per-FeatureSet" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:granularity ;
+        sh:in ( "item" "section" "sub-item" ) ;
+        sh:maxCount 1 ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# Procedure Shape
+# -----------------------------------------------------------------------------
+
+tdoc:ProcedureShape a sh:NodeShape ;
+    sh:targetClass tdoc:Procedure ;
+    rdfs:comment "Procedure는 spec body protocol procedure. PHY/MAC/RRC/NW interface spec만. v3.0: independent class."@en ;
+    sh:property [
+        sh:path tdoc:specNumber ;
+        sh:in ( "38.211" "38.212" "38.213" "38.214" "38.215" "38.291"
+                "38.300" "38.305" "38.321" "38.322" "38.323" "38.331" "38.355"
+                "38.401" "38.410" "38.413" "38.420" "38.423"
+                "38.460" "38.463" "38.470" "38.473" ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Procedure specNumber must be a spec body protocol procedure spec (NOT 38.133 perf req / 38.521-x conformance test)" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:procedureName ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:message "procedureName is canonical (e.g., 'BFR Procedure'); recommended but optional" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:granularity ;
+        sh:in ( "item" "section" "sub-item" ) ;
+        sh:maxCount 1 ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# PerformanceRequirement Shape
+# -----------------------------------------------------------------------------
+
+tdoc:PerformanceRequirementShape a sh:NodeShape ;
+    sh:targetClass tdoc:PerformanceRequirement ;
+    rdfs:comment "PerformanceRequirement는 RRM/RF perf req spec body. 38.133 RRM / 38.101-x UE RF / 38.104 BS RF만. v3.0: independent class."@en ;
+    sh:property [
+        sh:path tdoc:specNumber ;
+        sh:in ( "38.133" "38.101-1" "38.101-2" "38.101-3" "38.101-4" "38.101-5" "38.104" ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "PerformanceRequirement specNumber must be RRM/RF perf req spec: 38.133, 38.101-x, 38.104" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:perfReqName ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:message "perfReqName is canonical (e.g., 'TEvaluate_BFD_SSB'); item-level instances should have it" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:granularity ;
+        sh:in ( "item" "section" "sub-item" ) ;
+        sh:maxCount 1 ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# ConformanceTest Shape
+# -----------------------------------------------------------------------------
+
+tdoc:ConformanceTestShape a sh:NodeShape ;
+    sh:targetClass tdoc:ConformanceTest ;
+    rdfs:comment "ConformanceTest는 UE/BS conformance test spec body. RAN5 UE test (38.508-x, 38.509, 38.521-x, 38.523-1, 38.533) + RAN4 BS test (38.141-x, 38.181). v3.0: independent class."@en ;
+    sh:property [
+        sh:path tdoc:specNumber ;
+        sh:in ( "38.508-1" "38.508-2" "38.509"
+                "38.521-1" "38.521-2" "38.521-3" "38.521-4"
+                "38.523-1" "38.523-3" "38.533"
+                "38.141-1" "38.141-2" "38.181" ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "ConformanceTest specNumber must be a conformance test spec (RAN5 UE test or RAN4 BS test)" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:testCaseId ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:message "testCaseId is the per-test identifier (e.g., '38.521-4 §6.3.2.2.6')" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:granularity ;
+        sh:in ( "item" "section" "sub-item" ) ;
+        sh:maxCount 1 ;
+    ] .
+
+# A scoped document decision carries one explicit source-event scope.
+tdoc:ResolutionScopeShape a sh:PropertyShape ;
+    sh:targetSubjectsOf tdoc:resolutionScope ;
+    sh:path tdoc:resolutionScope ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:in ( "document_disposition" ) .
+
+# -----------------------------------------------------------------------------
+# Feature Shape
+# -----------------------------------------------------------------------------
+
+tdoc:FeatureShape a sh:NodeShape ;
+    sh:targetClass tdoc:Feature ;
+    rdfs:comment "Feature는 3GPP standardization feature. Release 표시 필수. v3.0 신규: usesIE / hasCapability / hasProcedure / disjointWith 관계 shape."@en ;
+    sh:property [
+        sh:path tdoc:introducedInRelease ;
+        sh:datatype xsd:string ;
+        sh:pattern "^Rel-\\d+$" ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Feature.introducedInRelease must match pattern Rel-NN (e.g., Rel-16, Rel-18)" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:featureName ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Feature must have a canonical featureName (1 line)" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:usesIE ;
+        sh:class tdoc:RRCParameter ;
+        sh:message "Feature.usesIE range must be RRCParameter" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:hasCapability ;
+        sh:class tdoc:CapabilityItem ;
+        sh:message "Feature.hasCapability range must be CapabilityItem" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:hasProcedure ;
+        sh:class tdoc:Procedure ;
+        sh:message "Feature.hasProcedure range must be Procedure" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:hasPerfRequirement ;
+        sh:class tdoc:PerformanceRequirement ;
+        sh:message "Feature.hasPerfRequirement range must be PerformanceRequirement" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:hasConformanceTest ;
+        sh:class tdoc:ConformanceTest ;
+        sh:message "Feature.hasConformanceTest range must be ConformanceTest" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:disjointWith ;
+        sh:class tdoc:Feature ;
+        sh:message "Feature.disjointWith range must be another Feature (symmetric)" ;
+    ] ;
+    sh:sparql [
+        sh:message "Conceptually distinct Features require different disjointWith endpoints." ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE { $this tdoc:disjointWith $this . }
+        """
+    ] .
+
+# =============================================================================
+# Section 2 — definedInSection 관계 shape
+# =============================================================================
+# Item-level CapabilityItem and Procedure require a definedInSection link.
+# ASN.1 chunks can carry synthetic sectionIds without a matching Section;
+# the RRCParameter link remains optional. These shapes do not impose a link
+# minimum on PerformanceRequirement or ConformanceTest.
+# Conditional requirements use sh:targetClass with
+# sh:or(non-item OR definedInSection >= 1), rather than a target blank node.
+
+tdoc:RRCParameterDefinedInSectionShape a sh:NodeShape ;
+    sh:targetClass tdoc:RRCParameter ;
+    sh:property [
+        sh:path tdoc:definedInSection ;
+        sh:minCount 0 ;  # ASN.1 chunk sectionIds are synthetic; Spec fallback acceptable
+        sh:message "item-level RRCParameter SHOULD have :definedInSection link (Spec fallback acceptable)" ;
+    ] .
+
+tdoc:CapabilityItemDefinedInSectionShape a sh:NodeShape ;
+    sh:targetClass tdoc:CapabilityItem ;
+    sh:or (
+        [ sh:not [ sh:property [ sh:path tdoc:granularity ; sh:hasValue "item" ] ] ]
+        [ sh:property [ sh:path tdoc:definedInSection ; sh:minCount 1 ] ]
+    ) ;
+    sh:message "item-level CapabilityItem MUST have :definedInSection link to a Section" .
+
+tdoc:ProcedureDefinedInSectionShape a sh:NodeShape ;
+    sh:targetClass tdoc:Procedure ;
+    sh:or (
+        [ sh:not [ sh:property [ sh:path tdoc:granularity ; sh:hasValue "item" ] ] ]
+        [ sh:property [ sh:path tdoc:definedInSection ; sh:minCount 1 ] ]
+    ) ;
+    sh:message "item-level Procedure MUST have :definedInSection link to a Section" .
+
+# =============================================================================
+# Section 3 — Disjointness
+# =============================================================================
+# - Entity classes (RRCParameter / CapabilityItem / Procedure / PerfReq /
+#   ConformanceTest) 는 서로 독립이며 동일 노드가 동시에 두 entity 클래스에
+#   속할 수 있다 (multi-labeled). 예: 38.331의 일부 IE가
+#   capability composite 역할도 하면 :RRCParameter + :CapabilityItem 동시.
+# - Feature 와 위 5 entity 클래스 사이는 disjoint.
+# - Section과 entity 라벨을 함께 가진 legacy granularity="section"
+#   인스턴스를 보존한다.
+
+tdoc:FeatureDisjointShape a sh:NodeShape ;
+    sh:targetClass tdoc:Feature ;
+    sh:not [
+        sh:or (
+            [ sh:class tdoc:RRCParameter ]
+            [ sh:class tdoc:CapabilityItem ]
+            [ sh:class tdoc:Procedure ]
+            [ sh:class tdoc:PerformanceRequirement ]
+            [ sh:class tdoc:ConformanceTest ]
+        )
+    ] ;
+    rdfs:comment "Feature 노드는 entity 클래스 (5종)와 동시에 속할 수 없다 (의미적 disjoint)." .
+
+# =============================================================================
+# Section 4 — Spec hybrid (release-aware) shapes
+# =============================================================================
+# Spec은 두 역할로 존재한다.
+# (1) ABSTRACT HUB — specNumber만 보유 (specRelease 없음). Tdoc/CR MODIFIES,
+#     AFFECTS_CORE_SPEC, TRImpact IMPACTS_SPEC 등 release-blind 문서 참조의
+#     안정 타깃.
+# (2) RELEASE-KEYED — (specNumber, specRelease) 쌍. tdoc:inReleaseOf로 허브에
+#     연결되며 해당 release Section들의 부모 (belongsToSpec/hasSection).
+# sh:xone은 두 역할을 상호 배타적으로 검사한다. 허브에는 specRelease가
+# 없으며, release-keyed Spec에는 inReleaseOf 연결이 필요하다.
+
+tdoc:SpecHybridShape a sh:NodeShape ;
+    sh:targetClass tdoc:Spec ;
+    sh:property [
+        sh:path tdoc:specNumber ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Spec (hub or release-keyed) MUST have exactly one specNumber" ;
+    ] ;
+    sh:xone (
+        [
+            # (1) ABSTRACT HUB: specRelease 없음 + inReleaseOf 없음
+            sh:property [ sh:path tdoc:specRelease ; sh:maxCount 0 ] ;
+            sh:property [ sh:path tdoc:inReleaseOf ; sh:maxCount 0 ] ;
+            sh:property [ sh:path tdoc:specInRelease ; sh:maxCount 0 ] ;
+        ]
+        [
+            # (2) RELEASE-KEYED: specRelease 정확히 1 (Rel-NN) + inReleaseOf 정확히 1
+            sh:property [ sh:path tdoc:specRelease ; sh:minCount 1 ; sh:maxCount 1 ;
+                          sh:datatype xsd:string ; sh:pattern "^Rel-[0-9]+$" ] ;
+            sh:property [ sh:path tdoc:inReleaseOf ; sh:minCount 1 ; sh:maxCount 1 ;
+                          sh:class tdoc:Spec ] ;
+            sh:property [ sh:path tdoc:specInRelease ; sh:minCount 1 ; sh:maxCount 1 ;
+                          sh:class tdoc:Release ;
+                          sh:node [ sh:property [ sh:path tdoc:releaseName ;
+                                      sh:minCount 1 ; sh:maxCount 1 ;
+                                      sh:datatype xsd:string ;
+                                      sh:pattern "^Rel-[0-9]+$" ] ] ] ;
+        ]
+    ) ;
+    sh:sparql [
+        sh:message "A release-keyed Spec and its abstract hub MUST have the same specNumber" ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE {
+                $this tdoc:specNumber ?number ; tdoc:inReleaseOf ?hub .
+                ?hub tdoc:specNumber ?hubNumber .
+                FILTER (?number != ?hubNumber)
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        sh:message "specRelease MUST equal the releaseName reached through specInRelease" ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE {
+                $this tdoc:specRelease ?release ; tdoc:specInRelease ?releaseNode .
+                ?releaseNode tdoc:releaseName ?name .
+                FILTER (?release != ?name)
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        sh:message "Each (specNumber, specRelease) MUST identify a single release-keyed Spec" ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE {
+                $this tdoc:specNumber ?number ; tdoc:specRelease ?release .
+                ?other a tdoc:Spec ; tdoc:specNumber ?number ; tdoc:specRelease ?release .
+                FILTER (?other != $this)
+            }
+        """ ;
+    ] ;
+    sh:message "Spec must be either an abstract hub (no specRelease / no inReleaseOf) or a release-keyed variant (exactly one specRelease 'Rel-NN' + exactly one inReleaseOf to its hub) — core v4.1 hybrid" ;
+    rdfs:comment "release-aware hybrid Spec 무결성: 허브/release-키 역할의 상호 배타 + release-키의 허브 연결 의무." .
+
+tdoc:InReleaseOfHubTargetShape a sh:NodeShape ;
+    sh:targetObjectsOf tdoc:inReleaseOf ;
+    sh:class tdoc:Spec ;
+    sh:property [
+        sh:path tdoc:specRelease ;
+        sh:maxCount 0 ;
+        sh:message "inReleaseOf MUST point to an ABSTRACT HUB Spec (a node carrying specRelease is itself release-keyed, not a hub)" ;
+    ] ;
+    rdfs:comment "inReleaseOf의 타깃은 항상 허브 — release-키 변형끼리의 연결(체인) 금지." .
+
+tdoc:SectionBelongsToReleaseKeyedShape a sh:NodeShape ;
+    sh:targetClass tdoc:Section ;
+    sh:property [
+        sh:path tdoc:belongsToSpec ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Section MUST belong to exactly one Spec (functional)" ;
+    ] ;
+    sh:property [
+        sh:path ( tdoc:belongsToSpec tdoc:specRelease ) ;
+        sh:minCount 1 ;
+        sh:message "Section's belongsToSpec MUST point to a RELEASE-KEYED Spec (with specRelease); attaching Sections to the abstract hub re-creates the pre-v4.0 latest-only ambiguity" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:specNumber ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Section MUST carry exactly one specNumber (the copy of its release-keyed owner's specNumber)" ;
+    ] ;
+    sh:property [
+        sh:path ( tdoc:belongsToSpec tdoc:specNumber ) ;
+        sh:equals tdoc:specNumber ;
+        sh:message "Section specNumber MUST equal the specNumber of its belongsToSpec owner" ;
+    ] ;
+    sh:or (
+        [ sh:property [ sh:path tdoc:parentSection ; sh:maxCount 0 ] ]
+        [ sh:property [
+            sh:path ( tdoc:parentSection tdoc:belongsToSpec ) ;
+            sh:equals tdoc:belongsToSpec ;
+            sh:message "A Section and its parentSection MUST belong to the same release-keyed Spec" ;
+        ] ]
+    ) ;
+    rdfs:comment "Section은 release-키 Spec에만 귀속 — 허브 직접 귀속 금지 (release별 Section 우주 분리 보장). Section의 specNumber는 그 소속 Spec의 specNumber 사본이다." .
+
+tdoc:HasSectionTopLevelShape a sh:NodeShape ;
+    sh:targetObjectsOf tdoc:hasSection ;
+    sh:class tdoc:Section ;
+    sh:property [
+        sh:path [ sh:inversePath tdoc:hasSection ] ;
+        sh:equals tdoc:belongsToSpec ;
+        sh:message "hasSection and belongsToSpec MUST identify the same release-keyed Spec owner" ;
+    ] ;
+    sh:property [
+        sh:path tdoc:parentSection ;
+        sh:maxCount 0 ;
+        sh:message "hasSection MUST point to a TOP-LEVEL Section (no parentSection); membership of sub-sections is expressed by belongsToSpec only" ;
+    ] ;
+    rdfs:comment "hasSection 은 최상위 절만 — 하위 절의 소속은 belongsToSpec 으로만 표현한다." .
+
+# =============================================================================
+# Section 5 — Assessed claims and exact source evidence
+# These constraints check recorded evidence contracts. A source verifier checks
+# file bytes, locators and the actual meaning before promoting an assertion.
+# =============================================================================
+
+tdoc:SourceUnitShape a sh:NodeShape ;
+    sh:targetClass tdoc:SourceUnit ;
+    sh:not [ sh:class tdoc:Procedure ] ;
+    sh:property [ sh:path tdoc:sourceUnitTitle ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path tdoc:specNumber ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path tdoc:sectionNumber ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path tdoc:sourceUnitInSection ; sh:class tdoc:Section ; sh:nodeKind sh:IRI ; sh:minCount 1 ] .
+
+tdoc:EvidenceFragmentShape a sh:NodeShape ;
+    sh:targetClass tdoc:EvidenceFragment ;
+    sh:property [ sh:path tdoc:evidencePath ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path tdoc:evidenceSha256 ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:pattern "^[0-9a-f]{64}$" ] ;
+    sh:property [ sh:path tdoc:evidenceLocator ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path tdoc:evidenceQuote ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] .
+
+tdoc:EvidenceAssertionShape a sh:NodeShape ;
+    sh:targetClass tdoc:EvidenceAssertion ;
+    sh:property [ sh:path tdoc:assertionId ; sh:datatype xsd:string ;
+        sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path tdoc:evidenceStatus ;
+        sh:in ( "source_verified" "pending" "rejected" ) ;
+        sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path tdoc:assessmentMethod ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path tdoc:hasEvidence ; sh:nodeKind sh:IRI ;
+        sh:node tdoc:EvidenceFragmentShape ] ;
+    sh:or (
+        [ sh:property [ sh:path tdoc:evidenceStatus ; sh:in ( "pending" "rejected" ) ] ]
+        [ sh:property [ sh:path tdoc:evidenceStatus ; sh:hasValue "source_verified" ] ;
+          sh:or (
+            [ sh:node tdoc:EvidenceFragmentShape ]
+            [ sh:property [ sh:path tdoc:hasEvidence ; sh:minCount 1 ] ]
+          ) ]
+    ) .
+
+tdoc:DecisionDispositionShape a sh:NodeShape ;
+    sh:targetClass tdoc:DecisionDisposition ;
+    sh:property [ sh:path tdoc:dispositionId ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path tdoc:targetTdocNumber ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:pattern "^R[1-5]-[0-9]+$" ] ;
+    sh:property [ sh:path tdoc:dispositionOf ; sh:nodeKind sh:IRI ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:class tdoc:Resolution ] ;
+    sh:property [ sh:path tdoc:dispositionTarget ; sh:nodeKind sh:IRI ;
+        sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path tdoc:dispositionCode ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "agreed" "withdrawn" "rejected" "not_agreed" "not_pursued"
+                "not_treated" "merged" "not_concluded" "replied_to"
+            "noted" "postponed" "revised" "endorsed" "conditionally_agreed"
+            "partially_agreed" "ambiguous" ) ] ;
+    sh:sparql [
+        sh:message "An unconditional agreed disposition requires source_verified evidence." ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE {
+                $this tdoc:dispositionCode "agreed" .
+                FILTER NOT EXISTS { $this tdoc:evidenceStatus "source_verified" }
+            }
+        """
+    ] .
+
+tdoc:FeatureAssertionShape a sh:NodeShape ;
+    sh:targetClass tdoc:FeatureAssertion ;
+    sh:node tdoc:QualifiedRelationShape .
+
+tdoc:QualifiedRelationShape a sh:NodeShape ;
+    sh:targetSubjectsOf tdoc:assertionSubject, tdoc:assertionObject, tdoc:assertionPredicateIRI ;
+    sh:property [ sh:path tdoc:assertionSubject ; sh:nodeKind sh:IRI ;
+        sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path tdoc:assertionObject ; sh:nodeKind sh:IRI ;
+        sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path tdoc:assertionPredicateIRI ; sh:datatype xsd:anyURI ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:pattern "^[A-Za-z][A-Za-z0-9+.-]*:" ] .
+
+tdoc:TRImpactEvidenceShape a sh:NodeShape ;
+    sh:targetClass tdoc:TRImpact ;
+    sh:property [ sh:path tdoc:trImpactId ; sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+    sh:property [ sh:path tdoc:impactType ;
+        sh:in ( "NewTS" "NewSection" "ExtendSection" "NoChange" "TopicalCandidate" ) ;
+        sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path tdoc:verifiedImpactScope ; sh:datatype xsd:string ; sh:maxCount 1 ;
+        sh:in ( "new_specification" "new_section" "existing_section_change"
+                "published_definition_reuse" "published_analysis_reuse" "explicit_no_change" ) ] ;
+    sh:sparql [
+        sh:message "An assessed operation scope belongs to a source_verified TR claim." ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE {
+                $this tdoc:verifiedImpactScope ?scope .
+                FILTER NOT EXISTS { $this tdoc:evidenceStatus "source_verified" }
+            }
+        """
+    ] ;
+    sh:sparql [
+        sh:message "A verified TR claim requires an explicit assessed operation scope; NoChange uses explicit_no_change." ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE {
+                $this tdoc:evidenceStatus "source_verified" ; tdoc:impactType ?kind .
+                FILTER NOT EXISTS {
+                    $this tdoc:verifiedImpactScope ?scope .
+                    FILTER ((?kind = "NoChange" && ?scope = "explicit_no_change") ||
+                            (?kind != "NoChange" && ?scope != "explicit_no_change"))
+                }
+            }
+        """
+    ] ;
+    sh:property [ sh:path tdoc:impactsSpec ; sh:maxCount 1 ; sh:class tdoc:Spec ] ;
+    sh:property [ sh:path tdoc:impactsSection ; sh:maxCount 1 ; sh:class tdoc:Section ] ;
+    sh:property [ sh:path tdoc:candidateImpactsSpec ; sh:maxCount 1 ; sh:class tdoc:Spec ] ;
+    sh:sparql [
+        sh:message "A topical retrieval candidate requires pending status and its candidate specification target." ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE {
+                $this tdoc:impactType "TopicalCandidate" .
+                FILTER NOT EXISTS {
+                    $this tdoc:evidenceStatus "pending" ; tdoc:candidateImpactsSpec ?target .
+                }
+            }
+        """
+    ] ;
+    sh:sparql [
+        sh:message "Causal impact edges require a source_verified causal claim." ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT DISTINCT $this WHERE {
+                { $this tdoc:impactsSpec|tdoc:impactsSection ?target }
+                UNION { ?target tdoc:specImpactedBy|tdoc:sectionImpactedBy $this }
+                FILTER NOT EXISTS {
+                    $this tdoc:evidenceStatus "source_verified" ; tdoc:impactType ?kind .
+                    FILTER (?kind IN ("NewTS", "NewSection", "ExtendSection"))
+                }
+            }
+        """
+    ] ;
+    sh:sparql [
+        sh:message "A source_verified causal claim must identify its specification target." ;
+        sh:select """
+            PREFIX tdoc: <https://w3id.org/spectra#>
+            SELECT $this WHERE {
+                $this tdoc:evidenceStatus "source_verified" ; tdoc:impactType ?kind .
+                FILTER (?kind IN ("NewTS", "NewSection", "ExtendSection"))
+                FILTER NOT EXISTS { $this tdoc:impactsSpec ?target }
+            }
+        """
+    ] .
+
+# Core document/reference classes: stable IRI and typed identifiers.
+# Identifier presence remains governed by each producer/load contract; these
+# shapes validate supplied identifiers without requiring unavailable metadata.
+
+tdoc:AgendaItemIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:AgendaItem ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:agendaNumber ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:AgreementIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Agreement ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:resolutionId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:CRIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:CR ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:tdocNumber ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:CRPackIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:CRPack ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:crPackId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:ChartIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Chart ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:chartId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:CompanyIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Company ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:companyName ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:ConclusionIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Conclusion ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:resolutionId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:ContactIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Contact ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:contactName ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:FigureIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Figure ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:figureId ; sh:datatype xsd:string ; sh:minLength 1 ] ;
+    sh:property [ sh:path tdoc:moreFilePaths ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:LSIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:LS ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:tdocNumber ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:MeetingIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Meeting ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:meetingNumber ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:ReleaseIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Release ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:releaseName ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:ResolutionIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Resolution ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:resolutionId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:SessionNotesIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:SessionNotes ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:tdocNumber ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:SummaryIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Summary ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:tdocNumber ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:TSFigureIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:TSFigure ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:figureId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:TSTableIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:TSTable ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:tableId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:TableIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Table ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:tableId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:TdocIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:Tdoc ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:tdocNumber ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:TechnicalReportIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:TechnicalReport ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:trNumber ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:WorkItemIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:WorkItem ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:workItemCode ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:WorkingAssumptionIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:WorkingAssumption ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:resolutionId ; sh:datatype xsd:string ; sh:minLength 1 ] .
+
+tdoc:WorkingGroupIdentityShape a sh:NodeShape ;
+    sh:targetClass tdoc:WorkingGroup ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path tdoc:wgName ; sh:datatype xsd:string ; sh:minLength 1 ] .

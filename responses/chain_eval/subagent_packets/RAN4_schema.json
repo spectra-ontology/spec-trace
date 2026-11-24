@@ -1,0 +1,1297 @@
+{
+ "task": "You write one read-only Cypher query for a Neo4j graph of 3GPP standardization records. Graph schema (node labels with properties, then relationship patterns):\n(:AgendaItem {_createdBy, agendaDescription, agendaNumber, id, meetingNumber})\n(:Agreement {content, contentWithEquations, hasFFS, hasTBD, note, resolutionId, resolutionScope, sequence})\n(:CR {_belongsTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _modifies, _presentedAt, _recoveredAt, _relatedTo, _revisedTo, _submittedBy, _targetRelease, abstract, affectsCN, affectsME, affectsRAN, affectsUICC, clausesAffected, consequencesIfNotApproved, crCategory, crNumber, crRevision, for, id, legacyCrPackReference, reasonForChange, reservationDate, secretaryRemarks, status, summaryOfChange, tdocNumber, title, titleSource, tsgCRPack, type, uploadedDate})\n(:CRPack {crPackId, tsgMeeting})\n(:Chart {caption, chartId, chartNumber, filePath})\n(:Company {aliases, companyName, id})\n(:Conclusion {content, contentWithEquations, hasConsensus, resolutionId, sequence})\n(:ConformanceTest {granularity, isVoid, level, ontologyVersion, sectionId, sectionNumber, sectionTitle, specNumber, testCaseId, updatedAt})\n(:Contact {contactId, contactName, id})\n(:DecisionDisposition {assessmentMethod, dispositionCode, dispositionId, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, evidenceStatus, targetTdocNumber})\n(:Delegate {delegateId, nameSurface})\n(:EmailMessage {archiveCode, id, messageId, roundNum, sentDate, subject})\n(:EmailThread {earliestDate, latestDate, overmergeSuspect, participantCount, subject, threadKey, totalMessages})\n(:EvidenceAssertion {assertionId, assertionPredicateIRI, assessmentMethod, evidenceStatus, id})\n(:EvidenceFragment {evidenceId, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, id})\n(:Feature {catalogVersion, curator, featureDescription, featureName, introducedInRelease, legacyFeatureNames, legacyReplacedBy, name, notes, ontologyVersion, specBodyTerms, updatedAt})\n(:FeatureAssertion {assertionId, assertionPredicateIRI, assessmentMethod, evidenceRows, evidenceStatus, kind})\n(:Figure {caption, figureId, figureNumber, filePath})\n(:LS {_belongsTo, _ccTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _originalLS, _originatedFrom, _presentedAt, _recoveredAt, _relatedTo, _replyIn, _replyTo, _revisedTo, _sentTo, _submittedBy, _targetRelease, abstract, direction, for, id, reservationDate, secretaryRemarks, status, tdocNumber, title, type, uploadedDate})\n(:Meeting {_chairman_report_note, _chairman_report_status, _createdBy, canonicalMeetingNumber, id, meetingNumber, meetingNumberInt, workingGroup})\n(:PerformanceRequirement {granularity, isVoid, level, ontologyVersion, perfReqName, sectionId, sectionNumber, sectionTitle, specNumber, updatedAt})\n(:Release {id, releaseName})\n(:Resolution {content, contentWithEquations, hasConsensus, hasFFS, hasTBD, note, resolutionId, resolutionScope, sequence})\n(:Section {granularity, isVoid, level, sectionId, sectionNumber, sectionTitle, specNumber})\n(:Spec {id, specInRelease, specNumber, specRelease, specVersion})\n(:TRImpact {affectedSection, assessmentMethod, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, evidenceStatus, impactDescription, impactType, trImpactId, verifiedImpactScope})\n(:TSFigure {figureCaption, figureId, figureNumber})\n(:TSTable {tableCaption, tableId, tableNumber})\n(:Table {caption, equations, filePath, tableId, tableNumber})\n(:Tdoc {_belongsTo, _ccTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _modifies, _originalLS, _originatedFrom, _presentedAt, _recoveredAt, _relatedTo, _replyIn, _replyTo, _revisedTo, _sentTo, _submittedBy, _targetRelease, abstract, affectsCN, affectsME, affectsRAN, affectsUICC, clausesAffected, consequencesIfNotApproved, crCategory, crNumber, crRevision, direction, for, id, legacyCrPackReference, reasonForChange, reservationDate, secretaryRemarks, status, summaryOfChange, tdocNumber, title, tsgCRPack, type, uploadedDate})\n(:TechnicalReport {conclusions, scope, sourceIdentityAssessmentMethod, sourceIdentityAssessmentPath, sourceIdentityAssessmentSha256, studyItemRpNumber, trNumber, trStatus, trTitle, trVersion, workItemRpNumber})\n(:WorkItem {id, workItemCode})\n(:WorkingAssumption {content, hasFFS, hasTBD, resolutionId, sequence})\n(:WorkingGroup {id, wgName})\n(:EmailMessage)-[:ANCHORS]->(:Tdoc)\n(:Tdoc)-[:SUBMITTED_BY]->(:Company)\n(:Tdoc)-[:PRESENTED_AT]->(:Meeting)\n(:Tdoc)-[:BELONGS_TO]->(:AgendaItem)\n(:Tdoc)-[:HAS_CONTACT]->(:Contact)\n(:Resolution)-[:MADE_AT]->(:Meeting)\n(:Resolution)-[:RESOLUTION_BELONGS_TO]->(:AgendaItem)\n(:Resolution)-[:HAS_DISPOSITION]->(:DecisionDisposition)\n(:DecisionDisposition)-[:DISPOSITION_OF]->(:Resolution)\n(:Resolution)-[:REFERENCES]->(:Tdoc)\n(:DecisionDisposition)-[:DISPOSITION_TARGET]->(:Tdoc)\n(:Resolution)-[:ABOUT_TDOC]->(:Tdoc)\n(:EmailMessage)-[:IN_THREAD]->(:EmailThread)\n(:EmailMessage)-[:SENT_BY]->(:Delegate)\n(:Tdoc)-[:RELATED_TO]->(:WorkItem)\n(:EmailMessage)-[:ANCHORS]->(:Meeting)\n(:EmailMessage)-[:ANCHORS]->(:Resolution)\n(:Tdoc)-[:TARGET_RELEASE]->(:Release)\n(:Section)-[:BELONGS_TO_SPEC]->(:Spec)\n(:Tdoc)-[:MODIFIES]->(:Spec)\n(:Section)-[:HAS_SUB_SECTION]->(:Section)\n(:Section)-[:PARENT_SECTION]->(:Section)\n(:Section)-[:REFERENCES_SECTION]->(:Section)\n(:Section)-[:REFERENCED_BY_SECTION]->(:Section)\n(:Section)-[:CONTAINS_TABLE]->(:TSTable)\n(:TSTable)-[:TABLE_IN_SECTION]->(:Section)\n(:Tdoc)-[:MODIFIES_SECTION]->(:Section)\n(:Section)-[:MODIFIED_BY_CR]->(:Tdoc)\n(:Tdoc)-[:IS_REVISION_OF]->(:Tdoc)\n(:Tdoc)-[:REVISED_TO]->(:Tdoc)\n(:EmailThread)-[:ANCHORS]->(:Spec)\n(:CRPack)-[:HAS_CR]->(:Tdoc)\n(:Tdoc)-[:BELONGS_TO_CR_PACK]->(:CRPack)\n(:EmailMessage)-[:ANCHORS]->(:Section)\n(:Section)-[:REFERENCES_SPEC]->(:Spec)\n(:Tdoc)-[:AFFECTS_TEST_SPEC]->(:Spec)\n(:Tdoc)-[:SENT_TO]->(:WorkingGroup)\n(:Section)-[:CONTAINS_FIGURE]->(:TSFigure)\n(:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)\n(:Tdoc)-[:CC_TO]->(:WorkingGroup)\n(:Spec)-[:HAS_SECTION]->(:Section)\n(:Tdoc)-[:AFFECTS_CORE_SPEC]->(:Spec)\n(:Table)-[:CONTAINED_IN]->(:Meeting)\n(:Tdoc)-[:ORIGINATED_FROM]->(:WorkingGroup)\n(:Tdoc)-[:REPLY_TO]->(:Tdoc)\n(:Tdoc)-[:REPLY_IN]->(:Tdoc)\n(:Figure)-[:CONTAINED_IN]->(:Meeting)\n(:TRImpact)-[:HAS_EVIDENCE]->(:EvidenceFragment)\n(:Delegate)-[:ANCHORS]->(:Contact)\n(:ConformanceTest)-[:definedInSection]->(:Section)\n(:PerformanceRequirement)-[:definedInSection]->(:Section)\n(:Resolution)-[:HAS_TABLE]->(:Table)\n(:Spec)-[:SPEC_IN_RELEASE]->(:Release)\n(:Spec)-[:IN_RELEASE_OF]->(:Spec)\n(:TRImpact)-[:IMPACT_OF_TR]->(:TechnicalReport)\n(:TechnicalReport)-[:HAS_TR_IMPACT]->(:TRImpact)\n(:TechnicalReport)-[:TARGET_RELEASE]->(:Release)\n(:Resolution)-[:HAS_FIGURE]->(:Figure)\n(:EvidenceAssertion)-[:HAS_EVIDENCE]->(:EvidenceFragment)\n(:EvidenceAssertion)-[:ASSERTION_SUBJECT]->(:TechnicalReport)\n(:EvidenceAssertion)-[:ASSERTION_OBJECT]->(:Spec)\n(:TRImpact)-[:CANDIDATE_IMPACTS_SPEC]->(:Spec)\n(:TechnicalReport)-[:DISCUSSES_SPEC]->(:Spec)\n(:FeatureAssertion)-[:hasEvidence]->(:EvidenceFragment)\n(:FeatureAssertion)-[:assertionSubject]->(:Feature)\n(:TechnicalReport)-[:REFERENCES_TR]->(:TechnicalReport)\n(:TechnicalReport)-[:REFERENCED_BY_TR]->(:TechnicalReport)\n(:EmailMessage)-[:ANCHORS]->(:AgendaItem)\n(:Feature)-[:wasDerivedFrom]->(:EvidenceFragment)\n(:FeatureAssertion)-[:assertionObject]->(:EvidenceFragment)\n(:Chart)-[:CONTAINED_IN]->(:Meeting)\n(:TRImpact)-[:IMPACTS_SPEC]->(:Spec)\n(:Spec)-[:SPEC_IMPACTED_BY]->(:TRImpact)\n(:Feature)-[:disjointWith]->(:Feature)\n(:Feature)-[:hasPerfRequirement]->(:PerformanceRequirement)\n(:FeatureAssertion)-[:assertionObject]->(:PerformanceRequirement)\n(:Tdoc)-[:ORIGINAL_LS]->(:Tdoc)\n(:TechnicalReport)-[:RECOMMENDS_CHANGE_TO_SPEC]->(:Spec)\n(:CR)-[:MODIFIES]->(:Spec)\n(:CR)-[:RELATED_TO]->(:WorkItem)\n(:CR)-[:BELONGS_TO_CR_PACK]->(:CRPack)\n(:CRPack)-[:HAS_CR]->(:CR)\n(:Feature)-[:relatedFeature]->(:Feature)\n(:FeatureAssertion)-[:assertionObject]->(:Feature)\n(:EvidenceAssertion)-[:ASSERTION_SUBJECT]->(:Tdoc)\n(:EvidenceAssertion)-[:ASSERTION_OBJECT]->(:Tdoc)\n(:Tdoc)-[:AFFECTS_OM_SPEC]->(:Spec)\nAnswer with a JSON object {\"cypher\": \"...\"}. The query must RETURN DISTINCT exactly these columns in this order: <the item's fields>. Use only MATCH, WHERE, WITH, RETURN.",
+ "items": [
+  {
+   "id": "RAN4-q040ab0f3fe99",
+   "question": "In which TSG RAN CR pack was change request R4-2300883 (CR 0100 to TS 37.114) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q04c787a86505",
+   "question": "In which TSG RAN CR pack was change request R4-1913322 (CR 0117 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q04e2d931363a",
+   "question": "RAN4 recorded document R4-2418926 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q04e5ea452c67",
+   "question": "Trace change request R4-1907727 (CR 0005 to TS 38.141-1) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.141-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q0511cbbbe4b8",
+   "question": "TSG RAN CR pack RP-241443 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q067b75797872",
+   "question": "Change request R4-2012176 (CR 1003 to TS 38.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q0760e984a0b3",
+   "question": "RAN4 recorded document R4-2320032 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q083a94191487",
+   "question": "RAN4 recorded document R4-1906342 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q087e276d3e07",
+   "question": "In which TSG RAN CR pack was change request R4-2520026 (CR 6025 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q0dce13629589",
+   "question": "Change request R4-2506748 (CR 5577 to TS 38.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q110ba8383702",
+   "question": "Which Rel-17 change requests that modify clause B.2.3 of TS 38.151 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q1323ed4a2929",
+   "question": "In which TSG RAN CR pack was change request R4-2113314 (CR 0001 to TS 38.921) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q1453fef41838",
+   "question": "In which TSG RAN CR pack was change request R4-2120405 (CR 0025 to TS 36.171) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q162acc5f9153",
+   "question": "RAN4 recorded document R4-2410233 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q17462eb54a71",
+   "question": "In which TSG RAN CR pack was change request R4-2120807 (CR 0276 to TS 38.101-4) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q180e42663986",
+   "question": "Change request R4-2313470 (CR 1797 to TS 38.101-1) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q1f39174fa9c8",
+   "question": "In which TSG RAN CR pack was change request R4-2312705 (CR 1733 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q1fe3755d6b40",
+   "question": "Which Rel-16 change requests that modify clause A.4.6.1.4.2 of TS 38.133 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q28f071e1653e",
+   "question": "In which TSG RAN CR pack was change request R4-2000507 (CR 0103 to TS 38.101-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q2cf4fe77c43b",
+   "question": "In which TSG RAN CR pack was change request R4-2408827 (CR 0004 to TS 38.786) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q30fad004a7ea",
+   "question": "Trace change request R4-1913716 (CR 0036 to TS 38.141-2) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.141-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q31a0d3cc414b",
+   "question": "RAN4 recorded document R4-2101338 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q322ac54cbc52",
+   "question": "Change request R4-2420498 (CR 2605 to TS 38.101-1) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q35fd3fb7b553",
+   "question": "In which TSG RAN CR pack was change request R4-2205062 (CR 0382 to TS 38.141-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q387201e8712b",
+   "question": "In which TSG RAN CR pack was change request R4-2313319 (CR 1782 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q3a6786b00568",
+   "question": "Trace change request R4-2219117 (CR 0320 to TS 38.101-4) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-4 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q3ca2369fb7d7",
+   "question": "In which TSG RAN CR pack was change request R4-2109156 (CR 5770 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q3cea03a7679f",
+   "question": "In which TSG RAN CR pack was change request R4-2420157 (CR 5060 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q3d04820b63fd",
+   "question": "In which TSG RAN CR pack was change request R4-2500253 (CR 5233 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q4112deb94f68",
+   "question": "Change request R4-2512282 (CR 5910 to TS 38.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q41742b843840",
+   "question": "Change request R4-2605508 (CR 0881 to TS 38.101-4) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q445cf0b14431",
+   "question": "TSG RAN CR pack RP-202446 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q45979a07a628",
+   "question": "Which Rel-16 change requests that modify clause B.1.7 of TS 38.171 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q4825b101bb10",
+   "question": "Trace change request R4-2215213 (CR 2569 to TS 38.133) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.133 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q49e498af97c6",
+   "question": "TSG RAN CR pack RP-230558 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q49eca3504192",
+   "question": "Change request R4-2107743 (CR 0525 to TS 38.101-3) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q4a662b7f4538",
+   "question": "Change request R4-2312398 (CR 0061 to TS 38.174) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q4b021940c388",
+   "question": "In which TSG RAN CR pack was change request R4-2302577 (CR 1444 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q4b6316860aa0",
+   "question": "Trace change request R4-2219764 (CR 1264 to TS 38.101-1) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q4cc856ebbcdb",
+   "question": "Trace change request R4-2400632 (CR 2043 to TS 38.101-1) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q538ce9c984c7",
+   "question": "Which Rel-16 change requests that modify clause A.7.6.3.2.2 of TS 38.133 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q5413fea88fee",
+   "question": "Trace change request R4-2309876 (CR 0479 to TS 38.141-2) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.141-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q5564f8be249d",
+   "question": "Trace change request R4-2313080 (CR 1771 to TS 38.101-1) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q55dfd1445763",
+   "question": "In which TSG RAN CR pack was change request R4-2605424 (CR 6572 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q5ad47b57b059",
+   "question": "Which Rel-17 change requests that modify clause 4.7.2.5.1 of TS 38.141-2 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q5ba0021c8fa4",
+   "question": "In which TSG RAN CR pack was change request R4-2007899 (CR 0856 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q5efc5e930e7c",
+   "question": "Which Rel-17 change requests that modify clause 8.5 of TS 38.133 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q5f9ae7ff4ca2",
+   "question": "In which TSG RAN CR pack was change request R4-2520572 (CR 0099 to TS 36.102) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q61fc35b23bca",
+   "question": "Which Rel-19 change requests that modify clause 4.10 of TS 38.141-2 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q686bae23d9ed",
+   "question": "Which Rel-18 change requests that modify clause A.7.5.1.6 of TS 38.133 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q693c97415156",
+   "question": "Which Rel-18 change requests that modify clause 6.4D.2.4 of TS 38.101-1 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q697be1e4a3c9",
+   "question": "In which TSG RAN CR pack was change request R4-2501011 (CR 5292 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q6a9a6059b312",
+   "question": "RAN4 recorded document R4-2412759 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q6b66f6959630",
+   "question": "Which Rel-19 change requests that modify clause 3 of TS 38.141-1 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q6b7ce554139f",
+   "question": "Change request R4-2002331 (CR 0586 to TS 38.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q6e77303481c2",
+   "question": "Trace change request R4-2400446 (CR 0693 to TS 38.101-2) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q6f99ebb5536d",
+   "question": "RAN4 recorded document R4-2520564 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q700336dc267c",
+   "question": "TSG RAN CR pack RP-241457 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q73e2c49b2b9b",
+   "question": "TSG RAN CR pack RP-243023 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q7856a8e4df53",
+   "question": "In which TSG RAN CR pack was change request R4-2512206 (CR 5908 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q7889785005bc",
+   "question": "RAN4 recorded document R4-2321517 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q7ac40c661427",
+   "question": "In which TSG RAN CR pack was change request R4-2418221 (CR 0009 to TS 37.902) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q7b142d26efae",
+   "question": "In which TSG RAN CR pack was change request R4-2218748 (CR 2711 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q7c0b8a133aa4",
+   "question": "Trace change request R4-2410746 (CR 0749 to TS 38.101-2) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q80e43084a4f2",
+   "question": "Which Rel-18 change requests that modify clause 6.1.5.3.2 of TS 38.133 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q8321a5639b22",
+   "question": "Change request R4-1814116 (CR 0826 to TS 37.104) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q8491cc4f5801",
+   "question": "Which Rel-17 change requests that modify clause 10.1.5B of TS 38.133 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q85ce85b29b6b",
+   "question": "Change request R4-1808431 (CR 5831 to TS 36.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q868acb2ebeaa",
+   "question": "In which TSG RAN CR pack was change request R4-2410755 (CR 0093 to TS 38.101-5) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q87efde642ece",
+   "question": "Which Rel-17 change requests that modify clause 4.9.2.3 of TS 38.141-1 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q885034bf88da",
+   "question": "Change request R4-2606731 (CR 1500 to TS 38.101-3) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q89cd953bf6e9",
+   "question": "Trace change request R4-2102876 (CR 1780 to TS 38.133) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.133 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-q8b9d3adb4da3",
+   "question": "TSG RAN CR pack RP-202509 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q8bd430fcdab9",
+   "question": "Which Rel-17 change requests that modify clause 12 of TS 38.133 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q8d218ebb63a7",
+   "question": "In which TSG RAN CR pack was change request R4-2006940 (CR 0327 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q922415e9d436",
+   "question": "RAN4 recorded document R4-2314391 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q999ced5da643",
+   "question": "TSG RAN CR pack RP-202438 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q9af7694e76c9",
+   "question": "Which Rel-18 change requests that modify clause A.10.4.4.1 of TS 38.133 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-q9d09ea7eb7a2",
+   "question": "TSG RAN CR pack RP-233373 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q9db387fe16a1",
+   "question": "Change request R4-2309463 (CR 0970 to TS 38.101-3) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q9f812ad4331b",
+   "question": "In which TSG RAN CR pack was change request R4-2600967 (CR 6384 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qa0e1970ac450",
+   "question": "TSG RAN CR pack RP-243050 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qa0ee8dd0c5fe",
+   "question": "Which Rel-19 change requests that modify clause 6.0 of TS 38.191 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qa4750e485453",
+   "question": "In which TSG RAN CR pack was change request R4-2418950 (CR 0679 to TS 38.101-4) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qa5c1585cf99f",
+   "question": "Trace change request R4-2108210 (CR 1984 to TS 38.133) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.133 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qa76183a8febb",
+   "question": "In which TSG RAN CR pack was change request R4-2511166 (CR 5977 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qa8e05562becd",
+   "question": "RAN4 recorded document R4-1814089 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qa90b20577892",
+   "question": "Change request R4-2115869 (CR 0002 to TS 38.176-2) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qab04136c772f",
+   "question": "In which TSG RAN CR pack was change request R4-2002236 (CR 0581 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qab608dcda8a2",
+   "question": "In which TSG RAN CR pack was change request R4-2320863 (CR 3898 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qaefbcc17da50",
+   "question": "In which TSG RAN CR pack was change request R4-2318415 (CR 6018 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qaf657234732f",
+   "question": "In which TSG RAN CR pack was change request R4-2010737 (CR 4906 to TS 36.104) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qb048a1afe3bd",
+   "question": "Trace change request R4-2311315 (CR 3406 to TS 38.133) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.133 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qb0b017a1e878",
+   "question": "Trace change request R4-2600495 (CR 0151 to TS 38.108) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.108 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qb1054ffbe015",
+   "question": "In which TSG RAN CR pack was change request R4-2011775 (CR 0480 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qb5cd580caeee",
+   "question": "TSG RAN CR pack RP-241479 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qb6d3953ab01f",
+   "question": "Trace change request R4-2002917 (CR 0098 to TS 38.101-2) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qb6fe7cb4ed72",
+   "question": "RAN4 recorded document R4-2402129 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qb93dd55dd861",
+   "question": "RAN4 recorded document R4-1914943 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qbae21b2fc37c",
+   "question": "TSG RAN CR pack RP-202414 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qbb9a8cf8e3ba",
+   "question": "Trace change request R4-2309017 (CR 1577 to TS 38.101-1) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qbc1b6bff1b92",
+   "question": "RAN4 recorded document R4-2208159 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qbf73f53d6350",
+   "question": "In which TSG RAN CR pack was change request R4-2300265 (CR 2820 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qc01e2171002c",
+   "question": "TSG RAN CR pack RP-242163 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qc1be5f204ee7",
+   "question": "TSG RAN CR pack RP-252382 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qc433b789a0cc",
+   "question": "In which TSG RAN CR pack was change request R4-1914524 (CR 0206 to TS 37.145-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qcb777989dced",
+   "question": "Change request R4-2310105 (CR 3298 to TS 38.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qcc6797247296",
+   "question": "Change request R4-2414387 (CR 2470 to TS 38.101-1) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qd0110bbd6c8a",
+   "question": "Which Rel-16 change requests that modify clause 9.2.2 of TS 38.113 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qd2f412ba1025",
+   "question": "TSG RAN CR pack RP-223307 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qd36ec4c0e312",
+   "question": "TSG RAN CR pack RP-241488 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qd52324c426b0",
+   "question": "Trace change request R4-2309870 (CR 0037 to TS 38.108) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.108 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qd556f1e9936e",
+   "question": "TSG RAN CR pack RP-250602 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qd6c5ab874d0a",
+   "question": "In which TSG RAN CR pack was change request R4-2220864 (CR 0327 to TS 38.101-4) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qd83d8bb26857",
+   "question": "RAN4 recorded document R4-2412551 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qd858d80b5970",
+   "question": "Trace change request R4-2308205 (CR 1560 to TS 38.101-1) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.101-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qd8a4fa2a8d6a",
+   "question": "RAN4 recorded document R4-2014329 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qdbd88f6a86ae",
+   "question": "In which TSG RAN CR pack was change request R4-2219605 (CR 1258 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qdbe06b1b6990",
+   "question": "TSG RAN CR pack RP-220349 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qde4bfb81cf1f",
+   "question": "Which Rel-17 change requests that modify clause 6.3.2.3 of TS 38.141-1 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qde64dc1758c1",
+   "question": "In which TSG RAN CR pack was change request R4-2001827 (CR 0135 to TS 38.141-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qdff77c73df04",
+   "question": "RAN4 recorded document R4-2008192 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qe2dbcd580244",
+   "question": "In which TSG RAN CR pack was change request R4-2312501 (CR 0403 to TS 38.101-4) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qe3006b1dcc53",
+   "question": "Change request R4-2418642 (CR 5115 to TS 38.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qe369e265c182",
+   "question": "RAN4 recorded document R4-2007939 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qe5c2d6dd2bb5",
+   "question": "RAN4 recorded document R4-2401390 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qe7f63dd4d9c5",
+   "question": "Which Rel-16 change requests that modify clause 6.3C of TS 38.101-1 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qe823b5ad1764",
+   "question": "TSG RAN CR pack RP-260428 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qe960b18db6d1",
+   "question": "RAN4 recorded document R4-2007026 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qe9dca262c0b7",
+   "question": "Trace change request R4-2103352 (CR 0262 to TS 38.104) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.104 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qed65341d1de6",
+   "question": "Change request R4-2418635 (CR 5109 to TS 38.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qefd2278270e5",
+   "question": "Which Rel-19 change requests that modify clause 6.3A.3.3.7 of TS 38.101-1 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qf0252546bab4",
+   "question": "Change request R4-2319511 (CR 1059 to TS 38.101-3) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qf1178f9d499d",
+   "question": "In which TSG RAN CR pack was change request R4-1708754 (CR 0792 to TS 37.104) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qf35b3a21fafb",
+   "question": "TSG RAN CR pack RP-200388 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qf48f4fc24c96",
+   "question": "Change request R4-2523089 (CR 6168 to TS 38.133) was handled by RAN4. What source-verified disposition did RAN4 record for the whole document and at which RAN4 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN4 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qf82b27fd5fe1",
+   "question": "Trace change request R4-2400130 (CR 3967 to TS 38.133) from the RAN4 decision to the clauses it modifies. Give the source-verified disposition RAN4 recorded for the whole document, the RAN4 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.133 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN4-qfbabb2d13577",
+   "question": "RAN4 recorded document R4-2300771 as revised. Follow its revisions to every later version that has a source-verified RAN4 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN4-qfe7477850f8a",
+   "question": "TSG RAN CR pack RP-243073 carries change requests from RAN4. For each change request in the pack that has a source-verified RAN4 disposition for the whole document, give the document, the disposition, and the RAN4 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  }
+ ]
+}

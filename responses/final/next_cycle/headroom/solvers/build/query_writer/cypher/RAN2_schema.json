@@ -1,0 +1,605 @@
+{
+ "task": "You write one read-only Cypher query for a Neo4j graph of 3GPP standardization records. Graph schema (node labels with properties, then relationship patterns):\n(:AgendaItem {_createdBy, agendaDescription, agendaNumber, id, meetingNumber})\n(:Agreement {content, contentWithEquations, hasFFS, hasTBD, note, resolutionId, resolutionScope, sequence})\n(:CR {_belongsTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _modifies, _presentedAt, _recoveredAt, _relatedTo, _revisedTo, _submittedBy, _targetRelease, abstract, affectsCN, affectsME, affectsRAN, affectsUICC, clausesAffected, consequencesIfNotApproved, crCategory, crNumber, crRevision, for, id, legacyCrPackReference, reasonForChange, reservationDate, secretaryRemarks, status, summaryOfChange, tdocNumber, title, tsgCRPack, type, uploadedDate})\n(:CRPack {crPackId, tsgMeeting})\n(:CapabilityItem {capabilityGranularity, capabilityItemName, granularity, id, legacyAliasProperties, legacyRelease, ontologyVersion, qualifierChunkId, release, sourceAliases, specNumber, updatedAt})\n(:Company {aliases, companyName, id})\n(:Conclusion {content, hasConsensus, resolutionId, sequence})\n(:Contact {contactId, contactName, id})\n(:DecisionDisposition {assessmentMethod, dispositionCode, dispositionId, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, evidenceStatus, targetTdocNumber})\n(:Delegate {delegateId, nameSurface})\n(:EmailMessage {archiveCode, id, messageId, roundNum, sentDate, subject})\n(:EmailThread {earliestDate, latestDate, overmergeSuspect, participantCount, subject, threadKey, totalMessages})\n(:EvidenceAssertion {assertionId, assertionPredicateIRI, assessmentMethod, evidenceStatus, id})\n(:EvidenceFragment {evidenceId, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, id})\n(:Feature {catalogVersion, curator, featureDescription, featureName, introducedInRelease, legacyFeatureNames, legacyReplacedBy, name, notes, ontologyVersion, specBodyTerms, updatedAt})\n(:FeatureAssertion {assertionId, assertionPredicateIRI, assessmentMethod, evidenceRows, evidenceStatus, kind})\n(:Figure {caption, figureId, figureNumber, filePath})\n(:LS {_belongsTo, _ccTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _originalLS, _originatedFrom, _presentedAt, _recoveredAt, _relatedTo, _replyIn, _replyTo, _revisedTo, _sentTo, _submittedBy, _targetRelease, abstract, direction, for, id, reservationDate, secretaryRemarks, status, tdocNumber, title, type, uploadedDate})\n(:Meeting {canonicalMeetingNumber, id, meetingNumber, meetingNumberInt, workingGroup})\n(:Procedure {granularity, ontologyVersion, procedureName, sectionNumber, sourceSnapshotReleases, sourceUnitAssessmentLocator, sourceUnitAssessmentMethod, sourceUnitAssessmentPath, sourceUnitAssessmentSha256, sourceUnitKind, specNumber, updatedAt})\n(:RRCParameter {asn1ChunkId, granularity, ieKind, ieName, isCapabilityComposite, ontologyVersion, release, specNumber, updatedAt})\n(:Release {id, releaseName})\n(:Resolution {content, contentWithEquations, hasConsensus, hasFFS, hasTBD, note, resolutionId, resolutionScope, sequence})\n(:Section {isVoid, level, sectionId, sectionNumber, sectionTitle, specNumber})\n(:SourceUnit {granularity, ontologyVersion, sectionNumber, sourceSnapshotReleases, sourceUnitAssessmentLocator, sourceUnitAssessmentMethod, sourceUnitAssessmentPath, sourceUnitAssessmentSha256, sourceUnitKind, sourceUnitTitle, specNumber, updatedAt})\n(:Spec {id, specNumber, specRelease, specVersion})\n(:TRImpact {affectedSection, assessmentMethod, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, evidenceStatus, impactDescription, impactType, trImpactId, verifiedImpactScope})\n(:TSFigure {figureCaption, figureId, figureNumber})\n(:TSTable {tableCaption, tableId, tableNumber})\n(:Table {caption, equations, filePath, tableId, tableNumber})\n(:Tdoc {_belongsTo, _ccTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _modifies, _originalLS, _originatedFrom, _presentedAt, _recoveredAt, _relatedTo, _replyIn, _replyTo, _revisedTo, _sentTo, _submittedBy, _targetRelease, abstract, affectsCN, affectsME, affectsRAN, affectsUICC, clausesAffected, consequencesIfNotApproved, crCategory, crNumber, crRevision, direction, for, id, legacyCrPackReference, reasonForChange, reservationDate, secretaryRemarks, status, summaryOfChange, tdocNumber, title, tsgCRPack, type, uploadedDate})\n(:TechnicalReport {conclusions, scope, trNumber, trStatus, trTitle, trVersion})\n(:WorkItem {id, workItemCode})\n(:WorkingAssumption {content, contentWithEquations, hasFFS, hasTBD, note, resolutionId, sequence})\n(:WorkingGroup {id, wgName})\n(:EmailMessage)-[:ANCHORS]->(:Tdoc)\n(:Tdoc)-[:SUBMITTED_BY]->(:Company)\n(:Tdoc)-[:PRESENTED_AT]->(:Meeting)\n(:Tdoc)-[:BELONGS_TO]->(:AgendaItem)\n(:Tdoc)-[:HAS_CONTACT]->(:Contact)\n(:EmailMessage)-[:IN_THREAD]->(:EmailThread)\n(:EmailMessage)-[:SENT_BY]->(:Delegate)\n(:Tdoc)-[:RELATED_TO]->(:WorkItem)\n(:Tdoc)-[:TARGET_RELEASE]->(:Release)\n(:EmailMessage)-[:ANCHORS]->(:Resolution)\n(:EmailMessage)-[:ANCHORS]->(:Meeting)\n(:Resolution)-[:MADE_AT]->(:Meeting)\n(:Resolution)-[:HAS_DISPOSITION]->(:DecisionDisposition)\n(:DecisionDisposition)-[:DISPOSITION_OF]->(:Resolution)\n(:Resolution)-[:REFERENCES]->(:Tdoc)\n(:DecisionDisposition)-[:DISPOSITION_TARGET]->(:Tdoc)\n(:Resolution)-[:ABOUT_TDOC]->(:Tdoc)\n(:Resolution)-[:RESOLUTION_BELONGS_TO]->(:AgendaItem)\n(:Tdoc)-[:MODIFIES]->(:Spec)\n(:EmailMessage)-[:ANCHORS]->(:Section)\n(:Tdoc)-[:IS_REVISION_OF]->(:Tdoc)\n(:Tdoc)-[:REVISED_TO]->(:Tdoc)\n(:EmailThread)-[:ANCHORS]->(:Spec)\n(:Section)-[:BELONGS_TO_SPEC]->(:Spec)\n(:Section)-[:HAS_SUB_SECTION]->(:Section)\n(:Section)-[:PARENT_SECTION]->(:Section)\n(:Tdoc)-[:MODIFIES_SECTION]->(:Section)\n(:Section)-[:MODIFIED_BY_CR]->(:Tdoc)\n(:Tdoc)-[:SENT_TO]->(:WorkingGroup)\n(:Tdoc)-[:CC_TO]->(:WorkingGroup)\n(:Tdoc)-[:BELONGS_TO_CR_PACK]->(:CRPack)\n(:CRPack)-[:HAS_CR]->(:Tdoc)\n(:Tdoc)-[:ORIGINATED_FROM]->(:WorkingGroup)\n(:Section)-[:REFERENCES_SECTION]->(:Section)\n(:Section)-[:REFERENCED_BY_SECTION]->(:Section)\n(:RRCParameter)-[:definedInSection]->(:Section)\n(:Section)-[:REFERENCES_SPEC]->(:Spec)\n(:Tdoc)-[:AFFECTS_CORE_SPEC]->(:Spec)\n(:Tdoc)-[:REPLY_TO]->(:Tdoc)\n(:Tdoc)-[:REPLY_IN]->(:Tdoc)\n(:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)\n(:Section)-[:CONTAINS_FIGURE]->(:TSFigure)\n(:EmailMessage)-[:ANCHORS]->(:AgendaItem)\n(:TSTable)-[:TABLE_IN_SECTION]->(:Section)\n(:Section)-[:CONTAINS_TABLE]->(:TSTable)\n(:FeatureAssertion)-[:hasEvidence]->(:EvidenceFragment)\n(:Spec)-[:HAS_SECTION]->(:Section)\n(:Delegate)-[:ANCHORS]->(:Contact)\n(:FeatureAssertion)-[:assertionObject]->(:RRCParameter)\n(:FeatureAssertion)-[:assertionSubject]->(:Feature)\n(:FeatureAssertion)-[:assertionSubject]->(:CapabilityItem)\n(:CapabilityItem)-[:definedByIE]->(:RRCParameter)\n(:CapabilityItem)-[:definedInSection]->(:Section)\n(:Tdoc)-[:AFFECTS_TEST_SPEC]->(:Spec)\n(:Tdoc)-[:AFFECTS_OM_SPEC]->(:Spec)\n(:Figure)-[:CONTAINED_IN]->(:Meeting)\n(:Spec)-[:SPEC_IN_RELEASE]->(:Release)\n(:Spec)-[:IN_RELEASE_OF]->(:Spec)\n(:Procedure)-[:definedInSection]->(:Section)\n(:Feature)-[:usesIE]->(:RRCParameter)\n(:Table)-[:CONTAINED_IN]->(:Meeting)\n(:FeatureAssertion)-[:assertionObject]->(:CapabilityItem)\n(:Feature)-[:hasCapability]->(:CapabilityItem)\n(:TRImpact)-[:HAS_EVIDENCE]->(:EvidenceFragment)\n(:SourceUnit)-[:SOURCE_UNIT_IN_SECTION]->(:Section)\n(:Feature)-[:wasDerivedFrom]->(:EvidenceFragment)\n(:FeatureAssertion)-[:assertionObject]->(:EvidenceFragment)\n(:TechnicalReport)-[:HAS_TR_IMPACT]->(:TRImpact)\n(:TRImpact)-[:IMPACT_OF_TR]->(:TechnicalReport)\n(:Resolution)-[:HAS_FIGURE]->(:Figure)\n(:Feature)-[:hasProcedure]->(:Procedure)\n(:FeatureAssertion)-[:assertionObject]->(:Procedure)\n(:TRImpact)-[:CANDIDATE_IMPACTS_SPEC]->(:Spec)\n(:Feature)-[:disjointWith]->(:Feature)\n(:EvidenceAssertion)-[:HAS_EVIDENCE]->(:EvidenceFragment)\n(:EvidenceAssertion)-[:ASSERTION_SUBJECT]->(:TechnicalReport)\n(:EvidenceAssertion)-[:ASSERTION_OBJECT]->(:Spec)\n(:TechnicalReport)-[:DISCUSSES_SPEC]->(:Spec)\n(:TechnicalReport)-[:TARGET_RELEASE]->(:Release)\n(:Resolution)-[:HAS_TABLE]->(:Table)\n(:Tdoc)-[:ORIGINAL_LS]->(:Tdoc)\n(:FeatureAssertion)-[:assertionObject]->(:Feature)\n(:Feature)-[:relatedFeature]->(:Feature)\n(:EvidenceAssertion)-[:ASSERTION_SUBJECT]->(:Tdoc)\n(:EvidenceAssertion)-[:ASSERTION_OBJECT]->(:Tdoc)\n(:TRImpact)-[:IMPACTS_SPEC]->(:Spec)\n(:Spec)-[:SPEC_IMPACTED_BY]->(:TRImpact)\nAnswer with a JSON object {\"cypher\": \"...\"}. The query must RETURN DISTINCT exactly these columns in this order: <the item's fields>. Use only MATCH, WHERE, WITH, RETURN.",
+ "items": [
+  {
+   "id": "RAN2-q0010d8d27103",
+   "question": "Change request R2-2102518 (CR 0523 to TS 38.306) targets Rel-16. For each clause it modifies in Rel-16, which Rel-16 change requests other than R2-2102518 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q002d155ed565",
+   "question": "TSG RAN CR pack RP-251688 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15, Rel-16, Rel-17 or Rel-18). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q00cce592b90e",
+   "question": "Change request R2-2008289 (CR 0258 to TS 38.300) targets Rel-16. For each clause it modifies in Rel-16, which Rel-16 change requests other than R2-2008289 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q02d73bbdf069",
+   "question": "TSG RAN CR pack RP-241554 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17 or Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q078e793d881c",
+   "question": "Change request R2-2504722 (CR 2090 to TS 38.321) targets Rel-18. For each clause it modifies in Rel-18, which Rel-18 change requests other than R2-2504722 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q0b01f6934c7d",
+   "question": "TSG RAN CR pack RP-232566 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16 or Rel-17). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q0bbbcbdfab78",
+   "question": "TSG RAN CR pack RP-241581 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q0dab396f5a2b",
+   "question": "TSG RAN CR pack RP-200347 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q115d169e5df8",
+   "question": "TSG RAN CR pack RP-201195 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q14be2b7440bf",
+   "question": "Change request R2-2208725 (CR 1401 to TS 38.321) targets Rel-17. For each clause it modifies in Rel-17, which Rel-17 change requests other than R2-2208725 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q19401e79dd93",
+   "question": "TSG RAN CR pack RP-250663 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q19b0d1acb074",
+   "question": "TSG RAN CR pack RP-182654 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q1fd3918af3a6",
+   "question": "TSG RAN CR pack RP-243228 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q25faf5194a54",
+   "question": "Change request R2-1907717 (CR 1091 to TS 38.331) targets Rel-15. For each clause it modifies in Rel-15, which Rel-15 change requests other than R2-1907717 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q2ae2d1b96762",
+   "question": "Change request R2-2411080 (CR 5062 to TS 38.331) targets Rel-18. For each clause it modifies in Rel-18, which Rel-18 change requests other than R2-2411080 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q2c3895e241f7",
+   "question": "Change request R2-2010821 (CR 2145 to TS 38.331) targets Rel-16. For each clause it modifies in Rel-16, which Rel-16 change requests other than R2-2010821 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q330e6aa7d851",
+   "question": "TSG RAN CR pack RP-240691 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q3b54a1d5e856",
+   "question": "TSG RAN CR pack RP-231417 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15, Rel-16 or Rel-17). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q3f5c8161f76d",
+   "question": "Change request R2-1902805 (CR 0151 to TS 38.300) targets Rel-15. For each clause it modifies in Rel-15, which Rel-15 change requests other than R2-1902805 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q42a0472ba266",
+   "question": "TSG RAN CR pack RP-260661 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16, Rel-17, Rel-18 or Rel-19). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q42ea5d2871bd",
+   "question": "Change request R2-2409806 (CR 0924 to TS 38.300) targets Rel-17. For each clause it modifies in Rel-17, which Rel-17 change requests other than R2-2409806 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q4aa6b7cf2cb2",
+   "question": "TSG RAN CR pack RP-221735 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q4bd38bfee850",
+   "question": "TSG RAN CR pack RP-221765 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16 or Rel-17). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q53063dc11dd1",
+   "question": "TSG RAN CR pack RP-182660 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q54dda4ebb9a7",
+   "question": "TSG RAN CR pack RP-190545 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q55e800f5ec56",
+   "question": "TSG RAN CR pack RP-190542 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q5831710ea972",
+   "question": "TSG RAN CR pack RP-220839 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q623443440a4c",
+   "question": "TSG RAN CR pack RP-253730 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-19). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q6d4cb3c120c0",
+   "question": "TSG RAN CR pack RP-241577 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-q6f54cb471363",
+   "question": "Change request R2-2604261 (CR 5721 to TS 38.331) targets Rel-19. For each clause it modifies in Rel-19, which Rel-19 change requests other than R2-2604261 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q71f5357a68aa",
+   "question": "Change request R2-2314063 (CR 0766 to TS 38.300) targets Rel-18. For each clause it modifies in Rel-18, which Rel-18 change requests other than R2-2314063 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q755597358b21",
+   "question": "Change request R2-2506626 (CR 2101 to TS 38.321) targets Rel-19. For each clause it modifies in Rel-19, which Rel-19 change requests other than R2-2506626 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q860585794db4",
+   "question": "TSG RAN CR pack RP-252818 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-19). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-q8bc757fdc0dd",
+   "question": "Change request R2-2312634 (CR 1673 to TS 38.321) targets Rel-17. For each clause it modifies in Rel-17, which Rel-17 change requests other than R2-2312634 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q8f665cdf7e15",
+   "question": "Change request R2-2410935 (CR 1975 to TS 38.321) targets Rel-17. For each clause it modifies in Rel-17, which Rel-17 change requests other than R2-2410935 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-q9105cf559e57",
+   "question": "TSG RAN CR pack RP-250657 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16, Rel-17 or Rel-18). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qa6583797acc0",
+   "question": "TSG RAN CR pack RP-201925 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qa7d6ba5fbbb1",
+   "question": "Change request R2-1818829 (CR 0096 to TS 38.300) targets Rel-15. For each clause it modifies in Rel-15, which Rel-15 change requests other than R2-1818829 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-qab2b239df263",
+   "question": "TSG RAN CR pack RP-192935 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-qb62f6cf5285c",
+   "question": "TSG RAN CR pack RP-220502 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qb7ff6a86bbac",
+   "question": "Change request R2-1809043 (CR 0012 to TS 38.306) targets Rel-15. For each clause it modifies in Rel-15, which Rel-15 change requests other than R2-1809043 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-qb9680caaec7b",
+   "question": "TSG RAN CR pack RP-220475 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qba478ad9f079",
+   "question": "TSG RAN CR pack RP-240664 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qc2069e6f1320",
+   "question": "Change request R2-1813047 (CR 0326 to TS 38.321) targets Rel-15. For each clause it modifies in Rel-15, which Rel-15 change requests other than R2-1813047 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-qc23b2eaefb38",
+   "question": "Change request R2-2302135 (CR 0015 to TS 38.351) targets Rel-17. For each clause it modifies in Rel-17, which Rel-17 change requests other than R2-2302135 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-qc716ff9f28e8",
+   "question": "TSG RAN CR pack RP-250659 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17 or Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-qc7f350c4aab9",
+   "question": "TSG RAN CR pack RP-220483 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qcf48204761b4",
+   "question": "TSG RAN CR pack RP-243231 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qd4eb4cc439bc",
+   "question": "Change request R2-2313894 (CR 1012 to TS 38.306) targets Rel-17. For each clause it modifies in Rel-17, which Rel-17 change requests other than R2-2313894 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-qd73b54c08513",
+   "question": "TSG RAN CR pack RP-201163 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15 or Rel-16). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qd8ee8ff5151e",
+   "question": "TSG RAN CR pack RP-240650 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-15, Rel-16, Rel-17 or Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-qdef5c67edd8a",
+   "question": "TSG RAN CR pack RP-241570 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-qe2f2d4571436",
+   "question": "TSG RAN CR pack RP-233911 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qe47fce775846",
+   "question": "Change request R2-2203862 (CR 0685 to TS 38.306) targets Rel-17. For each clause it modifies in Rel-17, which Rel-17 change requests other than R2-2203862 that modify the same clause have a source-verified RAN2 disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the RAN2 meeting, and the CR pack document number.",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN2-qe71c52fdfc86",
+   "question": "TSG RAN CR pack RP-221722 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-qe79a0bf58505",
+   "question": "TSG RAN CR pack RP-211472 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-qea1303af5958",
+   "question": "TSG RAN CR pack RP-252817 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-19). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qedddffc6ce70",
+   "question": "TSG RAN CR pack RP-250661 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-18). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN2-qf25e8f708c35",
+   "question": "TSG RAN CR pack RP-233887 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-17). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN2-qf60e959613bc",
+   "question": "TSG RAN CR pack RP-241549 carries change requests from RAN2. Take each change request in the pack that has a source-verified RAN2 disposition for the whole document and each clause it modifies in the release that change request targets (Rel-16, Rel-17 or Rel-18). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "fields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  }
+ ]
+}

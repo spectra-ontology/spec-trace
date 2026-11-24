@@ -1,0 +1,122 @@
+{
+  "working_group": "RAN1",
+  "phase": 4,
+  "scope": "Projection of an existing original loaded-graph execution receipt; not a fresh execution and not limited to the released query projection.",
+  "original_receipt": {
+    "path": "logs/tsg/RAN/formal/RAN1/phase-4/cq_cypher_results.json",
+    "sha256": "7c76473c054bca711a07764629d5234de61ba13af6ccf0a9fceec767960223dc"
+  },
+  "metadata": {
+    "version": "3.0"
+  },
+  "counts": {
+    "PASS": 15
+  },
+  "results": [
+    {
+      "id": "CQ1-1",
+      "query": "MATCH (cr:CR {tdocNumber: 'R1-2504971'}) WHERE cr.reasonForChange IS NOT NULL RETURN cr.tdocNumber, cr.reasonForChange",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ1-2",
+      "query": "MATCH (cr:CR {tdocNumber: 'R1-2506685'}) WHERE cr.summaryOfChange IS NOT NULL RETURN cr.tdocNumber, cr.summaryOfChange",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ1-3",
+      "query": "MATCH (cr:CR)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_LPWUS-Core'}) WHERE cr.consequencesIfNotApproved IS NOT NULL RETURN cr.tdocNumber, cr.consequencesIfNotApproved ORDER BY cr.tdocNumber DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 24
+    },
+    {
+      "id": "CQ2-1",
+      "query": "MATCH (cr:CR {tdocNumber: 'R1-2504971'})-[r:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) RETURN cr.tdocNumber, sp.specNumber, type(r) AS relationType ORDER BY sp.specNumber ASC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 5
+    },
+    {
+      "id": "CQ2-2",
+      "query": "MATCH (cr:CR)-[:MODIFIES]->(mainSpec:Spec {specNumber: '38.214'}) MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(otherSpec:Spec) WHERE mainSpec <> otherSpec RETURN mainSpec.specNumber AS modifiedSpec, otherSpec.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount ORDER BY crCount DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 11
+    },
+    {
+      "id": "CQ2-3",
+      "query": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec {specNumber: '38.214'}) WITH sp, collect(cr.tdocNumber) AS crList, count(cr) AS crCount RETURN sp.specNumber, crCount, crList[..10] AS sampleCRs",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ2-4",
+      "query": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) RETURN cr.tdocNumber, count(DISTINCT sp) AS affectedSpecCount, collect(DISTINCT sp.specNumber) AS affectedSpecs ORDER BY affectedSpecCount DESC, cr.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-1",
+      "query": "MATCH (pack:CRPack {crPackId: 'RP-252634'})-[:HAS_CR]->(cr:CR) RETURN pack.crPackId, pack.tsgMeeting, cr.tdocNumber, cr.summaryOfChange ORDER BY cr.tdocNumber ASC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 9
+    },
+    {
+      "id": "CQ3-2",
+      "query": "MATCH (cr:CR)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_newRAT-Core'}) MATCH (cr)-[:BELONGS_TO_CR_PACK]->(pack:CRPack) RETURN wi.workItemCode, pack.crPackId, pack.tsgMeeting, count(cr) AS crCount ORDER BY toInteger(split(pack.tsgMeeting, '#')[1]) DESC, crCount DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ3-3",
+      "query": "MATCH (pack:CRPack)-[:HAS_CR]->(cr:CR) WHERE pack.tsgMeeting = 'RAN#109' RETURN pack.tsgMeeting, pack.crPackId, count(cr) AS crCount ORDER BY crCount DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ4-1",
+      "query": "MATCH (cr:CR)-[:MODIFIES_SECTION]->(sec:Section {sectionNumber: '5.1.5'})-[:BELONGS_TO_SPEC]->(:Spec {specNumber: '38.214'}) WHERE cr.reasonForChange IS NOT NULL RETURN sec.sectionId, cr.tdocNumber, cr.reasonForChange ORDER BY cr.tdocNumber DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ4-2",
+      "query": "MATCH (res:Resolution {resolutionId: 'AGR-115-7.1-004'})-[:HAS_DISPOSITION]->(:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(cr:CR) RETURN res.resolutionId, cr.tdocNumber, cr.reasonForChange, cr.summaryOfChange ORDER BY cr.tdocNumber ASC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 3
+    },
+    {
+      "id": "CQ4-3",
+      "query": "MATCH (cr:CR)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_MIMO_evo_DL_UL-Core'}) MATCH (cr)-[:MODIFIES_SECTION]->(sec:Section) WHERE cr.reasonForChange IS NOT NULL RETURN wi.workItemCode, sec.sectionId, cr.tdocNumber, cr.reasonForChange ORDER BY cr.tdocNumber DESC, sec.sectionId ASC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ4-4",
+      "query": "MATCH (cr:CR)-[:SUBMITTED_BY]->(co:Company {companyName: 'Samsung'}) MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) RETURN co.companyName, cr.tdocNumber, collect(DISTINCT sp.specNumber) AS affectedSpecs ORDER BY cr.tdocNumber DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ4-5",
+      "query": "MATCH (res:Resolution)-[:MADE_AT]->(m:Meeting {meetingNumber: 'RAN1#121'}) MATCH (res)-[:HAS_DISPOSITION]->(:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(cr:CR) WHERE cr.summaryOfChange IS NOT NULL RETURN m.meetingNumber, res.resolutionId, cr.tdocNumber, cr.summaryOfChange ORDER BY cr.tdocNumber DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    }
+  ]
+}

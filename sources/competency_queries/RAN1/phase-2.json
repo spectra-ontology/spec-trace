@@ -1,0 +1,260 @@
+{
+  "working_group": "RAN1",
+  "phase": 2,
+  "scope": "Projection of an existing original loaded-graph execution receipt; not a fresh execution and not limited to the released query projection.",
+  "original_receipt": {
+    "path": "logs/tsg/RAN/formal/RAN1/phase-2/cq_cypher_results.json",
+    "sha256": "26084a7ef71015fcc3a3cf80678906ebc9ef61b1e77158026626f813138c0954"
+  },
+  "metadata": {
+    "version": "5.0",
+    "date": "2026-11-24T17:52:10.230712",
+    "total": 34,
+    "pass": 34,
+    "no_data": 0,
+    "fail": 0
+  },
+  "counts": {
+    "PASS": 34
+  },
+  "results": [
+    {
+      "id": "CQ1-1",
+      "query": "MATCH (p:AgendaItem {meetingNumber: '115'}) WHERE toLower(p.agendaDescription) CONTAINS 'mimo' MATCH (ai:AgendaItem {meetingNumber: '115'}) WHERE ai.meetingNumber = p.meetingNumber AND (ai.agendaNumber = p.agendaNumber OR ai.agendaNumber STARTS WITH p.agendaNumber + '.') WITH DISTINCT ai MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai), (a)-[:MADE_AT]->(:Meeting {canonicalMeetingNumber: 'RAN1#115'}) RETURN a.resolutionId, a.content, ai.agendaNumber ORDER BY ai.agendaNumber, a.sequence LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ1-2",
+      "query": "MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem {agendaNumber: '5.1'}), (a)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN1#100'}) RETURN a.resolutionId, a.content ORDER BY a.sequence LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 5
+    },
+    {
+      "id": "CQ1-3",
+      "query": "MATCH (c:Conclusion)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN1#121'}) RETURN c.resolutionId, c.content ORDER BY c.sequence LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ1-4",
+      "query": "MATCH (wa:WorkingAssumption)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN1#115'}) RETURN wa.resolutionId, wa.content ORDER BY wa.sequence LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ1-5",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.hasFFS = true RETURN a.resolutionId, a.content, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ1-6",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'PDCCH' AND a.content CONTAINS 'blind' RETURN a.resolutionId, m.meetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-7",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'beam' AND (a.content CONTAINS 'management' OR a.content CONTAINS 'indication') RETURN a.resolutionId, m.meetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ2-1",
+      "query": "MATCH (a:Agreement {resolutionId: 'AGR-100-e-6.1-001'})-[:REFERENCES]->(t:Tdoc) RETURN a.resolutionId, a.content, t.tdocNumber, t.title",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 3
+    },
+    {
+      "id": "CQ2-2",
+      "query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc {tdocNumber: 'R1-2001110'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, a.resolutionId, a.content, m.meetingNumber",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ2-3",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN1#115'}) MATCH (a)-[:HAS_DISPOSITION]->(d:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(cr:CR) RETURN a.resolutionId, a.content, a.sequence AS sequence, collect(DISTINCT cr.tdocNumber) AS approvedCRs ORDER BY sequence LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ2-4",
+      "query": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) RETURN ai.agendaNumber, count(r) AS resolutionCount ORDER BY resolutionCount DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ2-5",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS '38.211' RETURN a.resolutionId, m.meetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ3-1",
+      "query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, a.resolutionId, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ3-2",
+      "query": "MATCH (c:Company {companyName: 'Samsung'})<-[:SUBMITTED_BY]-(t:Tdoc) WITH c, count(t) AS totalTdocs OPTIONAL MATCH (a:Agreement)-[:REFERENCES]->(t2:Tdoc)-[:SUBMITTED_BY]->(c) WITH c, totalTdocs, count(DISTINCT t2) AS agreementLinkedTdocs, count(DISTINCT a) AS agreementCount RETURN c.companyName, totalTdocs, agreementLinkedTdocs, agreementCount, round(100.0 * agreementLinkedTdocs / totalTdocs, 1) AS contributionRate",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ3-3",
+      "query": "MATCH (p:AgendaItem) WHERE toLower(p.agendaDescription) CONTAINS 'mimo' MATCH (ai:AgendaItem) WHERE ai.meetingNumber = p.meetingNumber AND (ai.agendaNumber = p.agendaNumber OR ai.agendaNumber STARTS WITH p.agendaNumber + '.') WITH DISTINCT ai MATCH (a:Agreement)-[:RESOLUTION_BELONGS_TO]->(ai) MATCH (a)-[:REFERENCES]->(:Tdoc)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT a) AS contributionCount ORDER BY contributionCount DESC, c.companyName ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-4",
+      "query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Qualcomm'}), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, a.resolutionId, a.content, m.meetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-5",
+      "query": "MATCH (a:Agreement)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company) WHERE c.companyName IN ['Ericsson', 'Nokia'] RETURN c.companyName, count(DISTINCT a) AS contributionCount ORDER BY contributionCount DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 2
+    },
+    {
+      "id": "CQ3-6",
+      "query": "MATCH (t:Tdoc {status: 'approved'})-[:SUBMITTED_BY]->(c:Company {companyName: 'ZTE'}) RETURN t.tdocNumber, t.title ORDER BY t.tdocNumber DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ4-1",
+      "query": "MATCH (p:AgendaItem) WHERE toLower(p.agendaDescription) CONTAINS 'mimo' MATCH (ai:AgendaItem) WHERE ai.meetingNumber = p.meetingNumber AND (ai.agendaNumber = p.agendaNumber OR ai.agendaNumber STARTS WITH p.agendaNumber + '.') WITH DISTINCT ai MATCH (t:Tdoc)-[:BELONGS_TO]->(ai) WHERE t.summaryType = 'FL' MATCH (t)-[:MODERATED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT t) AS flCount ORDER BY flCount DESC, c.companyName ASC LIMIT 5",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 5
+    },
+    {
+      "id": "CQ4-2",
+      "query": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem), (t)-[:MODERATED_BY]->(c:Company {companyName: 'Huawei'})\nWHERE t.summaryType = 'FL'\nRETURN DISTINCT ai.agendaNumber, count(t) AS flCount ORDER BY flCount DESC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ4-3",
+      "query": "MATCH (t:Tdoc)-[:MODERATED_BY]->(c:Company)\nWHERE t.summaryType = 'FL'\nRETURN c.companyName, count(t) AS flCount ORDER BY flCount DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-1",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'CSI-RS' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC, a.resolutionId ASC LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ5-2",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'HARQ' AND a.content CONTAINS 'feedback' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-3",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'SRS' AND a.content CONTAINS 'configuration' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-4",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'DCI' AND a.content CONTAINS 'format' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-5",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'PUSCH' AND a.content CONTAINS 'repetition' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-6",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE m.meetingNumberInt >= 100 AND m.meetingNumberInt <= 121 WITH m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS n, count(a) AS agreementCount RETURN meeting, agreementCount ORDER BY n, meeting",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 32
+    },
+    {
+      "id": "CQ5-7",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'MIMO' AND a.content CONTAINS 'codebook' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-8",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'BWP' AND a.content CONTAINS 'switch' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-9",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'slot' AND a.content CONTAINS 'aggregation' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-10",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'UCI' AND a.content CONTAINS 'multiplex' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-11",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'DMRS' AND a.content CONTAINS 'pattern' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-12",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'SSB' AND a.content CONTAINS 'burst' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ5-13",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'PUCCH' AND a.content CONTAINS 'resource' RETURN m.meetingNumber, a.resolutionId, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    }
+  ]
+}

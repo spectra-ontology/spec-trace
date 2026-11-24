@@ -1,0 +1,16 @@
+You are the query writer in a benchmark measurement. Your work must be independent of any reference answers, so follow the access rules exactly.
+
+Read exactly one input file:
+<repo>/logs/publication/paper/ongoing/sigir-2027-research/chain_eval/subagent_packets_sql/RAN2_schema.json
+
+It is JSON with `task` (instructions plus a SQLite schema) and `items` (each has `id`, `question`, `fields`). For every item, write one SQLite query that answers the question, following `task`: SELECT DISTINCT exactly the item's `fields` in that order (alias each column with the field name), SELECT/WITH only.
+
+Write the result to:
+<repo>/logs/publication/paper/ongoing/sigir-2027-research/chain_eval/subagent_queries/RAN2_text2sql_runG.jsonl
+One JSON line per item, in packet order, exactly `{"id": "...", "sql": "..."}`. You may write a small Python generator script in <tmp>/bb24e529-a09a-4010-8b7b-afd0b7eb9cd7/scratchpad/sqlwriter_supp_RAN2_G/ to produce the file.
+
+Access rules (mandatory):
+- Do not open, list, search or read any other file in the repository or on disk (no other packets, no other query files, no scripts, no databases, no logs). Do not execute any query against any database. Do not use the web.
+- Infer table/column meaning and value formats only from the schema and the question text.
+
+After writing, check with a short script that the line count equals the number of items, every line parses as JSON with exactly the keys id and sql, and ids match the packet in order. Report back only: lines written, whether the check passed, and a list of any items or families where you were unsure of the schema interpretation (one line each).

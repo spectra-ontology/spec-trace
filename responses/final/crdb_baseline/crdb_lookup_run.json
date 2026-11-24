@@ -1,0 +1,137 @@
+{
+  "method": "crdb_lookup",
+  "model": "none",
+  "items": 667,
+  "itemFiles": [
+    "logs/publication/paper/ongoing/sigir-2027-research/integration/items_final/gate/core/chain_items_admitted.jsonl",
+    "logs/publication/paper/ongoing/sigir-2027-research/integration/items_final/gate/ran5/chain_items_admitted.jsonl"
+  ],
+  "snapshot": {
+    "zipFile": "CRDB_20261012.zip",
+    "zipBytes": 58035283,
+    "zipSha256": "093273fd4d6da3418aaeaa6753c81ff0e862db8e378b8629886941498330bc19",
+    "xlsxMember": "CRDB_20261012.xlsx",
+    "xlsxBytes": 59056213,
+    "xlsxZipTimestamp": "2026-10-12T09:14:20",
+    "sheet": "Query1",
+    "sheetPath": "xl/worksheets/sheet1.xml",
+    "dataRows": 603428,
+    "columns": [
+      "Spec number",
+      "CR number",
+      "Revision",
+      "Subject",
+      "Meeting WG-level",
+      "WG-level status",
+      "Meeting TSG-level",
+      "TSG-level status",
+      "WGSourceOrganizations",
+      "TSGSourceOrganizations",
+      "WG Tdoc",
+      "Category",
+      "Release",
+      "Version-current",
+      "Version-new",
+      "Date",
+      "TSG Tdoc",
+      "Work items"
+    ],
+    "sourceUrl": "https://www.3gpp.org/ftp/Information/Databases/Change_Request/CRDB_20261012.zip",
+    "listingEntry": "CRDB_20261012.zip 2026/10/12 7:14 56675 KB",
+    "httpLastModified": "Mon, 12 Oct 2026 07:14:37 GMT",
+    "retrieved": "Sat, 14 Nov 2026 03:36:43 GMT",
+    "snapshotDateInFileName": "20261012"
+  },
+  "rules": {
+    "inputsUsed": "Answers read only the item keys id, wg, family, anchor, question and fields, and the CRDB rows. gold, evidence, expectsEmpty and hops are dropped when the item file is read; no earlier response file is read.",
+    "columnMapping": {
+      "document / final_document": "WG Tdoc",
+      "disposition": "WG-level status",
+      "wg_meeting": "Meeting WG-level",
+      "cr_pack": "TSG Tdoc",
+      "tsg_meeting": "Meeting TSG-level",
+      "revision order": "Revision within one (Spec number, CR number)",
+      "not used": "Subject, TSG-level status, source organisations, Category, Release, versions, Date, Work items"
+    },
+    "familyRules": {
+      "pack_lookup": "rows of the anchor WG Tdoc -> one row [TSG Tdoc, Meeting TSG-level] per distinct submission whose TSG Tdoc is an RP document and whose meeting is a TSG RAN plenary",
+      "pack_lookup_empty": "same question template and same rule as pack_lookup; the family label is not used",
+      "disposition_pack": "rows of the anchor WG Tdoc -> every distinct (WG-level status, Meeting WG-level) with both filled, times every distinct (TSG Tdoc, Meeting TSG-level) as in pack_lookup",
+      "pack_origin": "rows whose TSG Tdoc is the anchor pack and whose WG Tdoc is a document of the item's WG -> for each such WG Tdoc, every distinct (WG-level status, Meeting WG-level) with both filled, gathered over that WG Tdoc's rows of the same (Spec number, CR number)",
+      "revision_chain": "rows of the anchor WG Tdoc give (Spec number, CR number, Revision); every other WG Tdoc of the item's WG in the same (Spec number, CR number) with a strictly higher Revision -> every distinct WG-level status times every distinct RP TSG Tdoc of that document; a document with no status or no RP pack gives no row",
+      "full_chain": "not expressible: the CRDB has no modified-clause column; answered with no rows",
+      "clause_history": "not expressible: the CRDB has no modified-clause column; answered with no rows"
+    },
+    "normalisation": {
+      "document numbers": "upper-case, whitespace and parentheses removed, runs of '-' collapsed to one ('RP--080615' -> 'RP-080615'); no suffix is stripped ('R4-79AH-0008' stays as it is)",
+      "WG document of RANn": "normalised WG Tdoc starting with 'Rn-' (RAN5 also 'R5S', its signalling sub-group prefix)",
+      "CR pack": "normalised TSG Tdoc matching RP-<digits>; any other TSG Tdoc value counts as no pack",
+      "meeting labels": "surrounding and inner whitespace removed, leading '3GPP' removed, '-#' -> '#' ('3GPPRAN1#100-bis-e' -> 'RAN1#100-bis-e', '3GPPRAN-#18' -> 'RAN#18'); a TSG meeting counts only when it starts with 'RAN#'; bis spellings are left to the scorer's meeting_spelling",
+      "CR number": "compared upper-case without leading zeros ('0058' == '58')",
+      "Revision": "'-' and '0' are revision 0; other values are their integer; a non-numeric value has no order and is never 'later'",
+      "empty cell": "'-', '' and a missing cell are no value"
+    },
+    "statusVocabulary": {
+      "source": "the answer rules every method receives (run_chain_eval.ANSWER_RULES): 'Disposition values are lower-case codes such as agreed, revised, noted, endorsed, withdrawn, not_pursued'",
+      "mapping": "CRDB WG-level status lower-cased with spaces replaced by '_' (agreed, revised, noted, endorsed, withdrawn, 'not pursued' -> not_pursued, postponed, merged, rejected, 'not treated' -> not_treated, reissued); '-' is no disposition"
+    },
+    "multipleRows": {
+      "same WG Tdoc in several rows": "WG-level values (status, WG meeting) and TSG-level values (pack, plenary meeting) are gathered separately as distinct pairs and combined; a row with WG-level status '-' still contributes its pack",
+      "question names CR and spec": "pack_lookup, pack_lookup_empty and disposition_pack questions state '(CR <n> to TS <spec>)'; when some rows of the WG Tdoc match that CR and spec only those rows are used, otherwise all rows of the WG Tdoc",
+      "several CRDB revisions": "revision_chain keeps every later revision that satisfies the conditions; no single 'final' revision is chosen",
+      "incomplete answer row": "a requested field that the CRDB leaves empty drops that answer row"
+    }
+  },
+  "responses": {
+    "RAN1": {
+      "path": "logs/publication/paper/ongoing/sigir-2027-research/final/crdb_baseline/RAN1_crdb_lookup.jsonl",
+      "items": 110
+    },
+    "RAN2": {
+      "path": "logs/publication/paper/ongoing/sigir-2027-research/final/crdb_baseline/RAN2_crdb_lookup.jsonl",
+      "items": 140
+    },
+    "RAN3": {
+      "path": "logs/publication/paper/ongoing/sigir-2027-research/final/crdb_baseline/RAN3_crdb_lookup.jsonl",
+      "items": 140
+    },
+    "RAN4": {
+      "path": "logs/publication/paper/ongoing/sigir-2027-research/final/crdb_baseline/RAN4_crdb_lookup.jsonl",
+      "items": 139
+    },
+    "RAN5": {
+      "path": "logs/publication/paper/ongoing/sigir-2027-research/final/crdb_baseline/RAN5_crdb_lookup.jsonl",
+      "items": 138
+    }
+  },
+  "answerCounts": {
+    "clause_history": {
+      "items": 100,
+      "nonEmptyAnswers": 0
+    },
+    "disposition_pack": {
+      "items": 99,
+      "nonEmptyAnswers": 99
+    },
+    "full_chain": {
+      "items": 100,
+      "nonEmptyAnswers": 0
+    },
+    "pack_lookup": {
+      "items": 100,
+      "nonEmptyAnswers": 100
+    },
+    "pack_lookup_empty": {
+      "items": 86,
+      "nonEmptyAnswers": 0
+    },
+    "pack_origin": {
+      "items": 100,
+      "nonEmptyAnswers": 100
+    },
+    "revision_chain": {
+      "items": 82,
+      "nonEmptyAnswers": 79
+    }
+  }
+}

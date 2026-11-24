@@ -1,0 +1,3426 @@
+{
+  "command": "gate",
+  "script": "scripts/publication/paper/ongoing/sigir-2027-research/reconcile_reported_counts.py",
+  "scriptSha256": "4080e8d58320ffb2228fd7cd947194b0c769b8ad8f6c74b8e3ac78e30adfd721",
+  "static": {
+    "failureOrder": [
+      "gold_differs_from_independent_derivation",
+      "row_width_differs_from_requested_fields",
+      "question_does_not_name_a_requested_field",
+      "evidence_source_changed",
+      "document_list_pack_differs_from_pack_record",
+      "same_cr_identity_packed_outside_gold",
+      "empty_gold_not_supported_by_disposition",
+      "unexpected_empty_gold"
+    ],
+    "packSourcesSql": "SELECT doc.number FROM doc WHERE doc.id IN ({considered}) AND doc.pack_field GLOB 'RP-[0-9]*' AND NOT EXISTS (SELECT 1 FROM pack_member m WHERE m.cr = doc.id AND m.pack = doc.pack_field)",
+    "docstringItem5": "묶음 출처 일치: 문항이 살피는 문서 가운데 문서 목록의 묶음 번호(`tdoc:tsgCRPack`)가 묶음 기록의 소속과 다른\n   문서가 없다. 두 출처가 갈리는 문서는 어느 쪽을 읽느냐에 따라 답이 달라지므로 정답을 하나로 정할 수 없다.",
+    "considered": {
+      "document": "SELECT :anchor",
+      "revision_chain": "WITH RECURSIVE later(id) AS ( SELECT later FROM revision WHERE earlier = :anchor UNION SELECT r.later FROM revision r JOIN later l ON r.earlier = l.id) SELECT id FROM later",
+      "clause_history": "SELECT s.cr FROM section_change s JOIN doc ON doc.id = s.cr WHERE s.section = :anchor AND doc.release = s.release",
+      "pack_origin": "SELECT cr FROM pack_member WHERE pack_id = :anchor UNION SELECT id FROM doc WHERE pack_field = :anchor_local"
+    },
+    "syntheticCases": [
+      {
+        "case": "listAndRecordSame",
+        "listPackField": "RP-1",
+        "recordPacks": [
+          "RP-1"
+        ],
+        "rejects": false,
+        "expected": false
+      },
+      {
+        "case": "listAndRecordDifferent",
+        "listPackField": "RP-1",
+        "recordPacks": [
+          "RP-2"
+        ],
+        "rejects": true,
+        "expected": true
+      },
+      {
+        "case": "listOnly",
+        "listPackField": "RP-1",
+        "recordPacks": [],
+        "rejects": true,
+        "expected": true
+      },
+      {
+        "case": "listDashRecordPack",
+        "listPackField": "-",
+        "recordPacks": [
+          "RP-1"
+        ],
+        "rejects": false,
+        "expected": false
+      },
+      {
+        "case": "listEmptyRecordPack",
+        "listPackField": "",
+        "recordPacks": [
+          "RP-1"
+        ],
+        "rejects": false,
+        "expected": false
+      },
+      {
+        "case": "listOtherTextRecordPack",
+        "listPackField": "see RP-1",
+        "recordPacks": [
+          "RP-1"
+        ],
+        "rejects": false,
+        "expected": false
+      },
+      {
+        "case": "recordHasFurtherPack",
+        "listPackField": "RP-1",
+        "recordPacks": [
+          "RP-1",
+          "RP-2"
+        ],
+        "rejects": false,
+        "expected": false
+      },
+      {
+        "case": "listPackWithSuffix",
+        "listPackField": "RP-1 rev",
+        "recordPacks": [
+          "RP-1"
+        ],
+        "rejects": true,
+        "expected": true
+      },
+      {
+        "case": "listPackInParentheses",
+        "listPackField": "(RP-1)",
+        "recordPacks": [
+          "RP-1"
+        ],
+        "rejects": false,
+        "expected": false
+      },
+      {
+        "case": "neither",
+        "listPackField": "",
+        "recordPacks": [],
+        "rejects": false,
+        "expected": false
+      },
+      {
+        "case": "notInDocumentList",
+        "listPackField": null,
+        "recordPacks": [
+          "RP-1"
+        ],
+        "rejects": false,
+        "expected": false
+      }
+    ]
+  },
+  "storedGate": {
+    "inputs": {
+      "core": "logs/publication/paper/ongoing/sigir-2027-research/integration/items_final/core/chain_items.jsonl",
+      "ran5": "logs/publication/paper/ongoing/sigir-2027-research/integration/items_final/ran5/chain_items.jsonl"
+    },
+    "stored": {
+      "core": "logs/publication/paper/ongoing/sigir-2027-research/integration/items_final/gate/core",
+      "ran5": "logs/publication/paper/ongoing/sigir-2027-research/integration/items_final/gate/ran5"
+    },
+    "configs": {
+      "A": {
+        "phase2Root": "logs/publication/paper/ongoing/sigir-2027-research/integration/before_baseline_revision_output_rule",
+        "phase4Root": "logs/publication/paper/ongoing/sigir-2027-research/RAN5_graph_export"
+      },
+      "B": {
+        "phase2Root": null,
+        "phase4Root": "logs/publication/paper/ongoing/sigir-2027-research/RAN5_graph_export"
+      }
+    },
+    "byConfig": {
+      "A": {
+        "core": {
+          "checked": 530,
+          "admitted": 529,
+          "rejected": 1,
+          "sourceFilesHashed": 150,
+          "rejectedItems": [
+            {
+              "id": "RAN4-pack_lookup_empty-R4-2314403",
+              "failures": [
+                "same_cr_identity_packed_outside_gold"
+              ]
+            }
+          ],
+          "admittedFileIdentical": true,
+          "reportFileIdentical": true
+        },
+        "ran5": {
+          "checked": 140,
+          "admitted": 138,
+          "rejected": 2,
+          "sourceFilesHashed": 35,
+          "rejectedItems": [
+            {
+              "id": "RAN5-disposition_pack-R5-197045",
+              "failures": [
+                "document_list_pack_differs_from_pack_record"
+              ]
+            },
+            {
+              "id": "RAN5-revision_chain-R5-195854",
+              "failures": [
+                "document_list_pack_differs_from_pack_record"
+              ]
+            }
+          ],
+          "admittedFileIdentical": true,
+          "reportFileIdentical": true
+        }
+      },
+      "B": {
+        "core": {
+          "checked": 530,
+          "admitted": 529,
+          "rejected": 1,
+          "sourceFilesHashed": 150,
+          "rejectedItems": [
+            {
+              "id": "RAN4-pack_lookup_empty-R4-2314403",
+              "failures": [
+                "same_cr_identity_packed_outside_gold"
+              ]
+            }
+          ],
+          "admittedFileIdentical": true,
+          "reportFileIdentical": true
+        },
+        "ran5": {
+          "checked": 140,
+          "admitted": 138,
+          "rejected": 2,
+          "sourceFilesHashed": 35,
+          "rejectedItems": [
+            {
+              "id": "RAN5-disposition_pack-R5-197045",
+              "failures": [
+                "document_list_pack_differs_from_pack_record"
+              ]
+            },
+            {
+              "id": "RAN5-revision_chain-R5-195854",
+              "failures": [
+                "document_list_pack_differs_from_pack_record"
+              ]
+            }
+          ],
+          "admittedFileIdentical": true,
+          "reportFileIdentical": true
+        }
+      }
+    },
+    "reproducingConfigs": [
+      "A",
+      "B"
+    ],
+    "configUsedForDocumentClasses": "A"
+  },
+  "documentClasses": {
+    "unit": "문항이 살피는 문서(게이트 DB). 한 문서가 여러 문항에서 세일 수 있다",
+    "documentsByClass": {
+      "agree": 1261,
+      "bothNoPack:emptyOrAbsent": 125,
+      "listPackOutsideRecord": 2,
+      "notInDocumentList:recordPack": 1,
+      "recordPackOnly:dash": 63,
+      "recordPackOnly:emptyOrAbsent": 242
+    },
+    "itemsByClass": {
+      "agree": 459,
+      "bothNoPack:emptyOrAbsent": 108,
+      "listPackOutsideRecord": 2,
+      "notInDocumentList:recordPack": 1,
+      "recordPackOnly:dash": 25,
+      "recordPackOnly:emptyOrAbsent": 112
+    },
+    "admittedItemsWithUncheckedDirection": {
+      "admittedItemsWithAny": 133,
+      "recordPackOnly:dash": 25,
+      "recordPackOnly:emptyOrAbsent": 112
+    },
+    "examples": {
+      "agree": [
+        {
+          "item": "RAN1-pack_lookup-R1-1909887",
+          "document": "tdoc:R1-1909887",
+          "listPackField": "RP-191942",
+          "recordPacks": [
+            "RP-191942"
+          ]
+        },
+        {
+          "item": "RAN1-pack_lookup-R1-2505010",
+          "document": "tdoc:R1-2505010",
+          "listPackField": "RP-251562",
+          "recordPacks": [
+            "RP-251562"
+          ]
+        },
+        {
+          "item": "RAN1-pack_lookup-R1-2208155",
+          "document": "tdoc:R1-2208155",
+          "listPackField": "RP-222401",
+          "recordPacks": [
+            "RP-222401"
+          ]
+        },
+        {
+          "item": "RAN1-pack_lookup-R1-2212754",
+          "document": "tdoc:R1-2212754",
+          "listPackField": "RP-222856",
+          "recordPacks": [
+            "RP-222856"
+          ]
+        },
+        {
+          "item": "RAN1-pack_lookup-R1-2002832",
+          "document": "tdoc:R1-2002832",
+          "listPackField": "RP-200683",
+          "recordPacks": [
+            "RP-200683"
+          ]
+        }
+      ],
+      "bothNoPack:emptyOrAbsent": [
+        {
+          "item": "RAN1-revision_chain-R1-2403693",
+          "document": "tdoc:R1-2403737",
+          "listPackField": "",
+          "recordPacks": []
+        },
+        {
+          "item": "RAN1-revision_chain-R1-2307027",
+          "document": "tdoc:R1-2308454",
+          "listPackField": "",
+          "recordPacks": []
+        },
+        {
+          "item": "RAN1-revision_chain-R1-2308156",
+          "document": "tdoc:R1-2308573",
+          "listPackField": "",
+          "recordPacks": []
+        },
+        {
+          "item": "RAN1-pack_lookup_empty-R1-2601678",
+          "document": "tdoc:R1-2601678",
+          "listPackField": "",
+          "recordPacks": []
+        },
+        {
+          "item": "RAN1-pack_lookup_empty-R1-167179",
+          "document": "tdoc:R1-167179",
+          "listPackField": "",
+          "recordPacks": []
+        }
+      ],
+      "listPackOutsideRecord": [
+        {
+          "item": "RAN5-disposition_pack-R5-197045",
+          "document": "tdoc:R5-197045",
+          "listPackField": "RP-191704",
+          "recordPacks": [
+            "RP-191711"
+          ]
+        },
+        {
+          "item": "RAN5-revision_chain-R5-195854",
+          "document": "tdoc:R5-197032",
+          "listPackField": "RP-191704",
+          "recordPacks": [
+            "RP-191711"
+          ]
+        }
+      ],
+      "notInDocumentList:recordPack": [
+        {
+          "item": "RAN1-pack_origin-RP-261340",
+          "document": "tdoc:R1-2605124",
+          "listPackField": null,
+          "recordPacks": [
+            "RP-261340"
+          ]
+        }
+      ],
+      "recordPackOnly:dash": [
+        {
+          "item": "RAN5-pack_lookup-R5-247719",
+          "document": "tdoc:R5-247719",
+          "listPackField": "-",
+          "recordPacks": [
+            "RP-242695"
+          ]
+        },
+        {
+          "item": "RAN5-pack_lookup-R5-221510",
+          "document": "tdoc:R5-221510",
+          "listPackField": "-",
+          "recordPacks": [
+            "RP-220093"
+          ]
+        },
+        {
+          "item": "RAN5-disposition_pack-R5-221784",
+          "document": "tdoc:R5-221784",
+          "listPackField": "-",
+          "recordPacks": [
+            "RP-220083"
+          ]
+        },
+        {
+          "item": "RAN5-disposition_pack-R5-235871",
+          "document": "tdoc:R5-235871",
+          "listPackField": "-",
+          "recordPacks": [
+            "RP-231641"
+          ]
+        },
+        {
+          "item": "RAN5-disposition_pack-R5-214035",
+          "document": "tdoc:R5-214035",
+          "listPackField": "-",
+          "recordPacks": [
+            "RP-211033"
+          ]
+        }
+      ],
+      "recordPackOnly:emptyOrAbsent": [
+        {
+          "item": "RAN1-pack_origin-RP-261340",
+          "document": "tdoc:R1-2603378",
+          "listPackField": "",
+          "recordPacks": [
+            "RP-261340"
+          ]
+        },
+        {
+          "item": "RAN1-pack_origin-RP-261340",
+          "document": "tdoc:R1-2603379",
+          "listPackField": "",
+          "recordPacks": [
+            "RP-261340"
+          ]
+        },
+        {
+          "item": "RAN1-pack_origin-RP-253013",
+          "document": "tdoc:R1-2508143",
+          "listPackField": "",
+          "recordPacks": [
+            "RP-253013"
+          ]
+        },
+        {
+          "item": "RAN1-pack_origin-RP-253013",
+          "document": "tdoc:R1-2508144",
+          "listPackField": "",
+          "recordPacks": [
+            "RP-253013"
+          ]
+        },
+        {
+          "item": "RAN1-pack_origin-RP-253013",
+          "document": "tdoc:R1-2508166",
+          "listPackField": "",
+          "recordPacks": [
+            "RP-253013"
+          ]
+        }
+      ]
+    }
+  },
+  "e4": {
+    "source": "logs/publication/paper/ongoing/sigir-2027-research/final/substitution_ablation.json",
+    "counts": {
+      "evaluated": 667,
+      "unchanged": 509,
+      "changed": 35,
+      "undefined": 123,
+      "changedKinds": {
+        "lostOnly": 35
+      },
+      "undefinedReasons": {
+        "readDocumentOnly": 25,
+        "rowsNeedRecord": 98
+      }
+    },
+    "blankCellUndefinedCounts": {
+      "evaluated": 667,
+      "unchanged": 435,
+      "changed": 25,
+      "undefined": 207,
+      "changedAlsoUndefined": 4
+    },
+    "changedByWgFamily": {
+      "RAN5/clause_history": 4,
+      "RAN5/disposition_pack": 7,
+      "RAN5/full_chain": 9,
+      "RAN5/pack_lookup": 4,
+      "RAN5/pack_origin": 4,
+      "RAN5/revision_chain": 7
+    },
+    "lostRowDirections": {
+      "meaning": "바뀐 문항의 읽은 문서 가운데 기록 묶음과 목록 값이 다른 문서를 방향별로 나누고, 그 방향의 문서에만 기록 행을 되돌렸을 때 되찾는 손실 행을 센다",
+      "itemsByRecoveringDirections": {
+        "recordPackListSaysNone:none-dash": 21,
+        "recordPackListSaysNone:none-dash+recordPackListSaysNone:none-emptyCell": 4,
+        "recordPackListSaysNone:none-emptyCell": 10
+      },
+      "documentsByDirection": {
+        "recordPackListSaysNone:none-dash": 63,
+        "recordPackListSaysNone:none-emptyCell": 42
+      },
+      "byBlankCellReading": {
+        "stayChangedWhenBlankCellUndefined": {
+          "recordPackListSaysNone:none-dash": 21,
+          "recordPackListSaysNone:none-dash+recordPackListSaysNone:none-emptyCell": 4
+        },
+        "becomeUndefined": {
+          "recordPackListSaysNone:none-emptyCell": 10
+        }
+      }
+    },
+    "items": [
+      {
+        "id": "RAN5-pack_lookup-R5-221329",
+        "wg": "RAN5",
+        "family": "pack_lookup",
+        "anchor": "tdoc:R5-221329",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "RP-220086",
+            "RAN#95"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-221329",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-220086"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-pack_lookup-R5-247719",
+        "wg": "RAN5",
+        "family": "pack_lookup",
+        "anchor": "tdoc:R5-247719",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "RP-242695",
+            "RAN#106"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-247719",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-242695"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-pack_lookup-R5-221510",
+        "wg": "RAN5",
+        "family": "pack_lookup",
+        "anchor": "tdoc:R5-221510",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "RP-220093",
+            "RAN#95"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-221510",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-220093"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-pack_lookup-R5-221112",
+        "wg": "RAN5",
+        "family": "pack_lookup",
+        "anchor": "tdoc:R5-221112",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "RP-220074",
+            "RAN#95"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-221112",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-220074"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-disposition_pack-R5-232387",
+        "wg": "RAN5",
+        "family": "disposition_pack",
+        "anchor": "tdoc:R5-232387",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#99",
+            "RP-230973",
+            "RAN#100"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-232387",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-230973"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-disposition_pack-R5-220682",
+        "wg": "RAN5",
+        "family": "disposition_pack",
+        "anchor": "tdoc:R5-220682",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#94-e",
+            "RP-220096",
+            "RAN#95"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-220682",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-220096"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-disposition_pack-R5-221784",
+        "wg": "RAN5",
+        "family": "disposition_pack",
+        "anchor": "tdoc:R5-221784",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#94-e",
+            "RP-220083",
+            "RAN#95"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-221784",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-220083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-disposition_pack-R5-232980",
+        "wg": "RAN5",
+        "family": "disposition_pack",
+        "anchor": "tdoc:R5-232980",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#99",
+            "RP-230983",
+            "RAN#100"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-232980",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-230983"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-disposition_pack-R5-235871",
+        "wg": "RAN5",
+        "family": "disposition_pack",
+        "anchor": "tdoc:R5-235871",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#100",
+            "RP-231641",
+            "RAN#101"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-235871",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-231641"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-disposition_pack-R5-233185",
+        "wg": "RAN5",
+        "family": "disposition_pack",
+        "anchor": "tdoc:R5-233185",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#99",
+            "RP-230976",
+            "RAN#100"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-233185",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-230976"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-disposition_pack-R5-214035",
+        "wg": "RAN5",
+        "family": "disposition_pack",
+        "anchor": "tdoc:R5-214035",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#91-e",
+            "RP-211033",
+            "RAN#92"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-214035",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-211033"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-213102",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-213102",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#91-e",
+            "RP-210992",
+            "RAN#92",
+            "7.3.2.4"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-213102",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-210992"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-248004",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-248004",
+        "goldRows": 4,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#105",
+            "RP-242738",
+            "RAN#106",
+            "7.6A.2.0.1"
+          ],
+          [
+            "agreed",
+            "RAN5#105",
+            "RP-242738",
+            "RAN#106",
+            "7.6A.2.1.5.1"
+          ],
+          [
+            "agreed",
+            "RAN5#105",
+            "RP-242738",
+            "RAN#106",
+            "7.6A.2.2.5"
+          ],
+          [
+            "agreed",
+            "RAN5#105",
+            "RP-242738",
+            "RAN#106",
+            "7.6A.2.3.5"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 4,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-248004",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-242738"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-221462",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-221462",
+        "goldRows": 2,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#94-e",
+            "RP-220078",
+            "RAN#95",
+            "4.1"
+          ],
+          [
+            "agreed",
+            "RAN5#94-e",
+            "RP-220078",
+            "RAN#95",
+            "4.2"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 2,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-221462",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-220078"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-233321",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-233321",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#99",
+            "RP-230982",
+            "RAN#100",
+            "6.5.2.2.3"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-233321",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-230982"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-235292",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-235292",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#100",
+            "RP-231696",
+            "RAN#101",
+            "8.2.2.2.1"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-235292",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-231696"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-235422",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-235422",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#100",
+            "RP-231678",
+            "RAN#101",
+            "4.1"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-235422",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-231678"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-232612",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-232612",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#99",
+            "RP-230932",
+            "RAN#100",
+            "6.5.3"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-232612",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-230932"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-233408",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-233408",
+        "goldRows": 2,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#99",
+            "RP-230947",
+            "RAN#100",
+            "7.1.1.1.2"
+          ],
+          [
+            "agreed",
+            "RAN5#99",
+            "RP-230947",
+            "RAN#100",
+            "8.1.5.2.2"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 2,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-233408",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-230947"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-full_chain-R5-220776",
+        "wg": "RAN5",
+        "family": "full_chain",
+        "anchor": "tdoc:R5-220776",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "agreed",
+            "RAN5#94-e",
+            "RP-220113",
+            "RAN#95",
+            "A.4.3.2B.2.3.1"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-220776",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-220113"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-revision_chain-R5-227333",
+        "wg": "RAN5",
+        "family": "revision_chain",
+        "anchor": "tdoc:R5-227333",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-228036",
+            "agreed",
+            "RP-222747"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-228036",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222747"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-revision_chain-R5-247478",
+        "wg": "RAN5",
+        "family": "revision_chain",
+        "anchor": "tdoc:R5-247478",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-247825",
+            "agreed",
+            "RP-242672"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-247825",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-242672"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-revision_chain-R5-222305",
+        "wg": "RAN5",
+        "family": "revision_chain",
+        "anchor": "tdoc:R5-222305",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-223679",
+            "agreed",
+            "RP-221084"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-223679",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221084"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-revision_chain-R5-222569",
+        "wg": "RAN5",
+        "family": "revision_chain",
+        "anchor": "tdoc:R5-222569",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-223794",
+            "agreed",
+            "RP-221125"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-223794",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221125"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-revision_chain-R5-247130",
+        "wg": "RAN5",
+        "family": "revision_chain",
+        "anchor": "tdoc:R5-247130",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-247613",
+            "agreed",
+            "RP-242736"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-247613",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-242736"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-revision_chain-R5-232184",
+        "wg": "RAN5",
+        "family": "revision_chain",
+        "anchor": "tdoc:R5-232184",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-233416",
+            "agreed",
+            "RP-230950"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-233416",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-230950"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-revision_chain-R5-233296",
+        "wg": "RAN5",
+        "family": "revision_chain",
+        "anchor": "tdoc:R5-233296",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-233450",
+            "agreed",
+            "RP-230971"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-233450",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-230971"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-clause_history-38.523-3-Rel-17-7.4.2.4.2",
+        "wg": "RAN5",
+        "family": "clause_history",
+        "anchor": "tdoc:section/38.523-3-Rel-17-7.4.2.4.2",
+        "goldRows": 2,
+        "lostRows": [
+          [
+            "R5-223378",
+            "agreed",
+            "RAN5#95-e",
+            "RP-221090"
+          ],
+          [
+            "R5-233833",
+            "agreed",
+            "RAN5#100",
+            "RP-231637"
+          ]
+        ],
+        "differingDocuments": 2,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          },
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-223378",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221090"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-233833",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-231637"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 2
+      },
+      {
+        "id": "RAN5-clause_history-38.509-Rel-16-5.3.4",
+        "wg": "RAN5",
+        "family": "clause_history",
+        "anchor": "tdoc:section/38.509-Rel-16-5.3.4",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-221430",
+            "agreed",
+            "RAN5#94-e",
+            "RP-220076"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-221430",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-220076"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-clause_history-38.521-1-Rel-18-7.6J.2",
+        "wg": "RAN5",
+        "family": "clause_history",
+        "anchor": "tdoc:section/38.521-1-Rel-18-7.6J.2",
+        "goldRows": 3,
+        "lostRows": [
+          [
+            "R5-247940",
+            "agreed",
+            "RAN5#105",
+            "RP-242695"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-247940",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-242695"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-clause_history-38.523-1-Rel-17-7.1.1.4.1.5",
+        "wg": "RAN5",
+        "family": "clause_history",
+        "anchor": "tdoc:section/38.523-1-Rel-17-7.1.1.4.1.5",
+        "goldRows": 2,
+        "lostRows": [
+          [
+            "R5-226019",
+            "agreed",
+            "RAN5#97",
+            "RP-222750"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": true,
+        "staysChangedWhenBlankCellUndefined": false,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-226019",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-222750"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-pack_origin-RP-242715",
+        "wg": "RAN5",
+        "family": "pack_origin",
+        "anchor": "tdoc:crpack/RP-242715",
+        "goldRows": 3,
+        "lostRows": [
+          [
+            "R5-247164",
+            "agreed",
+            "RAN5#105"
+          ],
+          [
+            "R5-247801",
+            "agreed",
+            "RAN5#105"
+          ],
+          [
+            "R5-247817",
+            "agreed",
+            "RAN5#105"
+          ]
+        ],
+        "differingDocuments": 3,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 2,
+            "lostRowsRecovered": 2,
+            "rowsOutsideGold": 0
+          },
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-247164",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-242715"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-247801",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-242715"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-247817",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-242715"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 3
+      },
+      {
+        "id": "RAN5-pack_origin-RP-221083",
+        "wg": "RAN5",
+        "family": "pack_origin",
+        "anchor": "tdoc:crpack/RP-221083",
+        "goldRows": 34,
+        "lostRows": [
+          [
+            "R5-222173",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222175",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222192",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222202",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222241",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222283",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222284",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222327",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222331",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222473",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222543",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222562",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222703",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222734",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222735",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-222975",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223022",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223025",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223046",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223050",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223067",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223072",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223164",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223245",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223649",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223650",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223651",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223652",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223653",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223654",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223655",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223656",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223657",
+            "agreed",
+            "RAN5#95-e"
+          ],
+          [
+            "R5-223658",
+            "agreed",
+            "RAN5#95-e"
+          ]
+        ],
+        "differingDocuments": 34,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 10,
+            "lostRowsRecovered": 10,
+            "rowsOutsideGold": 0
+          },
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 24,
+            "lostRowsRecovered": 24,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-222173",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222175",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222192",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222202",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222241",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222283",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222284",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222327",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222331",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222473",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222543",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222562",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222703",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222734",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222735",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-222975",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223022",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223025",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223046",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223050",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223067",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223072",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223164",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223245",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223649",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223650",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223651",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223652",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223653",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223654",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223655",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223656",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223657",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-223658",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-221083"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 34
+      },
+      {
+        "id": "RAN5-pack_origin-RP-230962",
+        "wg": "RAN5",
+        "family": "pack_origin",
+        "anchor": "tdoc:crpack/RP-230962",
+        "goldRows": 1,
+        "lostRows": [
+          [
+            "R5-233502",
+            "agreed",
+            "RAN5#99"
+          ]
+        ],
+        "differingDocuments": 1,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 1,
+            "lostRowsRecovered": 1,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-233502",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-230962"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 1
+      },
+      {
+        "id": "RAN5-pack_origin-RP-222755",
+        "wg": "RAN5",
+        "family": "pack_origin",
+        "anchor": "tdoc:crpack/RP-222755",
+        "goldRows": 35,
+        "lostRows": [
+          [
+            "R5-225949",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-225950",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-226313",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-226315",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-226316",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227182",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227435",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227474",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227475",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227548",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227549",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227550",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227551",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227552",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227553",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227554",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227555",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227556",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227557",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227558",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227559",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227560",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227561",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227562",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227563",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227564",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227565",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227730",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227844",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227871",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227974",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227977",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227978",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227979",
+            "agreed",
+            "RAN5#97"
+          ],
+          [
+            "R5-227980",
+            "agreed",
+            "RAN5#97"
+          ]
+        ],
+        "differingDocuments": 35,
+        "directions": {
+          "recordPackListSaysNone:none-dash": {
+            "documents": 29,
+            "lostRowsRecovered": 29,
+            "rowsOutsideGold": 0
+          },
+          "recordPackListSaysNone:none-emptyCell": {
+            "documents": 6,
+            "lostRowsRecovered": 6,
+            "rowsOutsideGold": 0
+          }
+        },
+        "recordRowsRestoreGold": true,
+        "emptyCellRestoreGold": false,
+        "staysChangedWhenBlankCellUndefined": true,
+        "lostDocumentsCheck5Condition": 0,
+        "documents": [
+          {
+            "document": "tdoc:R5-225949",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-225950",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-226313",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-226315",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-226316",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227182",
+            "direction": "recordPackListSaysNone:none-emptyCell",
+            "state": "none-emptyCell",
+            "listPackField": null,
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227435",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227474",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227475",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227548",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227549",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227550",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227551",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227552",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227553",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227554",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227555",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227556",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227557",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227558",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227559",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227560",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227561",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227562",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227563",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227564",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227565",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227730",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227844",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227871",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227974",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227977",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227978",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227979",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          },
+          {
+            "document": "tdoc:R5-227980",
+            "direction": "recordPackListSaysNone:none-dash",
+            "state": "none-dash",
+            "listPackField": "-",
+            "recordPacks": [
+              "RP-222755"
+            ],
+            "check5Condition": false,
+            "recoversLostRows": true
+          }
+        ],
+        "documentsShown": 35
+      }
+    ]
+  },
+  "manuscript": {
+    "path": "docs/publication/paper/ongoing/sigir-2027-research/manuscript/main.tex",
+    "md5": "8b84ee6d049871f4e92cd3728123f75e",
+    "lines": 981,
+    "passages": [
+      {
+        "needle": "remove items that admit two answers",
+        "line": 500,
+        "start": 499,
+        "end": 507,
+        "text": "the disposition code behind every empty gold answer. Two further conditions\nremove items that admit two answers. Pack membership is stated by the pack records and by the secretariat list\n(Section~\\ref{sec:linkaudit}); each pack the list names for a consulted\ndocument must list it as a member. A revised change request keeps its CR number under\na new document number, so the gate also rejects an item when another document\nwith the same specification and CR number lies in a pack outside the gold.\nThe gate rejects 3 of the 670 drawn items, two under the first condition, one\nunder the second.\n"
+      },
+      {
+        "needle": "its pack field (E4) and clauses-affected text (E6) those of 509 of 667",
+        "line": 598,
+        "start": 598,
+        "end": 598,
+        "text": "The list's status and meeting fields (E1, E2) return the gold rows of 466 of 481 and all 399 items (462 of 481 when one list line gives both, as it adds documents without a verified disposition), its revision field (E3) those of 79 of 82, and its pack field (E4) and clauses-affected text (E6) those of 509 of 667 and 38 of 200. Only the clause link is in no schema we could determine"
+      },
+      {
+        "needle": "E4 pack (pack field) & 667",
+        "line": 614,
+        "start": 614,
+        "end": 614,
+        "text": "E4 pack (pack field) & 667 & 509 & 35 & 123 \\\\"
+      },
+      {
+        "needle": "pack the list names against its pack record",
+        "line": 545,
+        "start": 544,
+        "end": 546,
+        "text": "spelling of the bis mark to \\texttt{\\#\\textit{N}bis}. (iv) The gate checks each\npack the list names against its pack record. The second round's other five items,\nall in RAN5, give every gold row but write one meeting without its suffix (\\texttt{RAN5\\#89} for the recorded \\texttt{RAN5\\#89-e}), which (iii) scores as another meeting."
+      }
+    ]
+  },
+  "memoryChecks": [
+    {
+      "step": "gate DB ('RAN1', '', '')",
+      "availableGib": 51.6
+    },
+    {
+      "step": "gate DB ('RAN2', 'logs/publication/paper/ongoing/sigir-2027-research/integration/before_baseline_revision_output_rule', '')",
+      "availableGib": 51.5
+    },
+    {
+      "step": "gate DB ('RAN3', '', '')",
+      "availableGib": 51.4
+    },
+    {
+      "step": "gate DB ('RAN4', '', '')",
+      "availableGib": 51.4
+    },
+    {
+      "step": "gate DB ('RAN5', '', 'logs/publication/paper/ongoing/sigir-2027-research/RAN5_graph_export')",
+      "availableGib": 51.3
+    },
+    {
+      "step": "gate DB ('RAN2', '', '')",
+      "availableGib": 51.3
+    },
+    {
+      "step": "E4 RAN1",
+      "availableGib": 51.3
+    },
+    {
+      "step": "E4 RAN2",
+      "availableGib": 51.3
+    },
+    {
+      "step": "E4 RAN3",
+      "availableGib": 51.3
+    },
+    {
+      "step": "E4 RAN4",
+      "availableGib": 50.9
+    },
+    {
+      "step": "E4 RAN5",
+      "availableGib": 51.2
+    }
+  ],
+  "checks": [
+    {
+      "name": "gateFailureOrder",
+      "pass": true,
+      "found": [
+        "gold_differs_from_independent_derivation",
+        "row_width_differs_from_requested_fields",
+        "question_does_not_name_a_requested_field",
+        "evidence_source_changed",
+        "document_list_pack_differs_from_pack_record",
+        "same_cr_identity_packed_outside_gold",
+        "empty_gold_not_supported_by_disposition",
+        "unexpected_empty_gold"
+      ]
+    },
+    {
+      "name": "packSourcesSqlAsRead",
+      "pass": true,
+      "found": "SELECT doc.number FROM doc WHERE doc.id IN ({considered}) AND doc.pack_field GLOB 'RP-[0-9]*' AND NOT EXISTS (SELECT 1 FROM pack_member m WHERE m.cr = doc.id AND m.pack = doc.pack_field)"
+    },
+    {
+      "name": "gateDocstringItem5Found",
+      "pass": true
+    },
+    {
+      "name": "gateSchemaFound",
+      "pass": true
+    },
+    {
+      "name": "synthetic:listAndRecordSame",
+      "pass": true,
+      "rejects": false
+    },
+    {
+      "name": "synthetic:listAndRecordDifferent",
+      "pass": true,
+      "rejects": true
+    },
+    {
+      "name": "synthetic:listOnly",
+      "pass": true,
+      "rejects": true
+    },
+    {
+      "name": "synthetic:listDashRecordPack",
+      "pass": true,
+      "rejects": false
+    },
+    {
+      "name": "synthetic:listEmptyRecordPack",
+      "pass": true,
+      "rejects": false
+    },
+    {
+      "name": "synthetic:listOtherTextRecordPack",
+      "pass": true,
+      "rejects": false
+    },
+    {
+      "name": "synthetic:recordHasFurtherPack",
+      "pass": true,
+      "rejects": false
+    },
+    {
+      "name": "synthetic:listPackWithSuffix",
+      "pass": true,
+      "rejects": true
+    },
+    {
+      "name": "synthetic:listPackInParentheses",
+      "pass": true,
+      "rejects": false
+    },
+    {
+      "name": "synthetic:neither",
+      "pass": true,
+      "rejects": false
+    },
+    {
+      "name": "synthetic:notInDocumentList",
+      "pass": true,
+      "rejects": false
+    },
+    {
+      "name": "storedGateOutputReproduced",
+      "pass": true,
+      "configs": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "name": "check5FiresExactlyOnListPackOutsideRecord",
+      "pass": true,
+      "mismatched": []
+    },
+    {
+      "name": "e4ItemFileUnchanged:core",
+      "pass": true
+    },
+    {
+      "name": "e4ItemFileUnchanged:ran5",
+      "pass": true
+    },
+    {
+      "name": "e4DatabaseUnchanged:RAN1",
+      "pass": true
+    },
+    {
+      "name": "e4ItemsReproduced:RAN1",
+      "pass": true
+    },
+    {
+      "name": "e4DiagnosticsReproduced:RAN1",
+      "pass": true
+    },
+    {
+      "name": "gate5RecheckReproduced:RAN1",
+      "pass": true
+    },
+    {
+      "name": "e4DatabaseUnchanged:RAN2",
+      "pass": true
+    },
+    {
+      "name": "e4ItemsReproduced:RAN2",
+      "pass": true
+    },
+    {
+      "name": "e4DiagnosticsReproduced:RAN2",
+      "pass": true
+    },
+    {
+      "name": "gate5RecheckReproduced:RAN2",
+      "pass": true
+    },
+    {
+      "name": "e4DatabaseUnchanged:RAN3",
+      "pass": true
+    },
+    {
+      "name": "e4ItemsReproduced:RAN3",
+      "pass": true
+    },
+    {
+      "name": "e4DiagnosticsReproduced:RAN3",
+      "pass": true
+    },
+    {
+      "name": "gate5RecheckReproduced:RAN3",
+      "pass": true
+    },
+    {
+      "name": "e4DatabaseUnchanged:RAN4",
+      "pass": true
+    },
+    {
+      "name": "e4ItemsReproduced:RAN4",
+      "pass": true
+    },
+    {
+      "name": "e4DiagnosticsReproduced:RAN4",
+      "pass": true
+    },
+    {
+      "name": "gate5RecheckReproduced:RAN4",
+      "pass": true
+    },
+    {
+      "name": "e4DatabaseUnchanged:RAN5",
+      "pass": true
+    },
+    {
+      "name": "e4ItemsReproduced:RAN5",
+      "pass": true
+    },
+    {
+      "name": "e4DiagnosticsReproduced:RAN5",
+      "pass": true
+    },
+    {
+      "name": "gate5RecheckReproduced:RAN5",
+      "pass": true
+    },
+    {
+      "name": "e4CountsReproduced",
+      "pass": true
+    },
+    {
+      "name": "e4BlankCountsReproduced",
+      "pass": true
+    },
+    {
+      "name": "e4ChangedAllLostOnly",
+      "pass": true,
+      "found": {
+        "lostOnly": 35
+      }
+    },
+    {
+      "name": "e4BlankChangedSubsetOfDefault",
+      "pass": true
+    },
+    {
+      "name": "e4LostRowsFullyRecoveredByRecordRows",
+      "pass": true,
+      "failing": []
+    },
+    {
+      "name": "e4LostDocumentsOutsideCheck5",
+      "pass": true
+    },
+    {
+      "name": "e4BlankChangedPredictedByEmptyCellDocuments",
+      "pass": true,
+      "onlyPredicted": [],
+      "onlyStored": []
+    },
+    {
+      "name": "manuscriptNeedleUnique:remove items that admit two answers",
+      "pass": true,
+      "lines": [
+        500
+      ]
+    },
+    {
+      "name": "manuscriptNeedleUnique:its pack field (E4) and clauses-affected text (E6) those of 509 of 667",
+      "pass": true,
+      "lines": [
+        598
+      ]
+    },
+    {
+      "name": "manuscriptNeedleUnique:E4 pack (pack field) & 667",
+      "pass": true,
+      "lines": [
+        614
+      ]
+    },
+    {
+      "name": "manuscriptNeedleUnique:pack the list names against its pack record",
+      "pass": true,
+      "lines": [
+        545
+      ]
+    }
+  ],
+  "allChecksPass": true
+}

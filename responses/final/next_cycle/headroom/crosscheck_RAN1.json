@@ -1,0 +1,35 @@
+{
+  "wg": "RAN1",
+  "checked": 60,
+  "same": 60,
+  "byFamily": [
+    {
+      "family": "clause_neighbours",
+      "result": "same",
+      "n": 20
+    },
+    {
+      "family": "first_change",
+      "result": "same",
+      "n": 20
+    },
+    {
+      "family": "previous_pack",
+      "result": "same",
+      "n": 20
+    }
+  ],
+  "referenceCypher": {
+    "pack_lookup": "MATCH (cr:CR {tdocNumber: $anchor}) MATCH (cr)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId, p.tsgMeeting",
+    "disposition_pack": "MATCH (cr:CR {tdocNumber: $anchor}) MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' MATCH (cr)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT d.dispositionCode, m.meetingNumber, p.crPackId, p.tsgMeeting",
+    "full_chain": "MATCH (cr:CR {tdocNumber: $anchor}) MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' MATCH (cr)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (cr)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode, m.meetingNumber, p.crPackId, p.tsgMeeting, s.sectionNumber",
+    "revision_chain": "MATCH (:CR {tdocNumber: $anchor})<-[:IS_REVISION_OF*1..]-(cr) MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' MATCH (cr)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT cr.tdocNumber, d.dispositionCode, p.crPackId",
+    "clause_history": "MATCH (:Section {sectionId: $anchor})<-[:MODIFIES_SECTION]-(cr) MATCH (cr)-[:TARGET_RELEASE]->(release:Release) WHERE $anchor CONTAINS ('-' + release.releaseName + '-') MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' MATCH (cr)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT cr.tdocNumber, d.dispositionCode, m.meetingNumber, p.crPackId",
+    "pack_origin": "MATCH (:CRPack {crPackId: $anchor})-[:HAS_CR]->(cr) MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' RETURN DISTINCT cr.tdocNumber, d.dispositionCode, m.meetingNumber",
+    "pack_lookup_empty": "MATCH (cr:CR {tdocNumber: $anchor}) MATCH (cr)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId, p.tsgMeeting",
+    "clause_neighbours": "MATCH (x:CR {tdocNumber: $anchor})-[:TARGET_RELEASE]->(release:Release) MATCH (x)-[:MODIFIES_SECTION]->(s:Section) WHERE s.sectionId CONTAINS ('-' + release.releaseName + '-') MATCH (s)<-[:MODIFIES_SECTION]-(cr)-[:TARGET_RELEASE]->(other:Release) WHERE cr <> x AND other.releaseName = release.releaseName MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' MATCH (cr)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT s.sectionNumber, cr.tdocNumber, d.dispositionCode, m.meetingNumber, p.crPackId",
+    "first_change": "MATCH (p:CRPack {crPackId: $anchor})-[:HAS_CR]->(cr) MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' MATCH (cr)-[:TARGET_RELEASE]->(release:Release) MATCH (cr)-[:MODIFIES_SECTION]->(s:Section) WHERE s.sectionId CONTAINS ('-' + release.releaseName + '-') WITH DISTINCT p, cr, s, release WHERE NOT EXISTS { MATCH (s)<-[:MODIFIES_SECTION]-(e)-[:TARGET_RELEASE]->(er:Release) MATCH (e)-[:BELONGS_TO_CR_PACK]->(ep:CRPack) WHERE er.releaseName = release.releaseName AND toInteger(substring(ep.tsgMeeting, 4)) < toInteger(substring(p.tsgMeeting, 4)) } RETURN DISTINCT cr.tdocNumber, s.specNumber, s.sectionNumber",
+    "previous_pack": "MATCH (p:CRPack {crPackId: $anchor})-[:HAS_CR]->(cr) MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' MATCH (cr)-[:TARGET_RELEASE]->(release:Release) MATCH (cr)-[:MODIFIES_SECTION]->(s:Section) WHERE s.sectionId CONTAINS ('-' + release.releaseName + '-') WITH DISTINCT p, s, release MATCH (s)<-[:MODIFIES_SECTION]-(e)-[:TARGET_RELEASE]->(er:Release) WHERE er.releaseName = release.releaseName MATCH (e)-[:BELONGS_TO_CR_PACK]->(ep:CRPack) WHERE toInteger(substring(ep.tsgMeeting, 4)) < toInteger(substring(p.tsgMeeting, 4)) WITH s, max(toInteger(substring(ep.tsgMeeting, 4))) AS latest, collect(DISTINCT ep) AS earlier UNWIND earlier AS ep WITH s, ep, latest WHERE toInteger(substring(ep.tsgMeeting, 4)) = latest RETURN DISTINCT s.specNumber, s.sectionNumber, ep.crPackId, ep.tsgMeeting"
+  },
+  "differing": []
+}

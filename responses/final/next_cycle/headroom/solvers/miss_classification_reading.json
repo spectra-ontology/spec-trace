@@ -1,0 +1,170 @@
+{
+  "purpose": "How the reading rule of the headroom plan is applied to query-writer misses, fixed before any query-writer session of the split has run.",
+  "recordedAtUtc": "2026-11-18T01:29:55+00:00",
+  "plan": {
+    "path": "logs/publication/paper/ongoing/sigir-2027-research/final/next_cycle/analysis_plan_headroom.json",
+    "sha256": "8d7cf7b3512b7bf60dbe0e6116a97fcf022227a2f0875b1b05fc0e2e7e7397b9",
+    "ruleKey": "reading",
+    "rule": "The split is reported as it comes out. If query writers and Codex with exploration again answer every item, the manuscript states that the two added operators stay within one query for these solvers and reports the separation the split gives among search routes and open-weight agents. If they fall below the ceiling, the per-family counts are reported with the misses classified by the first condition of the reference query that the written query lacks (checked by executing the written query with and without that condition)."
+  },
+  "stateWhenRecorded": {
+    "methodsInAnalysisManifest": [
+      "codex_text2cypher_explore",
+      "codex_text2cypher_schema",
+      "codex_text2sql_explore",
+      "codex_text2sql_schema"
+    ],
+    "solverFilesOutsideBuildFolder": [],
+    "note": "The analysis manifest holds the four Codex conditions only; no query-writer, text-search or dense session of the split has run."
+  },
+  "referenceQueries": {
+    "script": "scripts/publication/paper/ongoing/sigir-2027-research/measure_relational_equivalence.py",
+    "sha256": "1880441e022d7895fbc6f67bcce44427e44fd50c35715dd09518229add5c296e",
+    "dictionary": "CLAUSE_SET_SQL"
+  },
+  "conditionOrder": {
+    "clause_neighbours": [
+      {
+        "order": 1,
+        "name": "anchor",
+        "referenceSql": "cx.cr = :anchor",
+        "meaning": "the chain starts from the change request named in the question"
+      },
+      {
+        "order": 2,
+        "name": "other_than_anchor",
+        "referenceSql": "o.id <> :anchor",
+        "meaning": "the returned change requests exclude the one named in the question"
+      },
+      {
+        "order": 3,
+        "name": "anchor_release",
+        "referenceSql": "x.target_release = s.release",
+        "meaning": "the clause is taken in the release the named change request targets"
+      },
+      {
+        "order": 4,
+        "name": "other_release",
+        "referenceSql": "o.target_release = s.release",
+        "meaning": "a returned change request targets the release of the clause"
+      },
+      {
+        "order": 5,
+        "name": "evidence_status",
+        "referenceSql": "d.evidence_status = 'source_verified'",
+        "meaning": "the disposition is source-verified"
+      },
+      {
+        "order": 6,
+        "name": "scope",
+        "referenceSql": "d.scope = 'whole_target'",
+        "meaning": "the disposition covers the whole document"
+      }
+    ],
+    "first_change": [
+      {
+        "order": 1,
+        "name": "anchor",
+        "referenceSql": "m.pack_id = :anchor",
+        "meaning": "the chain starts from the pack named in the question"
+      },
+      {
+        "order": 2,
+        "name": "release",
+        "referenceSql": "doc.target_release = s.release",
+        "meaning": "the clause is taken in the release the change request targets"
+      },
+      {
+        "order": 3,
+        "name": "evidence_status",
+        "referenceSql": "d.evidence_status = 'source_verified'",
+        "meaning": "the disposition is source-verified"
+      },
+      {
+        "order": 4,
+        "name": "scope",
+        "referenceSql": "d.scope = 'whole_target'",
+        "meaning": "the disposition covers the whole document"
+      },
+      {
+        "order": 5,
+        "name": "no_earlier_pack",
+        "referenceSql": "NOT EXISTS (",
+        "meaning": "no pack of an earlier plenary changes the clause (the set difference)"
+      },
+      {
+        "order": 6,
+        "name": "earlier_same_clause",
+        "referenceSql": "c2.section_id = s.id",
+        "meaning": "the earlier change is to the same clause of the same specification and release"
+      },
+      {
+        "order": 7,
+        "name": "earlier_release",
+        "referenceSql": "d2.target_release = s.release",
+        "meaning": "the earlier change request targets the release of the clause"
+      },
+      {
+        "order": 8,
+        "name": "earlier_plenary_order",
+        "referenceSql": "p2.tsg_number < p.tsg_number",
+        "meaning": "earlier is decided by plenary number"
+      }
+    ],
+    "previous_pack": [
+      {
+        "order": 1,
+        "name": "anchor",
+        "referenceSql": "m.pack_id = :anchor",
+        "meaning": "the chain starts from the pack named in the question"
+      },
+      {
+        "order": 2,
+        "name": "release",
+        "referenceSql": "doc.target_release = s.release",
+        "meaning": "the clause is taken in the release the change request targets"
+      },
+      {
+        "order": 3,
+        "name": "evidence_status",
+        "referenceSql": "d.evidence_status = 'source_verified'",
+        "meaning": "the disposition is source-verified"
+      },
+      {
+        "order": 4,
+        "name": "scope",
+        "referenceSql": "d.scope = 'whole_target'",
+        "meaning": "the disposition covers the whole document"
+      },
+      {
+        "order": 5,
+        "name": "earlier_release",
+        "referenceSql": "d2.target_release = t.release",
+        "meaning": "the earlier change request targets the release of the clause"
+      },
+      {
+        "order": 6,
+        "name": "earlier_plenary_order",
+        "referenceSql": "p2.tsg_number < t.t",
+        "meaning": "earlier is decided by plenary number"
+      },
+      {
+        "order": 7,
+        "name": "latest_earlier",
+        "referenceSql": "tsg_number = (SELECT max(q.tsg_number) FROM prev q WHERE q.sid = prev.sid)",
+        "meaning": "per clause only the pack of the latest earlier plenary is returned (the per-clause maximum)"
+      }
+    ]
+  },
+  "orderRule": "The conditions of a family are its WHERE predicates in the order they appear in the reference SQL text; the source-verified whole-target condition counts as two predicates in its written order. Join keys are part of the join structure and are not listed.",
+  "procedure": [
+    "A miss is an admitted item whose first written query does not return the gold row set under the primary rule (no repair round).",
+    "Checked first, from the stored response: execution_deadline (the query stopped at the execution limit of the run), execution_error (any other execution error), no_query (the session left no query for the item).",
+    "Otherwise the conditions of the family are read in the order above. A written query lacks a condition when it holds no predicate that expresses it; a predicate on the same field with other values counts as lacking it.",
+    "The class of the miss is the first condition it lacks. The check executes the written query as written and with that condition added in the query's own names (or put in place of the differing predicate); the two queries differ in that condition only, both are stored, and the record states whether the query with the condition returns the gold row set.",
+    "When the query with the first lacking condition still differs from gold, the later lacking conditions are added one at a time in the same order and each result is recorded; the class stays the first one.",
+    "A miss whose query lacks none of the listed conditions is reported as no_listed_condition with the counts of gold-only and response-only rows.",
+    "Counts are reported per family, language and run; every miss receives exactly one class."
+  ],
+  "appliesTo": "query-writer runs A to E in both languages; the same order is used for any other query-writing method reported on the split."
+}

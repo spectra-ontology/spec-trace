@@ -1,0 +1,6219 @@
+{
+  "method": "crdb_lookup",
+  "model": "none",
+  "snapshot": {
+    "zipFile": "CRDB_20261012.zip",
+    "zipBytes": 58035283,
+    "zipSha256": "093273fd4d6da3418aaeaa6753c81ff0e862db8e378b8629886941498330bc19",
+    "xlsxMember": "CRDB_20261012.xlsx",
+    "xlsxBytes": 59056213,
+    "xlsxZipTimestamp": "2026-10-12T09:14:20",
+    "sheet": "Query1",
+    "sheetPath": "xl/worksheets/sheet1.xml",
+    "dataRows": 603428,
+    "columns": [
+      "Spec number",
+      "CR number",
+      "Revision",
+      "Subject",
+      "Meeting WG-level",
+      "WG-level status",
+      "Meeting TSG-level",
+      "TSG-level status",
+      "WGSourceOrganizations",
+      "TSGSourceOrganizations",
+      "WG Tdoc",
+      "Category",
+      "Release",
+      "Version-current",
+      "Version-new",
+      "Date",
+      "TSG Tdoc",
+      "Work items"
+    ],
+    "sourceUrl": "https://www.3gpp.org/ftp/Information/Databases/Change_Request/CRDB_20261012.zip",
+    "listingEntry": "CRDB_20261012.zip 2026/10/12 7:14 56675 KB",
+    "httpLastModified": "Mon, 12 Oct 2026 07:14:37 GMT",
+    "retrieved": "Sat, 14 Nov 2026 03:36:43 GMT",
+    "snapshotDateInFileName": "20261012"
+  },
+  "rules": {
+    "inputsUsed": "Answers read only the item keys id, wg, family, anchor, question and fields, and the CRDB rows. gold, evidence, expectsEmpty and hops are dropped when the item file is read; no earlier response file is read.",
+    "columnMapping": {
+      "document / final_document": "WG Tdoc",
+      "disposition": "WG-level status",
+      "wg_meeting": "Meeting WG-level",
+      "cr_pack": "TSG Tdoc",
+      "tsg_meeting": "Meeting TSG-level",
+      "revision order": "Revision within one (Spec number, CR number)",
+      "not used": "Subject, TSG-level status, source organisations, Category, Release, versions, Date, Work items"
+    },
+    "familyRules": {
+      "pack_lookup": "rows of the anchor WG Tdoc -> one row [TSG Tdoc, Meeting TSG-level] per distinct submission whose TSG Tdoc is an RP document and whose meeting is a TSG RAN plenary",
+      "pack_lookup_empty": "same question template and same rule as pack_lookup; the family label is not used",
+      "disposition_pack": "rows of the anchor WG Tdoc -> every distinct (WG-level status, Meeting WG-level) with both filled, times every distinct (TSG Tdoc, Meeting TSG-level) as in pack_lookup",
+      "pack_origin": "rows whose TSG Tdoc is the anchor pack and whose WG Tdoc is a document of the item's WG -> for each such WG Tdoc, every distinct (WG-level status, Meeting WG-level) with both filled, gathered over that WG Tdoc's rows of the same (Spec number, CR number)",
+      "revision_chain": "rows of the anchor WG Tdoc give (Spec number, CR number, Revision); every other WG Tdoc of the item's WG in the same (Spec number, CR number) with a strictly higher Revision -> every distinct WG-level status times every distinct RP TSG Tdoc of that document; a document with no status or no RP pack gives no row",
+      "full_chain": "not expressible: the CRDB has no modified-clause column; answered with no rows",
+      "clause_history": "not expressible: the CRDB has no modified-clause column; answered with no rows"
+    },
+    "normalisation": {
+      "document numbers": "upper-case, whitespace and parentheses removed, runs of '-' collapsed to one ('RP--080615' -> 'RP-080615'); no suffix is stripped ('R4-79AH-0008' stays as it is)",
+      "WG document of RANn": "normalised WG Tdoc starting with 'Rn-' (RAN5 also 'R5S', its signalling sub-group prefix)",
+      "CR pack": "normalised TSG Tdoc matching RP-<digits>; any other TSG Tdoc value counts as no pack",
+      "meeting labels": "surrounding and inner whitespace removed, leading '3GPP' removed, '-#' -> '#' ('3GPPRAN1#100-bis-e' -> 'RAN1#100-bis-e', '3GPPRAN-#18' -> 'RAN#18'); a TSG meeting counts only when it starts with 'RAN#'; bis spellings are left to the scorer's meeting_spelling",
+      "CR number": "compared upper-case without leading zeros ('0058' == '58')",
+      "Revision": "'-' and '0' are revision 0; other values are their integer; a non-numeric value has no order and is never 'later'",
+      "empty cell": "'-', '' and a missing cell are no value"
+    },
+    "statusVocabulary": {
+      "source": "the answer rules every method receives (run_chain_eval.ANSWER_RULES): 'Disposition values are lower-case codes such as agreed, revised, noted, endorsed, withdrawn, not_pursued'",
+      "mapping": "CRDB WG-level status lower-cased with spaces replaced by '_' (agreed, revised, noted, endorsed, withdrawn, 'not pursued' -> not_pursued, postponed, merged, rejected, 'not treated' -> not_treated, reissued); '-' is no disposition"
+    },
+    "multipleRows": {
+      "same WG Tdoc in several rows": "WG-level values (status, WG meeting) and TSG-level values (pack, plenary meeting) are gathered separately as distinct pairs and combined; a row with WG-level status '-' still contributes its pack",
+      "question names CR and spec": "pack_lookup, pack_lookup_empty and disposition_pack questions state '(CR <n> to TS <spec>)'; when some rows of the WG Tdoc match that CR and spec only those rows are used, otherwise all rows of the WG Tdoc",
+      "several CRDB revisions": "revision_chain keeps every later revision that satisfies the conditions; no single 'final' revision is chosen",
+      "incomplete answer row": "a requested field that the CRDB leaves empty drops that answer row"
+    }
+  },
+  "scoring": {
+    "scorer": "scripts/publication/paper/ongoing/sigir-2027-research/score_chain_eval.py",
+    "scores": "logs/publication/paper/ongoing/sigir-2027-research/final/crdb_baseline/scores.json",
+    "runs": 1,
+    "recountMatchesScorer": {
+      "perWg": true,
+      "perFamily": true,
+      "missingOrStale": 0
+    }
+  },
+  "exactMatch": {
+    "byFamily": {
+      "pack_lookup": {
+        "exact": 61,
+        "n": 100
+      },
+      "pack_lookup_empty": {
+        "exact": 86,
+        "n": 86
+      },
+      "pack_origin": {
+        "exact": 93,
+        "n": 100
+      },
+      "disposition_pack": {
+        "exact": 59,
+        "n": 99
+      },
+      "revision_chain": {
+        "exact": 78,
+        "n": 82
+      },
+      "full_chain": {
+        "exact": 0,
+        "n": 100
+      },
+      "clause_history": {
+        "exact": 0,
+        "n": 100
+      }
+    },
+    "byWg": {
+      "RAN1": {
+        "exact": 43,
+        "n": 110
+      },
+      "RAN2": {
+        "exact": 84,
+        "n": 140
+      },
+      "RAN3": {
+        "exact": 83,
+        "n": 140
+      },
+      "RAN4": {
+        "exact": 88,
+        "n": 139
+      },
+      "RAN5": {
+        "exact": 79,
+        "n": 138
+      }
+    },
+    "expressible": {
+      "exact": 377,
+      "n": 467
+    },
+    "answerable": {
+      "exact": 291,
+      "n": 581
+    },
+    "emptyGold": {
+      "exact": 86,
+      "n": 86
+    },
+    "all": {
+      "exact": 377,
+      "n": 667
+    }
+  },
+  "missDecomposition": {
+    "scope": "the 467 expressible items that are not an exact match; expected rows read only here, after scoring",
+    "misses": 90,
+    "classDefinitions": {
+      "cr_row_absent": "the anchor WG Tdoc or CR pack has no CRDB row",
+      "revision_chain_unnumbered_predecessor": "revision_chain anchor has no CRDB row while every expected later document is in the CRDB as the first revision ('-') of its CR: the revision step precedes the CR number, the pattern of an unnumbered draftCR",
+      "revision_chain_crosses_cr": "an expected later document is in the CRDB under a different (Spec number, CR number) than the anchor",
+      "snapshot_timing": "an expected CR pack or TSG meeting appears nowhere in the snapshot, or a CRDB-only pack or document belongs to a plenary or WG meeting later than the latest one of that body in any expected row (the latest expected meeting stands in for the benchmark's data cutoff)",
+      "pack_differs": "after aligning meeting labels the set of CR packs differs (CRDB lists an extra pack, lacks an expected pack, or gives another one)",
+      "pack_membership_differs": "pack_origin: after aligning meeting labels the set of documents carried by the pack differs",
+      "status_differs": "after aligning meeting labels and on the shared packs or documents, only the disposition differs: CRDB WG-level status is not the WG resolution disposition expected",
+      "meeting_label_differs": "the answer equals the expected rows once a trailing '-e' is removed from meeting labels on both sides, and nothing else differs",
+      "other": "none of the above explains the difference"
+    },
+    "classOrder": [
+      "cr_row_absent",
+      "revision_chain_unnumbered_predecessor",
+      "revision_chain_crosses_cr",
+      "meeting_label_differs",
+      "snapshot_timing",
+      "pack_differs",
+      "pack_membership_differs",
+      "status_differs",
+      "other"
+    ],
+    "primaryClassCounts": {
+      "cr_row_absent": 0,
+      "revision_chain_unnumbered_predecessor": 3,
+      "revision_chain_crosses_cr": 0,
+      "meeting_label_differs": 74,
+      "snapshot_timing": 1,
+      "pack_differs": 4,
+      "pack_membership_differs": 3,
+      "status_differs": 5,
+      "other": 0
+    },
+    "primaryClassByFamily": {
+      "revision_chain_unnumbered_predecessor": {
+        "revision_chain": 3
+      },
+      "meeting_label_differs": {
+        "pack_lookup": 37,
+        "disposition_pack": 37
+      },
+      "snapshot_timing": {
+        "pack_origin": 1
+      },
+      "pack_differs": {
+        "disposition_pack": 2,
+        "pack_lookup": 2
+      },
+      "pack_membership_differs": {
+        "pack_origin": 3
+      },
+      "status_differs": {
+        "disposition_pack": 1,
+        "pack_origin": 3,
+        "revision_chain": 1
+      }
+    },
+    "primaryClassSubtypes": {
+      "pack_differs": {
+        "crdbExtra": 4
+      },
+      "pack_membership_differs": {
+        "crdbExtra": 3
+      },
+      "status_differs": {
+        "expectedAdditionalDisposition": 3,
+        "differentDisposition": 2
+      }
+    },
+    "flagCounts": {
+      "cr_row_absent": 0,
+      "revision_chain_unnumbered_predecessor": 3,
+      "revision_chain_crosses_cr": 0,
+      "meeting_label_differs": 78,
+      "snapshot_timing": 1,
+      "pack_differs": 4,
+      "pack_membership_differs": 4,
+      "status_differs": 5,
+      "other": 0
+    },
+    "meetingLabelDifferencesByColumn": {
+      "tsg_meeting": 78
+    },
+    "examples": {
+      "cr_row_absent": [],
+      "revision_chain_unnumbered_predecessor": [
+        {
+          "id": "RAN1-revision_chain-R1-2403693",
+          "family": "revision_chain",
+          "class": "revision_chain_unnumbered_predecessor",
+          "expectedDocumentRowsInCrdb": {
+            "R1-2405740": [
+              [
+                "38.214",
+                "0590",
+                "-",
+                "R1-2405740",
+                "agreed",
+                "3GPPRAN1#117",
+                "RP-241076",
+                "3GPPRAN#104"
+              ]
+            ]
+          },
+          "crdbAnswer": [],
+          "expected": [
+            [
+              "R1-2405740",
+              "agreed",
+              "RP-241076"
+            ]
+          ]
+        },
+        {
+          "id": "RAN1-revision_chain-R1-2307027",
+          "family": "revision_chain",
+          "class": "revision_chain_unnumbered_predecessor",
+          "expectedDocumentRowsInCrdb": {
+            "R1-2308652": [
+              [
+                "38.213",
+                "0494",
+                "-",
+                "R1-2308652",
+                "agreed",
+                "3GPPRAN1#114",
+                "RP-232452",
+                "3GPPRAN#101"
+              ]
+            ]
+          },
+          "crdbAnswer": [],
+          "expected": [
+            [
+              "R1-2308652",
+              "agreed",
+              "RP-232452"
+            ]
+          ]
+        },
+        {
+          "id": "RAN1-revision_chain-R1-2308156",
+          "family": "revision_chain",
+          "class": "revision_chain_unnumbered_predecessor",
+          "expectedDocumentRowsInCrdb": {
+            "R1-2308634": [
+              [
+                "38.213",
+                "0491",
+                "-",
+                "R1-2308634",
+                "agreed",
+                "3GPPRAN1#114",
+                "RP-232453",
+                "3GPPRAN#101"
+              ]
+            ]
+          },
+          "crdbAnswer": [],
+          "expected": [
+            [
+              "R1-2308634",
+              "agreed",
+              "RP-232453"
+            ]
+          ]
+        }
+      ],
+      "revision_chain_crosses_cr": [],
+      "meeting_label_differs": [
+        {
+          "id": "RAN1-pack_lookup-R1-2208155",
+          "family": "pack_lookup",
+          "class": "meeting_label_differs",
+          "meetingLabelPairs": [
+            "tsg_meeting: crdb 'ran#97-e' / expected 'ran#97'"
+          ],
+          "crdbRows": [
+            [
+              "38.213",
+              "0350",
+              "-",
+              "R1-2208155",
+              "agreed",
+              "3GPPRAN1#110",
+              "RP-222401",
+              "3GPPRAN#97-e"
+            ]
+          ],
+          "crdbAnswer": [
+            [
+              "RP-222401",
+              "RAN#97-e"
+            ]
+          ],
+          "expected": [
+            [
+              "RP-222401",
+              "RAN#97"
+            ]
+          ]
+        },
+        {
+          "id": "RAN1-pack_lookup-R1-2212754",
+          "family": "pack_lookup",
+          "class": "meeting_label_differs",
+          "meetingLabelPairs": [
+            "tsg_meeting: crdb 'ran#98-e' / expected 'ran#98'"
+          ],
+          "crdbRows": [
+            [
+              "38.214",
+              "0374",
+              "-",
+              "R1-2212754",
+              "agreed",
+              "3GPPRAN1#111",
+              "RP-222856",
+              "3GPPRAN#98-e"
+            ]
+          ],
+          "crdbAnswer": [
+            [
+              "RP-222856",
+              "RAN#98-e"
+            ]
+          ],
+          "expected": [
+            [
+              "RP-222856",
+              "RAN#98"
+            ]
+          ]
+        },
+        {
+          "id": "RAN1-pack_lookup-R1-2002832",
+          "family": "pack_lookup",
+          "class": "meeting_label_differs",
+          "meetingLabelPairs": [
+            "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+          ],
+          "crdbRows": [
+            [
+              "38.215",
+              "0023",
+              "-",
+              "R1-2002832",
+              "agreed",
+              "3GPPRAN1#100-bis-e",
+              "RP-200683",
+              "3GPPRAN#88-e"
+            ]
+          ],
+          "crdbAnswer": [
+            [
+              "RP-200683",
+              "RAN#88-e"
+            ]
+          ],
+          "expected": [
+            [
+              "RP-200683",
+              "RAN#88"
+            ]
+          ]
+        }
+      ],
+      "snapshot_timing": [
+        {
+          "id": "RAN1-pack_origin-RP-261340",
+          "family": "pack_origin",
+          "class": "snapshot_timing",
+          "crdbOnly": [
+            "r1-2605124"
+          ],
+          "expectedOnly": [],
+          "entityDifference": "crdbExtra",
+          "snapshotTiming": {
+            "r1-2605124": "CRDB WG meeting ran1#125 later than latest expected RAN1 meeting"
+          },
+          "crdbRowsOfDifferingDocuments": {
+            "r1-2605124": [
+              [
+                "38.214",
+                "0767",
+                "-",
+                "R1-2605124",
+                "agreed",
+                "3GPPRAN1#125",
+                "RP-261340",
+                "3GPPRAN#112"
+              ]
+            ]
+          },
+          "crdbAnswer": [
+            [
+              "R1-2603378",
+              "agreed",
+              "RAN1#124-bis"
+            ],
+            [
+              "R1-2603379",
+              "agreed",
+              "RAN1#124-bis"
+            ],
+            [
+              "R1-2605124",
+              "agreed",
+              "RAN1#125"
+            ]
+          ],
+          "expected": [
+            [
+              "R1-2603378",
+              "agreed",
+              "RAN1#124b"
+            ],
+            [
+              "R1-2603379",
+              "agreed",
+              "RAN1#124b"
+            ]
+          ]
+        }
+      ],
+      "pack_differs": [
+        {
+          "id": "RAN2-disposition_pack-R2-2309110",
+          "family": "disposition_pack",
+          "class": "pack_differs",
+          "crdbOnly": [
+            "rp-232569"
+          ],
+          "expectedOnly": [],
+          "entityDifference": "crdbExtra",
+          "crdbRows": [
+            [
+              "38.351",
+              "0025",
+              "1",
+              "R2-2309110",
+              "agreed",
+              "3GPPRAN2#123",
+              "RP-232569",
+              "3GPPRAN#101"
+            ],
+            [
+              "38.351",
+              "0025",
+              "1",
+              "R2-2309110",
+              "agreed",
+              "3GPPRAN2#123",
+              "RP-232667",
+              "3GPPRAN#101"
+            ]
+          ],
+          "crdbAnswer": [
+            [
+              "agreed",
+              "RAN2#123",
+              "RP-232569",
+              "RAN#101"
+            ],
+            [
+              "agreed",
+              "RAN2#123",
+              "RP-232667",
+              "RAN#101"
+            ]
+          ],
+          "expected": [
+            [
+              "agreed",
+              "RAN2#123",
+              "RP-232667",
+              "RAN#101"
+            ]
+          ]
+        },
+        {
+          "id": "RAN3-pack_lookup-R3-205767",
+          "family": "pack_lookup",
+          "class": "pack_differs",
+          "meetingLabelPairs": [
+            "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+          ],
+          "crdbOnly": [
+            "rp-201567"
+          ],
+          "expectedOnly": [],
+          "entityDifference": "crdbExtra",
+          "crdbRows": [
+            [
+              "38.473",
+              "0586",
+              "5",
+              "R3-205767",
+              "agreed",
+              "3GPPRAN3#109-e",
+              "RP-201567",
+              "3GPPRAN#89-e"
+            ],
+            [
+              "38.473",
+              "0586",
+              "5",
+              "R3-205767",
+              "agreed",
+              "3GPPRAN3#109-e",
+              "RP-201956",
+              "3GPPRAN#89-e"
+            ]
+          ],
+          "crdbAnswer": [
+            [
+              "RP-201567",
+              "RAN#89-e"
+            ],
+            [
+              "RP-201956",
+              "RAN#89-e"
+            ]
+          ],
+          "expected": [
+            [
+              "RP-201956",
+              "RAN#89"
+            ]
+          ]
+        },
+        {
+          "id": "RAN3-pack_lookup-R3-205766",
+          "family": "pack_lookup",
+          "class": "pack_differs",
+          "meetingLabelPairs": [
+            "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+          ],
+          "crdbOnly": [
+            "rp-201566"
+          ],
+          "expectedOnly": [],
+          "entityDifference": "crdbExtra",
+          "crdbRows": [
+            [
+              "38.413",
+              "0383",
+              "3",
+              "R3-205766",
+              "agreed",
+              "3GPPRAN3#109-e",
+              "RP-201566",
+              "3GPPRAN#89-e"
+            ],
+            [
+              "38.413",
+              "0383",
+              "3",
+              "R3-205766",
+              "agreed",
+              "3GPPRAN3#109-e",
+              "RP-201955",
+              "3GPPRAN#89-e"
+            ]
+          ],
+          "crdbAnswer": [
+            [
+              "RP-201566",
+              "RAN#89-e"
+            ],
+            [
+              "RP-201955",
+              "RAN#89-e"
+            ]
+          ],
+          "expected": [
+            [
+              "RP-201955",
+              "RAN#89"
+            ]
+          ]
+        }
+      ],
+      "pack_membership_differs": [
+        {
+          "id": "RAN2-pack_origin-RP-192190",
+          "family": "pack_origin",
+          "class": "pack_membership_differs",
+          "crdbOnly": [
+            "r2-1911547",
+            "r2-1911549"
+          ],
+          "expectedOnly": [],
+          "entityDifference": "crdbExtra",
+          "crdbRowsOfDifferingDocuments": {
+            "r2-1911547": [
+              [
+                "36.300",
+                "1249",
+                "-",
+                "R2-1911547",
+                "agreed",
+                "3GPPRAN2#107",
+                "RP-192190",
+                "3GPPRAN#85"
+              ]
+            ],
+            "r2-1911549": [
+              [
+                "37.340",
+                "0153",
+                "-",
+                "R2-1911549",
+                "agreed",
+                "3GPPRAN2#107",
+                "RP-192190",
+                "3GPPRAN#85"
+              ]
+            ]
+          },
+          "crdbAnswer": [
+            [
+              "R2-1908881",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1908885",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1909030",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910048",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910111",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910228",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910234",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910444",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910461",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910918",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910922",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910938",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911029",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911031",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911505",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911530",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911543",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911544",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911547",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911549",
+              "agreed",
+              "RAN2#107"
+            ]
+          ],
+          "expected": [
+            [
+              "R2-1908881",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1908885",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1909030",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910048",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910111",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910228",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910234",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910444",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910461",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910918",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910922",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1910938",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911029",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911031",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911505",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911530",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911543",
+              "agreed",
+              "RAN2#107"
+            ],
+            [
+              "R2-1911544",
+              "agreed",
+              "RAN2#107"
+            ]
+          ]
+        },
+        {
+          "id": "RAN2-pack_origin-RP-191378",
+          "family": "pack_origin",
+          "class": "pack_membership_differs",
+          "crdbOnly": [
+            "r2-1908377"
+          ],
+          "expectedOnly": [],
+          "entityDifference": "crdbExtra",
+          "crdbRowsOfDifferingDocuments": {
+            "r2-1908377": [
+              [
+                "38.331",
+                "1118",
+                "-",
+                "R2-1908377",
+                "agreed",
+                "3GPPRAN2#106",
+                "RP-191378",
+                "3GPPRAN#84"
+              ]
+            ]
+          },
+          "crdbAnswer": [
+            [
+              "R2-1908340",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908341",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908342",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908345",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908348",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908351",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908352",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908355",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908358",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908361",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908377",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908378",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908381",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908385",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908412",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908413",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908415",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908419",
+              "agreed",
+              "RAN2#106"
+            ]
+          ],
+          "expected": [
+            [
+              "R2-1908340",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908341",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908342",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908345",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908348",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908351",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908352",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908355",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908358",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908361",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908378",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908381",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908385",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908412",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908413",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908415",
+              "agreed",
+              "RAN2#106"
+            ],
+            [
+              "R2-1908419",
+              "agreed",
+              "RAN2#106"
+            ]
+          ]
+        },
+        {
+          "id": "RAN3-pack_origin-RP-252673",
+          "family": "pack_origin",
+          "class": "pack_membership_differs",
+          "crdbOnly": [
+            "r3-256027"
+          ],
+          "expectedOnly": [],
+          "entityDifference": "crdbExtra",
+          "crdbRowsOfDifferingDocuments": {
+            "r3-256027": [
+              [
+                "38.413",
+                "1285",
+                "2",
+                "R3-256027",
+                "agreed",
+                "3GPPRAN3#129",
+                "RP-252673",
+                "3GPPRAN#109"
+              ]
+            ]
+          },
+          "crdbAnswer": [
+            [
+              "R3-255977",
+              "agreed",
+              "RAN3#129"
+            ],
+            [
+              "R3-255978",
+              "agreed",
+              "RAN3#129"
+            ],
+            [
+              "R3-255979",
+              "agreed",
+              "RAN3#129"
+            ],
+            [
+              "R3-256027",
+              "agreed",
+              "RAN3#129"
+            ]
+          ],
+          "expected": [
+            [
+              "R3-255977",
+              "agreed",
+              "RAN3#129"
+            ],
+            [
+              "R3-255978",
+              "agreed",
+              "RAN3#129"
+            ],
+            [
+              "R3-255979",
+              "agreed",
+              "RAN3#129"
+            ]
+          ]
+        }
+      ],
+      "status_differs": [
+        {
+          "id": "RAN1-disposition_pack-R1-2009625",
+          "family": "disposition_pack",
+          "class": "status_differs",
+          "meetingLabelPairs": [
+            "tsg_meeting: crdb 'ran#90-e' / expected 'ran#90'"
+          ],
+          "statusOnlyRows": {
+            "crdbOnly": [],
+            "expectedOnly": [
+              [
+                "endorsed",
+                "ran1#103",
+                "rp-202379",
+                "ran#90"
+              ]
+            ]
+          },
+          "statusDifference": "expectedAdditionalDisposition",
+          "crdbRows": [
+            [
+              "38.213",
+              "0164",
+              "-",
+              "R1-2009625",
+              "agreed",
+              "3GPPRAN1#103-e",
+              "RP-202379",
+              "3GPPRAN#90-e"
+            ]
+          ],
+          "crdbAnswer": [
+            [
+              "agreed",
+              "RAN1#103-e",
+              "RP-202379",
+              "RAN#90-e"
+            ]
+          ],
+          "expected": [
+            [
+              "agreed",
+              "RAN1#103-e",
+              "RP-202379",
+              "RAN#90"
+            ],
+            [
+              "endorsed",
+              "RAN1#103-e",
+              "RP-202379",
+              "RAN#90"
+            ]
+          ]
+        },
+        {
+          "id": "RAN1-pack_origin-RP-253013",
+          "family": "pack_origin",
+          "class": "status_differs",
+          "statusOnlyRows": {
+            "crdbOnly": [],
+            "expectedOnly": [
+              [
+                "r1-2508143",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508144",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508166",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508167",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508180",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508181",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508194",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508195",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508196",
+                "endorsed",
+                "ran1#122bis"
+              ],
+              [
+                "r1-2508197",
+                "endorsed",
+                "ran1#122bis"
+              ]
+            ]
+          },
+          "statusDifference": "expectedAdditionalDisposition",
+          "crdbRowsOfDifferingDocuments": {
+            "r1-2508143": [
+              [
+                "38.213",
+                "0730",
+                "-",
+                "R1-2508143",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508144": [
+              [
+                "38.213",
+                "0731",
+                "-",
+                "R1-2508144",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508166": [
+              [
+                "38.214",
+                "0700",
+                "-",
+                "R1-2508166",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508167": [
+              [
+                "38.214",
+                "0701",
+                "-",
+                "R1-2508167",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508180": [
+              [
+                "38.214",
+                "0702",
+                "-",
+                "R1-2508180",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508181": [
+              [
+                "38.214",
+                "0703",
+                "-",
+                "R1-2508181",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508194": [
+              [
+                "38.213",
+                "0735",
+                "-",
+                "R1-2508194",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508195": [
+              [
+                "38.213",
+                "0736",
+                "-",
+                "R1-2508195",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508196": [
+              [
+                "38.211",
+                "0160",
+                "-",
+                "R1-2508196",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ],
+            "r1-2508197": [
+              [
+                "38.211",
+                "0161",
+                "-",
+                "R1-2508197",
+                "agreed",
+                "3GPPRAN1#122-bis",
+                "RP-253013",
+                "3GPPRAN#110"
+              ]
+            ]
+          },
+          "crdbAnswer": [
+            [
+              "R1-2508143",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508144",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508166",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508167",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508180",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508181",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508194",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508195",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508196",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2508197",
+              "agreed",
+              "RAN1#122-bis"
+            ],
+            [
+              "R1-2509563",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509564",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509567",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509570",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509571",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509597",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509660",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509661",
+              "agreed",
+              "RAN1#123"
+            ]
+          ],
+          "expected": [
+            [
+              "R1-2508143",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508143",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508144",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508144",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508166",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508166",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508167",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508167",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508180",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508180",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508181",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508181",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508194",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508194",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508195",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508195",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508196",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508196",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508197",
+              "agreed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2508197",
+              "endorsed",
+              "RAN1#122b"
+            ],
+            [
+              "R1-2509563",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509564",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509567",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509570",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509571",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509597",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509660",
+              "agreed",
+              "RAN1#123"
+            ],
+            [
+              "R1-2509661",
+              "agreed",
+              "RAN1#123"
+            ]
+          ]
+        },
+        {
+          "id": "RAN1-pack_origin-RP-202390",
+          "family": "pack_origin",
+          "class": "status_differs",
+          "statusOnlyRows": {
+            "crdbOnly": [
+              [
+                "r1-2009687",
+                "revised",
+                "ran1#103"
+              ]
+            ],
+            "expectedOnly": [
+              [
+                "r1-2009687",
+                "agreed",
+                "ran1#103"
+              ]
+            ]
+          },
+          "statusDifference": "differentDisposition",
+          "crdbRowsOfDifferingDocuments": {
+            "r1-2009687": [
+              [
+                "38.214",
+                "0123",
+                "1",
+                "R1-2009687",
+                "revised",
+                "3GPPRAN1#103-e",
+                "RP-202390",
+                "3GPPRAN#90-e"
+              ]
+            ]
+          },
+          "crdbAnswer": [
+            [
+              "R1-2009447",
+              "agreed",
+              "RAN1#103-e"
+            ],
+            [
+              "R1-2009453",
+              "agreed",
+              "RAN1#103-e"
+            ],
+            [
+              "R1-2009454",
+              "agreed",
+              "RAN1#103-e"
+            ],
+            [
+              "R1-2009494",
+              "agreed",
+              "RAN1#103-e"
+            ],
+            [
+              "R1-2009687",
+              "revised",
+              "RAN1#103-e"
+            ]
+          ],
+          "expected": [
+            [
+              "R1-2009447",
+              "agreed",
+              "RAN1#103-e"
+            ],
+            [
+              "R1-2009453",
+              "agreed",
+              "RAN1#103-e"
+            ],
+            [
+              "R1-2009454",
+              "agreed",
+              "RAN1#103-e"
+            ],
+            [
+              "R1-2009494",
+              "agreed",
+              "RAN1#103-e"
+            ],
+            [
+              "R1-2009687",
+              "agreed",
+              "RAN1#103-e"
+            ]
+          ]
+        }
+      ],
+      "other": []
+    }
+  },
+  "latestExpectedMeetings": {
+    "plenary": 112,
+    "wg": {
+      "RAN1": 124,
+      "RAN2": 134,
+      "RAN3": 132,
+      "RAN4": 119,
+      "RAN5": 111
+    }
+  },
+  "misses": [
+    {
+      "id": "RAN1-pack_lookup-R1-2208155",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#97-e' / expected 'ran#97'"
+      ],
+      "crdbRows": [
+        [
+          "38.213",
+          "0350",
+          "-",
+          "R1-2208155",
+          "agreed",
+          "3GPPRAN1#110",
+          "RP-222401",
+          "3GPPRAN#97-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-222401",
+          "RAN#97-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-222401",
+          "RAN#97"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2212754",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#98-e' / expected 'ran#98'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0374",
+          "-",
+          "R1-2212754",
+          "agreed",
+          "3GPPRAN1#111",
+          "RP-222856",
+          "3GPPRAN#98-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-222856",
+          "RAN#98-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-222856",
+          "RAN#98"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2002832",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.215",
+          "0023",
+          "-",
+          "R1-2002832",
+          "agreed",
+          "3GPPRAN1#100-bis-e",
+          "RP-200683",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-200683",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-200683",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2202799",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0251",
+          "-",
+          "R1-2202799",
+          "agreed",
+          "3GPPRAN1#108-e",
+          "RP-220269",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-220269",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-220269",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2005157",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0090",
+          "1",
+          "R1-2005157",
+          "agreed",
+          "3GPPRAN1#101-e",
+          "RP-200687",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-200687",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-200687",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2106275",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#92-e' / expected 'ran#92'"
+      ],
+      "crdbRows": [
+        [
+          "38.211",
+          "0072",
+          "-",
+          "R1-2106275",
+          "agreed",
+          "3GPPRAN1#105-e",
+          "RP-211235",
+          "3GPPRAN#92-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-211235",
+          "RAN#92-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-211235",
+          "RAN#92"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2104049",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#92-e' / expected 'ran#92'"
+      ],
+      "crdbRows": [
+        [
+          "38.213",
+          "0218",
+          "-",
+          "R1-2104049",
+          "agreed",
+          "3GPPRAN1#104-bis-e",
+          "RP-211238",
+          "3GPPRAN#92-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-211238",
+          "RAN#92-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-211238",
+          "RAN#92"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2102004",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#91-e' / expected 'ran#91'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0162",
+          "-",
+          "R1-2102004",
+          "agreed",
+          "3GPPRAN1#104-e",
+          "RP-210052",
+          "3GPPRAN#91-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-210052",
+          "RAN#91-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-210052",
+          "RAN#91"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2208244",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#97-e' / expected 'ran#97'"
+      ],
+      "crdbRows": [
+        [
+          "38.212",
+          "0118",
+          "-",
+          "R1-2208244",
+          "agreed",
+          "3GPPRAN1#110",
+          "RP-222401",
+          "3GPPRAN#97-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-222401",
+          "RAN#97-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-222401",
+          "RAN#97"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_lookup-R1-2202945",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.213",
+          "0289",
+          "-",
+          "R1-2202945",
+          "agreed",
+          "3GPPRAN1#108-e",
+          "RP-220249",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-220249",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-220249",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2102205",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#91-e' / expected 'ran#91'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0168",
+          "1",
+          "R1-2102205",
+          "agreed",
+          "3GPPRAN1#104-e",
+          "RP-210053",
+          "3GPPRAN#91-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#104-e",
+          "RP-210053",
+          "RAN#91-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#104-e",
+          "RP-210053",
+          "RAN#91"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2007434",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbRows": [
+        [
+          "38.213",
+          "0131",
+          "-",
+          "R1-2007434",
+          "agreed",
+          "3GPPRAN1#102-e",
+          "RP-201812",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#102-e",
+          "RP-201812",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#102-e",
+          "RP-201812",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2112956",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#94-e' / expected 'ran#94'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0235",
+          "-",
+          "R1-2112956",
+          "agreed",
+          "3GPPRAN1#107-e",
+          "RP-212978",
+          "3GPPRAN#94-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#107-e",
+          "RP-212978",
+          "RAN#94-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#107-e",
+          "RP-212978",
+          "RAN#94"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2210760",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#98-e' / expected 'ran#98'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0366",
+          "-",
+          "R1-2210760",
+          "agreed",
+          "3GPPRAN1#110-bis-e",
+          "RP-222856",
+          "3GPPRAN#98-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#110-bis-e",
+          "RP-222856",
+          "RAN#98-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#110b-e",
+          "RP-222856",
+          "RAN#98"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2007458",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbRows": [
+        [
+          "38.212",
+          "0053",
+          "-",
+          "R1-2007458",
+          "agreed",
+          "3GPPRAN1#102-e",
+          "RP-201809",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#102-e",
+          "RP-201809",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#102-e",
+          "RP-201809",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2009625",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs",
+        "status_differs"
+      ],
+      "class": "status_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#90-e' / expected 'ran#90'"
+      ],
+      "statusOnlyRows": {
+        "crdbOnly": [],
+        "expectedOnly": [
+          [
+            "endorsed",
+            "ran1#103",
+            "rp-202379",
+            "ran#90"
+          ]
+        ]
+      },
+      "statusDifference": "expectedAdditionalDisposition",
+      "crdbRows": [
+        [
+          "38.213",
+          "0164",
+          "-",
+          "R1-2009625",
+          "agreed",
+          "3GPPRAN1#103-e",
+          "RP-202379",
+          "3GPPRAN#90-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#103-e",
+          "RP-202379",
+          "RAN#90-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#103-e",
+          "RP-202379",
+          "RAN#90"
+        ],
+        [
+          "endorsed",
+          "RAN1#103-e",
+          "RP-202379",
+          "RAN#90"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2208264",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#97-e' / expected 'ran#97'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0332",
+          "-",
+          "R1-2208264",
+          "agreed",
+          "3GPPRAN1#110",
+          "RP-222417",
+          "3GPPRAN#97-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#110",
+          "RP-222417",
+          "RAN#97-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#110",
+          "RP-222417",
+          "RAN#97"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2108489",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#93-e' / expected 'ran#93'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0211",
+          "-",
+          "R1-2108489",
+          "agreed",
+          "3GPPRAN1#106-e",
+          "RP-211841",
+          "3GPPRAN#93-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#106-e",
+          "RP-211841",
+          "RAN#93-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#106-e",
+          "RP-211841",
+          "RAN#93"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2202955",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.211",
+          "0090",
+          "-",
+          "R1-2202955",
+          "agreed",
+          "3GPPRAN1#108-e",
+          "RP-220263",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#108-e",
+          "RP-220263",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#108-e",
+          "RP-220263",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2108591",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#93-e' / expected 'ran#93'"
+      ],
+      "crdbRows": [
+        [
+          "38.212",
+          "0073",
+          "-",
+          "R1-2108591",
+          "agreed",
+          "3GPPRAN1#106-e",
+          "RP-211841",
+          "3GPPRAN#93-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#106-e",
+          "RP-211841",
+          "RAN#93-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#106-e",
+          "RP-211841",
+          "RAN#93"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-disposition_pack-R1-2005164",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.214",
+          "0109",
+          "-",
+          "R1-2005164",
+          "agreed",
+          "3GPPRAN1#101-e",
+          "RP-200697",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN1#101-e",
+          "RP-200697",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN1#101-e",
+          "RP-200697",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-revision_chain-R1-2403693",
+      "family": "revision_chain",
+      "flags": [
+        "revision_chain_unnumbered_predecessor"
+      ],
+      "class": "revision_chain_unnumbered_predecessor",
+      "expectedDocumentRowsInCrdb": {
+        "R1-2405740": [
+          [
+            "38.214",
+            "0590",
+            "-",
+            "R1-2405740",
+            "agreed",
+            "3GPPRAN1#117",
+            "RP-241076",
+            "3GPPRAN#104"
+          ]
+        ]
+      },
+      "crdbAnswer": [],
+      "expected": [
+        [
+          "R1-2405740",
+          "agreed",
+          "RP-241076"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-revision_chain-R1-2307027",
+      "family": "revision_chain",
+      "flags": [
+        "revision_chain_unnumbered_predecessor"
+      ],
+      "class": "revision_chain_unnumbered_predecessor",
+      "expectedDocumentRowsInCrdb": {
+        "R1-2308652": [
+          [
+            "38.213",
+            "0494",
+            "-",
+            "R1-2308652",
+            "agreed",
+            "3GPPRAN1#114",
+            "RP-232452",
+            "3GPPRAN#101"
+          ]
+        ]
+      },
+      "crdbAnswer": [],
+      "expected": [
+        [
+          "R1-2308652",
+          "agreed",
+          "RP-232452"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-revision_chain-R1-2308156",
+      "family": "revision_chain",
+      "flags": [
+        "revision_chain_unnumbered_predecessor"
+      ],
+      "class": "revision_chain_unnumbered_predecessor",
+      "expectedDocumentRowsInCrdb": {
+        "R1-2308634": [
+          [
+            "38.213",
+            "0491",
+            "-",
+            "R1-2308634",
+            "agreed",
+            "3GPPRAN1#114",
+            "RP-232453",
+            "3GPPRAN#101"
+          ]
+        ]
+      },
+      "crdbAnswer": [],
+      "expected": [
+        [
+          "R1-2308634",
+          "agreed",
+          "RP-232453"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_origin-RP-261340",
+      "family": "pack_origin",
+      "flags": [
+        "snapshot_timing",
+        "pack_membership_differs"
+      ],
+      "class": "snapshot_timing",
+      "crdbOnly": [
+        "r1-2605124"
+      ],
+      "expectedOnly": [],
+      "entityDifference": "crdbExtra",
+      "snapshotTiming": {
+        "r1-2605124": "CRDB WG meeting ran1#125 later than latest expected RAN1 meeting"
+      },
+      "crdbRowsOfDifferingDocuments": {
+        "r1-2605124": [
+          [
+            "38.214",
+            "0767",
+            "-",
+            "R1-2605124",
+            "agreed",
+            "3GPPRAN1#125",
+            "RP-261340",
+            "3GPPRAN#112"
+          ]
+        ]
+      },
+      "crdbAnswer": [
+        [
+          "R1-2603378",
+          "agreed",
+          "RAN1#124-bis"
+        ],
+        [
+          "R1-2603379",
+          "agreed",
+          "RAN1#124-bis"
+        ],
+        [
+          "R1-2605124",
+          "agreed",
+          "RAN1#125"
+        ]
+      ],
+      "expected": [
+        [
+          "R1-2603378",
+          "agreed",
+          "RAN1#124b"
+        ],
+        [
+          "R1-2603379",
+          "agreed",
+          "RAN1#124b"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_origin-RP-253013",
+      "family": "pack_origin",
+      "flags": [
+        "status_differs"
+      ],
+      "class": "status_differs",
+      "statusOnlyRows": {
+        "crdbOnly": [],
+        "expectedOnly": [
+          [
+            "r1-2508143",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508144",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508166",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508167",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508180",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508181",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508194",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508195",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508196",
+            "endorsed",
+            "ran1#122bis"
+          ],
+          [
+            "r1-2508197",
+            "endorsed",
+            "ran1#122bis"
+          ]
+        ]
+      },
+      "statusDifference": "expectedAdditionalDisposition",
+      "crdbRowsOfDifferingDocuments": {
+        "r1-2508143": [
+          [
+            "38.213",
+            "0730",
+            "-",
+            "R1-2508143",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508144": [
+          [
+            "38.213",
+            "0731",
+            "-",
+            "R1-2508144",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508166": [
+          [
+            "38.214",
+            "0700",
+            "-",
+            "R1-2508166",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508167": [
+          [
+            "38.214",
+            "0701",
+            "-",
+            "R1-2508167",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508180": [
+          [
+            "38.214",
+            "0702",
+            "-",
+            "R1-2508180",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508181": [
+          [
+            "38.214",
+            "0703",
+            "-",
+            "R1-2508181",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508194": [
+          [
+            "38.213",
+            "0735",
+            "-",
+            "R1-2508194",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508195": [
+          [
+            "38.213",
+            "0736",
+            "-",
+            "R1-2508195",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508196": [
+          [
+            "38.211",
+            "0160",
+            "-",
+            "R1-2508196",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ],
+        "r1-2508197": [
+          [
+            "38.211",
+            "0161",
+            "-",
+            "R1-2508197",
+            "agreed",
+            "3GPPRAN1#122-bis",
+            "RP-253013",
+            "3GPPRAN#110"
+          ]
+        ]
+      },
+      "crdbAnswer": [
+        [
+          "R1-2508143",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508144",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508166",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508167",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508180",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508181",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508194",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508195",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508196",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2508197",
+          "agreed",
+          "RAN1#122-bis"
+        ],
+        [
+          "R1-2509563",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509564",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509567",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509570",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509571",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509597",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509660",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509661",
+          "agreed",
+          "RAN1#123"
+        ]
+      ],
+      "expected": [
+        [
+          "R1-2508143",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508143",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508144",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508144",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508166",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508166",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508167",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508167",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508180",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508180",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508181",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508181",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508194",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508194",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508195",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508195",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508196",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508196",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508197",
+          "agreed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2508197",
+          "endorsed",
+          "RAN1#122b"
+        ],
+        [
+          "R1-2509563",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509564",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509567",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509570",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509571",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509597",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509660",
+          "agreed",
+          "RAN1#123"
+        ],
+        [
+          "R1-2509661",
+          "agreed",
+          "RAN1#123"
+        ]
+      ]
+    },
+    {
+      "id": "RAN1-pack_origin-RP-202390",
+      "family": "pack_origin",
+      "flags": [
+        "status_differs"
+      ],
+      "class": "status_differs",
+      "statusOnlyRows": {
+        "crdbOnly": [
+          [
+            "r1-2009687",
+            "revised",
+            "ran1#103"
+          ]
+        ],
+        "expectedOnly": [
+          [
+            "r1-2009687",
+            "agreed",
+            "ran1#103"
+          ]
+        ]
+      },
+      "statusDifference": "differentDisposition",
+      "crdbRowsOfDifferingDocuments": {
+        "r1-2009687": [
+          [
+            "38.214",
+            "0123",
+            "1",
+            "R1-2009687",
+            "revised",
+            "3GPPRAN1#103-e",
+            "RP-202390",
+            "3GPPRAN#90-e"
+          ]
+        ]
+      },
+      "crdbAnswer": [
+        [
+          "R1-2009447",
+          "agreed",
+          "RAN1#103-e"
+        ],
+        [
+          "R1-2009453",
+          "agreed",
+          "RAN1#103-e"
+        ],
+        [
+          "R1-2009454",
+          "agreed",
+          "RAN1#103-e"
+        ],
+        [
+          "R1-2009494",
+          "agreed",
+          "RAN1#103-e"
+        ],
+        [
+          "R1-2009687",
+          "revised",
+          "RAN1#103-e"
+        ]
+      ],
+      "expected": [
+        [
+          "R1-2009447",
+          "agreed",
+          "RAN1#103-e"
+        ],
+        [
+          "R1-2009453",
+          "agreed",
+          "RAN1#103-e"
+        ],
+        [
+          "R1-2009454",
+          "agreed",
+          "RAN1#103-e"
+        ],
+        [
+          "R1-2009494",
+          "agreed",
+          "RAN1#103-e"
+        ],
+        [
+          "R1-2009687",
+          "agreed",
+          "RAN1#103-e"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_lookup-R2-2002003",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#87-e' / expected 'ran#87'"
+      ],
+      "crdbRows": [
+        [
+          "38.331",
+          "1488",
+          "2",
+          "R2-2002003",
+          "agreed",
+          "3GPPRAN2#109-e",
+          "RP-200354",
+          "3GPPRAN#87-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-200354",
+          "RAN#87-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-200354",
+          "RAN#87"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_lookup-R2-2204039",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.300",
+          "0421",
+          "2",
+          "R2-2204039",
+          "agreed",
+          "3GPPRAN2#117-e",
+          "RP-220480",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-220480",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-220480",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_lookup-R2-2008659",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbRows": [
+        [
+          "38.331",
+          "2008",
+          "-",
+          "R2-2008659",
+          "agreed",
+          "3GPPRAN2#111-e",
+          "RP-201925",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-201925",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-201925",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_lookup-R2-2102426",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#91-e' / expected 'ran#91'"
+      ],
+      "crdbRows": [
+        [
+          "38.306",
+          "0490",
+          "1",
+          "R2-2102426",
+          "agreed",
+          "3GPPRAN2#113-e",
+          "RP-210697",
+          "3GPPRAN#91-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-210697",
+          "RAN#91-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-210697",
+          "RAN#91"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_lookup-R2-2002255",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#87-e' / expected 'ran#87'"
+      ],
+      "crdbRows": [
+        [
+          "36.331",
+          "4187",
+          "2",
+          "R2-2002255",
+          "agreed",
+          "3GPPRAN2#109-e",
+          "RP-200358",
+          "3GPPRAN#87-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-200358",
+          "RAN#87-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-200358",
+          "RAN#87"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_lookup-R2-2008568",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbRows": [
+        [
+          "38.304",
+          "0186",
+          "1",
+          "R2-2008568",
+          "agreed",
+          "3GPPRAN2#111-e",
+          "RP-201929",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-201929",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-201929",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_lookup-R2-2102024",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#91-e' / expected 'ran#91'"
+      ],
+      "crdbRows": [
+        [
+          "38.331",
+          "2445",
+          "1",
+          "R2-2102024",
+          "agreed",
+          "3GPPRAN2#113-e",
+          "RP-210689",
+          "3GPPRAN#91-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-210689",
+          "RAN#91-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-210689",
+          "RAN#91"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-disposition_pack-R2-2004595",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "37.355",
+          "0257",
+          "2",
+          "R2-2004595",
+          "agreed",
+          "3GPPRAN2#110-e",
+          "RP-201196",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN2#110-e",
+          "RP-201196",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN2#110-e",
+          "RP-201196",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-disposition_pack-R2-2008380",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbRows": [
+        [
+          "38.300",
+          "0295",
+          "-",
+          "R2-2008380",
+          "agreed",
+          "3GPPRAN2#111-e",
+          "RP-201929",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN2#111-e",
+          "RP-201929",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN2#111-e",
+          "RP-201929",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-disposition_pack-R2-2208977",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#97-e' / expected 'ran#97'"
+      ],
+      "crdbRows": [
+        [
+          "38.300",
+          "0515",
+          "1",
+          "R2-2208977",
+          "agreed",
+          "3GPPRAN2#119-e",
+          "RP-222516",
+          "3GPPRAN#97-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN2#119-e",
+          "RP-222516",
+          "RAN#97-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN2#119-e",
+          "RP-222516",
+          "RAN#97"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-disposition_pack-R2-2006180",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.321",
+          "0705",
+          "2",
+          "R2-2006180",
+          "agreed",
+          "3GPPRAN2#110-e",
+          "RP-201191",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN2#110-e",
+          "RP-201191",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN2#110-e",
+          "RP-201191",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-disposition_pack-R2-2008150",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbRows": [
+        [
+          "38.331",
+          "1993",
+          "-",
+          "R2-2008150",
+          "agreed",
+          "3GPPRAN2#111-e",
+          "RP-201922",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN2#111-e",
+          "RP-201922",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN2#111-e",
+          "RP-201922",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-disposition_pack-R2-2309110",
+      "family": "disposition_pack",
+      "flags": [
+        "pack_differs"
+      ],
+      "class": "pack_differs",
+      "crdbOnly": [
+        "rp-232569"
+      ],
+      "expectedOnly": [],
+      "entityDifference": "crdbExtra",
+      "crdbRows": [
+        [
+          "38.351",
+          "0025",
+          "1",
+          "R2-2309110",
+          "agreed",
+          "3GPPRAN2#123",
+          "RP-232569",
+          "3GPPRAN#101"
+        ],
+        [
+          "38.351",
+          "0025",
+          "1",
+          "R2-2309110",
+          "agreed",
+          "3GPPRAN2#123",
+          "RP-232667",
+          "3GPPRAN#101"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN2#123",
+          "RP-232569",
+          "RAN#101"
+        ],
+        [
+          "agreed",
+          "RAN2#123",
+          "RP-232667",
+          "RAN#101"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN2#123",
+          "RP-232667",
+          "RAN#101"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-disposition_pack-R2-2109158",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#93-e' / expected 'ran#93'"
+      ],
+      "crdbRows": [
+        [
+          "38.321",
+          "1134",
+          "1",
+          "R2-2109158",
+          "agreed",
+          "3GPPRAN2#115-e",
+          "RP-212439",
+          "3GPPRAN#93-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN2#115-e",
+          "RP-212439",
+          "RAN#93-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN2#115-e",
+          "RP-212439",
+          "RAN#93"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_origin-RP-192190",
+      "family": "pack_origin",
+      "flags": [
+        "pack_membership_differs"
+      ],
+      "class": "pack_membership_differs",
+      "crdbOnly": [
+        "r2-1911547",
+        "r2-1911549"
+      ],
+      "expectedOnly": [],
+      "entityDifference": "crdbExtra",
+      "crdbRowsOfDifferingDocuments": {
+        "r2-1911547": [
+          [
+            "36.300",
+            "1249",
+            "-",
+            "R2-1911547",
+            "agreed",
+            "3GPPRAN2#107",
+            "RP-192190",
+            "3GPPRAN#85"
+          ]
+        ],
+        "r2-1911549": [
+          [
+            "37.340",
+            "0153",
+            "-",
+            "R2-1911549",
+            "agreed",
+            "3GPPRAN2#107",
+            "RP-192190",
+            "3GPPRAN#85"
+          ]
+        ]
+      },
+      "crdbAnswer": [
+        [
+          "R2-1908881",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1908885",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1909030",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910048",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910111",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910228",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910234",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910444",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910461",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910918",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910922",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910938",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911029",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911031",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911505",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911530",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911543",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911544",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911547",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911549",
+          "agreed",
+          "RAN2#107"
+        ]
+      ],
+      "expected": [
+        [
+          "R2-1908881",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1908885",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1909030",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910048",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910111",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910228",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910234",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910444",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910461",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910918",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910922",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1910938",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911029",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911031",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911505",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911530",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911543",
+          "agreed",
+          "RAN2#107"
+        ],
+        [
+          "R2-1911544",
+          "agreed",
+          "RAN2#107"
+        ]
+      ]
+    },
+    {
+      "id": "RAN2-pack_origin-RP-191378",
+      "family": "pack_origin",
+      "flags": [
+        "pack_membership_differs"
+      ],
+      "class": "pack_membership_differs",
+      "crdbOnly": [
+        "r2-1908377"
+      ],
+      "expectedOnly": [],
+      "entityDifference": "crdbExtra",
+      "crdbRowsOfDifferingDocuments": {
+        "r2-1908377": [
+          [
+            "38.331",
+            "1118",
+            "-",
+            "R2-1908377",
+            "agreed",
+            "3GPPRAN2#106",
+            "RP-191378",
+            "3GPPRAN#84"
+          ]
+        ]
+      },
+      "crdbAnswer": [
+        [
+          "R2-1908340",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908341",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908342",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908345",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908348",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908351",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908352",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908355",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908358",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908361",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908377",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908378",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908381",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908385",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908412",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908413",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908415",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908419",
+          "agreed",
+          "RAN2#106"
+        ]
+      ],
+      "expected": [
+        [
+          "R2-1908340",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908341",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908342",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908345",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908348",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908351",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908352",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908355",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908358",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908361",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908378",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908381",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908385",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908412",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908413",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908415",
+          "agreed",
+          "RAN2#106"
+        ],
+        [
+          "R2-1908419",
+          "agreed",
+          "RAN2#106"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-pack_lookup-R3-222614",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.460",
+          "0057",
+          "-",
+          "R3-222614",
+          "agreed",
+          "3GPPRAN3#115-e",
+          "RP-220234",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-220234",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-220234",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-pack_lookup-R3-205767",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs",
+        "pack_differs"
+      ],
+      "class": "pack_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbOnly": [
+        "rp-201567"
+      ],
+      "expectedOnly": [],
+      "entityDifference": "crdbExtra",
+      "crdbRows": [
+        [
+          "38.473",
+          "0586",
+          "5",
+          "R3-205767",
+          "agreed",
+          "3GPPRAN3#109-e",
+          "RP-201567",
+          "3GPPRAN#89-e"
+        ],
+        [
+          "38.473",
+          "0586",
+          "5",
+          "R3-205767",
+          "agreed",
+          "3GPPRAN3#109-e",
+          "RP-201956",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-201567",
+          "RAN#89-e"
+        ],
+        [
+          "RP-201956",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-201956",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-pack_lookup-R3-201217",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#87-e' / expected 'ran#87'"
+      ],
+      "crdbRows": [
+        [
+          "36.413",
+          "1738",
+          "1",
+          "R3-201217",
+          "agreed",
+          "3GPPRAN3#107-e",
+          "RP-200419",
+          "3GPPRAN#87-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-200419",
+          "RAN#87-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-200419",
+          "RAN#87"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-pack_lookup-R3-205766",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs",
+        "pack_differs"
+      ],
+      "class": "pack_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbOnly": [
+        "rp-201566"
+      ],
+      "expectedOnly": [],
+      "entityDifference": "crdbExtra",
+      "crdbRows": [
+        [
+          "38.413",
+          "0383",
+          "3",
+          "R3-205766",
+          "agreed",
+          "3GPPRAN3#109-e",
+          "RP-201566",
+          "3GPPRAN#89-e"
+        ],
+        [
+          "38.413",
+          "0383",
+          "3",
+          "R3-205766",
+          "agreed",
+          "3GPPRAN3#109-e",
+          "RP-201955",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-201566",
+          "RAN#89-e"
+        ],
+        [
+          "RP-201955",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-201955",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-pack_lookup-R3-203594",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.401",
+          "0130",
+          "-",
+          "R3-203594",
+          "agreed",
+          "3GPPRAN3#108-e",
+          "RP-201085",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-201085",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-201085",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-pack_lookup-R3-222986",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.463",
+          "0681",
+          "2",
+          "R3-222986",
+          "agreed",
+          "3GPPRAN3#115-e",
+          "RP-220233",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-220233",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-220233",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-212980",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#92-e' / expected 'ran#92'"
+      ],
+      "crdbRows": [
+        [
+          "36.423",
+          "1600",
+          "2",
+          "R3-212980",
+          "agreed",
+          "3GPPRAN3#112-e",
+          "RP-211333",
+          "3GPPRAN#92-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#112-e",
+          "RP-211333",
+          "RAN#92-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#112-e",
+          "RP-211333",
+          "RAN#92"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-200236",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#87-e' / expected 'ran#87'"
+      ],
+      "crdbRows": [
+        [
+          "36.423",
+          "1429",
+          "-",
+          "R3-200236",
+          "agreed",
+          "3GPPRAN3#107-e",
+          "RP-200429",
+          "3GPPRAN#87-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#107-e",
+          "RP-200429",
+          "RAN#87-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#107-e",
+          "RP-200429",
+          "RAN#87"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-202667",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.413",
+          "0370",
+          "1",
+          "R3-202667",
+          "agreed",
+          "3GPPRAN3#107-bis-e",
+          "RP-201091",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#107-bis-e",
+          "RP-201091",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#107bis-e",
+          "RP-201091",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-200346",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#87-e' / expected 'ran#87'"
+      ],
+      "crdbRows": [
+        [
+          "38.423",
+          "0302",
+          "-",
+          "R3-200346",
+          "agreed",
+          "3GPPRAN3#107-e",
+          "RP-200428",
+          "3GPPRAN#87-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#107-e",
+          "RP-200428",
+          "RAN#87-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#107-e",
+          "RP-200428",
+          "RAN#87"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-226142",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#98-e' / expected 'ran#98'"
+      ],
+      "crdbRows": [
+        [
+          "38.401",
+          "0261",
+          "3",
+          "R3-226142",
+          "agreed",
+          "3GPPRAN3#118",
+          "RP-222882",
+          "3GPPRAN#98-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#118",
+          "RP-222882",
+          "RAN#98-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#118",
+          "RP-222882",
+          "RAN#98"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-203748",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.463",
+          "0511",
+          "-",
+          "R3-203748",
+          "agreed",
+          "3GPPRAN3#108-e",
+          "RP-201074",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#108-e",
+          "RP-201074",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#108-e",
+          "RP-201074",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-216188",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#94-e' / expected 'ran#94'"
+      ],
+      "crdbRows": [
+        [
+          "38.423",
+          "0706",
+          "1",
+          "R3-216188",
+          "agreed",
+          "3GPPRAN3#114-e",
+          "RP-212860",
+          "3GPPRAN#94-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#114-e",
+          "RP-212860",
+          "RAN#94-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#114-e",
+          "RP-212860",
+          "RAN#94"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-205048",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs",
+        "pack_differs"
+      ],
+      "class": "pack_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbOnly": [
+        "rp-201565"
+      ],
+      "expectedOnly": [],
+      "entityDifference": "crdbExtra",
+      "crdbRows": [
+        [
+          "36.423",
+          "1527",
+          "-",
+          "R3-205048",
+          "agreed",
+          "3GPPRAN3#109-e",
+          "RP-201565",
+          "3GPPRAN#89-e"
+        ],
+        [
+          "36.423",
+          "1527",
+          "-",
+          "R3-205048",
+          "agreed",
+          "3GPPRAN3#109-e",
+          "RP-201954",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#109-e",
+          "RP-201565",
+          "RAN#89-e"
+        ],
+        [
+          "agreed",
+          "RAN3#109-e",
+          "RP-201954",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#109-e",
+          "RP-201954",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-disposition_pack-R3-226125",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#98-e' / expected 'ran#98'"
+      ],
+      "crdbRows": [
+        [
+          "38.423",
+          "0929",
+          "1",
+          "R3-226125",
+          "agreed",
+          "3GPPRAN3#118",
+          "RP-222890",
+          "3GPPRAN#98-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN3#118",
+          "RP-222890",
+          "RAN#98-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN3#118",
+          "RP-222890",
+          "RAN#98"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-revision_chain-R3-215388",
+      "family": "revision_chain",
+      "flags": [
+        "status_differs"
+      ],
+      "class": "status_differs",
+      "statusOnlyRows": {
+        "crdbOnly": [
+          [
+            "r3-216125",
+            "revised",
+            "rp-212867"
+          ]
+        ],
+        "expectedOnly": [
+          [
+            "r3-216125",
+            "agreed",
+            "rp-212867"
+          ]
+        ]
+      },
+      "statusDifference": "differentDisposition",
+      "crdbRows": [
+        [
+          "38.455",
+          "0047",
+          "-",
+          "R3-215388",
+          "revised",
+          "3GPPRAN3#114-e",
+          "-",
+          "-"
+        ],
+        [
+          "38.455",
+          "0047",
+          "1",
+          "R3-215914",
+          "revised",
+          "3GPPRAN3#114-e",
+          "-",
+          "-"
+        ],
+        [
+          "38.455",
+          "0047",
+          "2",
+          "R3-216125",
+          "revised",
+          "3GPPRAN3#114-e",
+          "RP-212867",
+          "3GPPRAN#94-e"
+        ],
+        [
+          "38.455",
+          "0047",
+          "3",
+          "-",
+          "-",
+          "-",
+          "RP-213173",
+          "3GPPRAN#94-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "R3-216125",
+          "revised",
+          "RP-212867"
+        ]
+      ],
+      "expected": [
+        [
+          "R3-216125",
+          "agreed",
+          "RP-212867"
+        ]
+      ]
+    },
+    {
+      "id": "RAN3-pack_origin-RP-252673",
+      "family": "pack_origin",
+      "flags": [
+        "pack_membership_differs"
+      ],
+      "class": "pack_membership_differs",
+      "crdbOnly": [
+        "r3-256027"
+      ],
+      "expectedOnly": [],
+      "entityDifference": "crdbExtra",
+      "crdbRowsOfDifferingDocuments": {
+        "r3-256027": [
+          [
+            "38.413",
+            "1285",
+            "2",
+            "R3-256027",
+            "agreed",
+            "3GPPRAN3#129",
+            "RP-252673",
+            "3GPPRAN#109"
+          ]
+        ]
+      },
+      "crdbAnswer": [
+        [
+          "R3-255977",
+          "agreed",
+          "RAN3#129"
+        ],
+        [
+          "R3-255978",
+          "agreed",
+          "RAN3#129"
+        ],
+        [
+          "R3-255979",
+          "agreed",
+          "RAN3#129"
+        ],
+        [
+          "R3-256027",
+          "agreed",
+          "RAN3#129"
+        ]
+      ],
+      "expected": [
+        [
+          "R3-255977",
+          "agreed",
+          "RAN3#129"
+        ],
+        [
+          "R3-255978",
+          "agreed",
+          "RAN3#129"
+        ],
+        [
+          "R3-255979",
+          "agreed",
+          "RAN3#129"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-pack_lookup-R4-2220864",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#98-e' / expected 'ran#98'"
+      ],
+      "crdbRows": [
+        [
+          "38.101-4",
+          "0327",
+          "1",
+          "R4-2220864",
+          "agreed",
+          "3GPPRAN4#105",
+          "RP-223297",
+          "3GPPRAN#98-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-223297",
+          "RAN#98-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-223297",
+          "RAN#98"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-pack_lookup-R4-2120405",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#94-e' / expected 'ran#94'"
+      ],
+      "crdbRows": [
+        [
+          "36.171",
+          "0025",
+          "-",
+          "R4-2120405",
+          "agreed",
+          "3GPPRAN4#101-e",
+          "RP-212853",
+          "3GPPRAN#94-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-212853",
+          "RAN#94-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-212853",
+          "RAN#94"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-pack_lookup-R4-2011775",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbRows": [
+        [
+          "38.101-1",
+          "0480",
+          "1",
+          "R4-2011775",
+          "agreed",
+          "3GPPRAN4#96-e",
+          "RP-201507",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-201507",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-201507",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-pack_lookup-R4-2120807",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#94-e' / expected 'ran#94'"
+      ],
+      "crdbRows": [
+        [
+          "38.101-4",
+          "0276",
+          "-",
+          "R4-2120807",
+          "agreed",
+          "3GPPRAN4#101-e",
+          "RP-212846",
+          "3GPPRAN#94-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-212846",
+          "RAN#94-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-212846",
+          "RAN#94"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-pack_lookup-R4-2218748",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#98-e' / expected 'ran#98'"
+      ],
+      "crdbRows": [
+        [
+          "38.133",
+          "2711",
+          "-",
+          "R4-2218748",
+          "agreed",
+          "3GPPRAN4#105",
+          "RP-223292",
+          "3GPPRAN#98-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-223292",
+          "RAN#98-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-223292",
+          "RAN#98"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-pack_lookup-R4-2006940",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.101-1",
+          "0327",
+          "-",
+          "R4-2006940",
+          "agreed",
+          "3GPPRAN4#95-e",
+          "RP-200985",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-200985",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-200985",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-disposition_pack-R4-2107743",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#92-e' / expected 'ran#92'"
+      ],
+      "crdbRows": [
+        [
+          "38.101-3",
+          "0525",
+          "1",
+          "R4-2107743",
+          "agreed",
+          "3GPPRAN4#99-e",
+          "RP-211101",
+          "3GPPRAN#92-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN4#99-e",
+          "RP-211101",
+          "RAN#92-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN4#99-e",
+          "RP-211101",
+          "RAN#92"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-disposition_pack-R4-2012176",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#89-e' / expected 'ran#89'"
+      ],
+      "crdbRows": [
+        [
+          "38.133",
+          "1003",
+          "1",
+          "R4-2012176",
+          "agreed",
+          "3GPPRAN4#96-e",
+          "RP-201498",
+          "3GPPRAN#89-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN4#96-e",
+          "RP-201498",
+          "RAN#89-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN4#96-e",
+          "RP-201498",
+          "RAN#89"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-disposition_pack-R4-2115869",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#93-e' / expected 'ran#93'"
+      ],
+      "crdbRows": [
+        [
+          "38.176-2",
+          "0002",
+          "-",
+          "R4-2115869",
+          "agreed",
+          "3GPPRAN4#100-e",
+          "RP-211892",
+          "3GPPRAN#93-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN4#100-e",
+          "RP-211892",
+          "RAN#93-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN4#100-e",
+          "RP-211892",
+          "RAN#93"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-disposition_pack-R4-2002331",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#87-e' / expected 'ran#87'"
+      ],
+      "crdbRows": [
+        [
+          "38.133",
+          "0586",
+          "-",
+          "R4-2002331",
+          "agreed",
+          "3GPPRAN4#94-e",
+          "RP-200400",
+          "3GPPRAN#87-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN4#94-e",
+          "RP-200400",
+          "RAN#87-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN4#94-e",
+          "RP-200400",
+          "RAN#87"
+        ]
+      ]
+    },
+    {
+      "id": "RAN4-pack_origin-RP-202414",
+      "family": "pack_origin",
+      "flags": [
+        "status_differs"
+      ],
+      "class": "status_differs",
+      "statusOnlyRows": {
+        "crdbOnly": [],
+        "expectedOnly": [
+          [
+            "r4-2017391",
+            "not_treated",
+            "ran4#97"
+          ]
+        ]
+      },
+      "statusDifference": "expectedAdditionalDisposition",
+      "crdbRowsOfDifferingDocuments": {
+        "r4-2017391": [
+          [
+            "38.101-3",
+            "0402",
+            "2",
+            "R4-2017391",
+            "agreed",
+            "3GPPRAN4#97-e",
+            "RP-202414",
+            "3GPPRAN#90-e"
+          ]
+        ]
+      },
+      "crdbAnswer": [
+        [
+          "R4-2015170",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2015521",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016176",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016189",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016190",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016414",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016800",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017081",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017082",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017084",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017085",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017088",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017305",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017391",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017462",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017463",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017837",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017845",
+          "agreed",
+          "RAN4#97-e"
+        ]
+      ],
+      "expected": [
+        [
+          "R4-2015170",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2015521",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016176",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016189",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016190",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016414",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2016800",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017081",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017082",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017084",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017085",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017088",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017305",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017391",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017391",
+          "not_treated",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017462",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017463",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017837",
+          "agreed",
+          "RAN4#97-e"
+        ],
+        [
+          "R4-2017845",
+          "agreed",
+          "RAN4#97-e"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-211663",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#91-e' / expected 'ran#91'"
+      ],
+      "crdbRows": [
+        [
+          "38.508-1",
+          "1743",
+          "1",
+          "R5-211663",
+          "agreed",
+          "3GPPRAN5#90-e",
+          "RP-210132",
+          "3GPPRAN#91-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-210132",
+          "RAN#91-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-210132",
+          "RAN#91"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-200923",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#87-e' / expected 'ran#87'"
+      ],
+      "crdbRows": [
+        [
+          "38.508-2",
+          "0062",
+          "1",
+          "R5-200923",
+          "agreed",
+          "3GPPRAN5#86-e",
+          "RP-200070",
+          "3GPPRAN#87-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-200070",
+          "RAN#87-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-200070",
+          "RAN#87"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-224272",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#97-e' / expected 'ran#97'"
+      ],
+      "crdbRows": [
+        [
+          "38.508-2",
+          "0360",
+          "-",
+          "R5-224272",
+          "agreed",
+          "3GPPRAN5#96-e",
+          "RP-221974",
+          "3GPPRAN#97-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-221974",
+          "RAN#97-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-221974",
+          "RAN#97"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-206400",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#90-e' / expected 'ran#90'"
+      ],
+      "crdbRows": [
+        [
+          "38.523-2",
+          "0108",
+          "1",
+          "R5-206400",
+          "agreed",
+          "3GPPRAN5#89-e",
+          "RP-202237",
+          "3GPPRAN#90-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-202237",
+          "RAN#90-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-202237",
+          "RAN#90"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-221329",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.521-3",
+          "1330",
+          "-",
+          "R5-221329",
+          "agreed",
+          "3GPPRAN5#94-e",
+          "RP-220086",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-220086",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-220086",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-205692",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#90-e' / expected 'ran#90'"
+      ],
+      "crdbRows": [
+        [
+          "36.521-2",
+          "0938",
+          "-",
+          "R5-205692",
+          "agreed",
+          "3GPPRAN5#89-e",
+          "RP-202248",
+          "3GPPRAN#90-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-202248",
+          "RAN#90-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-202248",
+          "RAN#90"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-211532",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#91-e' / expected 'ran#91'"
+      ],
+      "crdbRows": [
+        [
+          "36.579-2",
+          "0126",
+          "1",
+          "R5-211532",
+          "agreed",
+          "3GPPRAN5#90-e",
+          "RP-210166",
+          "3GPPRAN#91-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-210166",
+          "RAN#91-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-210166",
+          "RAN#91"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-217968",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#94-e' / expected 'ran#94'"
+      ],
+      "crdbRows": [
+        [
+          "36.579-1",
+          "0212",
+          "1",
+          "R5-217968",
+          "agreed",
+          "3GPPRAN5#93-e",
+          "RP-212800",
+          "3GPPRAN#94-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-212800",
+          "RAN#94-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-212800",
+          "RAN#94"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-221510",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.508-1",
+          "2223",
+          "1",
+          "R5-221510",
+          "agreed",
+          "3GPPRAN5#94-e",
+          "RP-220093",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-220093",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-220093",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-pack_lookup-R5-221112",
+      "family": "pack_lookup",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.521-2",
+          "0705",
+          "-",
+          "R5-221112",
+          "agreed",
+          "3GPPRAN5#94-e",
+          "RP-220074",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "RP-220074",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "RP-220074",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-217847",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#94-e' / expected 'ran#94'"
+      ],
+      "crdbRows": [
+        [
+          "34.229-5",
+          "0243",
+          "1",
+          "R5-217847",
+          "agreed",
+          "3GPPRAN5#93-e",
+          "RP-212751",
+          "3GPPRAN#94-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#93-e",
+          "RP-212751",
+          "RAN#94-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#93-e",
+          "RP-212751",
+          "RAN#94"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-206302",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#90-e' / expected 'ran#90'"
+      ],
+      "crdbRows": [
+        [
+          "38.508-1",
+          "1620",
+          "1",
+          "R5-206302",
+          "agreed",
+          "3GPPRAN5#89-e",
+          "RP-202222",
+          "3GPPRAN#90-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#89-e",
+          "RP-202222",
+          "RAN#90-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#89-e",
+          "RP-202222",
+          "RAN#90"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-202524",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.905",
+          "0267",
+          "-",
+          "R5-202524",
+          "agreed",
+          "3GPPRAN5#87-e",
+          "RP-200576",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#87-e",
+          "RP-200576",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#87-e",
+          "RP-200576",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-202744",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.533",
+          "0708",
+          "1",
+          "R5-202744",
+          "agreed",
+          "3GPPRAN5#87-e",
+          "RP-200581",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#87-e",
+          "RP-200581",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#87-e",
+          "RP-200581",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-220682",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "38.523-1",
+          "2800",
+          "-",
+          "R5-220682",
+          "agreed",
+          "3GPPRAN5#94-e",
+          "RP-220096",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#94-e",
+          "RP-220096",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#94-e",
+          "RP-220096",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-221784",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#95-e' / expected 'ran#95'"
+      ],
+      "crdbRows": [
+        [
+          "37.901-5",
+          "0026",
+          "1",
+          "R5-221784",
+          "agreed",
+          "3GPPRAN5#94-e",
+          "RP-220083",
+          "3GPPRAN#95-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#94-e",
+          "RP-220083",
+          "RAN#95-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#94-e",
+          "RP-220083",
+          "RAN#95"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-203000",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#88-e' / expected 'ran#88'"
+      ],
+      "crdbRows": [
+        [
+          "38.533",
+          "0608",
+          "1",
+          "R5-203000",
+          "agreed",
+          "3GPPRAN5#87-e",
+          "RP-200581",
+          "3GPPRAN#88-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#87-e",
+          "RP-200581",
+          "RAN#88-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#87-e",
+          "RP-200581",
+          "RAN#88"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-215381",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#93-e' / expected 'ran#93'"
+      ],
+      "crdbRows": [
+        [
+          "38.521-3",
+          "1147",
+          "-",
+          "R5-215381",
+          "agreed",
+          "3GPPRAN5#92-e",
+          "RP-211690",
+          "3GPPRAN#93-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#92-e",
+          "RP-211690",
+          "RAN#93-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#92-e",
+          "RP-211690",
+          "RAN#93"
+        ]
+      ]
+    },
+    {
+      "id": "RAN5-disposition_pack-R5-214035",
+      "family": "disposition_pack",
+      "flags": [
+        "meeting_label_differs"
+      ],
+      "class": "meeting_label_differs",
+      "meetingLabelPairs": [
+        "tsg_meeting: crdb 'ran#92-e' / expected 'ran#92'"
+      ],
+      "crdbRows": [
+        [
+          "36.521-1",
+          "5321",
+          "1",
+          "R5-214035",
+          "agreed",
+          "3GPPRAN5#91-e",
+          "RP-211033",
+          "3GPPRAN#92-e"
+        ]
+      ],
+      "crdbAnswer": [
+        [
+          "agreed",
+          "RAN5#91-e",
+          "RP-211033",
+          "RAN#92-e"
+        ]
+      ],
+      "expected": [
+        [
+          "agreed",
+          "RAN5#91-e",
+          "RP-211033",
+          "RAN#92"
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1286 @@
+{
+ "task": "You write one read-only SQLite query for a relational database of 3GPP standardization records. Database schema (table definitions):\nCREATE TABLE cr_in_pack(cr TEXT, pack_id TEXT)\nCREATE TABLE cr_modifies_section(cr TEXT, section_id TEXT)\nCREATE TABLE cr_pack(id TEXT PRIMARY KEY, pack_number TEXT, tsg_meeting TEXT, tsg_number INTEGER)\nCREATE TABLE disposition(id TEXT PRIMARY KEY, resolution_id TEXT, target TEXT, code TEXT,\n                             evidence_status TEXT, scope TEXT, evidence_path TEXT, evidence_sha256 TEXT)\nCREATE TABLE document(id TEXT PRIMARY KEY, number TEXT, doc_type TEXT, cr_number TEXT, spec TEXT,\n                          target_release TEXT, list_status TEXT, presented_at TEXT, pack_field TEXT)\nCREATE TABLE meeting(id TEXT PRIMARY KEY, label TEXT, number_int INTEGER, wg TEXT)\nCREATE TABLE pack_member(cr TEXT, pack_id TEXT)\nCREATE TABLE resolution(id TEXT PRIMARY KEY, meeting_id TEXT)\nCREATE TABLE revision(earlier TEXT, later TEXT)\nCREATE TABLE section(id TEXT PRIMARY KEY, spec TEXT, release TEXT, clause TEXT)\nCREATE TABLE section_modified_by(cr TEXT, section_id TEXT)\nAnswer with a JSON object {\"sql\": \"...\"}. The query must SELECT DISTINCT exactly these columns in this order: <the item's fields>. Use only SELECT statements (WITH allowed).\n\nStored value domains, measured on this database for every table column above. When a column has at most 62 distinct values, all of them are listed with their record counts; otherwise its value kind, a format description and up to 3 example values are given. Values longer than 88 characters are never listed in full and examples longer than that are cut. For list values the elements are described.\ncr_in_pack.cr — identifier; 29438 values, 29438 distinct; length 14..14 (median 14.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-999999\" 87.8%, \"tdoc:R9s999999\" 12.2%; examples: \"tdoc:R5-198637\", \"tdoc:R5-243533\", \"tdoc:R5-235702\"\ncr_in_pack.pack_id — identifier; 29438 values, 1430 distinct; length 21..21 (median 21.0); characters: digits, lowercase, uppercase, \"-/:\"; all shapes (digits shown as 9; share of values): \"tdoc:crpack/RP-999999\" 100.0%; examples: \"tdoc:crpack/RP-231654\", \"tdoc:crpack/RP-221989\", \"tdoc:crpack/RP-240985\"\ncr_modifies_section.cr — identifier; 38324 values, 20173 distinct; length 14..14 (median 14); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-999999\" 99.6%, \"tdoc:R9s999999\" 0.4%; examples: \"tdoc:R5-204220\", \"tdoc:R5-204463\", \"tdoc:R5-187668\"\ncr_modifies_section.section_id — identifier; 38324 values, 13612 distinct; length 28..48 (median 37.0); characters: digits, lowercase, uppercase, \"-./:_\"; examples: \"tdoc:section/38.521-1-Rel-19-C\", \"tdoc:section/38.508-1-Rel-15-4.7.3\", \"tdoc:section/38.521-3-Rel-15-5.3\"\ncr_pack.id — identifier; 1430 values, 1430 distinct; length 21..21 (median 21.0); characters: digits, lowercase, uppercase, \"-/:\"; all shapes (digits shown as 9; share of values): \"tdoc:crpack/RP-999999\" 100.0%; examples: \"tdoc:crpack/RP-250727\", \"tdoc:crpack/RP-242305\", \"tdoc:crpack/RP-261377\"\ncr_pack.pack_number — identifier; 1430 values, 1430 distinct; length 9..9 (median 9.0); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"RP-999999\" 100.0%; examples: \"RP-182298\", \"RP-222744\", \"RP-261260\"\ncr_pack.tsg_meeting — categorical; 1430 values, 35 distinct; all values (count): \"RAN#104\" (78), \"RAN#105\" (77), \"RAN#106\" (77), \"RAN#107\" (71), \"RAN#109\" (67), \"RAN#111\" (67), \"RAN#112\" (66), \"RAN#100\" (64), \"RAN#110\" (63), \"RAN#101\" (62), \"RAN#108\" (62), \"RAN#99\" (62), \"RAN#98\" (58), \"RAN#103\" (57), \"RAN#97\" (57), \"RAN#102\" (51), \"RAN#95\" (48), \"RAN#94\" (44), \"RAN#93\" (40), \"RAN#96\" (40), \"RAN#92\" (35), \"RAN#91\" (28), \"RAN#90\" (21), \"RAN#85\" (15), \"RAN#86\" (15), \"RAN#89\" (14), \"RAN#82\" (13), \"RAN#84\" (13), \"RAN#88\" (13), \"RAN#83\" (12), \"RAN#87\" (12), \"RAN#79\" (10), \"RAN#81\" (9), \"RAN#80\" (7), \"RAN#78\" (2)\ncr_pack.tsg_number — integer; 1430 values, 35 distinct; all values (count): 104 (78), 105 (77), 106 (77), 107 (71), 109 (67), 111 (67), 112 (66), 100 (64), 110 (63), 101 (62), 108 (62), 99 (62), 98 (58), 103 (57), 97 (57), 102 (51), 95 (48), 94 (44), 93 (40), 96 (40), 92 (35), 91 (28), 90 (21), 85 (15), 86 (15), 89 (14), 82 (13), 84 (13), 88 (13), 83 (12), 87 (12), 79 (10), 81 (9), 80 (7), 78 (2)\ndisposition.id — identifier; 65489 values, 65489 distinct; length 90..90 (median 90); characters: digits, lowercase, \"-/:\"; examples: \"tdoc:decision-disposition/67ee22c7c0229cb367ccc5212699c9d3fa611833fc0f24c1bb7f06b94860a4… [90 chars]\", \"tdoc:decision-disposition/26cd8e0b50b6495c4aec4b07d88dc3c28db83b0c2e1f3b9e0c9c699b35b13a… [90 chars]\", \"tdoc:decision-disposition/59f33fb187db7fb3642d5751e406563c5ff9f215ff36e2642cf5a2403fd2cc… [90 chars]\"\ndisposition.resolution_id — identifier; 65489 values, 65483 distinct; length 28..40 (median 38); characters: digits, lowercase, uppercase, \"-./:\"; all shapes (digits shown as 9; share of values): \"tdoc:resolution/DOC-99-R9-999999-b9999\" 52.9%, \"tdoc:resolution/DOC-999-R9-999999-b9999\" 30.3%, \"tdoc:resolution/DOC-99-R9-999999-b99999\" 11.0%, \"tdoc:resolution/DOC-999-R9-999999-b99999\" 4.9%, \"tdoc:resolution/DOC-99-R9-999999-b999\" 0.8%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.99-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.99.99-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9.99.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.99.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9.9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.99.9.9-999\" 0.0%; examples: \"tdoc:resolution/DOC-91-R5-212467-b8807\", \"tdoc:resolution/DOC-78-R5-181296-b7466\", \"tdoc:resolution/DOC-80-R5-184252-b1778\"\ndisposition.target — identifier; 65489 values, 65397 distinct; length 14..14 (median 14); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-999999\" 100.0%; examples: \"tdoc:R5-205049\", \"tdoc:R5-251666\", \"tdoc:R5-225824\"\ndisposition.code — categorical; 65489 values, 13 distinct; all values (count): \"agreed\" (34255), \"revised\" (18793), \"withdrawn\" (5703), \"noted\" (5492), \"not_treated\" (875), \"endorsed\" (165), \"not_pursued\" (96), \"ambiguous\" (87), \"partially_agreed\" (15), \"conditionally_agreed\" (3), \"postponed\" (2), \"rejected\" (2), \"not_agreed\" (1)\ndisposition.evidence_status — categorical; 65489 values, 2 distinct; all values (count): \"source_verified\" (65402), \"pending\" (87)\ndisposition.scope — categorical; 65489 values, 3 distinct; all values (count): \"whole_target\" (65387), \"undetermined\" (87), \"subdocument\" (15)\ndisposition.evidence_path — categorical; 65489 values, 37 distinct; all values (count): \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-92.docx\" (2181), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-84.docx\" (2173), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-97.docx\" (2118), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-100.docx\" (2055), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-102.docx\" (2037), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-98.docx\" (2002), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-91.docx\" (1998), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-104.docx\" (1991), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-94.docx\" (1987), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-83.docx\" (1910), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-105.docx\" (1903), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-90.docx\" (1903), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-93.docx\" (1903), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-103.docx\" (1898), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-101.docx\" (1881), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-82.docx\" (1857), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-96.docx\" (1848), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-87.docx\" (1819), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-81.docx\" (1816), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-89.docx\" (1771), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-99.docx\" (1761), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-95.docx\" (1740), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-106.docx\" (1711), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-107.docx\" (1701), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-85.docx\" (1695), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-88.docx\" (1661), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-111.docx\" (1648), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-108.docx\" (1645), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-112.docx\" (1643), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-110.docx\" (1541), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-80.docx\" (1508), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-76.docx\" (1444), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-109.docx\" (1427), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-79.docx\" (1398), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-78.docx\" (1373), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-77.docx\" (1291), \"ontology/input/tsg/RAN/formal/meetings/RAN5/Final_Report/Final_Report_RAN5-86.docx\" (1251)\ndisposition.evidence_sha256 — categorical; 65489 values, 37 distinct; all values (count): \"7893541fe0aa3bc378b3ff8d30268a3063108ebdbf67815858d121163a4d1d72\" (2181), \"2281157913b756affa5aa6e8c9549f807ed726809ce125d6568d16a2f85a885b\" (2173), \"e810e4098b6fcb8f4efb595fd5bfabe98d657ea6f96d61476f588dea246948e2\" (2118), \"2250fe914c6fe1dbd100d7811b8340b72bda6b235843bcd8e247b8154a9fbf3f\" (2055), \"09775887cc01ff36c74917f90484da873073b40e43762abf496c6de33953de00\" (2037), \"34f5fb69ed75e13a2253be613a7588fe63303157d4b6147a6e7b4a6f9a9a7f38\" (2002), \"cd8a0c1391cd8632b06baa3a4528fe2b885cd8222a53319125ef33428bdcb1ab\" (1998), \"58b17fd47bbe6244a255cf3772a276bfabed849394c7c38fedfacf54609e3a18\" (1991), \"c3645a16fa14f1d7813479d2eb37c419b5bdefa0f5933388c7628fe1145b6b9b\" (1987), \"4519027c0dd6f718e4ef13b3cf0e36be0e87f4fbd4d1437a7fac93f6d79cb20a\" (1910), \"289084932724928e991a54d33d35641b9b9a34a7f05bb2a28e1fa4ce84541bf1\" (1903), \"515f32f6815c4dea91bb374787b56610ad8217b895770463b475d215f6a6b3dc\" (1903), \"5efb8350a19187796f6b8b58fb6a9305487209cc5cdadf2777f28e7f9f10c687\" (1903), \"2638cdeee26be4f5b6e2dbff0566184d1d22636d9de7c59891f6edb70301ffc0\" (1898), \"928acec86ff2dfdc54a9f57374c5e48f2c8b681a32436d2d027ac308dbfba7ca\" (1881), \"8de0b38567679f1f78940049cb441c8daf5ec04ba8759afb699f567f6b26cf29\" (1857), \"bee0a301b4ef21380e5d398f9c765b7a5cdb75eb83f86abaf09b50b993c974e8\" (1848), \"aa13bd5d8ddbd0098ae97f026c72a098926ed7f8ed739af92b7585d633f4f617\" (1819), \"f8d6607be4045a9852c84562211ff12a0ebbd5fd7195447a163e825a5798e129\" (1816), \"da7be66391fb2535de3c46214e70c94e5f4957c07e1ee0fa9f1a45982edfd06b\" (1771), \"d32eef2d502aa4e43b89c40296fe62f641fe55f856360e7ced51e046440e5ca5\" (1761), \"f8a73cc944bf489e556574ac8f5970dedb4c711e4a69823616a37c76f22b0185\" (1740), \"0cd48f407257765d2933bd1dc566eb8051f0590cca1a3648f01333a4cd86ff05\" (1711), \"f0c43bb326aa1fe315b9ef78fa7e806ca7d143edea3135b55ea24eac31d8d5a9\" (1701), \"516a9b06f7aaf3a3a2b81765750c3f78258c15b203d7be78a1dbe6a12e4ab442\" (1695), \"ec370dccd1c0babfd74325c07da8381cc9c2dee0fb90daa1574ea5faa3cd2a5b\" (1661), \"2baad016f33ccc439abcb5094f7f48a660abf69507bc10cf50870e5c7c85a399\" (1648), \"e1dd6074042f43b00a64cd7e0d8961ba4a48b70ef95cdf3c01e2c69bf89ae07a\" (1645), \"08eb9a4516d4e7a2f7f9ea858a9e343c882c1bd603c8989d2c1e9a6361bd22e0\" (1643), \"67e84c7d1440bafa50f7f264ab622e295cdf3b58bd572fcf3b01209170b7c0e6\" (1541), \"a4ab4d07eec7e9c02c2fcb7f4dedc37bff8410e8586692d3ab1e41b6be53d68b\" (1508), \"cb3b8056de268575803ee66e900ac5dd241d8ec7a3cb7409c3df8441718630b4\" (1444), \"629b19ab977631c5862e15f765de7571650149c8b1261d130e1f45168d648a49\" (1427), \"dc898c15d2da7db819a45f1c8974e6e196d7fb77eed433197aa367b071ba135a\" (1398), \"1293adb79d31390265d8487bde963e8dbc95cfbeb64b4269f5018643d1e688c0\" (1373), \"678091f923fe4f8acadf1556d09ba4cf0a881aa21d00da483079875a28465cde\" (1291), \"7c27bc07b1c70eee26d4268df091878bf0afd88c4ed76c0c619c05631874bb08\" (1251)\ndocument.id — identifier; 65413 values, 65413 distinct; length 14..15 (median 14); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-999999\" 100.0%, \"tdoc:R9-9999999\" 0.0%; examples: \"tdoc:R5-255088\", \"tdoc:R5-234640\", \"tdoc:R5-226359\"\ndocument.number — identifier; 65413 values, 65413 distinct; length 9..10 (median 9); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"R9-999999\" 100.0%, \"R9-9999999\" 0.0%; examples: \"R5-211534\", \"R5-226128\", \"R5-201026\"\ndocument.doc_type — categorical; 65413 values, 3 distinct; all values (count): \"tdoc:CR\" (56099), \"tdoc:Tdoc\" (8773), \"tdoc:LS\" (541)\ndocument.cr_number — identifier; 54361 values, 5603 distinct; length 1..4 (median 4); characters: digits, \"-\"; all shapes (digits shown as 9; share of values): \"9999\" 99.5%, \"-\" 0.5%; examples: \"5378\", \"1282\", \"4336\"\ndocument.spec — identifier; 56099 values, 72 distinct; length 6..8 (median 8.0); characters: digits, \"-.\"; all shapes (digits shown as 9; share of values): \"99.999-9\" 76.5%, \"99.999\" 23.5%; examples: \"36.579-5\", \"34.229-3\", \"34.121-1\"\ndocument.target_release — categorical; 61232 values, 13 distinct; all values (count): \"Rel-16\" (16388), \"Rel-17\" (13550), \"Rel-18\" (11328), \"Rel-15\" (9882), \"Rel-19\" (6442), \"Rel-14\" (3001), \"Rel-13\" (593), \"Rel-20\" (23), \"Rel-12\" (13), \"Rel-11\" (5), \"Rel-10\" (4), \"Rel-8\" (2), \"Rel-21\" (1)\ndocument.list_status — categorical; 65413 values, 15 distinct; all values (count): \"agreed\" (32543), \"revised\" (18783), \"withdrawn\" (5672), \"noted\" (5141), \"approved\" (1604), \"available\" (823), \"reserved\" (439), \"endorsed\" (155), \"postponed\" (102), \"not pursued\" (93), \"for email approval\" (23), \"not concluded\" (18), \"not treated\" (12), \"for email agreement\" (3), \"rejected\" (2)\ndocument.presented_at — categorical; 65413 values, 37 distinct; all values (count): \"tdoc:meeting/RAN5_92-e\" (2180), \"tdoc:meeting/RAN5_84\" (2170), \"tdoc:meeting/RAN5_97\" (2118), \"tdoc:meeting/RAN5_100\" (2053), \"tdoc:meeting/RAN5_102\" (2034), \"tdoc:meeting/RAN5_98\" (2006), \"tdoc:meeting/RAN5_91-e\" (1999), \"tdoc:meeting/RAN5_104\" (1991), \"tdoc:meeting/RAN5_94-e\" (1983), \"tdoc:meeting/RAN5_83\" (1904), \"tdoc:meeting/RAN5_105\" (1903), \"tdoc:meeting/RAN5_93-e\" (1903), \"tdoc:meeting/RAN5_90-e\" (1902), \"tdoc:meeting/RAN5_103\" (1897), \"tdoc:meeting/RAN5_101\" (1880), \"tdoc:meeting/RAN5_82\" (1853), \"tdoc:meeting/RAN5_96-e\" (1845), \"tdoc:meeting/RAN5_87-e\" (1816), \"tdoc:meeting/RAN5_81\" (1805), \"tdoc:meeting/RAN5_89-e\" (1768), \"tdoc:meeting/RAN5_99\" (1761), \"tdoc:meeting/RAN5_95-e\" (1740), \"tdoc:meeting/RAN5_106\" (1707), \"tdoc:meeting/RAN5_107\" (1699), \"tdoc:meeting/RAN5_85\" (1690), \"tdoc:meeting/RAN5_111\" (1660), \"tdoc:meeting/RAN5_88-e\" (1659), \"tdoc:meeting/RAN5_108\" (1642), \"tdoc:meeting/RAN5_112\" (1642), \"tdoc:meeting/RAN5_110\" (1540), \"tdoc:meeting/RAN5_80\" (1504), \"tdoc:meeting/RAN5_76\" (1441), \"tdoc:meeting/RAN5_109\" (1427), \"tdoc:meeting/RAN5_79\" (1394), \"tdoc:meeting/RAN5_78\" (1365), \"tdoc:meeting/RAN5_77\" (1284), \"tdoc:meeting/RAN5_86-e\" (1248)\ndocument.pack_field — identifier; 27202 values, 1347 distinct; length 1..9 (median 9); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"RP-999999\" 86.6%, \"-\" 13.4%; examples: \"RP-222004\", \"RP-200578\", \"RP-240231\"\nmeeting.id — categorical; 37 values, 37 distinct; all values (count): \"tdoc:meeting/RAN5_100\" (1), \"tdoc:meeting/RAN5_101\" (1), \"tdoc:meeting/RAN5_102\" (1), \"tdoc:meeting/RAN5_103\" (1), \"tdoc:meeting/RAN5_104\" (1), \"tdoc:meeting/RAN5_105\" (1), \"tdoc:meeting/RAN5_106\" (1), \"tdoc:meeting/RAN5_107\" (1), \"tdoc:meeting/RAN5_108\" (1), \"tdoc:meeting/RAN5_109\" (1), \"tdoc:meeting/RAN5_110\" (1), \"tdoc:meeting/RAN5_111\" (1), \"tdoc:meeting/RAN5_112\" (1), \"tdoc:meeting/RAN5_76\" (1), \"tdoc:meeting/RAN5_77\" (1), \"tdoc:meeting/RAN5_78\" (1), \"tdoc:meeting/RAN5_79\" (1), \"tdoc:meeting/RAN5_80\" (1), \"tdoc:meeting/RAN5_81\" (1), \"tdoc:meeting/RAN5_82\" (1), \"tdoc:meeting/RAN5_83\" (1), \"tdoc:meeting/RAN5_84\" (1), \"tdoc:meeting/RAN5_85\" (1), \"tdoc:meeting/RAN5_86-e\" (1), \"tdoc:meeting/RAN5_87-e\" (1), \"tdoc:meeting/RAN5_88-e\" (1), \"tdoc:meeting/RAN5_89-e\" (1), \"tdoc:meeting/RAN5_90-e\" (1), \"tdoc:meeting/RAN5_91-e\" (1), \"tdoc:meeting/RAN5_92-e\" (1), \"tdoc:meeting/RAN5_93-e\" (1), \"tdoc:meeting/RAN5_94-e\" (1), \"tdoc:meeting/RAN5_95-e\" (1), \"tdoc:meeting/RAN5_96-e\" (1), \"tdoc:meeting/RAN5_97\" (1), \"tdoc:meeting/RAN5_98\" (1), \"tdoc:meeting/RAN5_99\" (1)\nmeeting.label — categorical; 37 values, 37 distinct; all values (count): \"RAN5#100\" (1), \"RAN5#101\" (1), \"RAN5#102\" (1), \"RAN5#103\" (1), \"RAN5#104\" (1), \"RAN5#105\" (1), \"RAN5#106\" (1), \"RAN5#107\" (1), \"RAN5#108\" (1), \"RAN5#109\" (1), \"RAN5#110\" (1), \"RAN5#111\" (1), \"RAN5#112\" (1), \"RAN5#76\" (1), \"RAN5#77\" (1), \"RAN5#78\" (1), \"RAN5#79\" (1), \"RAN5#80\" (1), \"RAN5#81\" (1), \"RAN5#82\" (1), \"RAN5#83\" (1), \"RAN5#84\" (1), \"RAN5#85\" (1), \"RAN5#86-e\" (1), \"RAN5#87-e\" (1), \"RAN5#88-e\" (1), \"RAN5#89-e\" (1), \"RAN5#90-e\" (1), \"RAN5#91-e\" (1), \"RAN5#92-e\" (1), \"RAN5#93-e\" (1), \"RAN5#94-e\" (1), \"RAN5#95-e\" (1), \"RAN5#96-e\" (1), \"RAN5#97\" (1), \"RAN5#98\" (1), \"RAN5#99\" (1)\nmeeting.number_int — integer; 37 values, 37 distinct; all values (count): 100 (1), 101 (1), 102 (1), 103 (1), 104 (1), 105 (1), 106 (1), 107 (1), 108 (1), 109 (1), 110 (1), 111 (1), 112 (1), 76 (1), 77 (1), 78 (1), 79 (1), 80 (1), 81 (1), 82 (1), 83 (1), 84 (1), 85 (1), 86 (1), 87 (1), 88 (1), 89 (1), 90 (1), 91 (1), 92 (1), 93 (1), 94 (1), 95 (1), 96 (1), 97 (1), 98 (1), 99 (1)\nmeeting.wg — categorical; 37 values, 1 distinct; all values (count): \"RAN5\" (37)\npack_member.cr — identifier; 29438 values, 29438 distinct; length 14..14 (median 14.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-999999\" 87.8%, \"tdoc:R9s999999\" 12.2%; examples: \"tdoc:R5-221559\", \"tdoc:R5s220817\", \"tdoc:R5-237744\"\npack_member.pack_id — identifier; 29438 values, 1430 distinct; length 21..21 (median 21.0); characters: digits, lowercase, uppercase, \"-/:\"; all shapes (digits shown as 9; share of values): \"tdoc:crpack/RP-999999\" 100.0%; examples: \"tdoc:crpack/RP-240952\", \"tdoc:crpack/RP-250704\", \"tdoc:crpack/RP-220073\"\nresolution.id — identifier; 65483 values, 65483 distinct; length 28..40 (median 38); characters: digits, lowercase, uppercase, \"-./:\"; all shapes (digits shown as 9; share of values): \"tdoc:resolution/DOC-99-R9-999999-b9999\" 52.9%, \"tdoc:resolution/DOC-999-R9-999999-b9999\" 30.3%, \"tdoc:resolution/DOC-99-R9-999999-b99999\" 11.0%, \"tdoc:resolution/DOC-999-R9-999999-b99999\" 4.9%, \"tdoc:resolution/DOC-99-R9-999999-b999\" 0.8%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.99-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.99.99-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9.99.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.99.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-999-9.9.9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.9.9.9.9-999\" 0.0%, \"aaaa:aaaaaaaaaa/AAA-99-9.9.99.9.9-999\" 0.0%; examples: \"tdoc:resolution/DOC-104-R5-245656-b9777\", \"tdoc:resolution/DOC-103-R5-243981-b11535\", \"tdoc:resolution/DOC-95-R5-223017-b3280\"\nresolution.meeting_id — categorical; 65483 values, 45 distinct; all values (count): \"tdoc:meeting/RAN5_92-e\" (2181), \"tdoc:meeting/RAN5_84\" (2173), \"tdoc:meeting/RAN5_97\" (2118), \"tdoc:meeting/RAN5_100\" (2055), \"tdoc:meeting/RAN5_102\" (2037), \"tdoc:meeting/RAN5_98\" (2002), \"tdoc:meeting/RAN5_91-e\" (1996), \"tdoc:meeting/RAN5_104\" (1991), \"tdoc:meeting/RAN5_94-e\" (1983), \"tdoc:meeting/RAN5_83\" (1910), \"tdoc:meeting/RAN5_105\" (1903), \"tdoc:meeting/RAN5_90-e\" (1902), \"tdoc:meeting/RAN5_93-e\" (1901), \"tdoc:meeting/RAN5_103\" (1898), \"tdoc:meeting/RAN5_101\" (1881), \"tdoc:meeting/RAN5_82\" (1857), \"tdoc:meeting/RAN5_96-e\" (1846), \"tdoc:meeting/RAN5_81\" (1816), \"tdoc:meeting/RAN5_87-e\" (1816), \"tdoc:meeting/RAN5_89-e\" (1769), \"tdoc:meeting/RAN5_99\" (1759), \"tdoc:meeting/RAN5_95-e\" (1740), \"tdoc:meeting/RAN5_106\" (1711), \"tdoc:meeting/RAN5_107\" (1701), \"tdoc:meeting/RAN5_85\" (1695), \"tdoc:meeting/RAN5_88-e\" (1658), \"tdoc:meeting/RAN5_111\" (1648), \"tdoc:meeting/RAN5_108\" (1645), \"tdoc:meeting/RAN5_112\" (1643), \"tdoc:meeting/RAN5_110\" (1541), \"tdoc:meeting/RAN5_80\" (1508), \"tdoc:meeting/RAN5_76\" (1444), \"tdoc:meeting/RAN5_109\" (1427), \"tdoc:meeting/RAN5_79\" (1398), \"tdoc:meeting/RAN5_78\" (1373), \"tdoc:meeting/RAN5_77\" (1290), \"tdoc:meeting/RAN5_86-e\" (1248), \"tdoc:meeting/RAN5_86\" (3), \"tdoc:meeting/RAN5_87\" (3), \"tdoc:meeting/RAN5_88\" (3), \"tdoc:meeting/RAN5_94\" (3), \"tdoc:meeting/RAN5_89\" (2), \"tdoc:meeting/RAN5_93\" (2), \"tdoc:meeting/RAN5_96\" (2), \"tdoc:meeting/RAN5_90\" (1)\nrevision.earlier — identifier; 18367 values, 18361 distinct; length 14..14 (median 14); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-999999\" 100.0%, \"tdoc:RP-999999\" 0.0%; examples: \"tdoc:R5-191111\", \"tdoc:R5-195622\", \"tdoc:R5-240711\"\nrevision.later — identifier; 18367 values, 18367 distinct; length 14..15 (median 14); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-999999\" 100.0%, \"tdoc:R9-9999999\" 0.0%; examples: \"tdoc:R5-221374\", \"tdoc:R5-221747\", \"tdoc:R5-225778\"\nsection.id — identifier; 13612 values, 13612 distinct; length 28..48 (median 37.0); characters: digits, lowercase, uppercase, \"-./:_\"; examples: \"tdoc:section/38.521-3-Rel-15-A.3\", \"tdoc:section/38.533-Rel-19-A.1.3\", \"tdoc:section/38.521-5-Rel-19-F.1.3\"\nsection.spec — categorical; 13612 values, 15 distinct; all values (count): \"38.533\" (2946), \"38.521-1\" (2577), \"38.523-1\" (2357), \"38.521-4\" (1357), \"38.521-3\" (1341), \"38.521-2\" (1226), \"38.508-1\" (893), \"38.521-5\" (279), \"38.523-3\" (227), \"38.508-2\" (142), \"38.509\" (85), \"38.551\" (66), \"38.561\" (60), \"38.522\" (38), \"38.523-2\" (18)\nsection.release — categorical; 13612 values, 5 distinct; all values (count): \"Rel-19\" (7283), \"Rel-18\" (4327), \"Rel-17\" (1009), \"Rel-15\" (941), \"Rel-16\" (52)\nsection.clause — identifier; 13612 values, 8818 distinct; length 1..19 (median 9.0); characters: digits, lowercase, uppercase, \"._\"; examples: \"7.5A.1\", \"11.1.1a\", \"14.5.3.4.4.3\"\nsection_modified_by.cr — identifier; 38324 values, 20173 distinct; length 14..14 (median 14); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-999999\" 99.6%, \"tdoc:R9s999999\" 0.4%; examples: \"tdoc:R5-186734\", \"tdoc:R5-216285\", \"tdoc:R5-210713\"\nsection_modified_by.section_id — identifier; 38324 values, 13612 distinct; length 28..48 (median 37.0); characters: digits, lowercase, uppercase, \"-./:_\"; examples: \"tdoc:section/38.533-Rel-19-4.5.11.1\", \"tdoc:section/38.521-3-Rel-15-7.3A.1\", \"tdoc:section/38.521-1-Rel-19-7.6A.4.3.5.0a\"",
+ "items": [
+  {
+   "id": "RAN5-q028777b0430a",
+   "question": "In which TSG RAN CR pack was change request R5-245188 (CR 1835 to TS 38.521-3) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q02d1c0b6fa4e",
+   "question": "Which Rel-18 change requests that modify clause 7.3B.2.3_1.1 of TS 38.521-3 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q0304f690d12f",
+   "question": "In which TSG RAN CR pack was change request R5-196161 (CR 0408 to TS 38.521-3) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q04f3318016d4",
+   "question": "Which Rel-18 change requests that modify clause 6.3.2.1.2.4.1 of TS 38.521-4 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q065a6700f70d",
+   "question": "Change request R5-254950 (CR 5134 to TS 38.523-1) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q08c44dd601a9",
+   "question": "In which TSG RAN CR pack was change request R5-263541 (CR 5490 to TS 38.523-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q095aa98969e2",
+   "question": "Trace change request R5-220776 (CR 0297 to TS 38.508-2) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.508-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q0aecea1eda32",
+   "question": "In which TSG RAN CR pack was change request R5-224272 (CR 0360 to TS 38.508-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q0bce4acce1c7",
+   "question": "RAN5 recorded document R5-247478 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q0e5cec29f620",
+   "question": "Trace change request R5-184785 (CR 0080 to TS 38.508-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.508-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q12a2c79b8565",
+   "question": "In which TSG RAN CR pack was change request R5-250442 (CR 1888 to TS 38.521-3) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q14175c462195",
+   "question": "Which Rel-18 change requests that modify clause 14.1.2.2 of TS 38.523-1 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q14834ad5b5ae",
+   "question": "TSG RAN CR pack RP-251055 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q18a787cb7d7c",
+   "question": "Trace change request R5-218468 (CR 0437 to TS 38.521-4) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.521-4 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q1c0e27d1657f",
+   "question": "In which TSG RAN CR pack was change request R5-221510 (CR 2223 to TS 38.508-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q1f3284852f68",
+   "question": "Which Rel-18 change requests that modify clause 17.7.4.1 of TS 38.533 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q1ff34e69b526",
+   "question": "TSG RAN CR pack RP-242715 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q2166d28ba0fd",
+   "question": "RAN5 recorded document R5-222305 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q22d609e22e5f",
+   "question": "RAN5 recorded document R5-247130 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q22dfc0884407",
+   "question": "RAN5 recorded document R5-252659 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q282e983864c2",
+   "question": "RAN5 recorded document R5-215083 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q29228eeef704",
+   "question": "RAN5 recorded document R5-192223 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q2a63160e1bc6",
+   "question": "Change request R5-256849 (CR 4187 to TS 38.533) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q2d035fb6ceb2",
+   "question": "RAN5 recorded document R5-243207 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q3150c186a16d",
+   "question": "Change request R5-243877 (CR 2751 to TS 38.521-1) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q315c956af92f",
+   "question": "In which TSG RAN CR pack was change request R5-191564 (CR 2376 to TS 36.521-3) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q3380c999d752",
+   "question": "In which TSG RAN CR pack was change request R5-231233 (CR 2742 to TS 38.508-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q350e4b08c187",
+   "question": "RAN5 recorded document R5-227333 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q366b6b48223d",
+   "question": "RAN5 recorded document R5-193648 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q37d826bdf543",
+   "question": "TSG RAN CR pack RP-240228 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q3eac1e743cb7",
+   "question": "Which Rel-18 change requests that modify clause 5.3.2.2.2 of TS 38.521-4 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q422e57bd5062",
+   "question": "In which TSG RAN CR pack was change request R5-241443 (CR 0704 to TS 38.903) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q4366e9298bac",
+   "question": "Trace change request R5-254784 (CR 3517 to TS 38.521-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.521-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q45ac14dea8bf",
+   "question": "In which TSG RAN CR pack was change request R5-210198 (CR 1951 to TS 38.523-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q46e488ee54bf",
+   "question": "In which TSG RAN CR pack was change request R5-211532 (CR 0126 to TS 36.579-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q47e8b8626684",
+   "question": "In which TSG RAN CR pack was change request R5-247719 (CR 3043 to TS 38.521-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q47f9b6c38fa7",
+   "question": "In which TSG RAN CR pack was change request R5-187211 (CR 4601 to TS 36.521-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q4bd1fc850216",
+   "question": "Trace change request R5-211918 (CR 0068 to TS 38.522) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.522 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q4d170c2d5334",
+   "question": "TSG RAN CR pack RP-232841 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q4d8daf67b320",
+   "question": "Trace change request R5-232612 (CR 2231 to TS 38.521-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.521-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q4dced09756b2",
+   "question": "Trace change request R5-251067 (CR 0573 to TS 38.522) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.522 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q4e6734a1bc9b",
+   "question": "TSG RAN CR pack RP-200590 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q4e7ebc4a12db",
+   "question": "In which TSG RAN CR pack was change request R5-202237 (CR 4930 to TS 36.523-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q51935df38967",
+   "question": "TSG RAN CR pack RP-221083 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q528843bf4bb1",
+   "question": "Which Rel-18 change requests that modify clause 6.4E.1.1 of TS 38.521-1 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q543d47276290",
+   "question": "In which TSG RAN CR pack was change request R5-215537 (CR 1166 to TS 38.521-3) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q56ea91142aac",
+   "question": "RAN5 recorded document R5-260473 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q5b7eb41ad371",
+   "question": "In which TSG RAN CR pack was change request R5-198602 (CR 0459 to TS 38.533) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q5fcfe754e1a1",
+   "question": "Change request R5-232980 (CR 2275 to TS 38.521-1) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q5fe40bfef640",
+   "question": "In which TSG RAN CR pack was change request R5-220153 (CR 0283 to TS 38.903) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q60cae9e83419",
+   "question": "In which TSG RAN CR pack was change request R5-250767 (CR 3749 to TS 38.533) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q61152742a535",
+   "question": "Which Rel-17 change requests that modify clause 7.4.2.4.2 of TS 38.523-3 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q6248b260b979",
+   "question": "Trace change request R5-248004 (CR 3076 to TS 38.521-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.521-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q6a19205d76b0",
+   "question": "Which Rel-18 change requests that modify clause 6.3.2 of TS 38.521-4 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q6dbd971c754a",
+   "question": "RAN5 recorded document R5-260315 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q6e60cb61ef8a",
+   "question": "Change request R5-231454 (CR 3433 to TS 38.523-1) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q6fa4f22f9483",
+   "question": "Which Rel-18 change requests that modify clause 6.5L.1.3 of TS 38.521-3 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q715d89fcc038",
+   "question": "Change request R5-233185 (CR 0361 to TS 38.523-2) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q7177be67b9e2",
+   "question": "Which Rel-16 change requests that modify clause 5.3.4 of TS 38.509 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q71cace556e14",
+   "question": "Change request R5-202744 (CR 0708 to TS 38.533) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q71cb74e8b5b1",
+   "question": "RAN5 recorded document R5-202006 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q71e270ad2129",
+   "question": "In which TSG RAN CR pack was change request R5-254395 (CR 1061 to TS 38.905) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q72a779cad694",
+   "question": "Change request R5-235871 (CR 0719 to TS 38.521-4) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q73cec179e4e6",
+   "question": "Change request R5-217847 (CR 0243 to TS 34.229-5) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q7433b5c57688",
+   "question": "TSG RAN CR pack RP-221957 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q75434baa178e",
+   "question": "Trace change request R5-221462 (CR 0199 to TS 38.523-2) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.523-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q77be8a34cb69",
+   "question": "Which Rel-17 change requests that modify clause 7.1.1.4.1.5 of TS 38.523-1 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q79d432ceb811",
+   "question": "RAN5 recorded document R5-200857 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q7ca1397fa5b0",
+   "question": "In which TSG RAN CR pack was change request R5-252169 (CR 1591 to TS 34.229-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q7e02c65adffb",
+   "question": "Change request R5-221784 (CR 0026 to TS 37.901-5) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q7e347d48eb1f",
+   "question": "Which Rel-18 change requests that modify clause 7.3A.2.6 of TS 38.521-2 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q8129b95a26e6",
+   "question": "TSG RAN CR pack RP-251063 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q83c062e8bcd4",
+   "question": "Which Rel-17 change requests that modify clause 12.3.1.1.16 of TS 38.523-1 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q84007e0dc14e",
+   "question": "Change request R5-251941 (CR 0797 to TS 38.508-2) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q840384e12c43",
+   "question": "Which Rel-18 change requests that modify clause 6.3.2.2.2.4.1 of TS 38.521-4 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q86a33332adba",
+   "question": "Change request R5-231730 (CR 2167 to TS 38.533) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q9044b778e7d7",
+   "question": "In which TSG RAN CR pack was change request R5-200923 (CR 0062 to TS 38.508-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q92b3968158af",
+   "question": "Change request R5-232387 (CR 0533 to TS 34.229-5) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q9777bd78e6d4",
+   "question": "TSG RAN CR pack RP-251096 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q9aad5be2e683",
+   "question": "RAN5 recorded document R5-181075 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-q9c3f0dabea20",
+   "question": "In which TSG RAN CR pack was change request R5-244477 (CR 2883 to TS 38.521-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q9cf66e0dcbaf",
+   "question": "Change request R5-206302 (CR 1620 to TS 38.508-1) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-q9d6418e1aa16",
+   "question": "Trace change request R5-235422 (CR 0406 to TS 38.523-2) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.523-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-q9dd890b7d2e9",
+   "question": "Which Rel-19 change requests that modify clause 6.2A.3.1.1.3.3_1 of TS 38.521-4 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qa0b15eb73881",
+   "question": "Trace change request R5-230107 (CR 2971 to TS 38.523-3) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.523-3 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qa1f133ce2bd4",
+   "question": "RAN5 recorded document R5-232184 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qa60f386e2d1b",
+   "question": "Change request R5-202524 (CR 0267 to TS 38.905) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qa75279be16c2",
+   "question": "In which TSG RAN CR pack was change request R5-173621 (CR 1125 to TS 34.229-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qaa883d630544",
+   "question": "Change request R5-215381 (CR 1147 to TS 38.521-3) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qac919bfe0da4",
+   "question": "In which TSG RAN CR pack was change request R5-246770 (CR 5380 to TS 36.523-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qad1d19516f19",
+   "question": "TSG RAN CR pack RP-240955 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qb18de4416e4e",
+   "question": "In which TSG RAN CR pack was change request R5-211252 (CR 1193 to TS 38.521-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qb37f52e02930",
+   "question": "TSG RAN CR pack RP-190076 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qb43afadc583b",
+   "question": "In which TSG RAN CR pack was change request R5-221329 (CR 1330 to TS 38.521-3) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qb5071f920695",
+   "question": "Change request R5-220682 (CR 2800 to TS 38.523-1) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qbc7b8fb24b84",
+   "question": "In which TSG RAN CR pack was change request R5-221112 (CR 0705 to TS 38.521-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qbd75f83fe3c5",
+   "question": "Trace change request R5-213102 (CR 1280 to TS 38.521-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.521-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qbfc13d77f5a9",
+   "question": "TSG RAN CR pack RP-252279 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qc013c432fce5",
+   "question": "Trace change request R5-198903 (CR 1193 to TS 38.523-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.523-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qc16f7e905f34",
+   "question": "Which Rel-18 change requests that modify clause 14.2.1.1 of TS 38.533 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qc1c625677079",
+   "question": "In which TSG RAN CR pack was change request R5-211663 (CR 1743 to TS 38.508-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qc20c98ca1685",
+   "question": "Trace change request R5-233321 (CR 3633 to TS 38.523-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.523-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qc45680f31c89",
+   "question": "Change request R5-214035 (CR 5321 to TS 36.521-1) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qc480f577a751",
+   "question": "TSG RAN CR pack RP-222755 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qc5414ce228ec",
+   "question": "In which TSG RAN CR pack was change request R5-191529 (CR 0083 to TS 38.905) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qc62b9541bdbf",
+   "question": "Trace change request R5-233408 (CR 3766 to TS 38.523-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.523-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qc70e69783b35",
+   "question": "TSG RAN CR pack RP-211712 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qcb23e7194d0e",
+   "question": "In which TSG RAN CR pack was change request R5-217968 (CR 0212 to TS 36.579-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qcb3d4280e88c",
+   "question": "In which TSG RAN CR pack was change request R5-182444 (CR 0711 to TS 36.521-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qcb8b4519bfd2",
+   "question": "RAN5 recorded document R5-222569 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qcc5f84ffb67c",
+   "question": "In which TSG RAN CR pack was change request R5-205692 (CR 0938 to TS 36.521-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qcdccc4797881",
+   "question": "Trace change request R5-217715 (CR 0283 to TS 38.508-2) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.508-2 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qcdeb49f1340f",
+   "question": "Trace change request R5-263126 (CR 3802 to TS 38.521-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.521-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qd15a5d318821",
+   "question": "In which TSG RAN CR pack was change request R5-206400 (CR 0108 to TS 38.523-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qd3eb00a3b986",
+   "question": "TSG RAN CR pack RP-253581 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qd778f74107ee",
+   "question": "In which TSG RAN CR pack was change request R5-250110 (CR 1057 to TS 36.521-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qda077e246958",
+   "question": "Trace change request R5-235292 (CR 3936 to TS 38.523-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.523-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qdda2560139cd",
+   "question": "Which Rel-17 change requests that modify clause 7.3.3.2 of TS 38.523-3 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qdda3ce801758",
+   "question": "TSG RAN CR pack RP-250681 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qde317edc86b0",
+   "question": "TSG RAN CR pack RP-250731 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qe15f3a0b74ec",
+   "question": "In which TSG RAN CR pack was change request R5-254221 (CR 5106 to TS 38.523-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qe337f6a5f128",
+   "question": "RAN5 recorded document R5-233296 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qe38f4ef0e637",
+   "question": "In which TSG RAN CR pack was change request R5-194995 (CR 0044 to TS 38.521-4) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qe63e08fab145",
+   "question": "Change request R5-203000 (CR 0608 to TS 38.533) was handled by RAN5. What source-verified disposition did RAN5 record for the whole document and at which RAN5 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN5 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qe644473c854d",
+   "question": "In which TSG RAN CR pack was change request R5-194984 (CR 0037 to TS 38.521-4) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qe6743c6badd6",
+   "question": "Which Rel-18 change requests that modify clause 7.6J.2 of TS 38.521-1 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qe852e78d0271",
+   "question": "RAN5 recorded document R5-205924 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qe85e166ea7f5",
+   "question": "RAN5 recorded document R5-236866 as revised. Follow its revisions to every later version that has a source-verified RAN5 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qe94e92df3cc9",
+   "question": "Trace change request R5-198404 (CR 0502 to TS 38.521-3) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.521-3 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qed43c5187215",
+   "question": "TSG RAN CR pack RP-252302 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qeffb5c1bd7be",
+   "question": "Which Rel-19 change requests that modify clause 6.2J.1 of TS 38.521-1 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qf11d20dc1cf3",
+   "question": "Trace change request R5-198894 (CR 1093 to TS 38.523-1) from the RAN5 decision to the clauses it modifies. Give the source-verified disposition RAN5 recorded for the whole document, the RAN5 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.523-1 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN5-qf23152ffec35",
+   "question": "Which Rel-19 change requests that modify clause F.1.1.3 of TS 38.521-4 have a source-verified RAN5 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN5 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN5-qf3289c73767f",
+   "question": "In which TSG RAN CR pack was change request R5-256282 (CR 0009 to TS 37.579-4) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qf3c856a2c5fe",
+   "question": "In which TSG RAN CR pack was change request R5-173731 (CR 1034 to TS 36.523-2) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qf8a80dfa0c76",
+   "question": "TSG RAN CR pack RP-232826 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qf8f80d182203",
+   "question": "In which TSG RAN CR pack was change request R5-180867 (CR 3922 to TS 34.123-1) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN5-qfeb4ca5c7829",
+   "question": "TSG RAN CR pack RP-230962 carries change requests from RAN5. For each change request in the pack that has a source-verified RAN5 disposition for the whole document, give the document, the disposition, and the RAN5 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  }
+ ]
+}

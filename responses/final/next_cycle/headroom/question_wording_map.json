@@ -1,0 +1,215 @@
+{
+ "purpose": "Each condition of the member-side reference query of the three clause-set families (measure_relational_equivalence.py CLAUSE_SET_SQL; the container-side query differs only in the {member} and {change} tables) mapped to the phrase of the question template (build_chain_items.py CLAUSE_SET_FAMILIES) that states it. {wg} is the item's working group; {doc}, {cr}, {spec}, {release}, {pack}, {releases} are filled from the item's anchor.",
+ "check": "every phrase occurs in the template, every SQL condition occurs in the reference query text, and every phrase (placeholders filled: {wg} with the item's working group, others matched as any text) occurs in every admitted question of its family",
+ "sources": {
+  "build_chain_items.py": "cc46af3f63c4c01bd468af5cd1497615d97d235c2311115750582bf4c207f2d3",
+  "measure_relational_equivalence.py": "1880441e022d7895fbc6f67bcce44427e44fd50c35715dd09518229add5c296e"
+ },
+ "admittedFiles": {
+  "core": "be9989fbeb195b51fdf97cddd53b5ac3177a1745886e912e728f5c7044112dcc",
+  "ran5": "8d71c5691fe6b7c5a533e6ee0e55912be6daf0c08daaf4aaea3aeb7e3288b48e"
+ },
+ "families": {
+  "clause_neighbours": {
+   "template": "Change request {doc} (CR {cr} to TS {spec}) targets {release}. For each clause it modifies in {release}, which {release} change requests other than {doc} that modify the same clause have a source-verified {wg} disposition for the whole document and were submitted in a TSG RAN CR pack? Give the clause, each document, its disposition, the {wg} meeting, and the CR pack document number.",
+   "answerFields": [
+    "clause",
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ],
+   "conditions": [
+    {
+     "referenceQueryCondition": "cx.cr = :anchor",
+     "phrase": "Change request {doc} (CR {cr} to TS {spec})",
+     "questionsContainingPhrase": 100,
+     "admittedQuestions": 100
+    },
+    {
+     "referenceQueryCondition": "x.target_release = s.release",
+     "phrase": "targets {release}. For each clause it modifies in {release}",
+     "questionsContainingPhrase": 100,
+     "admittedQuestions": 100
+    },
+    {
+     "referenceQueryCondition": "JOIN {change} co ON co.section_id = s.id",
+     "phrase": "that modify the same clause",
+     "questionsContainingPhrase": 100,
+     "admittedQuestions": 100
+    },
+    {
+     "referenceQueryCondition": "o.target_release = s.release",
+     "phrase": "which {release} change requests",
+     "questionsContainingPhrase": 100,
+     "admittedQuestions": 100
+    },
+    {
+     "referenceQueryCondition": "o.id <> :anchor",
+     "phrase": "other than {doc}",
+     "questionsContainingPhrase": 100,
+     "admittedQuestions": 100
+    },
+    {
+     "referenceQueryCondition": "{VERIFIED}  (d.target = o.id)",
+     "phrase": "have a source-verified {wg} disposition for the whole document",
+     "questionsContainingPhrase": 100,
+     "admittedQuestions": 100
+    },
+    {
+     "referenceQueryCondition": "JOIN {member} m ON m.cr = o.id JOIN cr_pack p ON p.id = m.pack_id",
+     "phrase": "were submitted in a TSG RAN CR pack",
+     "questionsContainingPhrase": 100,
+     "admittedQuestions": 100
+    },
+    {
+     "referenceQueryCondition": "SELECT DISTINCT s.clause, o.number, d.code, g.label, p.pack_number",
+     "phrase": "Give the clause, each document, its disposition, the {wg} meeting, and the CR pack document number.",
+     "questionsContainingPhrase": 100,
+     "admittedQuestions": 100
+    }
+   ]
+  },
+  "first_change": {
+   "template": "TSG RAN CR pack {pack} carries change requests from {wg}. Take each change request in the pack that has a source-verified {wg} disposition for the whole document and each clause it modifies in the release that change request targets ({releases}). Keep the clauses that the pack changes first: no change request of that release submitted in a CR pack at an earlier TSG RAN meeting in the records modifies the same clause. Give the document, the specification, and the clause.",
+   "answerFields": [
+    "document",
+    "specification",
+    "clause"
+   ],
+   "conditions": [
+    {
+     "referenceQueryCondition": "m.pack_id = :anchor",
+     "phrase": "TSG RAN CR pack {pack} carries change requests from {wg}. Take each change request in the pack",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    },
+    {
+     "referenceQueryCondition": "{VERIFIED}  (d.target = m.cr)",
+     "phrase": "has a source-verified {wg} disposition for the whole document",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    },
+    {
+     "referenceQueryCondition": "JOIN {change} c ON c.cr = m.cr ... doc.target_release = s.release",
+     "phrase": "each clause it modifies in the release that change request targets ({releases})",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    },
+    {
+     "referenceQueryCondition": "NOT EXISTS (...)",
+     "phrase": "Keep the clauses that the pack changes first: no change request",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    },
+    {
+     "referenceQueryCondition": "d2.target_release = s.release",
+     "phrase": "of that release",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    },
+    {
+     "referenceQueryCondition": "JOIN {member} m2 ON m2.cr = c2.cr JOIN cr_pack p2 ON p2.id = m2.pack_id",
+     "phrase": "submitted in a CR pack",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    },
+    {
+     "referenceQueryCondition": "p2.tsg_number < p.tsg_number",
+     "phrase": "at an earlier TSG RAN meeting in the records",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    },
+    {
+     "referenceQueryCondition": "c2.section_id = s.id",
+     "phrase": "modifies the same clause",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    },
+    {
+     "referenceQueryCondition": "SELECT DISTINCT doc.number, s.spec, s.clause",
+     "phrase": "Give the document, the specification, and the clause.",
+     "questionsContainingPhrase": 98,
+     "admittedQuestions": 98
+    }
+   ]
+  },
+  "previous_pack": {
+   "template": "TSG RAN CR pack {pack} carries change requests from {wg}. Take each change request in the pack that has a source-verified {wg} disposition for the whole document and each clause it modifies in the release that change request targets ({releases}). For each such clause, look at the change requests of that release that modify the same clause and give every CR pack of the latest earlier TSG RAN meeting in the records that carried such a change request; leave out clauses with no earlier pack. Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+   "answerFields": [
+    "specification",
+    "clause",
+    "cr_pack",
+    "tsg_meeting"
+   ],
+   "conditions": [
+    {
+     "referenceQueryCondition": "m.pack_id = :anchor",
+     "phrase": "TSG RAN CR pack {pack} carries change requests from {wg}. Take each change request in the pack",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "{VERIFIED}  (d.target = m.cr)",
+     "phrase": "has a source-verified {wg} disposition for the whole document",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "JOIN {change} c ON c.cr = m.cr ... doc.target_release = s.release",
+     "phrase": "each clause it modifies in the release that change request targets ({releases})",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "JOIN {change} c2 ON c2.section_id = t.sid",
+     "phrase": "look at the change requests of that release that modify the same clause",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "d2.target_release = t.release",
+     "phrase": "the change requests of that release",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "JOIN {member} m2 ON m2.cr = c2.cr JOIN cr_pack p2 ON p2.id = m2.pack_id",
+     "phrase": "that carried such a change request",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "p2.tsg_number < t.t",
+     "phrase": "earlier TSG RAN meeting in the records",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "tsg_number = (SELECT max(q.tsg_number) FROM prev q WHERE q.sid = prev.sid)",
+     "phrase": "of the latest earlier TSG RAN meeting",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "SELECT DISTINCT ... pack_number (all packs at that maximum)",
+     "phrase": "give every CR pack",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "prev has no row for the clause -> the clause gives no row",
+     "phrase": "leave out clauses with no earlier pack",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    },
+    {
+     "referenceQueryCondition": "SELECT DISTINCT spec, clause, pack_number, tsg_meeting",
+     "phrase": "Give the specification, the clause, the CR pack document number, and the TSG RAN meeting.",
+     "questionsContainingPhrase": 99,
+     "admittedQuestions": 99
+    }
+   ]
+  }
+ }
+}

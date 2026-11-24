@@ -1,0 +1,1048 @@
+{
+ "task": "You write one read-only Cypher query for a Neo4j graph of 3GPP standardization records. Graph schema (node labels with properties, then relationship patterns):\n(:AgendaItem {_createdBy, agendaDescription, agendaNumber, id, meetingNumber})\n(:Agreement {content, contentWithEquations, hasFFS, hasTBD, note, resolutionId, resolutionScope, sequence})\n(:CR {_belongsTo, _createdBy, _hasContact, _isRevisionOf, _modifies, _presentedAt, _relatedTo, _revisedTo, _submittedBy, _targetRelease, abstract, affectsCN, affectsME, affectsRAN, affectsUICC, clausesAffected, consequencesIfNotApproved, crCategory, crNumber, crRevision, for, id, reasonForChange, reservationDate, secretaryRemarks, status, summaryOfChange, tdocNumber, title, titleSource, tsgCRPack, type, uploadedDate})\n(:CRPack {crPackId, tsgMeeting})\n(:Chart {caption, chartId, chartNumber, chartPath, chartType})\n(:Company {aliases, companyName, id})\n(:Conclusion {content, contentWithEquations, hasConsensus, note, resolutionId, sequence})\n(:Contact {contactId, contactName, id})\n(:DecisionDisposition {assessmentMethod, dispositionCode, dispositionId, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, evidenceStatus, targetTdocNumber})\n(:Delegate {delegateId, nameSurface})\n(:EmailMessage {archiveCode, id, messageId, roundNum, sentDate, subject})\n(:EmailThread {earliestDate, latestDate, overmergeSuspect, participantCount, subject, threadKey, totalMessages})\n(:EvidenceAssertion {assertionId, assertionPredicateIRI, assessmentMethod, evidenceStatus, id})\n(:EvidenceFragment {evidenceId, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, id})\n(:Feature {catalogVersion, curator, featureDescription, featureName, introducedInRelease, legacyFeatureNames, legacyReplacedBy, name, notes, ontologyVersion, specBodyTerms, updatedAt})\n(:FeatureAssertion {assertionId, assertionPredicateIRI, assessmentMethod, evidenceRows, evidenceStatus, kind})\n(:Figure {caption, figureId, figureNumber, filePath})\n(:LS {_belongsTo, _ccTo, _hasContact, _isRevisionOf, _originalLS, _originatedFrom, _presentedAt, _relatedTo, _replyIn, _replyTo, _revisedTo, _sentTo, _submittedBy, _targetRelease, abstract, direction, for, id, reservationDate, secretaryRemarks, status, tdocNumber, title, type, uploadedDate})\n(:Meeting {canonicalMeetingNumber, id, meetingNumber, meetingNumberInt, workingGroup})\n(:Procedure {granularity, ontologyVersion, procedureName, sectionNumber, sourceSnapshotReleases, sourceUnitAssessmentLocator, sourceUnitAssessmentMethod, sourceUnitAssessmentPath, sourceUnitAssessmentSha256, sourceUnitKind, specNumber, updatedAt})\n(:Release {id, releaseName})\n(:Resolution {content, contentWithEquations, hasConsensus, hasFFS, hasTBD, note, resolutionId, resolutionScope, sequence})\n(:Section {isVoid, level, sectionId, sectionNumber, sectionTitle, specNumber})\n(:SessionNotes {_belongsTo, _hasContact, _isRevisionOf, _presentedAt, _relatedTo, _reportedAt, _reportedRun, _submittedBy, _targetRelease, abstract, for, id, reservationDate, status, tdocNumber, title, type, uploadedDate})\n(:SourceUnit {granularity, ontologyVersion, sectionNumber, sourceSnapshotReleases, sourceUnitAssessmentLocator, sourceUnitAssessmentMethod, sourceUnitAssessmentPath, sourceUnitAssessmentSha256, sourceUnitKind, sourceUnitTitle, specNumber, updatedAt})\n(:Spec {id, specNumber, specRelease, specTitle, specVersion})\n(:Summary {_belongsTo, _hasContact, _isRevisionOf, _presentedAt, _relatedTo, _reportedAt, _reportedRun, _revisedTo, _submittedBy, _targetRelease, abstract, for, id, reservationDate, roundNumber, secretaryRemarks, status, summaryType, tdocNumber, title, type, uploadedDate})\n(:TRImpact {affectedSection, assessmentMethod, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, evidenceStatus, impactDescription, impactType, legacyTrImpactId, trImpactId})\n(:TSFigure {figureCaption, figureId, figureNumber})\n(:TSTable {tableCaption, tableId, tableNumber})\n(:Table {caption, equations, filePath, tableId, tableNumber})\n(:Tdoc {_belongsTo, _ccTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _modifies, _originalLS, _originatedFrom, _presentedAt, _recoveredAt, _relatedTo, _replyIn, _replyTo, _reportedAt, _reportedRun, _revisedTo, _sentTo, _submittedBy, _targetRelease, abstract, affectsCN, affectsME, affectsRAN, affectsUICC, clausesAffected, consequencesIfNotApproved, crCategory, crNumber, crRevision, direction, for, id, reasonForChange, reservationDate, roundNumber, secretaryRemarks, status, summaryOfChange, summaryType, tdocNumber, title, tsgCRPack, type, uploadedDate})\n(:TechnicalReport {conclusions, scope, studyItemRpNumber, trNumber, trStatus, trTitle, trVersion, workItemRpNumber})\n(:WorkItem {id, workItemCode})\n(:WorkingAssumption {content, contentWithEquations, hasFFS, hasTBD, note, resolutionId, sequence})\n(:WorkingGroup {id, wgName})\n(:EmailMessage)-[:ANCHORS]->(:Tdoc)\n(:EmailMessage)-[:ANCHORS]->(:Meeting)\n(:EmailMessage)-[:IN_THREAD]->(:EmailThread)\n(:EmailMessage)-[:SENT_BY]->(:Delegate)\n(:EmailMessage)-[:ANCHORS]->(:Resolution)\n(:Tdoc)-[:SUBMITTED_BY]->(:Company)\n(:Tdoc)-[:PRESENTED_AT]->(:Meeting)\n(:Tdoc)-[:BELONGS_TO]->(:AgendaItem)\n(:Tdoc)-[:HAS_CONTACT]->(:Contact)\n(:Tdoc)-[:TARGET_RELEASE]->(:Release)\n(:Tdoc)-[:RELATED_TO]->(:WorkItem)\n(:Resolution)-[:MADE_AT]->(:Meeting)\n(:EmailMessage)-[:ANCHORS]->(:Section)\n(:Resolution)-[:RESOLUTION_BELONGS_TO]->(:AgendaItem)\n(:Resolution)-[:HAS_DISPOSITION]->(:DecisionDisposition)\n(:DecisionDisposition)-[:DISPOSITION_OF]->(:Resolution)\n(:Resolution)-[:REFERENCES]->(:Tdoc)\n(:DecisionDisposition)-[:DISPOSITION_TARGET]->(:Tdoc)\n(:EvidenceAssertion)-[:HAS_EVIDENCE]->(:EvidenceFragment)\n(:Resolution)-[:ABOUT_TDOC]->(:Tdoc)\n(:Tdoc)-[:REVISED_TO]->(:Tdoc)\n(:Tdoc)-[:IS_REVISION_OF]->(:Tdoc)\n(:Tdoc)-[:MODIFIES]->(:Spec)\n(:EmailThread)-[:ANCHORS]->(:Spec)\n(:EmailMessage)-[:ANCHORS]->(:AgendaItem)\n(:Tdoc)-[:SENT_TO]->(:WorkingGroup)\n(:Tdoc)-[:MODIFIES_SECTION]->(:Section)\n(:Section)-[:MODIFIED_BY_CR]->(:Tdoc)\n(:Section)-[:REFERENCES_SECTION]->(:Section)\n(:Section)-[:REFERENCED_BY_SECTION]->(:Section)\n(:Tdoc)-[:REPORTED_UNDER_AGENDA]->(:AgendaItem)\n(:EvidenceAssertion)-[:ASSERTION_OBJECT]->(:AgendaItem)\n(:EvidenceAssertion)-[:ASSERTION_SUBJECT]->(:Tdoc)\n(:Section)-[:BELONGS_TO_SPEC]->(:Spec)\n(:Tdoc)-[:MODERATED_BY]->(:Company)\n(:Section)-[:PARENT_SECTION]->(:Section)\n(:Section)-[:HAS_SUB_SECTION]->(:Section)\n(:Tdoc)-[:CC_TO]->(:WorkingGroup)\n(:TSTable)-[:TABLE_IN_SECTION]->(:Section)\n(:Section)-[:CONTAINS_TABLE]->(:TSTable)\n(:Tdoc)-[:BELONGS_TO_CR_PACK]->(:CRPack)\n(:CRPack)-[:HAS_CR]->(:Tdoc)\n(:Tdoc)-[:ORIGINATED_FROM]->(:WorkingGroup)\n(:Table)-[:CONTAINED_IN]->(:Meeting)\n(:Figure)-[:CONTAINED_IN]->(:Meeting)\n(:Resolution)-[:HAS_FIGURE]->(:Figure)\n(:Resolution)-[:HAS_TABLE]->(:Table)\n(:Tdoc)-[:CHAIRED_BY]->(:Company)\n(:Tdoc)-[:AFFECTS_CORE_SPEC]->(:Spec)\n(:Tdoc)-[:REPLY_IN]->(:Tdoc)\n(:Tdoc)-[:REPLY_TO]->(:Tdoc)\n(:Spec)-[:HAS_SECTION]->(:Section)\n(:Delegate)-[:ANCHORS]->(:Contact)\n(:Procedure)-[:definedInSection]->(:Section)\n(:FeatureAssertion)-[:hasEvidence]->(:EvidenceFragment)\n(:CR)-[:MODIFIES_SECTION]->(:Section)\n(:Section)-[:MODIFIED_BY_CR]->(:CR)\n(:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)\n(:Section)-[:CONTAINS_FIGURE]->(:TSFigure)\n(:Spec)-[:SPEC_IN_RELEASE]->(:Release)\n(:Spec)-[:IN_RELEASE_OF]->(:Spec)\n(:TRImpact)-[:HAS_EVIDENCE]->(:EvidenceFragment)\n(:FeatureAssertion)-[:assertionSubject]->(:Feature)\n(:TechnicalReport)-[:HAS_TR_IMPACT]->(:TRImpact)\n(:TRImpact)-[:IMPACT_OF_TR]->(:TechnicalReport)\n(:TRImpact)-[:CANDIDATE_IMPACTS_SPEC]->(:Spec)\n(:TechnicalReport)-[:TARGET_RELEASE]->(:Release)\n(:TechnicalReport)-[:RELATED_TO_WORK_ITEM]->(:WorkItem)\n(:WorkItem)-[:HAS_RELATED_TR]->(:TechnicalReport)\n(:TechnicalReport)-[:REFERENCES_TR]->(:TechnicalReport)\n(:TechnicalReport)-[:REFERENCED_BY_TR]->(:TechnicalReport)\n(:CR)-[:RELATED_TO]->(:WorkItem)\n(:Feature)-[:wasDerivedFrom]->(:EvidenceFragment)\n(:FeatureAssertion)-[:assertionObject]->(:EvidenceFragment)\n(:Feature)-[:hasProcedure]->(:Procedure)\n(:FeatureAssertion)-[:assertionObject]->(:Procedure)\n(:CR)-[:BELONGS_TO_CR_PACK]->(:CRPack)\n(:CRPack)-[:HAS_CR]->(:CR)\n(:CR)-[:MODIFIES]->(:Spec)\n(:Feature)-[:disjointWith]->(:Feature)\n(:SourceUnit)-[:SOURCE_UNIT_IN_SECTION]->(:Section)\n(:EvidenceAssertion)-[:ASSERTION_SUBJECT]->(:TechnicalReport)\n(:EvidenceAssertion)-[:ASSERTION_OBJECT]->(:Spec)\n(:TechnicalReport)-[:DISCUSSES_SPEC]->(:Spec)\n(:FeatureAssertion)-[:assertionObject]->(:Feature)\n(:Tdoc)-[:AFFECTS_TEST_SPEC]->(:Spec)\n(:Feature)-[:relatedFeature]->(:Feature)\n(:TechnicalReport)-[:RECOMMENDS_CHANGE_TO_SPEC]->(:Spec)\n(:Tdoc)-[:AFFECTS_OM_SPEC]->(:Spec)\n(:Resolution)-[:HAS_CHART]->(:Chart)\n(:Chart)-[:CONTAINED_IN]->(:Meeting)\nAnswer with a JSON object {\"cypher\": \"...\"}. The query must RETURN DISTINCT exactly these columns in this order: <the item's fields>. Use only MATCH, WHERE, WITH, RETURN.\n\nStored value domains, measured on this graph for every label property above. When a property has at most 62 distinct values, all of them are listed with their record counts; otherwise its value kind, a format description and up to 3 example values are given. Values longer than 88 characters are never listed in full and examples longer than that are cut. For list values the elements are described.\nThe namespace word of the graph's own w3id.org IRIs is withheld and shown as <ns>; the stored values contain that word instead.\n(:AgendaItem)._createdBy — categorical; 5 values, 1 distinct; all values (count): \"phase-2-backfill\" (5)\n(:AgendaItem).agendaDescription — text; 7890 values, 1674 distinct; length 2..168 (median 38.0); values withheld\n(:AgendaItem).agendaNumber — identifier; 7890 values, 1448 distinct; length 1..11 (median 7.0); characters: digits, \".\"; all shapes (digits shown as 9; share of values): \"9.9.9.9\" 25.4%, \"9.9.9\" 23.5%, \"9.9\" 12.3%, \"9.9.9.9.9\" 12.2%, \"9\" 6.7%, \"9.99.9\" 6.7%, \"9.99\" 3.2%, \"9.9.99.9\" 2.1%, \"9.9.9.9.9.9\" 1.7%, \"9.9.99\" 1.2%, \"9.99.99\" 1.2%, \"99.9.9\" 0.9%, \"99.9\" 0.8%, \"99.9.9.9\" 0.5%, \"99\" 0.5%, \"9.99.9.9\" 0.3%, \"9.9.99.9.9\" 0.2%, \"99.99\" 0.2%, \"9.9.99.99\" 0.1%, \"9.9.9.99\" 0.1%; examples: \"8.8\", \"8.1.1.1\", \"11.13\"\n(:AgendaItem).id — identifier; 7890 values, 7890 distinct; length 16..27 (median 22.0); characters: digits, lowercase, \"-./:\"; all shapes (digits shown as 9; share of values): \"aaaa:aaaaaa/99-9.9.9.9\" 11.5%, \"aaaa:aaaaaa/999-9.9.9\" 10.6%, \"aaaa:aaaaaa/99-9.9.9.9.9\" 7.9%, \"aaaa:aaaaaa/99a-9.9.9.9\" 6.3%, \"aaaa:aaaaaa/999-9.9\" 6.2%, \"aaaa:aaaaaa/99-9.9.9\" 5.9%, \"aaaa:aaaaaa/999-9.9.9.9\" 5.4%, \"aaaa:aaaaaa/999-9.99.9\" 4.7%, \"aaaa:aaaaaa/999a-9.9.9\" 3.7%, \"aaaa:aaaaaa/99a-9.9.9.9.9\" 3.6%, \"aaaa:aaaaaa/99a-9.9.9\" 3.3%, \"aaaa:aaaaaa/999-9\" 2.9%, \"aaaa:aaaaaa/999a-9.9\" 2.8%, \"aaaa:aaaaaa/999-9.99\" 2.3%, \"aaaa:aaaaaa/99-9.9\" 2.2%, \"aaaa:aaaaaa/999a-9.9.9.9\" 2.2%, \"aaaa:aaaaaa/999a-9.99.9\" 2.0%, \"aaaa:aaaaaa/99-9\" 1.7%, \"aaaa:aaaaaa/999a-9\" 1.4%, \"aaaa:aaaaaa/99-9.9.9.9.9.9\" 1.3%, \"aaaa:aaaaaa/99a-9.9\" 1.2%, \"aaaa:aaaaaa/99-9.9.99.9\" 1.1%, \"aaaa:aaaaaa/999a-9.99\" 0.9%, \"aaaa:aaaaaa/99a-9\" 0.9%, \"aaaa:aaaaaa/999-9.99.99\" 0.7%, \"aaaa:aaaaaa/999-99.9\" 0.5%, \"aaaa:aaaaaa/999-99.9.9\" 0.5%, \"aaaa:aaaaaa/99a-9.9.99.9\" 0.5%, \"aaaa:aaaaaa/99-9.9.99\" 0.5%, \"aaaa:aaaaaa/999-9.9.9.9.9\" 0.5%, \"aaaa:aaaaaa/99a-9.9.9.9.9.9\" 0.5%, \"aaaa:aaaaaa/999a-9.99.99\" 0.4%, \"aaaa:aaaaaa/999-9.9.99\" 0.4%, \"aaaa:aaaaaa/999a-99.9.9\" 0.4%, \"aaaa:aaaaaa/999a-99.9\" 0.3%, \"aaaa:aaaaaa/999-9.9.99.9\" 0.3%, \"tdoc:agenda/999-99\" 0.3%, \"aaaa:aaaaaa/999-99.9.9.9\" 0.3%, \"aaaa:aaaaaa/99a-9.9.99\" 0.3%, \"aaaa:aaaaaa/999a-99.9.9.9\" 0.2%, \"aaaa:aaaaaa/99-9.9.99.9.9\" 0.2%, \"aaaa:aaaaaa/999a-9.9.99.9\" 0.2%, \"tdoc:agenda/999b-99\" 0.2%, \"aaaa:aaaaaa/999-9.99.9.9\" 0.2%, \"aaaa:aaaaaa/999a-9.9.9.9.9\" 0.2%, \"tdoc:agenda/999-99.99\" 0.1%, \"aaaa:aaaaaa/999a-9.9.99\" 0.1%, \"aaaa:aaaaaa/999a-9.99.9.9\" 0.1%, \"tdoc:agenda/999b-99.99\" 0.1%, \"aaaa:aaaaaa/999a-9.9.99.99\" 0.1%, \"aaaa:aaaaaa/999-9.9.99.99\" 0.1%, \"aaaa:aaaaaa/999-9.9.9.99\" 0.0%, \"aaaa:aaaaaa/99a-9.9.99.9.9\" 0.0%, \"aaaa:aaaaaa/999a-9.9.9.99\" 0.0%, \"aaaa:aaaaaa/99-9.9.9.99\" 0.0%, \"tdoc:agenda/99b-99\" 0.0%; examples: \"tdoc:agenda/106-8.13.1\", \"tdoc:agenda/115-8.16.8\", \"tdoc:agenda/98-8\"\n(:AgendaItem).meetingNumber — categorical; 7890 values, 61 distinct; all values (count): \"90\" (262), \"89\" (220), \"88b\" (202), \"92b\" (200), \"90b\" (196), \"92\" (192), \"93\" (189), \"88\" (181), \"91\" (178), \"100\" (173), \"109\" (173), \"101\" (169), \"94b\" (162), \"94\" (158), \"100b\" (147), \"95\" (147), \"102\" (143), \"86b\" (141), \"84b\" (138), \"96\" (138), \"105\" (136), \"85\" (136), \"87\" (136), \"108\" (135), \"97\" (135), \"98\" (135), \"104b\" (134), \"107\" (134), \"96b\" (134), \"98b\" (134), \"106b\" (131), \"99\" (128), \"104\" (127), \"106\" (125), \"86\" (125), \"103\" (123), \"110\" (123), \"110b\" (113), \"111\" (113), \"112\" (113), \"112b\" (110), \"113\" (110), \"114\" (109), \"122\" (109), \"114b\" (99), \"115\" (98), \"124\" (91), \"124b\" (85), \"84\" (84), \"120\" (83), \"121\" (83), \"119\" (82), \"116\" (81), \"122b\" (81), \"107b\" (80), \"120b\" (80), \"116b\" (71), \"123\" (71), \"118b\" (69), \"118\" (68), \"117\" (67)\n(:Agreement).content — text; 27418 values, 27301 distinct; length 8..61851 (median 286); values withheld\n(:Agreement).contentWithEquations — text; 1623 values, 1622 distinct; length 46..61835 (median 894.5); values withheld\n(:Agreement).hasFFS — boolean; 22094 values, 2 distinct; all values (count): false (17300), true (4794)\n(:Agreement).hasTBD — boolean; 22094 values, 2 distinct; all values (count): false (21987), true (107)\n(:Agreement).note — text; 3148 values, 3052 distinct; length 11..15533 (median 161.0); values withheld\n(:Agreement).resolutionId — identifier; 27418 values, 27418 distinct; length 12..31 (median 19.0); characters: digits, lowercase, uppercase, \"-.\"; examples: \"AGR-105-e-8.1.4-015\", \"DOC-91-R1-1721262-t7640-r8\", \"DOC-104b-e-R1-2103918-t5704-r6\"\n(:Agreement).resolutionScope — categorical; 5324 values, 1 distinct; all values (count): \"document_disposition\" (5324)\n(:Agreement).sequence — integer; 27418 values, 1583 distinct; range 1..10032; examples: 6855, 1338, 1381\n(:CR)._belongsTo — identifier; 10820 values, 786 distinct; length 16..25 (median 20.0); characters: digits, lowercase, \"-./:\"; all shapes (digits shown as 9; share of values): \"aaaa:aaaaaa/99-9.9.9\" 24.1%, \"aaaa:aaaaaa/999-9.9\" 23.5%, \"aaaa:aaaaaa/999a-9.9\" 10.4%, \"aaaa:aaaaaa/99a-9.9.9\" 9.8%, \"aaaa:aaaaaa/999-9.9.9\" 7.0%, \"aaaa:aaaaaa/999-9\" 6.8%, \"aaaa:aaaaaa/999-9.99\" 4.8%, \"aaaa:aaaaaa/999a-9\" 3.0%, \"aaaa:aaaaaa/99-9.9\" 2.5%, \"aaaa:aaaaaa/999a-9.99\" 2.3%, \"aaaa:aaaaaa/99-9.9.9.9\" 1.7%, \"aaaa:aaaaaa/999a-9.9.9\" 1.3%, \"aaaa:aaaaaa/99-9.9.99\" 0.6%, \"aaaa:aaaaaa/99a-9.9\" 0.6%, \"aaaa:aaaaaa/999-9.9.99\" 0.5%, \"aaaa:aaaaaa/99-9.9.9.9.9\" 0.2%, \"aaaa:aaaaaa/99a-9.9.99\" 0.2%, \"aaaa:aaaaaa/99-9\" 0.1%, \"aaaa:aaaaaa/999-9.99.9\" 0.1%, \"aaaa:aaaaaa/99a-9.9.9.9\" 0.1%, \"aaaa:aaaaaa/99a-9.9.9.9.9\" 0.1%, \"aaaa:aaaaaa/999a-9.9.99\" 0.1%, \"aaaa:aaaaaa/999-9.9.9.9\" 0.0%, \"aaaa:aaaaaa/99-9.9.99.9\" 0.0%, \"aaaa:aaaaaa/999a-9.9.9.9\" 0.0%, \"aaaa:aaaaaa/999-99.9\" 0.0%, \"aaaa:aaaaaa/99a-9\" 0.0%, \"aaaa:aaaaaa/999a-9.99.9\" 0.0%, \"aaaa:aaaaaa/99a-9.9.99.9\" 0.0%; examples: \"tdoc:agenda/118b-8.1\", \"tdoc:agenda/84b-7.3.11\", \"tdoc:agenda/108-8.17\"\n(:CR)._createdBy — categorical; 13 values, 1 distinct; all values (count): \"phase-4-backfill\" (13)\n(:CR)._hasContact — identifier; 10820 values, 273 distinct; length 17..19 (median 18); characters: digits, lowercase, \"/:\"; values withheld\n(:CR)._isRevisionOf — identifier; 2988 values, 2975 distinct; length 14..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 88.7%, \"tdoc:R9-999999\" 11.2%, \"tdoc:S9-999999\" 0.0%, \"tdoc:RP-999999\" 0.0%; examples: \"tdoc:R1-2212626\", \"tdoc:R1-1913220\", \"tdoc:R1-2106489\"\n(:CR)._modifies — categorical; 10820 values, 51 distinct; all values (count): \"tdoc:spec/38_213\" (3082), \"tdoc:spec/38_214\" (2471), \"tdoc:spec/36_213\" (1923), \"tdoc:spec/36_211\" (764), \"tdoc:spec/38_212\" (664), \"tdoc:spec/38_211\" (482), \"tdoc:spec/36_212\" (383), \"tdoc:spec/37_213\" (201), \"tdoc:spec/38_900\" (169), \"tdoc:spec/38_215\" (164), \"tdoc:spec/38_901\" (101), \"tdoc:spec/38_202\" (73), \"tdoc:spec/36_214\" (53), \"tdoc:spec/36_873\" (46), \"tdoc:spec/36_201\" (28), \"tdoc:spec/25_214\" (22), \"tdoc:spec/38_811\" (21), \"tdoc:spec/37_885\" (17), \"tdoc:spec/38_201\" (17), \"tdoc:spec/25_212\" (15), \"tdoc:spec/36_300\" (15), \"tdoc:spec/38_802\" (14), \"tdoc:spec/38_821\" (12), \"tdoc:spec/37_985\" (8), \"tdoc:spec/38_300\" (7), \"tdoc:spec/38_769\" (7), \"tdoc:spec/25_707\" (6), \"tdoc:spec/36_885\" (6), \"tdoc:spec/36_814\" (5), \"tdoc:spec/38_291\" (5), \"tdoc:spec/25_211\" (4), \"tdoc:spec/25_215\" (4), \"tdoc:spec/38_885\" (4), \"tdoc:spec/38_858\" (3), \"tdoc:spec/38_864\" (3), \"tdoc:spec/25_766\" (2), \"tdoc:spec/25_996\" (2), \"tdoc:spec/38_306\" (2), \"tdoc:spec/38_843\" (2), \"tdoc:spec/38_912\" (2), \"tdoc:spec/28_552\" (1), \"tdoc:spec/36_302\" (1), \"tdoc:spec/36_306\" (1), \"tdoc:spec/36_331\" (1), \"tdoc:spec/36_763\" (1), \"tdoc:spec/36_802\" (1), \"tdoc:spec/36_976\" (1), \"tdoc:spec/38_331\" (1), \"tdoc:spec/38_830\" (1), \"tdoc:spec/38_855\" (1), \"tdoc:spec/38_859\" (1)\n(:CR)._presentedAt — categorical; 10820 values, 61 distinct; all values (count): \"tdoc:meeting/RAN1_110\" (539), \"tdoc:meeting/RAN1_110b-e\" (520), \"tdoc:meeting/RAN1_96\" (393), \"tdoc:meeting/RAN1_117\" (345), \"tdoc:meeting/RAN1_111\" (324), \"tdoc:meeting/RAN1_86\" (323), \"tdoc:meeting/RAN1_112\" (306), \"tdoc:meeting/RAN1_118\" (269), \"tdoc:meeting/RAN1_115\" (256), \"tdoc:meeting/RAN1_95\" (253), \"tdoc:meeting/RAN1_99\" (253), \"tdoc:meeting/RAN1_107-e\" (250), \"tdoc:meeting/RAN1_114\" (227), \"tdoc:meeting/RAN1_112b-e\" (226), \"tdoc:meeting/RAN1_116b\" (224), \"tdoc:meeting/RAN1_98\" (224), \"tdoc:meeting/RAN1_87\" (223), \"tdoc:meeting/RAN1_84\" (222), \"tdoc:meeting/RAN1_84b\" (218), \"tdoc:meeting/RAN1_114b\" (215), \"tdoc:meeting/RAN1_103-e\" (208), \"tdoc:meeting/RAN1_88\" (205), \"tdoc:meeting/RAN1_88b\" (181), \"tdoc:meeting/RAN1_116\" (180), \"tdoc:meeting/RAN1_121\" (180), \"tdoc:meeting/RAN1_96b\" (180), \"tdoc:meeting/RAN1_118b\" (172), \"tdoc:meeting/RAN1_106-e\" (169), \"tdoc:meeting/RAN1_97\" (163), \"tdoc:meeting/RAN1_85\" (162), \"tdoc:meeting/RAN1_86b\" (161), \"tdoc:meeting/RAN1_108-e\" (158), \"tdoc:meeting/RAN1_104-e\" (154), \"tdoc:meeting/RAN1_100b-e\" (151), \"tdoc:meeting/RAN1_102-e\" (151), \"tdoc:meeting/RAN1_92b\" (146), \"tdoc:meeting/RAN1_101-e\" (140), \"tdoc:meeting/RAN1_94\" (140), \"tdoc:meeting/RAN1_89\" (136), \"tdoc:meeting/RAN1_93\" (136), \"tdoc:meeting/RAN1_98b\" (135), \"tdoc:meeting/RAN1_92\" (134), \"tdoc:meeting/RAN1_123\" (127), \"tdoc:meeting/RAN1_100-e\" (125), \"tdoc:meeting/RAN1_122b\" (119), \"tdoc:meeting/RAN1_90\" (113), \"tdoc:meeting/RAN1_104b-e\" (110), \"tdoc:meeting/RAN1_105-e\" (107), \"tdoc:meeting/RAN1_109-e\" (98), \"tdoc:meeting/RAN1_91\" (92), \"tdoc:meeting/RAN1_124\" (82), \"tdoc:meeting/RAN1_120\" (80), \"tdoc:meeting/RAN1_94b\" (78), \"tdoc:meeting/RAN1_119\" (69), \"tdoc:meeting/RAN1_124b\" (67), \"tdoc:meeting/RAN1_90b\" (67), \"tdoc:meeting/RAN1_122\" (52), \"tdoc:meeting/RAN1_113\" (40), \"tdoc:meeting/RAN1_107b-e\" (22), \"tdoc:meeting/RAN1_120b\" (17), \"tdoc:meeting/RAN1_100\" (3)\n(:CR)._relatedTo — list of values (10806 lists, 0 scalars, 0 empty lists, list length 1..15); elements: identifier; 11680 values, 208 distinct; length 18..45 (median 29.0); characters: digits, lowercase, uppercase, \"-/:_\"; examples: \"tdoc:workitem/LTE_SL_V2V-Core\", \"tdoc:workitem/NR_NTN_solutions-Core\", \"tdoc:workitem/NR_cov_enh2\"\n(:CR)._revisedTo — string or list of values (11 lists, 2858 scalars, 0 empty lists, list length 2..4); elements: identifier; 2882 values, 2882 distinct; length 14..15 (median 15.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 89.1%, \"tdoc:R9-999999\" 10.8%, \"tdoc:RP-999999\" 0.1%; examples: \"tdoc:R1-168032\", \"tdoc:R1-1913617\", \"tdoc:R1-1911483\"\n(:CR)._submittedBy — list of values (10820 lists, 0 scalars, 0 empty lists, list length 1..17); elements: identifier; 18241 values, 160 distinct; length 15..56 (median 21.0); characters: digits, lowercase, uppercase, \"/:_\"; values withheld\n(:CR)._targetRelease — categorical; 10782 values, 12 distinct; all values (count): \"tdoc:release/Rel_17\" (2669), \"tdoc:release/Rel_15\" (2174), \"tdoc:release/Rel_16\" (1584), \"tdoc:release/Rel_18\" (1535), \"tdoc:release/Rel_14\" (1182), \"tdoc:release/Rel_13\" (1118), \"tdoc:release/Rel_19\" (428), \"tdoc:release/Rel_12\" (73), \"tdoc:release/Rel_20\" (8), \"tdoc:release/Rel_11\" (5), \"tdoc:release/Rel_9\" (5), \"tdoc:release/Rel_8\" (1)\n(:CR).abstract — text; 326 values, 191 distinct; length 9..547 (median 66); values withheld\n(:CR).affectsCN — boolean; 668 values, 1 distinct; all values (count): false (668)\n(:CR).affectsME — boolean; 670 values, 2 distinct; all values (count): true (649), false (21)\n(:CR).affectsRAN — boolean; 670 values, 2 distinct; all values (count): true (627), false (43)\n(:CR).affectsUICC — boolean; 668 values, 1 distinct; all values (count): false (668)\n(:CR).clausesAffected — text; 665 values, 367 distinct; length 1..419 (median 14); values withheld\n(:CR).consequencesIfNotApproved — text; 2116 values, 1581 distinct; length 14..15697 (median 94); values withheld\n(:CR).crCategory — categorical; 9656 values, 6 distinct; all values (count): \"F\" (7760), \"B\" (976), \"A\" (828), \"D\" (80), \"C\" (11), \"E\" (1)\n(:CR).crNumber — identifier; 4413 values, 1457 distinct; length 4..4 (median 4); characters: digits; all shapes (digits shown as 9; share of values): \"9999\" 100.0%; examples: \"0173\", \"1092\", \"0814\"\n(:CR).crRevision — categorical; 559 values, 9 distinct; all values (count): \"1\" (447), \"2\" (81), \"3\" (16), \"4\" (4), \"5\" (3), \"6\" (3), \"7\" (2), \"8\" (2), \"9\" (1)\n(:CR).for — categorical; 10430 values, 6 distinct; all values (count): \"Decision\" (6464), \"Agreement\" (3426), \"Discussion\" (358), \"Endorsement\" (113), \"Approval\" (37), \"Information\" (32)\n(:CR).id — identifier; 10820 values, 10820 distinct; length 14..15 (median 15.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 91.5%, \"tdoc:R9-999999\" 8.5%; examples: \"tdoc:R1-2205666\", \"tdoc:R1-2209954\", \"tdoc:R1-2402450\"\n(:CR).reasonForChange — text; 2120 values, 1819 distinct; length 9..13736 (median 318); values withheld\n(:CR).reservationDate — identifier; 10820 values, 7687 distinct; length 19..26 (median 26); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99\" 53.2%, \"9999-99-99T99:99:99.999999\" 46.8%; examples: \"2020-11-02T11:03:59.890000\", \"2023-03-02T16:11:52\", \"2021-11-03T04:59:59.623000\"\n(:CR).secretaryRemarks — text; 1554 values, 961 distinct; length 14..441 (median 62); values withheld\n(:CR).status — categorical; 10820 values, 12 distinct; all values (count): \"agreed\" (3692), \"revised\" (2498), \"not pursued\" (2336), \"endorsed\" (855), \"noted\" (575), \"withdrawn\" (301), \"postponed\" (205), \"not treated\" (169), \"available\" (128), \"reserved\" (31), \"merged\" (29), \"conditionally agreed\" (1)\n(:CR).summaryOfChange — text; 2118 values, 1822 distinct; length 9..17424 (median 173.5); values withheld\n(:CR).tdocNumber — identifier; 10833 values, 10833 distinct; length 9..10 (median 10); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"R9-9999999\" 91.5%, \"R9-999999\" 8.5%; examples: \"R1-2211469\", \"R1-1903704\", \"R1-1720388\"\n(:CR).title — text; 10833 values, 6743 distinct; length 4..170 (median 55); values withheld\n(:CR).titleSource — categorical; 13 values, 1 distinct; all values (count): \"cr-form\" (13)\n(:CR).tsgCRPack — identifier; 3546 values, 845 distinct; length 9..9 (median 9); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"RP-999999\" 100.0%; examples: \"RP-222864\", \"RP-202386\", \"RP-190443\"\n(:CR).type — categorical; 10820 values, 3 distinct; all values (count): \"draftCR\" (6345), \"CR\" (4414), \"pCR\" (61)\n(:CR).uploadedDate — identifier; 10545 values, 7191 distinct; length 19..26 (median 26); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99.999999\" 87.7%, \"9999-99-99T99:99:99\" 12.3%; examples: \"2024-08-09T23:16:04.240000\", \"2024-09-30T12:55:03.427000\", \"2017-11-17T17:25:15.043000\"\n(:CRPack).crPackId — identifier; 522 values, 522 distinct; length 9..9 (median 9.0); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"RP-999999\" 100.0%; examples: \"RP-200685\", \"RP-211845\", \"RP-241058\"\n(:CRPack).tsgMeeting — categorical; 522 values, 34 distinct; all values (count): \"RAN#102\" (35), \"RAN#101\" (27), \"RAN#103\" (27), \"RAN#95\" (27), \"RAN#110\" (24), \"RAN#108\" (23), \"RAN#94\" (23), \"RAN#96\" (23), \"RAN#97\" (22), \"RAN#86\" (21), \"RAN#98\" (21), \"RAN#104\" (19), \"RAN#88\" (17), \"RAN#105\" (16), \"RAN#99\" (16), \"RAN#109\" (15), \"RAN#87\" (15), \"RAN#90\" (15), \"RAN#100\" (14), \"RAN#111\" (14), \"RAN#89\" (14), \"RAN#92\" (14), \"RAN#106\" (12), \"RAN#107\" (12), \"RAN#112\" (12), \"RAN#91\" (11), \"RAN#93\" (8), \"RAN#84\" (7), \"RAN#83\" (5), \"RAN#85\" (5), \"RAN#81\" (3), \"RAN#80\" (2), \"RAN#82\" (2), \"RAN#79\" (1)\n(:Chart).caption — categorical; 1 values, 1 distinct; values withheld\n(:Chart).chartId — categorical; 1 values, 1 distinct; all values (count): \"CHT-114b-001\" (1)\n(:Chart).chartNumber — categorical; 1 values, 1 distinct; all values (count): \"6.3.2\" (1)\n(:Chart).chartPath — categorical; 1 values, 1 distinct; all values (count): \"ontology/output/tsg/RAN/formal/charts/RAN1/RAN1_114b/CHT-114b-001.xml\" (1)\n(:Chart).chartType — categorical; 1 values, 1 distinct; all values (count): \"scatterChart\" (1)\n(:Company).aliases — list of values (226 lists, 0 scalars, 0 empty lists, list length 1..15); elements: text; 446 values, 446 distinct; length 2..57 (median 11.0); values withheld\n(:Company).companyName — text; 226 values, 226 distinct; length 2..30 (median 8.0); values withheld\n(:Company).id — identifier; 226 values, 226 distinct; length 15..43 (median 21.0); characters: digits, lowercase, uppercase, \"/:_\"; values withheld\n(:Conclusion).content — text; 2824 values, 2812 distinct; length 8..11136 (median 177.0); values withheld\n(:Conclusion).contentWithEquations — text; 62 values, 62 distinct; length 98..2767 (median 392.0); values withheld\n(:Conclusion).hasConsensus — boolean; 2824 values, 2 distinct; all values (count): true (2353), false (471)\n(:Conclusion).note — text; 267 values, 250 distinct; length 20..5962 (median 125.5); values withheld\n(:Conclusion).resolutionId — identifier; 2824 values, 2824 distinct; length 12..24 (median 18.0); characters: digits, lowercase, uppercase, \"-.\"; all shapes (digits shown as 9; share of values): \"AAA-999-9.9.9-999\" 11.0%, \"AAA-999-a-9.9.9-999\" 8.5%, \"AAA-999-9.9-999\" 6.3%, \"AAA-99-9.9.9.9-999\" 6.3%, \"AAA-99-9.9.9-999\" 5.7%, \"AAA-99-9.9.9.9.9-999\" 5.2%, \"AAA-999a-a-9.9.9-999\" 4.6%, \"AAA-999-a-9.9.9.9-999\" 4.5%, \"AAA-999-9.9.9.9-999\" 3.6%, \"AAA-999a-9.9.9-999\" 3.6%, \"AAA-999a-a-9.9.9.9-999\" 3.6%, \"AAA-999-9.99.9-999\" 3.4%, \"AAA-99a-9.9.9.9-999\" 3.0%, \"AAA-99a-9.9.9-999\" 2.9%, \"AAA-999a-9.9-999\" 2.7%, \"AAA-999-a-9.99.9-999\" 2.4%, \"AAA-99a-9.9.9.9.9-999\" 2.3%, \"AAA-999a-a-9.9-999\" 1.9%, \"AAA-999-a-9.9-999\" 1.7%, \"AAA-999a-a-9.99.9-999\" 1.3%, \"AAA-999a-9.9.9.9-999\" 1.3%, \"AAA-999-9-999\" 1.2%, \"AAA-99-9.9-999\" 1.2%, \"AAA-999-a-9.99-999\" 1.2%, \"AAA-999-9.99-999\" 1.1%, \"AAA-99-9.9.99.9-999\" 0.9%, \"AAA-999-a-9-999\" 0.9%, \"AAA-999-a-9.9.9.9.9-999\" 0.8%, \"AAA-999a-9-999\" 0.8%, \"AAA-999a-a-9-999\" 0.7%, \"AAA-999-99.9.9-999\" 0.6%, \"AAA-999-a-9.99.9.9-999\" 0.6%, \"AAA-999a-a-9.9.99.9-999\" 0.5%, \"AAA-999-a-9.9.99-999\" 0.5%, \"AAA-999a-a-9.99-999\" 0.5%, \"AAA-999a-9.99.9-999\" 0.4%, \"AAA-999a-a-9.9.9.9.9-999\" 0.4%, \"AAA-99a-9.9.99.9-999\" 0.2%, \"AAA-999a-99.9.9-999\" 0.2%, \"AAA-99a-9.9-999\" 0.2%, \"AAA-99-9.9.99-999\" 0.1%, \"AAA-999-a-9.9.99.9-999\" 0.1%, \"AAA-999a-a-9.9.99-999\" 0.1%, \"AAA-999-9.99.99-999\" 0.1%, \"AAA-999a-a-9.99.9.9-999\" 0.1%, \"AAA-999a-9.99-999\" 0.1%, \"AAA-999-99.9-999\" 0.1%, \"AAA-99-9-999\" 0.1%, \"AAA-999-99.9.9.9-999\" 0.1%, \"AAA-999-9.9.99-999\" 0.0%, \"AAA-999a-99.9-999\" 0.0%, \"AAA-99a-9.9.99.9.9-999\" 0.0%, \"AAA-99a-9-999\" 0.0%, \"AAA-99a-9.9.99-999\" 0.0%, \"AAA-999a-99.9.9.9-999\" 0.0%, \"AAA-999a-a-9.9.99.99-999\" 0.0%; examples: \"CON-105-e-5-016\", \"CON-123-8.1-002\", \"CON-110b-e-8.5-001\"\n(:Conclusion).sequence — integer; 2824 values, 18 distinct; all values (count): 1 (1423), 2 (563), 3 (297), 4 (187), 5 (110), 6 (72), 7 (47), 8 (35), 9 (25), 10 (15), 11 (14), 12 (10), 13 (7), 14 (7), 15 (4), 16 (3), 17 (3), 18 (2)\n(:Contact).contactId — identifier; 1048 values, 1048 distinct; length 3..6 (median 5.0); characters: digits; values withheld\n(:Contact).contactName — text; 1048 values, 911 distinct; length 5..47 (median 12); values withheld\n(:Contact).id — identifier; 1048 values, 1048 distinct; length 16..19 (median 18.0); characters: digits, lowercase, \"/:\"; values withheld\n(:DecisionDisposition).assessmentMethod — text; 22649 values, 21457 distinct; length 112..40602 (median 1111); values withheld\n(:DecisionDisposition).dispositionCode — categorical; 22649 values, 13 distinct; all values (count): \"ambiguous\" (9212), \"agreed\" (6036), \"noted\" (4626), \"endorsed\" (1824), \"partially_agreed\" (412), \"revised\" (198), \"not_treated\" (122), \"withdrawn\" (109), \"not_pursued\" (65), \"conditionally_agreed\" (33), \"postponed\" (10), \"merged\" (1), \"not_agreed\" (1)\n(:DecisionDisposition).dispositionId — identifier; 22649 values, 22649 distinct; length 28..47 (median 39); characters: digits, lowercase, uppercase, \"-.:\"; examples: \"RAN1:DOC-87-R1-1612996-t6819-r20:R1-1612996\", \"RAN1:DOC-102-e-R1-2007415-b1849:R1-2007415\", \"RAN1:DOC-97-R1-1907682-b3599:R1-1907682\"\n(:DecisionDisposition).evidenceLocator — text; 22649 values, 14580 distinct; length 48..86 (median 50.0); values withheld\n(:DecisionDisposition).evidencePath — categorical; 22649 values, 61 distinct; all values (count): \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-84b.docx\" (932), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-84.docx\" (713), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-103-e.docx\" (693), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-101-e.docx\" (685), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-85.docx\" (685), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-109-e.docx\" (643), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-102-e.docx\" (576), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-108-e.docx\" (546), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-100b-e.docx\" (545), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-86.docx\" (542), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-110b-e.docx\" (511), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-110.docx\" (483), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-107-e.docx\" (471), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-93.docx\" (458), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-104-e.docx\" (457), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-88.docx\" (448), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-98.docx\" (445), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-88b.docx\" (430), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-115.docx\" (428), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-87.docx\" (424), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-94.docx\" (421), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-96.docx\" (418), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-86b.docx\" (415), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-111.docx\" (408), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-100-e.docx\" (404), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-114.docx\" (397), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-95.docx\" (381), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-92b.docx\" (375), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-116.docx\" (367), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-89.docx\" (366), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-97.docx\" (364), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-92.docx\" (358), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-99.docx\" (355), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-117.docx\" (352), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-122b.docx\" (338), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-94b.docx\" (334), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-98b.docx\" (329), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-96b.docx\" (319), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-106-e.docx\" (311), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-91.docx\" (301), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-114b.docx\" (300), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-104b-e.docx\" (292), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-90.docx\" (292), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-112b-e.docx\" (291), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-105-e.docx\" (253), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-118.docx\" (249), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-112.docx\" (235), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-90b.docx\" (215), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-116b.docx\" (202), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-124.docx\" (194), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-106b-e.docx\" (192), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-122.docx\" (190), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-121.docx\" (189), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-123.docx\" (178), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-118b.docx\" (172), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-120.docx\" (159), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-124b.docx\" (139), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-113.docx\" (136), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-119.docx\" (131), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-120b.docx\" (114), \"ontology/input/tsg/RAN/formal/meetings/RAN1/Final_Report/Final_Report_RAN1-107b-e.docx\" (98)\n(:DecisionDisposition).evidenceQuote — text; 22649 values, 19871 distinct; length 20..61819 (median 227); values withheld\n(:DecisionDisposition).evidenceSha256 — categorical; 22649 values, 61 distinct; all values (count): \"7ed84ac798333e628e453c80f2d0a83eb17a1573a270876eb32daa9859ddb753\" (932), \"3b121d299cc480409704f580d30d337574fc8dd17645e9f88c39fed23b597bfa\" (713), \"74bab889041019885fce6cb6f5402fd7170d5ca1c34e22bcec20b895d141b844\" (693), \"89d5a89bdc20e1b828c5552baf6b48c6312ec04a5d90904a3fd354d7a836df89\" (685), \"90e6a0e26e0985964cdbf4b519517aa8be480d7437da6a1993ac541edda2ce5f\" (685), \"89f142f7cce33a15350173790b89c49dc2119f08a14f8af0bf5bec758c545c02\" (643), \"06b39620293c4fb89082e7b4fbe20234e3d40ba890b9ad2f987ecd282b30b0c6\" (576), \"89543611740172735b6e7e94d8eb29b7e66b3292d49338d3243eb992d8e73127\" (546), \"3056a9fa599f7553d0fec4b4a15bb19d86d66a28d74b42b492fbd34e55eccaa2\" (545), \"f1d59fa0d6cd7ed41f992705c85b08cd9b01567e3734b4c3bc494e2bc40470f6\" (542), \"ded5c81f3d9cf38a97696845d1d81cd57cb076ce5a7e8fc9e40396c2280fc38d\" (511), \"8947ac0e7e687a62cb43f89fcb6fe8d398494e2472cbc90801509de501a155bb\" (483), \"3f99ae4005f95fbabdf264a78e7fa6e6f9ffc5e6c6711b53e4a1ac5f245c7e5c\" (471), \"ad6d2d04d0749d797a29b1154c58c76ea1a168a6821794df8ab0e893ea234574\" (458), \"a2394c339f4bf59ed23d5f18786a031ed69a998538256c22c8909d9e32f8f3cc\" (457), \"96a7cfbb08d22e1d41edac2386acc7a1b6e5c1b7f9260e0c0cda7b26e166e5bf\" (448), \"f1c3f453001c4ad7e3de13f023589d880880950c8d7010ef550c7ec63889dfe9\" (445), \"dcf7affe354008c9bc1be0df61c7de4736e18d20cfd13331250ce88cfdc65b94\" (430), \"77f1c24ed93cf6948892a8d7366d75d3c4c1dd0d72c6ae75e14aecf0f6d3cb48\" (428), \"fc41e242b7d0e23082eb0ae6e3ff0034620581238a5a47ef861bb87bdbb2e050\" (424), \"0c69ceef3bc93834eedd32e5b0371d3e5e244babd9dd719509669ba4c1895da5\" (421), \"9b1a51dfe36054763741ab6b53cdfabf9d28205f79e8cc90d1b538e39183dd32\" (418), \"47da75656b90227a4aa73f2596e31e89c72790aff70378f34a4143d8f162f522\" (415), \"094d88e6886793889e77a3981cced71606add0a8d07aa434c476ad70305ea762\" (408), \"31eb6f41049493370cce7e7de9689a86ecc4e080583374ff452404d7d50fe1b9\" (404), \"1b6364ffaa1d7426293c5351783e7bb32725bbedb85e7d5505d267fe7ace6c6e\" (397), \"77dbbb105ad860d9ad6e4baedbb59b34b06b9ed6e91d74008668942a26acbc8e\" (381), \"fd9f930e495bb400642bf4d8665697bdaa389daa5021ea300c39ad203070213d\" (375), \"2ceac98a65f75a6bcbdd453ee29fad5b53eb5913c70d4eb64458f1b156733c81\" (367), \"b4d903e260f2bfb7262ad40297dd485cdc27440789209061a3382ece95a23d57\" (366), \"ff65886bed9eb05456f16697b7bc6a1bfc17c9d38cdcaac4933c7b60d8f0e782\" (364), \"359c8a6f07672ad9fa256c153b84b574f796d3de17b54f4ceecbb64857eb2502\" (358), \"96b6df4665f2f8287a7a2a8485b5a39fbd9b9bb0a61e3a01328de78298dc36c0\" (355), \"7fcb887b15ab7466fc68ed68250287e11879fd5b35343b17e97401ecc4f3ee08\" (352), \"8f9064910af248270b5b17a30a1dee3390a137ec79938cc8672078acee473f58\" (338), \"131ea7e42748321026b13eb06afd4aa600b73ea16a6d9ec7004f038a521ba591\" (334), \"1e221bf733f9623d80af5bbfcd92ba1e775c2ccd4e53da01f3dea69590004709\" (329), \"1848a7a05c0b34606ac822dfe5a22cca0d9f26423bac3abf7f8d4f448b9ee554\" (319), \"c9aeaee7c3d0c535421535830c8cd2b6bdb4d9e351db3c276139a17abc94cf58\" (311), \"18363e6df18386111e09a4c89bf5acdeb3e55517b415dbe407d512f42d02f6df\" (301), \"cc3fd4ad27bf18f3b0bced9f16871775637f2b22297c453c2ad7265c7cd1627c\" (300), \"9d4afabcf3bb0658bb77e9320be128cc8ad6210901ed81d74709f7d475afd1df\" (292), \"dcb0138862b7008985c1dd2397e291427332dbc3a9ab475945459fefc3a3a3e7\" (292), \"400e870111a5ecc41ba34aaca01813ff796067dea8abc73ddc306c27bf4d1e84\" (291), \"a26309221f72524ff8b7e7eb966b48c4457f2fdd526920e952a9651035f1bf58\" (253), \"0870dfef05b74cb20d5bf7485a697da55fae4bd3238af721a5d3ec31ec122596\" (249), \"bf89a05d3588c5b03a7f67dce009bae5731ad77d5196c6f68c00ce6609ee6f3e\" (235), \"e9668e74a5f97b372990db4054f697b322a3259b153a742c491c8c0825e6a12b\" (215), \"db6fff5795bac1c7c8a8fbe65656705c34c93b7a07971d62e4296aff535a7c92\" (202), \"6a597e6f1b6839447fc6e78331e99f89744ab7b7085088e46ef93832d36477c2\" (194), \"933a09946202a4e527d9b267efd1b13519383f7bdd49544394818da8c71581bf\" (192), \"daaf4aab9089a6702761ccd30f982ac8ead005274e224ad5e87fcddb8ae1e442\" (190), \"1afef2ab9f34fc330627e5d265f3f9cc5ee87e37fc13e9043712382ff0db1970\" (189), \"0fc4f4da372d682fef7585d8f72d2e5ebac3f46e41f8205658e8742b48e11b71\" (178), \"cbb7412c60ecb748438d5327b6423db784fc0d2a16fde577eb3be850bba0dc1a\" (172), \"b70f8d20300c73ada072784dce8458c9b35bd499e3df85e8679268ff93df15c1\" (159), \"0f9da319d89e089e032615ffe86667c8e0beb077a1274b74b849e85368300666\" (139), \"482f63efb3e6402d512a3516da8c89a178f02a75a99c038c919cd91f81468f02\" (136), \"9a7d23fcfaecccadd43bb6313816e632f765e1870441ebfdcd4796b220d7d7df\" (131), \"e380c9f8f9f580ee7fbea389da721a2ad8fa550e7702eaf342d192ddeab77657\" (114), \"ca4f014daac0df64e272a66b1f34e430faf3dc0e284c67ad5d707451aacc1e89\" (98)\n(:DecisionDisposition).evidenceStatus — categorical; 22649 values, 2 distinct; all values (count): \"source_verified\" (13437), \"pending\" (9212)\n(:DecisionDisposition).targetTdocNumber — identifier; 22649 values, 18188 distinct; length 9..10 (median 10.0); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"R9-9999999\" 87.3%, \"R9-999999\" 12.7%; examples: \"R1-2205578\", \"R1-2600027\", \"R1-2508533\"\n(:Delegate).delegateId — text; 1802 values, 1802 distinct; length 2..287 (median 13.0); values withheld\n(:Delegate).nameSurface — text; 1802 values, 1802 distinct; length 2..287 (median 13.0); values withheld\n(:EmailMessage).archiveCode — identifier; 204236 values, 598 distinct; length 5..7 (median 5.0); characters: digits, uppercase, \"_\"; values withheld\n(:EmailMessage).id — identifier; 204236 values, 204236 distinct; length 18..20 (median 19.0); characters: digits, lowercase, \"#\"; values withheld\n(:EmailMessage).messageId — identifier; 204236 values, 204232 distinct; length 10..16 (median 14.0); characters: digits, lowercase, uppercase, \"._\"; values withheld\n(:EmailMessage).roundNum — integer; 2969 values, 7 distinct; values withheld\n(:EmailMessage).sentDate — identifier; 204236 values, 203749 distinct; length 19..25 (median 25); characters: digits, uppercase, \"+-:\"; values withheld\n(:EmailMessage).subject — text; 204236 values, 21269 distinct; length 3..254 (median 54); values withheld\n(:EmailThread).earliestDate — identifier; 12387 values, 12361 distinct; length 25..25 (median 25); characters: digits, uppercase, \"+-:\"; values withheld\n(:EmailThread).latestDate — identifier; 12387 values, 12374 distinct; length 25..25 (median 25.0); characters: digits, uppercase, \"+-:\"; values withheld\n(:EmailThread).overmergeSuspect — boolean; 12387 values, 2 distinct; values withheld\n(:EmailThread).participantCount — integer; 12387 values, 41 distinct; values withheld\n(:EmailThread).subject — text; 12387 values, 12387 distinct; length 3..250 (median 50); values withheld\n(:EmailThread).threadKey — text; 12387 values, 12387 distinct; length 0..250 (median 50); values withheld\n(:EmailThread).totalMessages — integer; 12387 values, 226 distinct; range 1..478; values withheld\n(:EvidenceAssertion).assertionId — identifier; 4438 values, 4438 distinct; length 36..74 (median 38.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"RAN9:role-agenda:999:R9-9999999:p9999\" 35.3%, \"RAN9:role-agenda:999-e:R9-9999999:p9999\" 25.9%, \"RAN9:role-agenda:999b:R9-9999999:p9999\" 13.9%, \"RAN9:role-agenda:999b-e:R9-9999999:p9999\" 13.4%, \"RAN9:role-agenda:999:R9-9999999:p999\" 5.1%, \"RAN9:role-agenda:999-e:R9-9999999:p999\" 2.3%, \"RAN9:role-agenda:999b:R9-9999999:p999\" 2.1%, \"RAN9:role-agenda:999b-e:R9-9999999:p999\" 1.9%, \"tr-source-9b999f9abcc99b999a9a999da9f99af99999999ee999dc999e999999999bf999\" 0.0%, \"tr-source-999fd9bd999af9c9a99b99999af9a999c99b99999eaed999fdbf99d99999b99d\" 0.0%, \"tr-source-999ab99c999ed999f9bb999999fbe999d99c9dcd9f9dfe99999bbbe9999ec999\" 0.0%, \"tr-source-9999999f99999999a99999c9c9bd999b9c999abac99f9f99d999a9f999f99999\" 0.0%, \"tr-source-efa9ab9ca9cf9b99bc999c9caa99c99af9de9fa99999d9d9999c9999be99b999\" 0.0%, \"tr-source-f9b9999ca9bdf99999cead9a999f99c9d9dd99c99ce9b9cbf99df99999999999\" 0.0%, \"tr-source-9a9c999999efdceef999b9b9c9999a99d9bc99999999f99c9999f9999bf9e9f9\" 0.0%; examples: \"RAN1:role-agenda:107b-e:R1-2200703:p773\", \"RAN1:role-agenda:103-e:R1-2009510:p1364\", \"RAN1:role-agenda:116b:R1-2403544:p1105\"\n(:EvidenceAssertion).assertionPredicateIRI — categorical; 4438 values, 3 distinct; all values (count): \"https://w3id.org/<ns>#reportedUnderAgenda\" (4431), \"https://w3id.org/<ns>#discussesSpec\" (5), \"https://w3id.org/<ns>#recommendsChangeToSpec\" (2)\n(:EvidenceAssertion).assessmentMethod — text; 4438 values, 4438 distinct; length 49..226 (median 198.0); values withheld\n(:EvidenceAssertion).evidenceStatus — categorical; 4438 values, 1 distinct; all values (count): \"source_verified\" (4438)\n(:EvidenceAssertion).id — identifier; 4431 values, 4431 distinct; length 51..55 (median 53); characters: digits, lowercase, uppercase, \"-/:\"; all shapes (digits shown as 9; share of values): \"tdoc:assertion/RAN9:role-agenda:999:R9-9999999:p9999\" 35.3%, \"tdoc:assertion/RAN9:role-agenda:999-e:R9-9999999:p9999\" 25.9%, \"tdoc:assertion/RAN9:role-agenda:999b:R9-9999999:p9999\" 13.9%, \"tdoc:assertion/RAN9:role-agenda:999b-e:R9-9999999:p9999\" 13.4%, \"tdoc:assertion/RAN9:role-agenda:999:R9-9999999:p999\" 5.1%, \"tdoc:assertion/RAN9:role-agenda:999-e:R9-9999999:p999\" 2.3%, \"tdoc:assertion/RAN9:role-agenda:999b:R9-9999999:p999\" 2.1%, \"tdoc:assertion/RAN9:role-agenda:999b-e:R9-9999999:p999\" 1.9%; examples: \"tdoc:assertion/RAN1:role-agenda:118b:R1-2408319:p2039\", \"tdoc:assertion/RAN1:role-agenda:104b-e:R1-2103990:p3598\", \"tdoc:assertion/RAN1:role-agenda:124:R1-2600550:p3337\"\n(:EvidenceFragment).evidenceId — categorical; 45 values, 45 distinct; all values (count): \"0343c427bd27205037ef4030dfc45465140dcebdfd4321ba06eebcbb7d948806\" (1), \"22bcfe7023f2f68b97574f730f24ce262c3d4fddf633527908ff30619bda432f\" (1), \"2613eb02a9a0b6efdd5593347e7fa8d1a8c4b227f9db11dfc244468a747c1dd6\" (1), \"2b7239eef5c4753863eab78238e5aa9049d2542473ae73a803524bb07a402760\" (1), \"2eb0e3f95bfa6d9754adec668c565f0a4567191bdfa38fdef4232b6cad1d4f88\" (1), \"3421665b1551207b2723280aeb056575b8223ce7a36eefe32c967d5a799f4eaa\" (1), \"354553e54948f15a4574ec2188dbe465d68aaf231e67b6d12cd0a4018154c327\" (1), \"3761c2c6247886eb599675f880ff0ad8eea179c80597c907e450934d9cdfe55a\" (1), \"41ac7d03c3ea82e6549296150dd92efbab065994ddb1a07809ca06b6232eef4e\" (1), \"41c067defca16ee417adf0ae5d7fe54daea67c33020d01ba18d37ab6cc776e55\" (1), \"4482f298fd0ebd2e7f12475bead24cc51b8ef259be98bd4247b2af26528ead98\" (1), \"44ec1d555c635679dc83633a65d8bac5f692c40a805e620c47d6c8eec4ee4591\" (1), \"4e24db44a26fb0a6e7737c4557009c783eb2397bd3ebc5aef67b76de452d30b8\" (1), \"514f0db266952b92a9248137aef8b06a783254ece7334187c1ccebbb7a1bbd85\" (1), \"5cbe349be8c0887465a96881faa45be82c5e2816e0cfbd8a57bcf503aadccdad\" (1), \"61de9405db6e7377efa0e28536e38e3da7d6fd06f37593c4bb2bcc587d4ce759\" (1), \"64adc66b4ab8731a2b2054ba0380f36a96f2953b8840e01f4a2a25aeee845129\" (1), \"7296cbcd8081b78496bb0bb4d2974b4254e62c28b65f5756b9f3ad491253c8c3\" (1), \"775d18fd915e03962dff2decb80ff4350cc318edc04a9a4fb46eacd1fa5b8a14\" (1), \"7981d16a2402fbf4ec6bc7691d150f2d16990c9561e6cfec77ff640b4ad9e00f\" (1), \"8134238253745756c8a764933436a9704db1a9d9510670c4bcd902407760c7a9\" (1), \"829f02ea065a389159a322eef73d137c09ad2faf46cb43a03dd94bdaefa720bb\" (1), \"82ce000daa08b2e4ee74ed676f0abf5ed5b6d67a9ff691c79c7a7e93d5e07e61\" (1), \"83e8081c37c5b6383528750817ddb01ccc72fe9dfd206f51c4a384bd1822a533\" (1), \"8890af576e7a635b984465de817882ef783cc6b8711433b21b032a9b1a6af85d\" (1), \"92d8d52c40a318c9a082d3f3ac7e665e3a31d6d9b96716266dd5a4d9ccaa2444\" (1), \"97efa717aa82337ab632216abb3f6a82c2d61809030fe4751314722705b574ef\" (1), \"99aa7011b7acaa6c964b3510f6ee01dc869f324f4c17b9510ef5250cbf13856b\" (1), \"aec96f5640c903e4ebd96da1122085062ef9a7dcd601725bab1d7f691edbd469\" (1), \"af0ed10967aaa59070ff364a4917ff39f8b6f0a6f9af13b534efa523d38eabb6\" (1), \"b41fce0c28320e6a79fcab00ac2a1ed54b5436280fe96c11f71606054ed495e8\" (1), \"b4bb9272d2599a58017b1f8b0853f8f77229b54a14c44d3c9e619a0040c0bf5e\" (1), \"d0a07bab367ecaa6c6e5aa86c9ea4173fe7d94443e170ce54ac5d8f348b7ec77\" (1), \"d3a57c61f56aa823673a78b0aee9fe295271400ce22626ad87a4f4479eb1fa01\" (1), \"d5886943c941d2dc0766d39d9a05534e063e2dc8270cbdf537905c808b478b66\" (1), \"d877109c3178607c2821e685dc23dc7ea8ddf6b53af71c2d94c3f4807518670f\" (1), \"df424536ce726fab0c9c9138dc3c283943749b43f458e92f3899f8106e9018ce\" (1), \"e5b477ada386446b1c80c84d6b7b12304aae1da65e72ae1bcd40996a2f440fbc\" (1), \"e80dd5c5dce029257648f3d14741a59d0adcbd81ca1b3a99c14b128f9dea4921\" (1), \"e84d11d75a6fada4f72948a430c34f81ea09f689d34913b3f5d549c2657f0df8\" (1), \"e85351257855644d8bd19e2012b8bd5f2627f4607a9f305adfeb4d5cb9b2fdda\" (1), \"f209b519a1c65face5d1aec9ada66e8791414cc0e52f51d59f33cb3510fb5226\" (1), \"f22da4bc8ea07e1c4315340d3765e062fcad70bfd573139bb3d9f25f39be87f2\" (1), \"f892ca7b8fd0ebbb124daf029e71a5588ecade050851e31d9cdbe949f86f91dd\" (1), \"ffec4bb28cf42e9d29ef2ca4e6d658f98fd201f2b6e67b1167e75c15290c7888\" (1)\n(:EvidenceFragment).evidenceLocator — text; 8628 values, 5707 distinct; length 61..181 (median 74); values withheld\n(:EvidenceFragment).evidencePath — text; 8628 values, 67 distinct; length 59..169 (median 83); values withheld\n(:EvidenceFragment).evidenceQuote — text; 8628 values, 6582 distinct; length 3..15107 (median 85.0); values withheld\n(:EvidenceFragment).evidenceSha256 — identifier; 8628 values, 67 distinct; length 64..64 (median 64); characters: digits, lowercase; examples: \"3f99ae4005f95fbabdf264a78e7fa6e6f9ffc5e6c6711b53e4a1ac5f245c7e5c\", \"a2394c339f4bf59ed23d5f18786a031ed69a998538256c22c8909d9e32f8f3cc\", \"a26309221f72524ff8b7e7eb966b48c4457f2fdd526920e952a9651035f1bf58\"\n(:EvidenceFragment).id — identifier; 8583 values, 8583 distinct; length 90..98 (median 90); characters: digits, lowercase, \"#-./:\"; examples: \"tdoc:evidence/role-agenda-3551f0116d2bf8ecccad159aeb44dc71ae5e75e6bc3310ef69d91116ec426b… [90 chars]\", \"tdoc:evidence/role-agenda-d363c65bb95664812c6719a6f49ff3b0e2ebcc25874a08231df519019ad3f3… [90 chars]\", \"tdoc:evidence/role-agenda-16232fd27c18d5674d5fc93b2029b521e1a089548a65b845b57c05e0e76374… [90 chars]\"\n(:Feature).catalogVersion — categorical; 22 values, 1 distinct; all values (count): \"2.0.1\" (22)\n(:Feature).curator — categorical; 22 values, 2 distinct; all values (count): \"Claude (self-bias acknowledged)\" (20), \"Claude (self-bias acknowledged, added 2026-05-19 — Q4 disjoint baseline)\" (2)\n(:Feature).featureDescription — text; 22 values, 22 distinct; length 83..277 (median 142.5); values withheld\n(:Feature).featureName — categorical; 22 values, 22 distinct; all values (count): \"Beam Failure Detection / Recovery (Rel-15 base)\" (1), \"CSI Reporting Framework (Rel-15 base)\" (1), \"CSI-RS Resource Configuration (Rel-15 base)\" (1), \"Conditional Handover (CHO, Rel-16)\" (1), \"Conditional PSCell Change (CPC, Rel-16)\" (1), \"LTM (L1/L2 Triggered Mobility, Rel-18)\" (1), \"LTM NRDC (Rel-19)\" (1), \"Multi-Set BFD/BFR (Rel-17)\" (1), \"PDCCH Search Space Configuration (Rel-15 base)\" (1), \"Rel-15 Type-II Codebook (base)\" (1), \"Rel-16 Enhanced Type-II Codebook\" (1), \"Rel-17 BFD/BFR Relaxation (Power Saving)\" (1), \"Rel-17 Further Enhanced Type-II Codebook\" (1), \"Rel-18 Candidate Cell TCI State Activation (LTM MAC CE)\" (1), \"Rel-18 eType-II CJT (Coherent Joint Transmission)\" (1), \"Rel-18 eType-II Doppler CSI\" (1), \"SCell BFR (Rel-16)\" (1), \"SRS (Sounding Reference Signal, Rel-15 base)\" (1), \"Subsequent Conditional PSCell Addition/Change (CPAC, Rel-18)\" (1), \"TCI State Framework (Rel-15 base)\" (1), \"Type-I Codebook (Rel-15 base)\" (1), \"Unified TCI Framework (Rel-17)\" (1)\n(:Feature).introducedInRelease — categorical; 22 values, 5 distinct; all values (count): \"Rel-15\" (8), \"Rel-18\" (5), \"Rel-16\" (4), \"Rel-17\" (4), \"Rel-19\" (1)\n(:Feature).legacyFeatureNames — list of values (2 lists, 0 scalars, 0 empty lists, list length 1..1); elements: categorical; 2 values, 2 distinct; all values (count): \"Conditional PSCell Addition/Change (CPAC, Rel-18)\" (1), \"Rel-18 Candidate TCI State Set (PDCCH MAC CE)\" (1)\n(:Feature).legacyReplacedBy — categorical; 3 values, 3 distinct; all values (count): \"LTM (L1/L2 Triggered Mobility, Rel-18)\" (1), \"Rel-16 Enhanced Type-II Codebook\" (1), \"Unified TCI Framework (Rel-17)\" (1)\n(:Feature).name — categorical; 22 values, 22 distinct; all values (count): \"Beam Failure Detection / Recovery (Rel-15 base)\" (1), \"CSI Reporting Framework (Rel-15 base)\" (1), \"CSI-RS Resource Configuration (Rel-15 base)\" (1), \"Conditional Handover (CHO, Rel-16)\" (1), \"Conditional PSCell Change (CPC, Rel-16)\" (1), \"LTM (L1/L2 Triggered Mobility, Rel-18)\" (1), \"LTM NRDC (Rel-19)\" (1), \"Multi-Set BFD/BFR (Rel-17)\" (1), \"PDCCH Search Space Configuration (Rel-15 base)\" (1), \"Rel-15 Type-II Codebook (base)\" (1), \"Rel-16 Enhanced Type-II Codebook\" (1), \"Rel-17 BFD/BFR Relaxation (Power Saving)\" (1), \"Rel-17 Further Enhanced Type-II Codebook\" (1), \"Rel-18 Candidate Cell TCI State Activation (LTM MAC CE)\" (1), \"Rel-18 eType-II CJT (Coherent Joint Transmission)\" (1), \"Rel-18 eType-II Doppler CSI\" (1), \"SCell BFR (Rel-16)\" (1), \"SRS (Sounding Reference Signal, Rel-15 base)\" (1), \"Subsequent Conditional PSCell Addition/Change (CPAC, Rel-18)\" (1), \"TCI State Framework (Rel-15 base)\" (1), \"Type-I Codebook (Rel-15 base)\" (1), \"Unified TCI Framework (Rel-17)\" (1)\n(:Feature).notes — text; 22 values, 22 distinct; length 83..277 (median 142.5); values withheld\n(:Feature).ontologyVersion — categorical; 22 values, 1 distinct; all values (count): \"v7.0.0\" (22)\n(:Feature).specBodyTerms — list of values (22 lists, 0 scalars, 0 empty lists, list length 3..6); elements: text; 89 values, 89 distinct; length 3..38 (median 14); values withheld\n(:Feature).updatedAt — integer; 22 values, 1 distinct; all values (count): 1792361004 (22)\n(:FeatureAssertion).assertionId — categorical; 38 values, 38 distinct; all values (count): \"feature-0e7e37cbe3de2d0db9ae1fb4794a2dbcd90b42cf4bddb3d6365dff4fe513d57e\" (1), \"feature-115f9fd9e624a2f02cec08ca2a82368d8c54749e32d86b2f15130c0a7ac0fda7\" (1), \"feature-11d95e2285138a249b6a173c8863d2bfa116e34f23b1a9f239358b6fbd49b251\" (1), \"feature-151f73e35f40c3a54c41a4ab99b2f5537d28ae4794a825ec878c59bdd91cc554\" (1), \"feature-2875bf3ce8ed68573ce16709fb9c09202bc8d3af528cb9f4134ef2e6b2e7f52f\" (1), \"feature-2ca3e64bc58bcd664dd941ad101560f8169df5085ee31d0a2c178e8f89141911\" (1), \"feature-2e74e642125837e4747aea4a3a528bed91ad6ab1e00ee5d65ff1171205da772b\" (1), \"feature-3f5a43dccc9e434fb2e63fbdb497612a1634f2e4514dda3d08df8c7521130fbb\" (1), \"feature-400ef396f9f2151f8d7ea6cb078b041c2adc397964059c764272f052e7412e77\" (1), \"feature-6553836ebb4e1424503d55170776f6b4ca6e10e734c0fc7ea916c803b4fcfecb\" (1), \"feature-6ad03f738186abfc4b7b3a883bf6d5fc637ce9a72f34ec69bf38abb3a1eeac5a\" (1), \"feature-723d8571bb742285d74dbc794023d4c8bc36e62a29136ad64f7f143fa64eabd6\" (1), \"feature-75ae7b0169928af016dea27528b22715ded9e7bf6888c0ff6c22e72e7fe97702\" (1), \"feature-803acb3698fc8281a804e0c3c758ed43709794d1fd8d68eeca91ef9b5dd06695\" (1), \"feature-830dab864e4c3a06d1989cf9ae7edb36565513e20ab15bcafbb924f8bd0c5c68\" (1), \"feature-842fe109ce9ee0ac376e67b0c3d2026e54e96be96b43cb72d12ab71171ac4843\" (1), \"feature-92c9064f0014f59c685b44a087a84609bd907b057b57482283369a71a7052079\" (1), \"feature-951bf52e8cd4cd0bcb10bc7b98b07b07ef2d80d60c30cd1a0de1b46879d02561\" (1), \"feature-952e8719407e014d71d73aa83a0a77dee09b616b0145dc1594b29358bee8b5ee\" (1), \"feature-95a9ceaecdab4f1e050a02b31738972c11ed7671d912f56e02137c72e9c3eb4e\" (1), \"feature-95b2f42c45e71789ad5c6e557bc259ee0686e856bafaa6eab6c1276f896f8a75\" (1), \"feature-97b5df13770d3f57348a5f7efb65fe44cc6b7591919ee19056160376a94df964\" (1), \"feature-a22fe5603dd32f856779201e91f4f5459eae97024ac1d29fd49f529e30504f9a\" (1), \"feature-a2783512ded73680d361616503c0675aa8b36fe5a4a7f10ba3146a38f777c9b1\" (1), \"feature-a68f483040b7c10a46eeee769618970ca63eae35e2457b58ad3af54f3ea63a56\" (1), \"feature-b1d7a253d1584fd3bfadf65b16c3cd13d85ab1b10959353308294f4a349353b6\" (1), \"feature-b4c838736ea870b5c9f039e5cad02e17efcd97de65c5d0775bf3ca0ebc940690\" (1), \"feature-b53ff6b885f8a031fe51b19cd302b24008bffb9e60b8bfac688aa154bbfb6458\" (1), \"feature-b66ee876f520659778c045ad7533309de75424b4552e185def51b374241b9625\" (1), \"feature-b7fb3c064a6979129af5c898287f106eec61c6b5f251b97a7af4bbbdda3f6505\" (1), \"feature-bea1ea91450eb33b3d2bd386ff242ac687745e6794524fabc834f255ad05dc85\" (1), \"feature-c0e2974ef9eadb5fed7a457bc12461cbf45837d171ff6148bf380c125bc2e348\" (1), \"feature-c5e8354cea0f595aa3b4fa2239c0edce4b34233b944144fc38b7adae8b27ac10\" (1), \"feature-d9d0da3903be107863b27551ba8c3bac56710bb81c54258af03c877cf7ce00c5\" (1), \"feature-da521ba2ed3838862de71832ff9e6f4b350f7d716bce66d1549764ca252474ff\" (1), \"feature-e9196226a2d2272d32f47057201750dca28ad8b21c05eaf30e6416dfc20d0b08\" (1), \"feature-eb8fd42a73246958f19c89e4e89b72495a457e936b60775b05a0be41f9d42fc8\" (1), \"feature-f717240ceac60061c4f16c6e471119cdd0b4d13903019d85e7ec9a484e9ff62e\" (1)\n(:FeatureAssertion).assertionPredicateIRI — categorical; 38 values, 3 distinct; all values (count): \"http://www.w3.org/ns/prov#wasDerivedFrom\" (22), \"https://w3id.org/<ns>#hasProcedure\" (13), \"https://w3id.org/<ns>#relatedFeature\" (3)\n(:FeatureAssertion).assessmentMethod — text; 38 values, 5 distinct; length 95..185 (median 137); values withheld\n(:FeatureAssertion).evidenceRows — text; 38 values, 38 distinct; length 1393..22246 (median 6849.0); values withheld\n(:FeatureAssertion).evidenceStatus — categorical; 38 values, 1 distinct; all values (count): \"source_verified\" (38)\n(:FeatureAssertion).kind — categorical; 38 values, 3 distinct; all values (count): \"feature_definition\" (22), \"feature_procedure\" (13), \"replacement_reconciliation\" (3)\n(:Figure).caption — text; 15 values, 15 distinct; length 41..107 (median 72); values withheld\n(:Figure).figureId — identifier; 1411 values, 1411 distinct; length 10..14 (median 12); characters: digits, lowercase, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"FIG-999-999\" 33.4%, \"FIG-999-e-999\" 27.4%, \"FIG-999b-e-999\" 18.9%, \"FIG-99-999\" 9.1%, \"FIG-999b-999\" 8.0%, \"FIG-99b-999\" 3.1%; examples: \"FIG-94-007\", \"FIG-120b-004\", \"FIG-97-009\"\n(:Figure).figureNumber — categorical; 15 values, 11 distinct; all values (count): \"Figure 6.4.1\" (4), \"Figure X\" (2), \"Figure 1\" (1), \"Figure 2\" (1), \"Figure 5.2.4-1\" (1), \"Figure 6.2-1\" (1), \"Figure 6.2-2\" (1), \"Figure 6.2-3\" (1), \"Figure 6.3.1\" (1), \"Figure 6.4.2\" (1), \"Figure 8.1-1\" (1)\n(:Figure).filePath — identifier; 1411 values, 1411 distinct; length 66..75 (median 70); characters: digits, lowercase, uppercase, \"-./_\"; all shapes (digits shown as 9; share of values): \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999/FIG-999-999.png\" 29.8%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999-e/FIG-999-e-999.png\" 23.4%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999b-e/FIG-999b-e-999.png\" 14.7%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999b/FIG-999b-999.png\" 5.7%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_99/FIG-99-999.png\" 5.4%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_99/FIG-99-999.emf\" 3.3%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999/FIG-999-999.emf\" 3.1%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999b-e/FIG-999b-e-999.gif\" 2.6%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999b/FIG-999b-999.emf\" 2.2%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999-e/FIG-999-e-999.emf\" 2.1%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_99b/FIG-99b-999.emf\" 1.7%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999-e/FIG-999-e-999.gif\" 1.3%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_99b/FIG-99b-999.png\" 1.3%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999b-e/FIG-999b-e-999.jpeg\" 1.1%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999b-e/FIG-999b-e-999.emf\" 0.6%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999-e/FIG-999-e-999.jpeg\" 0.6%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999/FIG-999-999.jpeg\" 0.4%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_99/FIG-99-999.jpeg\" 0.2%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_99/FIG-99-999.wmf\" 0.1%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999b/FIG-999b-999.jpeg\" 0.1%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999b-e/FIG-999b-e-999.xml\" 0.1%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_999/FIG-999-999.xml\" 0.1%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_99/FIG-99-999.xml\" 0.1%, \"ontology/output/tsg/RAN/formal/figures/RAN9/RAN9_99b/FIG-99b-999.jpeg\" 0.1%; examples: \"ontology/output/tsg/RAN/formal/figures/RAN1/RAN1_123/FIG-123-008.png\", \"ontology/output/tsg/RAN/formal/figures/RAN1/RAN1_119/FIG-119-018.png\", \"ontology/output/tsg/RAN/formal/figures/RAN1/RAN1_119/FIG-119-035.png\"\n(:LS)._belongsTo — identifier; 6427 values, 1147 distinct; length 16..27 (median 21); characters: digits, lowercase, \"-./:\"; all shapes (digits shown as 9; share of values): \"aaaa:aaaaaa/999-9\" 30.0%, \"aaaa:aaaaaa/99-9\" 12.0%, \"aaaa:aaaaaa/999a-9\" 11.6%, \"aaaa:aaaaaa/99-9.9.9\" 5.8%, \"aaaa:aaaaaa/999-9.9.9\" 5.3%, \"aaaa:aaaaaa/99a-9\" 5.0%, \"aaaa:aaaaaa/99-9.9.9.9\" 4.5%, \"aaaa:aaaaaa/999-9.9\" 4.4%, \"aaaa:aaaaaa/99-9.9.9.9.9\" 2.7%, \"aaaa:aaaaaa/99a-9.9.9.9\" 2.3%, \"aaaa:aaaaaa/99a-9.9.9\" 2.2%, \"aaaa:aaaaaa/999-9.99\" 2.1%, \"aaaa:aaaaaa/999-9.99.9\" 1.7%, \"aaaa:aaaaaa/999a-9.9\" 1.5%, \"aaaa:aaaaaa/999a-9.9.9\" 1.4%, \"aaaa:aaaaaa/999-9.9.9.9\" 1.2%, \"aaaa:aaaaaa/99a-9.9.9.9.9\" 1.1%, \"aaaa:aaaaaa/99-9.9\" 0.7%, \"aaaa:aaaaaa/999a-9.9.9.9\" 0.6%, \"aaaa:aaaaaa/999a-9.99.9\" 0.6%, \"aaaa:aaaaaa/999-9.9.99\" 0.5%, \"aaaa:aaaaaa/99-9.9.99\" 0.4%, \"aaaa:aaaaaa/999a-9.99\" 0.4%, \"aaaa:aaaaaa/999-9.9.9.9.9\" 0.3%, \"aaaa:aaaaaa/99a-9.9.99\" 0.3%, \"aaaa:aaaaaa/99-9.9.99.9\" 0.2%, \"aaaa:aaaaaa/99-9.9.9.9.9.9\" 0.2%, \"aaaa:aaaaaa/999a-9.9.9.9.9\" 0.2%, \"aaaa:aaaaaa/999a-9.9.99\" 0.1%, \"aaaa:aaaaaa/99-9.9.99.9.9\" 0.1%, \"aaaa:aaaaaa/999-99.9\" 0.1%, \"aaaa:aaaaaa/999-9.9.99.9\" 0.1%, \"aaaa:aaaaaa/999-9.99.9.9\" 0.1%, \"aaaa:aaaaaa/999-99.9.9\" 0.1%, \"aaaa:aaaaaa/999a-9.9.99.9\" 0.1%, \"aaaa:aaaaaa/99a-9.9\" 0.0%, \"aaaa:aaaaaa/99a-9.9.99.9\" 0.0%, \"aaaa:aaaaaa/999a-99.9.9\" 0.0%, \"aaaa:aaaaaa/999a-99.9\" 0.0%, \"aaaa:aaaaaa/99a-9.9.99.9.9\" 0.0%, \"aaaa:aaaaaa/99a-9.9.9.9.9.9\" 0.0%, \"aaaa:aaaaaa/999a-99.9.9.9\" 0.0%; examples: \"tdoc:agenda/111-5\", \"tdoc:agenda/122b-8.1\", \"tdoc:agenda/117-8.1\"\n(:LS)._ccTo — list of values (2130 lists, 0 scalars, 0 empty lists, list length 1..14); elements: identifier; 3086 values, 65 distinct; length 10..48 (median 16); characters: digits, lowercase, uppercase, \"/:_\"; all shapes (digits shown as 9; share of values): \"tdoc:wg/RAN9\" 79.3%, \"tdoc:wg/SA9\" 9.5%, \"aaaa:aa/AAA\" 4.3%, \"tdoc:wg/CT9\" 2.2%, \"aaaa:aa/AA\" 1.5%, \"tdoc:wg/GSMA_9GJA\" 0.4%, \"aaaa:aa/AAA_9\" 0.3%, \"aaaa:aa/Aaa_Aaaa_aa_Aaa_Aaaa_Aaaaaa_aa_aaa_Aaaaa\" 0.3%, \"aaaa:aa/Aa_Aa_Aaaaaaaa\" 0.2%, \"aaaa:aa/AAAA_AA\" 0.2%, \"tdoc:wg/SA9_LI\" 0.1%, \"aaaa:aa/AAAA_Aaaaaaaaaaaaa_AAA_Aaaaaaa_Aaaaa\" 0.1%, \"tdoc:wg/9GAA_WG9\" 0.1%, \"aaaa:aa/AAAA\" 0.1%, \"aaaa:aa/AAAA_AAAAA\" 0.1%, \"tdoc:wg/IEEE_999\" 0.1%, \"tdoc:wg/IEEE_999_99\" 0.1%, \"aaaa:aa/AAAA_AAA_Aaaaaaaaa\" 0.1%, \"aaaa:aa/AaAa_Aaaaaaaa\" 0.1%, \"aaaa:aa/AAA_Aaaaaaaa_Aaaaaaaa_Aaaaaaaaaaa\" 0.1%, \"aaaa:aa/AAAA_aaaaaa\" 0.1%, \"aaaa:aa/AAA_AAAA\" 0.1%, \"tdoc:wg/RAN_WG9\" 0.0%, \"aaaa:aa/AAAA_AAAA\" 0.0%, \"aaaa:aa/AAA_AAA_AAA_9_AA_99_AA_9\" 0.0%, \"tdoc:wg/RAN9__RAN9\" 0.0%, \"aaaa:aa/AAAA_AAA_AAAA\" 0.0%, \"aaaa:aa/AAAAaaaaa_aa_Aaaaaaaaaaa___Aaaaaaaaaa\" 0.0%, \"aaaa:aa/AAA_Aaaaaaaa_Aaaaaaaaaaaaaaaaaaa_Aaaaaa\" 0.0%, \"tdoc:wg/IEEE_999_99_Coexistence\" 0.0%, \"tdoc:wg/IEEE_999_LAN_MAN_Standards_Committee\" 0.0%, \"aaaa:aa/AAA_Aaaaaa_aa_Aaaaaaaaaaa___Aaaaaaaaaaaa\" 0.0%, \"aaaa:aa/AAA_Aaaaaaaa_Aaaaaaaaaaaaaaaaaa_Aaaaaa\" 0.0%, \"aaaa:aa/Aaaaaaa_aa_aaa_Aaaaa_aa_AAA\" 0.0%, \"tdoc:wg/IEEE_999_99_Coexistence_WG\" 0.0%, \"tdoc:wg/SAE_Cellular_V9X_Technical_Committee\" 0.0%, \"aaaa:aa/AAA_AAAA_Aaaaaaaaa_Aaaaaaaaa\" 0.0%, \"tdoc:wg/IEEE_999_99_WG_Chair\" 0.0%, \"tdoc:wg/IEEE_999_99_WG\" 0.0%, \"tdoc:wg/IEEE_999_LMSC\" 0.0%, \"tdoc:wg/9G_IA\" 0.0%, \"aaaa:aa/AAAA_Aaaaaaaaa_Aaaaaaaaaaa\" 0.0%, \"tdoc:wg/IEEE_999_99_Vice_Chair\" 0.0%, \"aaaa:aa/AA_AAA_Aaaaa\" 0.0%; examples: \"tdoc:wg/IEEE_SA\", \"tdoc:wg/CT4\", \"tdoc:wg/RAN6\"\n(:LS)._hasContact — identifier; 6427 values, 151 distinct; length 18..19 (median 18); characters: digits, lowercase, \"/:\"; values withheld\n(:LS)._isRevisionOf — identifier; 1485 values, 1481 distinct; length 14..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 93.5%, \"tdoc:R9-999999\" 6.5%; examples: \"tdoc:R1-168447\", \"tdoc:R1-2310521\", \"tdoc:R1-165999\"\n(:LS)._originalLS — text; 1878 values, 1776 distinct; length 13..79 (median 15.0); values withheld\n(:LS)._originatedFrom — categorical; 1819 values, 13 distinct; all values (count): \"tdoc:wg/RAN2\" (852), \"tdoc:wg/RAN4\" (666), \"tdoc:wg/SA2\" (95), \"tdoc:wg/RAN3\" (92), \"tdoc:wg/RAN\" (38), \"tdoc:wg/SA4\" (18), \"tdoc:wg/SA5\" (18), \"tdoc:wg/SA1\" (17), \"tdoc:wg/CT1\" (7), \"tdoc:wg/SA3\" (7), \"tdoc:wg/SA\" (6), \"tdoc:wg/RAN5\" (2), \"tdoc:wg/CT4\" (1)\n(:LS)._presentedAt — categorical; 6427 values, 62 distinct; all values (count): \"tdoc:meeting/RAN1_108-e\" (292), \"tdoc:meeting/RAN1_109-e\" (169), \"tdoc:meeting/RAN1_113\" (169), \"tdoc:meeting/RAN1_93\" (164), \"tdoc:meeting/RAN1_115\" (151), \"tdoc:meeting/RAN1_94\" (147), \"tdoc:meeting/RAN1_114b\" (141), \"tdoc:meeting/RAN1_110\" (140), \"tdoc:meeting/RAN1_106-e\" (137), \"tdoc:meeting/RAN1_120\" (137), \"tdoc:meeting/RAN1_98\" (137), \"tdoc:meeting/RAN1_91\" (133), \"tdoc:meeting/RAN1_103-e\" (131), \"tdoc:meeting/RAN1_114\" (131), \"tdoc:meeting/RAN1_104-e\" (129), \"tdoc:meeting/RAN1_100b-e\" (128), \"tdoc:meeting/RAN1_111\" (127), \"tdoc:meeting/RAN1_112\" (121), \"tdoc:meeting/RAN1_99\" (120), \"tdoc:meeting/RAN1_98b\" (118), \"tdoc:meeting/RAN1_101-e\" (117), \"tdoc:meeting/RAN1_92b\" (117), \"tdoc:meeting/RAN1_116b\" (113), \"tdoc:meeting/RAN1_107-e\" (112), \"tdoc:meeting/RAN1_110b-e\" (111), \"tdoc:meeting/RAN1_90\" (110), \"tdoc:meeting/RAN1_88\" (106), \"tdoc:meeting/RAN1_102-e\" (105), \"tdoc:meeting/RAN1_87\" (105), \"tdoc:meeting/RAN1_92\" (105), \"tdoc:meeting/RAN1_86\" (103), \"tdoc:meeting/RAN1_112b-e\" (101), \"tdoc:meeting/RAN1_117\" (98), \"tdoc:meeting/RAN1_106b-e\" (97), \"tdoc:meeting/RAN1_105-e\" (96), \"tdoc:meeting/RAN1_90b\" (96), \"tdoc:meeting/RAN1_89\" (93), \"tdoc:meeting/RAN1_97\" (93), \"tdoc:meeting/RAN1_96b\" (90), \"tdoc:meeting/RAN1_95\" (88), \"tdoc:meeting/RAN1_116\" (86), \"tdoc:meeting/RAN1_119\" (85), \"tdoc:meeting/RAN1_121\" (85), \"tdoc:meeting/RAN1_85\" (85), \"tdoc:meeting/RAN1_120b\" (81), \"tdoc:meeting/RAN1_118\" (80), \"tdoc:meeting/RAN1_118b\" (79), \"tdoc:meeting/RAN1_104b-e\" (78), \"tdoc:meeting/RAN1_122b\" (77), \"tdoc:meeting/RAN1_94b\" (75), \"tdoc:meeting/RAN1_86b\" (74), \"tdoc:meeting/RAN1_84b\" (71), \"tdoc:meeting/RAN1_88b\" (68), \"tdoc:meeting/RAN1_100-e\" (67), \"tdoc:meeting/RAN1_96\" (65), \"tdoc:meeting/RAN1_122\" (60), \"tdoc:meeting/RAN1_84\" (52), \"tdoc:meeting/RAN1_124\" (48), \"tdoc:meeting/RAN1_123\" (42), \"tdoc:meeting/RAN1_124b\" (36), \"tdoc:meeting/RAN1_100\" (28), \"tdoc:meeting/RAN1_107b-e\" (27)\n(:LS)._relatedTo — list of values (6298 lists, 0 scalars, 0 empty lists, list length 1..18); elements: identifier; 8274 values, 374 distinct; length 17..53 (median 28.0); characters: digits, lowercase, uppercase, \"-/:_\"; examples: \"tdoc:workitem/NR_NTN_Ku_bands\", \"tdoc:workitem/NR_ATG_enh\", \"tdoc:workitem/LTE_eV2X-Core\"\n(:LS)._replyIn — string or list of values (86 lists, 109 scalars, 0 empty lists, list length 2..10); elements: identifier; 381 values, 379 distinct; length 14..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 95.3%, \"tdoc:R9-999999\" 4.5%, \"tdoc:S9-9999999\" 0.3%; examples: \"tdoc:R1-2408832\", \"tdoc:R4-1804729\", \"tdoc:R1-2109376\"\n(:LS)._replyTo — string or list of values (46 lists, 3247 scalars, 0 empty lists, list length 2..3); elements: text; 3342 values, 1174 distinct; length 9..48 (median 15.0); values withheld\n(:LS)._revisedTo — string or list of values (5 lists, 1436 scalars, 0 empty lists, list length 2..2); elements: identifier; 1446 values, 1446 distinct; length 14..15 (median 15.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 95.0%, \"tdoc:R9-999999\" 5.0%; examples: \"tdoc:R1-2202734\", \"tdoc:R1-1721310\", \"tdoc:R1-1613334\"\n(:LS)._sentTo — list of values (6404 lists, 0 scalars, 0 empty lists, list length 1..24); elements: identifier; 7779 values, 105 distinct; length 10..75 (median 17); characters: digits, lowercase, uppercase, \"/:_\"; examples: \"tdoc:wg/3GPP_TSG_RAN_WG2\", \"tdoc:wg/5GAA\", \"tdoc:wg/6G_IA_Chair\"\n(:LS)._submittedBy — list of values (6421 lists, 0 scalars, 0 empty lists, list length 1..8); elements: identifier; 7013 values, 139 distinct; length 15..80 (median 23); characters: digits, lowercase, uppercase, \"/:_\"; values withheld\n(:LS)._targetRelease — categorical; 6363 values, 10 distinct; all values (count): \"tdoc:release/Rel_15\" (1277), \"tdoc:release/Rel_16\" (1257), \"tdoc:release/Rel_17\" (1255), \"tdoc:release/Rel_18\" (1226), \"tdoc:release/Rel_19\" (551), \"tdoc:release/Rel_14\" (504), \"tdoc:release/Rel_13\" (208), \"tdoc:release/Rel_20\" (75), \"tdoc:release/Rel_12\" (8), \"tdoc:release/Rel_10\" (2)\n(:LS).abstract — text; 172 values, 167 distinct; length 1..361 (median 47); values withheld\n(:LS).direction — categorical; 6427 values, 2 distinct; all values (count): \"out\" (4521), \"in\" (1906)\n(:LS).for — categorical; 5972 values, 6 distinct; all values (count): \"Decision\" (3018), \"Discussion\" (1593), \"Approval\" (1299), \"Agreement\" (35), \"Information\" (25), \"Action\" (2)\n(:LS).id — identifier; 6427 values, 6427 distinct; length 14..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 95.2%, \"tdoc:R9-999999\" 4.8%; examples: \"tdoc:R1-2208750\", \"tdoc:R1-1719307\", \"tdoc:R1-2401947\"\n(:LS).reservationDate — identifier; 6427 values, 4173 distinct; length 19..26 (median 26); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99\" 54.4%, \"9999-99-99T99:99:99.999999\" 45.6%; examples: \"2022-02-10T21:41:20\", \"2022-04-22T02:59:01\", \"2024-04-03T20:59:09\"\n(:LS).secretaryRemarks — text; 397 values, 133 distinct; length 4..268 (median 34); values withheld\n(:LS).status — categorical; 6427 values, 12 distinct; all values (count): \"revised\" (1422), \"approved\" (1416), \"not treated\" (1355), \"treated\" (1280), \"noted\" (608), \"agreed\" (106), \"withdrawn\" (97), \"postponed\" (77), \"available\" (28), \"endorsed\" (23), \"not pursued\" (13), \"reserved\" (2)\n(:LS).tdocNumber — identifier; 6427 values, 6427 distinct; length 9..10 (median 10); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"R9-9999999\" 95.2%, \"R9-999999\" 4.8%; examples: \"R1-2402200\", \"R1-1719325\", \"R1-2303856\"\n(:LS).title — text; 6427 values, 5164 distinct; length 4..191 (median 51.0); values withheld\n(:LS).type — categorical; 6427 values, 2 distinct; all values (count): \"LS out\" (4521), \"LS in\" (1906)\n(:LS).uploadedDate — identifier; 6370 values, 4456 distinct; length 19..26 (median 26.0); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99.999999\" 86.0%, \"9999-99-99T99:99:99\" 14.0%; examples: \"2016-02-24T13:42:35.513000\", \"2023-05-26T13:01:16.447000\", \"2023-05-15T09:58:23.033000\"\n(:Meeting).canonicalMeetingNumber — categorical; 62 values, 61 distinct; all values (count): \"RAN1#100\" (2), \"RAN1#100b\" (1), \"RAN1#101\" (1), \"RAN1#102\" (1), \"RAN1#103\" (1), \"RAN1#104\" (1), \"RAN1#104b\" (1), \"RAN1#105\" (1), \"RAN1#106\" (1), \"RAN1#106b\" (1), \"RAN1#107\" (1), \"RAN1#107b\" (1), \"RAN1#108\" (1), \"RAN1#109\" (1), \"RAN1#110\" (1), \"RAN1#110b\" (1), \"RAN1#111\" (1), \"RAN1#112\" (1), \"RAN1#112b\" (1), \"RAN1#113\" (1), \"RAN1#114\" (1), \"RAN1#114b\" (1), \"RAN1#115\" (1), \"RAN1#116\" (1), \"RAN1#116b\" (1), \"RAN1#117\" (1), \"RAN1#118\" (1), \"RAN1#118b\" (1), \"RAN1#119\" (1), \"RAN1#120\" (1), \"RAN1#120b\" (1), \"RAN1#121\" (1), \"RAN1#122\" (1), \"RAN1#122b\" (1), \"RAN1#123\" (1), \"RAN1#124\" (1), \"RAN1#124b\" (1), \"RAN1#84\" (1), \"RAN1#84b\" (1), \"RAN1#85\" (1), \"RAN1#86\" (1), \"RAN1#86b\" (1), \"RAN1#87\" (1), \"RAN1#88\" (1), \"RAN1#88b\" (1), \"RAN1#89\" (1), \"RAN1#90\" (1), \"RAN1#90b\" (1), \"RAN1#91\" (1), \"RAN1#92\" (1), \"RAN1#92b\" (1), \"RAN1#93\" (1), \"RAN1#94\" (1), \"RAN1#94b\" (1), \"RAN1#95\" (1), \"RAN1#96\" (1), \"RAN1#96b\" (1), \"RAN1#97\" (1), \"RAN1#98\" (1), \"RAN1#98b\" (1), \"RAN1#99\" (1)\n(:Meeting).id — categorical; 62 values, 62 distinct; all values (count): \"tdoc:meeting/RAN1_100\" (1), \"tdoc:meeting/RAN1_100-e\" (1), \"tdoc:meeting/RAN1_100b-e\" (1), \"tdoc:meeting/RAN1_101-e\" (1), \"tdoc:meeting/RAN1_102-e\" (1), \"tdoc:meeting/RAN1_103-e\" (1), \"tdoc:meeting/RAN1_104-e\" (1), \"tdoc:meeting/RAN1_104b-e\" (1), \"tdoc:meeting/RAN1_105-e\" (1), \"tdoc:meeting/RAN1_106-e\" (1), \"tdoc:meeting/RAN1_106b-e\" (1), \"tdoc:meeting/RAN1_107-e\" (1), \"tdoc:meeting/RAN1_107b-e\" (1), \"tdoc:meeting/RAN1_108-e\" (1), \"tdoc:meeting/RAN1_109-e\" (1), \"tdoc:meeting/RAN1_110\" (1), \"tdoc:meeting/RAN1_110b-e\" (1), \"tdoc:meeting/RAN1_111\" (1), \"tdoc:meeting/RAN1_112\" (1), \"tdoc:meeting/RAN1_112b-e\" (1), \"tdoc:meeting/RAN1_113\" (1), \"tdoc:meeting/RAN1_114\" (1), \"tdoc:meeting/RAN1_114b\" (1), \"tdoc:meeting/RAN1_115\" (1), \"tdoc:meeting/RAN1_116\" (1), \"tdoc:meeting/RAN1_116b\" (1), \"tdoc:meeting/RAN1_117\" (1), \"tdoc:meeting/RAN1_118\" (1), \"tdoc:meeting/RAN1_118b\" (1), \"tdoc:meeting/RAN1_119\" (1), \"tdoc:meeting/RAN1_120\" (1), \"tdoc:meeting/RAN1_120b\" (1), \"tdoc:meeting/RAN1_121\" (1), \"tdoc:meeting/RAN1_122\" (1), \"tdoc:meeting/RAN1_122b\" (1), \"tdoc:meeting/RAN1_123\" (1), \"tdoc:meeting/RAN1_124\" (1), \"tdoc:meeting/RAN1_124b\" (1), \"tdoc:meeting/RAN1_84\" (1), \"tdoc:meeting/RAN1_84b\" (1), \"tdoc:meeting/RAN1_85\" (1), \"tdoc:meeting/RAN1_86\" (1), \"tdoc:meeting/RAN1_86b\" (1), \"tdoc:meeting/RAN1_87\" (1), \"tdoc:meeting/RAN1_88\" (1), \"tdoc:meeting/RAN1_88b\" (1), \"tdoc:meeting/RAN1_89\" (1), \"tdoc:meeting/RAN1_90\" (1), \"tdoc:meeting/RAN1_90b\" (1), \"tdoc:meeting/RAN1_91\" (1), \"tdoc:meeting/RAN1_92\" (1), \"tdoc:meeting/RAN1_92b\" (1), \"tdoc:meeting/RAN1_93\" (1), \"tdoc:meeting/RAN1_94\" (1), \"tdoc:meeting/RAN1_94b\" (1), \"tdoc:meeting/RAN1_95\" (1), \"tdoc:meeting/RAN1_96\" (1), \"tdoc:meeting/RAN1_96b\" (1), \"tdoc:meeting/RAN1_97\" (1), \"tdoc:meeting/RAN1_98\" (1), \"tdoc:meeting/RAN1_98b\" (1), \"tdoc:meeting/RAN1_99\" (1)\n(:Meeting).meetingNumber — categorical; 62 values, 62 distinct; all values (count): \"RAN1#100\" (1), \"RAN1#100-e\" (1), \"RAN1#100b-e\" (1), \"RAN1#101-e\" (1), \"RAN1#102-e\" (1), \"RAN1#103-e\" (1), \"RAN1#104-e\" (1), \"RAN1#104b-e\" (1), \"RAN1#105-e\" (1), \"RAN1#106-e\" (1), \"RAN1#106b-e\" (1), \"RAN1#107-e\" (1), \"RAN1#107b-e\" (1), \"RAN1#108-e\" (1), \"RAN1#109-e\" (1), \"RAN1#110\" (1), \"RAN1#110b-e\" (1), \"RAN1#111\" (1), \"RAN1#112\" (1), \"RAN1#112b-e\" (1), \"RAN1#113\" (1), \"RAN1#114\" (1), \"RAN1#114b\" (1), \"RAN1#115\" (1), \"RAN1#116\" (1), \"RAN1#116b\" (1), \"RAN1#117\" (1), \"RAN1#118\" (1), \"RAN1#118b\" (1), \"RAN1#119\" (1), \"RAN1#120\" (1), \"RAN1#120b\" (1), \"RAN1#121\" (1), \"RAN1#122\" (1), \"RAN1#122b\" (1), \"RAN1#123\" (1), \"RAN1#124\" (1), \"RAN1#124b\" (1), \"RAN1#84\" (1), \"RAN1#84b\" (1), \"RAN1#85\" (1), \"RAN1#86\" (1), \"RAN1#86b\" (1), \"RAN1#87\" (1), \"RAN1#88\" (1), \"RAN1#88b\" (1), \"RAN1#89\" (1), \"RAN1#90\" (1), \"RAN1#90b\" (1), \"RAN1#91\" (1), \"RAN1#92\" (1), \"RAN1#92b\" (1), \"RAN1#93\" (1), \"RAN1#94\" (1), \"RAN1#94b\" (1), \"RAN1#95\" (1), \"RAN1#96\" (1), \"RAN1#96b\" (1), \"RAN1#97\" (1), \"RAN1#98\" (1), \"RAN1#98b\" (1), \"RAN1#99\" (1)\n(:Meeting).meetingNumberInt — integer; 62 values, 41 distinct; all values (count): 100 (3), 104 (2), 106 (2), 107 (2), 110 (2), 112 (2), 114 (2), 116 (2), 118 (2), 120 (2), 122 (2), 124 (2), 84 (2), 86 (2), 88 (2), 90 (2), 92 (2), 94 (2), 96 (2), 98 (2), 101 (1), 102 (1), 103 (1), 105 (1), 108 (1), 109 (1), 111 (1), 113 (1), 115 (1), 117 (1), 119 (1), 121 (1), 123 (1), 85 (1), 87 (1), 89 (1), 91 (1), 93 (1), 95 (1), 97 (1), 99 (1)\n(:Meeting).workingGroup — categorical; 62 values, 1 distinct; all values (count): \"RAN1\" (62)\n(:Procedure).granularity — categorical; 73 values, 1 distinct; all values (count): \"item\" (73)\n(:Procedure).ontologyVersion — categorical; 73 values, 1 distinct; all values (count): \"v3.0.0\" (73)\n(:Procedure).procedureName — text; 73 values, 71 distinct; length 21..188 (median 47); values withheld\n(:Procedure).sectionNumber — identifier; 73 values, 72 distinct; length 1..8 (median 5.0); characters: digits, lowercase, uppercase, \".\"; all shapes (digits shown as 9; share of values): \"9.9.9.9\" 30.1%, \"9.9.9\" 26.0%, \"9.9\" 9.6%, \"99.9\" 6.8%, \"99.9.9\" 5.5%, \"99\" 5.5%, \"9\" 4.1%, \"9.9.9A\" 4.1%, \"9.9A\" 2.7%, \"99.9A\" 1.4%, \"9.9.9a\" 1.4%, \"9.9.9A\" 1.4%, \"9.9.9.9A\" 1.4%; examples: \"16.5\", \"8.1A\", \"23\"\n(:Procedure).sourceSnapshotReleases — list of values (73 lists, 0 scalars, 0 empty lists, list length 1..5); elements: categorical; 281 values, 5 distinct; all values (count): \"Rel-19\" (70), \"Rel-18\" (66), \"Rel-17\" (60), \"Rel-16\" (53), \"Rel-15\" (32)\n(:Procedure).sourceUnitAssessmentLocator — identifier; 73 values, 73 distinct; length 14..15 (median 15); characters: digits, lowercase, \"[]\"; all shapes (digits shown as 9; share of values): \"assessments[99]\" 87.7%, \"aaaaaaaaaaa[9]\" 12.3%; examples: \"assessments[31]\", \"assessments[60]\", \"assessments[74]\"\n(:Procedure).sourceUnitAssessmentMethod — text; 73 values, 3 distinct; length 206..316 (median 220); values withheld\n(:Procedure).sourceUnitAssessmentPath — categorical; 73 values, 1 distinct; all values (count): \"ontology/config/procedure_source_assessments.json\" (73)\n(:Procedure).sourceUnitAssessmentSha256 — categorical; 73 values, 1 distinct; all values (count): \"270e58a78ef922a423e1cb2f4eeb405c9368eace09ff69c5e6d95193e6e97c22\" (73)\n(:Procedure).sourceUnitKind — categorical; 73 values, 1 distinct; all values (count): \"individual_protocol_procedure\" (73)\n(:Procedure).specNumber — categorical; 73 values, 2 distinct; all values (count): \"38.214\" (42), \"38.213\" (31)\n(:Procedure).updatedAt — integer; 73 values, 1 distinct; all values (count): 1792361001 (73)\n(:Release).id — categorical; 13 values, 13 distinct; all values (count): \"tdoc:release/Rel_10\" (1), \"tdoc:release/Rel_11\" (1), \"tdoc:release/Rel_12\" (1), \"tdoc:release/Rel_13\" (1), \"tdoc:release/Rel_14\" (1), \"tdoc:release/Rel_15\" (1), \"tdoc:release/Rel_16\" (1), \"tdoc:release/Rel_17\" (1), \"tdoc:release/Rel_18\" (1), \"tdoc:release/Rel_19\" (1), \"tdoc:release/Rel_20\" (1), \"tdoc:release/Rel_8\" (1), \"tdoc:release/Rel_9\" (1)\n(:Release).releaseName — categorical; 13 values, 13 distinct; all values (count): \"Rel-10\" (1), \"Rel-11\" (1), \"Rel-12\" (1), \"Rel-13\" (1), \"Rel-14\" (1), \"Rel-15\" (1), \"Rel-16\" (1), \"Rel-17\" (1), \"Rel-18\" (1), \"Rel-19\" (1), \"Rel-20\" (1), \"Rel-8\" (1), \"Rel-9\" (1)\n(:Resolution).content — text; 42767 values, 42605 distinct; length 3..61851 (median 260); values withheld\n(:Resolution).contentWithEquations — text; 1749 values, 1748 distinct; length 46..61835 (median 852.5); values withheld\n(:Resolution).hasConsensus — boolean; 2824 values, 2 distinct; all values (count): true (2353), false (471)\n(:Resolution).hasFFS — boolean; 23032 values, 2 distinct; all values (count): false (17890), true (5142)\n(:Resolution).hasTBD — boolean; 23032 values, 2 distinct; all values (count): false (22919), true (113)\n(:Resolution).note — text; 3600 values, 3448 distinct; length 11..15533 (median 157.0); values withheld\n(:Resolution).resolutionId — identifier; 42767 values, 42767 distinct; length 11..31 (median 21); characters: digits, lowercase, uppercase, \"-.\"; examples: \"DOC-88b-R1-1706283-t6986-r34\", \"DOC-84b-R1-163413-b288\", \"DOC-100b-e-R1-2003010-b3126\"\n(:Resolution).resolutionScope — categorical; 16911 values, 1 distinct; all values (count): \"document_disposition\" (16911)\n(:Resolution).sequence — integer; 42767 values, 6016 distinct; range 1..10049; examples: 4126, 5610, 4148\n(:Section).isVoid — boolean; 3949 values, 2 distinct; all values (count): false (3912), true (37)\n(:Section).level — integer; 3949 values, 6 distinct; all values (count): 3 (1112), 4 (895), 5 (751), 2 (704), 1 (346), 6 (141)\n(:Section).sectionId — identifier; 3949 values, 3949 distinct; length 15..26 (median 20); characters: digits, lowercase, uppercase, \"-.\"; all shapes (digits shown as 9; share of values): \"99.999-Aaa-99-9.9.9\" 22.7%, \"99.999-Aaa-99-9.9.9.9\" 21.8%, \"99.999-Aaa-99-9.9.9.9.9\" 18.1%, \"99.999-Aaa-99-9.9\" 14.7%, \"99.999-Aaa-99-9\" 6.5%, \"99.999-Aaa-99-9.9.99\" 3.7%, \"99.999-Aaa-99-9.9.9.9.9.9\" 3.5%, \"99.999-Aaa-99-99.9\" 2.3%, \"99.999-Rel-99-99\" 1.2%, \"99.999-Aaa-99-99.9.9\" 1.1%, \"99.999-Rel-99-A\" 0.9%, \"99.999-Aaa-99-99.9.9.9\" 0.7%, \"99.999-Rel-99-99.9A\" 0.4%, \"99.999-Aaa-99-9.9.9A\" 0.3%, \"99.999-Aaa-99-9.9.9.9.9a\" 0.3%, \"99.999-Aaa-99-9.9.9.9.99\" 0.2%, \"99.999-Aaa-99-9.9A\" 0.2%, \"99.999-Aaa-99-9.9.9.9.9A\" 0.2%, \"99.999-Rel-99-B\" 0.1%, \"99.999-Aaa-99-99.9.9.9.9\" 0.1%, \"99.999-Aaa-99-9.9.9.9a\" 0.1%, \"99.999-Rel-99-99.9B\" 0.1%, \"99.999-Aaa-99-9.A\" 0.1%, \"99.999-Aaa-99-9.9.9A\" 0.1%, \"99.999-Aaa-99-9.9.9A\" 0.1%, \"99.999-Aaa-99-9.9.9.9.9a\" 0.1%, \"99.999-Aaa-99-99.9.9A\" 0.1%, \"99.999-Aaa-99-9.9.9.9.9a\" 0.1%, \"99.999-Aaa-99-9.9.9.9A\" 0.1%, \"99.999-Aaa-99-9.99\" 0.0%, \"99.999-Aaa-99-9.9.9.9.9A\" 0.0%, \"99.999-Rel-99-99.9C\" 0.0%, \"99.999-Rel-99-99.9D\" 0.0%, \"99.999-Aaa-99-9.9.9.9.9.9a\" 0.0%, \"99.999-Aaa-99-9.9.9.9.9.9a\" 0.0%, \"99.999-Aaa-99-9.9.9.9.9.9a\" 0.0%, \"99.999-Aaa-99-9.9.9.9.9.9a\" 0.0%, \"99.999-Aaa-99-9.9.9.9.99a\" 0.0%, \"99.999-Aaa-99-9.9.9a\" 0.0%; examples: \"38.213-Rel-15-1\", \"38.212-Rel-16-8.3\", \"38.213-Rel-19-11.2A\"\n(:Section).sectionNumber — identifier; 3949 values, 703 distinct; length 1..12 (median 7); characters: digits, lowercase, uppercase, \".\"; all shapes (digits shown as 9; share of values): \"9.9.9\" 22.7%, \"9.9.9.9\" 21.8%, \"9.9.9.9.9\" 18.1%, \"9.9\" 14.7%, \"9\" 6.5%, \"9.9.99\" 3.7%, \"9.9.9.9.9.9\" 3.5%, \"99.9\" 2.3%, \"99\" 1.2%, \"99.9.9\" 1.1%, \"A\" 1.0%, \"99.9.9.9\" 0.7%, \"99.9A\" 0.4%, \"9.9.9A\" 0.3%, \"9.9.9.9.9a\" 0.3%, \"9.9A\" 0.2%, \"9.9.9.9.99\" 0.2%, \"9.9.9.9.9A\" 0.2%, \"99.9.9.9.9\" 0.1%, \"99.9B\" 0.1%, \"9.A\" 0.1%, \"9.9.9.9a\" 0.1%, \"9.9.9A\" 0.1%, \"9.9.9A\" 0.1%, \"9.9.9.9.9a\" 0.1%, \"99.9.9A\" 0.1%, \"9.9.9.9.9a\" 0.1%, \"9.9.9.9A\" 0.1%, \"9.99\" 0.0%, \"99.9C\" 0.0%, \"99.9D\" 0.0%, \"9.9.9.9.9A\" 0.0%, \"9.9.9.9.9.9a\" 0.0%, \"9.9.9.9.9.9a\" 0.0%, \"9.9.9.9.9.9a\" 0.0%, \"9.9.9.9.9.9a\" 0.0%, \"9.9.9.9.99a\" 0.0%, \"9.9.9a\" 0.0%; examples: \"8.1.5A\", \"4.4.3\", \"7.4.4\"\n(:Section).sectionTitle — text; 3949 values, 708 distinct; length 3..188 (median 32.0); values withheld\n(:Section).specNumber — categorical; 3949 values, 8 distinct; all values (count): \"38.211\" (1212), \"38.214\" (814), \"38.212\" (766), \"38.213\" (546), \"38.215\" (277), \"38.201\" (142), \"38.202\" (131), \"38.291\" (61)\n(:SessionNotes)._belongsTo — identifier; 721 values, 665 distinct; length 17..24 (median 20); characters: digits, lowercase, \"-./:\"; all shapes (digits shown as 9; share of values): \"aaaa:aaaaaa/999-9.9\" 30.8%, \"aaaa:aaaaaa/999a-9.9\" 15.3%, \"aaaa:aaaaaa/999-9.99\" 12.9%, \"aaaa:aaaaaa/999-9.99.9\" 8.3%, \"aaaa:aaaaaa/999-9.9.9\" 7.9%, \"aaaa:aaaaaa/999a-9.99\" 5.3%, \"aaaa:aaaaaa/999-9.99.99\" 3.7%, \"aaaa:aaaaaa/999a-9.99.9\" 3.1%, \"aaaa:aaaaaa/999-9\" 2.2%, \"aaaa:aaaaaa/999-9.9.99\" 1.8%, \"aaaa:aaaaaa/999a-9.99.99\" 1.8%, \"aaaa:aaaaaa/999a-9.9.9\" 1.7%, \"aaaa:aaaaaa/999-99.9\" 1.5%, \"aaaa:aaaaaa/999a-99.9\" 1.1%, \"aaaa:aaaaaa/999a-9\" 1.0%, \"aaaa:aaaaaa/999a-99.9.9\" 0.6%, \"aaaa:aaaaaa/999-99.9.9\" 0.6%, \"aaaa:aaaaaa/999-9.9.99.9\" 0.3%, \"aaaa:aaaaaa/999a-9.9.99\" 0.1%, \"tdoc:agenda/999b-99\" 0.1%; examples: \"tdoc:agenda/118-8.1\", \"tdoc:agenda/114b-8.15\", \"tdoc:agenda/106-8.5\"\n(:SessionNotes)._hasContact — categorical; 721 values, 7 distinct; values withheld\n(:SessionNotes)._isRevisionOf — categorical; 2 values, 2 distinct; all values (count): \"tdoc:R1-2102191\" (1), \"tdoc:R1-2103979\" (1)\n(:SessionNotes)._presentedAt — categorical; 721 values, 36 distinct; all values (count): \"tdoc:meeting/RAN1_114\" (35), \"tdoc:meeting/RAN1_115\" (31), \"tdoc:meeting/RAN1_109-e\" (27), \"tdoc:meeting/RAN1_122b\" (27), \"tdoc:meeting/RAN1_110\" (26), \"tdoc:meeting/RAN1_114b\" (26), \"tdoc:meeting/RAN1_122\" (25), \"tdoc:meeting/RAN1_112\" (24), \"tdoc:meeting/RAN1_121\" (24), \"tdoc:meeting/RAN1_112b-e\" (23), \"tdoc:meeting/RAN1_124b\" (23), \"tdoc:meeting/RAN1_111\" (22), \"tdoc:meeting/RAN1_124\" (22), \"tdoc:meeting/RAN1_108-e\" (21), \"tdoc:meeting/RAN1_113\" (21), \"tdoc:meeting/RAN1_103-e\" (20), \"tdoc:meeting/RAN1_104b-e\" (20), \"tdoc:meeting/RAN1_105-e\" (20), \"tdoc:meeting/RAN1_116b\" (20), \"tdoc:meeting/RAN1_120b\" (20), \"tdoc:meeting/RAN1_102-e\" (19), \"tdoc:meeting/RAN1_107-e\" (19), \"tdoc:meeting/RAN1_110b-e\" (19), \"tdoc:meeting/RAN1_116\" (19), \"tdoc:meeting/RAN1_104-e\" (18), \"tdoc:meeting/RAN1_106-e\" (18), \"tdoc:meeting/RAN1_120\" (18), \"tdoc:meeting/RAN1_118b\" (17), \"tdoc:meeting/RAN1_101-e\" (16), \"tdoc:meeting/RAN1_117\" (16), \"tdoc:meeting/RAN1_123\" (16), \"tdoc:meeting/RAN1_118\" (14), \"tdoc:meeting/RAN1_119\" (14), \"tdoc:meeting/RAN1_106b-e\" (11), \"tdoc:meeting/RAN1_107b-e\" (6), \"tdoc:meeting/RAN1_100b-e\" (4)\n(:SessionNotes)._relatedTo — list of values (633 lists, 0 scalars, 0 empty lists, list length 1..9); elements: identifier; 719 values, 108 distinct; length 19..45 (median 29.0); characters: digits, lowercase, uppercase, \"-/:_\"; examples: \"tdoc:workitem/NR_feMIMO-Core\", \"tdoc:workitem/NR_MIMO_evo_DL_UL-Core\", \"tdoc:workitem/FS_Ambient_IoT_solutions\"\n(:SessionNotes)._reportedAt — list of values (721 lists, 0 scalars, 0 empty lists, list length 1..1); elements: categorical; 721 values, 36 distinct; all values (count): \"tdoc:meeting/RAN1_114\" (35), \"tdoc:meeting/RAN1_115\" (31), \"tdoc:meeting/RAN1_109-e\" (27), \"tdoc:meeting/RAN1_122b\" (27), \"tdoc:meeting/RAN1_110\" (26), \"tdoc:meeting/RAN1_114b\" (26), \"tdoc:meeting/RAN1_122\" (25), \"tdoc:meeting/RAN1_112\" (24), \"tdoc:meeting/RAN1_121\" (24), \"tdoc:meeting/RAN1_112b-e\" (23), \"tdoc:meeting/RAN1_124b\" (23), \"tdoc:meeting/RAN1_111\" (22), \"tdoc:meeting/RAN1_124\" (22), \"tdoc:meeting/RAN1_108-e\" (21), \"tdoc:meeting/RAN1_113\" (21), \"tdoc:meeting/RAN1_103-e\" (20), \"tdoc:meeting/RAN1_104b-e\" (20), \"tdoc:meeting/RAN1_105-e\" (20), \"tdoc:meeting/RAN1_116b\" (20), \"tdoc:meeting/RAN1_120b\" (20), \"tdoc:meeting/RAN1_102-e\" (19), \"tdoc:meeting/RAN1_107-e\" (19), \"tdoc:meeting/RAN1_110b-e\" (19), \"tdoc:meeting/RAN1_116\" (19), \"tdoc:meeting/RAN1_104-e\" (18), \"tdoc:meeting/RAN1_106-e\" (18), \"tdoc:meeting/RAN1_120\" (18), \"tdoc:meeting/RAN1_118b\" (17), \"tdoc:meeting/RAN1_101-e\" (16), \"tdoc:meeting/RAN1_117\" (16), \"tdoc:meeting/RAN1_123\" (16), \"tdoc:meeting/RAN1_118\" (14), \"tdoc:meeting/RAN1_119\" (14), \"tdoc:meeting/RAN1_106b-e\" (11), \"tdoc:meeting/RAN1_107b-e\" (6), \"tdoc:meeting/RAN1_100b-e\" (4)\n(:SessionNotes)._reportedRun — categorical; 721 values, 1 distinct; all values (count): \"f9eedcffe6294dae87c1422d2c4653de\" (721)\n(:SessionNotes)._submittedBy — list of values (721 lists, 0 scalars, 0 empty lists, list length 1..1); elements: categorical; 721 values, 6 distinct; values withheld\n(:SessionNotes)._targetRelease — categorical; 667 values, 6 distinct; all values (count): \"tdoc:release/Rel_18\" (209), \"tdoc:release/Rel_17\" (198), \"tdoc:release/Rel_19\" (138), \"tdoc:release/Rel_16\" (85), \"tdoc:release/Rel_20\" (29), \"tdoc:release/Rel_15\" (8)\n(:SessionNotes).abstract — categorical; 4 values, 3 distinct; values withheld\n(:SessionNotes).for — categorical; 721 values, 3 distinct; all values (count): \"Endorsement\" (496), \"Information\" (192), \"Decision\" (33)\n(:SessionNotes).id — identifier; 721 values, 721 distinct; length 15..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 100.0%; examples: \"tdoc:R1-2112790\", \"tdoc:R1-2409222\", \"tdoc:R1-2312498\"\n(:SessionNotes).reservationDate — identifier; 721 values, 262 distinct; length 19..26 (median 26.0); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99\" 77.1%, \"9999-99-99T99:99:99.999999\" 22.9%; examples: \"2024-02-26T20:19:56\", \"2022-01-21T03:46:38\", \"2021-02-04T21:51:49.557000\"\n(:SessionNotes).status — categorical; 721 values, 3 distinct; all values (count): \"endorsed\" (409), \"noted\" (309), \"withdrawn\" (3)\n(:SessionNotes).tdocNumber — identifier; 721 values, 721 distinct; length 10..10 (median 10); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"R9-9999999\" 100.0%; examples: \"R1-2210692\", \"R1-2110622\", \"R1-2308537\"\n(:SessionNotes).title — text; 721 values, 284 distinct; length 21..157 (median 56.5); values withheld\n(:SessionNotes).type — categorical; 721 values, 2 distinct; all values (count): \"other\" (621), \"discussion\" (100)\n(:SessionNotes).uploadedDate — identifier; 718 values, 431 distinct; length 19..26 (median 26); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99.999999\" 97.4%, \"9999-99-99T99:99:99\" 2.6%; examples: \"2022-05-22T10:01:06.867000\", \"2022-08-28T18:21:19.460000\", \"2024-08-24T02:51:08.413000\"\n(:SourceUnit).granularity — categorical; 8 values, 1 distinct; all values (count): \"item\" (8)\n(:SourceUnit).ontologyVersion — categorical; 8 values, 1 distinct; all values (count): \"v3.0.0\" (8)\n(:SourceUnit).sectionNumber — categorical; 8 values, 8 distinct; all values (count): \"16.3\" (1), \"4.3\" (1), \"5.2\" (1), \"5.3\" (1), \"6\" (1), \"6.4\" (1), \"8.4.1\" (1), \"8.6\" (1)\n(:SourceUnit).sourceSnapshotReleases — list of values (8 lists, 0 scalars, 0 empty lists, list length 1..5); elements: categorical; 28 values, 5 distinct; all values (count): \"Rel-19\" (8), \"Rel-17\" (6), \"Rel-18\" (6), \"Rel-16\" (5), \"Rel-15\" (3)\n(:SourceUnit).sourceUnitAssessmentLocator — categorical; 8 values, 8 distinct; all values (count): \"assessments[15]\" (1), \"assessments[41]\" (1), \"assessments[43]\" (1), \"assessments[44]\" (1), \"assessments[61]\" (1), \"assessments[6]\" (1), \"assessments[76]\" (1), \"assessments[79]\" (1)\n(:SourceUnit).sourceUnitAssessmentMethod — text; 8 values, 3 distinct; length 154..195 (median 168); values withheld\n(:SourceUnit).sourceUnitAssessmentPath — categorical; 8 values, 1 distinct; all values (count): \"ontology/config/procedure_source_assessments.json\" (8)\n(:SourceUnit).sourceUnitAssessmentSha256 — categorical; 8 values, 1 distinct; all values (count): \"270e58a78ef922a423e1cb2f4eeb405c9368eace09ff69c5e6d95193e6e97c22\" (8)\n(:SourceUnit).sourceUnitKind — categorical; 8 values, 3 distinct; all values (count): \"timing_requirement\" (4), \"procedure_collection\" (3), \"reference_only\" (1)\n(:SourceUnit).sourceUnitTitle — categorical; 8 values, 8 distinct; values withheld\n(:SourceUnit).specNumber — categorical; 8 values, 2 distinct; all values (count): \"38.214\" (6), \"38.213\" (2)\n(:SourceUnit).updatedAt — integer; 8 values, 1 distinct; all values (count): 1792361001 (8)\n(:Spec).id — identifier; 128 values, 128 distinct; length 16..23 (median 16.0); characters: digits, lowercase, uppercase, \"-/:_\"; all shapes (digits shown as 9; share of values): \"tdoc:spec/99_999\" 62.5%, \"tdoc:spec/99_999/Rel-99\" 35.2%, \"aaaa:aaaa/99_999-9\" 2.3%; examples: \"tdoc:spec/38_215/Rel-16\", \"tdoc:spec/38_201/Rel-17\", \"tdoc:spec/38_201/Rel-16\"\n(:Spec).specNumber — identifier; 129 values, 84 distinct; length 6..8 (median 6.0); characters: digits, \"-.\"; all shapes (digits shown as 9; share of values): \"99.999\" 97.7%, \"99.999-9\" 2.3%; examples: \"38.865\", \"36.302\", \"25.708\"\n(:Spec).specRelease — categorical; 45 values, 6 distinct; all values (count): \"Rel-19\" (11), \"Rel-18\" (9), \"Rel-15\" (8), \"Rel-16\" (8), \"Rel-17\" (8), \"Rel-20\" (1)\n(:Spec).specTitle — text; 65 values, 65 distinct; length 30..146 (median 51); values withheld\n(:Spec).specVersion — categorical; 45 values, 30 distinct; all values (count): \"19.3.0\" (6), \"19.0.0\" (4), \"16.17.0\" (2), \"17.13.0\" (2), \"17.5.0\" (2), \"18.0.0\" (2), \"18.4.0\" (2), \"18.8.0\" (2), \"18.9.0\" (2), \"15.0.0\" (1), \"15.1.0\" (1), \"15.10.0\" (1), \"15.13.0\" (1), \"15.15.0\" (1), \"15.16.0\" (1), \"15.6.0\" (1), \"15.7.0\" (1), \"16.0.0\" (1), \"16.1.0\" (1), \"16.10.0\" (1), \"16.15.0\" (1), \"16.4.0\" (1), \"16.7.0\" (1), \"17.0.0\" (1), \"17.1.0\" (1), \"17.10.0\" (1), \"17.16.0\" (1), \"18.1.0\" (1), \"19.2.0\" (1), \"20.0.0\" (1)\n(:Summary)._belongsTo — identifier; 3710 values, 1173 distinct; length 17..26 (median 22); characters: digits, lowercase, \"-./:\"; all shapes (digits shown as 9; share of values): \"aaaa:aaaaaa/999-9.9.9\" 26.2%, \"aaaa:aaaaaa/999-9.9.9.9\" 14.9%, \"aaaa:aaaaaa/999a-9.9.9\" 9.8%, \"aaaa:aaaaaa/999-9.9\" 8.6%, \"aaaa:aaaaaa/999-9.99.9\" 8.3%, \"aaaa:aaaaaa/999a-9.9.9.9\" 7.3%, \"aaaa:aaaaaa/999a-9.9\" 4.7%, \"aaaa:aaaaaa/999a-9.99.9\" 3.5%, \"aaaa:aaaaaa/999-99.9.9\" 2.5%, \"aaaa:aaaaaa/999a-99.9.9\" 1.9%, \"aaaa:aaaaaa/999-9.99\" 1.8%, \"aaaa:aaaaaa/999-99.9.9.9\" 1.7%, \"aaaa:aaaaaa/999a-99.9.9.9\" 1.5%, \"aaaa:aaaaaa/999-9.9.9.9.9\" 1.3%, \"aaaa:aaaaaa/999-9\" 1.2%, \"aaaa:aaaaaa/999-9.99.9.9\" 0.9%, \"aaaa:aaaaaa/999a-9.9.9.9.9\" 0.7%, \"aaaa:aaaaaa/999a-9.99.9.9\" 0.6%, \"aaaa:aaaaaa/999a-9.99\" 0.5%, \"aaaa:aaaaaa/999a-9\" 0.5%, \"aaaa:aaaaaa/999-99.9\" 0.4%, \"aaaa:aaaaaa/999-9.9.99\" 0.3%, \"aaaa:aaaaaa/999a-9.9.99.9\" 0.3%, \"aaaa:aaaaaa/999a-99.9\" 0.3%, \"aaaa:aaaaaa/999-9.9.99.9\" 0.2%, \"aaaa:aaaaaa/999a-9.9.99\" 0.1%; examples: \"tdoc:agenda/107-8.1.3\", \"tdoc:agenda/115-8.14.3\", \"tdoc:agenda/124-8.8\"\n(:Summary)._hasContact — identifier; 3710 values, 69 distinct; length 18..19 (median 18); characters: digits, lowercase, \"/:\"; values withheld\n(:Summary)._isRevisionOf — identifier; 546 values, 545 distinct; length 15..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 100.0%; examples: \"tdoc:R1-2106167\", \"tdoc:R1-2108493\", \"tdoc:R1-2506492\"\n(:Summary)._presentedAt — categorical; 3710 values, 36 distinct; all values (count): \"tdoc:meeting/RAN1_106-e\" (148), \"tdoc:meeting/RAN1_103-e\" (145), \"tdoc:meeting/RAN1_110\" (140), \"tdoc:meeting/RAN1_105-e\" (138), \"tdoc:meeting/RAN1_109-e\" (136), \"tdoc:meeting/RAN1_110b-e\" (126), \"tdoc:meeting/RAN1_111\" (125), \"tdoc:meeting/RAN1_124\" (123), \"tdoc:meeting/RAN1_124b\" (123), \"tdoc:meeting/RAN1_112\" (119), \"tdoc:meeting/RAN1_106b-e\" (116), \"tdoc:meeting/RAN1_114\" (116), \"tdoc:meeting/RAN1_104-e\" (109), \"tdoc:meeting/RAN1_114b\" (109), \"tdoc:meeting/RAN1_108-e\" (107), \"tdoc:meeting/RAN1_102-e\" (106), \"tdoc:meeting/RAN1_104b-e\" (106), \"tdoc:meeting/RAN1_112b-e\" (104), \"tdoc:meeting/RAN1_116b\" (102), \"tdoc:meeting/RAN1_116\" (101), \"tdoc:meeting/RAN1_122b\" (101), \"tdoc:meeting/RAN1_115\" (99), \"tdoc:meeting/RAN1_123\" (98), \"tdoc:meeting/RAN1_107-e\" (97), \"tdoc:meeting/RAN1_113\" (95), \"tdoc:meeting/RAN1_117\" (94), \"tdoc:meeting/RAN1_100b-e\" (91), \"tdoc:meeting/RAN1_118\" (89), \"tdoc:meeting/RAN1_101-e\" (88), \"tdoc:meeting/RAN1_118b\" (84), \"tdoc:meeting/RAN1_122\" (82), \"tdoc:meeting/RAN1_119\" (71), \"tdoc:meeting/RAN1_120\" (61), \"tdoc:meeting/RAN1_120b\" (59), \"tdoc:meeting/RAN1_107b-e\" (52), \"tdoc:meeting/RAN1_121\" (50)\n(:Summary)._relatedTo — list of values (3520 lists, 0 scalars, 0 empty lists, list length 1..4); elements: identifier; 3533 values, 107 distinct; length 19..44 (median 29); characters: digits, lowercase, uppercase, \"-/:_\"; examples: \"tdoc:workitem/LTE_DL_MIMO_EE-Core\", \"tdoc:workitem/FS_NR_XR_enh\", \"tdoc:workitem/5G_V2X_NRSL-Core\"\n(:Summary)._reportedAt — list of values (3710 lists, 0 scalars, 0 empty lists, list length 1..1); elements: categorical; 3710 values, 36 distinct; all values (count): \"tdoc:meeting/RAN1_106-e\" (148), \"tdoc:meeting/RAN1_103-e\" (146), \"tdoc:meeting/RAN1_110\" (140), \"tdoc:meeting/RAN1_105-e\" (138), \"tdoc:meeting/RAN1_109-e\" (136), \"tdoc:meeting/RAN1_110b-e\" (126), \"tdoc:meeting/RAN1_111\" (125), \"tdoc:meeting/RAN1_124\" (123), \"tdoc:meeting/RAN1_124b\" (123), \"tdoc:meeting/RAN1_112\" (119), \"tdoc:meeting/RAN1_106b-e\" (116), \"tdoc:meeting/RAN1_114\" (116), \"tdoc:meeting/RAN1_104-e\" (109), \"tdoc:meeting/RAN1_114b\" (109), \"tdoc:meeting/RAN1_108-e\" (107), \"tdoc:meeting/RAN1_104b-e\" (106), \"tdoc:meeting/RAN1_102-e\" (105), \"tdoc:meeting/RAN1_112b-e\" (104), \"tdoc:meeting/RAN1_116b\" (102), \"tdoc:meeting/RAN1_116\" (101), \"tdoc:meeting/RAN1_122b\" (101), \"tdoc:meeting/RAN1_115\" (99), \"tdoc:meeting/RAN1_123\" (98), \"tdoc:meeting/RAN1_107-e\" (97), \"tdoc:meeting/RAN1_113\" (95), \"tdoc:meeting/RAN1_117\" (94), \"tdoc:meeting/RAN1_100b-e\" (91), \"tdoc:meeting/RAN1_118\" (89), \"tdoc:meeting/RAN1_101-e\" (88), \"tdoc:meeting/RAN1_118b\" (84), \"tdoc:meeting/RAN1_122\" (82), \"tdoc:meeting/RAN1_119\" (71), \"tdoc:meeting/RAN1_120\" (61), \"tdoc:meeting/RAN1_120b\" (59), \"tdoc:meeting/RAN1_107b-e\" (52), \"tdoc:meeting/RAN1_121\" (50)\n(:Summary)._reportedRun — categorical; 3710 values, 1 distinct; all values (count): \"f9eedcffe6294dae87c1422d2c4653de\" (3710)\n(:Summary)._revisedTo — string or list of values (1 lists, 573 scalars, 0 empty lists, list length 2..2); elements: identifier; 575 values, 575 distinct; length 15..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 100.0%; examples: \"tdoc:R1-2106035\", \"tdoc:R1-2004964\", \"tdoc:R1-2302120\"\n(:Summary)._submittedBy — list of values (3710 lists, 0 scalars, 0 empty lists, list length 1..4); elements: categorical; 3797 values, 37 distinct; values withheld\n(:Summary)._targetRelease — categorical; 3607 values, 6 distinct; all values (count): \"tdoc:release/Rel_17\" (1227), \"tdoc:release/Rel_18\" (1060), \"tdoc:release/Rel_19\" (627), \"tdoc:release/Rel_20\" (360), \"tdoc:release/Rel_16\" (321), \"tdoc:release/Rel_15\" (12)\n(:Summary).abstract — text; 22 values, 2 distinct; length 1..102 (median 51.5); values withheld\n(:Summary).for — categorical; 3647 values, 5 distinct; all values (count): \"Decision\" (3581), \"Discussion\" (47), \"Information\" (17), \"Agreement\" (1), \"Endorsement\" (1)\n(:Summary).id — identifier; 3710 values, 3710 distinct; length 15..15 (median 15.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 100.0%; examples: \"tdoc:R1-2401577\", \"tdoc:R1-2306178\", \"tdoc:R1-2508087\"\n(:Summary).reservationDate — identifier; 3710 values, 2349 distinct; length 19..26 (median 19); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99\" 69.2%, \"9999-99-99T99:99:99.999999\" 30.8%; examples: \"2021-05-18T08:25:47.427000\", \"2024-04-17T06:03:08\", \"2021-04-14T03:02:08.187000\"\n(:Summary).roundNumber — integer; 2833 values, 15 distinct; all values (count): 1 (923), 2 (880), 3 (545), 4 (274), 5 (90), 0 (55), 6 (33), 7 (13), 8 (8), 9 (5), 10 (3), 103 (1), 11 (1), 113 (1), 92 (1)\n(:Summary).secretaryRemarks — text; 17 values, 17 distinct; length 41..321 (median 82); values withheld\n(:Summary).status — categorical; 3710 values, 6 distinct; all values (count): \"noted\" (3264), \"revised\" (390), \"not treated\" (50), \"withdrawn\" (3), \"endorsed\" (2), \"not pursued\" (1)\n(:Summary).summaryType — categorical; 3710 values, 2 distinct; all values (count): \"FL\" (2964), \"Moderator\" (746)\n(:Summary).tdocNumber — identifier; 3710 values, 3710 distinct; length 10..10 (median 10.0); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"R9-9999999\" 100.0%; examples: \"R1-2509610\", \"R1-2102124\", \"R1-2007008\"\n(:Summary).title — text; 3710 values, 1971 distinct; length 18..154 (median 61); values withheld\n(:Summary).type — categorical; 3710 values, 2 distinct; all values (count): \"discussion\" (3705), \"other\" (5)\n(:Summary).uploadedDate — identifier; 3707 values, 2984 distinct; length 19..26 (median 26.0); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99.999999\" 98.8%, \"9999-99-99T99:99:99\" 1.2%; examples: \"2020-11-05T23:51:11.047000\", \"2025-02-18T19:41:08.887000\", \"2021-04-21T09:41:24.297000\"\n(:TRImpact).affectedSection — categorical; 37 values, 18 distinct; all values (count): \"\" (9), \"16\" (4), \"8\" (4), \"5\" (2), \"5.2\" (2), \"5.3\" (2), \"6\" (2), \"7.4\" (2), \"11\" (1), \"13\" (1), \"14\" (1), \"17\" (1), \"18\" (1), \"19\" (1), \"3\" (1), \"5.1\" (1), \"5.5\" (1), \"8.9\" (1)\n(:TRImpact).assessmentMethod — text; 37 values, 37 distinct; length 326..484 (median 402); values withheld\n(:TRImpact).evidenceLocator — categorical; 37 values, 37 distinct; all values (count): \"claims[0]\" (1), \"claims[10]\" (1), \"claims[11]\" (1), \"claims[12]\" (1), \"claims[13]\" (1), \"claims[14]\" (1), \"claims[15]\" (1), \"claims[16]\" (1), \"claims[17]\" (1), \"claims[18]\" (1), \"claims[19]\" (1), \"claims[1]\" (1), \"claims[20]\" (1), \"claims[21]\" (1), \"claims[22]\" (1), \"claims[23]\" (1), \"claims[24]\" (1), \"claims[25]\" (1), \"claims[26]\" (1), \"claims[27]\" (1), \"claims[28]\" (1), \"claims[29]\" (1), \"claims[2]\" (1), \"claims[30]\" (1), \"claims[31]\" (1), \"claims[32]\" (1), \"claims[33]\" (1), \"claims[34]\" (1), \"claims[35]\" (1), \"claims[36]\" (1), \"claims[3]\" (1), \"claims[4]\" (1), \"claims[5]\" (1), \"claims[6]\" (1), \"claims[7]\" (1), \"claims[8]\" (1), \"claims[9]\" (1)\n(:TRImpact).evidencePath — categorical; 37 values, 1 distinct; all values (count): \"ontology/input/tsg/RAN/formal/TR/RAN1/tr_impact_evidence.json\" (37)\n(:TRImpact).evidenceQuote — categorical; 37 values, 1 distinct; values withheld\n(:TRImpact).evidenceSha256 — categorical; 37 values, 1 distinct; all values (count): \"06bd393f417c05234b31143268dc2d3b89b5b6158c821139f14a51caaa9bb469\" (37)\n(:TRImpact).evidenceStatus — categorical; 37 values, 1 distinct; all values (count): \"pending\" (37)\n(:TRImpact).impactDescription — text; 37 values, 37 distinct; length 207..749 (median 492); values withheld\n(:TRImpact).impactType — categorical; 37 values, 4 distinct; all values (count): \"ExtendSection\" (14), \"NewSection\" (14), \"NoChange\" (8), \"NewTS\" (1)\n(:TRImpact).legacyTrImpactId — categorical; 2 values, 2 distinct; all values (count): \"38.885-38.213-S8\" (1), \"38.889-38.213-S16\" (1)\n(:TRImpact).trImpactId — categorical; 37 values, 37 distinct; all values (count): \"38.742-38.211-S7.4\" (1), \"38.760-1-NoChange\" (1), \"38.765-38.211-S18\" (1), \"38.769-38.291\" (1), \"38.802-NoChange\" (1), \"38.808-NoChange\" (1), \"38.812-NoChange\" (1), \"38.824-38.211-S5\" (1), \"38.824-38.214-S5\" (1), \"38.830-38.211-S6\" (1), \"38.830-38.214-S6\" (1), \"38.838-38.214-S5.2\" (1), \"38.840-38.213-S3\" (1), \"38.843-38.214-S5.2\" (1), \"38.855-38.211-S7.4\" (1), \"38.855-38.214-S5.1\" (1), \"38.858-NoChange\" (1), \"38.859-NoChange\" (1), \"38.864-38.213-S8\" (1), \"38.865-38.211-S5.3\" (1), \"38.866-38.213-S11\" (1), \"38.867-38.211-S19\" (1), \"38.869-38.211-S17\" (1), \"38.869-38.213-S14\" (1), \"38.875-38.211-S5.3\" (1), \"38.875-38.212-S5.5\" (1), \"38.875-38.213-S8.9\" (1), \"38.885-38.211-S8\" (1), \"38.885-38.212-S8\" (1), \"38.885-38.213-S16\" (1), \"38.885-38.214-S8\" (1), \"38.889-38.211-S16\" (1), \"38.889-38.212-S16\" (1), \"38.889-38.213-S13\" (1), \"38.889-38.214-S16\" (1), \"38.900-NoChange\" (1), \"38.901-NoChange\" (1)\n(:TSFigure).figureCaption — categorical; 50 values, 13 distinct; values withheld\n(:TSFigure).figureId — categorical; 50 values, 50 distinct; all values (count): \"38.201-Rel-15-F1\" (1), \"38.201-Rel-15-F2\" (1), \"38.201-Rel-16-F1\" (1), \"38.201-Rel-16-F2\" (1), \"38.201-Rel-17-F1\" (1), \"38.201-Rel-17-F2\" (1), \"38.201-Rel-18-F1\" (1), \"38.201-Rel-18-F2\" (1), \"38.201-Rel-19-F1\" (1), \"38.201-Rel-19-F2\" (1), \"38.202-Rel-15-F5.1.1-1\" (1), \"38.202-Rel-15-F5.2.1-1\" (1), \"38.202-Rel-15-F5.2.2-1\" (1), \"38.202-Rel-15-F5.2.3-1\" (1), \"38.202-Rel-16-F5.1.1-1\" (1), \"38.202-Rel-16-F5.2.1-1\" (1), \"38.202-Rel-16-F5.2.2-1\" (1), \"38.202-Rel-16-F5.2.3-1\" (1), \"38.202-Rel-16-F5.3.1-1\" (1), \"38.202-Rel-16-F5.3.2-1\" (1), \"38.202-Rel-17-F5.1.1-1\" (1), \"38.202-Rel-17-F5.2.1-1\" (1), \"38.202-Rel-17-F5.2.2-1\" (1), \"38.202-Rel-17-F5.2.3-1\" (1), \"38.202-Rel-17-F5.3.1-1\" (1), \"38.202-Rel-17-F5.3.2-1\" (1), \"38.202-Rel-18-F5.1.1-1\" (1), \"38.202-Rel-18-F5.2.1-1\" (1), \"38.202-Rel-18-F5.2.2-1\" (1), \"38.202-Rel-18-F5.2.3-1\" (1), \"38.202-Rel-18-F5.3.1-1\" (1), \"38.202-Rel-18-F5.3.2-1\" (1), \"38.202-Rel-19-F5.1.1-1\" (1), \"38.202-Rel-19-F5.2.1-1\" (1), \"38.202-Rel-19-F5.2.2-1\" (1), \"38.202-Rel-19-F5.2.3-1\" (1), \"38.202-Rel-19-F5.3.1-1\" (1), \"38.202-Rel-19-F5.3.2-1\" (1), \"38.211-Rel-15-F4.3.1-1\" (1), \"38.211-Rel-16-F4.3.1-1\" (1), \"38.211-Rel-16-F8.5-1\" (1), \"38.211-Rel-17-F4.3.1-1\" (1), \"38.211-Rel-17-F8.5-1\" (1), \"38.211-Rel-18-F4.3.1-1\" (1), \"38.211-Rel-18-F8.5-1\" (1), \"38.211-Rel-19-F4.3.1-1\" (1), \"38.211-Rel-19-F8.5-1\" (1), \"38.291-Rel-19-F6.1.1-1\" (1), \"38.291-Rel-19-F6.2.1-1\" (1), \"38.291-Rel-19-F8.2-1\" (1)\n(:TSFigure).figureNumber — categorical; 50 values, 13 distinct; all values (count): \"1\" (5), \"2\" (5), \"4.3.1-1\" (5), \"5.1.1-1\" (5), \"5.2.1-1\" (5), \"5.2.2-1\" (5), \"5.2.3-1\" (5), \"5.3.1-1\" (4), \"5.3.2-1\" (4), \"8.5-1\" (4), \"6.1.1-1\" (1), \"6.2.1-1\" (1), \"8.2-1\" (1)\n(:TSTable).tableCaption — text; 2344 values, 709 distinct; length 4..498 (median 83); values withheld\n(:TSTable).tableId — identifier; 2376 values, 2376 distinct; length 18..30 (median 26.0); characters: digits, lowercase, uppercase, \"-.\"; all shapes (digits shown as 9; share of values): \"99.999-Aaa-99-A9.9.9.9.9-9\" 26.6%, \"99.999-Aaa-99-A9.9.9.9-9\" 17.3%, \"99.999-Aaa-99-A9.9.9.9.9-99\" 10.6%, \"99.999-Aaa-99-A9.9-9\" 7.4%, \"99.999-Aaa-99-A9.9.9-9\" 6.4%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 4.3%, \"99.999-Aaa-99-A9.9.9.9-99\" 3.3%, \"99.999-Aaa-99-A99.9-9\" 3.2%, \"99.999-Aaa-99-A99-9\" 2.6%, \"99.999-Aaa-99-A9.9.9.9.9-99A\" 2.2%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 1.9%, \"99.999-Rel-99-T99-99\" 1.7%, \"99.999-Aaa-99-A9.9.9.9.9.9-9\" 1.3%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 1.1%, \"99.999-Aaa-99-A9.9.9.9.9-99A\" 1.1%, \"99.999-Aaa-99-A9.9.9.9.9a-9\" 0.7%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.6%, \"99.999-Aaa-99-A9.9.9.9-9A\" 0.4%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.4%, \"99.999-Aaa-99-A9.9.9.9.9-99A\" 0.4%, \"99.999-Rel-99-T99-99A\" 0.4%, \"99.999-Aaa-99-A9.9.9.9A-9\" 0.3%, \"99.999-Aaa-99-A99.9-9A\" 0.3%, \"99.999-Aaa-99-A99.9A-9\" 0.3%, \"99.999-Rel-99-T99-9A\" 0.3%, \"99.999-Aaa-99-A99.9.9.9-9\" 0.3%, \"99.999-Aaa-99-A9.9.9.9.9-99A\" 0.3%, \"99.999-Aaa-99-A9.9.9.9-9A\" 0.3%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.3%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.3%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.3%, \"99.999-Aaa-99-A9.9.9.9.9-99A-9\" 0.3%, \"99.999-Aaa-99-A9-9\" 0.3%, \"99.999-Aaa-99-A9.9-9A\" 0.3%, \"99.999-Aaa-99-A99.9-9A\" 0.3%, \"99.999-Aaa-99-A99.9.9-9\" 0.2%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.2%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.2%, \"99.999-Aaa-99-A9.9.9-9A\" 0.2%, \"99.999-Aaa-99-A9.9.9.9.9a\" 0.2%, \"99.999-Aaa-99-A9.9.9.9.99-9\" 0.2%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-99A-9\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-99A-9\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-99A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-99A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.1%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.0%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.0%, \"99.999-Aaa-99-A9.9.9.9.9-9A\" 0.0%; examples: \"38.213-Rel-19-T13-15A\", \"38.215-Rel-17-T5.1.3-1\", \"38.213-Rel-19-T16.3-1\"\n(:TSTable).tableNumber — identifier; 2376 values, 673 distinct; length 3..15 (median 11); characters: digits, lowercase, uppercase, \"-.\"; all shapes (digits shown as 9; share of values): \"9.9.9.9.9-9\" 26.6%, \"9.9.9.9-9\" 17.3%, \"9.9.9.9.9-99\" 10.6%, \"9.9-9\" 7.4%, \"9.9.9-9\" 6.4%, \"9.9.9.9.9-9A\" 4.3%, \"9.9.9.9-99\" 3.3%, \"99.9-9\" 3.2%, \"99-9\" 2.6%, \"9.9.9.9.9-99A\" 2.2%, \"9.9.9.9.9-9A\" 1.9%, \"99-99\" 1.7%, \"9.9.9.9.9.9-9\" 1.3%, \"9.9.9.9.9-9A\" 1.1%, \"9.9.9.9.9-99A\" 1.1%, \"9.9.9.9.9a-9\" 0.7%, \"9.9.9.9.9-9A\" 0.6%, \"9.9.9.9-9A\" 0.4%, \"9.9.9.9.9-9A\" 0.4%, \"9.9.9.9.9-99A\" 0.4%, \"99-99A\" 0.4%, \"9.9.9.9A-9\" 0.3%, \"99.9-9A\" 0.3%, \"99.9A-9\" 0.3%, \"99-9A\" 0.3%, \"99.9.9.9-9\" 0.3%, \"9.9.9.9.9-99A\" 0.3%, \"9.9.9.9-9A\" 0.3%, \"9.9.9.9.9-9A\" 0.3%, \"9.9.9.9.9-9A\" 0.3%, \"9.9.9.9.9-9A\" 0.3%, \"9.9.9.9.9-99A-9\" 0.3%, \"9-9\" 0.3%, \"9.9-9A\" 0.3%, \"99.9-9A\" 0.3%, \"99.9.9-9\" 0.2%, \"9.9.9.9.9-9A\" 0.2%, \"9.9.9.9.9-9A\" 0.2%, \"9.9.9-9A\" 0.2%, \"9.9.9.9.9a\" 0.2%, \"9.9.9.9.99-9\" 0.2%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-9A\" 0.1%, \"9.9.9.9.9-99A-9\" 0.1%, \"9.9.9.9.9-99A-9\" 0.1%, \"9.9.9.9.9-99A\" 0.1%, \"9.9.9.9.9-99A\" 0.1%, \"9.9.9.9.9-9A\" 0.0%, \"9.9.9.9.9-9A\" 0.0%, \"9.9.9.9.9-9A\" 0.0%; examples: \"13-3\", \"13-15\", \"14-1\"\n(:Table).caption — text; 438 values, 370 distinct; length 7..386 (median 68.0); values withheld\n(:Table).equations — list of values (186 lists, 0 scalars, 0 empty lists, list length 1..32); elements: text; 1013 values, 577 distinct; length 3..357 (median 34); values withheld\n(:Table).filePath — identifier; 1518 values, 1518 distinct; length 66..89 (median 70.0); characters: digits, lowercase, uppercase, \"-./_\"; examples: \"ontology/output/tsg/RAN/formal/tables/RAN1/RAN1_118b/TBL-118b-020.html\", \"ontology/output/tsg/RAN/formal/tables/RAN1/RAN1_92/TBL-92-036_3.html\", \"ontology/output/tsg/RAN/formal/tables/RAN1/RAN1_124/TBL-124-066.html\"\n(:Table).tableId — identifier; 1518 values, 1518 distinct; length 10..14 (median 11.0); characters: digits, lowercase, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"TBL-999-999\" 31.2%, \"TBL-99-999\" 23.8%, \"TBL-999-e-999\" 13.3%, \"TBL-99b-999\" 12.0%, \"TBL-999b-999\" 11.5%, \"TBL-999b-e-999\" 8.2%; examples: \"TBL-114b-034\", \"TBL-124b-025\", \"TBL-124-010\"\n(:Table).tableNumber — text; 438 values, 225 distinct; length 7..21 (median 13); values withheld\n(:Tdoc)._belongsTo — identifier; 127149 values, 6562 distinct; length 16..27 (median 22.0); characters: digits, lowercase, \"-./:\"; all shapes (digits shown as 9; share of values): \"aaaa:aaaaaa/999-9.9.9\" 13.5%, \"aaaa:aaaaaa/99-9.9.9.9\" 10.9%, \"aaaa:aaaaaa/99-9.9.9.9.9\" 8.3%, \"aaaa:aaaaaa/999-9.9.9.9\" 7.5%, \"aaaa:aaaaaa/99a-9.9.9.9\" 6.0%, \"aaaa:aaaaaa/99-9.9.9\" 5.7%, \"aaaa:aaaaaa/999-9.99.9\" 5.4%, \"aaaa:aaaaaa/999a-9.9.9\" 4.9%, \"aaaa:aaaaaa/999-9.9\" 4.8%, \"aaaa:aaaaaa/999-9\" 3.8%, \"aaaa:aaaaaa/99a-9.9.9.9.9\" 3.5%, \"aaaa:aaaaaa/999a-9.9.9.9\" 3.0%, \"aaaa:aaaaaa/99a-9.9.9\" 2.5%, \"aaaa:aaaaaa/999a-9.99.9\" 2.2%, \"aaaa:aaaaaa/999a-9.9\" 2.1%, \"aaaa:aaaaaa/999a-9\" 1.6%, \"aaaa:aaaaaa/999-9.99\" 1.3%, \"aaaa:aaaaaa/99-9.9.9.9.9.9\" 1.1%, \"aaaa:aaaaaa/99-9\" 1.0%, \"aaaa:aaaaaa/999-99.9.9\" 0.9%, \"aaaa:aaaaaa/99-9.9.99.9\" 0.9%, \"aaaa:aaaaaa/999a-99.9.9\" 0.7%, \"aaaa:aaaaaa/99-9.9\" 0.7%, \"aaaa:aaaaaa/999-99.9.9.9\" 0.7%, \"aaaa:aaaaaa/999a-99.9.9.9\" 0.6%, \"aaaa:aaaaaa/999-9.9.9.9.9\" 0.5%, \"aaaa:aaaaaa/99a-9.9.99.9\" 0.5%, \"aaaa:aaaaaa/999a-9.99\" 0.5%, \"aaaa:aaaaaa/99a-9\" 0.4%, \"aaaa:aaaaaa/999-9.99.9.9\" 0.4%, \"aaaa:aaaaaa/999-9.99.99\" 0.4%, \"aaaa:aaaaaa/999-99.9\" 0.4%, \"aaaa:aaaaaa/999-9.9.99\" 0.4%, \"aaaa:aaaaaa/99-9.9.99\" 0.3%, \"aaaa:aaaaaa/99-9.9.99.9.9\" 0.3%, \"aaaa:aaaaaa/99a-9.9.9.9.9.9\" 0.3%, \"aaaa:aaaaaa/999-9.9.99.9\" 0.2%, \"aaaa:aaaaaa/999a-9.99.99\" 0.2%, \"aaaa:aaaaaa/999a-9.9.9.9.9\" 0.2%, \"aaaa:aaaaaa/999a-99.9\" 0.2%, \"aaaa:aaaaaa/99a-9.9\" 0.2%, \"aaaa:aaaaaa/999a-9.9.99.9\" 0.2%, \"aaaa:aaaaaa/999a-9.99.9.9\" 0.2%, \"aaaa:aaaaaa/99a-9.9.99\" 0.1%, \"aaaa:aaaaaa/99a-9.9.99.9.9\" 0.1%, \"aaaa:aaaaaa/999a-9.9.99\" 0.1%, \"aaaa:aaaaaa/999a-9.9.99.99\" 0.0%, \"aaaa:aaaaaa/999-9.9.99.99\" 0.0%, \"tdoc:agenda/999b-99\" 0.0%, \"tdoc:agenda/999-99\" 0.0%, \"aaaa:aaaaaa/999-9.9.9.99\" 0.0%, \"aaaa:aaaaaa/99-9.9.9.99\" 0.0%; examples: \"tdoc:agenda/107-8.3\", \"tdoc:agenda/107-8.16.5\", \"tdoc:agenda/107b-8.15.5\"\n(:Tdoc)._ccTo — list of values (2130 lists, 0 scalars, 0 empty lists, list length 1..14); elements: identifier; 3086 values, 65 distinct; length 10..48 (median 16); characters: digits, lowercase, uppercase, \"/:_\"; all shapes (digits shown as 9; share of values): \"tdoc:wg/RAN9\" 79.3%, \"tdoc:wg/SA9\" 9.5%, \"aaaa:aa/AAA\" 4.3%, \"tdoc:wg/CT9\" 2.2%, \"aaaa:aa/AA\" 1.5%, \"tdoc:wg/GSMA_9GJA\" 0.4%, \"aaaa:aa/AAA_9\" 0.3%, \"aaaa:aa/Aaa_Aaaa_aa_Aaa_Aaaa_Aaaaaa_aa_aaa_Aaaaa\" 0.3%, \"aaaa:aa/Aa_Aa_Aaaaaaaa\" 0.2%, \"aaaa:aa/AAAA_AA\" 0.2%, \"tdoc:wg/SA9_LI\" 0.1%, \"aaaa:aa/AAAA_Aaaaaaaaaaaaa_AAA_Aaaaaaa_Aaaaa\" 0.1%, \"tdoc:wg/9GAA_WG9\" 0.1%, \"aaaa:aa/AAAA\" 0.1%, \"aaaa:aa/AAAA_AAAAA\" 0.1%, \"tdoc:wg/IEEE_999\" 0.1%, \"tdoc:wg/IEEE_999_99\" 0.1%, \"aaaa:aa/AAAA_AAA_Aaaaaaaaa\" 0.1%, \"aaaa:aa/AaAa_Aaaaaaaa\" 0.1%, \"aaaa:aa/AAA_Aaaaaaaa_Aaaaaaaa_Aaaaaaaaaaa\" 0.1%, \"aaaa:aa/AAAA_aaaaaa\" 0.1%, \"aaaa:aa/AAA_AAAA\" 0.1%, \"tdoc:wg/RAN_WG9\" 0.0%, \"aaaa:aa/AAAA_AAAA\" 0.0%, \"aaaa:aa/AAA_AAA_AAA_9_AA_99_AA_9\" 0.0%, \"tdoc:wg/RAN9__RAN9\" 0.0%, \"aaaa:aa/AAAA_AAA_AAAA\" 0.0%, \"aaaa:aa/AAAAaaaaa_aa_Aaaaaaaaaaa___Aaaaaaaaaa\" 0.0%, \"aaaa:aa/AAA_Aaaaaaaa_Aaaaaaaaaaaaaaaaaaa_Aaaaaa\" 0.0%, \"tdoc:wg/IEEE_999_99_Coexistence\" 0.0%, \"tdoc:wg/IEEE_999_LAN_MAN_Standards_Committee\" 0.0%, \"aaaa:aa/AAA_Aaaaaa_aa_Aaaaaaaaaaa___Aaaaaaaaaaaa\" 0.0%, \"aaaa:aa/AAA_Aaaaaaaa_Aaaaaaaaaaaaaaaaaa_Aaaaaa\" 0.0%, \"aaaa:aa/Aaaaaaa_aa_aaa_Aaaaa_aa_AAA\" 0.0%, \"tdoc:wg/IEEE_999_99_Coexistence_WG\" 0.0%, \"tdoc:wg/SAE_Cellular_V9X_Technical_Committee\" 0.0%, \"aaaa:aa/AAA_AAAA_Aaaaaaaaa_Aaaaaaaaa\" 0.0%, \"tdoc:wg/IEEE_999_99_WG_Chair\" 0.0%, \"tdoc:wg/IEEE_999_99_WG\" 0.0%, \"tdoc:wg/IEEE_999_LMSC\" 0.0%, \"tdoc:wg/9G_IA\" 0.0%, \"aaaa:aa/AAAA_Aaaaaaaaa_Aaaaaaaaaaa\" 0.0%, \"tdoc:wg/IEEE_999_99_Vice_Chair\" 0.0%, \"aaaa:aa/AA_AAA_Aaaaa\" 0.0%; examples: \"tdoc:wg/SA\", \"tdoc:wg/Wi_Fi_Alliance\", \"tdoc:wg/Councel_of_the_Mayor_of_NYC\"\n(:Tdoc)._createdBy — categorical; 1 values, 1 distinct; all values (count): \"phase-6-backfill\" (1)\n(:Tdoc)._hasContact — identifier; 127149 values, 1048 distinct; length 16..19 (median 18.0); characters: digits, lowercase, \"/:\"; values withheld\n(:Tdoc)._idBackfilled — boolean; 1 values, 1 distinct; all values (count): true (1)\n(:Tdoc)._isRevisionOf — identifier; 12000 values, 11928 distinct; length 14..15 (median 15.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 92.4%, \"tdoc:R9-999999\" 7.6%, \"tdoc:S9-999999\" 0.0%, \"tdoc:RP-999999\" 0.0%; examples: \"tdoc:R1-1721490\", \"tdoc:R1-1706608\", \"tdoc:R1-1804104\"\n(:Tdoc)._modifies — categorical; 10820 values, 51 distinct; all values (count): \"tdoc:spec/38_213\" (3082), \"tdoc:spec/38_214\" (2471), \"tdoc:spec/36_213\" (1923), \"tdoc:spec/36_211\" (764), \"tdoc:spec/38_212\" (664), \"tdoc:spec/38_211\" (482), \"tdoc:spec/36_212\" (383), \"tdoc:spec/37_213\" (201), \"tdoc:spec/38_900\" (169), \"tdoc:spec/38_215\" (164), \"tdoc:spec/38_901\" (101), \"tdoc:spec/38_202\" (73), \"tdoc:spec/36_214\" (53), \"tdoc:spec/36_873\" (46), \"tdoc:spec/36_201\" (28), \"tdoc:spec/25_214\" (22), \"tdoc:spec/38_811\" (21), \"tdoc:spec/37_885\" (17), \"tdoc:spec/38_201\" (17), \"tdoc:spec/25_212\" (15), \"tdoc:spec/36_300\" (15), \"tdoc:spec/38_802\" (14), \"tdoc:spec/38_821\" (12), \"tdoc:spec/37_985\" (8), \"tdoc:spec/38_300\" (7), \"tdoc:spec/38_769\" (7), \"tdoc:spec/25_707\" (6), \"tdoc:spec/36_885\" (6), \"tdoc:spec/36_814\" (5), \"tdoc:spec/38_291\" (5), \"tdoc:spec/25_211\" (4), \"tdoc:spec/25_215\" (4), \"tdoc:spec/38_885\" (4), \"tdoc:spec/38_858\" (3), \"tdoc:spec/38_864\" (3), \"tdoc:spec/25_766\" (2), \"tdoc:spec/25_996\" (2), \"tdoc:spec/38_306\" (2), \"tdoc:spec/38_843\" (2), \"tdoc:spec/38_912\" (2), \"tdoc:spec/28_552\" (1), \"tdoc:spec/36_302\" (1), \"tdoc:spec/36_306\" (1), \"tdoc:spec/36_331\" (1), \"tdoc:spec/36_763\" (1), \"tdoc:spec/36_802\" (1), \"tdoc:spec/36_976\" (1), \"tdoc:spec/38_331\" (1), \"tdoc:spec/38_830\" (1), \"tdoc:spec/38_855\" (1), \"tdoc:spec/38_859\" (1)\n(:Tdoc)._originalLS — text; 1878 values, 1776 distinct; length 13..79 (median 15.0); values withheld\n(:Tdoc)._originatedFrom — categorical; 1819 values, 13 distinct; all values (count): \"tdoc:wg/RAN2\" (852), \"tdoc:wg/RAN4\" (666), \"tdoc:wg/SA2\" (95), \"tdoc:wg/RAN3\" (92), \"tdoc:wg/RAN\" (38), \"tdoc:wg/SA4\" (18), \"tdoc:wg/SA5\" (18), \"tdoc:wg/SA1\" (17), \"tdoc:wg/CT1\" (7), \"tdoc:wg/SA3\" (7), \"tdoc:wg/SA\" (6), \"tdoc:wg/RAN5\" (2), \"tdoc:wg/CT4\" (1)\n(:Tdoc)._presentedAt — categorical; 127149 values, 62 distinct; all values (count): \"tdoc:meeting/RAN1_90\" (3309), \"tdoc:meeting/RAN1_89\" (3005), \"tdoc:meeting/RAN1_87\" (2741), \"tdoc:meeting/RAN1_109-e\" (2688), \"tdoc:meeting/RAN1_88b\" (2688), \"tdoc:meeting/RAN1_110\" (2618), \"tdoc:meeting/RAN1_88\" (2614), \"tdoc:meeting/RAN1_86b\" (2514), \"tdoc:meeting/RAN1_86\" (2506), \"tdoc:meeting/RAN1_110b-e\" (2480), \"tdoc:meeting/RAN1_114\" (2442), \"tdoc:meeting/RAN1_91\" (2436), \"tdoc:meeting/RAN1_103-e\" (2353), \"tdoc:meeting/RAN1_96\" (2348), \"tdoc:meeting/RAN1_90b\" (2315), \"tdoc:meeting/RAN1_95\" (2313), \"tdoc:meeting/RAN1_106-e\" (2289), \"tdoc:meeting/RAN1_102-e\" (2287), \"tdoc:meeting/RAN1_104-e\" (2273), \"tdoc:meeting/RAN1_92\" (2257), \"tdoc:meeting/RAN1_112\" (2254), \"tdoc:meeting/RAN1_107-e\" (2241), \"tdoc:meeting/RAN1_105-e\" (2231), \"tdoc:meeting/RAN1_92b\" (2230), \"tdoc:meeting/RAN1_111\" (2220), \"tdoc:meeting/RAN1_93\" (2175), \"tdoc:meeting/RAN1_108-e\" (2159), \"tdoc:meeting/RAN1_85\" (2094), \"tdoc:meeting/RAN1_96b\" (2078), \"tdoc:meeting/RAN1_94\" (2050), \"tdoc:meeting/RAN1_97\" (2049), \"tdoc:meeting/RAN1_94b\" (2047), \"tdoc:meeting/RAN1_113\" (2045), \"tdoc:meeting/RAN1_115\" (2040), \"tdoc:meeting/RAN1_112b-e\" (2036), \"tdoc:meeting/RAN1_106b-e\" (2013), \"tdoc:meeting/RAN1_114b\" (1974), \"tdoc:meeting/RAN1_98\" (1966), \"tdoc:meeting/RAN1_117\" (1953), \"tdoc:meeting/RAN1_101-e\" (1949), \"tdoc:meeting/RAN1_116\" (1930), \"tdoc:meeting/RAN1_99\" (1897), \"tdoc:meeting/RAN1_121\" (1888), \"tdoc:meeting/RAN1_116b\" (1881), \"tdoc:meeting/RAN1_104b-e\" (1869), \"tdoc:meeting/RAN1_84b\" (1855), \"tdoc:meeting/RAN1_98b\" (1812), \"tdoc:meeting/RAN1_118\" (1800), \"tdoc:meeting/RAN1_118b\" (1751), \"tdoc:meeting/RAN1_124\" (1744), \"tdoc:meeting/RAN1_124b\" (1729), \"tdoc:meeting/RAN1_100b-e\" (1706), \"tdoc:meeting/RAN1_120\" (1674), \"tdoc:meeting/RAN1_119\" (1600), \"tdoc:meeting/RAN1_122\" (1593), \"tdoc:meeting/RAN1_122b\" (1563), \"tdoc:meeting/RAN1_120b\" (1504), \"tdoc:meeting/RAN1_123\" (1419), \"tdoc:meeting/RAN1_100-e\" (1340), \"tdoc:meeting/RAN1_84\" (1333), \"tdoc:meeting/RAN1_107b-e\" (835), \"tdoc:meeting/RAN1_100\" (146)\n(:Tdoc)._recoveredAt — categorical; 1 values, 1 distinct; all values (count): \"2026-04-25\" (1)\n(:Tdoc)._relatedTo — list of values (78255 lists, 0 scalars, 0 empty lists, list length 1..18); elements: identifier; 82295 values, 429 distinct; length 17..53 (median 28); characters: digits, lowercase, uppercase, \"-/:_\"; examples: \"tdoc:workitem/NR_DSS\", \"tdoc:workitem/5GS_Ph1\", \"tdoc:workitem/TEI18\"\n(:Tdoc)._replyIn — string or list of values (86 lists, 109 scalars, 0 empty lists, list length 2..10); elements: identifier; 381 values, 379 distinct; length 14..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 95.3%, \"tdoc:R9-999999\" 4.5%, \"tdoc:S9-9999999\" 0.3%; examples: \"tdoc:R4-2321741\", \"tdoc:R4-2402192\", \"tdoc:R3-220807\"\n(:Tdoc)._replyTo — string or list of values (46 lists, 3247 scalars, 0 empty lists, list length 2..3); elements: text; 3342 values, 1174 distinct; length 9..48 (median 15.0); values withheld\n(:Tdoc)._reportedAt — list of values (4431 lists, 0 scalars, 0 empty lists, list length 1..1); elements: categorical; 4431 values, 36 distinct; all values (count): \"tdoc:meeting/RAN1_103-e\" (166), \"tdoc:meeting/RAN1_106-e\" (166), \"tdoc:meeting/RAN1_110\" (166), \"tdoc:meeting/RAN1_109-e\" (163), \"tdoc:meeting/RAN1_105-e\" (158), \"tdoc:meeting/RAN1_114\" (151), \"tdoc:meeting/RAN1_111\" (147), \"tdoc:meeting/RAN1_124b\" (146), \"tdoc:meeting/RAN1_110b-e\" (145), \"tdoc:meeting/RAN1_124\" (145), \"tdoc:meeting/RAN1_112\" (143), \"tdoc:meeting/RAN1_114b\" (135), \"tdoc:meeting/RAN1_115\" (130), \"tdoc:meeting/RAN1_108-e\" (128), \"tdoc:meeting/RAN1_122b\" (128), \"tdoc:meeting/RAN1_104-e\" (127), \"tdoc:meeting/RAN1_106b-e\" (127), \"tdoc:meeting/RAN1_112b-e\" (127), \"tdoc:meeting/RAN1_104b-e\" (126), \"tdoc:meeting/RAN1_102-e\" (124), \"tdoc:meeting/RAN1_116b\" (122), \"tdoc:meeting/RAN1_116\" (120), \"tdoc:meeting/RAN1_107-e\" (116), \"tdoc:meeting/RAN1_113\" (116), \"tdoc:meeting/RAN1_123\" (114), \"tdoc:meeting/RAN1_117\" (110), \"tdoc:meeting/RAN1_122\" (107), \"tdoc:meeting/RAN1_101-e\" (104), \"tdoc:meeting/RAN1_118\" (103), \"tdoc:meeting/RAN1_118b\" (101), \"tdoc:meeting/RAN1_100b-e\" (95), \"tdoc:meeting/RAN1_119\" (85), \"tdoc:meeting/RAN1_120\" (79), \"tdoc:meeting/RAN1_120b\" (79), \"tdoc:meeting/RAN1_121\" (74), \"tdoc:meeting/RAN1_107b-e\" (58)\n(:Tdoc)._reportedRun — categorical; 4431 values, 1 distinct; all values (count): \"f9eedcffe6294dae87c1422d2c4653de\" (4431)\n(:Tdoc)._revisedTo — string or list of values (68 lists, 11580 scalars, 0 empty lists, list length 2..4); elements: identifier; 11733 values, 11733 distinct; length 14..15 (median 15); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 92.4%, \"tdoc:R9-999999\" 7.6%, \"tdoc:RP-999999\" 0.0%; examples: \"tdoc:R1-1720147\", \"tdoc:R1-2007436\", \"tdoc:R1-2301842\"\n(:Tdoc)._sentTo — list of values (6404 lists, 0 scalars, 0 empty lists, list length 1..24); elements: identifier; 7779 values, 105 distinct; length 10..75 (median 17); characters: digits, lowercase, uppercase, \"/:_\"; examples: \"tdoc:wg/TTA\", \"tdoc:wg/3GPP_ITU_R_ad_hoc\", \"tdoc:wg/ETSI_TC_BRAN\"\n(:Tdoc)._submittedBy — list of values (126963 lists, 0 scalars, 0 empty lists, list length 1..32); elements: identifier; 160566 values, 710 distinct; length 15..116 (median 25.0); characters: digits, lowercase, uppercase, \"/:_\"; values withheld\n(:Tdoc)._targetRelease — categorical; 87067 values, 13 distinct; all values (count): \"tdoc:release/Rel_17\" (21416), \"tdoc:release/Rel_18\" (19801), \"tdoc:release/Rel_19\" (14317), \"tdoc:release/Rel_16\" (13136), \"tdoc:release/Rel_15\" (8808), \"tdoc:release/Rel_20\" (4725), \"tdoc:release/Rel_14\" (3283), \"tdoc:release/Rel_13\" (1482), \"tdoc:release/Rel_12\" (85), \"tdoc:release/Rel_9\" (6), \"tdoc:release/Rel_11\" (5), \"tdoc:release/Rel_10\" (2), \"tdoc:release/Rel_8\" (1)\n(:Tdoc).abstract — text; 1803 values, 1299 distinct; length 1..2056 (median 63); values withheld\n(:Tdoc).affectsCN — boolean; 668 values, 1 distinct; all values (count): false (668)\n(:Tdoc).affectsME — boolean; 670 values, 2 distinct; all values (count): true (649), false (21)\n(:Tdoc).affectsRAN — boolean; 670 values, 2 distinct; all values (count): true (627), false (43)\n(:Tdoc).affectsUICC — boolean; 668 values, 1 distinct; all values (count): false (668)\n(:Tdoc).clausesAffected — text; 665 values, 367 distinct; length 1..419 (median 14); values withheld\n(:Tdoc).consequencesIfNotApproved — text; 2103 values, 1572 distinct; length 14..15697 (median 94.0); values withheld\n(:Tdoc).crCategory — categorical; 9656 values, 6 distinct; all values (count): \"F\" (7760), \"B\" (976), \"A\" (828), \"D\" (80), \"C\" (11), \"E\" (1)\n(:Tdoc).crNumber — identifier; 4413 values, 1457 distinct; length 4..4 (median 4); characters: digits; all shapes (digits shown as 9; share of values): \"9999\" 100.0%; examples: \"0765\", \"1011\", \"0807\"\n(:Tdoc).crRevision — categorical; 559 values, 9 distinct; all values (count): \"1\" (447), \"2\" (81), \"3\" (16), \"4\" (4), \"5\" (3), \"6\" (3), \"7\" (2), \"8\" (2), \"9\" (1)\n(:Tdoc).direction — categorical; 6427 values, 2 distinct; all values (count): \"out\" (4521), \"in\" (1906)\n(:Tdoc).for — categorical; 103578 values, 8 distinct; all values (count): \"Decision\" (82066), \"Discussion\" (13596), \"Agreement\" (3583), \"Approval\" (2004), \"Endorsement\" (1265), \"Information\" (1060), \"Action\" (2), \"Presentation\" (2)\n(:Tdoc).id — identifier; 127150 values, 127150 distinct; length 14..15 (median 15.0); characters: digits, lowercase, uppercase, \"-:\"; all shapes (digits shown as 9; share of values): \"tdoc:R9-9999999\" 93.9%, \"tdoc:R9-999999\" 6.1%; examples: \"tdoc:R1-1704537\", \"tdoc:R1-2108766\", \"tdoc:R1-1807666\"\n(:Tdoc).reasonForChange — text; 2107 values, 1806 distinct; length 9..13736 (median 317.5); values withheld\n(:Tdoc).reservationDate — identifier; 127149 values, 79716 distinct; length 19..26 (median 26.0); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99.999999\" 56.5%, \"9999-99-99T99:99:99\" 43.5%; examples: \"2024-04-03T09:22:21\", \"2026-04-03T06:40:22\", \"2021-05-18T08:25:47.630000\"\n(:Tdoc).roundNumber — integer; 2833 values, 15 distinct; all values (count): 1 (923), 2 (880), 3 (545), 4 (274), 5 (90), 0 (55), 6 (33), 7 (13), 8 (8), 9 (5), 10 (3), 103 (1), 11 (1), 113 (1), 92 (1)\n(:Tdoc).secretaryRemarks — text; 3017 values, 1519 distinct; length 4..441 (median 62); values withheld\n(:Tdoc).status — categorical; 127149 values, 15 distinct; all values (count): \"not treated\" (56495), \"available\" (24881), \"noted\" (21996), \"revised\" (8453), \"agreed\" (4098), \"withdrawn\" (2912), \"endorsed\" (2545), \"not pursued\" (2531), \"approved\" (1547), \"treated\" (1288), \"postponed\" (319), \"reserved\" (49), \"merged\" (33), \"conditionally agreed\" (1), \"not concluded\" (1)\n(:Tdoc).summaryOfChange — text; 2105 values, 1809 distinct; length 9..17424 (median 174); values withheld\n(:Tdoc).summaryType — categorical; 3710 values, 2 distinct; all values (count): \"FL\" (2964), \"Moderator\" (746)\n(:Tdoc).tdocNumber — identifier; 127150 values, 127150 distinct; length 9..10 (median 10.0); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"R9-9999999\" 93.9%, \"R9-999999\" 6.1%; examples: \"R1-1809555\", \"R1-2208324\", \"R1-2305318\"\n(:Tdoc).title — text; 127149 values, 64981 distinct; length 2..191 (median 49); values withheld\n(:Tdoc).tsgCRPack — identifier; 3546 values, 845 distinct; length 9..9 (median 9); characters: digits, uppercase, \"-\"; all shapes (digits shown as 9; share of values): \"RP-999999\" 100.0%; examples: \"RP-181170\", \"RP-222867\", \"RP-172692\"\n(:Tdoc).type — categorical; 127150 values, 16 distinct; all values (count): \"discussion\" (95249), \"other\" (14022), \"draftCR\" (6345), \"LS out\" (4521), \"CR\" (4414), \"LS in\" (1906), \"draft TR\" (266), \"report\" (90), \"agenda\" (86), \"Work Plan\" (85), \"draft TS\" (80), \"pCR\" (61), \"response\" (17), \"SID new\" (4), \"WID new\" (3), \"WI summary\" (1)\n(:Tdoc).uploadedDate — identifier; 124387 values, 82145 distinct; length 19..26 (median 26); characters: digits, uppercase, \"-.:\"; all shapes (digits shown as 9; share of values): \"9999-99-99T99:99:99.999999\" 93.9%, \"9999-99-99T99:99:99\" 6.1%; examples: \"2022-02-14T22:49:01.847000\", \"2021-05-26T16:01:17.623000\", \"2018-03-01T18:17:56.577000\"\n(:TechnicalReport).conclusions — text; 21 values, 21 distinct; length 39..800 (median 800); values withheld\n(:TechnicalReport).scope — text; 26 values, 26 distinct; length 88..800 (median 800.0); values withheld\n(:TechnicalReport).studyItemRpNumber — categorical; 24 values, 24 distinct; all values (count): \"RP-151606\" (1), \"RP-161596\" (1), \"RP-172021\" (1), \"RP-181403\" (1), \"RP-181430\" (1), \"RP-181463\" (1), \"RP-181477\" (1), \"RP-182138\" (1), \"RP-182155\" (1), \"RP-190224\" (1), \"RP-193237\" (1), \"RP-193240\" (1), \"RP-201145\" (1), \"RP-201677\" (1), \"RP-213599\" (1), \"RP-213661\" (1), \"RP-213700\" (1), \"RP-220297\" (1), \"RP-222616\" (1), \"RP-222644\" (1), \"RP-240826\" (1), \"RP-251881\" (1), \"RP-251933\" (1), \"RP-253246\" (1)\n(:TechnicalReport).trNumber — categorical; 26 values, 26 distinct; all values (count): \"38.742\" (1), \"38.760-1\" (1), \"38.765\" (1), \"38.769\" (1), \"38.802\" (1), \"38.808\" (1), \"38.812\" (1), \"38.824\" (1), \"38.830\" (1), \"38.838\" (1), \"38.840\" (1), \"38.843\" (1), \"38.855\" (1), \"38.857\" (1), \"38.858\" (1), \"38.859\" (1), \"38.864\" (1), \"38.865\" (1), \"38.866\" (1), \"38.867\" (1), \"38.869\" (1), \"38.875\" (1), \"38.885\" (1), \"38.889\" (1), \"38.900\" (1), \"38.901\" (1)\n(:TechnicalReport).trStatus — categorical; 26 values, 3 distinct; all values (count): \"Completed\" (19), \"Living\" (6), \"Draft\" (1)\n(:TechnicalReport).trTitle — text; 26 values, 26 distinct; length 30..104 (median 49.0); values withheld\n(:TechnicalReport).trVersion — categorical; 26 values, 13 distinct; all values (count): \"16.0.0\" (6), \"17.0.0\" (5), \"18.0.0\" (3), \"1.0.0\" (2), \"18.1.0\" (2), \"0.1.0\" (1), \"14.2.0\" (1), \"15.0.0\" (1), \"16.1.0\" (1), \"18.2.0\" (1), \"19.0.0\" (1), \"19.3.0\" (1), \"20.0.0\" (1)\n(:TechnicalReport).workItemRpNumber — categorical; 1 values, 1 distinct; all values (count): \"RP-170813\" (1)\n(:WorkItem).id — identifier; 429 values, 429 distinct; length 17..53 (median 28); characters: digits, lowercase, uppercase, \"-/:_\"; examples: \"tdoc:workitem/LTE_WLAN_radio-Core\", \"tdoc:workitem/LTE_MTCe2_L1-Core\", \"tdoc:workitem/IoT_NTN_Ph3-Core\"\n(:WorkItem).workItemCode — identifier; 429 values, 429 distinct; length 3..39 (median 14); characters: digits, lowercase, uppercase, \"-_\"; examples: \"5G_eLCS_ph2\", \"LTE_eD2D_Prox-Core\", \"NB_IOT\"\n(:WorkingAssumption).content — text; 938 values, 927 distinct; length 3..7713 (median 328); values withheld\n(:WorkingAssumption).contentWithEquations — text; 64 values, 64 distinct; length 133..3424 (median 663.5); values withheld\n(:WorkingAssumption).hasFFS — boolean; 938 values, 2 distinct; all values (count): false (590), true (348)\n(:WorkingAssumption).hasTBD — boolean; 938 values, 2 distinct; all values (count): false (932), true (6)\n(:WorkingAssumption).note — text; 185 values, 180 distinct; length 19..7877 (median 154.0); values withheld\n(:WorkingAssumption).resolutionId — identifier; 938 values, 938 distinct; length 11..23 (median 18.0); characters: digits, lowercase, uppercase, \"-.\"; all shapes (digits shown as 9; share of values): \"AA-99-9.9.9.9-999\" 14.3%, \"AA-99-9.9.9.9.9-999\" 13.3%, \"AA-99a-9.9.9.9-999\" 7.6%, \"AA-999-a-9.9.9-999\" 7.6%, \"AA-999-9.9.9-999\" 6.6%, \"AA-999-9.9.9.9-999\" 5.4%, \"AA-99a-9.9.9.9.9-999\" 5.3%, \"AA-999-a-9.9.9.9-999\" 4.8%, \"AA-999a-a-9.9.9.9-999\" 4.8%, \"AA-999a-9.9.9-999\" 4.5%, \"AA-999a-a-9.9.9-999\" 4.3%, \"AA-999-9.99.9-999\" 3.0%, \"AA-999-a-9.99.9-999\" 2.1%, \"AA-99a-9.9.9-999\" 1.7%, \"AA-99-9.9.9-999\" 1.7%, \"AA-999a-a-9.9.99.9-999\" 1.2%, \"AA-999a-a-9.99.9-999\" 1.2%, \"AA-999a-9.99.9-999\" 1.1%, \"AA-999a-99.9.9-999\" 0.9%, \"AA-999a-a-9.99.9.9-999\" 0.7%, \"AA-999-a-9.9-999\" 0.6%, \"AA-999-a-9.9.9.9.9-999\" 0.6%, \"AA-999-a-9.99.9.9-999\" 0.6%, \"AA-99a-9.9.99.9-999\" 0.6%, \"AA-999-99.9.9-999\" 0.6%, \"AA-99-9.9-999\" 0.5%, \"AA-999a-9.99-999\" 0.4%, \"AA-999-a-9.9.99.9-999\" 0.3%, \"AA-999-a-9.9.99-999\" 0.3%, \"AA-999-a-9.99-999\" 0.3%, \"AA-999-9.9-999\" 0.3%, \"AA-99-9.9.99.9-999\" 0.3%, \"AA-99-9-999\" 0.3%, \"AA-999a-a-9.9.9.9.9-999\" 0.2%, \"AA-999a-a-9.99-999\" 0.2%, \"AA-999-9.99-999\" 0.2%, \"AA-999a-9.9.9.9-999\" 0.2%, \"AA-99-9.9.99-999\" 0.2%, \"AA-999-99.9.9.9-999\" 0.2%, \"AA-999a-a-9.9-999\" 0.1%, \"AA-999a-a-9.99.99-999\" 0.1%, \"AA-99a-9-999\" 0.1%, \"AA-99-9.9.99.9.9-999\" 0.1%, \"AA-999-99.9-999\" 0.1%, \"AA-999a-99.9.9.9-999\" 0.1%; examples: \"WA-105-e-8.1.1-002\", \"WA-106-e-8.1.1-001\", \"WA-114b-8.13-003\"\n(:WorkingAssumption).sequence — integer; 938 values, 7 distinct; all values (count): 1 (632), 2 (190), 3 (68), 4 (29), 5 (11), 6 (6), 7 (2)\n(:WorkingGroup).id — identifier; 140 values, 140 distinct; length 10..75 (median 18.0); characters: digits, lowercase, uppercase, \"/:_\"; examples: \"tdoc:wg/CTIA_Certification_OTA_Working_Group\", \"tdoc:wg/IETF_CATS_WG\", \"tdoc:wg/SA_3\"\n(:WorkingGroup).wgName — text; 140 values, 140 distinct; length 2..67 (median 10.0); values withheld",
+ "items": [
+  {
+   "id": "RAN1-q02ed00cdfdad",
+   "question": "Trace change request R1-2112940 (CR 0088 to TS 38.212) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.212 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q0aab060405bc",
+   "question": "Change request R1-2312364 (CR 0458 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q0b024594c710",
+   "question": "In which TSG RAN CR pack was change request R1-2104049 (CR 0218 to TS 38.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q0b383eaf0464",
+   "question": "In which TSG RAN CR pack was change request R1-2205645 (CR 0318 to TS 38.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q0d29fe46c222",
+   "question": "Trace change request R1-2308619 (CR 0490 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q1125c2994a1b",
+   "question": "Change request R1-2202955 (CR 0090 to TS 38.211) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q14812bd77428",
+   "question": "TSG RAN CR pack RP-232451 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q154dc8a1cc63",
+   "question": "RAN1 recorded document R1-2307027 as revised. Follow its revisions to every later version that has a source-verified RAN1 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q182cd66ec6d9",
+   "question": "Which Rel-16 change requests that modify clause 6.3.2.4.2.5 of TS 38.212 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q1876c7a0145c",
+   "question": "Trace change request R1-2312477 (CR 0544 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q19e267ce1beb",
+   "question": "TSG RAN CR pack RP-212968 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q1f719db26cfe",
+   "question": "Which Rel-19 change requests that modify clause 5.1.4.2 of TS 38.214 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q1fdc03be7e77",
+   "question": "Trace change request R1-2205275 (CR 0305 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q200a64fd3b1d",
+   "question": "Change request R1-2108489 (CR 0211 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q212e58443be6",
+   "question": "TSG RAN CR pack RP-240527 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q21bb827f90b9",
+   "question": "In which TSG RAN CR pack was change request R1-2106275 (CR 0072 to TS 38.211) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q22628231867f",
+   "question": "TSG RAN CR pack RP-242931 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q29a6754c388e",
+   "question": "Trace change request R1-1913654 (CR 0075 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q2e1d839fdb6c",
+   "question": "Which Rel-16 change requests that modify clause 7.1.2 of TS 38.211 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q2f647889722a",
+   "question": "TSG RAN CR pack RP-220257 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q308de7d0c44e",
+   "question": "Change request R1-2208264 (CR 0332 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q35cc00131c12",
+   "question": "TSG RAN CR pack RP-221605 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q3811099b32df",
+   "question": "TSG RAN CR pack RP-253027 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q3995b7707dd5",
+   "question": "Which Rel-16 change requests that modify clause 6.4.1.4.4 of TS 38.211 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q39d3b365747b",
+   "question": "Change request R1-2403754 (CR 0625 to TS 38.213) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q3bc833f726da",
+   "question": "Which Rel-17 change requests that modify clause 4.2 of TS 38.213 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q3e7b20ae72dc",
+   "question": "Which Rel-15 change requests that modify clause 7.3.1.1.1 of TS 38.212 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q3f2983d80722",
+   "question": "Which Rel-17 change requests that modify clause 5.2.1.5.2 of TS 38.214 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q427d7f90fe86",
+   "question": "Change request R1-2007458 (CR 0053 to TS 38.212) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q4554b15c9939",
+   "question": "Trace change request R1-2202681 (CR 0239 to TS 38.214) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.214 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q45c336a2d020",
+   "question": "RAN1 recorded document R1-2403693 as revised. Follow its revisions to every later version that has a source-verified RAN1 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q482bea5b9347",
+   "question": "Trace change request R1-2202985 (CR 0301 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q484b65c860be",
+   "question": "Which Rel-16 change requests that modify clause 6.4.1.4.3 of TS 38.211 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q492ca6c5bebf",
+   "question": "Which Rel-19 change requests that modify clause 5.2.2.2.9a of TS 38.214 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q49f5cc0afc7b",
+   "question": "Change request R1-2005164 (CR 0109 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q4c9aa1c4daf9",
+   "question": "Trace change request R1-2409263 (CR 0686 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q4d86ef04ae59",
+   "question": "Trace change request R1-2208017 (CR 0301 to TS 38.214) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.214 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q5154c2ea6399",
+   "question": "Change request R1-2108591 (CR 0073 to TS 38.212) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q53d8e96a28d9",
+   "question": "In which TSG RAN CR pack was change request R1-1902538 (CR 0008 to TS 38.214) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q5d0c741a784a",
+   "question": "Change request R1-2410932 (CR 0144 to TS 38.211) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q5d11ed05b116",
+   "question": "TSG RAN CR pack RP-260172 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q5e472e002ac6",
+   "question": "TSG RAN CR pack RP-220269 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q5fddaf524066",
+   "question": "In which TSG RAN CR pack was change request R1-1909887 (CR 0058 to TS 38.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q63101e852f4f",
+   "question": "Trace change request R1-2208260 (CR 0362 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q657c81375a03",
+   "question": "Which Rel-16 change requests that modify clause 9.2.2 of TS 38.213 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q659e74bf8482",
+   "question": "In which TSG RAN CR pack was change request R1-1809647 (CR 0002 to TS 37.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q66cee9c173a6",
+   "question": "Trace change request R1-2202969 (CR 0103 to TS 38.212) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.212 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q67110c2c0af3",
+   "question": "TSG RAN CR pack RP-261340 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q6786f5d50565",
+   "question": "Trace change request R1-2112960 (CR 0021 to TS 38.202) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.202 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q6a816a3b2d9e",
+   "question": "Trace change request R1-2106252 (CR 0235 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q6d7ce24c3cd3",
+   "question": "TSG RAN CR pack RP-242218 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q6f40f992de61",
+   "question": "Trace change request R1-2312691 (CR 0057 to TS 38.215) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.215 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q720f9af7bc2e",
+   "question": "TSG RAN CR pack RP-253037 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q73125379c8bc",
+   "question": "Change request R1-2401859 (CR 0520 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q731314560097",
+   "question": "TSG RAN CR pack RP-222419 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q781400bad419",
+   "question": "Change request R1-2308556 (CR 0489 to TS 38.213) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q79c4b1300fb8",
+   "question": "In which TSG RAN CR pack was change request R1-2509657 (CR 0713 to TS 38.214) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q88721b6cb040",
+   "question": "In which TSG RAN CR pack was change request R1-2401816 (CR 0516 to TS 38.214) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q89a6304d4e3f",
+   "question": "In which TSG RAN CR pack was change request R1-2202799 (CR 0251 to TS 38.214) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q8bc7cc23d461",
+   "question": "In which TSG RAN CR pack was change request R1-2506649 (CR 0155 to TS 38.211) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q8ccd79732771",
+   "question": "TSG RAN CR pack RP-233737 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q902d2fcdcbcb",
+   "question": "In which TSG RAN CR pack was change request R1-1717870 (CR 0021 to TS 38.901) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q934b64e38484",
+   "question": "Change request R1-2505015 (CR 0716 to TS 38.213) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q94e3bf3e2289",
+   "question": "Trace change request R1-1905888 (CR 0007 to TS 38.202) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.202 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-q9575744a009d",
+   "question": "Which Rel-18 change requests that modify clause 8.4.1.3 of TS 38.212 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q95eea09b3858",
+   "question": "Which Rel-16 change requests that modify clause 8.2.3.2 of TS 38.211 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-q9a59b33b97fe",
+   "question": "Change request R1-2009625 (CR 0164 to TS 38.213) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-q9dfbbacb2e96",
+   "question": "TSG RAN CR pack RP-211250 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qa19668093a14",
+   "question": "Trace change request R1-2509644 (CR 0075 to TS 38.215) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.215 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-qac92a1ec9d32",
+   "question": "Which Rel-15 change requests that modify clause 9.1.3.2 of TS 38.213 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qaf69bd0e3f93",
+   "question": "In which TSG RAN CR pack was change request R1-2505010 (CR 0223 to TS 38.212) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qb8265a57b471",
+   "question": "In which TSG RAN CR pack was change request R1-1913234 (CR 0011 to TS 38.215) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qba82056aee67",
+   "question": "In which TSG RAN CR pack was change request R1-2102004 (CR 0162 to TS 38.214) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qbaf3c506f16e",
+   "question": "Which Rel-15 change requests that modify clause 4.4.2 of TS 38.211 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qbbb44c7bca59",
+   "question": "TSG RAN CR pack RP-233733 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qc5eab3ce8739",
+   "question": "Which Rel-19 change requests that modify clause 5.1.6.5 of TS 38.214 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qc7e2f943ce81",
+   "question": "Change request R1-2405761 (CR 0651 to TS 38.213) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qc7fd8c609947",
+   "question": "Change request R1-2401778 (CR 0512 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qc8472684e9bd",
+   "question": "TSG RAN CR pack RP-241065 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qc907d66469c0",
+   "question": "In which TSG RAN CR pack was change request R1-2208155 (CR 0350 to TS 38.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qcbd3edd5f443",
+   "question": "Change request R1-2102205 (CR 0168 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qcd9f54ddda3c",
+   "question": "Which Rel-17 change requests that modify clause 5.2.2.2.6 of TS 38.214 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qce19f5dd13d0",
+   "question": "RAN1 recorded document R1-2308156 as revised. Follow its revisions to every later version that has a source-verified RAN1 disposition for the whole document and was submitted in a TSG RAN CR pack. Give each such document, that disposition, and the CR pack document number.",
+   "fields": [
+    "final_document",
+    "disposition",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qd2fada9e1c66",
+   "question": "Change request R1-2407361 (CR 0601 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qd3d315daf094",
+   "question": "In which TSG RAN CR pack was change request R1-167179 (CR 0697 to TS 36.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qd42ec96efa7e",
+   "question": "In which TSG RAN CR pack was change request R1-2601678 (CR 1456 to TS 36.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qd721c19c0bc9",
+   "question": "Trace change request R1-2405514 (CR 0557 to TS 38.214) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.214 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-qd789815d360b",
+   "question": "Which Rel-17 change requests that modify clause 8.4.2.1 of TS 38.214 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qd794c7c762bf",
+   "question": "TSG RAN CR pack RP-202390 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qd81164507c3e",
+   "question": "In which TSG RAN CR pack was change request R1-2509711 (CR 0744 to TS 38.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qda6b89c24ca8",
+   "question": "Change request R1-2112956 (CR 0235 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qdb85116d0da5",
+   "question": "In which TSG RAN CR pack was change request R1-167854 (CR 0712 to TS 36.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qdf253722befa",
+   "question": "Trace change request R1-2106280 (CR 0073 to TS 38.211) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.211 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-qdf7c5e7381ec",
+   "question": "In which TSG RAN CR pack was change request R1-2005157 (CR 0090 to TS 38.214) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qdf9ff45b40e4",
+   "question": "In which TSG RAN CR pack was change request R1-2403724 (CR 0624 to TS 38.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qe23b0cab195c",
+   "question": "In which TSG RAN CR pack was change request R1-2407402 (CR 0657 to TS 38.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qe7acab6f5262",
+   "question": "TSG RAN CR pack RP-230449 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qe99a8fb08a14",
+   "question": "In which TSG RAN CR pack was change request R1-2208244 (CR 0118 to TS 38.212) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qe9a6c072bf72",
+   "question": "In which TSG RAN CR pack was change request R1-2002832 (CR 0023 to TS 38.215) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qeb65d2219674",
+   "question": "In which TSG RAN CR pack was change request R1-1714399 (CR 0949 to TS 36.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qed3d7d332edd",
+   "question": "Change request R1-2210760 (CR 0366 to TS 38.214) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qf2e42a4bc65f",
+   "question": "In which TSG RAN CR pack was change request R1-2202945 (CR 0289 to TS 38.213) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qf40f4d5407f6",
+   "question": "Change request R1-2007434 (CR 0131 to TS 38.213) was handled by RAN1. What source-verified disposition did RAN1 record for the whole document and at which RAN1 meeting, and in which TSG RAN CR pack was it then submitted? Give the disposition, the RAN1 meeting, the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qf6f6970331d5",
+   "question": "Which Rel-16 change requests that modify clause 6.1.2.3.1 of TS 38.214 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qf7180d82c597",
+   "question": "Trace change request R1-2101995 (CR 0189 to TS 38.213) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.213 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-qfc5c087d958a",
+   "question": "Which Rel-18 change requests that modify clause 7.7.3 of TS 38.213 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qfd418876739e",
+   "question": "Trace change request R1-2002764 (CR 0079 to TS 38.214) from the RAN1 decision to the clauses it modifies. Give the source-verified disposition RAN1 recorded for the whole document, the RAN1 meeting, the TSG RAN CR pack document number, the TSG RAN meeting, and each clause of TS 38.214 that the CR modifies.",
+   "fields": [
+    "disposition",
+    "wg_meeting",
+    "cr_pack",
+    "tsg_meeting",
+    "clause"
+   ]
+  },
+  {
+   "id": "RAN1-qfd7d13f149a8",
+   "question": "TSG RAN CR pack RP-253013 carries change requests from RAN1. For each change request in the pack that has a source-verified RAN1 disposition for the whole document, give the document, the disposition, and the RAN1 meeting.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting"
+   ]
+  },
+  {
+   "id": "RAN1-qffd02b4de4ba",
+   "question": "Which Rel-18 change requests that modify clause 17.1A of TS 38.213 have a source-verified RAN1 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN1 meeting, and the CR pack document number.",
+   "fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+   ]
+  },
+  {
+   "id": "RAN1-qffe15a7dca94",
+   "question": "In which TSG RAN CR pack was change request R1-2212754 (CR 0374 to TS 38.214) submitted? Give the CR pack document number and the TSG RAN meeting.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  }
+ ]
+}

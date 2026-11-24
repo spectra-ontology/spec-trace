@@ -1,0 +1,197 @@
+{
+  "working_group": "RAN2",
+  "phase": 2,
+  "scope": "Projection of an existing original loaded-graph execution receipt; not a fresh execution and not limited to the released query projection.",
+  "original_receipt": {
+    "path": "logs/tsg/RAN/formal/RAN2/phase-2/cq_cypher_results.json",
+    "sha256": "c8a7c5d0520080c34118deb9c6637401dbd2ce937c5b30870fecded5245d7ecc"
+  },
+  "metadata": {
+    "version": "5.0",
+    "date": "2026-11-24T17:52:20.241630",
+    "total": 25,
+    "pass": 25,
+    "no_data": 0,
+    "fail": 0
+  },
+  "counts": {
+    "PASS": 25
+  },
+  "results": [
+    {
+      "id": "CQ1-1",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN2#117'}) OPTIONAL MATCH (a)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) RETURN a.resolutionId, a.content, ai.agendaNumber ORDER BY ai.agendaNumber, a.sequence LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ1-2",
+      "query": "MATCH (c:Conclusion)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN2#121'}) RETURN c.resolutionId, c.content, c.hasConsensus ORDER BY c.sequence LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ1-3",
+      "query": "MATCH (wa:WorkingAssumption)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN2#115'}) RETURN wa.resolutionId, wa.content ORDER BY wa.sequence LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 11
+    },
+    {
+      "id": "CQ1-4",
+      "query": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) WHERE (ai.agendaNumber = '8.11' OR ai.agendaNumber STARTS WITH '8.11.') AND ai.meetingNumber = '117' MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, labels(r) AS type, r.content ORDER BY r.sequence LIMIT 15",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 15
+    },
+    {
+      "id": "CQ1-5",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:TARGET_RELEASE]->(rel:Release {releaseName: 'Rel-18'}), (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, m.canonicalMeetingNumber, r.content ORDER BY m.meetingNumberInt DESC, r.sequence LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-6",
+      "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.331'}), (r)-[:MADE_AT]->(m:Meeting) RETURN r.resolutionId, m.canonicalMeetingNumber, r.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-7",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (r)-[:MADE_AT]->(m:Meeting) WITH wi, r, m RETURN wi.workItemCode AS workItemId, r.resolutionId, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-8",
+      "query": "MATCH (r:Resolution)-[:RESOLUTION_BELONGS_TO]->(ai:AgendaItem) WHERE ai.agendaNumber <> 'UNKNOWN' RETURN ai.agendaNumber, ai.meetingNumber, count(r) AS resolutionCount ORDER BY resolutionCount DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ2-1",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc {tdocNumber: 'R2-2508373'}) MATCH (r)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, r.resolutionId, labels(r) AS type, m.canonicalMeetingNumber, r.content",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 2
+    },
+    {
+      "id": "CQ2-2",
+      "query": "MATCH (a:Agreement {resolutionId: 'AGR-132-8.13.2-004'})-[:REFERENCES]->(t:Tdoc) RETURN a.resolutionId, a.content, t.tdocNumber, t.title",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ2-3",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting), (a)-[:REFERENCES]->(t:Tdoc) WHERE toLower(a.content) CONTAINS 'comeback' RETURN DISTINCT t.tdocNumber, t.title, a.resolutionId, m.canonicalMeetingNumber, a.content ORDER BY m.canonicalMeetingNumber DESC, t.tdocNumber LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ2-4",
+      "query": "MATCH (a:Agreement)-[:HAS_DISPOSITION]->(:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(t:Tdoc)-[:MODIFIES]->(sp:Spec), (a)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, sp.specNumber, a.resolutionId, m.canonicalMeetingNumber, a.content ORDER BY m.meetingNumberInt DESC, a.sequence LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-1",
+      "query": "MATCH (c:Company {companyName: 'Huawei'})<-[:SUBMITTED_BY]-(t:Tdoc) WITH count(t) AS totalTdocs MATCH (c:Company {companyName: 'Huawei'})<-[:SUBMITTED_BY]-(t:Tdoc)<-[:REFERENCES]-(r:Resolution) WITH totalTdocs, count(DISTINCT t) AS resolvedTdocs RETURN totalTdocs, resolvedTdocs, round(100.0 * resolvedTdocs / totalTdocs, 1) AS ratio",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ3-2",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec {specNumber: '38.331'}), (t)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(DISTINCT r) AS contributions ORDER BY contributions DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-3",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem), (t)-[:SUBMITTED_BY]->(c:Company) WITH wi, c, count(DISTINCT r) AS cnt ORDER BY cnt DESC WITH wi, collect({company: c.companyName, count: cnt})[0..5] AS topCompanies RETURN wi.workItemCode, topCompanies LIMIT 5",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 5
+    },
+    {
+      "id": "CQ3-4",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company) WHERE c.companyName IN ['Huawei', 'Ericsson'] RETURN c.companyName, count(DISTINCT r) AS resolutionCount ORDER BY resolutionCount DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 2
+    },
+    {
+      "id": "CQ6-1",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:TARGET_RELEASE]->(rel:Release {releaseName: 'Rel-18'}), (r)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS mNum, count(DISTINCT r) AS resCount ORDER BY mNum DESC, meeting DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 25
+    },
+    {
+      "id": "CQ6-2",
+      "query": "MATCH (r2:Resolution)-[:REFERENCES]->(:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}) MATCH (r2)-[:MADE_AT]->(m:Meeting) WITH c, m, count(DISTINCT r2) AS companyCount MATCH (r:Resolution)-[:MADE_AT]->(m) WITH c, m, companyCount, count(DISTINCT r) AS total, count(DISTINCT CASE WHEN EXISTS { (r)-[:REFERENCES]->(:Tdoc) } THEN r END) AS linked RETURN c.companyName AS company, m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS mNum, companyCount, linked, total, round(100.0 * companyCount / linked, 1) AS shareOfLinked ORDER BY mNum DESC, meeting DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 61
+    },
+    {
+      "id": "CQ1-9",
+      "query": "MATCH (r:Resolution) RETURN CASE WHEN r:Agreement THEN 'Agreement' WHEN r:Conclusion THEN 'Conclusion' WHEN r:WorkingAssumption THEN 'WorkingAssumption' ELSE coalesce(r.resolutionScope, 'Resolution') END AS type, count(r) AS cnt ORDER BY cnt DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 4
+    },
+    {
+      "id": "CQ1-10",
+      "query": "MATCH (r:Resolution)-[:MADE_AT]->(m:Meeting {canonicalMeetingNumber: 'RAN2#132'}) RETURN CASE WHEN r:Agreement THEN 'Agreement' WHEN r:Conclusion THEN 'Conclusion' WHEN r:WorkingAssumption THEN 'WorkingAssumption' ELSE coalesce(r.resolutionScope, 'Resolution') END AS type, count(r) AS cnt ORDER BY cnt DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 3
+    },
+    {
+      "id": "CQ2-5",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc {tdocNumber: 'R2-2600228'}), (r)-[:MADE_AT]->(m:Meeting) RETURN t.tdocNumber, r.resolutionId, labels(r) AS type, m.canonicalMeetingNumber, r.content",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 2
+    },
+    {
+      "id": "CQ2-6",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) WHERE a.content CONTAINS 'FFS' RETURN a.resolutionId, m.canonicalMeetingNumber, a.content ORDER BY m.meetingNumberInt DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-5",
+      "query": "MATCH (r:Resolution)-[:REFERENCES]->(t:Tdoc)-[:SUBMITTED_BY]->(c:Company), (r)-[:MADE_AT]->(m:Meeting) RETURN c.companyName, count(DISTINCT r) AS resolutionCount ORDER BY resolutionCount DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ6-3",
+      "query": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS mNum, count(a) AS agrCount ORDER BY mNum DESC, meeting DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 61
+    },
+    {
+      "id": "CQ6-4",
+      "query": "MATCH (c:Conclusion)-[:MADE_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber AS meeting, m.meetingNumberInt AS mNum, count(c) AS conCount ORDER BY mNum DESC, meeting DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 11
+    }
+  ]
+}

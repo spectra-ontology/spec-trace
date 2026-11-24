@@ -1,0 +1,198 @@
+{
+  "working_group": "RAN2",
+  "phase": 1,
+  "scope": "Projection of an existing original loaded-graph execution receipt; not a fresh execution and not limited to the released query projection.",
+  "original_receipt": {
+    "path": "logs/tsg/RAN/formal/RAN2/phase-1/cq_cypher_results.json",
+    "sha256": "54df214df05af32a5b417a32044ff8f18bbbd7a93d3561afbf4dbdd9ac4773f2"
+  },
+  "metadata": {
+    "version": "1.1",
+    "date": "2026-11-24T17:48:35.180715",
+    "dataset_hash": "c48dee911442ec9d",
+    "total": 25,
+    "pass": 25,
+    "no_data": 0,
+    "fail": 0
+  },
+  "counts": {
+    "PASS": 25
+  },
+  "results": [
+    {
+      "id": "CQ1-1",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#130'})<-[:PRESENTED_AT]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_Mob_enh2-Core'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-2",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#132'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem {agendaNumber: '6.1.3.1'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-3",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#132'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-4",
+      "query": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-19'}), (t)-[:PRESENTED_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, t.type, t.status, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-5",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#131'})<-[:PRESENTED_AT]-(t:Tdoc) WHERE t.status IN ['approved', 'agreed'] RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ1-6",
+      "query": "MATCH (t:Tdoc {tdocNumber: 'R2-2509337'}) RETURN t.tdocNumber, t.title, t.status, t.type LIMIT 1",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ1-7",
+      "query": "MATCH (t:Tdoc {tdocNumber: 'R2-2509337'}) RETURN t.tdocNumber, t.title, t.`for` LIMIT 1",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ1-8",
+      "query": "MATCH (t:Tdoc {tdocNumber: 'R2-2509337'})-[:HAS_CONTACT]->(c:Contact) RETURN t.tdocNumber, c.contactName, c.contactId LIMIT 1",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ1-9",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#132'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem) WITH DISTINCT a RETURN a.agendaNumber, a.agendaDescription ORDER BY a.agendaNumber ASC LIMIT 50",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 50
+    },
+    {
+      "id": "CQ2-1",
+      "query": "MATCH (t:Tdoc {tdocNumber: 'R2-2509478'}) OPTIONAL MATCH (t)-[:IS_REVISION_OF]->(prev:Tdoc) OPTIONAL MATCH (t)-[:REVISED_TO]->(next:Tdoc) RETURN t.tdocNumber, prev.tdocNumber AS previousVersion, next.tdocNumber AS nextVersion",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ2-2",
+      "query": "MATCH (t:Tdoc {tdocNumber: 'R2-2509443'}) OPTIONAL MATCH (t)-[:SENT_TO]->(wg:WorkingGroup) OPTIONAL MATCH (t)-[:CC_TO]->(cc:WorkingGroup) OPTIONAL MATCH (t)-[:ORIGINATED_FROM]->(from:WorkingGroup) RETURN t.tdocNumber, t.direction, collect(DISTINCT wg.wgName) AS sentTo, collect(DISTINCT cc.wgName) AS ccTo, collect(DISTINCT from.wgName) AS originatedFrom",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ2-3",
+      "query": "MATCH (t:Tdoc)-[:REPLY_TO]->(target:Tdoc) RETURN t.tdocNumber, target.tdocNumber AS replyTarget ORDER BY t.tdocNumber DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ2-4",
+      "query": "MATCH (t:Tdoc {tdocNumber: 'R2-2509337'})-[:MODIFIES]->(s:Spec) RETURN t.tdocNumber, t.title, s.specNumber, s.specVersion LIMIT 1",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ2-5",
+      "query": "MATCH (t:Tdoc {tdocNumber: 'R2-2509337'}) RETURN t.tdocNumber, t.crCategory, t.clausesAffected, t.affectsUICC, t.affectsME, t.affectsRAN, t.affectsCN LIMIT 1",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ2-6",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#131'})<-[:PRESENTED_AT]-(t:Tdoc) WHERE t.status = 'postponed' RETURN t.tdocNumber, t.title, t.type ORDER BY t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 9
+    },
+    {
+      "id": "CQ2-7",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#132'})<-[:PRESENTED_AT]-(t:LS)-[:BELONGS_TO]->(a:AgendaItem) WHERE t.direction = 'in' RETURN t.tdocNumber, t.title, a.agendaNumber ORDER BY a.agendaNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-1",
+      "query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Ericsson'}), (t)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_newRAT-Core'}), (t)-[:PRESENTED_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, t.status, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-2",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#130'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem {agendaNumber: '8.2.2'}), (t)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, t.tdocNumber, t.title, t.status ORDER BY c.companyName, t.tdocNumber LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-3",
+      "query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company), (t)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_newRAT-Core'}) RETURN c.companyName, count(t) AS contributions ORDER BY contributions DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-4",
+      "query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}) WITH count(t) AS total, sum(CASE WHEN t.status IN ['agreed', 'approved', 'endorsed'] THEN 1 ELSE 0 END) AS adopted RETURN total, adopted, round(adopted * 100.0 / total, 1) AS adoptionRate",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 1
+    },
+    {
+      "id": "CQ3-5",
+      "query": "MATCH (t0:Tdoc {tdocNumber: 'R2-2509337'})-[:BELONGS_TO]->(a:AgendaItem), (t0)-[:PRESENTED_AT]->(m:Meeting) MATCH (m)<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a), (t)-[:SUBMITTED_BY]->(c:Company) WHERE t.tdocNumber <> 'R2-2509337' RETURN c.companyName, t.tdocNumber, t.title, t.status ORDER BY c.companyName, t.tdocNumber LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ3-6",
+      "query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Nokia'}), (t)-[:RELATED_TO]->(wi:WorkItem) RETURN wi.workItemCode, count(t) AS contributions ORDER BY contributions DESC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ4-1",
+      "query": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}), (t)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_Mob_enh2-Core'}), (t)-[:PRESENTED_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, t.status, m.canonicalMeetingNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    },
+    {
+      "id": "CQ4-2",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#132'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}) RETURN t.status, count(t) AS count ORDER BY count DESC",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 11
+    },
+    {
+      "id": "CQ4-3",
+      "query": "MATCH (m:Meeting {canonicalMeetingNumber: 'RAN2#107'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem {agendaNumber: '11.4.2'}) WHERE t.status = 'not treated' RETURN t.tdocNumber, t.title, t.type ORDER BY t.tdocNumber ASC LIMIT 10",
+      "status": "PASS",
+      "guard_defects": [],
+      "result_count": 10
+    }
+  ]
+}

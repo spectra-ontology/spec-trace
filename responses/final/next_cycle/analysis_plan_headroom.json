@@ -1,0 +1,106 @@
+{
+ "purpose": "Prespecified design for a split of items built on operators that the seven admitted families do not use, to measure whether such items separate the methods that reach the ceiling on the 667 admitted items. Written before any item of the three families was generated and before any solver saw a question of these families: the generator, the gate and the graph cross-check held no entry for them, and no model was called on any candidate.",
+ "recordedAtUtc": "2026-11-17T22:06:39+00:00",
+ "stateWhenWritten": {
+  "build_chain_items.py": "1c740aacd9018bb372c9f040eb8f890e39f78954f89c9103353fb732b1043452",
+  "verify_chain_items.py": "07f876b79a18a0f036ae260486cfa48d5a0ca49c480ff3bed85fc866ce467c01",
+  "crosscheck_chain_items_graph.py": "76cb8eff5f4c61177f7e5aff326e567d4f7b2086f0c291ecfb01aff34b1c3c04",
+  "measure_relational_equivalence.py": "c1287de7e50894487b7d7c05e3d8b86f26b8048a4defeb0acfc7ba1c2b66ccf4",
+  "note": "sha256 of the generator, gate, graph cross-check and reference-query scripts before any of them names the three families"
+ },
+ "whyTheseFamilies": "Chosen on structure alone, from counts over the relational exports with no model call. The seven admitted families are each one query of at most seven joins built from equality joins and one recursive step. clause_neighbours keeps those operators and lengthens the chain (nine joins): it is the control for chain length alone. first_change adds a set difference over plenary order (no earlier pack changed the clause). previous_pack adds a per-clause maximum over plenary order (the latest earlier meeting). A family across working groups was examined and left out: the exports share no packed specification between working groups and two pack identifiers in all, so a cross-group answer would depend on the plenary label alone.",
+ "families": {
+  "clause_neighbours": {
+   "anchor": "a change request with a source-verified whole-document disposition that is a member of a CR pack (the anchor rule of full_chain)",
+   "answer": "for each clause the anchor modifies in its own release: every other change request of that release that modifies the clause, has a source-verified whole-document disposition and is a member of a CR pack",
+   "fields": [
+    "clause",
+    "document",
+    "disposition",
+    "working-group meeting",
+    "CR pack document number"
+   ]
+  },
+  "first_change": {
+   "anchor": "a CR pack",
+   "answer": "for the pack's change requests that have a source-verified whole-document disposition: each (document, specification, clause) where the clause is modified in the change request's release and no change request of that release that is a member of a CR pack of an earlier TSG RAN meeting (smaller meeting number) modifies the same clause",
+   "fields": [
+    "document",
+    "specification",
+    "clause"
+   ]
+  },
+  "previous_pack": {
+   "anchor": "a CR pack",
+   "answer": "for each clause modified (in the change request's release) by a pack member that has a source-verified whole-document disposition: every CR pack of the latest earlier TSG RAN meeting that carried a change request of that release modifying the clause; clauses with no earlier pack give no row",
+   "fields": [
+    "specification",
+    "clause",
+    "CR pack document number",
+    "TSG RAN meeting"
+   ]
+  },
+  "referenceQueries": "the member-side and container-side SQL of the candidate count (clause_neighbours, first_change, previous_pack), with the specification column added to the two pack-anchored families so that a pack spanning several specifications gives distinct rows; they enter measure_relational_equivalence.py and verify_chain_items.py as the reference and the re-derivation",
+  "scopeOfEarlier": "'Earlier' is decided inside the records of the working group (CR packs of TSG RAN meetings 79 to 112 in the exports). The question text says so once."
+ },
+ "questionWording": "Each question states every condition of its reference query in words (source-verified disposition for the whole document, same release, membership of a CR pack, earlier TSG RAN meeting within the records, all packs of the latest earlier meeting, clauses with no earlier pack left out) and names the answer fields in order, in the style of the seven existing templates. The wording is fixed before any solver run and is not edited after a score is seen. A table mapping each query condition to its phrase is stored next to the items.",
+ "selection": {
+  "generator": "build_chain_items.py with the three families added, same options as the admitted set: --per-cell 20, --seed 20261111, one random stream per (seed, wg, family)",
+  "eligible": "anchors whose reference answer has 1 to 61 rows (61 is the largest gold answer of the admitted set) and whose member-side and container-side derivations agree; empty answers are left out because the gate admits an empty gold only for the closed-without-pack disposition",
+  "size": "up to 20 anchors per working group and family, 300 items at most; the admitted count is whatever passes the gate",
+  "regression": "After the families are added, regenerating the seven existing families with the recorded options must reproduce the admitted 667 items byte for byte, and reconcile_reported_counts.py and the claims verifiers must pass unchanged."
+ },
+ "gate": [
+  "verify_chain_items.py (container-side re-derivation, same checks as the admitted set)",
+  "control_chain_gate.py --per-family 6 --seed 7",
+  "crosscheck_chain_items_graph.py against the working-group graphs",
+  "reference-query equality in measure_relational_equivalence.py"
+ ],
+ "solvers": {
+  "queryWriters": {
+   "sessions": "one fresh context-free Claude Opus 5.5 subagent per working group, language (text2sql, text2cypher) and run; runs A to E (50 sessions)",
+   "prompt": "the archived query-writer prompt of the same working group and language with the item packet replaced by the split's packet and the output file name changed",
+   "execution": "execute_repeated_runs.sh settings: first query only, no repair round for the primary metric",
+   "runs": "Five runs, the number of the first query-writer round on the admitted set; fixed here. A session that ends without a complete query file is relaunched once and the relaunch is recorded."
+  },
+  "codex": {
+   "solver": "Codex CLI (gpt-6.1-sol)",
+   "conditions": [
+    "text2sql schema only",
+    "text2sql with exploration",
+    "text2cypher schema only",
+    "text2cypher with exploration"
+   ],
+   "prompt": "the archived invocation prompts of those four conditions with the split's packets",
+   "runs": "one run each, as on the admitted set"
+  },
+  "textSearch": {
+   "sessions": "fresh Claude Opus 5.5 subagents, packets built by build_text_search_packets.py with the part size of the admitted set, tool search_records_text.py with metadata",
+   "runs": "two runs (the smallest number that gives a range)"
+  },
+  "denseTool": {
+   "sessions": "same parts, tool search_records_dense.py with the local bge-m3 encoder",
+   "runs": "two runs, as on the admitted set"
+  },
+  "localAgent": {
+   "runner": "scripts/publication/paper/ongoing/sigir-2027-research/run_local_agent_eval.py",
+   "models": [
+    "qwen2.5:14b",
+    "llama3.1:8b"
+   ],
+   "routes": [
+    "sql_explore",
+    "text_search"
+   ],
+   "runs": "one run per model and route with the settings of analysis_plan_local_agent.json"
+  },
+  "notMeasured": "Text-only search and raw-text search are left out: they isolate the role of record metadata, which the admitted set already measures."
+ },
+ "scoring": {
+  "primary": "exact row-set match of score_chain_eval.py (recorded meeting notation)",
+  "secondary": "same_meeting rule of score_meeting_spelling_sensitivity.py, reported next to the primary count",
+  "reported": "per method and per family: exact count over the admitted items of the split with a Wilson 95% interval; for repeated runs the mean and the range; for local agents the session medians and the number of sessions ended without an answer. Every method and run is reported regardless of score."
+ },
+ "reading": "The split is reported as it comes out. If query writers and Codex with exploration again answer every item, the manuscript states that the two added operators stay within one query for these solvers and reports the separation the split gives among search routes and open-weight agents. If they fall below the ceiling, the per-family counts are reported with the misses classified by the first condition of the reference query that the written query lacks (checked by executing the written query with and without that condition).",
+ "notAnalysed": "No item is replaced and no run is dropped after a score is seen. A condition that cannot be completed is reported as incomplete with the reason."
+}

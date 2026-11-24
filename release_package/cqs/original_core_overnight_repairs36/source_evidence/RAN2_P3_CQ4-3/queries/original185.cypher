@@ -1,1 +1,0 @@
-MATCH (r:Resolution)-[:REFERENCES]->(cr:CR) WHERE cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' MATCH (cr)-[:MODIFIES]->(sp:Spec) RETURN r.resolutionId, cr.tdocNumber, cr.clausesAffected, sp.specNumber ORDER BY r.resolutionId, cr.tdocNumber, sp.specNumber

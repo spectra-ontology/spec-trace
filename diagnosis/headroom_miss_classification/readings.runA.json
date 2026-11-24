@@ -1,0 +1,140 @@
+{
+ "e3715d93cf94": {
+  "held": {
+   "anchor": "WHERE number = '{ANCHOR}' OR doc_id = '{ANCHOR}'",
+   "other_than_anchor": "c2.doc_id NOT IN (SELECT doc_id FROM x)",
+   "anchor_release": "WHERE s.rel = d.trel",
+   "other_release": "WHERE s.rel = d.trel",
+   "evidence_status": "replace(replace(lower(trim(di.evidence_status)), '_', '-'), ' ', '-') IN ('source-verified', 'verified', 'sourceverified', 'verified-source')"
+  },
+  "lacking": [
+   {
+    "condition": "scope",
+    "find": "replace(replace(lower(trim(di.scope)), '_', ' '), '-', ' ') IN ('whole document', 'document', 'whole', 'full document', 'full', 'entire document', 'whole doc', 'doc', 'whole tdoc', 'tdoc', 'full tdoc', 'entire', 'all')",
+    "replace": "di.scope = 'whole_target'"
+   }
+  ],
+  "storedValuesKeptByThePredicate": {
+   "evidence_status": [
+    "source_verified"
+   ],
+   "scope": []
+  }
+ },
+ "bfa4bd4dfbe2": {
+  "held": {
+   "anchor": "dp.pack_number = '{ANCHOR}' OR dp.pack_id = '{ANCHOR}'",
+   "release": "WHERE s.rel = d.trel",
+   "evidence_status": "replace(replace(lower(trim(di.evidence_status)), '_', '-'), ' ', '-') IN ('source-verified', 'verified', 'sourceverified', 'verified-source')",
+   "no_earlier_pack": "WHERE NOT EXISTS ( SELECT 1 FROM cpk e",
+   "earlier_same_clause": "e.spec = t.spec AND e.clause = t.clause AND e.rel = t.rel",
+   "earlier_release": "WHERE s.rel = d.trel",
+   "earlier_plenary_order": "e.tsg_num < t.tsg_num"
+  },
+  "lacking": [
+   {
+    "condition": "scope",
+    "find": "replace(replace(lower(trim(di.scope)), '_', ' '), '-', ' ') IN ('whole document', 'document', 'whole', 'full document', 'full', 'entire document', 'whole doc', 'doc', 'whole tdoc', 'tdoc', 'full tdoc', 'entire', 'all')",
+    "replace": "di.scope = 'whole_target'"
+   }
+  ],
+  "storedValuesKeptByThePredicate": {
+   "evidence_status": [
+    "source_verified"
+   ],
+   "scope": []
+  }
+ },
+ "d4f2fb03c4e9": {
+  "held": {
+   "anchor": "dp.pack_number = '{ANCHOR}' OR dp.pack_id = '{ANCHOR}'",
+   "release": "WHERE s.rel = d.trel",
+   "evidence_status": "replace(replace(lower(trim(di.evidence_status)), '_', '-'), ' ', '-') IN ('source-verified', 'verified', 'sourceverified', 'verified-source')",
+   "earlier_release": "WHERE s.rel = d.trel",
+   "earlier_plenary_order": "e2.tsg_num < t.tsg_num",
+   "latest_earlier": "e.tsg_num = ( SELECT MAX(e2.tsg_num) FROM cpk e2 WHERE"
+  },
+  "lacking": [
+   {
+    "condition": "scope",
+    "find": "replace(replace(lower(trim(di.scope)), '_', ' '), '-', ' ') IN ('whole document', 'document', 'whole', 'full document', 'full', 'entire document', 'whole doc', 'doc', 'whole tdoc', 'tdoc', 'full tdoc', 'entire', 'all')",
+    "replace": "di.scope = 'whole_target'"
+   }
+  ],
+  "storedValuesKeptByThePredicate": {
+   "evidence_status": [
+    "source_verified"
+   ],
+   "scope": []
+  }
+ },
+ "3660b1ac2de8": {
+  "held": {
+   "anchor": "WHERE number = '{ANCHOR}' OR id = '{ANCHOR}'",
+   "other_than_anchor": "d2.id NOT IN (SELECT doc_id FROM X)",
+   "anchor_release": "LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(s.release)),'release',''),'rel',''),'-',''),' ',''),'r') = LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(X.tr)),'release',''),'rel',''),'-',''),' ',''),'r')",
+   "other_release": "LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(d2.target_release)),'release',''),'rel',''),'-',''),' ',''),'r') = LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(s2.release)),'release',''),'rel',''),'-',''),' ',''),'r')",
+   "evidence_status": "LOWER(REPLACE(REPLACE(REPLACE(TRIM(d.evidence_status),'_',''),'-',''),' ','')) IN ('sourceverified','verifiedsource','verifiedfromsource')"
+  },
+  "lacking": [
+   {
+    "condition": "scope",
+    "find": "LOWER(REPLACE(REPLACE(REPLACE(TRIM(d.scope),'_',''),'-',''),' ','')) IN ('wholedocument','document','whole','fulldocument','full','entiredocument','entire','doc','wholedoc','documentlevel','tdoc')",
+    "replace": "d.scope = 'whole_target'"
+   }
+  ],
+  "storedValuesKeptByThePredicate": {
+   "evidence_status": [
+    "source_verified"
+   ],
+   "scope": []
+  }
+ },
+ "aac0b077da4a": {
+  "held": {
+   "anchor": "pack_number = '{ANCHOR}' OR id = '{ANCHOR}'",
+   "release": "LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(s.release)),'release',''),'rel',''),'-',''),' ',''),'r') = LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(doc.target_release)),'release',''),'rel',''),'-',''),' ',''),'r')",
+   "evidence_status": "LOWER(REPLACE(REPLACE(REPLACE(TRIM(d.evidence_status),'_',''),'-',''),' ','')) IN ('sourceverified','verifiedsource','verifiedfromsource')",
+   "no_earlier_pack": "WHERE NOT EXISTS ( SELECT 1 FROM section s2",
+   "earlier_same_clause": "s2.spec = b.spec AND s2.release = b.rel AND s2.clause = b.clause",
+   "earlier_release": "LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(d2.target_release)),'release',''),'rel',''),'-',''),' ',''),'r') = LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(s2.release)),'release',''),'rel',''),'-',''),' ',''),'r')",
+   "earlier_plenary_order": "cp.tsg_number < b.tn"
+  },
+  "lacking": [
+   {
+    "condition": "scope",
+    "find": "LOWER(REPLACE(REPLACE(REPLACE(TRIM(d.scope),'_',''),'-',''),' ','')) IN ('wholedocument','document','whole','fulldocument','full','entiredocument','entire','doc','wholedoc','documentlevel','tdoc')",
+    "replace": "d.scope = 'whole_target'"
+   }
+  ],
+  "storedValuesKeptByThePredicate": {
+   "evidence_status": [
+    "source_verified"
+   ],
+   "scope": []
+  }
+ },
+ "6d3b00dd7dae": {
+  "held": {
+   "anchor": "pack_number = '{ANCHOR}' OR id = '{ANCHOR}'",
+   "release": "LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(s.release)),'release',''),'rel',''),'-',''),' ',''),'r') = LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(doc.target_release)),'release',''),'rel',''),'-',''),' ',''),'r')",
+   "evidence_status": "LOWER(REPLACE(REPLACE(REPLACE(TRIM(d.evidence_status),'_',''),'-',''),' ','')) IN ('sourceverified','verifiedsource','verifiedfromsource')",
+   "earlier_release": "LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(d2.target_release)),'release',''),'rel',''),'-',''),' ',''),'r') = LTRIM(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(s2.release)),'release',''),'rel',''),'-',''),' ',''),'r')",
+   "earlier_plenary_order": "cp.tsg_number < b.tn",
+   "latest_earlier": "c.ptn = ( SELECT MAX(c3.ptn) FROM cand c3 WHERE"
+  },
+  "lacking": [
+   {
+    "condition": "scope",
+    "find": "LOWER(REPLACE(REPLACE(REPLACE(TRIM(d.scope),'_',''),'-',''),' ','')) IN ('wholedocument','document','whole','fulldocument','full','entiredocument','entire','doc','wholedoc','documentlevel','tdoc')",
+    "replace": "d.scope = 'whole_target'"
+   }
+  ],
+  "storedValuesKeptByThePredicate": {
+   "evidence_status": [
+    "source_verified"
+   ],
+   "scope": []
+  }
+ }
+}

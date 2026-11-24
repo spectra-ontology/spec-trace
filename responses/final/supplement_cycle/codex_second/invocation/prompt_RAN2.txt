@@ -1,0 +1,23 @@
+You are an independent solver in a validity check of a question set. Answer 84 questions about the 3GPP RAN2 standardization process using ONLY the record files in the current working directory. The purpose is to test whether each question SENTENCE alone determines its answer, so independence matters more than anything else.
+
+Hard rules:
+- Read only files inside the current working directory: `questions.jsonl` and the files under `records/`. Do not open, list or search any path outside this directory (no parent directories, no home directory, no other temporary folders, no absolute paths), even when a record mentions another path. Do not use the web, a database (no Neo4j, no Qdrant, no SQLite), or any model/API service. Do not start or stop any service or container. Do not create or modify any file except `answers.jsonl` and helper scripts under `work/` in this directory. No git operations.
+- If a question sentence can reasonably be read in more than one way, pick the reading you find most natural, answer under it, and describe the alternative in the `note` field. Do not guess what an answer key would say.
+- Report honestly; if you cannot determine an answer, say so in `note` and give your best rows. Use only values found in the records; never fill from your own knowledge.
+
+Questions: `questions.jsonl` (each line: id, wg, question, fields — `fields` is the column order of each answer row).
+
+Record files (JSON-LD, top-level key `@graph` is a list of records; explore their keys yourself with small Python snippets):
+- Documents (TDocs, CRs; includes revision links, target release, list status fields): `records/phase-1/tdocs.jsonld` (the other files in `records/phase-1/`, e.g. meetings, may also be read)
+- Decision events with their meeting: `records/phase-2/resolutions_document_dispositions.jsonld`, plus `resolutions_agreements.jsonld`, `resolutions_conclusions.jsonld` and `resolutions_working_assumptions.jsonld` in that same directory
+- Disposition records (one per decision event and target document; carry a disposition code, an evidence status, and an assessment method that states the scope): `records/phase-2/decision_dispositions.jsonld`
+- Plenary CR packs and their member CRs: `records/phase-4/crpacks.jsonld`
+- Specification clauses and the CRs that modify them, and CR-side extensions: `records/phase-4/section_extensions.jsonld`, `cr_extensions.jsonld` (same directory)
+
+Answer format conventions (the same ones given to every solver): copy document numbers, meeting names and clause numbers exactly as the records write them, in the forms R2-2205027 (document), RAN2#110-e (working-group meeting), RP-221234 (CR pack), RAN#96 (plenary meeting), 6.2.1 (clause). Disposition values are the lower-case codes found in the records (agreed, revised, noted, endorsed, withdrawn, not_pursued, ...). If the records hold no such row, the answer is an empty row list.
+
+Practical: files are up to several hundred MB; check `free -h` first, load one file at a time with Python `json`, keep only what you need, and do not run more than one heavy process at once (the machine is shared with other jobs; if available memory is under 10 GiB, process the file in a streaming or reduced way rather than loading it whole). Put any helper scripts under `work/`. Keep command output short (head/cut).
+
+Output: write `answers.jsonl` in this directory, one line per question: {"id": <id>, "rows": [[...], ...], "note": "<ambiguities or difficulties, empty string if none>"}. Rows are lists of strings in the `fields` order; include every row the question asks for, no duplicates.
+
+Final message: for each id, the number of rows and any ambiguity you noted, plus a one-paragraph description of how you interpreted the record structure. Do not claim correctness — you cannot know it.

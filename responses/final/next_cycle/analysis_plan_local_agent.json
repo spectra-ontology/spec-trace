@@ -1,0 +1,32 @@
+{
+ "purpose": "Prespecified design for the open-weight agent measurement. Written before any response of this measurement existed (the output folder final/next_cycle/local_agent was empty); the only earlier execution is a tool check described under toolCheck, whose answers are not scored.",
+ "recordedAtUtc": "2026-11-17T21:49:23+00:00",
+ "items": [
+  "logs/publication/paper/ongoing/sigir-2027-research/integration/items_final/gate/core/chain_items_admitted.jsonl",
+  "logs/publication/paper/ongoing/sigir-2027-research/integration/items_final/gate/ran5/chain_items_admitted.jsonl"
+ ],
+ "itemCount": 667,
+ "runner": {
+  "script": "scripts/publication/paper/ongoing/sigir-2027-research/run_local_agent_eval.py",
+  "sha256": "adb5caab825ff99cab16345ab71d24d5cf4e978dcc8a64ea121026942bb27a6f"
+ },
+ "models": [
+  "qwen2.5:14b",
+  "llama3.1:8b"
+ ],
+ "modelOrder": "qwen2.5:14b on both routes first, then llama3.1:8b on both routes; the models are the two local readers of the existing closed-book, dense and oracle rows",
+ "routes": {
+  "sql_explore": "schema of the relational export plus a read-only SQL tool; the rows of the final answer query, executed once with the 60-second cap, are the answer (the open-weight counterpart of the Codex exploration condition)",
+  "text_search": "the BM25 tool with record-built metadata of the Opus text-search condition (search_records_text.search), 8 chunks of at most 1,500 characters per call; the model answers rows directly"
+ },
+ "session": "one session per item, temperature 0, seed 0, JSON output, 16,384-token context (the local-reader context). No turn limit: when the cumulative tokens reported by the server exceed half the context, the next turn must be the answer, otherwise the item is unreadable. A tool result is cut to 12,000 characters (8 x 1,500, the per-call volume of the local dense condition).",
+ "runs": "one run per model and route (temperature 0); 4 conditions x 667 items",
+ "scoring": {
+  "primary": "exact row-set match of score_chain_eval.py (recorded meeting notation); answerable 581 with Wilson 95% interval, empty-gold 86, fabricated, D and D_X as in the results table",
+  "secondary": "same_meeting rule of score_meeting_spelling_sensitivity.py reported next to the primary count"
+ },
+ "reported": "all four conditions are reported whatever their scores; turns, tokens and seconds per item are reported as medians; items ended without an answer at the budget are counted",
+ "toolCheck": "before the runs, the runner is executed on the first item of one working group per route into a scratch folder to confirm that the loop, the tools and the output format work and to time a session; those outputs are deleted and not scored",
+ "notAnalysed": "No run is dropped after its score is seen. A condition that cannot be completed on this host is reported as incomplete with the reason and the number of items solved.",
+ "differenceFromAgentRows": "The Opus and Codex rows are sessions over a packet of many items with shell access to the tool; the local rows are one bounded session per item. The table states the condition."
+}

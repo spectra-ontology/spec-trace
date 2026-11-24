@@ -1,0 +1,658 @@
+{
+  "itemFiles": [
+    {
+      "path": "logs/publication/paper/ongoing/sigir-2027-research/final/next_cycle/headroom/gate/core/chain_items_admitted.jsonl",
+      "items": 237
+    },
+    {
+      "path": "logs/publication/paper/ongoing/sigir-2027-research/final/next_cycle/headroom/gate/ran5/chain_items_admitted.jsonl",
+      "items": 60
+    }
+  ],
+  "items": 297,
+  "comparison": "SELECT DISTINCT 결과 행 집합과 gold 행 집합의 완전 일치",
+  "variants": {
+    "cr_side": {
+      "records": {
+        "member": "<withheld sha256=7ebb67dc7b5faec0fb5dbfdb6417dbf7ee2e1e46050c50315ea53c607b13cf93 chars=10>",
+        "change": "cr_modifies_section",
+        "origin": "pack_member"
+      },
+      "match": 297,
+      "items": 297,
+      "byItemFile": [
+        {
+          "path": "logs/publication/paper/ongoing/sigir-2027-research/final/next_cycle/headroom/gate/core/chain_items_admitted.jsonl",
+          "match": 237,
+          "items": 237
+        },
+        {
+          "path": "logs/publication/paper/ongoing/sigir-2027-research/final/next_cycle/headroom/gate/ran5/chain_items_admitted.jsonl",
+          "match": 60,
+          "items": 60
+        }
+      ],
+      "byFamily": {
+        "pack_lookup": {
+          "joins": 1,
+          "tables": 2,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_pack"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM cr_in_pack m JOIN cr_pack p ON p.id = m.pack_id WHERE m.cr = :anchor"
+        },
+        "disposition_pack": {
+          "joins": 4,
+          "tables": 5,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_pack",
+            "disposition",
+            "meeting",
+            "resolution"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT d.code, g.label, p.pack_number, p.tsg_meeting FROM disposition d JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN cr_in_pack m ON m.cr = d.target JOIN cr_pack p ON p.id = m.pack_id WHERE d.target = :anchor AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "full_chain": {
+          "joins": 6,
+          "tables": 7,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_modifies_section",
+            "cr_pack",
+            "disposition",
+            "meeting",
+            "resolution",
+            "section"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT d.code, g.label, p.pack_number, p.tsg_meeting, s.clause FROM disposition d JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN cr_in_pack m ON m.cr = d.target JOIN cr_pack p ON p.id = m.pack_id JOIN cr_modifies_section c ON c.cr = d.target JOIN section s ON s.id = c.section_id WHERE d.target = :anchor AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target' AND s.clause IS NOT NULL"
+        },
+        "revision_chain": {
+          "joins": 6,
+          "tables": 6,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_pack",
+            "disposition",
+            "document",
+            "resolution",
+            "revision"
+          ],
+          "recursive": true,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "WITH RECURSIVE later(id) AS ( SELECT later FROM revision WHERE earlier = :anchor UNION SELECT v.later FROM revision v JOIN later l ON v.earlier = l.id) SELECT DISTINCT doc.number, d.code, p.pack_number FROM later JOIN document doc ON doc.id = later.id JOIN disposition d ON d.target = later.id JOIN resolution r ON r.id = d.resolution_id JOIN cr_in_pack m ON m.cr = later.id JOIN cr_pack p ON p.id = m.pack_id WHERE d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "clause_history": {
+          "joins": 7,
+          "tables": 8,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_modifies_section",
+            "cr_pack",
+            "disposition",
+            "document",
+            "meeting",
+            "resolution",
+            "section"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT doc.number, d.code, g.label, p.pack_number FROM cr_modifies_section c JOIN section s ON s.id = c.section_id JOIN document doc ON doc.id = c.cr JOIN disposition d ON d.target = c.cr JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN cr_in_pack m ON m.cr = c.cr JOIN cr_pack p ON p.id = m.pack_id WHERE c.section_id = :anchor AND doc.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "pack_origin": {
+          "joins": 4,
+          "tables": 5,
+          "tableNames": [
+            "disposition",
+            "document",
+            "meeting",
+            "pack_member",
+            "resolution"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT doc.number, d.code, g.label FROM pack_member m JOIN document doc ON doc.id = m.cr JOIN disposition d ON d.target = m.cr JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id WHERE m.pack_id = :anchor AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "pack_lookup_empty": {
+          "joins": 1,
+          "tables": 2,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_pack"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM cr_in_pack m JOIN cr_pack p ON p.id = m.pack_id WHERE m.cr = :anchor"
+        },
+        "clause_neighbours": {
+          "joins": 9,
+          "tables": 8,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_modifies_section",
+            "cr_pack",
+            "disposition",
+            "document",
+            "meeting",
+            "resolution",
+            "section"
+          ],
+          "recursive": false,
+          "match": 100,
+          "items": 100,
+          "byWg": {
+            "RAN1": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN2": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN3": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN4": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN5": {
+              "match": 20,
+              "items": 20
+            }
+          },
+          "sql": "SELECT DISTINCT s.clause, o.number, d.code, g.label, p.pack_number FROM cr_modifies_section cx JOIN document x ON x.id = cx.cr JOIN section s ON s.id = cx.section_id JOIN cr_modifies_section co ON co.section_id = s.id JOIN document o ON o.id = co.cr JOIN disposition d ON d.target = o.id JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN cr_in_pack m ON m.cr = o.id JOIN cr_pack p ON p.id = m.pack_id WHERE cx.cr = :anchor AND o.id <> :anchor AND x.target_release = s.release AND o.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "first_change": {
+          "joins": 9,
+          "tables": 7,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_modifies_section",
+            "cr_pack",
+            "disposition",
+            "document",
+            "resolution",
+            "section"
+          ],
+          "recursive": false,
+          "match": 98,
+          "items": 98,
+          "byWg": {
+            "RAN1": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN2": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN3": {
+              "match": 19,
+              "items": 19
+            },
+            "RAN4": {
+              "match": 19,
+              "items": 19
+            },
+            "RAN5": {
+              "match": 20,
+              "items": 20
+            }
+          },
+          "sql": "SELECT DISTINCT doc.number, s.spec, s.clause FROM cr_in_pack m JOIN cr_pack p ON p.id = m.pack_id JOIN document doc ON doc.id = m.cr JOIN disposition d ON d.target = m.cr JOIN resolution r ON r.id = d.resolution_id JOIN cr_modifies_section c ON c.cr = m.cr JOIN section s ON s.id = c.section_id WHERE m.pack_id = :anchor AND doc.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target' AND NOT EXISTS ( SELECT 1 FROM cr_modifies_section c2 JOIN document d2 ON d2.id = c2.cr JOIN cr_in_pack m2 ON m2.cr = c2.cr JOIN cr_pack p2 ON p2.id = m2.pack_id WHERE c2.section_id = s.id AND d2.target_release = s.release AND p2.tsg_number < p.tsg_number)"
+        },
+        "previous_pack": {
+          "joins": 10,
+          "tables": 7,
+          "tableNames": [
+            "cr_in_pack",
+            "cr_modifies_section",
+            "cr_pack",
+            "disposition",
+            "document",
+            "resolution",
+            "section"
+          ],
+          "recursive": false,
+          "match": 99,
+          "items": 99,
+          "byWg": {
+            "RAN1": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN2": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN3": {
+              "match": 19,
+              "items": 19
+            },
+            "RAN4": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN5": {
+              "match": 20,
+              "items": 20
+            }
+          },
+          "sql": "WITH touched AS ( SELECT DISTINCT s.id AS sid, s.spec, s.clause, s.release, p.tsg_number AS t FROM cr_in_pack m JOIN cr_pack p ON p.id = m.pack_id JOIN document doc ON doc.id = m.cr JOIN disposition d ON d.target = m.cr JOIN resolution r ON r.id = d.resolution_id JOIN cr_modifies_section c ON c.cr = m.cr JOIN section s ON s.id = c.section_id WHERE m.pack_id = :anchor AND doc.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'), prev AS ( SELECT t.sid, t.spec, t.clause, p2.pack_number, p2.tsg_meeting, p2.tsg_number FROM touched t JOIN cr_modifies_section c2 ON c2.section_id = t.sid JOIN document d2 ON d2.id = c2.cr JOIN cr_in_pack m2 ON m2.cr = c2.cr JOIN cr_pack p2 ON p2.id = m2.pack_id WHERE d2.target_release = t.release AND p2.tsg_number < t.t) SELECT DISTINCT spec, clause, pack_number, tsg_meeting FROM prev WHERE tsg_number = (SELECT max(q.tsg_number) FROM prev q WHERE q.sid = prev.sid)"
+        }
+      },
+      "mismatches": []
+    },
+    "container_side": {
+      "records": {
+        "member": "<withheld sha256=87d1d5a4f57ea6e6e0933ee167f9a282f874d0f9e0a8bc7671226ccb83007a85 chars=11>",
+        "change": "section_modified_by",
+        "origin": "cr_in_pack"
+      },
+      "match": 297,
+      "items": 297,
+      "byItemFile": [
+        {
+          "path": "logs/publication/paper/ongoing/sigir-2027-research/final/next_cycle/headroom/gate/core/chain_items_admitted.jsonl",
+          "match": 237,
+          "items": 237
+        },
+        {
+          "path": "logs/publication/paper/ongoing/sigir-2027-research/final/next_cycle/headroom/gate/ran5/chain_items_admitted.jsonl",
+          "match": 60,
+          "items": 60
+        }
+      ],
+      "byFamily": {
+        "pack_lookup": {
+          "joins": 1,
+          "tables": 2,
+          "tableNames": [
+            "cr_pack",
+            "pack_member"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM pack_member m JOIN cr_pack p ON p.id = m.pack_id WHERE m.cr = :anchor"
+        },
+        "disposition_pack": {
+          "joins": 4,
+          "tables": 5,
+          "tableNames": [
+            "cr_pack",
+            "disposition",
+            "meeting",
+            "pack_member",
+            "resolution"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT d.code, g.label, p.pack_number, p.tsg_meeting FROM disposition d JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN pack_member m ON m.cr = d.target JOIN cr_pack p ON p.id = m.pack_id WHERE d.target = :anchor AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "full_chain": {
+          "joins": 6,
+          "tables": 7,
+          "tableNames": [
+            "cr_pack",
+            "disposition",
+            "meeting",
+            "pack_member",
+            "resolution",
+            "section",
+            "section_modified_by"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT d.code, g.label, p.pack_number, p.tsg_meeting, s.clause FROM disposition d JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN pack_member m ON m.cr = d.target JOIN cr_pack p ON p.id = m.pack_id JOIN section_modified_by c ON c.cr = d.target JOIN section s ON s.id = c.section_id WHERE d.target = :anchor AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target' AND s.clause IS NOT NULL"
+        },
+        "revision_chain": {
+          "joins": 6,
+          "tables": 6,
+          "tableNames": [
+            "cr_pack",
+            "disposition",
+            "document",
+            "pack_member",
+            "resolution",
+            "revision"
+          ],
+          "recursive": true,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "WITH RECURSIVE later(id) AS ( SELECT later FROM revision WHERE earlier = :anchor UNION SELECT v.later FROM revision v JOIN later l ON v.earlier = l.id) SELECT DISTINCT doc.number, d.code, p.pack_number FROM later JOIN document doc ON doc.id = later.id JOIN disposition d ON d.target = later.id JOIN resolution r ON r.id = d.resolution_id JOIN pack_member m ON m.cr = later.id JOIN cr_pack p ON p.id = m.pack_id WHERE d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "clause_history": {
+          "joins": 7,
+          "tables": 8,
+          "tableNames": [
+            "cr_pack",
+            "disposition",
+            "document",
+            "meeting",
+            "pack_member",
+            "resolution",
+            "section",
+            "section_modified_by"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT doc.number, d.code, g.label, p.pack_number FROM section_modified_by c JOIN section s ON s.id = c.section_id JOIN document doc ON doc.id = c.cr JOIN disposition d ON d.target = c.cr JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN pack_member m ON m.cr = c.cr JOIN cr_pack p ON p.id = m.pack_id WHERE c.section_id = :anchor AND doc.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "pack_origin": {
+          "joins": 4,
+          "tables": 5,
+          "tableNames": [
+            "cr_in_pack",
+            "disposition",
+            "document",
+            "meeting",
+            "resolution"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT doc.number, d.code, g.label FROM cr_in_pack m JOIN document doc ON doc.id = m.cr JOIN disposition d ON d.target = m.cr JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id WHERE m.pack_id = :anchor AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "pack_lookup_empty": {
+          "joins": 1,
+          "tables": 2,
+          "tableNames": [
+            "cr_pack",
+            "pack_member"
+          ],
+          "recursive": false,
+          "match": 0,
+          "items": 0,
+          "byWg": {},
+          "sql": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM pack_member m JOIN cr_pack p ON p.id = m.pack_id WHERE m.cr = :anchor"
+        },
+        "clause_neighbours": {
+          "joins": 9,
+          "tables": 8,
+          "tableNames": [
+            "cr_pack",
+            "disposition",
+            "document",
+            "meeting",
+            "pack_member",
+            "resolution",
+            "section",
+            "section_modified_by"
+          ],
+          "recursive": false,
+          "match": 100,
+          "items": 100,
+          "byWg": {
+            "RAN1": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN2": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN3": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN4": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN5": {
+              "match": 20,
+              "items": 20
+            }
+          },
+          "sql": "SELECT DISTINCT s.clause, o.number, d.code, g.label, p.pack_number FROM section_modified_by cx JOIN document x ON x.id = cx.cr JOIN section s ON s.id = cx.section_id JOIN section_modified_by co ON co.section_id = s.id JOIN document o ON o.id = co.cr JOIN disposition d ON d.target = o.id JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN pack_member m ON m.cr = o.id JOIN cr_pack p ON p.id = m.pack_id WHERE cx.cr = :anchor AND o.id <> :anchor AND x.target_release = s.release AND o.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+        },
+        "first_change": {
+          "joins": 9,
+          "tables": 7,
+          "tableNames": [
+            "cr_pack",
+            "disposition",
+            "document",
+            "pack_member",
+            "resolution",
+            "section",
+            "section_modified_by"
+          ],
+          "recursive": false,
+          "match": 98,
+          "items": 98,
+          "byWg": {
+            "RAN1": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN2": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN3": {
+              "match": 19,
+              "items": 19
+            },
+            "RAN4": {
+              "match": 19,
+              "items": 19
+            },
+            "RAN5": {
+              "match": 20,
+              "items": 20
+            }
+          },
+          "sql": "SELECT DISTINCT doc.number, s.spec, s.clause FROM pack_member m JOIN cr_pack p ON p.id = m.pack_id JOIN document doc ON doc.id = m.cr JOIN disposition d ON d.target = m.cr JOIN resolution r ON r.id = d.resolution_id JOIN section_modified_by c ON c.cr = m.cr JOIN section s ON s.id = c.section_id WHERE m.pack_id = :anchor AND doc.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target' AND NOT EXISTS ( SELECT 1 FROM section_modified_by c2 JOIN document d2 ON d2.id = c2.cr JOIN pack_member m2 ON m2.cr = c2.cr JOIN cr_pack p2 ON p2.id = m2.pack_id WHERE c2.section_id = s.id AND d2.target_release = s.release AND p2.tsg_number < p.tsg_number)"
+        },
+        "previous_pack": {
+          "joins": 10,
+          "tables": 7,
+          "tableNames": [
+            "cr_pack",
+            "disposition",
+            "document",
+            "pack_member",
+            "resolution",
+            "section",
+            "section_modified_by"
+          ],
+          "recursive": false,
+          "match": 99,
+          "items": 99,
+          "byWg": {
+            "RAN1": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN2": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN3": {
+              "match": 19,
+              "items": 19
+            },
+            "RAN4": {
+              "match": 20,
+              "items": 20
+            },
+            "RAN5": {
+              "match": 20,
+              "items": 20
+            }
+          },
+          "sql": "WITH touched AS ( SELECT DISTINCT s.id AS sid, s.spec, s.clause, s.release, p.tsg_number AS t FROM pack_member m JOIN cr_pack p ON p.id = m.pack_id JOIN document doc ON doc.id = m.cr JOIN disposition d ON d.target = m.cr JOIN resolution r ON r.id = d.resolution_id JOIN section_modified_by c ON c.cr = m.cr JOIN section s ON s.id = c.section_id WHERE m.pack_id = :anchor AND doc.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'), prev AS ( SELECT t.sid, t.spec, t.clause, p2.pack_number, p2.tsg_meeting, p2.tsg_number FROM touched t JOIN section_modified_by c2 ON c2.section_id = t.sid JOIN document d2 ON d2.id = c2.cr JOIN pack_member m2 ON m2.cr = c2.cr JOIN cr_pack p2 ON p2.id = m2.pack_id WHERE d2.target_release = t.release AND p2.tsg_number < t.t) SELECT DISTINCT spec, clause, pack_number, tsg_meeting FROM prev WHERE tsg_number = (SELECT max(q.tsg_number) FROM prev q WHERE q.sid = prev.sid)"
+        }
+      },
+      "mismatches": []
+    }
+  },
+  "conditionControls": {
+    "without_source_verified_whole_target_condition": {
+      "removedFromSql": "AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+      "itemsDifferingFromGold": 0,
+      "items": 0,
+      "byFamily": {
+        "disposition_pack": {
+          "differ": 0,
+          "items": 0
+        },
+        "full_chain": {
+          "differ": 0,
+          "items": 0
+        },
+        "clause_history": {
+          "differ": 0,
+          "items": 0
+        },
+        "pack_origin": {
+          "differ": 0,
+          "items": 0
+        }
+      }
+    },
+    "without_release_match_condition": {
+      "removedFromSql": "AND doc.target_release = s.release",
+      "itemsDifferingFromGold": 0,
+      "items": 0,
+      "byFamily": {
+        "clause_history": {
+          "differ": 0,
+          "items": 0
+        }
+      }
+    }
+  },
+  "clauseSetConditionControls": {
+    "without_source_verified_whole_target_condition": {
+      "replaced": {
+        "clause_neighbours": {
+          "from": "AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+          "to": ""
+        },
+        "first_change": {
+          "from": "AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+          "to": ""
+        },
+        "previous_pack": {
+          "from": "AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+          "to": ""
+        }
+      },
+      "itemsDifferingFromGold": 21,
+      "items": 297,
+      "byFamily": {
+        "clause_neighbours": {
+          "differ": 20,
+          "items": 100
+        },
+        "first_change": {
+          "differ": 1,
+          "items": 98
+        },
+        "previous_pack": {
+          "differ": 0,
+          "items": 99
+        }
+      }
+    },
+    "without_release_match_of_other_change_requests": {
+      "replaced": {
+        "clause_neighbours": {
+          "from": "AND o.target_release = s.release",
+          "to": ""
+        },
+        "first_change": {
+          "from": "AND d2.target_release = s.release",
+          "to": ""
+        },
+        "previous_pack": {
+          "from": "WHERE d2.target_release = t.release AND",
+          "to": "WHERE"
+        }
+      },
+      "itemsDifferingFromGold": 16,
+      "items": 297,
+      "byFamily": {
+        "clause_neighbours": {
+          "differ": 6,
+          "items": 100
+        },
+        "first_change": {
+          "differ": 6,
+          "items": 98
+        },
+        "previous_pack": {
+          "differ": 4,
+          "items": 99
+        }
+      }
+    },
+    "earlier_change_matched_by_clause_number_across_releases": {
+      "replaced": {
+        "first_change": {
+          "from": "WHERE c2.section_id = s.id AND d2.target_release = s.release",
+          "to": "JOIN section s2 ON s2.id = c2.section_id WHERE s2.spec = s.spec AND s2.clause = s.clause"
+        }
+      },
+      "itemsDifferingFromGold": 69,
+      "items": 98,
+      "byFamily": {
+        "first_change": {
+          "differ": 69,
+          "items": 98
+        }
+      }
+    },
+    "without_latest_earlier_meeting_condition": {
+      "replaced": {
+        "previous_pack": {
+          "from": "WHERE tsg_number = (SELECT max(q.tsg_number) FROM prev q WHERE q.sid = prev.sid)",
+          "to": ""
+        }
+      },
+      "itemsDifferingFromGold": 77,
+      "items": 99,
+      "byFamily": {
+        "previous_pack": {
+          "differ": 77,
+          "items": 99
+        }
+      }
+    }
+  }
+}

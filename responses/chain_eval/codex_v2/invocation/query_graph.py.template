@@ -1,0 +1,19 @@
+"""Run one read-only Cypher query against the graph and print the result as JSON.
+
+Usage: python3 query_graph.py "<cypher>"   or   echo "<cypher>" | python3 query_graph.py
+Output: {"columns": [...], "rows": [[...], ...], "rowCount": n, "truncated": bool} or {"error": "..."}.
+"""
+import json
+import socket
+import sys
+
+query = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else sys.stdin.read()
+with socket.create_connection(("127.0.0.1", PROXY_PORT), timeout=120) as connection:
+    connection.sendall((json.dumps({"cypher": query}) + "\n").encode())
+    data = b""
+    while not data.endswith(b"\n"):
+        chunk = connection.recv(1 << 20)
+        if not chunk:
+            break
+        data += chunk
+print(data.decode("utf-8", "replace").rstrip("\n"))

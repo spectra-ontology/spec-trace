@@ -1,0 +1,110 @@
+{
+ "description": "작업 폴더 공유 감사(묶음별 · 세션 합본 · 폴더 기준 · 간접 실행)에 걸린 항목을 대화 기록과 남은 파일로 하나씩 확인한 판정. 감사 결과 파일은 같은 폴더의 {묶음}.json · session_*_all_groups.json · indirect_*.json · mentions/*.json 이고, run_scratch_helper_ownership_audit.py 가 agents.json 에서 다시 만든다.",
+ "coverage": {
+  "groups": "agents.json 의 10묶음. 이전 세션 5cbc630c 4묶음(시험 경로 검색·글만, 거절 RAN5, 질의 작성)은 2026-11-12T14:33:52Z~15:30:54Z 에 같은 작업 폴더에서 함께 돌았다. 이번 세션 bb24e529 6묶음은 질의 작성 2026-11-12T22:49:22Z~23:11:35Z, 질의 작성 실행 C–E 2026-11-14T02:58:37Z~03:30:39Z, 전체 경로 2026-11-14T03:14:17Z~07:54:04Z, 거절 재추출 2026-11-14T12:26:49Z~12:33:27Z, 글 검색 실행 B 2026-11-14T20:22:28.470Z~20:42:36.055Z, 글 검색 실행 C 2026-11-14T20:56:33.103Z~21:18:17.304Z 에 돌았다. 실행 C–E 와 전체 경로는 03:14:17Z~03:30:39Z 에 함께 돌았다. 실행 B 와 실행 C 의 열다섯 풀이는 각 실행 안에서 함께 돌았고, 두 실행은 시간이 겹치지 않는다. 세션 합본 검사(session_bb24e529_all_groups.json)가 이 묶음들을 한 시간축에서 본다.",
+  "sessionWideAudits": "session_5cbc630c_all_groups.json 과 session_bb24e529_all_groups.json 은 한 세션의 모든 묶음을 한 시간축에 놓은 검사다. 묶음 사이의 겹침을 본다.",
+  "sessionWideFolderScans": "mentions/session_5cbc630c_all_folders.json(파일 3820개, 에이전트 40)과 mentions/session_bb24e529_all_folders.json(파일 20493개, 에이전트 114)은 작업 폴더 전체를 본다. 묶음별 폴더 검사가 다루지 않던 곳(이전 세션 최상위 파일, 이번 세션 최상위 파일과 tools* · helpers · bin · prompts 하위 폴더)을 여기서 모두 다룬다. 실행 B·C 묶음은 실행 폴더(text_search_runB_dir 3416개, text_search_runC_dir 3481개)와 풀이가 따로 만든 폴더(text_search_runB_bin 8개, text_search_runC_tools_RAN3_part3 5개, text_search_runC_ran4p2_private 9개)를 따로도 본다.",
+  "sessionWideCounts": {
+   "5cbc630c": {
+    "agents": 38,
+    "toolCallPieces": 4211,
+    "pathsWritten": 72,
+    "pathsWrittenByMoreThanOneAgent": 1,
+    "foreignAccess": 1,
+    "foreignAccessCount": 2,
+    "helperRunsWithoutRecordedWrite": 6
+   },
+   "bb24e529": {
+    "agents": 114,
+    "toolCallPieces": 26594,
+    "helperEvents": 6419,
+    "runsOrReads": 5852,
+    "pathsWritten": 666,
+    "pathsWrittenByMoreThanOneAgent": 6,
+    "foreignAccess": 3,
+    "foreignAccessCount": 4,
+    "helperRunsWithoutRecordedWrite": 52
+   }
+  },
+  "groupSumReconciliation": {
+   "bb24e529": "조각 26594 = 15559 + 5191 + 4774 + 494 + 134 + 442(전체 경로 · 글 검색 실행 B · 실행 C · 거절 재추출 · 질의 작성 · 질의 작성 실행 C–E). 쓴 경로는 묶음별 합 668 = 315 + 139 + 147 + 18 + 11 + 38 이고 합본은 666 이다. 둘 차이는 묶음 사이에 겹친 두 경로다. gen_ran4.py 는 질의 작성 묶음의 세 에이전트와 실행 C–E 묶음의 한 에이전트가 함께 썼고, 작업 폴더 bin/write_out.py 는 전체 경로 묶음의 한 에이전트(a197a8dd67e1023c0)와 실행 B 묶음의 한 에이전트(aa820b27bb8bbf6d2)가 함께 썼다. 합본의 pathsWrittenByMoreThanOneAgent 여섯 경로는 이 둘과 묶음 안의 넷(전체 경로의 text_search_full/write_out.py, 실행 B 의 bin/summ.py, 실행 C 의 run.py 와 bin/run.py)이다. 합본의 다른 에이전트 접근 4건은 모두 실행 C 묶음의 4건이다.",
+   "5cbc630c": "조각 4211 = 1318 + 2327 + 267 + 319 - 20. 거절 RAN5 Cypher 두 에이전트(a6639f08ebcbbf7e2, aab757f31edcdce2a)가 거절 RAN5 묶음과 질의 작성 묶음에 함께 들어 있어 묶음별로는 두 번 세고 합본에서는 한 번 센다. 쓴 경로 72 의 겹침은 s.sh 하나다."
+  },
+  "indirectExecution": "indirect_5cbc630c.json 과 indirect_bb24e529.json 은 실행된 스크립트가 안에서 같은 폴더의 다른 에이전트 스크립트를 하위 프로세스나 import 로 부른 후보를 대화 기록의 코드 본문에서 찾는다(audit_indirect_helper_execution.py). 명령 한 줄만 읽는 첫 검사가 보지 못하는 경우다. 5cbc630c 는 시간축 사건 700개 · 쓴 보조 파일 58개에서 후보 0건, bb24e529 는 사건 5259개 · 쓴 보조 파일 459개에서 스크립트 후보 1건(실행 B 의 bin/run.py → bin/summ.py, 아래 판정)과 한 호출 안 후보 0건이다. 이 검사는 대화 기록만 읽으므로 작업 폴더를 지운 뒤에도 같은 결과를 낸다. 두 에이전트로 꾸민 대조 기록에서 넣어 둔 다섯 경우(스크립트 안 import 를 두 번 실행, 스크립트 안 하위 프로세스, cd 뒤 파일 이름, sys.path 뒤 import)가 모두 걸리고 다른 후보는 나오지 않았다."
+ },
+ "deviations": [
+  {
+   "path": "OLD scratchpad final_text/text_search/s.sh",
+   "group": "pilot_text_search",
+   "finding": "실제로 다른 에이전트의 파일을 실행했다.",
+   "timeline": "RAN2 풀이(a927f04f3ef262396)가 14:58:44.390Z 에 s.sh 를 쓰고 14:58:48.932Z 에 실행했다. RAN3 풀이(aa6243892c0ade384)가 14:58:50.380Z 에 같은 경로를 덮어썼다. RAN2 는 14:59:07.727Z 와 14:59:17.651Z 에 그 파일을 두 번 더 실행했다.",
+   "effect": "남은 s.sh(681바이트)는 RAN3 판이며 W=work_RAN3 · --wg RAN3 로 고정되어 있다. RAN2 의 두 실행은 work_RAN3/commands.tsv 의 3·4행(q2f9, --wg RAN3 --tdoc R2-2401729)과 0바이트 work_RAN3/q2f9_tdoc_all.txt 만 남겼다. RAN2 는 자기 run_ran2.sh(10줄, --wg RAN2 고정)로 같은 문항을 다시 찾았고 그 출력 q2f9_tdoc_all.txt 는 47줄이다.",
+   "answerCheck": "RAN2 추적의 그 문항(RAN2-q2f9566d14c2a) 명령 3개는 모두 --wg RAN2 이고, RAN2 추적 전체의 --wg 는 RAN2 88건뿐이다. RAN3 답 파일과 추적에는 R2-2401729 · q2f9 가 0건이다. 시험 경로 답을 전체 경로 답과 비교하면 RAN2 14/14 문항, RAN3 13/14 문항의 행이 같고, 사건 문항 RAN2-pack_lookup-R2-2401729 의 답 [RP-240656, RAN#103] 도 같다.",
+   "verdict": "점수 영향 없음. 시험 경로는 논문 수치를 내지 않으며, 논문 수치는 전체 경로(text_search_full)에서 나온다. 두 풀이의 최종 보고도 이 사건을 적었다."
+  },
+  {
+   "path": "NEW scratchpad final_text/text_search_full/write_out.py",
+   "group": "full_route",
+   "finding": "두 에이전트가 같은 경로를 썼으나 각자 쓴 직후 같은 명령에서 실행했다.",
+   "timeline": "RAN1 3부(a5082495bc51c7cb6)가 07:45:56.278Z 한 명령에서 쓰고 실행했고, RAN5 3부(acc0546852bab5a0a)가 07:46:21.410Z 한 명령에서 쓰고 실행했다.",
+   "verdict": "다른 에이전트의 파일 실행 0건(full_route.json 의 runOrReadOfAnotherAgentsFile 0)."
+  },
+  {
+   "path": "NEW scratchpad gen_ran4.py",
+   "group": "query_writers_bb24e529 · query_writers_runs_C_to_E",
+   "finding": "네 에이전트가 같은 경로를 썼으나 각자 쓴 뒤에만 읽고 실행했다.",
+   "timeline": "a7f23d58033006f71 이 22:58:18.912Z 에 쓰고 실행했다. ac38b5bec5df239a3 가 23:01:06.033Z 에 쓰고 실행했다. aa8deca090efec1c4 는 23:01:08.946Z 에 쓰고 읽었고, 23:01:17.204Z 에 다시 쓴 뒤 23:01:19.907Z 에 실행했다. 그 사이 23:01:13.102Z 의 읽기는 자기가 마지막으로 쓴 판이다. 이틀 뒤 실행 E RAN4 Cypher 풀이(af355507f92e073bb)가 2026-11-14T03:14:38.254Z 에 같은 경로를 새로 쓰고 같은 명령 안에서 실행했다. 그 뒤 이 경로에 접근한 에이전트는 없다.",
+   "verdict": "다른 에이전트의 파일 실행·읽기 0건."
+  },
+  {
+   "path": "NEW scratchpad final_text/text_search_full/write_out.py (폴더 기준 검사)",
+   "group": "full_route",
+   "finding": "폴더 기준 검사가 RAN5 1부(a8e5ff50c836a8a65)도 이 파일을 가리켰다고 센다.",
+   "verdict": "잘못 걸린 항목. 그 에이전트의 heredoc 안 Python 에서 W='…/text_search_full' 를 대입하고 자기 폴더 work_RAN5_part1/write_out.py 를 썼다. 명령 기준 검사는 이 에이전트의 쓰기를 work_RAN5_part1/write_out.py 로 읽는다."
+  },
+  {
+   "path": "NEW scratchpad final_text/text_search_full_runC/run.py · bin/run.py",
+   "group": "text_search_runC",
+   "finding": "실제로 다른 에이전트의 감싸개를 세 번 실행했다. 감사의 4건 가운데 둘은 맞고 둘은 잘못 걸렸으며, 하나는 놓쳤다.",
+   "timeline": "과제 글은 풀이마다 출력 폴더(work_<부>/)는 정하지만 보조 코드의 자리는 정하지 않는다. 다섯 풀이가 실행 폴더의 같은 경로에 감싸개를 썼다. run.py 는 RAN3 2부(ad5cb8ab0235b1234) 20:56:54.689Z, RAN5 3부(a918cdbdcac114f57) 20:57:03.314Z, RAN1 1부(ae0b38a6d145b073b) 20:57:03.452Z, bin/run.py 는 RAN3 1부(adb9ab5f60150ce24) 20:56:58.881Z, RAN4 2부(a412f7407a71a961a) 20:57:02.309Z 다. 그 뒤 RAN3 1부가 20:57:03.298Z 에 RAN4 2부의 bin/run.py 로(--wg RAN4, 빈 출력이 work_RAN4_part2/out/0002 로 저장), RAN3 2부가 20:57:06.174Z 에 RAN5 3부의 run.py 로(--wg RAN5, RAN5 기록이 찍혀 버림), RAN1 1부가 20:57:08.519Z 에 RAN5 3부의 run.py 로(인자 오류로 출력 없음) 한 번씩 검색했다.",
+   "auditCheck": "명령 기준 검사는 도구 호출 시각으로 사건을 줄 세운다. 호출 시각으로는 RAN1 1부가 run.py 를 마지막으로 썼지만, 20:57:06.174Z 와 20:57:08.519Z 의 두 실행이 저장 경로를 work_RAN5_part3 으로 찍었으므로 실제로 마지막에 닿은 쓰기는 RAN5 3부의 것이다. 그래서 감사는 RAN3 2부의 실행을 맞게 잡되 마지막 쓴 주체를 RAN1 1부로 적고, RAN5 3부 자신의 20:57:10.397Z 실행과 20:57:36.573Z 읽기를 다른 에이전트 접근으로 잘못 잡으며, RAN1 1부의 실행은 놓친다. 감싸개가 찍은 저장 경로가 누구의 감싸개가 돌았는지 정하는 증거다.",
+   "effect": "세 풀이는 각자 자기 이름의 감싸개를 새로 쓰고 같은 검색을 다시 돌렸다. RAN3 2부는 그 줄을 ACCIDENTAL 로 적고 출력을 버린 뒤 --wg RAN3 로 다시 찾았다. RAN5 3부는 20:57:36.573Z 에 run.py 를 자기 작업 폴더로 옮기고 자기 cmdlog 의 2–3행과 out/0002–0003(다른 두 풀이의 실행)을 지웠다. RAN4 2부는 자기 cmdlog 에서 RAN3 1부의 줄을 지웠다.",
+   "answerCheck": "세 출력 가운데 어느 것도 답에 쓰이지 않았다(text_search_full_runC/solver_logs/deviations.txt 의 부별 줄과 공유 감싸개 줄).",
+   "verdict": "점수 영향 없음. 각 문항의 답은 그 풀이가 자기 --wg 로 다시 찾은 기록만 쓴다."
+  },
+  {
+   "path": "NEW scratchpad final_text/text_search_full_runB/bin/summ.py",
+   "group": "text_search_runB",
+   "finding": "두 에이전트가 같은 경로를 썼고, 한 에이전트의 스크립트가 하위 프로세스로 다른 에이전트의 summ.py 를 불렀다(간접 실행 검사의 유일한 후보).",
+   "timeline": "RAN4 1부(ab6b5cc0195a79db3)가 20:22:56.495Z 에 bin/run.py, 20:23:51.001Z 에 bin/summ.py 를 쓰고, 20:24:02.326Z 에 run.py 를 고쳐 dirname(__file__)/summ.py 를 하위 프로세스로 부르게 했다. RAN5 1부(a15aaf3054c129980)가 20:24:03.662Z 에 같은 경로의 summ.py 를 덮어썼다. RAN4 1부가 20:24:09.722Z 한 호출에서 run.py 를 여섯 번 돌렸고, 그때마다 RAN5 1부의 summ.py 가 4행(K = int(sys.argv[2]))에서 ValueError 로 아무것도 찍지 않고 끝났다. RAN5 1부는 summ.py 를 열 번 돌렸고 모두 자기가 쓴 뒤다.",
+   "effect": "검색 출력은 RAN4 1부 자신의 감싸개가 work_RAN4_part1/out/0005_q01~0010_q16 으로 저장했고, cmdlog 의 n=5–10 항목(6–11행, n 은 0 부터)은 모두 --wg RAN4 다. RAN4 1부는 20:24:33.419Z 에 보조 코드를 bin_RAN4_part1 로 옮기고 20:24:39Z 에 0005–0010 을 grep 으로 읽었다.",
+   "answerCheck": "다른 에이전트의 코드에서 나온 내용은 답에 0건이다. 그 summ.py 는 실패해서 출력이 없었다.",
+   "verdict": "점수 영향 없음. 명령 기준 검사는 이 경우를 보지 못하고(text_search_runB.json 의 다른 에이전트 접근 0), indirect_bb24e529.json 이 잡는다."
+  },
+  {
+   "path": "NEW scratchpad bin/write_out.py",
+   "group": "full_route · text_search_runB",
+   "finding": "두 묶음의 두 에이전트가 같은 경로를 썼으나 각자 쓴 명령 안에서 실행했다.",
+   "timeline": "전체 경로의 a197a8dd67e1023c0 이 2026-11-14T03:45:41.908Z 한 명령에서 쓰고 실행했고, 실행 B RAN1 3부(aa820b27bb8bbf6d2)가 20:37:34.914Z 한 명령에서 자기 판을 쓰고 실행했다. 디스크에 남은 파일은 실행 B 판이다.",
+   "verdict": "다른 에이전트의 파일 실행 0건(session_bb24e529_all_groups.json 의 다른 에이전트 접근에 이 경로가 없다)."
+  },
+  {
+   "path": "NEW scratchpad bin/ (run.py · filt.py · disp.py · clause.py · write_out.py)",
+   "group": "text_search_runB",
+   "finding": "실행 B RAN1 3부(aa820b27bb8bbf6d2)가 실행 폴더 밖의 작업 폴더 bin/ 에 보조 스크립트 다섯 개를 썼다.",
+   "verdict": "모두 자기만 썼고 자기만 실행했다(text_search_runB_bin.json 의 mentionedByMoreThanOneAgent 0). 같은 폴더의 s.py · doc.sh · ch.sh 는 전체 경로 a197a8dd67e1023c0 의 파일이고 실행 B 는 이 셋을 실행하지 않았다."
+  },
+  {
+   "path": "scripts/publication/paper/ongoing/sigir-2027-research/search_records_text.py",
+   "group": "pilot_text_search 4 · pilot_text_only 2 · full_route 46 · text_search_runB 2 · abstention_redraw 4",
+   "finding": "누구도 쓰지 않은 보조 스크립트를 실행했다(runOrReadWithoutRecordedWrite).",
+   "verdict": "모두 저장소 안의 허용된 검색 도구다(inRepo true). 풀이가 읽는 문항 묶음(text_search_packets · text_only_packets 와 그 _full 판, 거절 실험의 abstention3/*_packets)의 task 칸이 이 도구를 유일한 데이터 접근 도구로 준다. 실행 B·C 는 실행 A 의 문항 묶음과 같은 task 칸을 쓴다. 실행 B 의 두 건은 RAN3 1부(a04043a8c7d714937, 20:22:44.936Z)와 RAN2 2부(a85e6857d83458859, 20:22:50.528Z)가 도구를 바로 부른 것이다. 실행 C 는 감싸개를 거쳐 이 도구를 불러 명령 기준 검사에는 감싸개 실행으로 잡힌다(0건)."
+  },
+  {
+   "path": "mentions/abstention_redraw_root.json, mentions/query_writers_bb24e529_root.json, mentions/query_writers_runs_C_to_E_root.json",
+   "finding": "이번 세션 작업 폴더 최상위를 보는 검사(abstention_redraw_root · query_writers_bb24e529_root · query_writers_runs_C_to_E_root)는 다시 돌릴 때 files 가 늘어난다.",
+   "verdict": "작업 폴더가 살아 있는 임시 폴더라 그 뒤에 생긴 파일 수만 바뀐다. 겹침 판정 칸(mentionedByMoreThanOneAgent)은 그대로다. 실행기 --check 는 이 칸을 folderFileCountChanged 로 따로 적는다."
+  }
+ ],
+ "result": "공유 작업 폴더에서 다른 에이전트의 파일을 실제로 실행한 일은 시험 경로의 s.sh 1건(실행 2번, 출력 0줄), 글 검색 실행 C 의 공유 감싸개 3건(각 1번, 출력은 답에 쓰이지 않음), 실행 B 의 summ.py 하위 프로세스 1건(한 호출 안 6번, 실패로 출력 없음)이다. 어느 것도 답과 점수에 영향이 없다. 실행 A 전체 경로, 거절 재추출, 질의 작성 실행 A–E 에서는 0건이다."
+}

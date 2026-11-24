@@ -1,0 +1,485 @@
+{
+ "task": "You write one read-only Cypher query for a Neo4j graph of 3GPP standardization records. Graph schema (node labels with properties, then relationship patterns):\n(:AgendaItem {_createdBy, agendaDescription, agendaNumber, id, meetingNumber})\n(:Agreement {content, contentWithEquations, hasFFS, hasTBD, note, resolutionId, resolutionScope, sequence})\n(:CR {_belongsTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _modifies, _presentedAt, _recoveredAt, _relatedTo, _revisedTo, _submittedBy, _targetRelease, abstract, affectsCN, affectsME, affectsRAN, affectsUICC, clausesAffected, consequencesIfNotApproved, crCategory, crNumber, crRevision, for, id, legacyCrPackReference, reasonForChange, reservationDate, secretaryRemarks, status, summaryOfChange, tdocNumber, title, titleSource, tsgCRPack, type, uploadedDate})\n(:CRPack {crPackId, tsgMeeting})\n(:Chart {caption, chartId, chartNumber, filePath})\n(:Company {aliases, companyName, id})\n(:Conclusion {content, contentWithEquations, hasConsensus, resolutionId, sequence})\n(:ConformanceTest {granularity, isVoid, level, ontologyVersion, sectionId, sectionNumber, sectionTitle, specNumber, testCaseId, updatedAt})\n(:Contact {contactId, contactName, id})\n(:DecisionDisposition {assessmentMethod, dispositionCode, dispositionId, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, evidenceStatus, targetTdocNumber})\n(:Delegate {delegateId, nameSurface})\n(:EmailMessage {archiveCode, id, messageId, roundNum, sentDate, subject})\n(:EmailThread {earliestDate, latestDate, overmergeSuspect, participantCount, subject, threadKey, totalMessages})\n(:EvidenceAssertion {assertionId, assertionPredicateIRI, assessmentMethod, evidenceStatus, id})\n(:EvidenceFragment {evidenceId, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, id})\n(:Feature {catalogVersion, curator, featureDescription, featureName, introducedInRelease, legacyFeatureNames, legacyReplacedBy, name, notes, ontologyVersion, specBodyTerms, updatedAt})\n(:FeatureAssertion {assertionId, assertionPredicateIRI, assessmentMethod, evidenceRows, evidenceStatus, kind})\n(:Figure {caption, figureId, figureNumber, filePath})\n(:LS {_belongsTo, _ccTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _originalLS, _originatedFrom, _presentedAt, _recoveredAt, _relatedTo, _replyIn, _replyTo, _revisedTo, _sentTo, _submittedBy, _targetRelease, abstract, direction, for, id, reservationDate, secretaryRemarks, status, tdocNumber, title, type, uploadedDate})\n(:Meeting {_chairman_report_note, _chairman_report_status, _createdBy, canonicalMeetingNumber, id, meetingNumber, meetingNumberInt, workingGroup})\n(:PerformanceRequirement {granularity, isVoid, level, ontologyVersion, perfReqName, sectionId, sectionNumber, sectionTitle, specNumber, updatedAt})\n(:Release {id, releaseName})\n(:Resolution {content, contentWithEquations, hasConsensus, hasFFS, hasTBD, note, resolutionId, resolutionScope, sequence})\n(:Section {granularity, isVoid, level, sectionId, sectionNumber, sectionTitle, specNumber})\n(:Spec {id, specInRelease, specNumber, specRelease, specVersion})\n(:TRImpact {affectedSection, assessmentMethod, evidenceLocator, evidencePath, evidenceQuote, evidenceSha256, evidenceStatus, impactDescription, impactType, trImpactId, verifiedImpactScope})\n(:TSFigure {figureCaption, figureId, figureNumber})\n(:TSTable {tableCaption, tableId, tableNumber})\n(:Table {caption, equations, filePath, tableId, tableNumber})\n(:Tdoc {_belongsTo, _ccTo, _createdBy, _hasContact, _idBackfilled, _isRevisionOf, _modifies, _originalLS, _originatedFrom, _presentedAt, _recoveredAt, _relatedTo, _replyIn, _replyTo, _revisedTo, _sentTo, _submittedBy, _targetRelease, abstract, affectsCN, affectsME, affectsRAN, affectsUICC, clausesAffected, consequencesIfNotApproved, crCategory, crNumber, crRevision, direction, for, id, legacyCrPackReference, reasonForChange, reservationDate, secretaryRemarks, status, summaryOfChange, tdocNumber, title, tsgCRPack, type, uploadedDate})\n(:TechnicalReport {conclusions, scope, sourceIdentityAssessmentMethod, sourceIdentityAssessmentPath, sourceIdentityAssessmentSha256, studyItemRpNumber, trNumber, trStatus, trTitle, trVersion, workItemRpNumber})\n(:WorkItem {id, workItemCode})\n(:WorkingAssumption {content, hasFFS, hasTBD, resolutionId, sequence})\n(:WorkingGroup {id, wgName})\n(:EmailMessage)-[:ANCHORS]->(:Tdoc)\n(:Tdoc)-[:SUBMITTED_BY]->(:Company)\n(:Tdoc)-[:PRESENTED_AT]->(:Meeting)\n(:Tdoc)-[:BELONGS_TO]->(:AgendaItem)\n(:Tdoc)-[:HAS_CONTACT]->(:Contact)\n(:Resolution)-[:MADE_AT]->(:Meeting)\n(:Resolution)-[:RESOLUTION_BELONGS_TO]->(:AgendaItem)\n(:Resolution)-[:HAS_DISPOSITION]->(:DecisionDisposition)\n(:DecisionDisposition)-[:DISPOSITION_OF]->(:Resolution)\n(:Resolution)-[:REFERENCES]->(:Tdoc)\n(:DecisionDisposition)-[:DISPOSITION_TARGET]->(:Tdoc)\n(:Resolution)-[:ABOUT_TDOC]->(:Tdoc)\n(:EmailMessage)-[:IN_THREAD]->(:EmailThread)\n(:EmailMessage)-[:SENT_BY]->(:Delegate)\n(:Tdoc)-[:RELATED_TO]->(:WorkItem)\n(:EmailMessage)-[:ANCHORS]->(:Meeting)\n(:EmailMessage)-[:ANCHORS]->(:Resolution)\n(:Tdoc)-[:TARGET_RELEASE]->(:Release)\n(:Section)-[:BELONGS_TO_SPEC]->(:Spec)\n(:Tdoc)-[:MODIFIES]->(:Spec)\n(:Section)-[:HAS_SUB_SECTION]->(:Section)\n(:Section)-[:PARENT_SECTION]->(:Section)\n(:Section)-[:REFERENCES_SECTION]->(:Section)\n(:Section)-[:REFERENCED_BY_SECTION]->(:Section)\n(:Section)-[:CONTAINS_TABLE]->(:TSTable)\n(:TSTable)-[:TABLE_IN_SECTION]->(:Section)\n(:Tdoc)-[:MODIFIES_SECTION]->(:Section)\n(:Section)-[:MODIFIED_BY_CR]->(:Tdoc)\n(:Tdoc)-[:IS_REVISION_OF]->(:Tdoc)\n(:Tdoc)-[:REVISED_TO]->(:Tdoc)\n(:EmailThread)-[:ANCHORS]->(:Spec)\n(:CRPack)-[:HAS_CR]->(:Tdoc)\n(:Tdoc)-[:BELONGS_TO_CR_PACK]->(:CRPack)\n(:EmailMessage)-[:ANCHORS]->(:Section)\n(:Section)-[:REFERENCES_SPEC]->(:Spec)\n(:Tdoc)-[:AFFECTS_TEST_SPEC]->(:Spec)\n(:Tdoc)-[:SENT_TO]->(:WorkingGroup)\n(:Section)-[:CONTAINS_FIGURE]->(:TSFigure)\n(:TSFigure)-[:FIGURE_IN_SECTION]->(:Section)\n(:Tdoc)-[:CC_TO]->(:WorkingGroup)\n(:Spec)-[:HAS_SECTION]->(:Section)\n(:Tdoc)-[:AFFECTS_CORE_SPEC]->(:Spec)\n(:Table)-[:CONTAINED_IN]->(:Meeting)\n(:Tdoc)-[:ORIGINATED_FROM]->(:WorkingGroup)\n(:Tdoc)-[:REPLY_TO]->(:Tdoc)\n(:Tdoc)-[:REPLY_IN]->(:Tdoc)\n(:Figure)-[:CONTAINED_IN]->(:Meeting)\n(:TRImpact)-[:HAS_EVIDENCE]->(:EvidenceFragment)\n(:Delegate)-[:ANCHORS]->(:Contact)\n(:ConformanceTest)-[:definedInSection]->(:Section)\n(:PerformanceRequirement)-[:definedInSection]->(:Section)\n(:Resolution)-[:HAS_TABLE]->(:Table)\n(:Spec)-[:SPEC_IN_RELEASE]->(:Release)\n(:Spec)-[:IN_RELEASE_OF]->(:Spec)\n(:TRImpact)-[:IMPACT_OF_TR]->(:TechnicalReport)\n(:TechnicalReport)-[:HAS_TR_IMPACT]->(:TRImpact)\n(:TechnicalReport)-[:TARGET_RELEASE]->(:Release)\n(:Resolution)-[:HAS_FIGURE]->(:Figure)\n(:EvidenceAssertion)-[:HAS_EVIDENCE]->(:EvidenceFragment)\n(:EvidenceAssertion)-[:ASSERTION_SUBJECT]->(:TechnicalReport)\n(:EvidenceAssertion)-[:ASSERTION_OBJECT]->(:Spec)\n(:TRImpact)-[:CANDIDATE_IMPACTS_SPEC]->(:Spec)\n(:TechnicalReport)-[:DISCUSSES_SPEC]->(:Spec)\n(:FeatureAssertion)-[:hasEvidence]->(:EvidenceFragment)\n(:FeatureAssertion)-[:assertionSubject]->(:Feature)\n(:TechnicalReport)-[:REFERENCES_TR]->(:TechnicalReport)\n(:TechnicalReport)-[:REFERENCED_BY_TR]->(:TechnicalReport)\n(:EmailMessage)-[:ANCHORS]->(:AgendaItem)\n(:Feature)-[:wasDerivedFrom]->(:EvidenceFragment)\n(:FeatureAssertion)-[:assertionObject]->(:EvidenceFragment)\n(:Chart)-[:CONTAINED_IN]->(:Meeting)\n(:TRImpact)-[:IMPACTS_SPEC]->(:Spec)\n(:Spec)-[:SPEC_IMPACTED_BY]->(:TRImpact)\n(:Feature)-[:disjointWith]->(:Feature)\n(:Feature)-[:hasPerfRequirement]->(:PerformanceRequirement)\n(:FeatureAssertion)-[:assertionObject]->(:PerformanceRequirement)\n(:Tdoc)-[:ORIGINAL_LS]->(:Tdoc)\n(:TechnicalReport)-[:RECOMMENDS_CHANGE_TO_SPEC]->(:Spec)\n(:CR)-[:MODIFIES]->(:Spec)\n(:CR)-[:RELATED_TO]->(:WorkItem)\n(:CR)-[:BELONGS_TO_CR_PACK]->(:CRPack)\n(:CRPack)-[:HAS_CR]->(:CR)\n(:Feature)-[:relatedFeature]->(:Feature)\n(:FeatureAssertion)-[:assertionObject]->(:Feature)\n(:EvidenceAssertion)-[:ASSERTION_SUBJECT]->(:Tdoc)\n(:EvidenceAssertion)-[:ASSERTION_OBJECT]->(:Tdoc)\n(:Tdoc)-[:AFFECTS_OM_SPEC]->(:Spec)\nAnswer with a JSON object {\"cypher\": \"...\"}. The query must RETURN DISTINCT exactly these columns in this order: <the item's fields>. Use only MATCH, OPTIONAL MATCH, WHERE, WITH, UNWIND, CASE, UNION and RETURN; when the records hold no such row, answer as the question instructs.",
+ "items": [
+  {
+   "id": "RAN4-q0c179af04f50",
+   "question": "In which TSG RAN CR pack was change request R4-2301345 (CR 2894 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q0ea9d95870c6",
+   "question": "In which TSG RAN CR pack was change request R4-167761 (CR 4006 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q13c5cc4b00fc",
+   "question": "In which TSG RAN CR pack was change request R4-163199 (CR 0742 to TS 25.104) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q14c52ebc7ac3",
+   "question": "In which TSG RAN CR pack was change request R4-162520 (CR 3548 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q1ad539c33cc6",
+   "question": "In which TSG RAN CR pack was change request R4-2014965 (CR 1218 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q1bc8c50f6ed9",
+   "question": "In which TSG RAN CR pack was change request R4-2409534 (CR 0641 to TS 38.104) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q2013607573cb",
+   "question": "In which TSG RAN CR pack was change request R4-2400229 (CR 1994 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q216454e7a40c",
+   "question": "In which TSG RAN CR pack was change request R4-168645 (CR 0863 to TS 36.104) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q2795f175208f",
+   "question": "In which TSG RAN CR pack was change request R4-2003240 (CR 0283 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q2c796baca0d6",
+   "question": "In which TSG RAN CR pack was change request R4-2510729 (CR 5913 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q3a3dee04fae9",
+   "question": "In which TSG RAN CR pack was change request R4-167803 (CR 4028 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q48c5ac2d5eda",
+   "question": "In which TSG RAN CR pack was change request R4-160956 (CR 3348 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q4a4ad7cff8a7",
+   "question": "In which TSG RAN CR pack was change request R4-2309151 (CR 5979 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q4be47f5836ee",
+   "question": "In which TSG RAN CR pack was change request R4-1904218 (CR 0014 to TS 37.843) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q4e69bffb7e42",
+   "question": "In which TSG RAN CR pack was change request R4-163719 (CR 0790 to TS 36.104) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q50f13ec2f102",
+   "question": "In which TSG RAN CR pack was change request R4-2506320 (CR 0111 to TS 38.106) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q5c2fc58e05ce",
+   "question": "In which TSG RAN CR pack was change request R4-2522129 (CR 6263 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q5dda68c6b448",
+   "question": "In which TSG RAN CR pack was change request R4-2112772 (CR 0042 to TS 38.113) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q5e4f5cc4b3fa",
+   "question": "In which TSG RAN CR pack was change request R4-2601073 (CR 0155 to TS 38.108) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q5f0191ac4ce1",
+   "question": "In which TSG RAN CR pack was change request R4-168691 (CR 4160 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q6717aaa41caf",
+   "question": "In which TSG RAN CR pack was change request R4-160724 (CR 0823 to TS 36.141) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q69b8ea245888",
+   "question": "In which TSG RAN CR pack was change request R4-1907846 (CR 0024 to TS 37.843) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q71fcc3ae26ad",
+   "question": "In which TSG RAN CR pack was change request R4-163826 (CR 3589 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q7369b880fcd5",
+   "question": "In which TSG RAN CR pack was change request R4-2507710 (CR 0787 to TS 38.101-4) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q754b1f86191d",
+   "question": "In which TSG RAN CR pack was change request R4-163805 (CR 3587 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q784796ed6a3a",
+   "question": "In which TSG RAN CR pack was change request R4-2411956 (CR 4724 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q79fe13fe2ac9",
+   "question": "In which TSG RAN CR pack was change request R4-2318357 (CR 1824 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q7a954708c48a",
+   "question": "In which TSG RAN CR pack was change request R4-2507415 (CR 2826 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q82f00a8d6cfa",
+   "question": "In which TSG RAN CR pack was change request R4-2409683 (CR 0097 to TS 38.101-5) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q8c62bb92e48a",
+   "question": "In which TSG RAN CR pack was change request R4-1700474 (CR 4370 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q9377eba63cf6",
+   "question": "In which TSG RAN CR pack was change request R4-2505400 (CR 0792 to TS 38.101-2) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q94db333608ca",
+   "question": "In which TSG RAN CR pack was change request R4-1908645 (CR 0160 to TS 37.145-2) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q99a974585932",
+   "question": "In which TSG RAN CR pack was change request R4-2311671 (CR 0501 to TS 38.104) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q9b96d76db54d",
+   "question": "In which TSG RAN CR pack was change request R4-2607773 (CR 3248 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-q9f7f7181a6c6",
+   "question": "In which TSG RAN CR pack was change request R4-2321999 (CR 0682 to TS 38.101-2) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qa0dbdf120024",
+   "question": "In which TSG RAN CR pack was change request R4-2000087 (CR 0185 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qa3062777c3d8",
+   "question": "In which TSG RAN CR pack was change request R4-161514 (CR 3488 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qa3cb95459e4c",
+   "question": "In which TSG RAN CR pack was change request R4-162584 (CR 3486 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qabe47a293250",
+   "question": "In which TSG RAN CR pack was change request R4-2418925 (CR 0668 to TS 38.104) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qabeeb11d07b7",
+   "question": "In which TSG RAN CR pack was change request R4-160389 (CR 0650 to TS 36.307) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qae4e62ea6244",
+   "question": "In which TSG RAN CR pack was change request R4-2307733 (CR 1523 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qb2f7b360a8cc",
+   "question": "In which TSG RAN CR pack was change request R4-161102 (CR 0829 to TS 36.141) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qb9cce2768e2d",
+   "question": "In which TSG RAN CR pack was change request R4-2520203 (CR 0671 to TS 38.141-2) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qbac1f89e143e",
+   "question": "In which TSG RAN CR pack was change request R4-2606753 (CR 6696 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qcfebb29ffba0",
+   "question": "In which TSG RAN CR pack was change request R4-167792 (CR 4024 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qd5571f40d418",
+   "question": "In which TSG RAN CR pack was change request R4-1915395 (CR 6786 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qd7a6c17ffd29",
+   "question": "In which TSG RAN CR pack was change request R4-2008547 (CR 0759 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qdb73fe637c35",
+   "question": "In which TSG RAN CR pack was change request R4-1710762 (CR 0798 to TS 37.141) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qdfa2ba84c6f1",
+   "question": "In which TSG RAN CR pack was change request R4-161785 (CR 3395 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qe031fcf087d7",
+   "question": "In which TSG RAN CR pack was change request R4-2320881 (CR 0055 to TS 36.106) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qe1e74ec501d5",
+   "question": "In which TSG RAN CR pack was change request R4-1609213 (CR 3989 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qe601896e1e33",
+   "question": "In which TSG RAN CR pack was change request R4-160388 (CR 0649 to TS 36.307) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qe7c0ea767add",
+   "question": "In which TSG RAN CR pack was change request R4-2006369 (CR 0152 to TS 38.101-2) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qeb4551d0a7cf",
+   "question": "In which TSG RAN CR pack was change request R4-2501562 (CR 2670 to TS 38.101-1) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qef4c2ea2be7d",
+   "question": "In which TSG RAN CR pack was change request R4-161842 (CR 3404 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qf0dcda97d383",
+   "question": "In which TSG RAN CR pack was change request R4-169004 (CR 4112 to TS 36.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qf1bc140b3859",
+   "question": "In which TSG RAN CR pack was change request R4-2308013 (CR 5964 to TS 36.101) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qf47f950407c2",
+   "question": "In which TSG RAN CR pack was change request R4-2311932 (CR 0991 to TS 38.101-3) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qf8d0a5bd6c7a",
+   "question": "In which TSG RAN CR pack was change request R4-2319708 (CR 0556 to TS 38.141-2) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  },
+  {
+   "id": "RAN4-qffa454656a5d",
+   "question": "In which TSG RAN CR pack was change request R4-2108198 (CR 1831 to TS 38.133) submitted? Give the CR pack document number and the TSG RAN meeting. Decide from the records in this order. First, if a CR pack record lists this change request, give one row for each such CR pack. Otherwise, if a RAN4 meeting report records a decision on the whole document that closed it without approval (withdrawn, not treated, not pursued, rejected or not agreed), the change request was not submitted to TSG RAN: answer with no rows. Otherwise the records do not determine the CR pack: answer with exactly one row that has INSUFFICIENT_RECORDS in both fields, not with an empty answer.",
+   "fields": [
+    "cr_pack",
+    "tsg_meeting"
+   ]
+  }
+ ]
+}
