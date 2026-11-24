@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rescore the 60 main conditions from released items and stored responses."""
+"""Rescore the 60 historical stored-score entries from released items and stored responses."""
 import argparse
 import json
 from pathlib import Path

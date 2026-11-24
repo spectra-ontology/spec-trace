@@ -27,7 +27,7 @@ The source documents are identified by archive path, SHA-256 and locator. The pa
 
 ## Preparation
 
-Run commands from the package root with Python 3.11 or later. The builder, gate and scorer use the Python standard library. Source restoration uses `lxml` and LibreOffice for the reports marked for conversion; passage rehydration uses `lxml`, `python-docx` and `openpyxl`; shape validation uses `rdflib` and `pyshacl`. Additional historical analysis scripts have the dependencies listed in `code_report.md`.
+Run commands from the package root with Python 3.11 or later. The builder, gate and scorer use the Python standard library. Source restoration uses `lxml` and LibreOffice for the reports marked for conversion; passage rehydration uses `lxml`, `python-docx` and `openpyxl`; shape validation uses `rdflib` and `pyshacl`. The current-table analysis uses `numpy`. Additional historical analysis scripts have the dependencies listed in `code_report.md`.
 
 ```sh
 sha256sum -c SHA256SUMS
@@ -79,7 +79,18 @@ The JSON-LD records and the five SQLite databases represent the same query graph
 python3 restore/rescore_stored.py --release . --out work/rescored.json
 ```
 
-This command replays all 60 main stored score entries with the released scorer and 667 admitted items. Local preparation reproduced 60/60 entries in every field except the response path. The broader historical score-report check and its per-entry coverage are recorded in `datasheet.md`; the package preserves the original response and score bytes.
+This command replays all 60 historical stored-score entries with the released scorer and 667 admitted items. Local preparation reproduced 60/60 entries in every field except the response path. The broader historical score-report check and its per-entry coverage are recorded in `datasheet.md`; the package preserves the original response and score bytes.
+
+## Reproduce the current result tables
+
+```sh
+mkdir -p code/.git
+python3 restore/reproduce_current_tables.py --release . \
+  --out work/m2_template_session.json --report work/m2_reproduction.json \
+  --expected sources/current_tables_reference.json
+```
+
+This offline command reconstructs all 37 current analysis conditions on the 667 admitted questions. It runs the packaged scoring and template/session analysis unchanged, including both scoring rules and 10,000-draw cluster and session bootstraps. A temporary filesystem adapter maps released responses, packets and databases into the expected input layout. The output matches the reference SHA-256 byte for byte; the report records condition totals and the original analysis-source hashes. These current-table conditions and the 60 historical score entries above are separate replay targets.
 
 ## Provenance paths
 
@@ -93,6 +104,6 @@ The packaged vocabulary and stored outcomes can be recounted with `python3 resto
 
 The original loaded-graph competency-query receipts are indexed in [sources/competency_queries/index.json](sources/competency_queries/index.json). They retain identifiers, outcomes, counts, guard checks and project-authored queries, with original-file and projected-file hashes. Their scope is the original loaded process graph; these stored outcomes are separate from the fresh benchmark gate over the released query projection. Raw answer samples and source-text fields stay in the original receipts.
 
-The namespace is `https://w3id.org/spectra#`. The first public ontology release is archived under DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872). Package version 1.2.0 retains the preceding public creator, publisher, issue date, license and namespace metadata and supplies the current 37 named classes, 86 object properties, 112 datatype properties, 44 node shapes and 16 disposition codes. `docs/ontology_build.json` records the source snapshots and their hashes. External publication of this prepared package is a separate step.
+The namespace is `https://w3id.org/spectra#`. The first public ontology release is archived under DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872). Package version 1.2.0 retains the preceding public creator, publisher, issue date, license and namespace metadata and supplies the current 37 named classes, 86 object properties, 112 datatype properties, 44 node shapes and 16 disposition codes. `docs/ontology_build.json` records the source snapshots and their hashes. This resource package is available on the repository’s `vldb-2027` branch.
 
 The package uses CC BY 4.0 (`LICENSE`). Cite the authors and manuscript listed in `CITATION.cff`. Restored 3GPP source documents and locally rehydrated passages retain the terms of 3GPP and its Organizational Partners. Earlier archived releases remain associated with the concept DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871); this preparation creates no new DOI.
