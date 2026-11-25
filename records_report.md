@@ -1,5 +1,10 @@
 # Record files and receipts: regeneration report
 
+This preparation record preserves the measurements and review questions recorded during the
+initial packaging of these files. The folder counts and Section 8 describe that stage.
+For the current artifact scope, use [README](README.md), the execution guide
+[REPRODUCING](REPRODUCING.md), and the [datasheet](datasheet.md).
+
 This report covers the two folders `records/` and `receipts/` of this release folder and the
 list `records_redactions.jsonl`. Every number below was measured on the files as they are
 stored here. Paths that start with `ontology/` or `logs/` are relative to the root of the
@@ -237,7 +242,7 @@ byte-equivalent to the earlier staging apart from the namespace (Section 5).
    per file, with a memory cap of 14 GB per run. The highest resident memory of a single
    file was 2,033,288 KB.
 
-## 8. Points for a decision
+## 8. Decisions recorded during initial preparation
 
 1. Vocabulary terms in `@context`. Forty-five record files keep the term definitions of the
    dropped properties (for example `hasContact`, `submittedBy`, `title`, `evidenceQuote`,

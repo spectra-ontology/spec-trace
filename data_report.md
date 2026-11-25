@@ -1,5 +1,10 @@
 # SQLite exports, source manifest, restore script and ontology: data report
 
+This preparation record preserves the measurements and review questions recorded during the
+initial packaging of these files. The folder counts and Section 8 describe that stage.
+For the current artifact scope, use [README](README.md), the execution guide
+[REPRODUCING](REPRODUCING.md), and the [datasheet](datasheet.md).
+
 This report covers the four folders `sqlite/`, `sources/`, `restore/` and `ontology/` of this
 release folder. Every number below was measured on the files named here. Paths that start with
 `ontology/`, `scripts/` or `logs/` are relative to the root of the source repository; all other
@@ -15,8 +20,8 @@ paths are relative to this folder. The checking tools are listed in section 7.
 | `ontology/` | 2 | 132,478 | `tdoc-ontology.ttl`, `tdoc-ontology-shapes.ttl` | no |
 
 No redaction was applied to any file in these four folders. The reasons are measured in
-sections 2.4 to 2.7 (SQLite), 3 (manifest) and 4 (restore script). Items that need a decision
-by a person are listed in section 8.
+sections 2.4 to 2.7 (SQLite), 3 (manifest) and 4 (restore script). The preparation-stage review questions
+are preserved in section 8.
 
 ## 2. `sqlite/`
 
@@ -481,7 +486,7 @@ folder. None calls a model or the network.
 | `text_scan.py` | scans of the manifest, the restore script and the ontology files |
 | `ontology_check.py` | section 5 |
 
-## 8. Open items for a decision by a person
+## 8. Decisions recorded during initial preparation
 
 1. **Creator line of the ontology.** `dc:creator "Sihyeon Choi (Samsung System LSI)"` names a
    person and an employer. The same header holds `rdfs:seeAlso <https://github.com/spectra-ontology/spectra>`,

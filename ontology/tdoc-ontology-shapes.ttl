@@ -100,7 +100,7 @@
 
 tdoc:RRCParameterShape a sh:NodeShape ;
     sh:targetClass tdoc:RRCParameter ;
-    rdfs:comment "RRCParameter는 ASN.1 IE 본질. specNumber는 실제 ASN.1 IE 입력이 있는 38.331, 38.355 및 NW interface 규격을 사용한다. Entity는 Section과 definedInSection으로 연결한다."@en ;
+    rdfs:comment "RRCParameter represents an ASN.1 information element. Its specNumber identifies an observed ASN.1 IE source in 38.331, 38.355 or the listed network-interface specifications. The entity links to its Section through definedInSection."@en ;
     sh:property [
         sh:path tdoc:specNumber ;
         sh:in ( "38.331" "38.355" "38.413" "38.420" "38.423" "38.460" "38.463" "38.470" "38.473" ) ;
@@ -118,7 +118,7 @@ tdoc:RRCParameterShape a sh:NodeShape ;
         sh:path tdoc:granularity ;
         sh:in ( "item" "section" "sub-item" ) ;
         sh:maxCount 1 ;
-        sh:message "granularity must be one of: item (v3.0 신규) / section (legacy) / sub-item" ;
+        sh:message "granularity must be one of: item (introduced in entity layer 3.0) / section (legacy) / sub-item"@en ;
     ] ;
     sh:property [
         sh:path tdoc:asn1ChunkId ;
@@ -133,7 +133,7 @@ tdoc:RRCParameterShape a sh:NodeShape ;
 
 tdoc:CapabilityItemShape a sh:NodeShape ;
     sh:targetClass tdoc:CapabilityItem ;
-    rdfs:comment "CapabilityItem은 UE capability item. spec은 38.306 (UE-cap) / 38.101-x (UE RF cap) / 38.508-1 (test cap). v3.0: independent class."@en ;
+    rdfs:comment "CapabilityItem represents a UE capability item from 38.306 (UE capability), 38.101-x (UE RF capability) or 38.508-1 (test capability). Entity layer 3.0 defines it as an independent class."@en ;
     sh:property [
         sh:path tdoc:specNumber ;
         sh:in ( "38.306" "38.101-1" "38.101-2" "38.101-3" "38.101-4" "38.101-5"
@@ -166,7 +166,7 @@ tdoc:CapabilityItemShape a sh:NodeShape ;
 
 tdoc:ProcedureShape a sh:NodeShape ;
     sh:targetClass tdoc:Procedure ;
-    rdfs:comment "Procedure는 spec body protocol procedure. PHY/MAC/RRC/NW interface spec만. v3.0: independent class."@en ;
+    rdfs:comment "Procedure represents a protocol procedure in the body of a PHY, MAC, RRC or network-interface specification. Entity layer 3.0 defines it as an independent class."@en ;
     sh:property [
         sh:path tdoc:specNumber ;
         sh:in ( "38.211" "38.212" "38.213" "38.214" "38.215" "38.291"
@@ -195,7 +195,7 @@ tdoc:ProcedureShape a sh:NodeShape ;
 
 tdoc:PerformanceRequirementShape a sh:NodeShape ;
     sh:targetClass tdoc:PerformanceRequirement ;
-    rdfs:comment "PerformanceRequirement는 RRM/RF perf req spec body. 38.133 RRM / 38.101-x UE RF / 38.104 BS RF만. v3.0: independent class."@en ;
+    rdfs:comment "PerformanceRequirement represents a requirement in an RRM or RF specification: 38.133 (RRM), 38.101-x (UE RF) or 38.104 (BS RF). Entity layer 3.0 defines it as an independent class."@en ;
     sh:property [
         sh:path tdoc:specNumber ;
         sh:in ( "38.133" "38.101-1" "38.101-2" "38.101-3" "38.101-4" "38.101-5" "38.104" ) ;
@@ -221,7 +221,7 @@ tdoc:PerformanceRequirementShape a sh:NodeShape ;
 
 tdoc:ConformanceTestShape a sh:NodeShape ;
     sh:targetClass tdoc:ConformanceTest ;
-    rdfs:comment "ConformanceTest는 UE/BS conformance test spec body. RAN5 UE test (38.508-x, 38.509, 38.521-x, 38.523-1, 38.533) + RAN4 BS test (38.141-x, 38.181). v3.0: independent class."@en ;
+    rdfs:comment "ConformanceTest represents a conformance test in a UE or BS test specification: RAN5 UE tests (38.508-x, 38.509, 38.521-x, 38.523-1, 38.533) and RAN4 BS tests (38.141-x, 38.181). Entity layer 3.0 defines it as an independent class."@en ;
     sh:property [
         sh:path tdoc:specNumber ;
         sh:in ( "38.508-1" "38.508-2" "38.509"
@@ -258,7 +258,7 @@ tdoc:ResolutionScopeShape a sh:PropertyShape ;
 
 tdoc:FeatureShape a sh:NodeShape ;
     sh:targetClass tdoc:Feature ;
-    rdfs:comment "Feature는 3GPP standardization feature. Release 표시 필수. v3.0 신규: usesIE / hasCapability / hasProcedure / disjointWith 관계 shape."@en ;
+    rdfs:comment "Feature represents a 3GPP standardization feature and requires a release identifier. Entity layer 3.0 introduced shapes for usesIE, hasCapability, hasProcedure and disjointWith."@en ;
     sh:property [
         sh:path tdoc:introducedInRelease ;
         sh:datatype xsd:string ;
@@ -368,7 +368,7 @@ tdoc:FeatureDisjointShape a sh:NodeShape ;
             [ sh:class tdoc:ConformanceTest ]
         )
     ] ;
-    rdfs:comment "Feature 노드는 entity 클래스 (5종)와 동시에 속할 수 없다 (의미적 disjoint)." .
+    rdfs:comment "Feature is semantically disjoint with each of the five entity classes."@en .
 
 # =============================================================================
 # Section 4 — Spec hybrid (release-aware) shapes
@@ -445,7 +445,7 @@ tdoc:SpecHybridShape a sh:NodeShape ;
         """ ;
     ] ;
     sh:message "Spec must be either an abstract hub (no specRelease / no inReleaseOf) or a release-keyed variant (exactly one specRelease 'Rel-NN' + exactly one inReleaseOf to its hub) — core v4.1 hybrid" ;
-    rdfs:comment "release-aware hybrid Spec 무결성: 허브/release-키 역할의 상호 배타 + release-키의 허브 연결 의무." .
+    rdfs:comment "Release-aware hybrid Spec integrity: hub and release-keyed roles are mutually exclusive, and each release-keyed Spec must link to its hub."@en .
 
 tdoc:InReleaseOfHubTargetShape a sh:NodeShape ;
     sh:targetObjectsOf tdoc:inReleaseOf ;
@@ -455,7 +455,7 @@ tdoc:InReleaseOfHubTargetShape a sh:NodeShape ;
         sh:maxCount 0 ;
         sh:message "inReleaseOf MUST point to an ABSTRACT HUB Spec (a node carrying specRelease is itself release-keyed, not a hub)" ;
     ] ;
-    rdfs:comment "inReleaseOf의 타깃은 항상 허브 — release-키 변형끼리의 연결(체인) 금지." .
+    rdfs:comment "The target of inReleaseOf is always a Spec hub; release-keyed variants link directly to their hub."@en .
 
 tdoc:SectionBelongsToReleaseKeyedShape a sh:NodeShape ;
     sh:targetClass tdoc:Section ;
@@ -490,7 +490,7 @@ tdoc:SectionBelongsToReleaseKeyedShape a sh:NodeShape ;
             sh:message "A Section and its parentSection MUST belong to the same release-keyed Spec" ;
         ] ]
     ) ;
-    rdfs:comment "Section은 release-키 Spec에만 귀속 — 허브 직접 귀속 금지 (release별 Section 우주 분리 보장). Section의 specNumber는 그 소속 Spec의 specNumber 사본이다." .
+    rdfs:comment "Each Section belongs to a release-keyed Spec, keeping section membership separate by release. The Section's specNumber is a copy of its owning Spec's specNumber."@en .
 
 tdoc:HasSectionTopLevelShape a sh:NodeShape ;
     sh:targetObjectsOf tdoc:hasSection ;
@@ -505,7 +505,7 @@ tdoc:HasSectionTopLevelShape a sh:NodeShape ;
         sh:maxCount 0 ;
         sh:message "hasSection MUST point to a TOP-LEVEL Section (no parentSection); membership of sub-sections is expressed by belongsToSpec only" ;
     ] ;
-    rdfs:comment "hasSection 은 최상위 절만 — 하위 절의 소속은 belongsToSpec 으로만 표현한다." .
+    rdfs:comment "hasSection links top-level sections only; membership of subsections is expressed through belongsToSpec only."@en .
 
 # =============================================================================
 # Section 5 — Assessed claims and exact source evidence

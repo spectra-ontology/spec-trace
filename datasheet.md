@@ -8,6 +8,7 @@ This datasheet follows the questions of Gebru et al., "Datasheets for Datasets",
 | `sqlite/` | one SQLite database per working group, with `SHA256SUMS.txt` |
 | `receipts/` | identity-review receipts |
 | `ontology/` | the OWL ontology and its SHACL shapes |
+| `metadata/dcat_void.ttl` and [archived body-graph descriptions](metadata/archived_body_graphs.ttl) | DCAT and VoID descriptions of the package and its 57 RDF/SQLite distributions, including formats, sizes and rights scopes |
 | `benchmark/` | drawn and admitted benchmark items, gate reports, anchor lists, five-hop sets |
 | `abstention/` | abstention items, their checks, stored responses and scores |
 | `responses/` | stored responses, queries, scores and the result files of the audits and analyses |
@@ -138,14 +139,14 @@ Two link audits, written apart from the build code, check each pack link against
 
 The gate, the abstention checks and the disposition audit also read the meeting reports that `restore/restore_sources.py` fetches from the public 3GPP archive (Section 6).
 
-**People in the data.** 3GPP documents name the delegates who submit them and the companies that source them. The package leaves out the following:
+**People in the data.** 3GPP documents name the delegates who submit them and the companies that source them. The released record and SQLite projections omit the following:
 
 1. the contact and company record kinds, and the `hasContact` (539,132 TDoc records) and `submittedBy` (542,915 TDoc records) links to them;
 2. 14 liaison link values that point to people: eight derived from an e-mail address (seven `replyTo`, one `sentTo`) and six that name a person (four `sentTo`, two `ccTo`);
 3. 240 liaison link values that hold free text in place of an identifier (154 `originalLS`, 85 `replyTo`, one `replyIn`);
 4. every text field copied from a 3GPP document: titles, abstracts, report sentences and quotes, cover-sheet fields and notes.
 
-What remains in the records is identifiers, codes, dates, links between identifiers (TDoc numbers and working-group or organisation identifiers), archive paths, hashes and locators. Archive paths and member names stay as the 3GPP archive publishes them, and some of these file names carry title words, company names or a delegate's name.
+The records retain identifiers, codes, dates, links between identifiers (TDoc numbers and working-group or organisation identifiers), archive paths, hashes and locators. Archive paths and member names stay as the 3GPP archive publishes them, and some carry title words, company names or a delegate's name. Separately, raw-source reconstruction recipes retain document titles, organization labels, work-item codes and cover-clause labels as frozen source metadata (`restore/retrieval/raw/cr/metadata_text_audit.json`). The contextual correspondence supplement retains short technical excerpts with source identities removed (`studies/correspondence_context/`). These fields and excerpts retain their original rights, as described in `LICENSE`.
 
 In the stored responses and result files, values that repeat document text, a person's name or a company attribution are replaced by a marker with the SHA-256 and length of the original. The files in the root-level redaction lists list every changed file with the hash of its original and of the released copy and the count of each kind of marker.
 
@@ -196,7 +197,7 @@ Where a report entry and the document list describe the same document differentl
 
 **Access.** The current ontology, 44 shapes, benchmark and replay package are available on the [`vldb-2027` branch](https://github.com/spectra-ontology/spec-trace/tree/vldb-2027). The first release links its ontology and shapes in the companion repository; its [version DOI](https://doi.org/10.5281/zenodo.20034872) archives five WG body graphs. The [concept DOI](https://doi.org/10.5281/zenodo.20034871) identifies the earlier archived release series.
 
-**License.** The package is under Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); see `LICENSE`.
+**License.** Project-authored material and structural record projections use Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/). Source-derived metadata, contextual quotations and restored documents retain their original rights; `LICENSE` specifies the scope.
 
 **3GPP documents.** The package refers to 3GPP documents by identifier and archive path, and it cites meeting reports by archive path, SHA-256 and locator. `restore/restore_sources.py` restores the cited reports locally from the public 3GPP archive, and the restored files stay under the 3GPP terms (https://www.3gpp.org/about-us/legal-matters, https://www.3gpp.org/terms-of-use).
 

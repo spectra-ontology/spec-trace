@@ -6,7 +6,7 @@
    문서 판정 기록(`document_decision_identity_reviews.json`)은 `identityStatus` · `classification`(글자일 때) ·
    `sourceDispositionCode` 를, 처분 판정 기록(`decision_disposition_identity_reviews.json`)은 `assessment` 를 센다.
    같은 이름의 빌드 입력 파일(`ontology/input/tsg/RAN/formal/meetings/RAN*/`)과 열쇠 · 상태가 같은지도 맞댄다.
-2. 기록마다 남은 글(`reason`)이 몇 가지인지(같은 글이 되풀이되면 틀에서 찍은 글이고, 기록마다 다르면 손으로 쓴 글이다).
+2. 기록마다 남은 글(`reason`)의 종류와 빈도를 세고, 알려진 빌드 템플릿과 일치하는 사유문을 구분한다.
 3. 처분 기록(`phase-2/RAN*/decision_dispositions.jsonld`, 레코드 단위로 읽는다)의 `assessmentMethod` 안에 든
    `identityReview` 를 열쇠로 기록과 잇는다. 문서 판정은 (meetingId, targetTdocNumber, decisionEvidence.locator),
    처분 판정은 dispositionId 가 열쇠다. 이은 처분 기록을 (판정 값, 규칙, evidenceStatus) 로 센다.
@@ -16,7 +16,7 @@
 4. 벤치마크 문항 667개(`items_final/gate/{core,ran5}/chain_items_admitted.jsonl`)의 `evidence[].dispositionId` 가
    3 에서 이은 처분 기록을 가리키는 정답 근거 행 수와 문항 수를 판정 값별로 센다.
    정답이 기대는 판정 기록은 `reason` 글이 `build_annex_identity_reviews.REASONS` 의 틀 글과 같은지로도 가른다
-   (같으면 그 결정적 스크립트가 찍은 글이고, 다르면 그 스크립트가 만든 기록이 아니다).
+   (일치하는 사유문은 `buildScriptTemplate`, 그 밖의 사유문은 `otherReasonText`로 분류한다).
 
 사용 (저장소 루트에서 실행):
   .venv/bin/python3 -I scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/measure_identity_reviews.py \
