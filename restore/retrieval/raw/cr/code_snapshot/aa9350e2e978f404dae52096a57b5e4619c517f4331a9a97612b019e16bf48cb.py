@@ -1,0 +1,637 @@
+#!/usr/bin/env python3
+"""Check raw CR forms against fixed Phase-8 chunk digests without services.
+
+Recipes hold source digests, structural metadata and expected chunk digests.
+Reason, summary, consequences and clauses are read from the acquired DOCX.
+Only the metadata resolver calls are adapted; body parsing and hardening use
+the hash-pinned original implementation.
+"""
+from __future__ import annotations
+
+import argparse
+import ast
+from collections import Counter, defaultdict
+from dataclasses import asdict
+from functools import lru_cache
+import gzip
+import hashlib
+import importlib.util
+import importlib.metadata
+import inspect
+import json
+import os
+from pathlib import Path
+import sqlite3
+import subprocess
+import sys
+import time
+import types
+
+os.environ['HF_HUB_OFFLINE'] = '1'
+os.environ['TRANSFORMERS_OFFLINE'] = '1'
+
+
+RAW_FIELDS = {
+    'reason_for_change': 'reason for change',
+    'summary_of_change': 'summary of change',
+    'consequences_if_not_approved': 'consequences if not approved',
+    'clauses_affected': 'clauses affected',
+}
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for part in iter(lambda: stream.read(4 << 20), b''):
+            h.update(part)
+    return h.hexdigest()
+
+
+def text_sha(value):
+    return hashlib.sha256((value or '').encode()).hexdigest()
+
+
+def encoded(value):
+    return json.dumps(value, ensure_ascii=False, separators=(',', ':')).encode()
+
+
+def runtime():
+    packages={}
+    for name in ('python-docx','lxml','transformers','tokenizers','torch'):
+        try:packages[name]=importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:packages[name]=None
+    return {'python':sys.version,'sqlite':sqlite3.sqlite_version,'executable':sys.executable,'packages':packages}
+
+
+@lru_cache(maxsize=8)
+def verify_code(repository, pins):
+    for relative, expected in pins:
+        path=(repository/relative).resolve()
+        if not path.is_relative_to(repository) or sha(path)!=expected:
+            raise ValueError('Code dependency digest differs: '+relative)
+    return True
+
+
+def module(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
+    result = importlib.util.module_from_spec(spec)
+    sys.modules[name] = result
+    spec.loader.exec_module(result)
+    return result
+
+
+def exporter(repository):
+    return module(repository / 'scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/export_retrieval_artifact.py', 'cr_probe_exporter')
+
+
+@lru_cache(maxsize=5)
+def load_phase8(repository, wg, expected_sha):
+    path = repository / f'scripts/tsg/RAN/formal/{wg}/phase-8/cr-parser/01_parse_cr_chunks.py'
+    if sha(path) != expected_sha:
+        raise ValueError('Phase-8 implementation changed')
+    tree = ast.parse(path.read_text(), filename=str(path))
+    class Adapt(ast.NodeTransformer):
+        removed = 0
+        sheet_calls = 0
+        identity_calls = 0
+        source_metadata_imports = 0
+        def visit_ImportFrom(self, node):
+            if node.module == 'tdoc_body_source_metadata' and [x.name for x in node.names] == ['validate_source_selection']:
+                self.removed += 1
+                return None
+            if node.module == 'tdoc_source_metadata' and [x.name for x in node.names] == ['identity_fields', 'corrected_label']:
+                self.source_metadata_imports += 1
+                return None
+            return node
+        def visit_Call(self, node):
+            node = self.generic_visit(node)
+            if isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Name) and node.func.value.id == 'tsg_cr_decision' and node.func.attr == 'sheet_cr_label':
+                self.sheet_calls += 1
+                node.func = ast.Name(id='frozen_sheet_cr_label', ctx=ast.Load())
+            if isinstance(node.func, ast.Attribute) and node.func.attr == 'resolve' and isinstance(node.func.value, ast.Call) and isinstance(node.func.value.func, ast.Name) and node.func.value.func.id == 'identity':
+                self.identity_calls += 1
+                node.func = ast.Name(id='frozen_identity', ctx=ast.Load())
+            return node
+    adapter = Adapt(); tree = adapter.visit(tree); ast.fix_missing_locations(tree)
+    expected_shape = {'RAN1':(0,1,2,0),'RAN2':(1,1,3,0),'RAN3':(1,1,2,0),'RAN4':(1,1,3,0),'RAN5':(1,1,0,1)}[wg]
+    if (adapter.removed, adapter.sheet_calls, adapter.identity_calls, adapter.source_metadata_imports) != expected_shape:
+        raise ValueError('Metadata adapter source shape changed: '+str((adapter.removed,adapter.sheet_calls,adapter.identity_calls,adapter.source_metadata_imports)))
+    name = 'cr_raw_phase8_' + wg
+    result = types.ModuleType(name); result.__file__ = str(path); sys.modules[name] = result
+    def validate_source_selection(root, view_wg, view, target, paths):
+        recipe, source = result.frozen_context
+        if view_wg != wg or view != 'cr' or target != recipe['tdoc'] or [Path(p).resolve() for p in paths] != [source.resolve()]:
+            raise ValueError('Frozen source selection differs')
+    def frozen_sheet_cr_label(number, tdoc, pack):
+        recipe, source = result.frozen_context
+        expected_identity = recipe['source_identity']
+        if (number, tdoc, pack) != (expected_identity[1], recipe['tdoc'], recipe['cr_metadata'].get('cr_pack_id', '')):
+            raise ValueError('Frozen CR identity differs')
+        return number
+    result.validate_source_selection = validate_source_selection
+    result.frozen_sheet_cr_label = frozen_sheet_cr_label
+    result.frozen_identity = lambda path: tuple(result.frozen_context[0]['source_identity'])
+    result.identity_fields = lambda root, view_wg: {}
+    result.corrected_label = lambda label, fields: label
+    exec(compile(tree, str(path), 'exec'), result.__dict__)
+    return result
+
+
+def checked_phase8(repository, wg, recipe, source):
+    result = load_phase8(repository, wg, recipe['phase8_sha256'])
+    result.frozen_context = recipe, source
+    return result
+
+
+@lru_cache(maxsize=5)
+def checked_phase4(repository, wg, expected_sha):
+    path = phase4_path(repository,wg)
+    if sha(path) != expected_sha:
+        raise ValueError('Phase-4 implementation changed')
+    return module(path, 'cr_raw_phase4_' + wg)
+
+
+def phase4_path(repository, wg):
+    filename = '01_parse_cr_documents.py' if wg == 'RAN5' else '02_parse_cr_documents.py'
+    return repository / f'scripts/tsg/RAN/formal/{wg}/phase-4/cr-parser/{filename}'
+
+
+def make_recipe(repository, wg, parser, cover_map, record, expected):
+    chosen = record['tdoc_number']
+    source = repository / record['source_path']
+    pack = record.get('cr_pack_id', '')
+    cover = cover_map.get((pack, chosen), {}) if pack else cover_map.get(chosen, {})
+    pack_cover = cover_map.get((pack, ''), {}) if pack else cover
+    first = expected[0]
+    code_paths = [Path(parser.__file__), phase4_path(repository,wg)]
+    code_paths += list((repository / 'scripts/tsg/RAN/formal/common').glob('*.py'))
+    code_paths += [repository / f'scripts/common/common/{name}' for name in
+                   ('chunker.py', 'atomic_io.py', 'embedding_registry.py', 'tdoc_number.py', 'local_model.py')]
+    recipe = {
+        'format': 'spectra-offline-cr-recipe-v1', 'wg': wg, 'tdoc': chosen,
+        'source_path': record['source_path'], 'source_sha256': sha(source),
+        'source_identity': [first['specNumber'], first['crNumber'], chosen],
+        'phase8_sha256': sha(Path(parser.__file__)),
+        'phase4_sha256': sha(phase4_path(repository,wg)),
+        'code_sha256': {str(p.relative_to(repository)): sha(p) for p in code_paths if p.is_file()},
+        'cr_metadata': {k: v for k, v in record.items() if k not in RAW_FIELDS},
+        'cover_metadata': cover, 'pack_metadata': pack_cover,
+        'expected_raw_field_sha256': {k: text_sha(record.get(k)) for k in RAW_FIELDS},
+        'expected_chunks': [{'chunkId': c['chunkId'], 'text_sha256': c.get('text_sha256') or text_sha(c['text'])} for c in expected],
+        'metadata_adapter': {'validate_source_selection': 'explicit frozen target and checked source path',
+                             'sheet_cr_label': 'frozen original index CR label; no live CR-sheet lookup'},
+    }
+    if '_target_index' in first:
+        recipe['target_chunk_indices'] = [c['_target_index'] for c in expected]
+        recipe['target_parsed_path'] = f'vectordb/parsed/cr/{wg}/{wg.lower()}_cr_chunks.json'
+    if wg == 'RAN4':
+        continuation_file=repository / 'vectordb/parsed/cr/RAN4/parse_stats.json'
+        extras=json.loads(continuation_file.read_text()).get('continuations',{}).get(chosen,[])
+        recipe['continuation_paths']=[{'path':path,'sha256':sha(repository/path)} for path in extras]
+    return recipe
+
+
+def input_maps(repository, wg, frontier=None):
+    parser = module(repository / f'scripts/tsg/RAN/formal/{wg}/phase-8/cr-parser/01_parse_cr_chunks.py', 'cr_prepare_' + wg)
+    groups = defaultdict(list)
+    if wg != 'RAN5':
+        cover_map, cr_map = parser.load_phase4_metadata()
+    else:
+        records=json.loads((repository / f'ontology/output/tsg/RAN/formal/parsed_cr/{wg}/cr_documents.json').read_text())['documents']
+        cr_map={r['tdoc_number']:r for r in records};cover_map={}
+        packs=json.loads((repository / f'ontology/output/tsg/RAN/formal/parsed_cr/{wg}/crpacks.json').read_text())['packs']
+        for pack in packs:
+            for tdoc in pack.get('tdocNumbers',[]):
+                cover_map[(pack['crPackId'],tdoc)]={'tsg_meeting':pack.get('tsgMeeting',''),'cr_pack_id':pack['crPackId']}
+    if frontier:
+        helper=exporter(repository)
+        for row in helper.rows(frontier,'docs'):
+            if row['collection'] != wg.lower()+'_cr_chunks':continue
+            meta=json.loads(row['meta']);locator=row['text_locator']
+            if locator['status']!='exact_parsed_slice' or locator['start']!=0 or locator['end']!=row['text_chars']:
+                raise ValueError('CR frontier needs a separate frozen-snapshot text bridge')
+            chunk={'chunkId':row['chunk_id'],'tdocNumber':row['tdoc'],'specNumber':meta.get('specNumber')or row['spec'],
+                   'crNumber':meta.get('crNumber'),'text_sha256':row['text_sha256'],'_target_index':locator['pointer'][1]}
+            groups[row['tdoc']].append(chunk)
+        for group in groups.values():group.sort(key=lambda c:c['_target_index'])
+        groups=dict(sorted(groups.items(),key=lambda x:x[1][0]['_target_index']))
+    else:
+        chunks_path = repository / f'vectordb/parsed/cr/{wg}/{wg.lower()}_cr_chunks.json'
+        chunks = json.loads(chunks_path.read_text())['chunks']
+        for chunk in chunks:
+            groups[chunk['tdocNumber']].append(chunk)
+    return parser, cover_map, cr_map, groups
+
+
+def prepare(args):
+    repository, wg = args.repository.resolve(), args.wg
+    parser, cover_map, cr_map, groups = input_maps(repository, wg,getattr(args,'frontier',None))
+    chosen = args.tdoc or next(iter(groups))
+    expected = groups[chosen]
+    recipe = make_recipe(repository, wg, parser, cover_map, cr_map[chosen], expected)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    if args.output.exists():
+        raise ValueError('Recipe exists')
+    args.output.write_bytes(encoded(recipe) + b'\n')
+    print(json.dumps({'tdoc': chosen, 'chunks': len(expected), 'source_sha256': recipe['source_sha256']}))
+
+
+def inventory(args):
+    repository, wg = args.repository.resolve(), args.wg
+    helper = exporter(repository)
+    parser, cover_map, cr_map, groups = input_maps(repository, wg,getattr(args,'frontier',None))
+    sources, by_path = {}, {}
+    with gzip.open(args.source_inventory, 'rt') as stream:
+        for line in stream:
+            row = json.loads(line); sources[row['archive_sha256']] = row
+            for path in row['paths']:
+                by_path[path] = row
+                by_path[path.lower()] = row
+    if args.url_inventory:
+        with gzip.open(args.url_inventory, 'rt') as stream:
+            for line in stream:
+                row = json.loads(line)
+                if row['sha256'] in sources:
+                    found = sources[row['sha256']]
+                    found['official_urls'] = sorted(set(found['official_urls']) | set(row['candidateUrls']))
+    counts, unknown, started = Counter(), [], time.monotonic()
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    if args.output.exists():
+        raise ValueError('Inventory exists')
+    with args.output.open('xb') as raw, gzip.GzipFile(filename='', mode='wb', fileobj=raw, compresslevel=6, mtime=0) as gz:
+        for tdoc, expected in groups.items():
+            if tdoc not in cr_map:
+                row = {'tdoc': tdoc, 'status': 'phase4_record_unresolved', 'expected_chunks': len(expected)}
+                unknown.append(row); counts[row['status']] += 1; gz.write(encoded(row) + b'\n'); continue
+            row = make_recipe(repository, wg, parser, cover_map, cr_map[tdoc], expected)
+            row['target_total_chunks']=sum(map(len,groups.values()))
+            path = Path(row['source_path'])
+            source = None
+            for parent in path.parents:
+                candidate = str(parent).replace('/derived/', '/source/', 1) + '.zip'
+                if candidate in by_path:
+                    source = by_path[candidate]; break
+            if source is None:
+                row['status'] = 'source_archive_unresolved'
+            else:
+                archive = repository / source['paths'][0]
+                wanted = row['source_sha256']
+                chain = next(([{'name': m['path'], 'sha256': m['sha256'], 'bytes': m['bytes']}]
+                              for m in source.get('members', []) if m.get('sha256') == wanted), None)
+                if chain is None:
+                    try:
+                        chain = helper.zip_member_chain(archive, wanted)
+                    except Exception as error:
+                        row['archive_scan_error'] = type(error).__name__ + ': ' + str(error)
+                selected = {'path': row['source_path'], 'sha256': wanted,
+                            'archive_paths': source['paths'], 'archive_sha256': source['archive_sha256'],
+                            'official_urls': [url for url in source['official_urls'] if url.startswith('https://')],
+                            'archive_bytes': source['archive_bytes']}
+                if chain:
+                    selected.update(source_status='exact_archive_member', member_chain=chain)
+                    row['status'] = 'exact_archive_member'
+                else:
+                    try:
+                        leaves = helper.zip_leaf_members(archive)
+                        desired = path.name.casefold()
+                        native_names = {desired[:-1] if desired.endswith('.docx') else desired,
+                                        str(Path(desired).with_suffix('.doc')),
+                                        str(Path(desired).with_suffix('.docm'))}
+                        candidates = [(chain, magic) for chain, magic in leaves if Path(chain[-1]['name']).name.casefold() in native_names]
+                        if len(candidates) == 1:
+                            chain, magic = candidates[0]
+                            selected.update(helper.native_conversion_record(chain, magic))
+                            row['status'] = 'native_doc_conversion_recipe'
+                        else:
+                            row['status'] = 'member_or_conversion_unresolved'
+                            row['candidate_members'] = [{'member_chain': chain, 'magic_prefix': magic} for chain, magic in leaves]
+                    except Exception as error:
+                        row['status'] = 'member_scan_error'; row['error'] = type(error).__name__ + ': ' + str(error)
+                row['sources'] = [selected]
+            if row['status'] not in ('exact_archive_member', 'native_doc_conversion_recipe'):
+                selected = helper.source_recipe(repository / row['source_path'], repository, by_path)
+                row['sources'] = [selected]
+                row['status'] = selected['source_status']
+            for extra in row.get('continuation_paths',[]):
+                selected=helper.source_recipe(repository/extra['path'],repository,by_path)
+                row.setdefault('sources',[]).append(selected)
+                if selected['source_status'] not in ('exact_archive_member','native_doc_conversion_recipe','exact_source_file'):
+                    row['status']='continuation_source_unresolved'
+            counts[row['status']] += 1
+            if row['status'] not in ('exact_archive_member', 'native_doc_conversion_recipe'):
+                unknown.append({k:v for k,v in row.items() if k not in ('code_sha256', 'cr_metadata', 'cover_metadata', 'pack_metadata', 'expected_chunks')})
+            gz.write(encoded(row) + b'\n')
+            if sum(counts.values()) % 250 == 0:
+                print(json.dumps({'processed': sum(counts.values()), 'counts': dict(counts)}), flush=True)
+    report = {'wg': wg, 'indexed_cr_tdocs': len(groups), 'phase4_records': len(cr_map), 'indexed_chunks': sum(map(len,groups.values())),
+              'counts': dict(counts), 'unknown': unknown, 'sha256': sha(args.output), 'bytes': args.output.stat().st_size,
+              'seconds': time.monotonic() - started,
+              'scope': 'Archive/member mapping with source digests and conversion recipes; actual raw executions have separate receipts.'}
+    args.report.write_bytes(encoded(report) + b'\n'); print(json.dumps({k:v for k,v in report.items() if k!='unknown'}))
+
+
+def execute_recipe(repository, recipe, source, output=None):
+    verify_code(repository,tuple(sorted(recipe.get('code_sha256',{}).items())))
+    if sha(source) != recipe['source_sha256']:
+        proof = source.with_name(source.name + '.conversion.json')
+        if not proof.is_file() or json.loads(proof.read_text()).get('output_sha256') != sha(source):
+            raise ValueError('Source DOCX digest differs')
+        proof_data = json.loads(proof.read_text())
+        expected_native = (recipe.get('sources') or [{}])[0].get('conversion', {}).get('native_sha256')
+        if expected_native and proof_data.get('native_sha256') != expected_native:
+            raise ValueError('Converted native source digest differs')
+    wg = recipe['wg']
+    phase4 = checked_phase4(repository, wg, recipe['phase4_sha256'])
+    doc = phase4.docx_text.open_document(str(source))
+    form = phase4.find_cr_form_table(doc)
+    if form is None:
+        raise ValueError('Source CR form not found')
+    raw = {key: phase4.cr_form_slot.form_value(form, label) for key, label in RAW_FIELDS.items()}
+    field_match = {k: text_sha(v) == recipe['expected_raw_field_sha256'][k] for k, v in raw.items()}
+    cr_meta = dict(recipe['cr_metadata']); cr_meta.update(raw)
+    tdoc, pack = recipe['tdoc'], cr_meta.get('cr_pack_id', '')
+    cover = {(pack, tdoc): recipe['cover_metadata'], (pack, ''): recipe['pack_metadata'], tdoc: recipe['cover_metadata']}
+    parser = checked_phase8(repository, wg, recipe, source)
+    started = time.monotonic()
+    if wg == 'RAN5':
+        form=parser.extract_cr_form(doc,source.name)
+        form.tdoc_number=tdoc;form.spec_number=recipe['source_identity'][0]
+        form.release=cr_meta.get('release') or form.release
+        form.title=cr_meta.get('title') or form.title
+        form._crDelProof=parser.cr_del_state.prove_xml([doc.element.body],lambda p:parser.docx_text.chunk_text(p,deleted=parser.docx_text.KEEP),raw_metadata=vars(form))
+        p4={'cr_number':cr_meta.get('cr_number',''),'rev':cr_meta.get('rev',''),'cr_pack_id':pack,'meeting':'',
+            'tsg_meeting':recipe['cover_metadata'].get('tsg_meeting',''),'source':'','title':cr_meta.get('title')or'',
+            'work_item':cr_meta.get('work_item')or''}
+        chunks=parser.generate_cr_chunks(form,*parser.extract_text_proposal(doc),phase4_meta=p4,cr_number=recipe['source_identity'][1])
+        tree=ast.parse(Path(parser.__file__).read_text())
+        main=next(n for n in tree.body if isinstance(n,ast.FunctionDef)and n.name=='main')
+        output_dict=next(n.value for n in main.body if isinstance(n,ast.Assign)and any(isinstance(t,ast.Name)and t.id=='output'for t in n.targets))
+        expr=next(v for k,v in zip(output_dict.keys,output_dict.values)if isinstance(k,ast.Constant)and k.value=='chunks')
+        chunks=eval(compile(ast.Expression(expr),str(parser.__file__),'eval'),parser.__dict__,{'all_chunks':chunks})
+    else:
+        kwargs={}
+        if 'source_identity' in inspect.signature(parser.parse_single_cr).parameters:kwargs['source_identity']=tuple(recipe['source_identity'])
+        if recipe.get('continuation_paths'):
+            source_root=source
+            for _ in Path(recipe['source_path']).parts:source_root=source_root.parent
+            extras=[source_root/entry['path']for entry in recipe['continuation_paths']]
+            if any(sha(path)!=entry['sha256'] for path,entry in zip(extras,recipe['continuation_paths'])):
+                raise ValueError('Continuation source digest differs')
+            kwargs['extra']=tuple(extras)
+        chunks = [asdict(c)for c in parser.parse_single_cr(source, cover, {tdoc: cr_meta}, **kwargs)]
+    chunks = parser._harden_per_cr(chunks)
+    actual = [{'chunkId': c['chunkId'], 'text_sha256': text_sha(c['text'])} for c in chunks]
+    report = {'tdoc': tdoc, 'actual_source_sha256': sha(source),
+              'snapshot_source_container_sha_equal': sha(source) == recipe['source_sha256'],
+              'raw_field_sha_equal': field_match, 'expected_chunk_count': len(recipe['expected_chunks']),
+              'actual_chunk_count': len(chunks), 'all_expected_chunks_exact': actual == recipe['expected_chunks'],
+              'actual_chunk_digests': actual, 'seconds': time.monotonic() - started,
+              'runtime':runtime(),
+              'scope': 'Raw DOCX form fields and Phase-8 parsing/hardening; frozen metadata resolver adapter.'}
+    if output and report['all_expected_chunks_exact']:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        content = encoded({'tdoc': tdoc, 'chunks': chunks}) + b'\n'
+        if output.exists() and output.read_bytes() != content:
+            raise ValueError('Existing local parsed output differs')
+        if not output.exists():
+            output.write_bytes(content)
+        report['local_output_sha256'] = sha(output)
+    return report
+
+
+def replay(args):
+    repository = args.repository.resolve()
+    recipe = json.loads(args.recipe.read_text())
+    source = args.source or repository / recipe['source_path']
+    report = execute_recipe(repository, recipe, source, args.output)
+    report['recipe_sha256'] = sha(args.recipe)
+    args.report.parent.mkdir(parents=True, exist_ok=True); args.report.write_bytes(encoded(report) + b'\n')
+    print(json.dumps({k:v for k,v in report.items() if k != 'actual_chunk_digests'}))
+    if not report['all_expected_chunks_exact']:
+        raise ValueError('Raw-source CR chunk digest sequence differs')
+
+
+def batch(args):
+    repository = args.repository.resolve()
+    code_start=sha(Path(__file__))
+    outcomes, counts, started = [], Counter(), time.monotonic()
+    args.report.parent.mkdir(parents=True, exist_ok=True)
+    with gzip.open(args.recipes, 'rt') as stream:
+        for line in stream:
+            recipe = json.loads(line); begin = time.monotonic()
+            try:
+                source = (args.source_root or repository) / recipe['source_path']
+                output = args.text_cache / (recipe['tdoc'] + '.json') if args.text_cache else None
+                report = execute_recipe(repository, recipe, source, output)
+                report.pop('actual_chunk_digests')
+                report['status'] = 'all_expected_chunks_exact' if report['all_expected_chunks_exact'] else 'chunk_digest_differs'
+            except Exception as error:
+                report = {'tdoc': recipe['tdoc'], 'status': 'error', 'error_type': type(error).__name__, 'error': str(error)}
+            report['seconds'] = time.monotonic() - begin
+            outcomes.append(report); counts[report['status']] += 1
+            args.report.write_bytes(encoded({'complete': False, 'counts': dict(counts), 'outcomes': outcomes}) + b'\n')
+            if len(outcomes) % 100 == 0:
+                print(json.dumps({'processed':len(outcomes),'counts':dict(counts)}), flush=True)
+    result = {'complete': True, 'recipes_sha256': sha(args.recipes), 'outcomes': outcomes, 'counts': dict(counts),
+              'seconds': time.monotonic()-started, 'source_root_mode': 'separate_acquired_cache' if args.source_root else 'retained_hash_pinned_derived_DOCX',
+              'runtime':runtime(),'runner_sha256_at_start':code_start,'runner_sha256_at_end':sha(Path(__file__)),
+              'scope': 'Raw DOCX form-slot extraction and Phase-8 parser/hardening. Source acquisition is recorded separately.'}
+    args.report.write_bytes(encoded(result)+b'\n'); print(json.dumps({k:v for k,v in result.items() if k!='outcomes'}))
+
+
+def bind_targets(args):
+    repository = args.repository.resolve()
+    chunks = json.loads((repository / f'vectordb/parsed/cr/{args.wg}/{args.wg.lower()}_cr_chunks.json').read_text())['chunks']
+    indices = {chunk['chunkId']: index for index, chunk in enumerate(chunks)}
+    if len(indices) != len(chunks):
+        raise ValueError('Chunk IDs are duplicated')
+    if args.output.exists():
+        raise ValueError('Bound recipe output exists')
+    count = 0
+    with gzip.open(args.recipes, 'rt') as inp, args.output.open('xb') as raw, gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0,compresslevel=6) as out:
+        for line in inp:
+            recipe = json.loads(line)
+            recipe['target_parsed_path'] = f'vectordb/parsed/cr/{args.wg}/{args.wg.lower()}_cr_chunks.json'
+            recipe['target_total_chunks'] = len(chunks)
+            recipe['target_chunk_indices'] = [indices[chunk['chunkId']] for chunk in recipe['expected_chunks']]
+            out.write(encoded(recipe) + b'\n'); count += len(recipe['target_chunk_indices'])
+    print(json.dumps({'chunks':count,'sha256':sha(args.output),'bytes':args.output.stat().st_size}))
+
+
+def assemble(args):
+    """Assemble verified local text outputs at original JSON pointer indices."""
+    rows, target, total, counts = {}, None, None, Counter()
+    with gzip.open(args.recipes, 'rt') as stream:
+        for line in stream:
+            recipe = json.loads(line)
+            current_target = recipe['target_parsed_path']
+            if target is not None and target != current_target:
+                raise ValueError('Recipes span multiple target files')
+            target = current_target
+            if total is not None and total != recipe['target_total_chunks']:
+                raise ValueError('Recipes disagree on target size')
+            total = recipe['target_total_chunks']
+            path = args.text_cache / (recipe['tdoc'] + '.json')
+            data = json.loads(path.read_text())
+            actual = [{'chunkId': c['chunkId'], 'text_sha256': text_sha(c['text'])} for c in data['chunks']]
+            if actual != recipe['expected_chunks']:
+                raise ValueError('Local chunk cache digest sequence differs')
+            for index, chunk in zip(recipe['target_chunk_indices'], data['chunks']):
+                if index in rows:
+                    raise ValueError('Repeated target index')
+                rows[index] = {'chunkId':chunk['chunkId'],'text':chunk['text']}
+                counts['chunks'] += 1
+            counts['tdocs'] += 1
+    if sorted(rows) != list(range(total)):
+        raise ValueError('Chunk target indices are incomplete')
+    output = args.output_root / target
+    if output.exists():
+        raise ValueError('Assembly target exists')
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(encoded({'chunks':[rows[i] for i in range(len(rows))]}) + b'\n')
+    report = {'counts':dict(counts),'logical_text_fields_only':True,'target_path':target,'target_sha256':sha(output),
+              'recipes_sha256':sha(args.recipes),'scope':'Original chunk JSON pointers and exact text; index row metadata comes from its frozen frontier.'}
+    args.report.write_bytes(encoded(report)+b'\n'); print(json.dumps(report))
+
+
+def acquired_batch(args):
+    """Acquire hash-pinned source members and execute every fixed recipe."""
+    repository = args.repository.resolve(); helper = exporter(repository)
+    started, outcomes, counts = time.monotonic(), [], Counter();code_start=sha(Path(__file__))
+    args.receipt_dir.mkdir(parents=True, exist_ok=True)
+    for line in gzip.open(args.recipes, 'rt'):
+        recipe = json.loads(line); tdoc = recipe['tdoc']; begin = time.monotonic()
+        case = args.receipt_dir / tdoc; case.mkdir(exist_ok=True)
+        recipe_path = case / 'recipe.json'
+        recipe_path.write_bytes(encoded(recipe)+b'\n')
+        try:
+            accepted=[source for source in recipe['sources']if source.get('conversion',{}).get('method')=='native_accepted_uno_export_reopen']
+            acquire_recipe=recipe
+            if accepted:
+                acquire_recipe=json.loads(json.dumps(recipe))
+                for source in acquire_recipe['sources']:
+                    if source.get('conversion',{}).get('method')=='native_accepted_uno_export_reopen':
+                        source['path']='native_accepted_inputs/'+tdoc+'/'+Path(source['member_chain'][-1]['name']).name
+                        source['sha256']=source['conversion']['native_sha256'];source.pop('conversion')
+                acquisition_path=case/'acquisition_recipe.json';acquisition_path.write_bytes(encoded(acquire_recipe)+b'\n')
+            else:acquisition_path=recipe_path
+            helper.acquire_tdoc(argparse.Namespace(recipe=acquisition_path,cache=args.cache,output=args.source_root,
+                                report=case/'acquire.json',download=args.download,timeout=args.timeout,
+                                local_archive_repository=args.local_archive_repository))
+            for source in accepted:
+                native=args.source_root/'native_accepted_inputs'/tdoc/Path(source['member_chain'][-1]['name']).name
+                target=args.source_root/source['path'];target.parent.mkdir(parents=True,exist_ok=True)
+                conversion=source['conversion']
+                version=subprocess.run(['libreoffice','--version'],check=True,capture_output=True,text=True).stdout.strip()
+                if version!=conversion['libreoffice_version']:raise ValueError('Native accepted converter version differs')
+                sys.path.insert(0,str(repository/'scripts/tsg/RAN/formal/common'))
+                import native_word_conversion
+                proof=native_word_conversion.recover_native_word(native,target)
+                if proof['acceptedRenderedText']['normalizedTextSha256']!=conversion['accepted_rendered_normalized_sha256']:
+                    raise ValueError('Native accepted rendered digest differs')
+                proof.update(native_sha256=conversion['native_sha256'],output_sha256=sha(target),
+                             snapshot_docx_container_sha_equal=sha(target)==source['sha256'])
+                target.with_name(target.name+'.conversion.json').write_bytes(encoded(proof)+b'\n')
+                (case/'native_accepted_conversion.json').write_bytes(encoded(proof)+b'\n')
+            result = execute_recipe(repository, recipe, args.source_root / recipe['source_path'], args.text_cache/(tdoc+'.json'))
+            result.pop('actual_chunk_digests')
+            result['status'] = 'all_expected_chunks_exact' if result['all_expected_chunks_exact'] else 'chunk_digest_differs'
+        except Exception as error:
+            result = {'tdoc':tdoc,'status':'error','error_type':type(error).__name__,'error':str(error)}
+        result['seconds'] = time.monotonic()-begin; counts[result['status']]+=1;outcomes.append(result)
+        args.report.write_bytes(encoded({'complete':False,'outcomes':outcomes,'counts':dict(counts)})+b'\n')
+        print(json.dumps({'processed':len(outcomes),'counts':dict(counts),'tdoc':tdoc,'status':result['status']}),flush=True)
+    report={'complete':True,'outcomes':outcomes,'counts':dict(counts),'seconds':time.monotonic()-started,
+            'recipes_sha256':sha(args.recipes),'network_enabled':args.download,
+            'runner_sha256_at_start':code_start,'runner_sha256_at_end':sha(Path(__file__)),'runtime':runtime(),
+            'scope':'Actual source archive/member acquisition, DOC conversion where pinned, raw form extraction and Phase-8 chunking/hardening.'}
+    args.report.write_bytes(encoded(report)+b'\n')
+
+
+def repair_sources(args):
+    """Use whole-file source identity when the selected pack copy differs."""
+    repository=args.repository.resolve();helper=exporter(repository)
+    by_member,by_sha,by_path={},{},{}
+    for inventory in [args.source_inventory]+args.additional_source_inventory:
+        with gzip.open(inventory,'rt')as stream:
+            for line in stream:
+                row=json.loads(line);by_sha[row['archive_sha256']]=row
+                for path in row['paths']:by_path[path]=row;by_path[path.lower()]=row
+                for member in row.get('members',[]):
+                    if member.get('sha256'):
+                        by_member.setdefault(member['sha256'],[]).append((row,member))
+    if args.url_inventory:
+        with gzip.open(args.url_inventory,'rt')as stream:
+            for line in stream:
+                row=json.loads(line)
+                if row['sha256']in by_sha:
+                    target=by_sha[row['sha256']];target['official_urls']=sorted(set(target['official_urls'])|set(row['candidateUrls']))
+    counts,gaps,changes=Counter(),[],[]
+    supported=('exact_archive_member','native_doc_conversion_recipe','exact_source_file','native_doc_accepted_conversion_recipe')
+    native_ledgers={}
+    if args.output.exists():raise ValueError('Repaired recipe output exists')
+    with gzip.open(args.recipes,'rt')as inp,args.output.open('xb')as raw,gzip.GzipFile(filename='',mode='wb',fileobj=raw,mtime=0,compresslevel=6)as out:
+        for line in inp:
+            row=json.loads(line)
+            for index,source in enumerate(row.get('sources',[])):
+                if source['source_status']in supported:continue
+                matches=by_member.get(source['sha256'],[])
+                if matches:
+                    archive,member=sorted(matches,key=lambda item:item[0]['paths'][0])[0]
+                    replacement={'path':source['path'],'sha256':source['sha256'],'source_status':'exact_archive_member',
+                                 'archive_paths':archive['paths'],'archive_sha256':archive['archive_sha256'],
+                                 'official_urls':archive['official_urls'],'member_chain':[{'name':member['path'],'sha256':member['sha256'],'bytes':member['bytes']}],
+                                 'source_identity_basis':'Exact complete DOCX SHA in retained alternate official source archive',
+                                 'previous_source_mapping':{k:v for k,v in source.items()if k in ('archive_paths','archive_sha256','source_status')}}
+                    row['sources'][index]=replacement;changes.append({'tdoc':row['tdoc'],'source':source['path'],'archive_sha256':archive['archive_sha256']})
+                else:
+                    replacement=helper.source_recipe(repository/source['path'],repository,by_path)
+                    if replacement['source_status']in supported:
+                        row['sources'][index]=replacement;changes.append({'tdoc':row['tdoc'],'source':source['path'],'archive_sha256':replacement['archive_sha256']})
+                        continue
+                    wg=row['wg']
+                    if wg not in native_ledgers:
+                        ledger=repository/f'ontology/input/tsg/RAN/formal/meetings/{wg}/tdoc_native_cr_sources.json'
+                        native_ledgers[wg]={r['target']:r for r in json.loads(ledger.read_text()).get('records',[])}if ledger.exists()else{}
+                    native_row=native_ledgers[wg].get(row['tdoc'],{})
+                    accepted=native_row.get('nativeAcceptedView')
+                    if accepted and accepted['derivedPath']==source['path'] and accepted['derivedSha256']==source['sha256']:
+                        archive=native_row['officialSourceArchive'];inventory=by_sha[archive['sha256']]
+                        member=next(m for m in archive['members']if m['sha256']==accepted['nativeSha256'])
+                        receipt=accepted['conversionReceipt']
+                        replacement={'path':source['path'],'sha256':source['sha256'],'source_status':'native_doc_accepted_conversion_recipe',
+                                     'archive_paths':inventory['paths'],'archive_sha256':archive['sha256'],'official_urls':inventory['official_urls'],
+                                     'member_chain':[{'name':member['name'],'sha256':member['sha256']}],
+                                     'conversion':{'method':'native_accepted_uno_export_reopen','native_sha256':accepted['nativeSha256'],
+                                                   'libreoffice_version':receipt['converterVersion'],
+                                                   'accepted_rendered_normalized_sha256':receipt['acceptedRenderedText']['normalizedTextSha256']},
+                                     'source_identity_basis':'Original nativeAcceptedView ledger; tracked changes accepted by pinned original converter and rendered text digest'}
+                        row['sources'][index]=replacement;changes.append({'tdoc':row['tdoc'],'source':source['path'],'archive_sha256':archive['sha256']})
+            statuses=[s['source_status']for s in row.get('sources',[])]
+            row['source_mapping_status']='all_sources_with_executable_recipe' if statuses and all(s in supported for s in statuses)else'additional_recipe_required'
+            row['status']=row['source_mapping_status']
+            row.pop('candidate_members',None)
+            counts[row['source_mapping_status']]+=1
+            for status in statuses:counts[status]+=1
+            if row['source_mapping_status']!='all_sources_with_executable_recipe':gaps.append(row['tdoc'])
+            out.write(encoded(row)+b'\n')
+    report={'counts':dict(counts),'changed_sources':changes,'remaining_tdocs':gaps,'sha256':sha(args.output),'bytes':args.output.stat().st_size,
+            'scope':'Exact source mapping and conversion recipes; raw parsing executions have separate receipts.'}
+    args.report.write_bytes(encoded(report)+b'\n');print(json.dumps(report))
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__); subs = p.add_subparsers(dest='command', required=True)
+    q = subs.add_parser('prepare'); q.add_argument('--repository', type=Path, default=Path('.')); q.add_argument('--wg', default='RAN3'); q.add_argument('--tdoc'); q.add_argument('--frontier',type=Path); q.add_argument('--output', type=Path, required=True)
+    q = subs.add_parser('replay'); q.add_argument('--repository', type=Path, default=Path('.')); q.add_argument('--recipe', type=Path, required=True); q.add_argument('--source', type=Path); q.add_argument('--report', type=Path, required=True); q.add_argument('--output', type=Path)
+    q = subs.add_parser('inventory'); q.add_argument('--repository', type=Path, default=Path('.')); q.add_argument('--wg', default='RAN3'); q.add_argument('--frontier',type=Path); q.add_argument('--source-inventory', type=Path, required=True); q.add_argument('--url-inventory', type=Path); q.add_argument('--output', type=Path, required=True); q.add_argument('--report', type=Path, required=True)
+    q = subs.add_parser('batch'); q.add_argument('--repository', type=Path, default=Path('.')); q.add_argument('--recipes', type=Path, required=True); q.add_argument('--source-root', type=Path); q.add_argument('--text-cache', type=Path); q.add_argument('--report', type=Path, required=True)
+    q = subs.add_parser('bind-targets'); q.add_argument('--repository', type=Path, default=Path('.')); q.add_argument('--wg', default='RAN3'); q.add_argument('--recipes', type=Path, required=True); q.add_argument('--output', type=Path, required=True); q.set_defaults(function=bind_targets)
+    q = subs.add_parser('assemble'); q.add_argument('--recipes', type=Path, required=True); q.add_argument('--text-cache', type=Path, required=True); q.add_argument('--output-root', type=Path, required=True); q.add_argument('--report', type=Path, required=True)
+    q = subs.add_parser('acquired-batch'); q.add_argument('--repository',type=Path,default=Path('.')); q.add_argument('--recipes',type=Path,required=True); q.add_argument('--cache',type=Path,required=True); q.add_argument('--source-root',type=Path,required=True); q.add_argument('--text-cache',type=Path,required=True); q.add_argument('--receipt-dir',type=Path,required=True); q.add_argument('--report',type=Path,required=True); q.add_argument('--download',action='store_true'); q.add_argument('--timeout',type=int,default=60); q.add_argument('--local-archive-repository',type=Path); q.set_defaults(function=acquired_batch)
+    q=subs.add_parser('repair-sources');q.add_argument('--repository',type=Path,default=Path('.'));q.add_argument('--recipes',type=Path,required=True);q.add_argument('--source-inventory',type=Path,required=True);q.add_argument('--additional-source-inventory',type=Path,action='append',default=[]);q.add_argument('--url-inventory',type=Path);q.add_argument('--output',type=Path,required=True);q.add_argument('--report',type=Path,required=True);q.set_defaults(function=repair_sources)
+    args = p.parse_args(); (args.function if hasattr(args,'function') else globals()[args.command])(args)
+
+
+if __name__ == '__main__':
+    main()

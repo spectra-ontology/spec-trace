@@ -19,7 +19,7 @@ python3 -m venv .venv
 
 The last command works offline after dependency installation. It verifies every package checksum, replays the 60 historical score entries, and reproduces all 37 current conditions with their template/session bootstraps. It uses the shipped responses and compressed databases. Successful execution writes `work/replay/report.json` and a current-table report with `matches_expected_output: true`. Model generation, source downloads and database services are separate from this replay.
 
-[Reproducing the paper](REPRODUCING.md) maps the evidence to commands and expected outputs. [The datasheet](datasheet.md) describes the population, question construction and distribution terms. The [vocabulary](docs/spectra.ttl) and [shapes](docs/spectra-shapes.ttl) define the records used by the benchmark.
+[Reproducing the paper](REPRODUCING.md) maps the evidence to commands and expected outputs. [Experimental interfaces and inputs](EXPERIMENTS.md) lists each condition's corpus, attached fields, tool budget and reproduction status. [Benchmark families and requested fields](BENCHMARK.md) gives the computed main and extension inventory. [The datasheet](datasheet.md) describes the population, question construction and distribution terms. The [vocabulary](docs/spectra.ttl) and [shapes](docs/spectra-shapes.ttl) define the records used by the benchmark.
 
 ## Contents
 
@@ -39,6 +39,9 @@ The last command works offline after dependency installation. It verifies every 
 | `sources/manifest.jsonl` | URLs and hashes for 280 cited reports and their conversions. |
 | `sources/disposition_bindings.jsonl.gz` | 358,062 text-free quote-hash receipts, decision spans and source-field locators. |
 | `restore/source_links/` | Official archive/member manifest, native CR-form checker and receipts for the 604 distinct CR–clause pairs in the main benchmark. |
+| `restore/retrieval/` | Text-free frontiers, official source recipes and constructors for all five WG search indexes and the plenary index, with source-version and execution receipts. |
+| `restore/lexical_containment/`, `restore/dense_retrieval/` | Portable deterministic-route replay and reconstruction of the recorded dense-reader requests. |
+| `restore/census/`, `restore/census_native/` | Complete source inventories, metadata, original corpus auditors and an executed native-field preservation fallback. |
 | `restore/` | Source retrieval, passage rehydration, SHACL validation, clean benchmark rebuild/gate and stored-response rescoring. |
 | `records_redactions.jsonl`, `results_redactions.jsonl`, `code_redactions.jsonl` | Changed-file provenance and original/released hashes. |
 | `SHA256SUMS` | Package file hashes, excluding this hash list itself. |
@@ -88,6 +91,10 @@ python3 restore/source_links/check_source_links.py --release . \
 ```
 
 The recorded official-download execution fetched 251 archives and confirmed 549 pairs. Two forms enumerate tables within the named clauses and retain the reader's `table_or_figure_in_clause` classification. Another 53 pairs retain their source-format or URL availability status. All 604 remain in the manifest. Repeat with `--offline` to check cached bytes; `--wg RAN1` selects one working group. This check covers native CR forms for these benchmark pairs; the whole-corpus audits retain their separate inputs and scopes.
+
+## Reconstruct retrieval and audit inputs
+
+[Retrieval restoration](restore/retrieval/README.md) supplies the five WG and plenary frontiers, official source recipes, native parsing commands and FTS construction. [Lexical containment](restore/lexical_containment/README.md) reproduces twelve deterministic routes for all 667 admitted questions. [Dense-reader input replay](restore/dense_retrieval/README.md) reconstructs the 1,334 recorded local-reader requests and documents its separate fresh-query pilot. [The census adapter](restore/census/README.md) provides the original pack and clause auditors with pinned metadata and complete source inventories. Each workflow records its actual source, parsing and execution coverage.
 
 ## Test stored SQL with synthetic counterexamples
 
