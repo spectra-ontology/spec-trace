@@ -1,0 +1,332 @@
+{
+  "schema_version": 1,
+  "status": "existing derived clause-history illustration; curated record/source inspection",
+  "unit_id": "U004",
+  "question_paraphrase_en": "The requester reports that PC1.5 single-port maximum-power wording appears in TS 38.101 v16 but is absent in v17: why, and was it discussed at a meeting?",
+  "source_derivation": "final/practitioner_chain_item.json",
+  "additional_existing_source_inspection": "practitioner_chain_item.json (root copy; its outsideGold inspection is absent from the final copy)",
+  "relation_to_benchmark": "The derived task uses the existing clause_history template. It is presented as an illustration of a supported subquery within U004; the original natural question remains partially mapped. This projection adds no benchmark question and measures no end-to-end natural-question answer.",
+  "anchor_resolution": {
+    "spec_in_original_question": "TS 38.101 (part unspecified)",
+    "version_in_original_question": "v16 and v17; exact editions unspecified",
+    "located_spec": "38.101-1",
+    "located_clause": "6.2.1",
+    "located_clause_title": "UE maximum output power",
+    "method": "Existing derivation searched available TS 38.101 parts 1–5 for the quoted PC1.5 wording, and located it in the Rel-16 snapshot of part 1.",
+    "observed_editions": [
+      {
+        "spec": "38.101-1",
+        "release": "Rel-16",
+        "version": "16.26.0",
+        "date": "2026-03",
+        "quoted_wording_found": true
+      },
+      {
+        "spec": "38.101-1",
+        "release": "Rel-17",
+        "version": "17.21.0",
+        "date": "2026-03",
+        "quoted_wording_found": false
+      }
+    ],
+    "interpretation": "The observed snapshots establish presence/absence in these editions. The requester’s exact compared editions are unspecified."
+  },
+  "supported_subquery": {
+    "id": "RAN4-clause_history-38.101-1-Rel-17-6.2.1",
+    "wg": "RAN4",
+    "family": "clause_history",
+    "hops": 4,
+    "anchor": "tdoc:section/38.101-1-Rel-17-6.2.1",
+    "question": "Which Rel-17 change requests that modify clause 6.2.1 of TS 38.101-1 have a source-verified RAN4 disposition for the whole document and were submitted in a TSG RAN CR pack? Give each document, its disposition, the RAN4 meeting, and the CR pack document number.",
+    "fields": [
+      "document",
+      "disposition",
+      "wg_meeting",
+      "cr_pack"
+    ]
+  },
+  "sql": {
+    "cr_side": "SELECT DISTINCT doc.number, d.code, g.label, p.pack_number FROM cr_modifies_section c JOIN section s ON s.id = c.section_id JOIN document doc ON doc.id = c.cr JOIN disposition d ON d.target = c.cr JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN cr_in_pack m ON m.cr = c.cr JOIN cr_pack p ON p.id = m.pack_id WHERE c.section_id = :anchor AND doc.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+    "container_side": "SELECT DISTINCT doc.number, d.code, g.label, p.pack_number FROM section_modified_by c JOIN section s ON s.id = c.section_id JOIN document doc ON doc.id = c.cr JOIN disposition d ON d.target = c.cr JOIN resolution r ON r.id = d.resolution_id JOIN meeting g ON g.id = r.meeting_id JOIN pack_member m ON m.cr = c.cr JOIN cr_pack p ON p.id = m.pack_id WHERE c.section_id = :anchor AND doc.target_release = s.release AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'"
+  },
+  "cypher_from_existing_derivation": "MATCH (:Section {sectionId: $anchor})<-[:MODIFIES_SECTION]-(cr) MATCH (cr)-[:TARGET_RELEASE]->(release:Release) WHERE $anchor CONTAINS ('-' + release.releaseName + '-') MATCH (cr)<-[:DISPOSITION_TARGET]-(d:DecisionDisposition {evidenceStatus: 'source_verified'}) -[:DISPOSITION_OF]->(:Resolution)-[:MADE_AT]->(m:Meeting) WHERE d.assessmentMethod CONTAINS '\"scope\": \"whole_target\"' MATCH (cr)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT cr.tdocNumber, d.dispositionCode, m.meetingNumber, p.crPackId",
+  "gold_fields": [
+    "document",
+    "disposition",
+    "wg_meeting",
+    "cr_pack"
+  ],
+  "gold_rows": [
+    [
+      "R4-2014330",
+      "agreed",
+      "RAN4#97-e",
+      "RP-202451"
+    ],
+    [
+      "R4-2014341",
+      "agreed",
+      "RAN4#97-e",
+      "RP-202452"
+    ],
+    [
+      "R4-2016878",
+      "agreed",
+      "RAN4#97-e",
+      "RP-202448"
+    ],
+    [
+      "R4-2100119",
+      "not_treated",
+      "RAN4#98-e",
+      "RP-210190"
+    ],
+    [
+      "R4-2103351",
+      "agreed",
+      "RAN4#98-e",
+      "RP-210096"
+    ],
+    [
+      "R4-2103378",
+      "agreed",
+      "RAN4#98-e",
+      "RP-210097"
+    ],
+    [
+      "R4-2107800",
+      "agreed",
+      "RAN4#99-e",
+      "RP-211117"
+    ],
+    [
+      "R4-2107827",
+      "agreed",
+      "RAN4#99-e",
+      "RP-211118"
+    ],
+    [
+      "R4-2107984",
+      "agreed",
+      "RAN4#99-e",
+      "RP-211116"
+    ],
+    [
+      "R4-2108017",
+      "agreed",
+      "RAN4#99-e",
+      "RP-211080"
+    ],
+    [
+      "R4-2115103",
+      "agreed",
+      "RAN4#100-e",
+      "RP-211901"
+    ],
+    [
+      "R4-2115104",
+      "agreed",
+      "RAN4#100-e",
+      "RP-211901"
+    ],
+    [
+      "R4-2115127",
+      "agreed",
+      "RAN4#100-e",
+      "RP-211921"
+    ],
+    [
+      "R4-2117089",
+      "agreed",
+      "RAN4#101-e",
+      "RP-212837"
+    ],
+    [
+      "R4-2117793",
+      "agreed",
+      "RAN4#101-e",
+      "RP-212833"
+    ],
+    [
+      "R4-2119853",
+      "agreed",
+      "RAN4#101-e",
+      "RP-212837"
+    ],
+    [
+      "R4-2119859",
+      "agreed",
+      "RAN4#101-e",
+      "RP-212837"
+    ],
+    [
+      "R4-2204761",
+      "agreed",
+      "RAN4#102-e",
+      "RP-220343"
+    ],
+    [
+      "R4-2204792",
+      "agreed",
+      "RAN4#102-e",
+      "RP-220376"
+    ],
+    [
+      "R4-2206455",
+      "agreed",
+      "RAN4#102-e",
+      "RP-220343"
+    ],
+    [
+      "R4-2209107",
+      "agreed",
+      "RAN4#103-e",
+      "RP-221684"
+    ],
+    [
+      "R4-2209741",
+      "agreed",
+      "RAN4#103-e",
+      "RP-221670"
+    ],
+    [
+      "R4-2210742",
+      "agreed",
+      "RAN4#103-e",
+      "RP-221673"
+    ],
+    [
+      "R4-2211224",
+      "agreed",
+      "RAN4#103-e",
+      "RP-221673"
+    ],
+    [
+      "R4-2211253",
+      "agreed",
+      "RAN4#103-e",
+      "RP-221655"
+    ],
+    [
+      "R4-2413242",
+      "agreed",
+      "RAN4#112",
+      "RP-242171"
+    ],
+    [
+      "R4-2420510",
+      "agreed",
+      "RAN4#113",
+      "RP-243054"
+    ],
+    [
+      "R4-2607321",
+      "agreed",
+      "RAN4#119",
+      "RP-261410"
+    ]
+  ],
+  "existing_derivation_agreement": {
+    "crSideRows": 28,
+    "containerSideRows": 28,
+    "cypherRows": 28,
+    "crSideEqualsContainerSide": true,
+    "sqlEqualsCypher": true,
+    "onlyInSql": [],
+    "onlyInCypher": []
+  },
+  "source_status_conflict_retained": [
+    {
+      "row": [
+        "R4-2100119",
+        "not_treated",
+        "RAN4#98-e",
+        "RP-210190"
+      ],
+      "tdocListStatus": "agreed",
+      "targetRelease": "Rel-17",
+      "allDispositionRecords": [
+        {
+          "code": "not_treated",
+          "meeting": "RAN4#98-e",
+          "evidenceStatus": "source_verified",
+          "scope": "whole_target",
+          "evidencePath": "Final_Report_RAN4-98-e.docx"
+        }
+      ]
+    }
+  ],
+  "context_row": {
+    "anchor": "tdoc:section/38.101-1-Rel-16-6.2.1",
+    "fields": [
+      "document",
+      "disposition",
+      "wg_meeting",
+      "cr_pack"
+    ],
+    "row": [
+      "R4-2211252",
+      "agreed",
+      "RAN4#103-e",
+      "RP-221655"
+    ],
+    "meaning": "Existing source-body inspection records insertion of the wording in Rel-16 CR1120; this row provides the associated disposition, WG meeting and pack."
+  },
+  "remaining_interpretation": {
+    "ask": "Why does the wording differ, and what discussion explains it?",
+    "existing_source_body_result": "The existing inspection found no modification of the quoted wording in the 28 Rel-17 gold CR bodies. It found insertion in Rel-16 R4-2211252.",
+    "supportable_conclusion": "The inspected records connect a clause to CRs, dispositions, WG meetings and packs and identify the Rel-16 insertion. Establishing the reason for the cross-release difference requires interpretation of additional source content and the requester’s exact editions.",
+    "other_relevant_existing_inspection": [
+      {
+        "document": "R4-2208744",
+        "release": "Rel-17",
+        "meeting": "RAN4#103-e",
+        "report_decision": "postponed",
+        "structured_disposition_available": false,
+        "body_readable": false,
+        "clause_link_available": false,
+        "pack_available": false
+      },
+      {
+        "document": "R4-2212773",
+        "cr_number": "1153",
+        "release": "Rel-17",
+        "meeting": "RAN4#104-e",
+        "report_decision": "not pursued",
+        "structured_disposition_available": true,
+        "body_readable": true,
+        "body_result": "Proposes inserting the wording into clause 6.2.1.",
+        "clause_link_available": false,
+        "pack_available": false
+      }
+    ],
+    "inspection_scope": {
+      "crRecords": 8070,
+      "withReadableBody": 3393,
+      "withoutBodyFile": 4590,
+      "withUnreadableBodyFile": 87
+    },
+    "scope_note": "The two other records are source-inspection context outside the derived 28-row answer. Report decisions identify outcomes; their reasons require further evidence."
+  },
+  "predicate_controls_from_existing_derivation": {
+    "without_source_verified_whole_target_condition": {
+      "removedFromSql": "AND d.evidence_status = 'source_verified' AND d.scope = 'whole_target'",
+      "rows": 28,
+      "sameAsGold": true,
+      "onlyWithoutCondition": []
+    },
+    "without_release_match_condition": {
+      "removedFromSql": "AND doc.target_release = s.release",
+      "rows": 28,
+      "sameAsGold": true,
+      "onlyWithoutCondition": []
+    }
+  },
+  "database": {
+    "path": "../../sqlite/RAN4.sqlite.gz",
+    "uncompressed_sha256": "b45cdcb406bf2817b98f1055593c2a810862fd177509f3fd11ecb6dd08af1292",
+    "compressed_sha256": "5a7e70679718630e65ca298733a60cf6cb922e466fa17d4f8e6a0cec3289f504"
+  },
+  "replay_scope": "The accompanying replay executes both SQL formulations and the Rel-16 context lookup on the released database; Cypher equality and document-body observations are preserved results of the existing derivation.",
+  "direct_native_source_check": "row_source_binding.json"
+}

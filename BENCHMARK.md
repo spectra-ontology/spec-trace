@@ -35,3 +35,9 @@ python3 restore/describe_workload.py --release . --out work/workload_inventory.j
 ```
 
 [The builder](code/scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/build_chain_items.py) defines the family contracts; [reproduction instructions](REPRODUCING.md) connect fixed-anchor construction, independent admission and scoring. Preserve item identity, requested fields and gold row sets when adding a comparison.
+
+## Using a documentary subquery in a real question
+
+The [engineer-question analysis](studies/practitioner_questions/README.md) gives de-identified summaries and model classifications of 33 existing question units, separately from the generated benchmark. A power-class wording question illustrates a supported clause-history subquery: the released SQL retrieves 28 source-bound documentary rows for TS 38.101-1 clause 6.2.1 in Rel-17. Those rows identify candidate CRs and their recorded dispositions, meetings and packs for subsequent inspection of the technical text and discussion. The example preserves its curated derivation and source context.
+
+The [matched-domain diagnostic](studies/matched_domains/README.md) offers a small executable interface check: one hash-selected representative for each main or extension family/WG cell, 50 in total. Both languages receive the same categorical appendix. The four archived first submissions each answer all 50; selection, inputs, query bytes, complete returned sets and unknown provider-model identity are retained. The main and extension benchmark scores keep their own populations and historical input conditions.

@@ -1,0 +1,202 @@
+[
+  {
+    "id": "RAN1-q29a6754c388e",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN1'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.213'})\nWHERE d.tdocNumber = 'R1-1913654' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN1-q2e3bcd13a977",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN1'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-192634'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-16'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT d, s, sp, rel, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nWHERE NOT EXISTS { MATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section)-[:BELONGS_TO_SPEC]->(earlierSpec:Spec), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: rel.releaseName}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack) WHERE earlierSpec.specNumber = sp.specNumber AND earlierSpec.specRelease = rel.releaseName AND earlierSection.sectionNumber = s.sectionNumber AND toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) < currentMeeting }\nRETURN DISTINCT d.tdocNumber AS document, sp.specNumber AS specification, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN1-q3bc833f726da",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN1'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-17'}), (d)-[:MODIFIES_SECTION]->(s:Section {sectionNumber: '4.2'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.213', specRelease: 'Rel-17'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN1-q45c336a2d020",
+    "query": "MATCH path = (seed:Tdoc {tdocNumber: 'R1-2403693'})-[:REVISED_TO|IS_REVISION_OF*1..]-(d:Tdoc)\nWHERE d.tdocNumber <> seed.tdocNumber AND all(i IN range(0, length(path) - 1) WHERE (type(relationships(path)[i]) = 'REVISED_TO' AND startNode(relationships(path)[i]) = nodes(path)[i]) OR (type(relationships(path)[i]) = 'IS_REVISION_OF' AND endNode(relationships(path)[i]) = nodes(path)[i]))\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN1'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS final_document, dd.dispositionCode AS disposition, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN1-q5154c2ea6399",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN1'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber = 'R1-2108591' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN1-q902d2fcdcbcb",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R1-1717870'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN1-qa546b7e1f645",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN1'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-200692'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-16'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, rel.releaseName AS target_release, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nMATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section {sectionNumber: clause})-[:BELONGS_TO_SPEC]->(earlierSpec:Spec {specNumber: specification, specRelease: target_release}), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: target_release}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack)\nWITH specification, clause, target_release, currentMeeting, earlierPack, toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS earlierMeeting\nWHERE earlierMeeting < currentMeeting\nWITH specification, clause, target_release, collect({pack: earlierPack, ordinal: earlierMeeting}) AS choices, max(earlierMeeting) AS latestMeeting\nUNWIND choices AS candidate\nWITH specification, clause, candidate.pack AS earlierPack, candidate.ordinal AS earlierMeeting, latestMeeting\nWHERE earlierMeeting = latestMeeting\nRETURN DISTINCT specification AS specification, clause AS clause, earlierPack.crPackId AS cr_pack, earlierPack.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN1-qc8472684e9bd",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN1'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-241065'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting"
+  },
+  {
+    "id": "RAN1-qd1d995f3c7e6",
+    "query": "MATCH (seed:Tdoc {tdocNumber: 'R1-2202802'})-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-17'}), (seed)-[:MODIFIES_SECTION]->(seedSection:Section)-[:BELONGS_TO_SPEC]->(seedSpec:Spec {specNumber: '38.212', specRelease: 'Rel-17'})\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN1'})\nMATCH (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-17'}), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.212', specRelease: 'Rel-17'}), (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber <> 'R1-2202802' AND s.sectionNumber = seedSection.sectionNumber AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT s.sectionNumber AS clause, d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN1-qf2e42a4bc65f",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R1-2202945'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN2-q02d73bbdf069",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN2'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-241554'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-17', 'Rel-18'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, rel.releaseName AS target_release, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nMATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section {sectionNumber: clause})-[:BELONGS_TO_SPEC]->(earlierSpec:Spec {specNumber: specification, specRelease: target_release}), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: target_release}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack)\nWITH specification, clause, target_release, currentMeeting, earlierPack, toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS earlierMeeting\nWHERE earlierMeeting < currentMeeting\nWITH specification, clause, target_release, collect({pack: earlierPack, ordinal: earlierMeeting}) AS choices, max(earlierMeeting) AS latestMeeting\nUNWIND choices AS candidate\nWITH specification, clause, candidate.pack AS earlierPack, candidate.ordinal AS earlierMeeting, latestMeeting\nWHERE earlierMeeting = latestMeeting\nRETURN DISTINCT specification AS specification, clause AS clause, earlierPack.crPackId AS cr_pack, earlierPack.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN2-q2c3895e241f7",
+    "query": "MATCH (seed:Tdoc {tdocNumber: 'R2-2010821'})-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-16'}), (seed)-[:MODIFIES_SECTION]->(seedSection:Section)-[:BELONGS_TO_SPEC]->(seedSpec:Spec {specNumber: '38.331', specRelease: 'Rel-16'})\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN2'})\nMATCH (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-16'}), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.331', specRelease: 'Rel-16'}), (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber <> 'R2-2010821' AND s.sectionNumber = seedSection.sectionNumber AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT s.sectionNumber AS clause, d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN2-q3e26d2802f04",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN2'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber = 'R2-2506546' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN2-q58026a6145f2",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R2-2306001'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN2-q7318811f00fe",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN2'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-201183'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting"
+  },
+  {
+    "id": "RAN2-q860585794db4",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN2'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-252818'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-19'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT d, s, sp, rel, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nWHERE NOT EXISTS { MATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section)-[:BELONGS_TO_SPEC]->(earlierSpec:Spec), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: rel.releaseName}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack) WHERE earlierSpec.specNumber = sp.specNumber AND earlierSpec.specRelease = rel.releaseName AND earlierSection.sectionNumber = s.sectionNumber AND toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) < currentMeeting }\nRETURN DISTINCT d.tdocNumber AS document, sp.specNumber AS specification, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN2-q86cd4db95e59",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN2'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-17'}), (d)-[:MODIFIES_SECTION]->(s:Section {sectionNumber: '7.3.2'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.305', specRelease: 'Rel-17'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN2-q9d47bc6f97c6",
+    "query": "MATCH path = (seed:Tdoc {tdocNumber: 'R2-1818753'})-[:REVISED_TO|IS_REVISION_OF*1..]-(d:Tdoc)\nWHERE d.tdocNumber <> seed.tdocNumber AND all(i IN range(0, length(path) - 1) WHERE (type(relationships(path)[i]) = 'REVISED_TO' AND startNode(relationships(path)[i]) = nodes(path)[i]) OR (type(relationships(path)[i]) = 'IS_REVISION_OF' AND endNode(relationships(path)[i]) = nodes(path)[i]))\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN2'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS final_document, dd.dispositionCode AS disposition, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN2-qa32e5f838520",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN2'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.331'})\nWHERE d.tdocNumber = 'R2-1902721' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN2-qdc7dc2141443",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R2-2008568'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN3-q16fe34e2e936",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN3'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.470'})\nWHERE d.tdocNumber = 'R3-222922' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN3-q1ba7910c1aeb",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN3'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-233845'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting"
+  },
+  {
+    "id": "RAN3-q1fbc1333eb5d",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN3'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber = 'R3-202667' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN3-q6ec77c41a74a",
+    "query": "MATCH path = (seed:Tdoc {tdocNumber: 'R3-221570'})-[:REVISED_TO|IS_REVISION_OF*1..]-(d:Tdoc)\nWHERE d.tdocNumber <> seed.tdocNumber AND all(i IN range(0, length(path) - 1) WHERE (type(relationships(path)[i]) = 'REVISED_TO' AND startNode(relationships(path)[i]) = nodes(path)[i]) OR (type(relationships(path)[i]) = 'IS_REVISION_OF' AND endNode(relationships(path)[i]) = nodes(path)[i]))\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN3'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS final_document, dd.dispositionCode AS disposition, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN3-q8a6100612fec",
+    "query": "MATCH (seed:Tdoc {tdocNumber: 'R3-194602'})-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-15'}), (seed)-[:MODIFIES_SECTION]->(seedSection:Section)-[:BELONGS_TO_SPEC]->(seedSpec:Spec {specNumber: '38.413', specRelease: 'Rel-15'})\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN3'})\nMATCH (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-15'}), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.413', specRelease: 'Rel-15'}), (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber <> 'R3-194602' AND s.sectionNumber = seedSection.sectionNumber AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT s.sectionNumber AS clause, d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN3-qbb384d8ef29b",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R3-215085'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN3-qc544a5a2f69d",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN3'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-233814'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-18'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT d, s, sp, rel, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nWHERE NOT EXISTS { MATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section)-[:BELONGS_TO_SPEC]->(earlierSpec:Spec), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: rel.releaseName}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack) WHERE earlierSpec.specNumber = sp.specNumber AND earlierSpec.specRelease = rel.releaseName AND earlierSection.sectionNumber = s.sectionNumber AND toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) < currentMeeting }\nRETURN DISTINCT d.tdocNumber AS document, sp.specNumber AS specification, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN3-qd2c056f983f8",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R3-255122'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN3-qdfe4d9c918aa",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN3'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-16'}), (d)-[:MODIFIES_SECTION]->(s:Section {sectionNumber: '8.3.4'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.413', specRelease: 'Rel-16'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN3-qf54b7fe1de2c",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN3'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-200423'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-16'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, rel.releaseName AS target_release, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nMATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section {sectionNumber: clause})-[:BELONGS_TO_SPEC]->(earlierSpec:Spec {specNumber: specification, specRelease: target_release}), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: target_release}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack)\nWITH specification, clause, target_release, currentMeeting, earlierPack, toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS earlierMeeting\nWHERE earlierMeeting < currentMeeting\nWITH specification, clause, target_release, collect({pack: earlierPack, ordinal: earlierMeeting}) AS choices, max(earlierMeeting) AS latestMeeting\nUNWIND choices AS candidate\nWITH specification, clause, candidate.pack AS earlierPack, candidate.ordinal AS earlierMeeting, latestMeeting\nWHERE earlierMeeting = latestMeeting\nRETURN DISTINCT specification AS specification, clause AS clause, earlierPack.crPackId AS cr_pack, earlierPack.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN4-q0da703b03ce1",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN4'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-231340'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-16', 'Rel-17', 'Rel-18'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, rel.releaseName AS target_release, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nMATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section {sectionNumber: clause})-[:BELONGS_TO_SPEC]->(earlierSpec:Spec {specNumber: specification, specRelease: target_release}), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: target_release}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack)\nWITH specification, clause, target_release, currentMeeting, earlierPack, toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS earlierMeeting\nWHERE earlierMeeting < currentMeeting\nWITH specification, clause, target_release, collect({pack: earlierPack, ordinal: earlierMeeting}) AS choices, max(earlierMeeting) AS latestMeeting\nUNWIND choices AS candidate\nWITH specification, clause, candidate.pack AS earlierPack, candidate.ordinal AS earlierMeeting, latestMeeting\nWHERE earlierMeeting = latestMeeting\nRETURN DISTINCT specification AS specification, clause AS clause, earlierPack.crPackId AS cr_pack, earlierPack.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN4-q3f128c42c249",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN4'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-250590'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-17', 'Rel-18'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT d, s, sp, rel, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nWHERE NOT EXISTS { MATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section)-[:BELONGS_TO_SPEC]->(earlierSpec:Spec), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: rel.releaseName}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack) WHERE earlierSpec.specNumber = sp.specNumber AND earlierSpec.specRelease = rel.releaseName AND earlierSection.sectionNumber = s.sectionNumber AND toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) < currentMeeting }\nRETURN DISTINCT d.tdocNumber AS document, sp.specNumber AS specification, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN4-q445cf0b14431",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN4'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-202446'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting"
+  },
+  {
+    "id": "RAN4-q5564f8be249d",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN4'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.101-1'})\nWHERE d.tdocNumber = 'R4-2313080' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN4-q5f9ae7ff4ca2",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R4-2520572'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN4-q686bae23d9ed",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN4'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-18'}), (d)-[:MODIFIES_SECTION]->(s:Section {sectionNumber: 'A.7.5.1.6'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.133', specRelease: 'Rel-18'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN4-q6a9a6059b312",
+    "query": "MATCH path = (seed:Tdoc {tdocNumber: 'R4-2412759'})-[:REVISED_TO|IS_REVISION_OF*1..]-(d:Tdoc)\nWHERE d.tdocNumber <> seed.tdocNumber AND all(i IN range(0, length(path) - 1) WHERE (type(relationships(path)[i]) = 'REVISED_TO' AND startNode(relationships(path)[i]) = nodes(path)[i]) OR (type(relationships(path)[i]) = 'IS_REVISION_OF' AND endNode(relationships(path)[i]) = nodes(path)[i]))\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN4'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS final_document, dd.dispositionCode AS disposition, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN4-q8321a5639b22",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN4'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber = 'R4-1814116' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN4-qab608dcda8a2",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R4-2320863'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN4-qb68ee1a1ea1c",
+    "query": "MATCH (seed:Tdoc {tdocNumber: 'R4-2108722'})-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-15'}), (seed)-[:MODIFIES_SECTION]->(seedSection:Section)-[:BELONGS_TO_SPEC]->(seedSpec:Spec {specNumber: '38.104', specRelease: 'Rel-15'})\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN4'})\nMATCH (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-15'}), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.104', specRelease: 'Rel-15'}), (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber <> 'R4-2108722' AND s.sectionNumber = seedSection.sectionNumber AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT s.sectionNumber AS clause, d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN5-q315c956af92f",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R5-191564'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN5-q4dced09756b2",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN5'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.522'})\nWHERE d.tdocNumber = 'R5-251067' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN5-q62c0ba2e6e6a",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN5'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-230947'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-17'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT d, s, sp, rel, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nWHERE NOT EXISTS { MATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section)-[:BELONGS_TO_SPEC]->(earlierSpec:Spec), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: rel.releaseName}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack) WHERE earlierSpec.specNumber = sp.specNumber AND earlierSpec.specRelease = rel.releaseName AND earlierSection.sectionNumber = s.sectionNumber AND toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) < currentMeeting }\nRETURN DISTINCT d.tdocNumber AS document, sp.specNumber AS specification, s.sectionNumber AS clause"
+  },
+  {
+    "id": "RAN5-q92cc544cbae2",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN5'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-261275'}), (d)-[:TARGET_RELEASE]->(rel:Release), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*' AND rel.releaseName IN ['Rel-19'] AND sp.specRelease = rel.releaseName\nWITH DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, rel.releaseName AS target_release, toInteger(reduce(digits = '', ch IN split(toString(p.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS currentMeeting\nMATCH (earlier:Tdoc)-[:MODIFIES_SECTION]->(earlierSection:Section {sectionNumber: clause})-[:BELONGS_TO_SPEC]->(earlierSpec:Spec {specNumber: specification, specRelease: target_release}), (earlier)-[:TARGET_RELEASE]->(:Release {releaseName: target_release}), (earlier)-[:BELONGS_TO_CR_PACK]->(earlierPack:CRPack)\nWITH specification, clause, target_release, currentMeeting, earlierPack, toInteger(reduce(digits = '', ch IN split(toString(earlierPack.tsgMeeting), '') | CASE WHEN ch >= '0' AND ch <= '9' THEN digits + ch ELSE digits END)) AS earlierMeeting\nWHERE earlierMeeting < currentMeeting\nWITH specification, clause, target_release, collect({pack: earlierPack, ordinal: earlierMeeting}) AS choices, max(earlierMeeting) AS latestMeeting\nUNWIND choices AS candidate\nWITH specification, clause, candidate.pack AS earlierPack, candidate.ordinal AS earlierMeeting, latestMeeting\nWHERE earlierMeeting = latestMeeting\nRETURN DISTINCT specification AS specification, clause AS clause, earlierPack.crPackId AS cr_pack, earlierPack.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN5-q9dd890b7d2e9",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN5'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack), (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-19'}), (d)-[:MODIFIES_SECTION]->(s:Section {sectionNumber: '6.2A.3.1.1.3.3_1'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-4', specRelease: 'Rel-19'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN5-qbd0afb2d46d9",
+    "query": "MATCH (seed:Tdoc {tdocNumber: 'R5-186468'})-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-15'}), (seed)-[:MODIFIES_SECTION]->(seedSection:Section)-[:BELONGS_TO_SPEC]->(seedSpec:Spec {specNumber: '38.508-1', specRelease: 'Rel-15'})\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN5'})\nMATCH (d)-[:TARGET_RELEASE]->(:Release {releaseName: 'Rel-15'}), (d)-[:MODIFIES_SECTION]->(s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.508-1', specRelease: 'Rel-15'}), (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber <> 'R5-186468' AND s.sectionNumber = seedSection.sectionNumber AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT s.sectionNumber AS clause, d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack"
+  },
+  {
+    "id": "RAN5-qde317edc86b0",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN5'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack {crPackId: 'RP-250731'})\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS document, dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting"
+  },
+  {
+    "id": "RAN5-qe63e08fab145",
+    "query": "MATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN5'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE d.tdocNumber = 'R5-203000' AND dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT dd.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN5-qe644473c854d",
+    "query": "MATCH (d:Tdoc {tdocNumber: 'R5-194984'})-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nRETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting"
+  },
+  {
+    "id": "RAN5-qe85e166ea7f5",
+    "query": "MATCH path = (seed:Tdoc {tdocNumber: 'R5-236866'})-[:REVISED_TO|IS_REVISION_OF*1..]-(d:Tdoc)\nWHERE d.tdocNumber <> seed.tdocNumber AND all(i IN range(0, length(path) - 1) WHERE (type(relationships(path)[i]) = 'REVISED_TO' AND startNode(relationships(path)[i]) = nodes(path)[i]) OR (type(relationships(path)[i]) = 'IS_REVISION_OF' AND endNode(relationships(path)[i]) = nodes(path)[i]))\nMATCH (r:Resolution)-[:HAS_DISPOSITION]->(dd:DecisionDisposition)-[:DISPOSITION_TARGET]->(d:Tdoc), (r)-[:MADE_AT]->(m:Meeting {workingGroup: 'RAN5'})\nMATCH (d)-[:BELONGS_TO_CR_PACK]->(p:CRPack)\nWHERE dd.evidenceStatus = 'source_verified' AND dd.assessmentMethod =~ '(?s).*\"scope\"\\\\s*:\\\\s*\"whole_target\".*'\nRETURN DISTINCT d.tdocNumber AS final_document, dd.dispositionCode AS disposition, p.crPackId AS cr_pack"
+  }
+]

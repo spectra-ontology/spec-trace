@@ -1,0 +1,404 @@
+"""Freeze, generate, and score the matched-domain interface diagnostic.
+
+Generation uses the authenticated Claude Code subscription, with tools and
+customizations disabled. Scoring runs in a separate process after generation.
+"""
+from __future__ import annotations
+
+import argparse
+import collections
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import sqlite3
+import subprocess
+import sys
+import tempfile
+import time
+
+HERE = Path(__file__).resolve().parent
+ROOT = next(p for p in HERE.parents if (p / "CLAUDE.md").is_file())
+BASE = ROOT / "logs/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark"
+SOURCE = ROOT / "scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark"
+CLI = Path.home() / ".local/bin/claude"
+MODEL = "claude-opus-5-5"
+RUNS = [("sql", "A"), ("cypher", "A"), ("cypher", "B"), ("sql", "B")]
+SYSTEM = (
+    "You are an independent query writer. Use only the supplied questions, schema, "
+    "and categorical-domain appendix. Produce executable read-only queries. "
+    "You have no tools, database access, prior answers, execution feedback, or examples "
+    "of correct queries. Return only the requested JSON object."
+)
+
+
+def sha(data):
+    return hashlib.sha256(data if isinstance(data, bytes) else data.encode()).hexdigest()
+
+
+def write(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+
+
+def read_items(path):
+    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+
+
+def packet_id(item):
+    return item["wg"] + "-q" + sha("packet:" + item["id"])[:12]
+
+
+def freeze():
+    if (HERE / "protocol.json").exists():
+        raise SystemExit("Protocol already frozen; inspect instead of overwriting.")
+    sources = {
+        "main": [BASE / f"integration/items_final/gate/{part}/chain_items_admitted.jsonl" for part in ["core", "ran5"]],
+        "extension": [BASE / f"final/next_cycle/headroom/items/{part}/chain_items.jsonl" for part in ["core", "ran5"]],
+    }
+    selected, strata = [], []
+    for suite, paths in sources.items():
+        cells = collections.defaultdict(list)
+        for path in paths:
+            for item in read_items(path):
+                cells[(item["wg"], item["family"])].append(item)
+        assert len(cells) == (35 if suite == "main" else 15)
+        for (wg, family), candidates in sorted(cells.items()):
+            item = min(candidates, key=lambda i: (sha(i["anchor"]), i["id"]))
+            selected.append(dict(item, suite=suite))
+            strata.append({"suite": suite, "wg": wg, "family": family,
+                           "eligible": len(candidates), "selectedId": item["id"],
+                           "anchorSha256": sha(item["anchor"]), "packetId": packet_id(item)})
+    selected.sort(key=packet_id)
+    assert len(selected) == len({i["id"] for i in selected}) == 50
+    write(HERE / "scoring_only/selected_items.json", selected)
+    write(HERE / "selection.json", strata)
+    domains = {}
+    sql_columns = ["document.doc_type", "document.list_status", "document.target_release",
+                   "disposition.code", "disposition.evidence_status", "disposition.scope",
+                   "meeting.wg", "section.release"]
+    graph_properties = ["(:Tdoc).type", "(:Tdoc).status", "(:CR).type", "(:CR).status",
+                        "(:DecisionDisposition).dispositionCode", "(:DecisionDisposition).evidenceStatus",
+                        "(:Resolution).resolutionScope", "(:Release).releaseName",
+                        "(:Spec).specRelease", "(:Meeting).workingGroup"]
+    schema_sources = {}
+    for wg in [f"RAN{n}" for n in range(1, 6)]:
+        db_path = BASE / f"integration/sqlite_final/{wg}.sqlite"
+        db = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        sql_domains = {}
+        for column in sql_columns:
+            table, name = column.split(".")
+            sql_domains[column] = [row[0] for row in db.execute(
+                f'SELECT DISTINCT "{name}" FROM "{table}" WHERE "{name}" IS NOT NULL ORDER BY "{name}"')]
+        db.close()
+        graph_path = BASE / f"chain_eval/codex_v2/packets_domain/cypher_{wg}.json"
+        graph_task = json.loads(graph_path.read_text())["task"]
+        graph_domains = {}
+        for prop in graph_properties:
+            line = next(line for line in graph_task.splitlines() if line.startswith(prop + " — "))
+            assert "all values (count):" in line, prop
+            tail = line.split("all values (count):", 1)[1]
+            graph_domains[prop] = sorted(json.loads(m) for m in re.findall(r'("(?:[^"\\]|\\.)*")\s*\(\d+\)', tail))
+        domains[wg] = {
+            "SQL categorical columns": sql_domains,
+            "Cypher categorical properties": graph_domains,
+            "Encoding fact": "SQL disposition.scope stores the scope key parsed from DecisionDisposition.assessmentMethod JSON; Resolution.resolutionScope is a separate property.",
+        }
+        schema_sources[wg] = {"sqliteSha256": sha(db_path.read_bytes()),
+                              "archivedGraphDomainsSha256": sha(graph_path.read_bytes())}
+    write(HERE / "categorical_domains.json", domains)
+    question_packets = {}
+    for language in ["sql", "cypher"]:
+        packets = []
+        for wg in [f"RAN{n}" for n in range(1, 6)]:
+            path = BASE / f"final/next_cycle/headroom/packets/{language}/{wg}_schema.json"
+            task = json.loads(path.read_text())["task"]
+            schema = task.split("\nAnswer with a JSON object", 1)[0]
+            packets.append({"wg": wg, "schema": schema,
+                            "categorical_domains": domains[wg],
+                            "items": [{"id": packet_id(i), "question": i["question"], "fields": i["fields"]}
+                                      for i in selected if i["wg"] == wg]})
+        question_packets[language] = packets
+        query_rules = (
+            "SQLite 3.37.2; SELECT statements only, WITH allowed; SELECT DISTINCT the requested fields in their given order."
+            if language == "sql" else
+            "Neo4j 5 Cypher; read-only clauses only (MATCH, OPTIONAL MATCH, WHERE, WITH, UNWIND, CASE, UNION, RETURN, ORDER BY, LIMIT); RETURN DISTINCT the requested fields in their given order."
+        )
+        prompt = (
+            f"Write exactly one {language.upper()} query for each of the 50 items below. "
+            "Each working group has its own database. Schema and categorical domains are supplied, "
+            "with the same categorical appendix for both query languages. "
+            "Record absence must be represented by an executable query returning no rows. "
+            + query_rules + "\nReturn one JSON object {\"queries\":[{\"id\":\"...\",\"query\":\"...\"}, ...]} "
+            "in the supplied item order, with no prose or markdown. "
+            "Use exact native stored values; source-verified dispositions, whole-document scopes, "
+            "release editions, and chronological requests have the meanings specified by each question.\n\n"
+            + json.dumps(packets, ensure_ascii=False, separators=(",", ":")) + "\n"
+        )
+        (HERE / f"writer_{language}.txt").write_text(prompt)
+    # Both conditions see identical question/field and categorical information.
+    for a, b in zip(question_packets["sql"], question_packets["cypher"]):
+        assert a["items"] == b["items"]
+        assert a["categorical_domains"] == b["categorical_domains"]
+    # Target identifiers from answers may appear only when supplied by the question.
+    leaks = []
+    for language, packets in question_packets.items():
+        text = json.dumps(packets, ensure_ascii=False)
+        questions = " ".join(i["question"] for i in selected)
+        for item in selected:
+            for row in item["gold"]:
+                for value in row:
+                    if re.search(r"(?:R[1-5]-\d{6,}|RP-\d{6,}|RAN[1-5]?#\d+)", str(value)):
+                        if str(value) in text and str(value) not in questions:
+                            leaks.append({"language": language, "item": item["id"], "value": value})
+    assert not leaks, leaks
+    write(HERE / "input_audit.json", {"questionFieldParity": True, "categoricalAppendixParity": True,
+                                      "answerIdentifierLeaksOutsideQuestions": leaks,
+                                      "writerKeys": ["wg", "schema", "categorical_domains", "items(id,question,fields)"]})
+    protocol = {
+        "purpose": "A stratified matched categorical-domain interface diagnostic, separate from the full 667-item and 297-item evaluations.",
+        "selection": "For every suite/WG/family cell, minimize SHA256(anchor UTF-8), breaking ties by item ID. Selection does not inspect outputs or score values.",
+        "nItems": 50, "nMain": 35, "nExtension": 15,
+        "repetitions": 2, "sessionOrder": RUNS, "requestedModel": MODEL,
+        "modelIdentity": "Use actual returned modelUsage keys; stop comparisons across different IDs. No fallback model.",
+        "generation": "One fresh session per language/repetition, all five WG schemas inline; first response only; no tools, customization, skills, MCP, database access, or execution feedback. No output-informed retries.",
+        "authentication": "claude.ai firstParty Max subscription verified with claude auth status; API key/auth token/custom base URL/provider flags absent; apiKeyHelper absent. --bare is forbidden because it skips OAuth.",
+        "domains": "Native categorical values for the eight listed SQL columns and ten listed graph properties; identical joint appendix is supplied to both languages. SQL is measured from frozen read-only exports; graph values are from existing measured packet records. No high-cardinality examples or answer identifiers.",
+        "scoring": "Gold is withheld from all writer prompts and visible only to the separate scorer. Exact unordered row-set match and row-set F1; strip/lower-case and recorded meeting spelling normalization only. Every first query is executed once per run; no feedback, repair, or scoring of translated substitutes.",
+        "runtimes": {"sqlite": "3.37.2", "neo4j": "existing services only; read transactions; 60 second transaction timeout"},
+        "servicePolicy": "No service start, restart, or configuration change. Unavailable execution is recorded as blocked.",
+        "claims": "Descriptive results on 50 fixed strata representatives, not a new estimate for the 667/297-item populations, not an isolated causal estimate of domains, and not a replacement for historic model conditions.",
+        "sourceFiles": {str(p.relative_to(ROOT)): sha(p.read_bytes()) for paths in sources.values() for p in paths},
+        "databases": schema_sources,
+        "writerInputs": {language: sha((HERE / f"writer_{language}.txt").read_bytes()) for language in ["sql", "cypher"]},
+        "systemPrompt": SYSTEM,
+        "frozenAtUnix": time.time(),
+    }
+    write(HERE / "protocol.json", protocol)
+    print(json.dumps({"selected": 50, "promptCharacters": {l: len((HERE / f"writer_{l}.txt").read_text()) for l in ["sql", "cypher"]}, "protocolSha256": sha((HERE / "protocol.json").read_bytes())}))
+
+
+def generate(language, repetition):
+    protocol = json.loads((HERE / "protocol.json").read_text())
+    prompt = HERE / f"writer_{language}.txt"
+    assert sha(prompt.read_bytes()) == protocol["writerInputs"][language]
+    name = f"{language}_{repetition}"
+    output = HERE / f"raw/{name}.json"
+    if output.exists():
+        raise SystemExit("Raw response already exists; no regeneration allowed.")
+    for key in ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL", "CLAUDE_CODE_USE_BEDROCK", "CLAUDE_CODE_USE_VERTEX", "CLAUDE_CODE_USE_FOUNDRY"]:
+        assert not os.environ.get(key), f"Forbidden authentication/provider environment: {key}"
+    auth = json.loads(subprocess.run([str(CLI), "auth", "status"], capture_output=True, text=True, check=True).stdout)
+    assert auth.get("loggedIn") and auth.get("authMethod") == "claude.ai" and auth.get("apiProvider") == "firstParty"
+    assert auth.get("subscriptionType") == "max"
+    output.parent.mkdir(exist_ok=True)
+    cwd = Path(tempfile.mkdtemp(prefix="spectra-matched-writer-"))
+    cmd = [str(CLI), "-p", "--model", MODEL, "--output-format", "json", "--safe-mode",
+           "--tools", "", "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}',
+           "--no-session-persistence", "--disable-slash-commands", "--permission-mode", "dontAsk",
+           "--effort", "high", "--system-prompt", SYSTEM]
+    started = time.time()
+    try:
+        with prompt.open() as inp, output.open("x") as out, (HERE / f"raw/{name}.stderr").open("x") as err:
+            process = subprocess.run(cmd, stdin=inp, stdout=out, stderr=err, cwd=cwd,
+                                     env=dict(os.environ, CLAUDE_CODE_MAX_OUTPUT_TOKENS="32000"))
+        write(HERE / f"raw/{name}.receipt.json", {
+            "command": [str(CLI.relative_to(Path.home()))] + cmd[1:],
+            "requestedModel": MODEL, "auth": {key: auth[key] for key in ["authMethod", "apiProvider", "subscriptionType"]},
+            "inputSha256": sha(prompt.read_bytes()), "systemPromptSha256": sha(SYSTEM),
+            "protocolSha256": sha((HERE / "protocol.json").read_bytes()),
+            "startedAtUnix": started, "durationSeconds": time.time()-started,
+            "exitCode": process.returncode, "rawSha256": sha(output.read_bytes()),
+            "isolatedCwdHadFiles": bool(list(cwd.iterdir())),
+        })
+        result = json.loads(output.read_text())
+        print(json.dumps({"run": name, "exitCode": process.returncode, "type": result.get("type"),
+                          "subtype": result.get("subtype"), "isError": result.get("is_error"),
+                          "modelUsage": result.get("modelUsage"), "duration_ms": result.get("duration_ms"),
+                          "resultCharacters": len(result.get("result", ""))}))
+        if process.returncode or result.get("is_error"):
+            raise SystemExit(1)
+    finally:
+        shutil.rmtree(cwd)
+
+
+def score(query_dir=None, generation_metadata=None, output_dir=None):
+    assert sqlite3.sqlite_version == "3.37.2", sqlite3.sqlite_version
+    sys.path.insert(0, str(ROOT / "scripts/common"))
+    from common.credentials import neo4j_auth
+    from neo4j import GraphDatabase, READ_ACCESS
+    spec = importlib.util.spec_from_file_location("score_chain_eval", SOURCE / "score_chain_eval.py")
+    scorer = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(scorer)
+    selected = json.loads((HERE / "scoring_only/selected_items.json").read_text())
+    by_packet = {packet_id(i): i for i in selected}
+    destination = Path(output_dir) if output_dir else HERE
+    external_metadata = json.loads(Path(generation_metadata).read_text()) if generation_metadata else None
+    identity_rules_path = BASE / "final/next_cycle/analysis/m2_template_session.json"
+    identity_rules = json.loads(identity_rules_path.read_text())["rules"]
+    kept = set(identity_rules["keptElectronicSpellings"])
+
+    def identity_rows(item, rows):
+        if rows is None:
+            return None
+        out = []
+        for row in rows:
+            values = []
+            for index, cell in enumerate(row):
+                value = scorer.cell_key(cell)
+                if index < len(item["fields"]) and item["fields"][index] in {"wg_meeting", "tsg_meeting"} and value not in kept:
+                    value = re.sub(r"-e$", "", value)
+                values.append(value)
+            out.append(values)
+        return out
+
+    metadata, summaries = {}, {}
+    for language, repetition in RUNS:
+        name = f"{language}_{repetition}"
+        if query_dir:
+            assert external_metadata, "External generation metadata is required"
+            path = Path(query_dir) / f"{name}.jsonl"
+            queries = read_items(path)
+            metadata[name] = external_metadata[name]
+            assert len(metadata[name]["actualModels"]) <= 1
+            assert metadata[name]["actualModels"] or metadata[name].get("modelIdentityStatus") == "unavailable", "Unknown IDs must be explicit"
+            assert metadata[name].get("provenanceReceipt"), "Link the session receipt"
+        else:
+            raw = json.loads((HERE / f"raw/{name}.json").read_text())
+            assert not raw.get("is_error"), name
+            actual_models = sorted(raw.get("modelUsage", {}))
+            assert len(actual_models) == 1, actual_models
+            result_text = raw["result"].strip()
+            if result_text.startswith("```"):
+                result_text = re.sub(r"^```(?:json)?\s*|\s*```$", "", result_text)
+            queries = json.loads(result_text)["queries"]
+            metadata[name] = {"actualModels": actual_models, "usage": raw.get("usage"), "modelUsage": raw.get("modelUsage"),
+                              "costFieldNote": "CLI accounting metadata; authentication used the Max subscription, not an API key.",
+                              "total_cost_usd": raw.get("total_cost_usd")}
+        assert len(queries) == 50
+        assert len({q["id"] for q in queries}) == 50
+        assert {q["id"] for q in queries} == set(by_packet)
+        write(destination / f"queries/{name}.json", queries)
+        connections = {}
+        rows_out = []
+        try:
+            for q in queries:
+                item = by_packet[q["id"]]
+                wg = item["wg"]
+                query = q["query"]
+                started = time.monotonic()
+                error, rows, blocked = None, None, False
+                try:
+                    if language == "sql":
+                        assert re.match(r"\s*(SELECT|WITH)\b", query, re.I), "SQL must start with SELECT/WITH"
+                        if wg not in connections:
+                            dbpath = BASE / f"integration/sqlite_final/{wg}.sqlite"
+                            connections[wg] = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
+                            connections[wg].execute("PRAGMA query_only=ON")
+                        db = connections[wg]
+                        db.set_progress_handler(lambda: int(time.monotonic()-started > 60), 10000)
+                        try:
+                            cursor = db.execute(query)
+                            output_fields = [d[0] for d in cursor.description]
+                            found = cursor.fetchmany(2001)
+                        finally:
+                            db.set_progress_handler(None, 0)
+                    else:
+                        # Reject writes and procedure calls before the read-only transaction.
+                        assert not re.search(r"\b(CREATE|MERGE|DELETE|DETACH|SET|REMOVE|DROP|LOAD|CALL)\b", re.sub(r"'(?:[^'\\]|\\.)*'", "''", query), re.I), "Disallowed Cypher write/procedure clause"
+                        if wg not in connections:
+                            connections[wg] = GraphDatabase.driver(f"bolt://127.0.0.1:{7686+int(wg[-1])}", auth=neo4j_auth(), connection_timeout=5, max_transaction_retry_time=0)
+                        with connections[wg].session(default_access_mode=READ_ACCESS) as session:
+                            with session.begin_transaction(timeout=60) as tx:
+                                result = tx.run(query)
+                                output_fields = list(result.keys())
+                                found = [list(r.values()) for r in result]
+                                tx.rollback()
+                    rows = [[None if c is None else str(c) for c in row] for row in found]
+                    assert len(found) <= 2000, "Output exceeds historic 2000-row cap"
+                    assert len(output_fields) == len(item["fields"]), f"Wrong column count: {output_fields}"
+                except Exception as exc:
+                    error = str(exc)[:1200]
+                    blocked = "ServiceUnavailable" in type(exc).__name__ or "AuthError" in type(exc).__name__
+                    rows = None
+                metrics = scorer.score(item["gold"], rows)
+                identity_metrics = scorer.score(identity_rows(item, item["gold"]), identity_rows(item, rows))
+                rows_out.append({"id": item["id"], "packetId": q["id"], "wg": wg,
+                                 "family": item["family"], "suite": item["suite"],
+                                 "query": query, "rows": rows, "error": error, "blocked": blocked,
+                                 "elapsedSeconds": time.monotonic()-started, "scores": metrics,
+                                 "identityScores": identity_metrics})
+        finally:
+            for connection in connections.values():
+                connection.close()
+        write(destination / f"scoring_only/{name}.json", rows_out)
+        summaries[name] = {suite: scorer.summarize([r["scores"] for r in rows_out if suite == "all" or r["suite"] == suite]) for suite in ["all", "main", "extension"]}
+        summaries[name]["blocked"] = sum(r["blocked"] for r in rows_out)
+        summaries[name]["identity"] = {suite: scorer.summarize([r["identityScores"] for r in rows_out if suite == "all" or r["suite"] == suite]) for suite in ["all", "main", "extension"]}
+        print(json.dumps({name: summaries[name]}), flush=True)
+    model_sets = {tuple(m["actualModels"]) for m in metadata.values() if m["actualModels"]}
+    model_ids_complete = all(len(m["actualModels"]) == 1 for m in metadata.values())
+    write(destination / "generation_metadata.json", metadata)
+    write(destination / "summary.json", {"sameActualModelAcrossAllSessions": len(model_sets) == 1 if model_ids_complete else None,
+                                 "modelIdentityComplete": model_ids_complete,
+                                 "identityRulesSourceSha256": sha(identity_rules_path.read_bytes()),
+                                 "keptElectronicSpellings": sorted(kept),
+                                 "actualModels": [list(s) for s in sorted(model_sets)], "runs": summaries})
+
+
+def preflight():
+    sys.path.insert(0, str(ROOT / "scripts/common"))
+    from common.credentials import neo4j_auth
+    from neo4j import GraphDatabase, READ_ACCESS
+    protocol = json.loads((HERE / "protocol.json").read_text())
+    domains = json.loads((HERE / "categorical_domains.json").read_text())
+    report = {"sqliteVersion": sqlite3.sqlite_version, "workingGroups": {}}
+    assert sqlite3.sqlite_version == "3.37.2"
+    for wg in domains:
+        dbpath = BASE / f"integration/sqlite_final/{wg}.sqlite"
+        assert sha(dbpath.read_bytes()) == protocol["databases"][wg]["sqliteSha256"]
+        db = sqlite3.connect(f"file:{dbpath}?mode=ro", uri=True)
+        sql_counts = {table: db.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]
+                      for table in ["document", "disposition", "resolution", "meeting", "cr_pack", "section"]}
+        db.close()
+        observed, differences = {}, {}
+        with GraphDatabase.driver(f"bolt://127.0.0.1:{7686+int(wg[-1])}", auth=neo4j_auth(), connection_timeout=5, max_transaction_retry_time=0) as driver:
+            with driver.session(default_access_mode=READ_ACCESS) as session:
+                with session.begin_transaction(timeout=60) as tx:
+                    server = tx.run("CALL dbms.components() YIELD name, versions RETURN name, versions").data()
+                    for prop, expected in domains[wg]["Cypher categorical properties"].items():
+                        label, property_name = re.fullmatch(r"\(:([^)]*)\)\.(.*)", prop).groups()
+                        actual = sorted(r["value"] for r in tx.run(f"MATCH (n:`{label}`) WHERE n.`{property_name}` IS NOT NULL RETURN DISTINCT n.`{property_name}` AS value"))
+                        observed[prop] = actual
+                        if actual != expected:
+                            differences[prop] = {"archived": expected, "current": actual}
+                    tx.rollback()
+        report["workingGroups"][wg] = {"sqliteRows": sql_counts, "neo4jServer": server,
+                                         "currentGraphCategoricalDomains": observed,
+                                         "archivedDomainDifferences": differences}
+        assert not differences, differences
+    write(HERE / "preflight.json", report)
+    print(json.dumps({"sqliteVersion": report["sqliteVersion"], "existingNeo4jServicesVerified": 5, "domainDifferences": 0}))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("action", choices=["freeze", "generate", "score", "preflight"])
+    parser.add_argument("--language", choices=["sql", "cypher"])
+    parser.add_argument("--repetition", choices=["A", "B"])
+    parser.add_argument("--query-dir", type=Path)
+    parser.add_argument("--generation-metadata", type=Path)
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args()
+    if args.action == "freeze":
+        freeze()
+    elif args.action == "generate":
+        assert args.language and args.repetition
+        generate(args.language, args.repetition)
+    elif args.action == "score":
+        score(args.query_dir, args.generation_metadata, args.output_dir)
+    else:
+        preflight()
