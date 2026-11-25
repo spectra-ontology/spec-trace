@@ -4,6 +4,23 @@ This package provides the query graph of five 3GPP Radio Access Network working 
 
 The source documents are identified by archive path, SHA-256 and locator. The package distributes their structured projection; `restore/` retrieves the cited reports and rehydrates source passages locally. Original disposition statuses describe the source graph. Local rehydration supplies the quote fields used by evidence-shape validation.
 
+## Start with the published results
+
+Use Python 3.11 or later.
+
+```sh
+git clone --branch vldb-2027 --single-branch https://github.com/spectra-ontology/spec-trace.git
+cd spec-trace
+python3 -m venv .venv
+. .venv/bin/activate
+.venv/bin/python -m pip install -r requirements-replay.txt
+.venv/bin/python restore/reproduce.py --out work/replay
+```
+
+The last command works offline after dependency installation. It verifies every package checksum, replays the 60 historical score entries, and reproduces all 37 current conditions with their template/session bootstraps. It uses the shipped responses and compressed databases. Successful execution writes `work/replay/report.json` and a current-table report with `matches_expected_output: true`. Model generation, source downloads and database services are separate from this replay.
+
+[Reproducing the paper](REPRODUCING.md) maps the evidence to commands and expected outputs. [The datasheet](datasheet.md) describes the population, question construction and distribution terms. The [vocabulary](docs/spectra.ttl) and [shapes](docs/spectra-shapes.ttl) define the records used by the benchmark.
+
 ## Contents
 
 | Path | Content |
@@ -21,13 +38,14 @@ The source documents are identified by archive path, SHA-256 and locator. The pa
 | `sources/competency_queries/index.json` | 25 sanitized original graph execution receipts: 644 PASS and 10 NO_DATA, with source and projected-file hashes. |
 | `sources/manifest.jsonl` | URLs and hashes for 280 cited reports and their conversions. |
 | `sources/disposition_bindings.jsonl.gz` | 358,062 text-free quote-hash receipts, decision spans and source-field locators. |
+| `restore/source_links/` | Official archive/member manifest, native CR-form checker and receipts for the 604 distinct CR–clause pairs in the main benchmark. |
 | `restore/` | Source retrieval, passage rehydration, SHACL validation, clean benchmark rebuild/gate and stored-response rescoring. |
 | `records_redactions.jsonl`, `results_redactions.jsonl`, `code_redactions.jsonl` | Changed-file provenance and original/released hashes. |
 | `SHA256SUMS` | Package file hashes, excluding this hash list itself. |
 
 ## Preparation
 
-Run commands from the package root with Python 3.11 or later. The builder, gate and scorer use the Python standard library. Source restoration uses `lxml` and LibreOffice for the reports marked for conversion; passage rehydration uses `lxml`, `python-docx` and `openpyxl`; shape validation uses `rdflib` and `pyshacl`. The current-table analysis uses `numpy`. Additional historical analysis scripts have the dependencies listed in `code_report.md`.
+Run commands from the package root with Python 3.11 or later, with `. .venv/bin/activate` in each shell used below. `requirements-replay.txt` pins the tested table-replay dependency; `requirements-sources.txt` adds the tested source and shape-validation dependencies. The builder, gate and scorer use the Python standard library. Source restoration uses LibreOffice 7.3.7.2 for the reports marked for conversion; conversion hashes bind the tested output bytes. Additional historical analysis scripts have the dependencies listed in `code_report.md`.
 
 ```sh
 sha256sum -c SHA256SUMS
@@ -44,6 +62,7 @@ gzip -dk sqlite/RAN2.sqlite.gz sqlite/RAN3.sqlite.gz sqlite/RAN4.sqlite.gz sqlit
 ## Restore sources and evidence
 
 ```sh
+python3 -m pip install -r requirements-sources.txt
 python3 restore/restore_sources.py --manifest sources/manifest.jsonl \
   --dest work/sources --work work/downloads --report work/source_restore.json
 
@@ -57,6 +76,27 @@ python3 restore/validate_bindings.py --release . --records work/dispositions_100
 `--limit 20` checks the first 20 dispositions per WG. Removing it selects every disposition in the selected WGs; `--wg RAN1` selects a partition. Passage rehydration checks the source file SHA-256, restores accepted body blocks or the precise annex row with its governing text, and compares the recovered quote's exact SHA-256 and character count with its producer receipt before emitting it. The report separately counts agreement of the direct target-predicate reread. Target-identity reviews remain separate evidence.
 
 The local preparation check rehydrated 100/100 passages, agreed with 100/100 direct rule readings, and conformed to all 44 released node shapes for this sample. The validator normalizes RDF 1.1 simple strings and explicit `xsd:string` literals to the same representation while retaining every shape constraint. This is a sample validation; the previously measured corpus-wide locator audit remains in `responses/final/next_cycle/analysis/locator_recompute.json`.
+
+## Check CR form links
+
+The [CR source check](restore/source_links/README.md) connects the main benchmark's 604 distinct CR–clause pairs to pinned official archive members. It runs with the Python standard library and the released independent reader:
+
+```sh
+python3 restore/source_links/check_source_links.py --release . \
+  --manifest restore/source_links/benchmark_clause_manifest.json \
+  --work work/cr_sources --report work/cr_source_check.json
+```
+
+The recorded official-download execution fetched 251 archives and confirmed 549 pairs. Two forms enumerate tables within the named clauses and retain the reader's `table_or_figure_in_clause` classification. Another 53 pairs retain their source-format or URL availability status. All 604 remain in the manifest. Repeat with `--offline` to check cached bytes; `--wg RAN1` selects one working group. This check covers native CR forms for these benchmark pairs; the whole-corpus audits retain their separate inputs and scopes.
+
+## Test stored SQL with synthetic counterexamples
+
+The [relational contract check](restore/semantic_stress/README.md) runs a fast
+offline pilot and supplies the full fixed-design measurement. It adds marked
+synthetic rows to disposable memory copies and preserves the released gold,
+records and responses. Its separate runtime requires SQLite 3.37.2; check the
+linked instructions before running it. This complements stored-score replay
+with explicit tests of snapshot-correct queries under changed scope values.
 
 ## Rebuild and gate the benchmark
 
