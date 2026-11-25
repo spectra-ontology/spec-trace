@@ -36,6 +36,15 @@ python3 restore/describe_workload.py --release . --out work/workload_inventory.j
 
 [The builder](code/scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/build_chain_items.py) defines the family contracts; [reproduction instructions](REPRODUCING.md) connect fixed-anchor construction, independent admission and scoring. Preserve item identity, requested fields and gold row sets when adding a comparison.
 
+## Public-schema comparison
+
+[The current schema review](sources/schema_comparison_review.json) records the six typed process elements, the exact frozen comparison report, and the primary-text scope for the three KG schema reassessments. It reproduces the manuscript's comparison of 15 public resources and the released process records across all 667 main items. The calculation keeps undetermined slots and counts (`null`) distinct from assessed absent slots and zero expressible items; expressibility measures schema support independently of slot population. The original report remains available as the historical measurement.
+
+```sh
+free -h
+python3 restore/describe_schema_comparison.py --release . --out work/schema_comparison.json
+```
+
 ## Using a documentary subquery in a real question
 
 The [engineer-question analysis](studies/practitioner_questions/README.md) gives de-identified summaries and model classifications of 33 existing question units, separately from the generated benchmark. A power-class wording question illustrates a supported clause-history subquery: the released SQL retrieves 28 source-bound documentary rows for TS 38.101-1 clause 6.2.1 in Rel-17. Those rows identify candidate CRs and their recorded dispositions, meetings and packs for subsequent inspection of the technical text and discussion. The example preserves its curated derivation and source context.

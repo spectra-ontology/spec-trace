@@ -4,8 +4,6 @@ This package provides the query graph of five 3GPP Radio Access Network working 
 
 The source documents are identified by archive path, SHA-256 and locator. The package distributes their structured projection; `restore/` retrieves the cited reports and rehydrates source passages locally. Original disposition statuses describe the source graph. Local rehydration supplies the quote fields used by evidence-shape validation.
 
-Follow-up studies make the resource's query behavior explicit. A [30-item authored operator pilot](studies/operator_pilot/README.md) covers six operations across all five WGs, with independently checked gold and a fresh schema-and-domain SQL session answering 30/30. A [paired scope-value replay](studies/scope_intervention/README.md) tests a one-literal intervention on all 298 previously classified stored SQL misses. A [semantic witness census](studies/semantic_witnesses/README.md) adds 66 data-backed tasks from 95 prespecified cells, distinguishing all 113 required operator-error controls and 162 of 200 executed controls. These studies retain their own protocols, inputs and execution receipts alongside the 667 main and 297 order-sensitive items. A [matched-domain diagnostic](studies/matched_domains/README.md) retains four first submissions on the same 50 hash-selected representatives: two SQL and two Cypher sessions each return 50/50 exact sets. Its standalone rescorer verifies all original query, gold and executed-row bindings. A [de-identified engineer-question analysis](studies/practitioner_questions/README.md) connects 33 question units to their classified operations and a replayable 28-row clause-history subquery, with the remaining interpretation task explicit.
-
 ## Start with the published results
 
 Use Python 3.11 or later.
@@ -22,6 +20,18 @@ python3 -m venv .venv
 The last command works offline after dependency installation. It verifies every package checksum, replays the 60 historical score entries, and reproduces all 37 current conditions with their template/session bootstraps. It uses the shipped responses and compressed databases. Successful execution writes `work/replay/report.json` and a current-table report with `matches_expected_output: true`. Model generation, source downloads and database services are separate from this replay.
 
 [Reproducing the paper](REPRODUCING.md) maps the evidence to commands and expected outputs. [Experimental interfaces and inputs](EXPERIMENTS.md) lists each condition's corpus, attached fields, tool budget and reproduction status. [Benchmark families and requested fields](BENCHMARK.md) gives the computed main and extension inventory. [The datasheet](datasheet.md) describes the population, question construction and distribution terms. The [vocabulary](docs/spectra.ttl) and [shapes](docs/spectra-shapes.ttl) define the records used by the benchmark.
+
+## Follow-up studies
+
+Each study preserves its own inputs, complete outputs and execution receipts. Choose a study for the comparison you want to reproduce.
+
+| Study | Reuse | Recorded result |
+|---|---|---|
+| [Operator pilot](studies/operator_pilot/README.md) | Six analytical operations across five WGs | One schema-and-domain first submission answers 30/30 authored items. |
+| [Scope-value replay](studies/scope_intervention/README.md) | A one-literal intervention on fixed saved queries | All 298 preclassified scope failures recover their gold sets. |
+| [Semantic witnesses](studies/semantic_witnesses/README.md) | Data that distinguish grouping, set, tie and composition errors |66 of 95 planned cells yield tasks; all 113 required controls and 162/200 total controls differ from gold. |
+| [Matched domains](studies/matched_domains/README.md) | SQL/Cypher first submissions on the same 50 fixed representatives | Two sessions per language each return 50/50; the archived configuration retains unknown provider-model identity. |
+| [Engineer questions](studies/practitioner_questions/README.md) | 33 de-identified question units and a documentary subquery in an actual request | Two SQL formulations reproduce the same 28 rows; question interpretation remains a separate step. |
 
 ## Contents
 
