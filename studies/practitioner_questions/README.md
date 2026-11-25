@@ -87,7 +87,7 @@ For an authorized local audit, `--private-source-root BASE --private-cases-root 
 | `source_hashes.json` | Hashes of all available private question files and the source analyses |
 | `replay.py` | Public aggregation/query replay and optional private byte/label verification |
 | `replay_receipt.json` | Executed public replay result |
-| `SHA256SUMS.txt` | Checksums for this folder |
+| `SHA256SUMS` | Checksums for this folder and its released subdirectories |
 
 ## Complete process-question decomposition
 

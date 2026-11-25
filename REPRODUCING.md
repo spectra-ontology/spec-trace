@@ -2,6 +2,8 @@
 
 The release connects process records, generated questions and recorded experimental outcomes. Begin with the offline replay in the [README](README.md#start-with-the-published-results); then choose the source checks or benchmark construction relevant to your use. [Experimental interfaces and inputs](EXPERIMENTS.md) identifies the information available in each measured condition.
 
+Run `mkdir -p work/checks` and `python3 -B restore/check_manifests.py --release . --out work/checks/manifests.json` to verify every nested checksum manifest, including the uncompressed SQLite pins, before choosing a workflow. The gate also checks that each directory has one checksum manifest.
+
 | Evidence | Inputs and command | Expected output and interpretation |
 |---|---|---|
 | Current agent scores, family/session analysis and uncertainty | `restore/reproduce_current_tables.py`, released responses, 667 admitted items, `sources/current_tables_reference.json` | 37 conditions, both scoring rules and 10,000-draw bootstraps; complete output hash equals the published reference. |

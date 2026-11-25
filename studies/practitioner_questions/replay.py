@@ -37,12 +37,15 @@ def require(condition, message):
 
 
 def verify_checksums():
-    manifest = HERE / "SHA256SUMS.txt"
-    require(manifest.is_file(), "Local SHA256SUMS.txt is required")
+    manifest = HERE / "SHA256SUMS"
+    require(manifest.is_file(), "Local SHA256SUMS is required")
+    root = HERE.resolve()
     for line in manifest.read_text().splitlines():
         expected, name = line.split("  ", 1)
-        path = HERE / name
-        require(path.parent == HERE and path.is_file(), "Invalid local manifest entry")
+        require(not Path(name).is_absolute(), "Invalid local manifest entry: " + name)
+        path = (root / name).resolve()
+        require(path.is_relative_to(root) and path.is_file(),
+                "Invalid local manifest entry: " + name)
         require(digest(path) == expected, "Local file checksum mismatch: " + name)
 
 
