@@ -30,7 +30,8 @@ NUMBER = re.compile(r"(?<![\w.$])\d+(?:\.\d+)?(?![\w.])")
 
 
 def literals(query: str) -> set[str]:
-    return {(a if a is not None else b).replace("''", "'").lower() for a, b in STRING.findall(query)}
+    return {(a if a is not None else b).replace("''", "'").lower()
+            for match in STRING.finditer(query) for a, b in [match.groups()]}
 
 
 def numbers(query: str) -> set[str]:
