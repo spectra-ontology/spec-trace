@@ -23,7 +23,7 @@ This datasheet follows the questions of Gebru et al., "Datasheets for Datasets",
 
 The records also support research on building source-bound records from meeting reports. Each source-verified disposition carries the file hash, the locator and the sentence rule that assign its code.
 
-**Creators.** Sihyeon Choi, Junho Lee and Jungmin Park, Samsung Electronics.
+**Creator.** Sihyeon Choi, Samsung Electronics.
 
 ## 2. Composition
 
