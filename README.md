@@ -1,4 +1,4 @@
-# From Contribution to Clause: Source-Bound Traceability Records and a Chain-Question Benchmark for the 3GPP Standardization Process [Experiment, Analysis & Benchmark]
+# SPECTRA: An Ontology and Benchmark for 3GPP Traceability [Experiment, Analysis & Benchmark]
 
 This package provides the query graph of five 3GPP Radio Access Network working groups in JSON-LD and SQLite, the vocabulary and constraints it instantiates, 667 admitted chain questions, stored model responses, scores, and executable build and checking tools. The graph connects contributions, target-specific dispositions, meetings, CR packs and clauses. Its measured footprint is in `sources/released_record_counts.json`.
 
