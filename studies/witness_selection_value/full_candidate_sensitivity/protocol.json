@@ -1,0 +1,131 @@
+{
+  "category": "new_measurement_posthoc_finite_census",
+  "design_document_sha256": {
+    "control_catalog.json": "83742ffd7f52c8ef9ae80feccfb8f5499863f45adaefd1b728993ff870caffbc",
+    "feasibility.md": "728cbe8af8ef8cab8fbff6b50f4a8ec10bd6b5b9f623cd7ad4859ffb4a2c5243",
+    "prior_work.md": "eae8bc6569cf0663579fee05d54bcf6d9b7a11fc2c2afd3e982c1146c833d995"
+  },
+  "enumerator_sha256": "2b69c3750aba7a9768f40ed9455231d84b020e57612280980253296c9c489f57",
+  "estimands": {
+    "bounds": "Report exact min/max support for each per-cell and aggregate policy score, and exact lower bound min(E)-max(U) for independent-policy contrast. It may be negative. Bounds concern only frozen finite policies, not unseen errors.",
+    "cell_equal_lattice": "L_s=lcm(nonzero |K_c,s|); shift each cell j by j*(L_s/|K_c,s|), convolve, divide support index by |C_s|*L_s.",
+    "cell_equal_mean": "mean_{c:primary_available and |K_c,s|>0} mu_c,s(P); category-empty cells are explicitly NA for that subset, not zero.",
+    "comparisons": "Exact mean(E)-mean(U), all/direct/other, for both control weights and equal-cell weights. Preserve any zero or negative result. Original hash/witness anchors are separately replayed and located within these finite policies, without changing them.",
+    "control_weighted_mean": "sum_c sum_{a in P_c} sum_{k in K_c,s}d_ck(a)/|P_c| divided by sum_c |K_c,s|; primary all=200,direct=113,other=87.",
+    "distributions": "Per-cell joint count PMF H_c,s(j)=#{a in P_c:sum_{k in K_c,s} d_ck(a)=j}/|P_c|. Preserve within-cell control correlation. Convolve integer count polynomials across cells.",
+    "exact_arithmetic": "Integer histogram counts, integer polynomial coefficients, Fraction reduced numerator/denominator; floats are display-only and never used in comparisons or quantiles.",
+    "forbidden_pooling": "Never pool candidate successes across cells before dividing by cell candidate count; large candidate cells receive only the stated fixed cell/control weight.",
+    "per_cell_control_probability": "p_ck(P)=sum_{a in P_c} d_ck(a)/|P_c|, P in {U,E}; exact Fraction.",
+    "per_cell_subset_mean": "mu_c,s(P)=sum_{a in P_c} sum_{k in K_c,s} d_ck(a) / (|P_c|*|K_c,s|).",
+    "quantiles": "Exact lower 5th, 50th and 95th quantiles from the finite policy PMF. These are policy quantiles, not confidence intervals."
+  },
+  "execution_authorization": {
+    "approval_receipt_created_by_this_agent": false,
+    "approval_schema": {
+      "approved": true,
+      "approved_by": "parent",
+      "authorization": "run_frozen_full_candidate_census",
+      "implementation_sha256": "FINAL_IMPLEMENTATION_MANIFEST_SHA256",
+      "protocol_sha256": "FINAL_PROTOCOL_SHA256"
+    },
+    "before_approval": "Only documentation, code writing, metadata/hash checks and static compilation. No new outcome/signature/SQL/metric evaluation.",
+    "required": "Separate parent approval receipt after reviewing final protocol/code hashes."
+  },
+  "fixed_population": {
+    "all_candidate_archive_rows": 2269290,
+    "candidate_universe": "Exactly the existing before-final-predicate enumerator and all its retained membership/shared-identity/cooccurrence preconditions. No expansion, reroll, exclusion or changed salt.",
+    "direct_control_slots": 113,
+    "other_control_slots": 87,
+    "planned_cells": 95,
+    "primary_available_cells": 66,
+    "primary_frozen_control_slots": 200,
+    "unavailable_cells": 29
+  },
+  "implementation_plan": {
+    "address_space_limit_bytes": 4294967296,
+    "aggregation": "Exact integer/Fraction PMFs and bounds in runner after validation.",
+    "code_files": [
+      "symbolic.py",
+      "exact_stats.py",
+      "run_census.py"
+    ],
+    "enumeration": "Import pinned immutable analyze_portable.py for raw relation reading and candidate/property/gate regeneration; compare all frozen rows again.",
+    "implementation_sha256": "57e6762ae57e95f386b36097efd041c295164993a80fb6b2c7a6f4ef537c7f99",
+    "single_process": true,
+    "symbolic": "Independent set/multiset interpreter in symbolic.py, not original builder gold/executor."
+  },
+  "input_sha256": {
+    "sqlite/RAN1.sqlite": "5e0d83e8418d887ec17433a883695a7ebcbff25e4c9ff048f4c2bd95f0c16cc1",
+    "sqlite/RAN2.sqlite.gz": "cd4dc565713f1d49bb389ef2056474380ed78d547f63cf8dd81580d85ec26a9d",
+    "sqlite/RAN3.sqlite.gz": "a43e9433f43725c2ba1ad4f9e841a4725245d1bb17cab2678967c12d9baa9b78",
+    "sqlite/RAN4.sqlite.gz": "5a7e70679718630e65ca298733a60cf6cb922e466fa17d4f8e6a0cec3289f504",
+    "sqlite/RAN5.sqlite.gz": "9a9797eefda6071ea33d6e9f0a26b4ecd43bdd4ead034e88d670d031fb986d27",
+    "studies/semantic_witnesses/build_semantic_witnesses.py": "bb4f093f09b73bf67216ec40cc449a6aeac3516d89765f306581f77ae96e91f8",
+    "studies/semantic_witnesses/protocol.json": "5ae29a7c9296d7cd37122a85928719c64586516542e4cc4b720040611afb29ff",
+    "studies/witness_selection_value/measurement/candidate_universe_RAN1.jsonl.gz": "425d4e3a168b23f0fbfc2738db95a596a48205c89b9329a66ff579cb5cb9cba9",
+    "studies/witness_selection_value/measurement/candidate_universe_RAN2.jsonl.gz": "29c8bfeef6a6ac4a9e758fd453fbddd08d15260b79b4ff68c2effb2ef755402b",
+    "studies/witness_selection_value/measurement/candidate_universe_RAN3.jsonl.gz": "714678d6486901b7643a3cd15f2cb51eedb5e47259c7688a9e629c221d97e8b3",
+    "studies/witness_selection_value/measurement/candidate_universe_RAN4.jsonl.gz": "eae988fe6e79698885bb9aaadcbdf264427ee8f31d106396c34dab22d161ba2e",
+    "studies/witness_selection_value/measurement/candidate_universe_RAN5.jsonl.gz": "2410952c4d676f4bbf7ea999468b0db0e8259fc26bd58606cb765c5acb250fb1",
+    "studies/witness_selection_value/measurement/execution.json": "c79478123567c502429f5c176d6426f90400bdbfeaef9ec6dd24a262cabab91f",
+    "studies/witness_selection_value/measurement/selection.json": "27b7d7b6330c9ef13b42fa387f2e4ca0880ff0d893c9cd82da479631fd4bc841",
+    "studies/witness_selection_value/protocol.json": "e0c74992cb34e78ee3033c2d40010ad7a2a6a5bf3b0cfd5cf4af83d8a4d2f2bf"
+  },
+  "outcomes": {
+    "bare_aggregate": "omit_group_by returns one row with arbitrary admitted bare code when multiple codes exist. Store the exact allowed rowset family. All comparisons used by indicator/partition must be invariant over allowed choices; otherwise fail closed. Audit actual SQLite row family membership.",
+    "indicator": "d_ck(a)=1 iff full normalized control rowset differs from the independent raw-relation reference rowset.",
+    "normalization": "Set of complete row tuples, non-NULL values as strings, NULL retained. No truncation, first-row or row-count-only score.",
+    "unsupported_inputs": "Any NULL/type/collation/identifier condition outside the declared interpreter semantics fails closed before dependent census publication; no outcome-driven exclusion."
+  },
+  "policies": {
+    "distribution_coupling": "Within a cell all controls share the same selected anchor; between distinct cells draws are independent under this explicitly hypothetical policy. No claim deterministic hashes were random draws.",
+    "unavailable": "All 29 remain present; E_c is empty and uniform_E and primary comparison are NA, never zero-filled or renormalized into 200.",
+    "uniform_E": "For each available cell c choose one anchor uniformly from E_c={a in U_c: all original witness predicates true}.",
+    "uniform_U": "For each available cell c choose one anchor uniformly from its complete frozen pre-predicate universe U_c."
+  },
+  "preservation": {
+    "all_results_retained": "All favorable/unfavorable counts, zero/negative differences, NA unavailable cells, failure receipts and incomplete phases.",
+    "claims_excluded": [
+      "held-out/unseen-error generalization",
+      "new model success",
+      "universal semantic equivalence",
+      "new general method or first novelty",
+      "randomized causal effect of witness selection",
+      "human conference judgment"
+    ],
+    "immutable": "Original review and decision, original paired study, frozen author analysis, main manuscript, release package.",
+    "new_outputs": "Only full_candidate_sensitivity/"
+  },
+  "purpose": "Remove single-comparator-hash dependence by exactly enumerating the explicit uniform-anchor policies over the same frozen finite candidate cohorts.",
+  "registration_state": {
+    "new_detection_results_computed": 0,
+    "new_generation_or_model_calls": 0,
+    "new_outcome_signatures_computed": 0,
+    "new_sql_control_executions": 0,
+    "new_symbolic_control_evaluations": 0,
+    "original_paired_results_and_controls_already_known": true
+  },
+  "role": "AUTHOR measurement design; original reviewer decision preserved",
+  "sql_validation": {
+    "all_representatives": "Execute reference plus every applicable family control for every representative, compare complete rows or exact allowed family for bare aggregate, then equality partition and every indicator. Cache exact(WG,SQL SHA) executions with all audit slots retained.",
+    "failure": "Any mismatch,error,timeout,ambiguous symbolic comparison or unfinished representative audit is retained and marks validation_incomplete_or_failed. No validated headline/claim until all checks pass. No SQL repair/reselection/deletion.",
+    "frozen_anchors": "Audit all132 frozen task slots from both original arms, their400 controls, original SQL strings and archived full reference/control rows. Preserve repeated anchors and task slots.",
+    "renderer": "Pinned original builder.task with new anchor literals, same SQL operations. For all132 original slots, rendered reference/control SQL must equal frozen strings exactly before reuse. Meeting label fallback affects descriptive metadata only.",
+    "renderer_preflight": "Before census/SQL audit, render and compare all original132 reference/control templates and direct-name mappings to the frozen132/400 SQL strings; any mismatch fails closed.",
+    "representatives": "For every(WG,cell,eligible_status,signature), retain canonical-JSON-smallest candidate. Freeze the complete representative inventory before any new SQL audit. No favorable outcome/runtime substitution.",
+    "runtime": "SQLite3.37.2, read-only immutable original DB, query_only=ON,60-second cap.",
+    "signature": "Ordered equality partition of reference and all family-control full rowsets plus 0/1/many row-cardinality bucket for each named outcome and declared interpreter branch tags; not literal rowset SHA."
+  },
+  "state": "scientific_design_approved_implementation_ready_for_parent_execution_review",
+  "study": "Exact full-candidate sensitivity of frozen source-bound controls",
+  "unavailable_family_diagnostics": {
+    "contract": "Reuse existing family control names and exact operator templates. These are additional cell-instantiations of known operations, not additional frozen200 slots. No primary aggregate weight. U-only diagnostic distributions may be recorded; E stays NA.",
+    "design_review_file": "design_review.json",
+    "enabled_in_proposed_execution": true,
+    "parent_approved": true,
+    "parent_may_disable_before_freeze": true,
+    "proposed_for_parent_approval": true,
+    "reason": "To evaluate raw symbolic family semantics for every archived candidate in all95 cells without fabricating original control slots."
+  },
+  "version": 1
+}

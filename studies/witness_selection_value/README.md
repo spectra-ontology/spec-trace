@@ -46,3 +46,11 @@ python3 -B studies/witness_selection_value/independent/check.py \
 ```
 
 The independent checker writes the specified new receipt and checks the existing frozen study. The [portable replay receipt](portable_replay.json) records the executed public measurement command and its agreement with the frozen selections and outputs.
+
+## Exact full-candidate policy census
+
+The [full-candidate census](full_candidate_sensitivity/README.md) evaluates all 2,269,290 frozen candidate/cell memberships and preserves both original anchor arms. For the same 200 known controls across 66 available cells, uniform witness-eligible anchors have 80.77% expected discrimination, compared with 48.76% for uniform anchors from each pre-predicate universe. Equal-cell weighting gives 80.82% and 49.19%. The original deterministic 162/200 versus 93/200 comparison remains separately recorded.
+
+The 113 direct controls confirm the eligibility properties by construction. Among the 87 other known controls, the control-slot expectation increases from 43.50% to 55.78%; equal-cell means over the 49 nonempty cells increase from 40.13% to 47.33%. Their exact cell contrasts include 16 positive, 17 zero and 16 negative means. The complete finite-policy distributions preserve overlapping supports, so the result concerns average discrimination under the stated policies rather than every-anchor dominance. All 29 unavailable cells remain `NA` for eligible selection.
+
+Follow the [external temporary-copy command](full_candidate_sensitivity/README.md#cold-replay-from-an-external-temporary-copy) with SQLite 3.37.2. The runner reads the 15 pinned release inputs and the included enumerator and writes only a fresh child of the external copied bundle. The shipped `run/` preserves all candidate annotations, exact fractions/PMFs and complete SQL audit.

@@ -31,8 +31,13 @@ Each study preserves its own inputs, complete outputs and execution receipts. Ch
 | [Scope-value replay](studies/scope_intervention/README.md) | A one-literal intervention on fixed saved queries | All 298 preclassified scope failures recover their gold sets. |
 | [Semantic witnesses](studies/semantic_witnesses/README.md) and [anchor comparison](studies/witness_selection_value/README.md) | Data that distinguish grouping, set, tie and composition errors | In the same 66 available cells, witness selection detects 162/200 fixed controls versus 93/200 under the hash baseline. |
 | [Semantic coverage census](studies/semantic_witnesses/coverage_census/README.md) | Raw candidate properties, joint witness predicates and their construction trace | Recomputes all 2,269,290 candidates across 95 cells and accounts for the 66 supported and 29 unavailable cells. |
+| [Full-candidate sensitivity](studies/witness_selection_value/full_candidate_sensitivity/README.md) | Exact uniform-anchor policies over all 2,269,290 frozen candidate/cell memberships | Across 66 available cells, expected discrimination is 80.77% under eligible-anchor selection and 48.76% under pre-predicate selection; the 87 other controls improve by 12.28 percentage points under control-slot weighting. Complete distributions and all 29 unavailable cells are retained. |
 | [Matched domains](studies/matched_domains/README.md) | SQL/Cypher first submissions on the same 50 fixed representatives | Two sessions per language each return 50/50; the archived configuration retains unknown provider-model identity. |
 | [Engineer questions](studies/practitioner_questions/README.md) and [five-unit decomposition](studies/practitioner_questions/decomposition/README.md) | 33 de-identified units with original classifications and two documented trace-context illustrations | U004 supplies 28 clause-history rows; U003 supplies a source-verified CR/disposition/pack/clause context. Technical interpretation retains its own evidence requirements. |
+
+The [schema evidence index](docs/schema_evidence.json) records the inspected versions, source sections and hashes behind the manuscript's dedicated process-slot comparison.
+
+For the [full-candidate policy census](studies/witness_selection_value/full_candidate_sensitivity/README.md#cold-replay-from-an-external-temporary-copy), use SQLite 3.37.2 and copy the study to an external temporary directory before running it. The linked guide gives the complete byte-pinned command; its output must be a fresh child of that copy, outside the release.
 
 ## Contents
 
@@ -58,7 +63,7 @@ Each study preserves its own inputs, complete outputs and execution receipts. Ch
 | `restore/census_reconstructed/` | Executed selected reconstruction checks, complete original audit comparisons, text-free expected digests and public-reference projection verification. |
 | `studies/operator_pilot/`, `studies/scope_intervention/`, `studies/semantic_witnesses/` | Analytical operations, fixed-cohort scope intervention and complete semantic witness pools, with frozen inputs, complete outputs and portable replay. |
 | `studies/review_dependence/` | Public record-to-gold dependence trace and complete subset-score replay. |
-| `studies/witness_selection_value/` | Paired witness/hash anchor selection, full candidate universes, complete SQL outputs and independent replay. |
+| `studies/witness_selection_value/` | Paired witness/hash anchor selection, full candidate universes, complete SQL outputs and independent replay; `full_candidate_sensitivity/` adds exact uniform-policy means, distributions and full-rowset SQL validation. |
 | `studies/matched_domains/`, `studies/practitioner_questions/` | Fixed-sample matched-value first submissions and de-identified real-question context, with separate protocols, data and portable verification. |
 | `studies/interface_condition/`, `studies/correspondence_context/` | Archived input-condition audit and identity-free contextual correspondence analysis, each with its own stated scope. |
 | `restore/` | Source retrieval, passage rehydration, SHACL validation, clean benchmark rebuild/gate and stored-response rescoring. |
