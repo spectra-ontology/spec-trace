@@ -1,0 +1,1312 @@
+{
+  "protocol_sha256": "ef1c32bd4d49c842e9016bb5375b32749cbc63cab1527901b824545c06ca0f5b",
+  "items": [
+    {
+      "id": "RAN1-analytic-pack_disposition_counts",
+      "wg": "RAN1",
+      "family": "pack_disposition_counts",
+      "question": "For CR pack RP-221603, how many distinct RAN1 member documents have each source-verified whole-document disposition? Return the disposition code and its distinct-document count. A document with several recorded codes counts once in each relevant group.",
+      "fields": [
+        "disposition",
+        "document_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00cda0f0ef4d6f2bf664e7368dc59364ecf7d392ca2afea47e0ff969d9678495",
+      "anchor": [
+        "tdoc:crpack/RP-221603"
+      ],
+      "gold": [
+        [
+          "agreed",
+          "2"
+        ]
+      ],
+      "reference_sql": "SELECT d.code,COUNT(DISTINCT REPLACE(m.cr,'tdoc:','')) FROM cr_in_pack m JOIN disposition d ON d.target=m.cr WHERE m.pack_id='tdoc:crpack/RP-221603' AND d.evidence_status='source_verified' AND d.scope='whole_target' GROUP BY d.code",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN1-analytic-shared_clauses",
+      "wg": "RAN1",
+      "family": "shared_clauses",
+      "question": "Compare R1-2009497 with R1-2009674 from pack RP-202383. Return the specification, release and clause for each typed section that both documents modify.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00233f4702a5166442bcb2a935f629071d2c77fe3f99e9045115700872c0af75",
+      "anchor": [
+        "tdoc:crpack/RP-202383",
+        "tdoc:R1-2009497",
+        "tdoc:R1-2009674"
+      ],
+      "gold": [
+        [
+          "38.213",
+          "Rel-16",
+          "16.4"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R1-2009497' INTERSECT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R1-2009674'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN1-analytic-exclusive_clauses",
+      "wg": "RAN1",
+      "family": "exclusive_clauses",
+      "question": "Compare R1-2405625 with R1-2405628 from pack RP-241067. Return the specification, release and clause for each typed section that R1-2405625 modifies and R1-2405628 does not modify in the released records.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00e52da85006a08c6886338a6eac6d40dfec7f6894ee56144491c6e0230df89e",
+      "anchor": [
+        "tdoc:crpack/RP-241067",
+        "tdoc:R1-2405625",
+        "tdoc:R1-2405628"
+      ],
+      "gold": [
+        [
+          "38.214",
+          "Rel-18",
+          "6.1.1.1"
+        ],
+        [
+          "38.214",
+          "Rel-18",
+          "6.1.4.2"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R1-2405625' EXCEPT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R1-2405628'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN1-analytic-both_clause_documents",
+      "wg": "RAN1",
+      "family": "both_clause_documents",
+      "question": "Which RAN1 documents in RP-191283 have typed modification links to both TS 38.213 Rel-15 clause 10.1 and TS 38.213 Rel-15 clause 9.3? Return the document numbers; each result must cover both named sections.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00f458c754ba87b9c565a8248afc8acedaec8f83972a8b6ff2599e0abda9c7c2",
+      "anchor": [
+        "tdoc:crpack/RP-191283",
+        "tdoc:section/38.213-Rel-15-10.1",
+        "tdoc:section/38.213-Rel-15-9.3"
+      ],
+      "gold": [
+        [
+          "R1-1907965"
+        ]
+      ],
+      "reference_sql": "SELECT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-191283' AND EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr AND x.section_id='tdoc:section/38.213-Rel-15-10.1') AND EXISTS(SELECT 1 FROM cr_modifies_section y WHERE y.cr=m.cr AND y.section_id='tdoc:section/38.213-Rel-15-9.3')",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN1-analytic-largest_clause_footprint",
+      "wg": "RAN1",
+      "family": "largest_clause_footprint",
+      "question": "Among the RAN1 members of CR pack RP-233698, which documents have the largest number of distinct typed modified-section identities? Return every tied document number with its count; different releases count as different identities.",
+      "fields": [
+        "document",
+        "clause_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00765edff0b8490c9bbbcd0f62acaa11e24532c1c47f056346f92cfb9240427c",
+      "anchor": [
+        "tdoc:crpack/RP-233698"
+      ],
+      "gold": [
+        [
+          "R1-2312481",
+          "2"
+        ],
+        [
+          "R1-2312482",
+          "2"
+        ]
+      ],
+      "reference_sql": "WITH counts AS (SELECT m.cr,COUNT(DISTINCT x.section_id) AS n FROM cr_in_pack m LEFT JOIN cr_modifies_section x ON x.cr=m.cr WHERE m.pack_id='tdoc:crpack/RP-233698' GROUP BY m.cr) SELECT REPLACE(cr,'tdoc:',''),n FROM counts WHERE n=(SELECT MAX(n)FROM counts)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN1-analytic-members_without_clause_records",
+      "wg": "RAN1",
+      "family": "members_without_clause_records",
+      "question": "Which RAN1 member documents of pack RP-211233 have zero typed modified-section links in the released records? Return document numbers. This asks about recorded-link absence in this snapshot.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "04449621686b66098604688fa37ebc9c9a9a9a165e5569b14de510b24c7db8bf",
+      "anchor": [
+        "tdoc:crpack/RP-211233"
+      ],
+      "gold": [
+        [
+          "R1-2106343"
+        ],
+        [
+          "R1-2106376"
+        ],
+        [
+          "R1-2106377"
+        ]
+      ],
+      "reference_sql": "SELECT DISTINCT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-211233' AND NOT EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN2-analytic-pack_disposition_counts",
+      "wg": "RAN2",
+      "family": "pack_disposition_counts",
+      "question": "Summarize pack RP-243224 by recorded RAN2 outcome. Count distinct member documents for every source-verified disposition applying to the whole document, returning code and count; count a multi-code document in each code group.",
+      "fields": [
+        "disposition",
+        "document_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00334dccd5c423c2f545b72f6e474341df3b6308afed1ec89047603fdefd7745",
+      "anchor": [
+        "tdoc:crpack/RP-243224"
+      ],
+      "gold": [
+        [
+          "agreed",
+          "24"
+        ]
+      ],
+      "reference_sql": "SELECT d.code,COUNT(DISTINCT REPLACE(m.cr,'tdoc:','')) FROM cr_in_pack m JOIN disposition d ON d.target=m.cr WHERE m.pack_id='tdoc:crpack/RP-243224' AND d.evidence_status='source_verified' AND d.scope='whole_target' GROUP BY d.code",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN2-analytic-shared_clauses",
+      "wg": "RAN2",
+      "family": "shared_clauses",
+      "question": "Looking at the typed clause links for R2-2410825 and R2-2411255, list specification, release and clause for the sections that both documents modify.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "003f4666ecc1711cfefb2e7198aa19fdd0796d65cfef1879bf670730bd1e985b",
+      "anchor": [
+        "tdoc:crpack/RP-243226",
+        "tdoc:R2-2410825",
+        "tdoc:R2-2411255"
+      ],
+      "gold": [
+        [
+          "38.321",
+          "Rel-17",
+          "5.2"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R2-2410825' INTERSECT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R2-2411255'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN2-analytic-exclusive_clauses",
+      "wg": "RAN2",
+      "family": "exclusive_clauses",
+      "question": "Looking at the typed clause links for R2-2001981 and R2-2002396, list specification, release and clause for the sections that R2-2001981 modifies and R2-2002396 does not modify in the released records.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00475cc87922df6a2969805eeb0c95be785b0967661d2cd990918a9e7a2ad446",
+      "anchor": [
+        "tdoc:crpack/RP-200341",
+        "tdoc:R2-2001981",
+        "tdoc:R2-2002396"
+      ],
+      "gold": [
+        [
+          "38.331",
+          "Rel-16",
+          "2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "3.2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "4.2.2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.2.2.2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.2.2.5"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.3.10.3"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.5.3.1"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.5.4.1"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.5.5.1"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.7.3.3"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.3.1"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.3.2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.3.3"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.4"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.5"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R2-2001981' EXCEPT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R2-2002396'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN2-analytic-both_clause_documents",
+      "wg": "RAN2",
+      "family": "both_clause_documents",
+      "question": "Find members of CR pack RP-211471 that modify each of these sections: TS 38.331 Rel-16 clause 6.2.2; TS 38.331 Rel-16 clause 6.3.2. Report RAN2 document numbers, requiring both links for every result.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "000d601fb311b23ae2a9b5e8a37d4c9be539f733bbd39c5629ee6c849ddf8f2f",
+      "anchor": [
+        "tdoc:crpack/RP-211471",
+        "tdoc:section/38.331-Rel-16-6.2.2",
+        "tdoc:section/38.331-Rel-16-6.3.2"
+      ],
+      "gold": [
+        [
+          "R2-2106722"
+        ],
+        [
+          "R2-2106772"
+        ]
+      ],
+      "reference_sql": "SELECT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-211471' AND EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr AND x.section_id='tdoc:section/38.331-Rel-16-6.2.2') AND EXISTS(SELECT 1 FROM cr_modifies_section y WHERE y.cr=m.cr AND y.section_id='tdoc:section/38.331-Rel-16-6.3.2')",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN2-analytic-largest_clause_footprint",
+      "wg": "RAN2",
+      "family": "largest_clause_footprint",
+      "question": "Rank the RAN2 documents in RP-261433 by the count of distinct typed sections they modify. Give all documents tied at the maximum, returning document number and count, with releases kept distinct.",
+      "fields": [
+        "document",
+        "clause_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "000b6885ca5376e8e896e113f2b5d1a79c5d84f332f1839b870afb7a01a6e0a0",
+      "anchor": [
+        "tdoc:crpack/RP-261433"
+      ],
+      "gold": [
+        [
+          "R2-2603282",
+          "2"
+        ],
+        [
+          "R2-2603283",
+          "2"
+        ],
+        [
+          "R2-2603284",
+          "2"
+        ],
+        [
+          "R2-2604334",
+          "2"
+        ]
+      ],
+      "reference_sql": "WITH counts AS (SELECT m.cr,COUNT(DISTINCT x.section_id) AS n FROM cr_in_pack m LEFT JOIN cr_modifies_section x ON x.cr=m.cr WHERE m.pack_id='tdoc:crpack/RP-261433' GROUP BY m.cr) SELECT REPLACE(cr,'tdoc:',''),n FROM counts WHERE n=(SELECT MAX(n)FROM counts)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN2-analytic-members_without_clause_records",
+      "wg": "RAN2",
+      "family": "members_without_clause_records",
+      "question": "List RAN2 members of CR pack RP-220510 for which the released snapshot records no typed clause-modification link. Give document numbers; the condition concerns the records, rather than the contents of the standards.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "010e2bc41bbf02fe405ae5b98b71c3258c53495d74fecd77de5754e5d8252029",
+      "anchor": [
+        "tdoc:crpack/RP-220510"
+      ],
+      "gold": [
+        [
+          "R2-2204152"
+        ],
+        [
+          "R2-2204159"
+        ],
+        [
+          "R2-2204212"
+        ],
+        [
+          "R2-2204213"
+        ]
+      ],
+      "reference_sql": "SELECT DISTINCT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-220510' AND NOT EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN3-analytic-pack_disposition_counts",
+      "wg": "RAN3",
+      "family": "pack_disposition_counts",
+      "question": "I need a disposition histogram for the RAN3 documents in RP-191399: for each source-verified whole-document code, give the code and the number of different documents carrying it. Include each document once per code.",
+      "fields": [
+        "disposition",
+        "document_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "01e4dad755ea97804bc06a45e5aecde72a45af012b90edf32e61551202dc11a7",
+      "anchor": [
+        "tdoc:crpack/RP-191399"
+      ],
+      "gold": [
+        [
+          "agreed",
+          "18"
+        ]
+      ],
+      "reference_sql": "SELECT d.code,COUNT(DISTINCT REPLACE(m.cr,'tdoc:','')) FROM cr_in_pack m JOIN disposition d ON d.target=m.cr WHERE m.pack_id='tdoc:crpack/RP-191399' AND d.evidence_status='source_verified' AND d.scope='whole_target' GROUP BY d.code",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN3-analytic-shared_clauses",
+      "wg": "RAN3",
+      "family": "shared_clauses",
+      "question": "For the two pack-RP-180468 documents R3-181410 and R3-181526, which typed sections satisfy this condition: both documents modify? Give specification, release and clause.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "004015b8250cd66d638eeeab8af4d566d48baaa238076ec80297e8dd7bc8cfb3",
+      "anchor": [
+        "tdoc:crpack/RP-180468",
+        "tdoc:R3-181410",
+        "tdoc:R3-181526"
+      ],
+      "gold": [
+        [
+          "38.425",
+          "Rel-15",
+          "5.5.2.1"
+        ],
+        [
+          "38.425",
+          "Rel-15",
+          "5.5.2.2"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R3-181410' INTERSECT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R3-181526'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN3-analytic-exclusive_clauses",
+      "wg": "RAN3",
+      "family": "exclusive_clauses",
+      "question": "For the two pack-RP-181921 documents R3-184882 and R3-185252, which typed sections satisfy this condition: R3-184882 modifies and R3-185252 does not modify in the released records? Give specification, release and clause.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "000534357fb4532f7ec0b1eb296ebbcf3750391202d86d25f77eb407b00ac7c3",
+      "anchor": [
+        "tdoc:crpack/RP-181921",
+        "tdoc:R3-184882",
+        "tdoc:R3-185252"
+      ],
+      "gold": [
+        [
+          "38.473",
+          "Rel-15",
+          "9.4.3"
+        ],
+        [
+          "38.473",
+          "Rel-15",
+          "9.4.4"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R3-184882' EXCEPT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R3-185252'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN3-analytic-both_clause_documents",
+      "wg": "RAN3",
+      "family": "both_clause_documents",
+      "question": "I need the RAN3 documents in RP-221134 whose recorded clause footprint includes TS 38.413 Rel-17 clause 9.2.16.4 as well as TS 38.413 Rel-17 clause 9.4.7. Return only their document numbers.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "0002cbf43d31409543a0c7715aa112888d55f099ea7e1c9c9f20ce6ae6cd5852",
+      "anchor": [
+        "tdoc:crpack/RP-221134",
+        "tdoc:section/38.413-Rel-17-9.2.16.4",
+        "tdoc:section/38.413-Rel-17-9.4.7"
+      ],
+      "gold": [
+        [
+          "R3-223971"
+        ]
+      ],
+      "reference_sql": "SELECT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-221134' AND EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr AND x.section_id='tdoc:section/38.413-Rel-17-9.2.16.4') AND EXISTS(SELECT 1 FROM cr_modifies_section y WHERE y.cr=m.cr AND y.section_id='tdoc:section/38.413-Rel-17-9.4.7')",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN3-analytic-largest_clause_footprint",
+      "wg": "RAN3",
+      "family": "largest_clause_footprint",
+      "question": "Which RAN3 member of RP-233817 has the widest recorded clause footprint? Count distinct typed section identities, preserving releases, and return every document tied for first place with its count.",
+      "fields": [
+        "document",
+        "clause_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "014b1977da6b48bebf912ccf53229a062389f907b76d3ea08c38e7c9783a761e",
+      "anchor": [
+        "tdoc:crpack/RP-233817"
+      ],
+      "gold": [
+        [
+          "R3-238068",
+          "14"
+        ]
+      ],
+      "reference_sql": "WITH counts AS (SELECT m.cr,COUNT(DISTINCT x.section_id) AS n FROM cr_in_pack m LEFT JOIN cr_modifies_section x ON x.cr=m.cr WHERE m.pack_id='tdoc:crpack/RP-233817' GROUP BY m.cr) SELECT REPLACE(cr,'tdoc:',''),n FROM counts WHERE n=(SELECT MAX(n)FROM counts)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN3-analytic-members_without_clause_records",
+      "wg": "RAN3",
+      "family": "members_without_clause_records",
+      "question": "Audit pack RP-233829 for RAN3 documents lacking any typed modified-section record in this snapshot. Return their document numbers.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "026d413b88be2b0c84c25f7a65f706ef30c9d245cbbd0cf385f74f1c39ad0b0a",
+      "anchor": [
+        "tdoc:crpack/RP-233829"
+      ],
+      "gold": [
+        [
+          "R3-238079"
+        ],
+        [
+          "R3-238081"
+        ]
+      ],
+      "reference_sql": "SELECT DISTINCT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-233829' AND NOT EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN4-analytic-pack_disposition_counts",
+      "wg": "RAN4",
+      "family": "pack_disposition_counts",
+      "question": "Group the members of RP-221661 by their RAN4 source-verified whole-document disposition. Report each code with its distinct document total; a document may belong to several code groups.",
+      "fields": [
+        "disposition",
+        "document_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "0014edb498d79c684256b44b3a4a7c7becc6ce8744941b8b740178e00ee06f31",
+      "anchor": [
+        "tdoc:crpack/RP-221661"
+      ],
+      "gold": [
+        [
+          "agreed",
+          "10"
+        ]
+      ],
+      "reference_sql": "SELECT d.code,COUNT(DISTINCT REPLACE(m.cr,'tdoc:','')) FROM cr_in_pack m JOIN disposition d ON d.target=m.cr WHERE m.pack_id='tdoc:crpack/RP-221661' AND d.evidence_status='source_verified' AND d.scope='whole_target' GROUP BY d.code",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN4-analytic-shared_clauses",
+      "wg": "RAN4",
+      "family": "shared_clauses",
+      "question": "Audit the clause sets of R4-2108199 and R4-2108204 in RP-211081. Report specification, release and clause exactly when both documents modify.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "002e3b5a4012099172f54209655cc1968f2e8fd21bf923e55eaf52bb7fad1569",
+      "anchor": [
+        "tdoc:crpack/RP-211081",
+        "tdoc:R4-2108199",
+        "tdoc:R4-2108204"
+      ],
+      "gold": [
+        [
+          "38.133",
+          "Rel-15",
+          "A.5.7.1.2.2"
+        ],
+        [
+          "38.133",
+          "Rel-15",
+          "A.7.7.1.2.2"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R4-2108199' INTERSECT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R4-2108204'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN4-analytic-exclusive_clauses",
+      "wg": "RAN4",
+      "family": "exclusive_clauses",
+      "question": "Audit the clause sets of R4-2303218 and R4-2303222 in RP-230516. Report specification, release and clause exactly when R4-2303218 modifies and R4-2303222 does not modify in the released records.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00a1edd7a5a9d70e90212bc658a6647c60c920742e406b8d6abb8750fe244b9c",
+      "anchor": [
+        "tdoc:crpack/RP-230516",
+        "tdoc:R4-2303218",
+        "tdoc:R4-2303222"
+      ],
+      "gold": [
+        [
+          "38.133",
+          "Rel-17",
+          "9.1.9"
+        ],
+        [
+          "38.133",
+          "Rel-17",
+          "9.3.4"
+        ],
+        [
+          "38.133",
+          "Rel-17",
+          "9.4.2.2"
+        ],
+        [
+          "38.133",
+          "Rel-17",
+          "9.4.3.2"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R4-2303218' EXCEPT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R4-2303222'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN4-analytic-both_clause_documents",
+      "wg": "RAN4",
+      "family": "both_clause_documents",
+      "question": "Filter CR pack RP-193032 to RAN4 member documents linked to both TS 38.101-3 Rel-15 clause 2 and TS 38.101-3 Rel-15 clause 5.5B.5. Give each document number once.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00064866a3271ced5b66c23e3df24b20e510506fbcfdd2ad947bdb6fa0a077de",
+      "anchor": [
+        "tdoc:crpack/RP-193032",
+        "tdoc:section/38.101-3-Rel-15-2",
+        "tdoc:section/38.101-3-Rel-15-5.5B.5"
+      ],
+      "gold": [
+        [
+          "R4-1913377"
+        ]
+      ],
+      "reference_sql": "SELECT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-193032' AND EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr AND x.section_id='tdoc:section/38.101-3-Rel-15-2') AND EXISTS(SELECT 1 FROM cr_modifies_section y WHERE y.cr=m.cr AND y.section_id='tdoc:section/38.101-3-Rel-15-5.5B.5')",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN4-analytic-largest_clause_footprint",
+      "wg": "RAN4",
+      "family": "largest_clause_footprint",
+      "question": "For pack RP-211890, count typed modified sections per RAN4 member document, treating different releases separately. Return document number and count for all documents attaining the maximum.",
+      "fields": [
+        "document",
+        "clause_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "003226bf377ca49ff47839b106ec71e81150df9d07827b3502b938ce2a3d9e73",
+      "anchor": [
+        "tdoc:crpack/RP-211890"
+      ],
+      "gold": [
+        [
+          "R4-2115464",
+          "29"
+        ],
+        [
+          "R4-2115465",
+          "29"
+        ]
+      ],
+      "reference_sql": "WITH counts AS (SELECT m.cr,COUNT(DISTINCT x.section_id) AS n FROM cr_in_pack m LEFT JOIN cr_modifies_section x ON x.cr=m.cr WHERE m.pack_id='tdoc:crpack/RP-211890' GROUP BY m.cr) SELECT REPLACE(cr,'tdoc:',''),n FROM counts WHERE n=(SELECT MAX(n)FROM counts)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN4-analytic-members_without_clause_records",
+      "wg": "RAN4",
+      "family": "members_without_clause_records",
+      "question": "From the RAN4 members of RP-250618, return the document numbers with no outgoing typed modification link to a section in the released records.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "018b5245b803da6c0884efc8561726c2ad780956ebda223a1ca8da9b259e6986",
+      "anchor": [
+        "tdoc:crpack/RP-250618"
+      ],
+      "gold": [
+        [
+          "R4-2500018"
+        ],
+        [
+          "R4-2500019"
+        ],
+        [
+          "R4-2500020"
+        ],
+        [
+          "R4-2500022"
+        ],
+        [
+          "R4-2500023"
+        ],
+        [
+          "R4-2500024"
+        ],
+        [
+          "R4-2500025"
+        ],
+        [
+          "R4-2500026"
+        ],
+        [
+          "R4-2500027"
+        ],
+        [
+          "R4-2500060"
+        ]
+      ],
+      "reference_sql": "SELECT DISTINCT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-250618' AND NOT EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN5-analytic-pack_disposition_counts",
+      "wg": "RAN5",
+      "family": "pack_disposition_counts",
+      "question": "Count the RAN5 documents in CR pack RP-221987 separately for each source-verified whole-document disposition code. Return code and distinct document count, allowing a document to contribute to several codes.",
+      "fields": [
+        "disposition",
+        "document_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "001212602af0c6e7845c73679bef5f990b44fb115cbd67ec3766b53f5d4d4def",
+      "anchor": [
+        "tdoc:crpack/RP-221987"
+      ],
+      "gold": [
+        [
+          "agreed",
+          "16"
+        ]
+      ],
+      "reference_sql": "SELECT d.code,COUNT(DISTINCT REPLACE(m.cr,'tdoc:','')) FROM cr_in_pack m JOIN disposition d ON d.target=m.cr WHERE m.pack_id='tdoc:crpack/RP-221987' AND d.evidence_status='source_verified' AND d.scope='whole_target' GROUP BY d.code",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN5-analytic-shared_clauses",
+      "wg": "RAN5",
+      "family": "shared_clauses",
+      "question": "Use the recorded section links of R5-195438 and R5-195439 to find every section that both documents modify. Return its specification, release and clause, preserving release distinctions.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "003e047ed62c40b63b1547c645c22652b52da63a3dec9836923f17ff141d4de0",
+      "anchor": [
+        "tdoc:crpack/RP-190871",
+        "tdoc:R5-195438",
+        "tdoc:R5-195439"
+      ],
+      "gold": [
+        [
+          "38.521-4",
+          "Rel-19",
+          "F.1.1.2"
+        ],
+        [
+          "38.521-4",
+          "Rel-19",
+          "F.1.3.2"
+        ],
+        [
+          "38.521-4",
+          "Rel-19",
+          "G.1.5"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R5-195438' INTERSECT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R5-195439'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN5-analytic-exclusive_clauses",
+      "wg": "RAN5",
+      "family": "exclusive_clauses",
+      "question": "Use the recorded section links of R5-256867 and R5-256869 to find every section that R5-256867 modifies and R5-256869 does not modify in the released records. Return its specification, release and clause, preserving release distinctions.",
+      "fields": [
+        "specification",
+        "release",
+        "clause"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "0037c91d4dc00566e5d44d75c6bbef7eb03c6a09b31a6014db955aac1d9d6ca6",
+      "anchor": [
+        "tdoc:crpack/RP-253552",
+        "tdoc:R5-256867",
+        "tdoc:R5-256869"
+      ],
+      "gold": [
+        [
+          "38.521-4",
+          "Rel-18",
+          "5.2.4"
+        ]
+      ],
+      "reference_sql": "SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R5-256867' EXCEPT SELECT s.spec,s.release,s.clause FROM cr_modifies_section x JOIN section s ON s.id=x.section_id WHERE x.cr='tdoc:R5-256869'",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN5-analytic-both_clause_documents",
+      "wg": "RAN5",
+      "family": "both_clause_documents",
+      "question": "Within RP-190078, list the RAN5 document numbers that modify both TS 38.521-1 Rel-19 clause 6.4.1.4.1 and TS 38.521-1 Rel-19 clause 7.6.3.4.1 according to the typed links. Matching just one section is insufficient.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "0001f5cd06fe4c3f56da7babd5004633c8275e79f436aec0890ab54ad90bea25",
+      "anchor": [
+        "tdoc:crpack/RP-190078",
+        "tdoc:section/38.521-1-Rel-19-6.4.1.4.1",
+        "tdoc:section/38.521-1-Rel-19-7.6.3.4.1"
+      ],
+      "gold": [
+        [
+          "R5-191088"
+        ]
+      ],
+      "reference_sql": "SELECT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-190078' AND EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr AND x.section_id='tdoc:section/38.521-1-Rel-19-6.4.1.4.1') AND EXISTS(SELECT 1 FROM cr_modifies_section y WHERE y.cr=m.cr AND y.section_id='tdoc:section/38.521-1-Rel-19-7.6.3.4.1')",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN5-analytic-largest_clause_footprint",
+      "wg": "RAN5",
+      "family": "largest_clause_footprint",
+      "question": "Find the largest distinct-section count among RAN5 members of RP-211710. Report every document number with that count, including ties and preserving release distinctions in the section count.",
+      "fields": [
+        "document",
+        "clause_count"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00455ab9d34108be27e4e96d1b0319c71c800530c510998a79b491030af0aca6",
+      "anchor": [
+        "tdoc:crpack/RP-211710"
+      ],
+      "gold": [
+        [
+          "R5-214571",
+          "3"
+        ]
+      ],
+      "reference_sql": "WITH counts AS (SELECT m.cr,COUNT(DISTINCT x.section_id) AS n FROM cr_in_pack m LEFT JOIN cr_modifies_section x ON x.cr=m.cr WHERE m.pack_id='tdoc:crpack/RP-211710' GROUP BY m.cr) SELECT REPLACE(cr,'tdoc:',''),n FROM counts WHERE n=(SELECT MAX(n)FROM counts)",
+      "python_sql_agreement": true
+    },
+    {
+      "id": "RAN5-analytic-members_without_clause_records",
+      "wg": "RAN5",
+      "family": "members_without_clause_records",
+      "question": "Identify RAN5 documents in RP-200066 whose recorded typed-section footprint is empty. Return their document numbers, interpreting emptiness within this released snapshot.",
+      "fields": [
+        "document"
+      ],
+      "authorship": "author-written analytical task",
+      "selection_sha256": "00213b321ade30ad4918b92d0e64039a4297414caa0d7a594e866da5a92f991c",
+      "anchor": [
+        "tdoc:crpack/RP-200066"
+      ],
+      "gold": [
+        [
+          "R5-201046"
+        ],
+        [
+          "R5-201047"
+        ],
+        [
+          "R5-201048"
+        ]
+      ],
+      "reference_sql": "SELECT DISTINCT REPLACE(m.cr,'tdoc:','') FROM cr_in_pack m WHERE m.pack_id='tdoc:crpack/RP-200066' AND NOT EXISTS(SELECT 1 FROM cr_modifies_section x WHERE x.cr=m.cr)",
+      "python_sql_agreement": true
+    }
+  ],
+  "selection": [
+    {
+      "wg": "RAN1",
+      "family": "pack_disposition_counts",
+      "eligible_candidates": 408,
+      "candidate_identity_order_sha256": "38357efda536488c5e7a9768636c4fdb421ab3e0a7cf648b44c3d48bb7320fde",
+      "selected": [
+        "tdoc:crpack/RP-221603"
+      ],
+      "selection_sha256": "00cda0f0ef4d6f2bf664e7368dc59364ecf7d392ca2afea47e0ff969d9678495"
+    },
+    {
+      "wg": "RAN1",
+      "family": "shared_clauses",
+      "eligible_candidates": 177,
+      "candidate_identity_order_sha256": "5277372a4c29ecd93254c30612e701ca2b7ffaef6c806e8523f8057c56078692",
+      "selected": [
+        "tdoc:crpack/RP-202383",
+        "tdoc:R1-2009497",
+        "tdoc:R1-2009674"
+      ],
+      "selection_sha256": "00233f4702a5166442bcb2a935f629071d2c77fe3f99e9045115700872c0af75"
+    },
+    {
+      "wg": "RAN1",
+      "family": "exclusive_clauses",
+      "eligible_candidates": 83,
+      "candidate_identity_order_sha256": "a0ddcc161465374646b133509eeab45f3681ae2e6426b0db73d4f7850f00325a",
+      "selected": [
+        "tdoc:crpack/RP-241067",
+        "tdoc:R1-2405625",
+        "tdoc:R1-2405628"
+      ],
+      "selection_sha256": "00e52da85006a08c6886338a6eac6d40dfec7f6894ee56144491c6e0230df89e"
+    },
+    {
+      "wg": "RAN1",
+      "family": "both_clause_documents",
+      "eligible_candidates": 1216,
+      "candidate_identity_order_sha256": "68b03a0793de10999d3e3aaed2ed7c404c86ba05071edb1556c220123d9a7d8e",
+      "selected": [
+        "tdoc:crpack/RP-191283",
+        "tdoc:section/38.213-Rel-15-10.1",
+        "tdoc:section/38.213-Rel-15-9.3"
+      ],
+      "selection_sha256": "00f458c754ba87b9c565a8248afc8acedaec8f83972a8b6ff2599e0abda9c7c2"
+    },
+    {
+      "wg": "RAN1",
+      "family": "largest_clause_footprint",
+      "eligible_candidates": 268,
+      "candidate_identity_order_sha256": "ba0fb19211ec4e30a9e516fd4a8f310e4f5a7ca5c8ff3558c403b177f92ca95a",
+      "selected": [
+        "tdoc:crpack/RP-233698"
+      ],
+      "selection_sha256": "00765edff0b8490c9bbbcd0f62acaa11e24532c1c47f056346f92cfb9240427c"
+    },
+    {
+      "wg": "RAN1",
+      "family": "members_without_clause_records",
+      "eligible_candidates": 70,
+      "candidate_identity_order_sha256": "13db3b4b30cf0d252fb1ee32c36f42b6a184fe20d5fb4202c30b527af42678a6",
+      "selected": [
+        "tdoc:crpack/RP-211233"
+      ],
+      "selection_sha256": "04449621686b66098604688fa37ebc9c9a9a9a165e5569b14de510b24c7db8bf"
+    },
+    {
+      "wg": "RAN2",
+      "family": "pack_disposition_counts",
+      "eligible_candidates": 526,
+      "candidate_identity_order_sha256": "f1b8ee78a5a2ef56b0e36702d241a4a1b0d5c186e95ad8074fa258f9f04dd23d",
+      "selected": [
+        "tdoc:crpack/RP-243224"
+      ],
+      "selection_sha256": "00334dccd5c423c2f545b72f6e474341df3b6308afed1ec89047603fdefd7745"
+    },
+    {
+      "wg": "RAN2",
+      "family": "shared_clauses",
+      "eligible_candidates": 1077,
+      "candidate_identity_order_sha256": "a51025af1593fa1af5f34eb001671f4b342eb319ddff32257371c0b6bd3c3776",
+      "selected": [
+        "tdoc:crpack/RP-243226",
+        "tdoc:R2-2410825",
+        "tdoc:R2-2411255"
+      ],
+      "selection_sha256": "003f4666ecc1711cfefb2e7198aa19fdd0796d65cfef1879bf670730bd1e985b"
+    },
+    {
+      "wg": "RAN2",
+      "family": "exclusive_clauses",
+      "eligible_candidates": 682,
+      "candidate_identity_order_sha256": "1ea990b9004f7fd6bab13353a0fd8809661232cf63fe5a5d73746e9b4ad3cc03",
+      "selected": [
+        "tdoc:crpack/RP-200341",
+        "tdoc:R2-2001981",
+        "tdoc:R2-2002396"
+      ],
+      "selection_sha256": "00475cc87922df6a2969805eeb0c95be785b0967661d2cd990918a9e7a2ad446"
+    },
+    {
+      "wg": "RAN2",
+      "family": "both_clause_documents",
+      "eligible_candidates": 4959,
+      "candidate_identity_order_sha256": "ca808e8ffcef0559a1634037426a07d5400c84e9eb9f20432911ac1641a7d16e",
+      "selected": [
+        "tdoc:crpack/RP-211471",
+        "tdoc:section/38.331-Rel-16-6.2.2",
+        "tdoc:section/38.331-Rel-16-6.3.2"
+      ],
+      "selection_sha256": "000d601fb311b23ae2a9b5e8a37d4c9be539f733bbd39c5629ee6c849ddf8f2f"
+    },
+    {
+      "wg": "RAN2",
+      "family": "largest_clause_footprint",
+      "eligible_candidates": 458,
+      "candidate_identity_order_sha256": "89ee88cb077118740f379819fc32c8837f5dfec9f0fd04e89cb24f08a4c70f17",
+      "selected": [
+        "tdoc:crpack/RP-261433"
+      ],
+      "selection_sha256": "000b6885ca5376e8e896e113f2b5d1a79c5d84f332f1839b870afb7a01a6e0a0"
+    },
+    {
+      "wg": "RAN2",
+      "family": "members_without_clause_records",
+      "eligible_candidates": 334,
+      "candidate_identity_order_sha256": "22a228e760c4dcdf87a40c462b5a15cf2c5c044b2d8deb82fc2a3be5f4405637",
+      "selected": [
+        "tdoc:crpack/RP-220510"
+      ],
+      "selection_sha256": "010e2bc41bbf02fe405ae5b98b71c3258c53495d74fecd77de5754e5d8252029"
+    },
+    {
+      "wg": "RAN3",
+      "family": "pack_disposition_counts",
+      "eligible_candidates": 373,
+      "candidate_identity_order_sha256": "ebab27f65be7f20dea66c246d2e9d47fe343093187f3a61e637bd2a49101b479",
+      "selected": [
+        "tdoc:crpack/RP-191399"
+      ],
+      "selection_sha256": "01e4dad755ea97804bc06a45e5aecde72a45af012b90edf32e61551202dc11a7"
+    },
+    {
+      "wg": "RAN3",
+      "family": "shared_clauses",
+      "eligible_candidates": 916,
+      "candidate_identity_order_sha256": "c676cbedc5a3499fd9e33c4495f75540200342163806b0b53487e2e72465d0b0",
+      "selected": [
+        "tdoc:crpack/RP-180468",
+        "tdoc:R3-181410",
+        "tdoc:R3-181526"
+      ],
+      "selection_sha256": "004015b8250cd66d638eeeab8af4d566d48baaa238076ec80297e8dd7bc8cfb3"
+    },
+    {
+      "wg": "RAN3",
+      "family": "exclusive_clauses",
+      "eligible_candidates": 791,
+      "candidate_identity_order_sha256": "a67a87ce2c24657012b960dec544f4fe35c0fcd1b65f1eb3642d778c6e6ae3bf",
+      "selected": [
+        "tdoc:crpack/RP-181921",
+        "tdoc:R3-184882",
+        "tdoc:R3-185252"
+      ],
+      "selection_sha256": "000534357fb4532f7ec0b1eb296ebbcf3750391202d86d25f77eb407b00ac7c3"
+    },
+    {
+      "wg": "RAN3",
+      "family": "both_clause_documents",
+      "eligible_candidates": 7886,
+      "candidate_identity_order_sha256": "b203ea1053101be402e24b450412fdc48cbe58651df069c885df7a7bb72b7d49",
+      "selected": [
+        "tdoc:crpack/RP-221134",
+        "tdoc:section/38.413-Rel-17-9.2.16.4",
+        "tdoc:section/38.413-Rel-17-9.4.7"
+      ],
+      "selection_sha256": "0002cbf43d31409543a0c7715aa112888d55f099ea7e1c9c9f20ce6ae6cd5852"
+    },
+    {
+      "wg": "RAN3",
+      "family": "largest_clause_footprint",
+      "eligible_candidates": 318,
+      "candidate_identity_order_sha256": "63ba24678c569ff1fbb1208844942c2e642cd775e45b26630b103f3cbde77773",
+      "selected": [
+        "tdoc:crpack/RP-233817"
+      ],
+      "selection_sha256": "014b1977da6b48bebf912ccf53229a062389f907b76d3ea08c38e7c9783a761e"
+    },
+    {
+      "wg": "RAN3",
+      "family": "members_without_clause_records",
+      "eligible_candidates": 181,
+      "candidate_identity_order_sha256": "9f09ababc0ec60443c09088574d1c284e8e6b7b26fba52485216c9eddf18170e",
+      "selected": [
+        "tdoc:crpack/RP-233829"
+      ],
+      "selection_sha256": "026d413b88be2b0c84c25f7a65f706ef30c9d245cbbd0cf385f74f1c39ad0b0a"
+    },
+    {
+      "wg": "RAN4",
+      "family": "pack_disposition_counts",
+      "eligible_candidates": 1078,
+      "candidate_identity_order_sha256": "0362cababef987497089842dba50b88a9c2976daf5f5ea0f4ed499a43471f5af",
+      "selected": [
+        "tdoc:crpack/RP-221661"
+      ],
+      "selection_sha256": "0014edb498d79c684256b44b3a4a7c7becc6ce8744941b8b740178e00ee06f31"
+    },
+    {
+      "wg": "RAN4",
+      "family": "shared_clauses",
+      "eligible_candidates": 870,
+      "candidate_identity_order_sha256": "c10e8833a9aeebe848d8e052dd9aa6f16463c39d6cf4ca96f08ddf9fa0929d96",
+      "selected": [
+        "tdoc:crpack/RP-211081",
+        "tdoc:R4-2108199",
+        "tdoc:R4-2108204"
+      ],
+      "selection_sha256": "002e3b5a4012099172f54209655cc1968f2e8fd21bf923e55eaf52bb7fad1569"
+    },
+    {
+      "wg": "RAN4",
+      "family": "exclusive_clauses",
+      "eligible_candidates": 630,
+      "candidate_identity_order_sha256": "72d7af3a1125c0067bee35075bda1edc7ef0526b3f80e43445a07f850acf6b82",
+      "selected": [
+        "tdoc:crpack/RP-230516",
+        "tdoc:R4-2303218",
+        "tdoc:R4-2303222"
+      ],
+      "selection_sha256": "00a1edd7a5a9d70e90212bc658a6647c60c920742e406b8d6abb8750fe244b9c"
+    },
+    {
+      "wg": "RAN4",
+      "family": "both_clause_documents",
+      "eligible_candidates": 15643,
+      "candidate_identity_order_sha256": "4591d26ee138367063afa4a198a066ce515614ce30277b850fabda444d063758",
+      "selected": [
+        "tdoc:crpack/RP-193032",
+        "tdoc:section/38.101-3-Rel-15-2",
+        "tdoc:section/38.101-3-Rel-15-5.5B.5"
+      ],
+      "selection_sha256": "00064866a3271ced5b66c23e3df24b20e510506fbcfdd2ad947bdb6fa0a077de"
+    },
+    {
+      "wg": "RAN4",
+      "family": "largest_clause_footprint",
+      "eligible_candidates": 834,
+      "candidate_identity_order_sha256": "e759aaba89c31b653e982401972a367289d438b2b2faa762fc7738b7adc38f91",
+      "selected": [
+        "tdoc:crpack/RP-211890"
+      ],
+      "selection_sha256": "003226bf377ca49ff47839b106ec71e81150df9d07827b3502b938ce2a3d9e73"
+    },
+    {
+      "wg": "RAN4",
+      "family": "members_without_clause_records",
+      "eligible_candidates": 438,
+      "candidate_identity_order_sha256": "95315a7b7666b4a079cdab1b6a352c8b177ac56563abf66c5ead8361f55bcf44",
+      "selected": [
+        "tdoc:crpack/RP-250618"
+      ],
+      "selection_sha256": "018b5245b803da6c0884efc8561726c2ad780956ebda223a1ca8da9b259e6986"
+    },
+    {
+      "wg": "RAN5",
+      "family": "pack_disposition_counts",
+      "eligible_candidates": 1282,
+      "candidate_identity_order_sha256": "89cc43cd3ccf45877d76165c026d444836c34421fa28fbe9d4fe3fbcf685065b",
+      "selected": [
+        "tdoc:crpack/RP-221987"
+      ],
+      "selection_sha256": "001212602af0c6e7845c73679bef5f990b44fb115cbd67ec3766b53f5d4d4def"
+    },
+    {
+      "wg": "RAN5",
+      "family": "shared_clauses",
+      "eligible_candidates": 3771,
+      "candidate_identity_order_sha256": "dd04146024af8d0bcd08573ce8ebc99d626f5851c3908f3511fafa8a80dcaaa7",
+      "selected": [
+        "tdoc:crpack/RP-190871",
+        "tdoc:R5-195438",
+        "tdoc:R5-195439"
+      ],
+      "selection_sha256": "003e047ed62c40b63b1547c645c22652b52da63a3dec9836923f17ff141d4de0"
+    },
+    {
+      "wg": "RAN5",
+      "family": "exclusive_clauses",
+      "eligible_candidates": 2319,
+      "candidate_identity_order_sha256": "87dc0b0a2dd98b2f4d3008b216b79c986b508c8face79305a9b3a37248eaa35d",
+      "selected": [
+        "tdoc:crpack/RP-253552",
+        "tdoc:R5-256867",
+        "tdoc:R5-256869"
+      ],
+      "selection_sha256": "0037c91d4dc00566e5d44d75c6bbef7eb03c6a09b31a6014db955aac1d9d6ca6"
+    },
+    {
+      "wg": "RAN5",
+      "family": "both_clause_documents",
+      "eligible_candidates": 27316,
+      "candidate_identity_order_sha256": "04a8c2273566d14fb8c9f4ccb78b702e3437697e219e8578f4986900fb1289f5",
+      "selected": [
+        "tdoc:crpack/RP-190078",
+        "tdoc:section/38.521-1-Rel-19-6.4.1.4.1",
+        "tdoc:section/38.521-1-Rel-19-7.6.3.4.1"
+      ],
+      "selection_sha256": "0001f5cd06fe4c3f56da7babd5004633c8275e79f436aec0890ab54ad90bea25"
+    },
+    {
+      "wg": "RAN5",
+      "family": "largest_clause_footprint",
+      "eligible_candidates": 1010,
+      "candidate_identity_order_sha256": "26e0097b0fe3094647ad5591f05e8e3609a9b8a77355f724c1d23ec1ee9f85fe",
+      "selected": [
+        "tdoc:crpack/RP-211710"
+      ],
+      "selection_sha256": "00455ab9d34108be27e4e96d1b0319c71c800530c510998a79b491030af0aca6"
+    },
+    {
+      "wg": "RAN5",
+      "family": "members_without_clause_records",
+      "eligible_candidates": 691,
+      "candidate_identity_order_sha256": "6e0f59b0d94250af349520775d1192c7a40f59ba4be929a0ef2ea8abe84e0e59",
+      "selected": [
+        "tdoc:crpack/RP-200066"
+      ],
+      "selection_sha256": "00213b321ade30ad4918b92d0e64039a4297414caa0d7a594e866da5a92f991c"
+    }
+  ],
+  "inputs": [
+    {
+      "wg": "RAN1",
+      "source": "logs/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/release_preparation/vldb_release/sqlite/RAN1.sqlite",
+      "source_sha256": "5e0d83e8418d887ec17433a883695a7ebcbff25e4c9ff048f4c2bd95f0c16cc1",
+      "database": "logs/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/release_preparation/vldb_release/sqlite/RAN1.sqlite",
+      "database_sha256": "5e0d83e8418d887ec17433a883695a7ebcbff25e4c9ff048f4c2bd95f0c16cc1",
+      "source_unchanged": true
+    },
+    {
+      "wg": "RAN2",
+      "source": "logs/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/release_preparation/vldb_release/sqlite/RAN2.sqlite.gz",
+      "source_sha256": "cd4dc565713f1d49bb389ef2056474380ed78d547f63cf8dd81580d85ec26a9d",
+      "database": "/tmp/vldb-operator-study-databases/RAN2.sqlite",
+      "database_sha256": "c770451677496aec0e4d489f06df68c02369d9347041df99f719842f712040c0",
+      "source_unchanged": true
+    },
+    {
+      "wg": "RAN3",
+      "source": "logs/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/release_preparation/vldb_release/sqlite/RAN3.sqlite.gz",
+      "source_sha256": "a43e9433f43725c2ba1ad4f9e841a4725245d1bb17cab2678967c12d9baa9b78",
+      "database": "/tmp/vldb-operator-study-databases/RAN3.sqlite",
+      "database_sha256": "c6e69a1472cf035bbe817155275970158b0512e62c38dd4983a63d77e10ab625",
+      "source_unchanged": true
+    },
+    {
+      "wg": "RAN4",
+      "source": "logs/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/release_preparation/vldb_release/sqlite/RAN4.sqlite.gz",
+      "source_sha256": "5a7e70679718630e65ca298733a60cf6cb922e466fa17d4f8e6a0cec3289f504",
+      "database": "/tmp/vldb-operator-study-databases/RAN4.sqlite",
+      "database_sha256": "b45cdcb406bf2817b98f1055593c2a810862fd177509f3fd11ecb6dd08af1292",
+      "source_unchanged": true
+    },
+    {
+      "wg": "RAN5",
+      "source": "logs/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/release_preparation/vldb_release/sqlite/RAN5.sqlite.gz",
+      "source_sha256": "9a9797eefda6071ea33d6e9f0a26b4ecd43bdd4ead034e88d670d031fb986d27",
+      "database": "/tmp/vldb-operator-study-databases/RAN5.sqlite",
+      "database_sha256": "58cc62435eb9a90b830862b5fe4ba18f82b8acd283c92abdfd2a146d6937cfcd",
+      "source_unchanged": true
+    }
+  ],
+  "execution": [
+    {
+      "wg": "RAN1",
+      "seconds": 0.09120595900458284
+    },
+    {
+      "wg": "RAN2",
+      "seconds": 0.2831517129961867
+    },
+    {
+      "wg": "RAN3",
+      "seconds": 0.31813977999263443
+    },
+    {
+      "wg": "RAN4",
+      "seconds": 0.9182254440092947
+    },
+    {
+      "wg": "RAN5",
+      "seconds": 0.6268457590194885
+    }
+  ],
+  "reference_sqlite": "3.37.2",
+  "source_inputs_unchanged": true
+}

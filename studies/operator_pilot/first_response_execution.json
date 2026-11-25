@@ -1,0 +1,797 @@
+{
+  "runtime": {
+    "python_sqlite": "3.37.2",
+    "cap_seconds": 60,
+    "interface": "schema and complete relevant value domains; one first response; no execution feedback"
+  },
+  "freeze_sha256": "6e46ad1ef59e340b9a0efba4d2d3d414cfcf742861fcd3ee09900ad5ce1d41d3",
+  "response_sha256": "4c8b749f0257cf93463d9c116609c89d426d06d7fce0b5bb5c2504e885b95c0e",
+  "evaluator_sha256": "e333160134c16db2a8871b490538cc34bde14b3d82394c06ab492692c7996913",
+  "source_inputs_unchanged": true,
+  "n": 30,
+  "exact": 30,
+  "groups": {
+    "family": {
+      "both_clause_documents": {
+        "n": 5,
+        "exact": 5,
+        "statuses": {
+          "returned": 5
+        }
+      },
+      "exclusive_clauses": {
+        "n": 5,
+        "exact": 5,
+        "statuses": {
+          "returned": 5
+        }
+      },
+      "largest_clause_footprint": {
+        "n": 5,
+        "exact": 5,
+        "statuses": {
+          "returned": 5
+        }
+      },
+      "members_without_clause_records": {
+        "n": 5,
+        "exact": 5,
+        "statuses": {
+          "returned": 5
+        }
+      },
+      "pack_disposition_counts": {
+        "n": 5,
+        "exact": 5,
+        "statuses": {
+          "returned": 5
+        }
+      },
+      "shared_clauses": {
+        "n": 5,
+        "exact": 5,
+        "statuses": {
+          "returned": 5
+        }
+      }
+    },
+    "wg": {
+      "RAN1": {
+        "n": 6,
+        "exact": 6,
+        "statuses": {
+          "returned": 6
+        }
+      },
+      "RAN2": {
+        "n": 6,
+        "exact": 6,
+        "statuses": {
+          "returned": 6
+        }
+      },
+      "RAN3": {
+        "n": 6,
+        "exact": 6,
+        "statuses": {
+          "returned": 6
+        }
+      },
+      "RAN4": {
+        "n": 6,
+        "exact": 6,
+        "statuses": {
+          "returned": 6
+        }
+      },
+      "RAN5": {
+        "n": 6,
+        "exact": 6,
+        "statuses": {
+          "returned": 6
+        }
+      }
+    }
+  },
+  "results": [
+    {
+      "id": "RAN1-analytic-pack_disposition_counts",
+      "wg": "RAN1",
+      "family": "pack_disposition_counts",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-221603' AND d.number LIKE 'R1-%'\n)\nSELECT x.code AS disposition, COUNT(DISTINCT d.id) AS document_count\nFROM pack_documents AS d\nJOIN disposition AS x ON x.target = d.id\nWHERE x.evidence_status = 'source_verified' AND x.scope = 'whole_target'\nGROUP BY x.code\nORDER BY disposition;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "agreed",
+          "2"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.005169882002519444
+    },
+    {
+      "id": "RAN1-analytic-shared_clauses",
+      "wg": "RAN1",
+      "family": "shared_clauses",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-202383' AND d.number LIKE 'R1-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R1-2009497'\nINTERSECT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R1-2009674'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.213",
+          "Rel-16",
+          "16.4"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.008956194011261687
+    },
+    {
+      "id": "RAN1-analytic-exclusive_clauses",
+      "wg": "RAN1",
+      "family": "exclusive_clauses",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-241067' AND d.number LIKE 'R1-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R1-2405625'\nEXCEPT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R1-2405628'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.214",
+          "Rel-18",
+          "6.1.1.1"
+        ],
+        [
+          "38.214",
+          "Rel-18",
+          "6.1.4.2"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.009312703012255952
+    },
+    {
+      "id": "RAN1-analytic-both_clause_documents",
+      "wg": "RAN1",
+      "family": "both_clause_documents",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-191283' AND d.number LIKE 'R1-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE s.spec IN ('38.213', 'TS 38.213')\n  AND s.release IN ('15', 'Rel-15')\n  AND s.clause IN ('10.1', '9.3')\nGROUP BY d.id, d.number\nHAVING COUNT(DISTINCT s.clause) = 2\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R1-1907965"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.007192271004896611
+    },
+    {
+      "id": "RAN1-analytic-largest_clause_footprint",
+      "wg": "RAN1",
+      "family": "largest_clause_footprint",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-233698' AND d.number LIKE 'R1-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n),\ncounts AS (\n  SELECT d.id, d.number AS document, COUNT(DISTINCT s.id) AS clause_count\n  FROM pack_documents AS d\n  LEFT JOIN links AS l ON l.cr = d.id\n  LEFT JOIN section AS s ON s.id = l.section_id\n  GROUP BY d.id, d.number\n)\nSELECT document, clause_count\nFROM counts\nWHERE clause_count = (SELECT MAX(clause_count) FROM counts)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R1-2312481",
+          "2"
+        ],
+        [
+          "R1-2312482",
+          "2"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.0078012119920458645
+    },
+    {
+      "id": "RAN1-analytic-members_without_clause_records",
+      "wg": "RAN1",
+      "family": "members_without_clause_records",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-211233' AND d.number LIKE 'R1-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM links AS l\n  JOIN section AS s ON s.id = l.section_id\n  WHERE l.cr = d.id\n)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R1-2106343"
+        ],
+        [
+          "R1-2106376"
+        ],
+        [
+          "R1-2106377"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.007427456002915278
+    },
+    {
+      "id": "RAN2-analytic-pack_disposition_counts",
+      "wg": "RAN2",
+      "family": "pack_disposition_counts",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-243224' AND d.number LIKE 'R2-%'\n)\nSELECT x.code AS disposition, COUNT(DISTINCT d.id) AS document_count\nFROM pack_documents AS d\nJOIN disposition AS x ON x.target = d.id\nWHERE x.evidence_status = 'source_verified' AND x.scope = 'whole_target'\nGROUP BY x.code\nORDER BY disposition;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "agreed",
+          "24"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.012237012997502461
+    },
+    {
+      "id": "RAN2-analytic-shared_clauses",
+      "wg": "RAN2",
+      "family": "shared_clauses",
+      "sql": "WITH links AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM document AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R2-2410825'\nINTERSECT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM document AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R2-2411255'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.321",
+          "Rel-17",
+          "5.2"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.0195497719978448
+    },
+    {
+      "id": "RAN2-analytic-exclusive_clauses",
+      "wg": "RAN2",
+      "family": "exclusive_clauses",
+      "sql": "WITH links AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM document AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R2-2001981'\nEXCEPT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM document AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R2-2002396'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.331",
+          "Rel-16",
+          "2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "3.2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "4.2.2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.2.2.2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.2.2.5"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.3.10.3"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.5.3.1"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.5.4.1"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.5.5.1"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "5.7.3.3"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.3.1"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.3.2"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.3.3"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.4"
+        ],
+        [
+          "38.331",
+          "Rel-16",
+          "6.5"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.01944387299590744
+    },
+    {
+      "id": "RAN2-analytic-both_clause_documents",
+      "wg": "RAN2",
+      "family": "both_clause_documents",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-211471' AND d.number LIKE 'R2-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE s.spec IN ('38.331', 'TS 38.331')\n  AND s.release IN ('16', 'Rel-16')\n  AND s.clause IN ('6.2.2', '6.3.2')\nGROUP BY d.id, d.number\nHAVING COUNT(DISTINCT s.clause) = 2\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R2-2106722"
+        ],
+        [
+          "R2-2106772"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.018146602989872918
+    },
+    {
+      "id": "RAN2-analytic-largest_clause_footprint",
+      "wg": "RAN2",
+      "family": "largest_clause_footprint",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-261433' AND d.number LIKE 'R2-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n),\ncounts AS (\n  SELECT d.id, d.number AS document, COUNT(DISTINCT s.id) AS clause_count\n  FROM pack_documents AS d\n  LEFT JOIN links AS l ON l.cr = d.id\n  LEFT JOIN section AS s ON s.id = l.section_id\n  GROUP BY d.id, d.number\n)\nSELECT document, clause_count\nFROM counts\nWHERE clause_count = (SELECT MAX(clause_count) FROM counts)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R2-2603282",
+          "2"
+        ],
+        [
+          "R2-2603283",
+          "2"
+        ],
+        [
+          "R2-2603284",
+          "2"
+        ],
+        [
+          "R2-2604334",
+          "2"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.018183109001256526
+    },
+    {
+      "id": "RAN2-analytic-members_without_clause_records",
+      "wg": "RAN2",
+      "family": "members_without_clause_records",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-220510' AND d.number LIKE 'R2-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM links AS l\n  JOIN section AS s ON s.id = l.section_id\n  WHERE l.cr = d.id\n)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R2-2204152"
+        ],
+        [
+          "R2-2204159"
+        ],
+        [
+          "R2-2204212"
+        ],
+        [
+          "R2-2204213"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.018572314002085477
+    },
+    {
+      "id": "RAN3-analytic-pack_disposition_counts",
+      "wg": "RAN3",
+      "family": "pack_disposition_counts",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-191399' AND d.number LIKE 'R3-%'\n)\nSELECT x.code AS disposition, COUNT(DISTINCT d.id) AS document_count\nFROM pack_documents AS d\nJOIN disposition AS x ON x.target = d.id\nWHERE x.evidence_status = 'source_verified' AND x.scope = 'whole_target'\nGROUP BY x.code\nORDER BY disposition;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "agreed",
+          "18"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.011182613001437858
+    },
+    {
+      "id": "RAN3-analytic-shared_clauses",
+      "wg": "RAN3",
+      "family": "shared_clauses",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-180468' AND d.number LIKE 'R3-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R3-181410'\nINTERSECT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R3-181526'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.425",
+          "Rel-15",
+          "5.5.2.1"
+        ],
+        [
+          "38.425",
+          "Rel-15",
+          "5.5.2.2"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.014780508005060256
+    },
+    {
+      "id": "RAN3-analytic-exclusive_clauses",
+      "wg": "RAN3",
+      "family": "exclusive_clauses",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-181921' AND d.number LIKE 'R3-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R3-184882'\nEXCEPT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R3-185252'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.473",
+          "Rel-15",
+          "9.4.3"
+        ],
+        [
+          "38.473",
+          "Rel-15",
+          "9.4.4"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.01426058099605143
+    },
+    {
+      "id": "RAN3-analytic-both_clause_documents",
+      "wg": "RAN3",
+      "family": "both_clause_documents",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-221134' AND d.number LIKE 'R3-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE s.spec IN ('38.413', 'TS 38.413')\n  AND s.release IN ('17', 'Rel-17')\n  AND s.clause IN ('9.2.16.4', '9.4.7')\nGROUP BY d.id, d.number\nHAVING COUNT(DISTINCT s.clause) = 2\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R3-223971"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.011846418987261131
+    },
+    {
+      "id": "RAN3-analytic-largest_clause_footprint",
+      "wg": "RAN3",
+      "family": "largest_clause_footprint",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-233817' AND d.number LIKE 'R3-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n),\ncounts AS (\n  SELECT d.id, d.number AS document, COUNT(DISTINCT s.id) AS clause_count\n  FROM pack_documents AS d\n  LEFT JOIN links AS l ON l.cr = d.id\n  LEFT JOIN section AS s ON s.id = l.section_id\n  GROUP BY d.id, d.number\n)\nSELECT document, clause_count\nFROM counts\nWHERE clause_count = (SELECT MAX(clause_count) FROM counts)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R3-238068",
+          "14"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.01260353100951761
+    },
+    {
+      "id": "RAN3-analytic-members_without_clause_records",
+      "wg": "RAN3",
+      "family": "members_without_clause_records",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-233829' AND d.number LIKE 'R3-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM links AS l\n  JOIN section AS s ON s.id = l.section_id\n  WHERE l.cr = d.id\n)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R3-238079"
+        ],
+        [
+          "R3-238081"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.012472750007873401
+    },
+    {
+      "id": "RAN4-analytic-pack_disposition_counts",
+      "wg": "RAN4",
+      "family": "pack_disposition_counts",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-221661' AND d.number LIKE 'R4-%'\n)\nSELECT x.code AS disposition, COUNT(DISTINCT d.id) AS document_count\nFROM pack_documents AS d\nJOIN disposition AS x ON x.target = d.id\nWHERE x.evidence_status = 'source_verified' AND x.scope = 'whole_target'\nGROUP BY x.code\nORDER BY disposition;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "agreed",
+          "10"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.03481151402229443
+    },
+    {
+      "id": "RAN4-analytic-shared_clauses",
+      "wg": "RAN4",
+      "family": "shared_clauses",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-211081' AND d.number LIKE 'R4-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R4-2108199'\nINTERSECT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R4-2108204'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.133",
+          "Rel-15",
+          "A.5.7.1.2.2"
+        ],
+        [
+          "38.133",
+          "Rel-15",
+          "A.7.7.1.2.2"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.06850685502286069
+    },
+    {
+      "id": "RAN4-analytic-exclusive_clauses",
+      "wg": "RAN4",
+      "family": "exclusive_clauses",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-230516' AND d.number LIKE 'R4-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R4-2303218'\nEXCEPT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R4-2303222'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.133",
+          "Rel-17",
+          "9.1.9"
+        ],
+        [
+          "38.133",
+          "Rel-17",
+          "9.3.4"
+        ],
+        [
+          "38.133",
+          "Rel-17",
+          "9.4.2.2"
+        ],
+        [
+          "38.133",
+          "Rel-17",
+          "9.4.3.2"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.06728283400298096
+    },
+    {
+      "id": "RAN4-analytic-both_clause_documents",
+      "wg": "RAN4",
+      "family": "both_clause_documents",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-193032' AND d.number LIKE 'R4-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE s.spec IN ('38.101-3', 'TS 38.101-3')\n  AND s.release IN ('15', 'Rel-15')\n  AND s.clause IN ('2', '5.5B.5')\nGROUP BY d.id, d.number\nHAVING COUNT(DISTINCT s.clause) = 2\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R4-1913377"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.05920504202367738
+    },
+    {
+      "id": "RAN4-analytic-largest_clause_footprint",
+      "wg": "RAN4",
+      "family": "largest_clause_footprint",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-211890' AND d.number LIKE 'R4-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n),\ncounts AS (\n  SELECT d.id, d.number AS document, COUNT(DISTINCT s.id) AS clause_count\n  FROM pack_documents AS d\n  LEFT JOIN links AS l ON l.cr = d.id\n  LEFT JOIN section AS s ON s.id = l.section_id\n  GROUP BY d.id, d.number\n)\nSELECT document, clause_count\nFROM counts\nWHERE clause_count = (SELECT MAX(clause_count) FROM counts)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R4-2115464",
+          "29"
+        ],
+        [
+          "R4-2115465",
+          "29"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.05777481500990689
+    },
+    {
+      "id": "RAN4-analytic-members_without_clause_records",
+      "wg": "RAN4",
+      "family": "members_without_clause_records",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-250618' AND d.number LIKE 'R4-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM links AS l\n  JOIN section AS s ON s.id = l.section_id\n  WHERE l.cr = d.id\n)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R4-2500018"
+        ],
+        [
+          "R4-2500019"
+        ],
+        [
+          "R4-2500020"
+        ],
+        [
+          "R4-2500022"
+        ],
+        [
+          "R4-2500023"
+        ],
+        [
+          "R4-2500024"
+        ],
+        [
+          "R4-2500025"
+        ],
+        [
+          "R4-2500026"
+        ],
+        [
+          "R4-2500027"
+        ],
+        [
+          "R4-2500060"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.05897115299012512
+    },
+    {
+      "id": "RAN5-analytic-pack_disposition_counts",
+      "wg": "RAN5",
+      "family": "pack_disposition_counts",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-221987' AND d.number LIKE 'R5-%'\n)\nSELECT x.code AS disposition, COUNT(DISTINCT d.id) AS document_count\nFROM pack_documents AS d\nJOIN disposition AS x ON x.target = d.id\nWHERE x.evidence_status = 'source_verified' AND x.scope = 'whole_target'\nGROUP BY x.code\nORDER BY disposition;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "agreed",
+          "16"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.035297007008921355
+    },
+    {
+      "id": "RAN5-analytic-shared_clauses",
+      "wg": "RAN5",
+      "family": "shared_clauses",
+      "sql": "WITH links AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM document AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R5-195438'\nINTERSECT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM document AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R5-195439'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.521-4",
+          "Rel-19",
+          "F.1.1.2"
+        ],
+        [
+          "38.521-4",
+          "Rel-19",
+          "F.1.3.2"
+        ],
+        [
+          "38.521-4",
+          "Rel-19",
+          "G.1.5"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.058783452986972407
+    },
+    {
+      "id": "RAN5-analytic-exclusive_clauses",
+      "wg": "RAN5",
+      "family": "exclusive_clauses",
+      "sql": "WITH links AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM document AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R5-256867'\nEXCEPT\nSELECT s.spec AS specification, s.release AS release, s.clause AS clause\nFROM document AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE d.number = 'R5-256869'\nORDER BY specification, release, clause;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "38.521-4",
+          "Rel-18",
+          "5.2.4"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.06094592300360091
+    },
+    {
+      "id": "RAN5-analytic-both_clause_documents",
+      "wg": "RAN5",
+      "family": "both_clause_documents",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-190078' AND d.number LIKE 'R5-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nJOIN links AS l ON l.cr = d.id\nJOIN section AS s ON s.id = l.section_id\nWHERE s.spec IN ('38.521-1', 'TS 38.521-1')\n  AND s.release IN ('19', 'Rel-19')\n  AND s.clause IN ('6.4.1.4.1', '7.6.3.4.1')\nGROUP BY d.id, d.number\nHAVING COUNT(DISTINCT s.clause) = 2\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R5-191088"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.06674572901101783
+    },
+    {
+      "id": "RAN5-analytic-largest_clause_footprint",
+      "wg": "RAN5",
+      "family": "largest_clause_footprint",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-211710' AND d.number LIKE 'R5-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n),\ncounts AS (\n  SELECT d.id, d.number AS document, COUNT(DISTINCT s.id) AS clause_count\n  FROM pack_documents AS d\n  LEFT JOIN links AS l ON l.cr = d.id\n  LEFT JOIN section AS s ON s.id = l.section_id\n  GROUP BY d.id, d.number\n)\nSELECT document, clause_count\nFROM counts\nWHERE clause_count = (SELECT MAX(clause_count) FROM counts)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R5-214571",
+          "3"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.06440321999252774
+    },
+    {
+      "id": "RAN5-analytic-members_without_clause_records",
+      "wg": "RAN5",
+      "family": "members_without_clause_records",
+      "sql": "WITH memberships AS (\n  SELECT cr, pack_id FROM cr_in_pack\n  UNION\n  SELECT cr, pack_id FROM pack_member\n),\npack_documents AS (\n  SELECT DISTINCT d.id, d.number\n  FROM memberships AS m\n  JOIN cr_pack AS p ON p.id = m.pack_id\n  JOIN document AS d ON d.id = m.cr\n  WHERE p.pack_number = 'RP-200066' AND d.number LIKE 'R5-%'\n),\nlinks AS (\n  SELECT cr, section_id FROM cr_modifies_section\n  UNION\n  SELECT cr, section_id FROM section_modified_by\n)\nSELECT d.number AS document\nFROM pack_documents AS d\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM links AS l\n  JOIN section AS s ON s.id = l.section_id\n  WHERE l.cr = d.id\n)\nORDER BY document;",
+      "exact": true,
+      "status": "returned",
+      "actual": [
+        [
+          "R5-201046"
+        ],
+        [
+          "R5-201047"
+        ],
+        [
+          "R5-201048"
+        ]
+      ],
+      "missing": [],
+      "extra": [],
+      "seconds": 0.06403766199946404
+    }
+  ]
+}

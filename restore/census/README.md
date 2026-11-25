@@ -70,7 +70,7 @@ python3 "$census_code/restore_census_artifact.py" stage-plenary-sources \
   --receipt "$census_work/plenary-layout.json"
 ```
 
-Validate a reconstructed tree with `verify-derived --root TREE --frontier "$census_inputs/receipts/derived_files.jsonl.gz" --frontier-receipt "$census_inputs/receipts/derived_frontier_receipt.json" --receipt OUTPUT.json`. Stage and audit that independently reconstructed tree with `--source-mode archive_reconstructed` after its input checks pass.
+The `verify-derived` command verifies the historical exact-byte frontier. For converted Word files, [reconstructed census verification](../census_reconstructed/README.md) combines exact archive and native bytes, complete selected paths, pinned conversion receipts, expected scientific-reader digests and both complete original audits. The executed RP-180200 condition verifies seven native files and six reconstructed CR forms plus one cover over the complete original base frontier. Its public-reference comparison retains every compared diagnostic field and validates withheld values by hash and length. Whole-corpus reconstruction certification extends these gates to every derived path.
 
 ## Execution scope and environment
 
