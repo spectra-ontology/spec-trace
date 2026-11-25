@@ -20,5 +20,3 @@ The credentials module is the released stub. Construction, search replay, fixed-
 ## Verification
 
 [The code-validation receipt](sources/code_validation.json) checks every listed file hash and size, compiles 468 packaged Python files and 34 restoration helpers in memory, and parses 7 shell files with `bash -n`. It also checks local Markdown file targets. These checks cover syntax and packaging. [REPRODUCING.md](REPRODUCING.md) links the separately executed construction, source-reading, retrieval and score-replay workflows. Earlier preparation evidence remains in `sources/package_checks.json` with its recorded scope.
-
-The follow-up studies add five Python sources, checked in memory by the same validation receipt. Their protocols, first responses and read-only execution receipts are linked from [Reproducing the paper](REPRODUCING.md).

@@ -1,0 +1,11 @@
+# Actual correspondence audit and selected workflow evidence
+
+This artifact connects standards correspondence to a precise account of observed information needs and process-record use. `cohort_projection.json` preserves an identity-free disposition for every one of 187 indexed RAN5 messages from May 2026. Selection rules were fixed before message-content labeling: choose the smallest of five full RAN mailing-list indexes, then the latest complete calendar month preceding the newest archive month.
+
+Two messages explicitly request existing information: latest specification-version confirmation and a reason for a table-title change. Their information needs concern version metadata and change rationale. Both fall outside the six process-link elements, giving exact/partial/outside whole-request counts of 0/0/2. The remaining 185 indexed rows comprise 182 declarative/action exclusions and three exact duplicate bodies. Two ambiguous cases remain among the 182 exclusions.
+
+The separately selected, post-hoc technical illustrations show actual contributors using revised-to and agreed-disposition records inside cross-WG dependency handling. The export preserves their technical language and distinguishes stored record facts from the sender's technical judgment that a dependency is cleared or a dependent contribution needs no revision. These illustrations provide workflow context; the convenience cohort supplies a bounded audit of observed requests rather than a representative-user or operator-coverage estimate.
+
+Annotation was direct Codex-session reading with targeted independent re-reading of 15 candidate/boundary cases by a second root session. It was not a human evaluation or blind double coding of all messages. Original source identity, sender metadata, hashes and literal body offsets are retained separately in private evidence. This projection removes names, addresses, source URLs, original message identifiers and signatures while preserving the technical snippets checked against raw source bodies.
+
+The [selection and annotation protocol](protocol.json) accompanies the released identity-free projection. Source correspondence and the complete audit ledger remain in local evidence; this contextual supplement has its own scope and does not contribute a model score or benchmark-population estimate.

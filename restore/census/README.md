@@ -1,6 +1,6 @@
 # Reproduce the pack and clause source audits
 
-The census adapter executes the original auditors against released relation records and hash-verified metadata. The completed local-source replay reproduces 54,487 pack links with 54,460 confirmations and 105,363 clause links with 104,125 confirmations. Its clause reader processes 97,782 forms under the original `--no-qdrant` condition. Execution evidence is in [receipts/full_replay.json](receipts/full_replay.json).
+The census adapter executes the original auditors against released relation records and hash-verified metadata. The completed local-source replay reproduces 54,487 pack links with 54,460 confirmations and 105,363 clause links with 104,125 confirmations. Its clause reader processes 97,782 forms under the original `--no-qdrant` condition. Execution evidence is in [receipts/full_replay.json](receipts/full_replay.json). The manuscript's 54,462 pack confirmations additionally include two RAN2 documents checked through their plenary copies when the cited local directories were absent. This replay preserves the original local-source auditor condition and its 54,460 confirmations; the two-copy supplement and original-source coverage keep their separate provenance.
 
 The package provides 43 projected metadata inputs, official source locators for 107,854 archive identities across 111,299 paths, and a derived-file frontier. Source archives and reconstructed documents reside in the reader's local work directory.
 

@@ -4,7 +4,7 @@ This package provides the query graph of five 3GPP Radio Access Network working 
 
 The source documents are identified by archive path, SHA-256 and locator. The package distributes their structured projection; `restore/` retrieves the cited reports and rehydrates source passages locally. Original disposition statuses describe the source graph. Local rehydration supplies the quote fields used by evidence-shape validation.
 
-Two follow-up studies make the resource's query behavior explicit. A [30-item authored operator pilot](studies/operator_pilot/README.md) covers six operations across all five WGs, with independently checked gold and a fresh schema-and-domain SQL session answering 30/30. A [paired scope-value replay](studies/scope_intervention/README.md) tests a one-literal intervention on all 298 previously classified stored SQL misses. These studies retain their own protocols, inputs and execution receipts alongside the 667 main and 297 order-sensitive items.
+Follow-up studies make the resource's query behavior explicit. A [30-item authored operator pilot](studies/operator_pilot/README.md) covers six operations across all five WGs, with independently checked gold and a fresh schema-and-domain SQL session answering 30/30. A [paired scope-value replay](studies/scope_intervention/README.md) tests a one-literal intervention on all 298 previously classified stored SQL misses. A [semantic witness census](studies/semantic_witnesses/README.md) adds 66 data-backed tasks from 95 prespecified cells, distinguishing all 113 required operator-error controls and 162 of 200 executed controls. These studies retain their own protocols, inputs and execution receipts alongside the 667 main and 297 order-sensitive items.
 
 ## Start with the published results
 
@@ -45,7 +45,8 @@ The last command works offline after dependency installation. It verifies every 
 | `restore/lexical_containment/`, `restore/dense_retrieval/` | Portable deterministic-route replay and reconstruction of the recorded dense-reader requests. |
 | `restore/census/`, `restore/census_native/` | Complete source inventories, metadata, original corpus auditors and an executed native-field preservation fallback. |
 | `restore/census_reconstructed/` | Executed selected reconstruction checks, complete original audit comparisons, text-free expected digests and public-reference projection verification. |
-| `studies/operator_pilot/`, `studies/scope_intervention/` | Authored analytical operations and the fixed-cohort scope intervention, with frozen inputs, complete outputs and portable replay. |
+| `studies/operator_pilot/`, `studies/scope_intervention/`, `studies/semantic_witnesses/` | Analytical operations, fixed-cohort scope intervention and complete semantic witness pools, with frozen inputs, complete outputs and portable replay. |
+| `studies/interface_condition/`, `studies/correspondence_context/` | Archived input-condition audit and identity-free contextual correspondence analysis, each with its own stated scope. |
 | `restore/` | Source retrieval, passage rehydration, SHACL validation, clean benchmark rebuild/gate and stored-response rescoring. |
 | `records_redactions.jsonl`, `results_redactions.jsonl`, `code_redactions.jsonl` | Changed-file provenance and original/released hashes. |
 | `SHA256SUMS` | Package file hashes, excluding this hash list itself. |

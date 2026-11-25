@@ -1,0 +1,102 @@
+{
+  "kind": "preselection_and_adjudication_protocol",
+  "registered_at_utc": "2026-11-25T04:37:17.451711+00:00",
+  "purpose": "New measurement of documentary information requests in existing actual correspondence; no desired review grade, model performance or representative-user claim.",
+  "prior_tracking": [
+    "scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/measure_practitioner_question_sources.py",
+    "logs/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/practitioner_question_sources.json"
+  ],
+  "new_cohort_selection": {
+    "root": "data/corpus/tsg/RAN/email/RAN5/source",
+    "rule": "Use the smallest of the five RAN mailing-list source indexes by total row count; take every indexed message in the most recent complete calendar month preceding the newest archive month, independently of message subject/body. Metadata-only inspection established RAN5 and May 2026 (2605A through 2605E).",
+    "why": "A complete bounded documentary cohort can be read directly in this session, with all exclusions retained. This is an explicitly convenient single-WG window, not a random sample.",
+    "wg": "RAN5",
+    "archives": [
+      "2605A",
+      "2605B",
+      "2605C",
+      "2605D",
+      "2605E"
+    ],
+    "expected_index_rows": 187,
+    "freeze_before_content_labeling": true,
+    "no_yield_based_extension": true
+  },
+  "units": {
+    "denominator": "Every indexed message; source-fetch failures, missing files and duplicates are explicit outcomes.",
+    "classification_unit": "One source message; exact request spans identify each substantive request, but counts use messages to avoid inflating compound requests.",
+    "independence": "Messages in the same thread or event are related; no independent-person count or prevalence generalization.",
+    "authorship": "Only newly authored body text. Quoted history, forwarded requests and signatures are excluded from new requests. Raw source body and character offsets bind every included span."
+  },
+  "labeling": {
+    "read_every_message": true,
+    "first_layer": [
+      "missing_or_unreadable",
+      "exact_duplicate",
+      "no_new_information_request",
+      "administrative_or_action_request",
+      "technical_interpretation_request",
+      "documentary_process_information_request",
+      "mixed_information_request"
+    ],
+    "include_request_rule": "Original sender explicitly requests existing factual information/evidence concerning documents, CR revisions, meeting disposition, pack membership, plenary, clause changes, or recorded process status. Declarative updates and requests to approve/comment/submit/revise a document are not lookup demand. An interrogative mark alone is insufficient.",
+    "actual_language_rule": "Preserve exact authored request span, including fragments when the sender uses a fragment. No paraphrase may be labeled original. Subject may provide context but cannot manufacture a question.",
+    "process_elements": [
+      "document_disposition",
+      "wg_meeting_of_disposition",
+      "revision_link",
+      "pack_membership",
+      "tsg_meeting_of_pack",
+      "clause_modified_by_cr"
+    ],
+    "outside_elements": [
+      "change_rationale",
+      "discussion_content",
+      "agreement_record",
+      "cross_spec_correspondence",
+      "document_content",
+      "document_access",
+      "document_identity_or_title",
+      "deadline_or_scheduling",
+      "submission_or_upload_status",
+      "withdrawal_or_resubmission_action",
+      "email_workflow_status",
+      "proponent_identity"
+    ],
+    "operators": "Annotate only operations necessary in the original request: anchored lookup, document/revision link, clause history, temporal comparison/latest, set difference, intersection, grouping/count, conjunction, recorded absence. Do not infer set difference merely from a yes/no question or multiple unrelated facts.",
+    "support": "Separate whole-request direct support, partial support, outside-resource scope, and unverified. Meeting outcome, email agreement, and administrative upload status are distinct fields. A demand for reasons/discussion cannot be satisfied by an E1-E6 link alone.",
+    "duplicate_rule": "Source-identical body messages share a dedup group. Quoted repetitions are not counted as fresh demands. Preserve every indexed row in the exclusion ledger."
+  },
+  "adjudication": {
+    "annotator": "Codex session, model-assisted direct reading, not a human user study.",
+    "pass1": "Read all new source-message content; record provisional category and exact evidence.",
+    "pass2": "Re-read every provisional documentary/mixed request against full raw source to reject action-only or quote-only cases, then verify exact offsets/hashes and map only supported fields.",
+    "ambiguity": "Retain ambiguous cases as unverified and show strict counts separately. No favorable resolution to increase coverage.",
+    "independent_check": "Request a second session/agent only if a slot is available; otherwise disclose single-model annotation and avoid agreement claims."
+  },
+  "privacy": {
+    "private_evidence": "Source path, original msg_id/detail_url/sender metadata and body span kept in private_evidence artifacts; original files remain read-only.",
+    "public_projection": "Only aggregate counts and privacy-screened technical snippets with identity removed, if suitable. Keep source exactness and original metadata private; no public reuse claim."
+  },
+  "prior_primary_papers_read": [
+    {
+      "path": "review/exemplar_pdfs/e5_lao_sembench.pdf",
+      "pages": [
+        1,
+        2,
+        3
+      ],
+      "comparison": "Uses designed query/operator/scenario coverage; this analysis adds observed correspondence demand and does not relabel designed scenarios as natural questions."
+    },
+    {
+      "path": "review/exemplar_pdfs/e6_deng_unstructured.pdf",
+      "pages": [
+        1,
+        2,
+        3
+      ],
+      "comparison": "Constructs database-backed analytical questions across operators; this cohort measures actual requests and does not infer executable gold from source text."
+    }
+  ],
+  "success_criteria": "A traceable complete-cohort demand/coverage map that can support, refine, or reject workload motivation. Zero directly supported questions is an admissible result. No benchmark items or evaluations will be invented."
+}
