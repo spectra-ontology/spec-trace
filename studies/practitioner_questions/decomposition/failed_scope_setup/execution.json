@@ -1,0 +1,193 @@
+{
+  "protocol_sha256": "9f9dade58dbdfb08b25a3533d1627edae879be06701576ba74d9bdacc4745ec2",
+  "checker_sha256": "5ae94f9287390d73c454d1d7c00c30a0c76f871159713e8c0d3adf0f6eab04de",
+  "question_analysis_sha256": "f7c8a4921deb424263dd046f407c64ab98d3b97dd414435908bd6c87252b3860",
+  "units": [
+    {
+      "unit_id": "U003",
+      "question_paraphrase_en": "For emergency-services test 11.4.1 in TS 38.523-1, what motivates R5-253194, the five-second timer and RRCRelease sequencing, and what corresponding behavior appears in TS 24.501 and TS 23.501?",
+      "is_followup": false,
+      "first_judgment": {
+        "type": "mixed",
+        "familyMapping": "none",
+        "nearestFamily": null,
+        "asksDesignRationale": false,
+        "elements": [
+          "change_rationale",
+          "discussion_content",
+          "cross_spec_correspondence"
+        ],
+        "benchmarkElementsRequired": [],
+        "outsideElementsRequired": [
+          "change_rationale",
+          "discussion_content",
+          "cross_spec_correspondence"
+        ]
+      },
+      "second_judgment": {
+        "type": "mixed",
+        "familyMapping": "partial",
+        "nearestFamily": "full_chain"
+      }
+    },
+    {
+      "unit_id": "U004",
+      "question_paraphrase_en": "The requester reports that PC1.5 single-port maximum-power wording appears in TS 38.101 v16 but is absent in v17: why, and was it discussed at a meeting?",
+      "is_followup": false,
+      "first_judgment": {
+        "type": "process_trace",
+        "familyMapping": "partial",
+        "nearestFamily": "clause_history",
+        "asksDesignRationale": false,
+        "elements": [
+          "clause_modified_by_cr",
+          "wg_meeting_of_disposition",
+          "change_rationale"
+        ],
+        "benchmarkElementsRequired": [
+          "clause_modified_by_cr",
+          "wg_meeting_of_disposition"
+        ],
+        "outsideElementsRequired": [
+          "change_rationale"
+        ]
+      },
+      "second_judgment": {
+        "type": "process_trace",
+        "familyMapping": "partial",
+        "nearestFamily": "clause_history"
+      }
+    },
+    {
+      "unit_id": "U015",
+      "question_paraphrase_en": "For the requester’s Rel-18 NR-NTN RACH-less handover scenario, what changes matter at each protocol layer, when does it fall back to RACH-based operation, and what issues attracted the most standardization debate?",
+      "is_followup": false,
+      "first_judgment": {
+        "type": "mixed",
+        "familyMapping": "none",
+        "nearestFamily": null,
+        "asksDesignRationale": false,
+        "elements": [
+          "discussion_content"
+        ],
+        "benchmarkElementsRequired": [],
+        "outsideElementsRequired": [
+          "discussion_content"
+        ]
+      },
+      "second_judgment": {
+        "type": "mixed",
+        "familyMapping": "none",
+        "nearestFamily": null
+      }
+    },
+    {
+      "unit_id": "U021",
+      "question_paraphrase_en": "With CSI-RS CDM type 2, powerControlOffset = 0 dB and PDSCH EPRE = 1, is per-port CSI-RS power 1 or 1/2? Support the interpretation with specifications and meeting discussions.",
+      "is_followup": false,
+      "first_judgment": {
+        "type": "mixed",
+        "familyMapping": "none",
+        "nearestFamily": null,
+        "asksDesignRationale": false,
+        "elements": [
+          "discussion_content"
+        ],
+        "benchmarkElementsRequired": [],
+        "outsideElementsRequired": [
+          "discussion_content"
+        ]
+      },
+      "second_judgment": {
+        "type": "mixed",
+        "familyMapping": "none",
+        "nearestFamily": null
+      }
+    },
+    {
+      "unit_id": "U023",
+      "question_paraphrase_en": "For enhanced Type 2 CSI on UCI-only PUSCH, can all CSI part 2 be omitted, and what discussion or agreement resolves the resulting CSI part 1 resource-calculation ambiguities?",
+      "is_followup": false,
+      "first_judgment": {
+        "type": "mixed",
+        "familyMapping": "none",
+        "nearestFamily": null,
+        "asksDesignRationale": false,
+        "elements": [
+          "agreement_record",
+          "discussion_content"
+        ],
+        "benchmarkElementsRequired": [],
+        "outsideElementsRequired": [
+          "agreement_record",
+          "discussion_content"
+        ]
+      },
+      "second_judgment": {
+        "type": "mixed",
+        "familyMapping": "none",
+        "nearestFamily": null
+      }
+    }
+  ],
+  "public_database": {
+    "path": "sqlite/RAN5.sqlite.gz",
+    "sha256": "9a9797eefda6071ea33d6e9f0a26b4ecd43bdd4ead034e88d670d031fb986d27",
+    "decompressed_sha256": "58cc62435eb9a90b830862b5fe4ba18f82b8acd283c92abdfd2a146d6937cfcd"
+  },
+  "database_before_after_unchanged": true,
+  "runtime": {
+    "sqlite": "3.37.2",
+    "cap_seconds": 60,
+    "mode": "ro immutable query_only"
+  },
+  "lookup": {
+    "unit_id": "U003",
+    "curated_anchor": "R5-253194",
+    "sql": "SELECT DISTINCT d.number, d.doc_type, d.cr_number, d.spec,\n d.target_release, d.list_status, d.presented_at,\n x.code, r.meeting_id, x.evidence_path, x.evidence_sha256,\n p.pack_number, p.tsg_meeting, s.spec, s.release, s.clause\nFROM document d\nLEFT JOIN disposition x ON x.target=d.id\n AND x.evidence_status='source_verified' AND x.scope='whole_document'\nLEFT JOIN resolution r ON r.id=x.resolution_id\nLEFT JOIN (SELECT cr,pack_id FROM pack_member\n UNION SELECT cr,pack_id FROM cr_in_pack) pm ON pm.cr=d.id\nLEFT JOIN cr_pack p ON p.id=pm.pack_id\nLEFT JOIN (SELECT cr,section_id FROM cr_modifies_section\n UNION SELECT cr,section_id FROM section_modified_by) sl ON sl.cr=d.id\nLEFT JOIN section s ON s.id=sl.section_id\nWHERE d.number=? ORDER BY d.number,x.code,r.meeting_id,p.pack_number,s.spec,s.release,s.clause",
+    "parameters": [
+      "R5-253194"
+    ],
+    "fields": [
+      "number",
+      "doc_type",
+      "cr_number",
+      "spec",
+      "target_release",
+      "list_status",
+      "presented_at",
+      "code",
+      "meeting_id",
+      "evidence_path",
+      "evidence_sha256",
+      "pack_number",
+      "tsg_meeting",
+      "spec",
+      "release",
+      "clause"
+    ],
+    "rows": [
+      [
+        "R5-253194",
+        "tdoc:CR",
+        "5008",
+        "38.523-1",
+        "Rel-19",
+        "agreed",
+        "tdoc:meeting/RAN5_107",
+        null,
+        null,
+        null,
+        null,
+        "RP-251118",
+        "RAN#108",
+        "38.523-1",
+        "Rel-19",
+        "11.4.1"
+      ]
+    ],
+    "row_count": 1,
+    "seconds": 0.09207312102080323
+  },
+  "scope": "Curated documentary lookup for one explicit anchor; preserves classifier disagreement. All five units retained, with no new model judgments or whole-question success measurement."
+}

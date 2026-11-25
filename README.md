@@ -30,8 +30,9 @@ Each study preserves its own inputs, complete outputs and execution receipts. Ch
 | [Operator pilot](studies/operator_pilot/README.md) | Six analytical operations across five WGs | One schema-and-domain first submission answers 30/30 authored items. |
 | [Scope-value replay](studies/scope_intervention/README.md) | A one-literal intervention on fixed saved queries | All 298 preclassified scope failures recover their gold sets. |
 | [Semantic witnesses](studies/semantic_witnesses/README.md) and [anchor comparison](studies/witness_selection_value/README.md) | Data that distinguish grouping, set, tie and composition errors | In the same 66 available cells, witness selection detects 162/200 fixed controls versus 93/200 under the hash baseline. |
+| [Semantic coverage census](studies/semantic_witnesses/coverage_census/README.md) | Raw candidate properties, joint witness predicates and their construction trace | Recomputes all 2,269,290 candidates across 95 cells and accounts for the 66 supported and 29 unavailable cells. |
 | [Matched domains](studies/matched_domains/README.md) | SQL/Cypher first submissions on the same 50 fixed representatives | Two sessions per language each return 50/50; the archived configuration retains unknown provider-model identity. |
-| [Engineer questions](studies/practitioner_questions/README.md) | 33 de-identified question units and a documentary subquery in an actual request | Two SQL formulations reproduce the same 28 rows; question interpretation remains a separate step. |
+| [Engineer questions](studies/practitioner_questions/README.md) and [five-unit decomposition](studies/practitioner_questions/decomposition/README.md) | 33 de-identified units with original classifications and two documented trace-context illustrations | U004 supplies 28 clause-history rows; U003 supplies a source-verified CR/disposition/pack/clause context. Technical interpretation retains its own evidence requirements. |
 
 ## Contents
 
@@ -56,6 +57,7 @@ Each study preserves its own inputs, complete outputs and execution receipts. Ch
 | `restore/census/`, `restore/census_native/` | Complete source inventories, metadata, original corpus auditors and an executed native-field preservation fallback. |
 | `restore/census_reconstructed/` | Executed selected reconstruction checks, complete original audit comparisons, text-free expected digests and public-reference projection verification. |
 | `studies/operator_pilot/`, `studies/scope_intervention/`, `studies/semantic_witnesses/` | Analytical operations, fixed-cohort scope intervention and complete semantic witness pools, with frozen inputs, complete outputs and portable replay. |
+| `studies/review_dependence/` | Public record-to-gold dependence trace and complete subset-score replay. |
 | `studies/witness_selection_value/` | Paired witness/hash anchor selection, full candidate universes, complete SQL outputs and independent replay. |
 | `studies/matched_domains/`, `studies/practitioner_questions/` | Fixed-sample matched-value first submissions and de-identified real-question context, with separate protocols, data and portable verification. |
 | `studies/interface_condition/`, `studies/correspondence_context/` | Archived input-condition audit and identity-free contextual correspondence analysis, each with its own stated scope. |
@@ -170,6 +172,17 @@ python3 restore/reproduce_current_tables.py --release . \
 ```
 
 This offline command reconstructs all 37 current analysis conditions on the 667 admitted questions. It runs the packaged scoring and template/session analysis unchanged, including both scoring rules and 10,000-draw cluster and session bootstraps. A temporary filesystem adapter maps released responses, packets and databases into the expected input layout. The output matches the reference SHA-256 byte for byte; the report records condition totals and the original analysis-source hashes. These current-table conditions and the 60 historical score entries above are separate replay targets.
+
+## Review-dependent gold and score sensitivity
+
+The [public dependence replay](studies/review_dependence/README.md) joins the released disposition records to their identity-review receipts and benchmark evidence. It reconstructs 242 dependent gold rows in 99 items (53 RAN1, 46 RAN2), then matches all 296 subset score cells across 37 conditions and both scoring rules to the original analysis:
+
+```sh
+free -h
+python3 -B studies/review_dependence/replay.py --release . --output work/review_dependence
+```
+
+The output retains every subset count/share, source-bound gold trace and input hash. It distinguishes aggregate method ordering from the separately recorded individual-run relations.
 
 ## Provenance paths
 

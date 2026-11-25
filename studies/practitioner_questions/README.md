@@ -88,3 +88,7 @@ For an authorized local audit, `--private-source-root BASE --private-cases-root 
 | `replay.py` | Public aggregation/query replay and optional private byte/label verification |
 | `replay_receipt.json` | Executed public replay result |
 | `SHA256SUMS.txt` | Checksums for this folder |
+
+## Complete process-question decomposition
+
+The [five-unit decomposition](decomposition/README.md) retains all original process/mixed questions and both classifications. It adds an executed source-context lookup for the explicitly named R5-253194, with independent native-span and raw-table verification, alongside the existing U004 clause-history inspection. Documentary context and each requested technical interpretation retain separate evidence requirements.

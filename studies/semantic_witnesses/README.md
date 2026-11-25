@@ -50,6 +50,8 @@ Execution uses Python 3.10.12 and SQLite 3.37.2, read-only immutable connections
 
 The [primary-work comparison](prior_work_review.json) connects this design to [SemBench](https://doi.org/10.14778/3811243.3811249), [Bench-U](https://www.vldb.org/pvldb/vol19/p2398-deng.pdf) and [distilled SQL test suites](https://aclanthology.org/2020.emnlp-main.29.pdf). Operator variation, composition and query mutation retain that attribution. This study contributes measured semantic coverage and replayable witnesses for this released source-bound process resource. Its evidence concerns the named query distinctions and their actual data support; model accuracy and engineer-question distributions have their own study designs.
 
+The [coverage and construction census](coverage_census/README.md) independently reconstructs the properties and joint witness predicates of all 2,269,290 candidate instances. It accounts for all 95 cell decisions, including the 29 unavailable cells, and links the observed patterns to the released source-construction code. Its recorded-data census complements the selected-task SQL and first-query measurements.
+
 Run from the package root with Python 3.10 and SQLite 3.37.2 for the recorded engine condition. These commands use the Python standard library. Check `python3 -c "import sqlite3; print(sqlite3.sqlite_version)"` before execution. First reconstruct the pools, gold and all 266 executed SQL outputs independently; this also decompresses the four compressed databases into the new work directory:
 
 ```sh
