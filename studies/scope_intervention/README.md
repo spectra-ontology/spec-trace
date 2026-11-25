@@ -2,13 +2,17 @@
 
 This CLI replays the separate follow-up intervention on all 298 frozen stored SQL failures (198 unique WG/item pairs across three sessions). It uses the released evaluator functions, the original 60-second query limit, and the frozen Python 3.10.12 / SQLite 3.37.2 runtime. All original model scores remain the recorded scores.
 
-Keep `replay_scope_intervention.py` and its `payload/` directory together. Supply the public release checkout and a new scratch output directory; the command works from any working directory and requires no `AGENTS.md` file.
+Run from the public checkout root with Python 3.10.12 and SQLite 3.37.2. The reference Linux executable is `/usr/bin/python3`; check its version before running, including when the score-replay virtual environment is active. Supply a new scratch output directory:
 
-```bash
-python -B replay_scope_intervention.py \
-  --release /path/to/spec-trace \
-  --output /path/to/new-scratch-output
+```sh
+free -h
+/usr/bin/python3 -c "import sys, sqlite3; print(sys.version.split()[0], sqlite3.sqlite_version)"
+/usr/bin/python3 -B studies/scope_intervention/replay_scope_intervention.py \
+  --release . \
+  --output work/scope_intervention
 ```
+
+For another working directory, use absolute paths to the script, checkout and output. Keep the script and its `payload/` directory together. The CLI requires no `AGENTS.md` file.
 
 The CLI checks its runtime and every frozen release input before executing. It decompresses the two hash-pinned SQLite databases into scratch, opens them as read-only immutable databases, and loads only imports and functions from the byte-preserved original intervention script. The original `solve_text2sql`, `score`, and paired replay functions perform execution and scoring. Explicit command-line paths replace the original workspace discovery. A single worker, the original query progress handler, the original batch checkpoint, and a 2 GiB process limit apply.
 

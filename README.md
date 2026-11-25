@@ -56,6 +56,7 @@ Each study preserves its own inputs, complete outputs and execution receipts. Ch
 | `restore/census/`, `restore/census_native/` | Complete source inventories, metadata, original corpus auditors and an executed native-field preservation fallback. |
 | `restore/census_reconstructed/` | Executed selected reconstruction checks, complete original audit comparisons, text-free expected digests and public-reference projection verification. |
 | `studies/operator_pilot/`, `studies/scope_intervention/`, `studies/semantic_witnesses/` | Analytical operations, fixed-cohort scope intervention and complete semantic witness pools, with frozen inputs, complete outputs and portable replay. |
+| `studies/witness_selection_value/` | Paired witness/hash anchor selection, full candidate universes, complete SQL outputs and independent replay. |
 | `studies/matched_domains/`, `studies/practitioner_questions/` | Fixed-sample matched-value first submissions and de-identified real-question context, with separate protocols, data and portable verification. |
 | `studies/interface_condition/`, `studies/correspondence_context/` | Archived input-condition audit and identity-free contextual correspondence analysis, each with its own stated scope. |
 | `restore/` | Source retrieval, passage rehydration, SHACL validation, clean benchmark rebuild/gate and stored-response rescoring. |
@@ -64,7 +65,9 @@ Each study preserves its own inputs, complete outputs and execution receipts. Ch
 
 ## Preparation
 
-Run commands from the package root with Python 3.11 or later, with `. .venv/bin/activate` in each shell used below. `requirements-replay.txt` pins the tested table-replay dependency; `requirements-sources.txt` adds the tested source and shape-validation dependencies. The builder, gate and scorer use the Python standard library. Source restoration uses LibreOffice 7.3.7.2 for the reports marked for conversion; conversion hashes bind the tested output bytes. Additional historical analysis scripts have the dependencies listed in `code_report.md`.
+Run the source-restoration and benchmark-construction commands below from the package root with Python 3.11 or later, with `. .venv/bin/activate` in each shell. `requirements-replay.txt` pins the tested table-replay dependency; `requirements-sources.txt` adds the tested source and shape-validation dependencies. The builder, gate and scorer use the Python standard library. Source restoration uses LibreOffice 7.3.7.2 for the reports marked for conversion; conversion hashes bind the tested output bytes. Additional historical analysis scripts have the dependencies listed in `code_report.md`.
+
+The follow-up SQL studies use their own recorded engine conditions. For a study that requires SQLite 3.37.2, select an interpreter linked to that release independently of the replay virtual environment; `python3` follows the active environment. The reference Linux interpreter is `/usr/bin/python3` with Python 3.10.12 and SQLite 3.37.2. Check the selected interpreter with `/path/to/python -c "import sys, sqlite3; print(sys.version.split()[0], sqlite3.sqlite_version)"`, then use that same executable for the study commands. The linked study guides identify their exact requirements.
 
 ```sh
 sha256sum -c SHA256SUMS
