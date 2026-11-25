@@ -34,13 +34,13 @@ The last command works offline after dependency installation. It verifies every 
 | `benchmark/` | 670 drawn main items, their 667 admitted items and gate reports; fixed anchors; 300 drawn five-hop items and 297 admitted items. |
 | `abstention/` | 160 abstention items, checks, packets, stored responses and scores, in 133 files. |
 | `responses/` | 3,052 stored response, query, score and analysis files. |
-| `diagnosis/` | 187 diagnosis files for the main and five-hop conditions. |
+| `diagnosis/` | Per-item diagnoses for the main and five-hop conditions, with source-locator follow-up evidence. |
 | `code/` | Measurement scripts and their repository dependencies, plus analysis scripts and results. `code_manifest.json` lists each shipped source and hash. |
 | `receipts/` | Ten target-identity review receipts. |
 | `sources/competency_queries/index.json` | 25 sanitized original graph execution receipts: 644 PASS and 10 NO_DATA, with source and projected-file hashes. |
 | `sources/manifest.jsonl` | URLs and hashes for 280 cited reports and their conversions. |
 | `sources/disposition_bindings.jsonl.gz` | 358,062 text-free quote-hash receipts, decision spans and source-field locators. |
-| `restore/source_links/` | Official archive/member manifest, native CR-form checker and receipts for the 604 distinct CR–clause pairs in the main benchmark. |
+| `restore/source_links/` | Official archive/member manifests, native and reconstructed CR-form checkers, and receipts for the 604 distinct CR–clause pairs in the main benchmark. |
 | `restore/retrieval/` | Text-free frontiers, official source recipes and constructors for all five WG search indexes and the plenary index, with source-version and execution receipts. |
 | `restore/lexical_containment/`, `restore/dense_retrieval/` | Portable deterministic-route replay and reconstruction of the recorded dense-reader requests. |
 | `restore/census/`, `restore/census_native/` | Complete source inventories, metadata, original corpus auditors and an executed native-field preservation fallback. |
@@ -85,6 +85,8 @@ python3 restore/validate_bindings.py --release . --records work/dispositions_100
 
 The local preparation check rehydrated 100/100 passages, agreed with 100/100 direct rule readings, and conformed to all 44 released node shapes for this sample. The validator normalizes RDF 1.1 simple strings and explicit `xsd:string` literals to the same representation while retaining every shape constraint. This is a sample validation; the previously measured corpus-wide locator audit remains in `responses/final/next_cycle/analysis/locator_recompute.json`.
 
+The [source-locator follow-up](diagnosis/source_locator/README.md) additionally rehydrates the complete 368-record saved `source_verified` exception class from 79 reports, checks its exact source/quote hashes and validates the restored records with the released shapes. It explains the original rich-rendering mismatches through accepted-prose rendering, with the original locator-census outputs preserved. Its 11-disposition intersection with seven main items has separate target/code/scope receipts.
+
 ## Check CR form links
 
 The [CR source check](restore/source_links/README.md) connects the main benchmark's 604 distinct CR–clause pairs to pinned official archive members. It runs with the Python standard library and the released independent reader:
@@ -95,7 +97,18 @@ python3 restore/source_links/check_source_links.py --release . \
   --work work/cr_sources --report work/cr_source_check.json
 ```
 
-The recorded official-download execution fetched 251 archives and confirmed 549 pairs. Two forms enumerate tables within the named clauses and retain the reader's `table_or_figure_in_clause` classification. Another 53 pairs retain their source-format or URL availability status. All 604 remain in the manifest. Repeat with `--offline` to check cached bytes; `--wg RAN1` selects one working group. This check covers native CR forms for these benchmark pairs; the whole-corpus audits retain their separate inputs and scopes.
+The original official-download execution fetched 251 archives and confirmed 549 pairs. A [reconstruction follow-up](restore/source_links/README.md#reconstruct-the-53-source-format-and-url-exceptions) restores the remaining 53 source-format/URL cases from 29 pinned official archives and confirms their complete scientific-reader fields against the historical forms and current gold. Together the checks confirm 602 of the 604 pairs. The two remaining forms enumerate tables within the named clauses and retain the reader's `table_or_figure_in_clause` classification. The original manifests and measurements are preserved.
+
+The reconstruction command uses LibreOffice and a Python interpreter with PyUNO (commonly the operating system's `/usr/bin/python3`):
+
+```sh
+python3 restore/source_links/check_reconstructed_sources.py --release . \
+  --manifest restore/source_links/reconstructed_source_manifest.json \
+  --conversion-python /usr/bin/python3 --workers 2 \
+  --work work/cr_reconstructed --report work/cr_reconstructed.json
+```
+
+Repeat either checker with `--offline` to verify cached bytes. The linked guide explains conversion provenance, reader equivalence and the separate whole-corpus audit paths.
 
 ## Reconstruct retrieval and audit inputs
 
@@ -156,6 +169,6 @@ The packaged vocabulary and stored outcomes can be recounted with `python3 resto
 
 The original loaded-graph competency-query receipts are indexed in [sources/competency_queries/index.json](sources/competency_queries/index.json). They retain identifiers, outcomes, counts, guard checks and project-authored queries, with original-file and projected-file hashes. Their scope is the original loaded process graph; these stored outcomes are separate from the fresh benchmark gate over the released query projection. Raw answer samples and source-text fields stay in the original receipts.
 
-The namespace is `https://w3id.org/spectra#`. The first public ontology release is archived under DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872). Package version 1.2.0 retains the preceding public creator, publisher, issue date, license and namespace metadata and supplies the current 37 named classes, 86 object properties, 112 datatype properties, 44 node shapes and 16 disposition codes. `docs/ontology_build.json` records the source snapshots and their hashes. This resource package is available on the repository’s `vldb-2027` branch.
+The namespace is `https://w3id.org/spectra#`. The first release links its ontology and shapes in the companion GitHub repository; DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) archives its five WG body graphs. Package version 1.2.0 on the `vldb-2027` branch supplies the current ontology, shapes and benchmark artifacts. It retains the preceding public creator, publisher, issue date, license and namespace metadata and supplies the current 37 named classes, 86 object properties, 112 datatype properties, 44 node shapes and 16 disposition codes. `docs/ontology_build.json` records the source snapshots and their hashes. This resource package is available on the repository’s `vldb-2027` branch.
 
 The package uses CC BY 4.0 (`LICENSE`). Cite the authors and manuscript listed in `CITATION.cff`. Restored 3GPP source documents and locally rehydrated passages retain the terms of 3GPP and its Organizational Partners. Earlier archived releases remain associated with the concept DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871); this preparation creates no new DOI.

@@ -28,6 +28,60 @@ timings, checker hash and receipt hashes. `benchmark_online_RAN1.json` through
 through `RAN5.json` record the final code with no URL opened. The sum of group
 times is a work measure; groups ran concurrently and it is not wall time.
 
+## Reconstruct the 53 source-format and URL exceptions
+
+The follow-up manifest `reconstructed_source_manifest.json` covers the complete
+53-pair exception frontier: 34 CR forms, 29 admitted items and 29 archives. It
+supplies the resolved official URL, each nested member name and SHA-256, the
+historical form hash, and a text-free digest of every scientific-reader field.
+All 53 pairs agree with the current released records and gold answers.
+
+The reconstruction checks 31 legacy Word forms, two native DOCX forms inside
+nested ZIPs, and one native DOCX form whose official meeting URL is now pinned.
+The legacy forms account for 48 pairs; the three native DOCX forms account for
+five. An executed fresh-download check verifies all 29 archives (86,299,243 bytes)
+from their official URLs. A separate fresh-conversion run invokes the unchanged
+original census constructor on all 31 legacy forms. All 34 forms pass strict
+OOXML validation and the complete scientific-reader comparison, including CR
+identity, specification and affected-clause fields. The primary
+`reconstructed_source_receipt.json` and `reconstructed_source_official_access.json`
+record these executions. Three mutation controls detect changed archive bytes,
+native-member hashes and expected reader digests.
+
+A supplementary accepted-native/export/reopen check verifies the whole accepted
+text of 28 legacy forms after Unicode NFC and layout-whitespace normalization.
+`reconstructed_source_accepted_validation.json` records those additional text
+digests and the three forms' separate reopen behavior. The primary benchmark
+restoration predicate is complete scientific-reader equivalence.
+
+Install LibreOffice and its Python UNO bindings, then run from the release root:
+
+```sh
+python3 restore/source_links/check_reconstructed_sources.py \
+  --release . \
+  --manifest restore/source_links/reconstructed_source_manifest.json \
+  --conversion-python /usr/bin/python3 \
+  --workers 2 \
+  --work work/cr_reconstructed \
+  --report work/cr_reconstructed.json
+```
+
+The default conversion policy invokes the unchanged original census constructor
+and compares the resulting scientific-reader digest with the pinned historical
+digest. `--conversion-policy accepted` selects the stronger whole-accepted-text
+predicate where supported. Native/output hashes bind each reusable conversion
+receipt. The reader receives the historical form basename because the original
+reader also interprets the specification in that name. Source and converted
+bytes remain local under `--work`; the distributed fixtures and receipts contain
+identifiers, locators, digests and outcomes.
+
+Repeat with the same cache and `--offline` for the offline replay. The original
+549 native confirmations plus these 53 reconstructed/native confirmations give
+602 confirmed pairs; the two table-identifier cases retain their classification.
+The original 549/2/53 reports remain available as the initial measurement.
+The [corpus-wide reconstruction gate](../census_reconstructed/README.md) covers
+its separate selected-input and complete-audit comparison scopes.
+
 ## Run from a public-release checkout
 
 From the release root, use a fresh cache for an official-download replay:

@@ -194,7 +194,7 @@ Where a report entry and the document list describe the same document differentl
 
 ## 6. Distribution
 
-**Access.** https://github.com/spectra-ontology/spec-trace
+**Access.** The current ontology, 44 shapes, benchmark and replay package are available on the [`vldb-2027` branch](https://github.com/spectra-ontology/spec-trace/tree/vldb-2027). The first release links its ontology and shapes in the companion repository; its [version DOI](https://doi.org/10.5281/zenodo.20034872) archives five WG body graphs. The [concept DOI](https://doi.org/10.5281/zenodo.20034871) identifies the earlier archived release series.
 
 **License.** The package is under Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/); see `LICENSE`.
 

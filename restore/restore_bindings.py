@@ -42,10 +42,20 @@ def main():
                     help="Root passed to restore_sources.py --dest")
     ap.add_argument("--wg", nargs="+", default=["RAN1", "RAN2", "RAN3", "RAN4", "RAN5"])
     ap.add_argument("--limit", type=int, default=0, help="First N records per WG; 0 checks every record")
+    ap.add_argument("--ids-from", type=Path,
+                    help="JSON manifest with rows containing disposition_id; select exactly those records")
     ap.add_argument("--out", type=Path, required=True, help="Local rehydrated JSON-LD")
     ap.add_argument("--report", type=Path, required=True)
     args = ap.parse_args()
     release, root = args.release.resolve(), args.source_root.resolve()
+    requested = None
+    if args.ids_from:
+        if args.limit:
+            ap.error("--ids-from and --limit select different cohorts; use one")
+        manifest = json.loads(args.ids_from.read_text())
+        requested = {row["disposition_id"] for row in manifest["rows"]}
+        if not requested or len(requested) != len(manifest["rows"]):
+            ap.error("--ids-from requires a nonempty list of distinct dispositionId values")
     # The modules retain their repository-relative layout in code/. A .git
     # marker makes their existing project-root discovery independent of cwd.
     code = release / "code"
@@ -63,7 +73,8 @@ def main():
         for n, row in enumerate(stream_rows(path)):
             if args.limit and n >= args.limit:
                 break
-            wanted[row["dispositionId"]] = row
+            if requested is None or row["dispositionId"] in requested:
+                wanted[row["dispositionId"]] = row
         if context is None:
             opener = gzip.open if path.suffix == ".gz" else open
             lines = []
@@ -73,6 +84,9 @@ def main():
                         break
                     lines.append(line)
             context = json.loads("".join(lines).rstrip().rstrip(",") + "}")["@context"]
+    if requested is not None and set(wanted) != requested:
+        raise SystemExit("Requested disposition IDs absent from selected WG records: " +
+                         ", ".join(sorted(requested - set(wanted))))
     recipes = {}
     with gzip.open(release / "sources/disposition_bindings.jsonl.gz", "rt") as stream:
         for line in stream:
@@ -161,10 +175,14 @@ def main():
         output.write('\n]}\n')
     for count in per_wg.values():
         totals.update(count)
-    report = {"scope": "first N records per WG" if args.limit else "all selected WG records",
+    report = {"scope": "exact manifest-selected records" if requested is not None else
+              "first N records per WG" if args.limit else "all selected WG records",
               "limit_per_wg": args.limit, "total": dict(totals), "per_wg": {k: dict(v) for k, v in per_wg.items()},
               "failures": failures, "emission": "Only passages whose exact producer quote hash and source hash match are emitted.",
               "rule_scope": "Direct target-predicate rule reread; identity-review and other producer conditions are reported separately."}
+    if requested is not None:
+        report["selection"] = {"records": len(requested),
+                               "manifestSha256": hashlib.sha256(args.ids_from.read_bytes()).hexdigest()}
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report["total"]))

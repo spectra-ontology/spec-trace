@@ -19,11 +19,19 @@ Record hops describe each family's construction contract. A solver may answer th
 
 Seven main family labels include an empty-gold variant of pack lookup. The three extension families add clause-set comparison and meeting-order conditions. Main and extension results retain their separate analysis scopes.
 
+## Main-workload structure and answer contract
+
+The 667 main items use 667 distinct working-group/anchor pairs. Of the 581 answerable items, 411 return one row. Row count measures output size; the inventory separately records the actual directed revision path when `--check-snapshot-contract` is selected.
+
+An empty answer refers to the exact TDoc and specification/CR identity in the fixed released snapshot and its meeting coverage. The gate checks pack membership and the corresponding list fields for that identity. The source disposition codes of the 86 empty items are `not_agreed`: 1, `not_pursued`: 25, `not_treated`: 18, `withdrawn`: 42. Later revisions retain their own document and CR identities.
+
+The database check confirms all 86 empty snapshot contracts. The 82 revision questions have shortest paths to their returned documents at these depths: 1: 62 items, 2: 18 items, 9: 1 items, 12: 1 items. All 82 return one row. The inventory also records the different-identity successor of R1-167179, including its separate specification, CR number and pack field.
+
 Recompute this inventory from the checkout:
 
 ```sh
 free -h
-python3 restore/describe_workload.py --release . --out work/workload_inventory.json --markdown work/BENCHMARK.md
+python3 restore/describe_workload.py --release . --out work/workload_inventory.json --markdown work/BENCHMARK.md --check-snapshot-contract
 ```
 
 [The builder](code/scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/build_chain_items.py) defines the family contracts; [reproduction instructions](REPRODUCING.md) connect fixed-anchor construction, independent admission and scoring. Preserve item identity, requested fields and gold row sets when adding a comparison.
