@@ -29,7 +29,7 @@ Each study preserves its own inputs, complete outputs and execution receipts. Ch
 |---|---|---|
 | [Operator pilot](studies/operator_pilot/README.md) | Six analytical operations across five WGs | One schema-and-domain first submission answers 30/30 authored items. |
 | [Scope-value replay](studies/scope_intervention/README.md) | A one-literal intervention on fixed saved queries | All 298 preclassified scope failures recover their gold sets. |
-| [Semantic witnesses](studies/semantic_witnesses/README.md) | Data that distinguish grouping, set, tie and composition errors |66 of 95 planned cells yield tasks; all 113 required controls and 162/200 total controls differ from gold. |
+| [Semantic witnesses](studies/semantic_witnesses/README.md) and [anchor comparison](studies/witness_selection_value/README.md) | Data that distinguish grouping, set, tie and composition errors | In the same 66 available cells, witness selection detects 162/200 fixed controls versus 93/200 under the hash baseline. |
 | [Matched domains](studies/matched_domains/README.md) | SQL/Cypher first submissions on the same 50 fixed representatives | Two sessions per language each return 50/50; the archived configuration retains unknown provider-model identity. |
 | [Engineer questions](studies/practitioner_questions/README.md) | 33 de-identified question units and a documentary subquery in an actual request | Two SQL formulations reproduce the same 28 rows; question interpretation remains a separate step. |
 

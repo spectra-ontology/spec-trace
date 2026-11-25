@@ -1,0 +1,1147 @@
+{
+  "study": "Fixed-cell semantic-witness selection comparison",
+  "version": 2,
+  "frozen_at_utc": "2026-11-25T08:41:18.007046+00:00",
+  "state_at_registration": "Original witness anchors and outputs are known. No hash-baseline reference or control SQL has been executed. The result direction is unknown; keep every prespecified pairing and output.",
+  "purpose": "Quantify matched operator-control discrimination and output-equivalence classes when the final witness predicates are applied versus removed from the original candidate enumerator, with fixed WG/stratum cells and control names.",
+  "prior_work_review_sha256": "e925fefeba9f8e796d0662f94421db208dca7240e227a7071e86653967c9b877",
+  "design": {
+    "working_groups": [
+      "RAN1",
+      "RAN2",
+      "RAN3",
+      "RAN4",
+      "RAN5"
+    ],
+    "original_cells": 95,
+    "paired_available_cells": 66,
+    "original_unavailable_cells": 29,
+    "rule": "Pair precisely the original available WG/stratum cells; retain all 95 cell records, including all 15 unavailable maximum-release cells. Never fill, replace, merge or drop unavailable cells. Keep the exact original per-cell family and set of control names.",
+    "weighting": "Each paired task/control contributes one observation in both arms; WG and available-cell weights are identical across arms. Also report WG/family strata and distinct anchor/control identities.",
+    "original_strata": [
+      {
+        "id": "pack_multicode",
+        "family": "pack_disposition_counts",
+        "cohort": "pack",
+        "requires": [
+          "at least two output code groups"
+        ],
+        "mutations": [
+          "omit_group_by"
+        ]
+      },
+      {
+        "id": "pack_duplicates",
+        "family": "pack_disposition_counts",
+        "cohort": "pack",
+        "requires": [
+          "at least one grouped raw joined row count exceeds its distinct-document count"
+        ],
+        "mutations": [
+          "count_star"
+        ]
+      },
+      {
+        "id": "pack_multicode_duplicates",
+        "family": "pack_disposition_counts",
+        "cohort": "pack",
+        "requires": [
+          "both pack_multicode and pack_duplicates"
+        ],
+        "mutations": [
+          "omit_group_by",
+          "count_star"
+        ]
+      },
+      {
+        "id": "meeting_multicode",
+        "family": "pack_disposition_counts",
+        "cohort": "resolution_meeting",
+        "requires": [
+          "at least two output code groups"
+        ],
+        "mutations": [
+          "omit_group_by"
+        ]
+      },
+      {
+        "id": "meeting_duplicates",
+        "family": "pack_disposition_counts",
+        "cohort": "resolution_meeting",
+        "requires": [
+          "at least one grouped raw joined row count exceeds its distinct-document count"
+        ],
+        "mutations": [
+          "count_star"
+        ]
+      },
+      {
+        "id": "meeting_multicode_duplicates",
+        "family": "pack_disposition_counts",
+        "cohort": "resolution_meeting",
+        "requires": [
+          "both meeting_multicode and meeting_duplicates"
+        ],
+        "mutations": [
+          "omit_group_by",
+          "count_star"
+        ]
+      },
+      {
+        "id": "intersection",
+        "family": "shared_clauses",
+        "requires": [
+          "nonempty intersection, nonempty first-only set, nonempty second-only set"
+        ],
+        "mutations": [
+          "union",
+          "first_only",
+          "second_only"
+        ]
+      },
+      {
+        "id": "intersection_release",
+        "family": "shared_clauses",
+        "requires": [
+          "intersection requirements",
+          "matching on specification and clause while ignoring release admits a full typed first-document identity outside the true intersection"
+        ],
+        "mutations": [
+          "release_blind_membership"
+        ]
+      },
+      {
+        "id": "difference",
+        "family": "exclusive_clauses",
+        "requires": [
+          "nonempty intersection, nonempty first-only set, nonempty second-only set; enumerate both directions"
+        ],
+        "mutations": [
+          "intersection",
+          "union",
+          "reverse_difference"
+        ]
+      },
+      {
+        "id": "difference_release",
+        "family": "exclusive_clauses",
+        "requires": [
+          "difference requirements",
+          "matching on specification and clause while ignoring release removes a true directed-difference identity"
+        ],
+        "mutations": [
+          "release_blind_membership"
+        ]
+      },
+      {
+        "id": "conjunction",
+        "family": "both_clause_documents",
+        "requires": [
+          "at least one both-link member, one first-only member and one second-only member"
+        ],
+        "mutations": [
+          "or",
+          "first_only",
+          "second_only"
+        ]
+      },
+      {
+        "id": "conjunction_release",
+        "family": "both_clause_documents",
+        "requires": [
+          "conjunction requirements",
+          "release-blind matching admits an additional member"
+        ],
+        "mutations": [
+          "release_blind_membership"
+        ]
+      },
+      {
+        "id": "maximum_variation",
+        "family": "largest_clause_footprint",
+        "requires": [
+          "at least two distinct positive footprint counts"
+        ],
+        "mutations": [
+          "all_positive"
+        ]
+      },
+      {
+        "id": "maximum_ties",
+        "family": "largest_clause_footprint",
+        "requires": [
+          "maximum_variation requirements",
+          "at least two documents attain the maximum"
+        ],
+        "mutations": [
+          "limit_one"
+        ]
+      },
+      {
+        "id": "maximum_release_count",
+        "family": "largest_clause_footprint",
+        "requires": [
+          "maximum_variation requirements",
+          "collapsing release in distinct counts changes the complete (document,count) result set"
+        ],
+        "mutations": [
+          "release_collapsed_count"
+        ]
+      },
+      {
+        "id": "maximum_release_winner",
+        "family": "largest_clause_footprint",
+        "requires": [
+          "maximum_variation requirements",
+          "collapsing release changes the maximum document identity set"
+        ],
+        "mutations": [
+          "release_collapsed_count"
+        ]
+      },
+      {
+        "id": "maximum_ties_release",
+        "family": "largest_clause_footprint",
+        "requires": [
+          "maximum_ties and maximum_release_count requirements"
+        ],
+        "mutations": [
+          "limit_one",
+          "release_collapsed_count"
+        ]
+      },
+      {
+        "id": "absence",
+        "family": "members_without_clause_records",
+        "requires": [
+          "at least one zero-link member and at least one positive-link member"
+        ],
+        "mutations": [
+          "exists",
+          "all_members"
+        ]
+      },
+      {
+        "id": "composition",
+        "family": "conjunction_disposition_counts",
+        "requires": [
+          "conjunction requirements",
+          "nonempty grouped answer",
+          "using OR before aggregation changes the complete histogram"
+        ],
+        "mutations": [
+          "or_before_grouping",
+          "omit_section_filter"
+        ]
+      }
+    ]
+  },
+  "arms": {
+    "witness": "The exact frozen original 66 selected anchors, not newly selected or modified.",
+    "hash_without_final_witness_predicates": "For each of the same 66 available cells select the minimum original selection digest over all pre-consider candidates, ignoring every final conditions argument to Pools.consider. No repeated salt, sampling or replacement."
+  },
+  "whole_candidate_universe_definition": {
+    "exact_algorithm": "Use the pinned original enumerate_pools(data,pool) unchanged, replacing only Pools.consider with a collector that records every call and ignores its final conditions argument for ranking. All candidate identities and the original predicate values are preserved in five compressed JSONL files. They and both complete selections are hashed in selection_freeze.json before any reference or control SQL is executed.",
+    "actual_cohorts": "Pack strata: each distinct pack with at least one cr_in_pack member. Meeting strata: each resolution meeting with at least one source_verified whole_target disposition in the original raw parser. These are actual observed cohorts, not every theoretically possible meeting.",
+    "document_pairs": "Each unordered pair of distinct member documents of the same pack that shares at least one complete typed (spec,release,clause) identity. Intersection strata use the sorted pair once; directed-difference strata use both orientations. The shared typed identity is an original enumerator restriction retained in the baseline; the additional three-nonempty-regions and release-collision conditions are removed.",
+    "section_pairs": "Each distinct unordered full typed-section pair co-occurring on at least one member of the same pack. The observed co-occurrence is retained in the baseline; the additional both/first-only/second-only regions, release collision and changed-histogram requirements are removed.",
+    "maximum_and_absence": "Each distinct actual pack with at least one membership. For maximum strata remove final positive-size variation, ties and release-change predicates. For absence remove mixed-presence/absence predicate.",
+    "necessary_vs_witness": "Identity typing, actual membership, actual cohort presence, shared typed-section document-pair enumeration and co-occurring section-pair enumeration define this comparator cohort. Some structural restrictions also constrain the possible outputs; outcome-blind here means ignoring the final witness predicates, not removing all semantic conditioning or sampling natural demand.",
+    "expected_calls_all95cells": 2269290,
+    "counts_by_cell": [
+      {
+        "wg": "RAN1",
+        "stratum": "pack_multicode",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 11,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "pack_duplicates",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 273,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "pack_multicode_duplicates",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 6,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "meeting_multicode",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 61,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "meeting_duplicates",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 58,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "meeting_multicode_duplicates",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 58,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "intersection",
+        "candidate_universe_count": 496,
+        "eligible_candidates": 39,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "intersection_release",
+        "candidate_universe_count": 496,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "difference",
+        "candidate_universe_count": 992,
+        "eligible_candidates": 78,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "difference_release",
+        "candidate_universe_count": 992,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "conjunction",
+        "candidate_universe_count": 37801,
+        "eligible_candidates": 143,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "conjunction_release",
+        "candidate_universe_count": 37801,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "maximum_variation",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 268,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "maximum_ties",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 54,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "maximum_release_count",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "maximum_release_winner",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "maximum_ties_release",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "absence",
+        "candidate_universe_count": 522,
+        "eligible_candidates": 70,
+        "status": "available"
+      },
+      {
+        "wg": "RAN1",
+        "stratum": "composition",
+        "candidate_universe_count": 37801,
+        "eligible_candidates": 140,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "pack_multicode",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 9,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "pack_duplicates",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 508,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "pack_multicode_duplicates",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 7,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "meeting_multicode",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 61,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "meeting_duplicates",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 55,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "meeting_multicode_duplicates",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 55,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "intersection",
+        "candidate_universe_count": 1708,
+        "eligible_candidates": 342,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "intersection_release",
+        "candidate_universe_count": 1708,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "difference",
+        "candidate_universe_count": 3416,
+        "eligible_candidates": 684,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "difference_release",
+        "candidate_universe_count": 3416,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "conjunction",
+        "candidate_universe_count": 61448,
+        "eligible_candidates": 290,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "conjunction_release",
+        "candidate_universe_count": 61448,
+        "eligible_candidates": 14,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "maximum_variation",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 458,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "maximum_ties",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 96,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "maximum_release_count",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "maximum_release_winner",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "maximum_ties_release",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "absence",
+        "candidate_universe_count": 602,
+        "eligible_candidates": 334,
+        "status": "available"
+      },
+      {
+        "wg": "RAN2",
+        "stratum": "composition",
+        "candidate_universe_count": 61448,
+        "eligible_candidates": 290,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "pack_multicode",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 4,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "pack_duplicates",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 2,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "pack_multicode_duplicates",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "meeting_multicode",
+        "candidate_universe_count": 56,
+        "eligible_candidates": 56,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "meeting_duplicates",
+        "candidate_universe_count": 56,
+        "eligible_candidates": 18,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "meeting_multicode_duplicates",
+        "candidate_universe_count": 56,
+        "eligible_candidates": 18,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "intersection",
+        "candidate_universe_count": 953,
+        "eligible_candidates": 705,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "intersection_release",
+        "candidate_universe_count": 953,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "difference",
+        "candidate_universe_count": 1906,
+        "eligible_candidates": 1410,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "difference_release",
+        "candidate_universe_count": 1906,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "conjunction",
+        "candidate_universe_count": 76996,
+        "eligible_candidates": 566,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "conjunction_release",
+        "candidate_universe_count": 76996,
+        "eligible_candidates": 8,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "maximum_variation",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 318,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "maximum_ties",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 66,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "maximum_release_count",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "maximum_release_winner",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "maximum_ties_release",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "absence",
+        "candidate_universe_count": 463,
+        "eligible_candidates": 181,
+        "status": "available"
+      },
+      {
+        "wg": "RAN3",
+        "stratum": "composition",
+        "candidate_universe_count": 76996,
+        "eligible_candidates": 566,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "pack_multicode",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 11,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "pack_duplicates",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 1,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "pack_multicode_duplicates",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "meeting_multicode",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 61,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "meeting_duplicates",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 13,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "meeting_multicode_duplicates",
+        "candidate_universe_count": 61,
+        "eligible_candidates": 13,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "intersection",
+        "candidate_universe_count": 1108,
+        "eligible_candidates": 407,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "intersection_release",
+        "candidate_universe_count": 1108,
+        "eligible_candidates": 13,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "difference",
+        "candidate_universe_count": 2216,
+        "eligible_candidates": 814,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "difference_release",
+        "candidate_universe_count": 2216,
+        "eligible_candidates": 26,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "conjunction",
+        "candidate_universe_count": 310052,
+        "eligible_candidates": 1008,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "conjunction_release",
+        "candidate_universe_count": 310052,
+        "eligible_candidates": 367,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "maximum_variation",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 834,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "maximum_ties",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 334,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "maximum_release_count",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "maximum_release_winner",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "maximum_ties_release",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "absence",
+        "candidate_universe_count": 1328,
+        "eligible_candidates": 438,
+        "status": "available"
+      },
+      {
+        "wg": "RAN4",
+        "stratum": "composition",
+        "candidate_universe_count": 310052,
+        "eligible_candidates": 923,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "pack_multicode",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 14,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "pack_duplicates",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "pack_multicode_duplicates",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "meeting_multicode",
+        "candidate_universe_count": 42,
+        "eligible_candidates": 38,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "meeting_duplicates",
+        "candidate_universe_count": 42,
+        "eligible_candidates": 1,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "meeting_multicode_duplicates",
+        "candidate_universe_count": 42,
+        "eligible_candidates": 1,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "intersection",
+        "candidate_universe_count": 11063,
+        "eligible_candidates": 1020,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "intersection_release",
+        "candidate_universe_count": 11063,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "difference",
+        "candidate_universe_count": 22126,
+        "eligible_candidates": 2040,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "difference_release",
+        "candidate_universe_count": 22126,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "conjunction",
+        "candidate_universe_count": 226161,
+        "eligible_candidates": 3744,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "conjunction_release",
+        "candidate_universe_count": 226161,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "maximum_variation",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 1010,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "maximum_ties",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 252,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "maximum_release_count",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "maximum_release_winner",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "maximum_ties_release",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 0,
+        "status": "unavailable"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "absence",
+        "candidate_universe_count": 1430,
+        "eligible_candidates": 691,
+        "status": "available"
+      },
+      {
+        "wg": "RAN5",
+        "stratum": "composition",
+        "candidate_universe_count": 226161,
+        "eligible_candidates": 3738,
+        "status": "available"
+      }
+    ]
+  },
+  "selection": {
+    "study_salt": "Released-record semantic witness study",
+    "formula": "SHA256(UTF8(json.dumps([study_salt, WG, stratum_id, complete_candidate_identity], ensure_ascii=False, sort_keys=True, separators=(\",\",\":\"))))",
+    "tie_break": "lexicographically smallest canonical candidate JSON after the SHA256 digest",
+    "rule": "Reuse exactly builder.selection_digest; no new seed, no outcome-driven exclusion, no reroll. Repeated anchors across strata remain in paired results and are separately counted."
+  },
+  "control_mapping": {
+    "pack_disposition_counts": {
+      "task_ids": [
+        "RAN1-witness-pack_multicode",
+        "RAN1-witness-pack_duplicates",
+        "RAN1-witness-pack_multicode_duplicates",
+        "RAN1-witness-meeting_multicode",
+        "RAN1-witness-meeting_duplicates",
+        "RAN1-witness-meeting_multicode_duplicates",
+        "RAN2-witness-pack_multicode",
+        "RAN2-witness-pack_duplicates",
+        "RAN2-witness-pack_multicode_duplicates",
+        "RAN2-witness-meeting_multicode",
+        "RAN2-witness-meeting_duplicates",
+        "RAN2-witness-meeting_multicode_duplicates",
+        "RAN3-witness-pack_multicode",
+        "RAN3-witness-pack_duplicates",
+        "RAN3-witness-meeting_multicode",
+        "RAN3-witness-meeting_duplicates",
+        "RAN3-witness-meeting_multicode_duplicates",
+        "RAN4-witness-pack_multicode",
+        "RAN4-witness-pack_duplicates",
+        "RAN4-witness-meeting_multicode",
+        "RAN4-witness-meeting_duplicates",
+        "RAN4-witness-meeting_multicode_duplicates",
+        "RAN5-witness-pack_multicode",
+        "RAN5-witness-meeting_multicode",
+        "RAN5-witness-meeting_duplicates",
+        "RAN5-witness-meeting_multicode_duplicates"
+      ],
+      "control_names": [
+        "count_star",
+        "omit_group_by"
+      ],
+      "control_executions_per_arm": 52
+    },
+    "shared_clauses": {
+      "task_ids": [
+        "RAN1-witness-intersection",
+        "RAN2-witness-intersection",
+        "RAN3-witness-intersection",
+        "RAN4-witness-intersection",
+        "RAN4-witness-intersection_release",
+        "RAN5-witness-intersection"
+      ],
+      "control_names": [
+        "first_only",
+        "release_blind_membership",
+        "reverse_difference",
+        "second_only",
+        "union"
+      ],
+      "control_executions_per_arm": 30
+    },
+    "exclusive_clauses": {
+      "task_ids": [
+        "RAN1-witness-difference",
+        "RAN2-witness-difference",
+        "RAN3-witness-difference",
+        "RAN4-witness-difference",
+        "RAN4-witness-difference_release",
+        "RAN5-witness-difference"
+      ],
+      "control_names": [
+        "first_only",
+        "intersection",
+        "release_blind_membership",
+        "reverse_difference",
+        "second_only",
+        "union"
+      ],
+      "control_executions_per_arm": 36
+    },
+    "both_clause_documents": {
+      "task_ids": [
+        "RAN1-witness-conjunction",
+        "RAN2-witness-conjunction",
+        "RAN2-witness-conjunction_release",
+        "RAN3-witness-conjunction",
+        "RAN3-witness-conjunction_release",
+        "RAN4-witness-conjunction",
+        "RAN4-witness-conjunction_release",
+        "RAN5-witness-conjunction"
+      ],
+      "control_names": [
+        "first_only",
+        "or",
+        "release_blind_membership",
+        "second_only"
+      ],
+      "control_executions_per_arm": 32
+    },
+    "largest_clause_footprint": {
+      "task_ids": [
+        "RAN1-witness-maximum_variation",
+        "RAN1-witness-maximum_ties",
+        "RAN2-witness-maximum_variation",
+        "RAN2-witness-maximum_ties",
+        "RAN3-witness-maximum_variation",
+        "RAN3-witness-maximum_ties",
+        "RAN4-witness-maximum_variation",
+        "RAN4-witness-maximum_ties",
+        "RAN5-witness-maximum_variation",
+        "RAN5-witness-maximum_ties"
+      ],
+      "control_names": [
+        "all_positive",
+        "limit_one",
+        "release_collapsed_count"
+      ],
+      "control_executions_per_arm": 30
+    },
+    "members_without_clause_records": {
+      "task_ids": [
+        "RAN1-witness-absence",
+        "RAN2-witness-absence",
+        "RAN3-witness-absence",
+        "RAN4-witness-absence",
+        "RAN5-witness-absence"
+      ],
+      "control_names": [
+        "all_members",
+        "exists"
+      ],
+      "control_executions_per_arm": 10
+    },
+    "conjunction_disposition_counts": {
+      "task_ids": [
+        "RAN1-witness-composition",
+        "RAN2-witness-composition",
+        "RAN3-witness-composition",
+        "RAN4-witness-composition",
+        "RAN5-witness-composition"
+      ],
+      "control_names": [
+        "omit_section_filter",
+        "or_before_grouping"
+      ],
+      "control_executions_per_arm": 10
+    }
+  },
+  "control_contract": "Exactly the existing measurement/execution.json control names plus the twelve separately recorded supplementary_omitted_controls.json executions: 200 per arm. The correct INTERSECT identity in the intersection family stays excluded. Every other originally recorded control remains. Required113 is a secondary diagnostic only; primary comparison uses all200.",
+  "gold_and_query_validity": {
+    "reference": "Use the same pinned original family-level reference SQL and operator-control templates with the selected anchor literals substituted. Task meanings, fields, identity policy and cohort semantics are fixed. An empty reference answer is valid when the original question permits it.",
+    "python": "Derive gold separately from direct raw relation reads with independent Python sets/dictionaries; compare with the original task builder gold and the actual reference SQL complete normalized rowset. A disagreement stops dependent measurement without changing the selected anchor.",
+    "normalization": "Deduplicate full row tuples, convert non-NULL cells to strings and sort; retain NULL values and every row. Discrimination compares full normalized rowsets, including output counts and typed release values.",
+    "type_and_source_rules": "A typed section is the complete (specification, release, clause) triple. Document and cohort membership use released identifiers. Disposition inclusion is evidence_status=source_verified and scope=whole_target. Distinct documents count once per code; several codes on one document contribute once to each group."
+  },
+  "execution": {
+    "interpreter": "/usr/bin/python3 -B",
+    "sqlite_version": "3.37.2",
+    "database_policy": "Five pinned released databases opened file:...?mode=ro&immutable=1 with PRAGMA query_only=ON. Compressed inputs are expanded one at a time to TemporaryDirectory and deleted on context exit. Verify compressed source and expanded database SHA256 before/after each phase.",
+    "caps": "60-second SQLite progress-handler cap per reference/control; RLIMIT_AS=2GiB, SQLite cache_size=-16384.",
+    "planned_reference_executions": 132,
+    "planned_control_executions": 400,
+    "model_responses": 0,
+    "paid_api_calls": 0,
+    "errors": "Retain SQL status and full successful raw rowsets. Errors and timeouts contribute zero semantic discriminations and are reported separately. Do not replace an anchor because of any result.",
+    "witness_replay": "Every witness-arm SQL string, status and complete rowset must equal the pre-existing stored 200-control contract."
+  },
+  "metrics": {
+    "primary": "Per arm: successful controls that differ from the independent reference full rowset, denominator fixed200. Paired matrix on identical task-id/control-name/WG/family labels; report both-different, witness-only, baseline-only, neither. Report absolute percentage-point difference with denominator200.",
+    "output_equivalence": "Partition reference plus successful controls per task by complete output rowset. Store every class and member query name. Report sum of distinct wrong-output classes, preserving task labels and separately reporting repeated anchors.",
+    "unique_counts": "Report66 labelled tasks, unique (WG,family,anchor) tasks, and unique (WG,family,anchor,control-name) executions; duplicate anchor occurrence lists are retained. No deduplication silently changes the primary paired denominator.",
+    "secondary": "Same-anchor pairing count, original final-predicate values on selected baseline candidates, required113 discrimination, grouped metrics by WG and family, all95 universe/eligible/availability counts.",
+    "interpretation": "A matched empirical comparison on this fixed structurally conditioned cohort and one unchanged hash rule. It measures named mistake sensitivity and output diversity on these actual records. It supports no model-accuracy, user-demand, causal generalization, random-population or general SQL-equivalence claim."
+  },
+  "input_sha256": {
+    "build_semantic_witnesses.py": "bb4f093f09b73bf67216ec40cc449a6aeac3516d89765f306581f77ae96e91f8",
+    "protocol.json": "5ae29a7c9296d7cd37122a85928719c64586516542e4cc4b720040611afb29ff",
+    "database_inputs.json": "87a28410995a58dd181eb34d8a076956b0dd1069863c7d6d0ec37dd4afab8d73",
+    "measurement/selection_and_gold.json": "63b3b1c870eb8bb1ed490e8de467206d7303fa7f9e1c04ccf302ff68ae535bf1",
+    "measurement/execution.json": "b41fc094cfd1cf5b96f8e1a6c1d7defe6125564ec336243dbafa9f6b907996c8",
+    "supplementary_omitted_controls.json": "d4d1672773d78b2481d2e02d7ad3270b83d1e0662219a15eb69be4f058fec8cd",
+    "measurement/freeze.json": "0d433c2fb709ce58be063c1dd9a0c07384d0160cef25f8aa14a96ce62f8ab364"
+  },
+  "database_pins": [
+    {
+      "wg": "RAN1",
+      "source_sha256": "5e0d83e8418d887ec17433a883695a7ebcbff25e4c9ff048f4c2bd95f0c16cc1",
+      "database_sha256": "5e0d83e8418d887ec17433a883695a7ebcbff25e4c9ff048f4c2bd95f0c16cc1"
+    },
+    {
+      "wg": "RAN2",
+      "source_sha256": "cd4dc565713f1d49bb389ef2056474380ed78d547f63cf8dd81580d85ec26a9d",
+      "database_sha256": "c770451677496aec0e4d489f06df68c02369d9347041df99f719842f712040c0"
+    },
+    {
+      "wg": "RAN3",
+      "source_sha256": "a43e9433f43725c2ba1ad4f9e841a4725245d1bb17cab2678967c12d9baa9b78",
+      "database_sha256": "c6e69a1472cf035bbe817155275970158b0512e62c38dd4983a63d77e10ab625"
+    },
+    {
+      "wg": "RAN4",
+      "source_sha256": "5a7e70679718630e65ca298733a60cf6cb922e466fa17d4f8e6a0cec3289f504",
+      "database_sha256": "b45cdcb406bf2817b98f1055593c2a810862fd177509f3fd11ecb6dd08af1292"
+    },
+    {
+      "wg": "RAN5",
+      "source_sha256": "9a9797eefda6071ea33d6e9f0a26b4ecd43bdd4ead034e88d670d031fb986d27",
+      "database_sha256": "58cc62435eb9a90b830862b5fe4ba18f82b8acd283c92abdfd2a146d6937cfcd"
+    }
+  ],
+  "implementation_sha256": "a0e4af7269e333aefb4eb9be838c865f3067d0d10c3883e7e5474c80e305c6b3",
+  "outputs": [
+    "candidate_universe_RAN1.jsonl.gz through candidate_universe_RAN5.jsonl.gz",
+    "selection.json including complete both-arm tasks/anchors/SQL/Python gold",
+    "selection_freeze.json written before measurement",
+    "execution.json with all SQL, full rowsets, output classes and paired control matrix",
+    "summary.json",
+    "freeze.json"
+  ],
+  "preservation": "Original protocol, original witness artefacts, pilot metrics, manuscript, review votes and public package remain unchanged. Keep this internal experiment separate until independent semantic validation and root publication decision.",
+  "pre_measurement_amendment": {
+    "previous_protocol_sha256": "c903b6575dcc7b9187856763a0d02aff77760eaad31f266d1ca08c2f36351df1",
+    "previous_implementation_sha256": "2482882def34b79d68d245c23f153d25433cb2f016b228c4445f210debcd5374",
+    "reason": "Preparation selected a resolution meeting identifier that has no descriptive meeting-table row. Original builder.task raised KeyError while rendering the optional parenthesized label.",
+    "prior_state": "Preparation only; no reference or control SQL executed, no new measured baseline output observed.",
+    "repair": "For a selected meeting cohort lacking a meeting-table row, provide a local question-rendering-only label recorded meeting identifier. Keep the exact chosen cohort identifier, both candidate universes, all hash rankings, all anchors and every reference/control SQL template unchanged. Do not synthesize or edit database rows, candidate relations, gold or SQL.",
+    "scope": "The renderer data view alone gains a descriptive string. The original builder source, original witness artefacts and the released database stay unchanged. This avoids introducing a metadata-based exclusion or reroll.",
+    "preserved_evidence": "failed_preparation_v1/ includes the original code, protocol, registration receipt, failure receipt and complete five candidate-universe archives."
+  }
+}

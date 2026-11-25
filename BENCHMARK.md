@@ -45,6 +45,10 @@ free -h
 python3 restore/describe_schema_comparison.py --release . --out work/schema_comparison.json
 ```
 
+## Data that expose operator mistakes
+
+The [witness design](studies/semantic_witnesses/README.md) fixes 19 data properties across five WGs and retains every candidate and predicate outcome. In the 66 available property/WG cells, the [paired anchor comparison](studies/witness_selection_value/README.md) holds query templates, the hash rule and 200 error controls fixed. Witness selection detects 162/200 controls; applying the same hash rule before the final witness predicate detects 93/200. Both arms retain query-validity and shared-identity preconditions. Of the 113 controls directly involved in selection, the respective counts are 113 and 56; for the other 87, they are 49 and 37. Full candidate universes, selected queries and raw row sets support independent replay. This measures sensitivity to the specified operator mistakes on released records, separately from model accuracy.
+
 ## Using a documentary subquery in a real question
 
 The [engineer-question analysis](studies/practitioner_questions/README.md) gives de-identified summaries and model classifications of 33 existing question units, separately from the generated benchmark. A power-class wording question illustrates a supported clause-history subquery: the released SQL retrieves 28 source-bound documentary rows for TS 38.101-1 clause 6.2.1 in Rel-17. Those rows identify candidate CRs and their recorded dispositions, meetings and packs for subsequent inspection of the technical text and discussion. The example preserves its curated derivation and source context.
