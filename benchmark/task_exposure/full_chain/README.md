@@ -54,6 +54,26 @@ wording, including the extra dot in R5-263126.
 | Opus SQL, 10 runs | 931 / 1000 (93.1%) | 903 / 1000 (90.3%) |
 | Opus Cypher, 10 runs | 960 / 1000 (96.0%) | 932 / 1000 (93.2%) |
 
+The next table pools each method's saved runs over all 667 main-workload
+items. Only the full-chain clause sets change. Each item contributes once
+per run.
+
+| Historical interface | Released projections | Explicit cover labels on full-chain items |
+|---|---:|---:|
+| Raw text, 2 runs | 1273 / 1334 (95.43%) | 1278 / 1334 (95.80%) |
+| Record chunks, 3 runs | 1960 / 2001 (97.95%) | 1968 / 2001 (98.35%) |
+| Opus SQL, 10 runs | 6342 / 6670 (95.08%) | 6314 / 6670 (94.66%) |
+| Opus Cypher, 10 runs | 6561 / 6670 (98.37%) | 6533 / 6670 (97.95%) |
+
+Raw text moves above SQL and Cypher within full-chain. Record chunks moves
+above Cypher over the main workload. These point estimates measure the
+effect of changing the gold projection on fixed responses. The historical
+solvers received the questions and their assigned evidence interface. For
+example, [the archived Raw text prompt](../../../responses/final/supplement_cycle/raw_agent/runA/prompts/RAN1_part1.txt)
+restricted the run to the [source-text search packet](../../../responses/final/supplement_cycle/raw_agent/packets/parts/RAN1_part1.json).
+[The task-exposure audit](../README.md) documents the other original packet
+conditions and provides a common wrapper for new runs.
+
 The item and run detail covers all 37 stored conditions. It also tests two
 distinct alternatives. Including placeholder strings verbatim changes raw
 text to 193/200. Restricting the released section links to the form's own
@@ -62,10 +82,11 @@ These are separate comparisons against the same original answer rows.
 
 ## Replay from the release root
 
-The shipped receipt contains derived labels, hashes, source locators, and
-per-item score changes. The score replay requires Python 3.10 or later and
-NumPy. It rebuilds all three alternatives from the label sets and verifies
-archived response hashes and exact counts.
+The shipped receipt contains derived labels, hashes, source locators,
+per-item score changes, and exact counts for the family and main workload.
+The score replay requires Python 3.10 or later and NumPy. It rebuilds
+all three alternatives from the label sets and verifies archived response
+hashes and exact counts.
 
 ```sh
 mkdir -p work

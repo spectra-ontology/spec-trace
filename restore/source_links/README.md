@@ -7,6 +7,38 @@ record and benchmark-item membership, identifies the CR form, and runs the
 released independent form/spec/clause reader. Python's standard library is
 sufficient; no database service or model call is used.
 
+## How the graph resolves affected clauses
+
+The CR cover sheet supplies a specification, a target release and a
+`Clauses affected` field. The [clause parser](../../code/scripts/tsg/RAN/formal/common/cr_clause.py)
+reads that field as ordered candidate clause labels. The builder tries each
+candidate in order within the same specification and keeps the first Section
+it can resolve. For each candidate the [Section index](../../code/scripts/tsg/RAN/formal/common/phase-4/cr_section_index.py)
+uses this priority:
+
+1. The Section for the requested release and clause label.
+2. The most recent indexed release at or below the requested release that has
+   a Section with that label.
+3. The most recent indexed release with that label, when all matching Sections
+   are in later releases.
+
+An absent or unreadable target release selects the most recent indexed
+release with that label. The builder skips a reference if none of its labels
+resolves. Both the
+[RAN1–RAN4 JSON-LD construction path](../../code/scripts/tsg/RAN/formal/RAN1/phase-4/cr-parser/03_generate_cr_jsonld.py)
+and the [RAN5 graph loader](../../code/scripts/tsg/RAN/formal/RAN5/phase-4/neo4j/01_load_cr_ontology.py)
+call the same parser and index.
+
+`MODIFIES_SECTION` (RDF `spectra:modifiesSection`, SQLite
+`cr_modifies_section`) preserves the resolved clause-label reference. A
+fallback endpoint gives that label an address in an available edition of the
+same specification. The requested edition and the linked edition remain
+distinct. The [benchmark answer contract](../../benchmark/ANSWER_CONTRACT.md)
+uses the clause label in `full_chain` and requires
+`document.target_release = section.release` for edition-specific families.
+The SQLite comparison uses the target release projected from the phase-1
+document record.
+
 ## Measured expansion
 
 The actual official-download run fetched 251 distinct archives (555,353,060
@@ -133,8 +165,15 @@ pairs reference 280 locally hashed archives (641,652,303 bytes); 551 pairs over
 251 archives have a supported exact native member and official URL. Archive
 presence is distinct from native-member support and fresh official access.
 
-This replay supports native OOXML form/spec/clause confirmation. The published
-5,610 raw-pass links include other relation types. Whole-census audits, release
-resolution, clause-body coverage, pack membership and disposition checks retain
-their existing separate procedures and evidence. The pinned manifest and receipts identify the release inputs used in these checks.
+The benchmark replay confirms CR identity, specification and clause label.
+It records the reread form release and the linked Section release as separate
+fields. The [corpus source audit](../../code/scripts/publication/paper/ongoing/vldb-2027-experiment-analysis-benchmark/audit_clause_links.py)
+first tests specification and clause-label agreement for each stored pair
+and then reports release concordance on the confirmed pairs. It reapplies the
+edition resolver for confirmed pairs with a different or unread form release.
+The [stored-link edition census](../../diagnosis/section_editions/README.md)
+reports the release comparison for the full stored relation using the
+relational document projection. Clause-body coverage, pack membership and
+dispositions each have their own audit. The benchmark's 5,610 raw-passing
+source links include several relation types.
 

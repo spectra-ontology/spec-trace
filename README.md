@@ -62,6 +62,7 @@ For the [full-candidate policy census](studies/witness_selection_value/full_cand
 | `sources/manifest.jsonl` | URLs and hashes for 280 cited reports and their conversions. |
 | `sources/disposition_bindings.jsonl.gz` | 358,062 text-free quote-hash receipts, decision spans and source-field locators. |
 | `restore/source_links/` | Official archive/member manifests, native and reconstructed CR-form checkers, and receipts for the 604 distinct CR–clause pairs in the main benchmark. |
+| [Clause editions](diagnosis/section_editions/README.md) | Resolving affected-clause labels and comparing the stored Section and document target releases across five working groups. |
 | `restore/retrieval/` | Text-free frontiers, official source recipes and constructors for all five WG search indexes and the plenary index, with source-version and execution receipts. |
 | `restore/lexical_containment/`, `restore/dense_retrieval/` | Portable deterministic-route replay and reconstruction of the recorded dense-reader requests. |
 | `restore/census/`, `restore/census_native/` | Complete source inventories, metadata, original corpus auditors and an executed native-field preservation fallback. |

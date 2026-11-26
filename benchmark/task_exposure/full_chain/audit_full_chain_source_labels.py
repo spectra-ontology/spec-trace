@@ -232,29 +232,36 @@ def score(analyzer, release, items, full_chain, strict, literal, at_source_relea
         records, _ = analyzer.load_responses({**condition, "files": paths}, items)
         changed = {}
         actual_scores = {}
-        for key, item in full_chain.items():
+        for key, item in items.items():
             rows = records.get(key, {}).get("rows")
             actual_scores[key] = analyzer.exact(item, rows, analyzer.IDENTITY_KEY)
+        baseline_main = sum(actual_scores.values())
+        baseline_family = sum(actual_scores[key] for key in full_chain)
         for name, alternative in (("explicit_source_labels", strict),
                                   ("literal_placeholders", literal),
                                   ("form_release_only", at_source_release)):
             gained, lost = [], []
-            for key, original in actual_scores.items():
+            for key in full_chain:
+                original = actual_scores[key]
                 alternative_exact = analyzer.exact(alternative[key], records.get(key, {}).get("rows"),
                                                    analyzer.IDENTITY_KEY)
                 if alternative_exact and not original:
                     gained.append(key)
                 if original and not alternative_exact:
                     lost.append(key)
-            changed[name] = {"exact": sum(actual_scores.values()) + len(gained) - len(lost),
+            delta = len(gained) - len(lost)
+            changed[name] = {"exact": baseline_family + delta,
+                             "all_main_exact": baseline_main + delta,
                              "gains": sorted(gained), "losses": sorted(lost)}
         replays[condition["method"]].append({
             "run": condition["run"], "received": len(set(records) & set(full_chain)),
-            "stored_gold_exact": sum(actual_scores.values()), "alternative": changed,
+            "stored_gold_exact": baseline_family, "all_main_stored_gold_exact": baseline_main,
+            "alternative": changed,
         })
     return {
         "conditions": len(conditions), "distinct_meeting_alias_exceptions": sorted(analyzer.KEPT),
-        "response_sha256": saved_response_hashes, "replays": dict(replays),
+        "main_items_per_run": len(items), "response_sha256": saved_response_hashes,
+        "replays": dict(replays),
     }
 
 
