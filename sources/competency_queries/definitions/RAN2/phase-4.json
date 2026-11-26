@@ -1,0 +1,118 @@
+{
+  "metadata": {
+    "phase": "phase-4",
+    "wg": "RAN2",
+    "version": "1.0",
+    "total_questions": 15,
+    "description": "RAN2 Phase-4 CR Ontology CQ 15개"
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "category": "CQ1_변경근거",
+      "question": "특정 CR의 변경 이유(reasonForChange)는?",
+      "cypher": "MATCH (c:CR {tdocNumber: 'R2-2508534'}) RETURN c.reasonForChange AS reasonForChange LIMIT 1",
+      "expected": "non-null reasonForChange"
+    },
+    {
+      "id": "CQ1-2",
+      "category": "CQ1_변경근거",
+      "question": "특정 CR의 변경 요약(summaryOfChange)은?",
+      "cypher": "MATCH (c:CR {tdocNumber: 'R2-2508534'}) RETURN c.summaryOfChange AS summaryOfChange LIMIT 1",
+      "expected": "non-null summaryOfChange"
+    },
+    {
+      "id": "CQ1-3",
+      "category": "CQ1_변경근거",
+      "question": "특정 CR의 미승인 영향(consequencesIfNotApproved)은?",
+      "cypher": "MATCH (c:CR {tdocNumber: 'R2-2508534'}) RETURN c.consequencesIfNotApproved AS consequences LIMIT 1",
+      "expected": "non-null consequences"
+    },
+    {
+      "id": "CQ2-1",
+      "category": "CQ2_CrossSpec",
+      "question": "특정 CR이 영향주는 다른 Spec 목록은?",
+      "cypher": "MATCH (c:CR)-[r:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(s:Spec) WHERE c.tdocNumber = 'R2-2001766' RETURN type(r) AS relType, s.specNumber AS spec",
+      "expected": "cross-spec relations for R2-2001766"
+    },
+    {
+      "id": "CQ2-2",
+      "category": "CQ2_CrossSpec",
+      "question": "특정 Spec을 수정하는 CR 중 다른 Spec에도 영향주는 CR은?",
+      "cypher": "MATCH (c:CR)-[:MODIFIES]->(s:Spec {specNumber: '38.331'}) WHERE EXISTS { MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->() } RETURN c.tdocNumber AS tdocNumber ORDER BY c.tdocNumber DESC LIMIT 10",
+      "expected": "CR list with cross-spec"
+    },
+    {
+      "id": "CQ2-3",
+      "category": "CQ2_CrossSpec",
+      "question": "특정 Spec을 영향 받는 Spec으로 참조하는 CR 목록은?",
+      "cypher": "MATCH (s:Spec {specNumber: '38.212'})<-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]-(c:CR) RETURN c.tdocNumber AS tdocNumber ORDER BY c.tdocNumber DESC LIMIT 10",
+      "expected": "CR list affecting 38.212"
+    },
+    {
+      "id": "CQ2-4",
+      "category": "CQ2_CrossSpec",
+      "question": "Cross-Spec 영향이 가장 많은 CR Top 10은?",
+      "cypher": "MATCH (c:CR)-[r:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->() WITH c, count(r) AS cnt ORDER BY cnt DESC LIMIT 10 RETURN c.tdocNumber AS tdocNumber, cnt",
+      "expected": "top 10 CRs by cross-spec count"
+    },
+    {
+      "id": "CQ3-1",
+      "category": "CQ3_CRPack",
+      "question": "특정 CR Pack에 포함된 CR 목록과 변경 요약은?",
+      "cypher": "MATCH (pack:CRPack {crPackId: 'RP-253714'})-[:HAS_CR]->(c:CR) RETURN c.tdocNumber AS tdocNumber, c.summaryOfChange AS summary ORDER BY c.tdocNumber DESC LIMIT 10",
+      "expected": "CR list in pack RP-253714"
+    },
+    {
+      "id": "CQ3-2",
+      "category": "CQ3_CRPack",
+      "question": "특정 Work Item 관련 CR이 속한 Pack 목록은?",
+      "cypher": "MATCH (c:CR)-[:RELATED_TO]->(w:WorkItem) WHERE w.workItemCode CONTAINS 'NR_newRAT' WITH c MATCH (c)-[:BELONGS_TO_CR_PACK]->(pack:CRPack) RETURN DISTINCT pack.crPackId AS crPackId, pack.tsgMeeting AS tsgMeeting ORDER BY toInteger(split(pack.tsgMeeting, '#')[1]) DESC, crPackId ASC LIMIT 10",
+      "expected": "Pack list for NR_newRAT work items"
+    },
+    {
+      "id": "CQ3-3",
+      "category": "CQ3_CRPack",
+      "question": "특정 TSG 회의에 제출된 CR Pack 목록은?",
+      "cypher": "MATCH (pack:CRPack {tsgMeeting: 'RAN#110'}) RETURN pack.crPackId AS crPackId ORDER BY pack.crPackId LIMIT 10",
+      "expected": "CR Packs from RAN#110"
+    },
+    {
+      "id": "CQ4-1",
+      "category": "CQ4_연계분석",
+      "question": "특정 Section을 수정하는 CR의 변경 이유 목록은?",
+      "cypher": "MATCH (sec:Section {sectionNumber: '5.3.5'})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.331'}) MATCH (sec)<-[:MODIFIES_SECTION]-(c:CR) RETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason ORDER BY toInteger(replace(sp.specRelease,'Rel-','')) DESC, c.tdocNumber DESC LIMIT 10",
+      "expected": "CRs modifying 38.331-5.3.5"
+    },
+    {
+      "id": "CQ4-2",
+      "category": "CQ4_연계분석",
+      "question": "특정 Resolution이 승인한 CR의 변경 이유와 요약은?",
+      "cypher": "MATCH (a:Agreement)-[:HAS_DISPOSITION]->(:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(c:CR) WHERE c.reasonForChange IS NOT NULL WITH c LIMIT 5 RETURN c.tdocNumber AS tdocNumber, c.reasonForChange AS reason, c.summaryOfChange AS summary",
+      "expected": "CR details from Agreement references",
+      "approval_contract": "Target-level dispositionCode=agreed + evidenceStatus=source_verified, bound to the exact Resolution and source span; REFERENCES and global document status do not assert approval."
+    },
+    {
+      "id": "CQ4-3",
+      "category": "CQ4_연계분석",
+      "question": "특정 Work Item 관련 CR이 수정하는 Section 목록은?",
+      "cypher": "MATCH (c:CR)-[:RELATED_TO]->(w:WorkItem) WHERE w.workItemCode CONTAINS 'NR_newRAT' WITH c MATCH (c)-[:MODIFIES_SECTION]->(sec:Section) RETURN DISTINCT sec.sectionId AS sectionId ORDER BY sec.sectionId LIMIT 10",
+      "expected": "Sections modified by NR_newRAT CRs"
+    },
+    {
+      "id": "CQ4-4",
+      "category": "CQ4_연계분석",
+      "question": "특정 회사의 CR이 영향주는 다른 Spec 목록은?",
+      "cypher": "MATCH (c:CR)-[:SUBMITTED_BY]->(comp:Company) WHERE comp.companyName CONTAINS 'Samsung' WITH c MATCH (c)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(s:Spec) RETURN DISTINCT s.specNumber AS spec ORDER BY spec LIMIT 10",
+      "expected": "Specs affected by Samsung CRs"
+    },
+    {
+      "id": "CQ4-5",
+      "category": "CQ4_연계분석",
+      "question": "특정 회의에서 승인된 CR의 변경 요약 목록은?",
+      "cypher": "MATCH (a:Agreement)-[:MADE_AT]->(m:Meeting {meetingNumber: 'RAN2#113-e'}) WITH a MATCH (a)-[:HAS_DISPOSITION]->(:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(c:CR) WHERE c.summaryOfChange IS NOT NULL RETURN DISTINCT c.tdocNumber AS tdocNumber, c.summaryOfChange AS summary ORDER BY tdocNumber DESC LIMIT 10",
+      "expected": "CR summaries from meeting RAN2#113-e",
+      "approval_contract": "Target-level dispositionCode=agreed + evidenceStatus=source_verified, bound to the exact Resolution and source span; REFERENCES and global document status do not assert approval."
+    }
+  ]
+}

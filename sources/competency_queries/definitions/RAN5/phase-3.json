@@ -1,0 +1,372 @@
+{
+  "metadata": {
+    "version": "1.1",
+    "wg": "RAN5",
+    "phase": 3,
+    "description": "RAN5 Phase-3 CQ — TS 구조 탐색 + TS↔CR↔Resolution 연결 검증 + Step 8 entity layer CQ 8개 (v3.0, 2026-05-22)",
+    "created": "2026-04-14",
+    "neo4j_uri": "bolt://localhost:7691",
+    "total_cqs": 41,
+    "updated": "2026-06-10",
+    "release_aware_note": "2026-06-10 release-aware hybrid 전환: sectionId/tableId가 {spec}-{Rel-NN}-{sec} 키로 변경됨에 따라 하드코딩 sectionId를 쓰던 CQ1-2/1-3/1-5/1-6/1-12/2-1을 specNumber+sectionNumber 동적 조회+latest-default(§5.1 DESC) 패턴으로 재작성(competency 동일). CQ3-2는 CR이 추상 hub Spec(specRelease IS NULL)을 MODIFIES하므로 IN_RELEASE_OF로 최신 release-키 Spec 섹션에 조인(category B). CQ2-1 예시 섹션은 release-aware 파스에서 참조 0이 된 §7.8A.2.1 대신 동일 spec의 참조 보유 §6.5D.3.3.5로 교체."
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.533의 Section 목록은?",
+      "cypher": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.533'}) RETURN s.sectionId, s.sectionNumber, s.sectionTitle, s.level ORDER BY s.sectionNumber LIMIT 25",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ1-2",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.533-5의 하위 Section 목록은?",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.533'})<-[:BELONGS_TO_SPEC]-(p:Section {sectionNumber:'5'}) WHERE rk.specRelease IS NOT NULL WITH p,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (p)-[:HAS_SUB_SECTION]->(c:Section) RETURN c.sectionId, c.sectionNumber, c.sectionTitle ORDER BY c.sectionNumber LIMIT 25",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-3",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.521-1-6.2.1 상위 계층 경로는?",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.521-1'})<-[:BELONGS_TO_SPEC]-(sec:Section {sectionNumber:'6.2.1'}) WHERE rk.specRelease IS NOT NULL WITH sec,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH path = (sec)-[:PARENT_SECTION*]->(ancestor:Section) RETURN [n IN nodes(path) | n.sectionId] AS hierarchy",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-4",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.533에서 레벨 1 Section 목록은?",
+      "cypher": "MATCH (s:Section {level: 1})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.533'}) RETURN s.sectionId, s.sectionNumber, s.sectionTitle ORDER BY s.sectionNumber",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ1-5",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.521-1-6.2.3 포함 Table 목록은?",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.521-1'})<-[:BELONGS_TO_SPEC]-(sec:Section {sectionNumber:'6.2.3'}) WHERE rk.specRelease IS NOT NULL WITH sec,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (sec)-[:HAS_SUB_SECTION*0..]->(sub:Section)-[:CONTAINS_TABLE]->(t:TSTable) RETURN sub.sectionNumber, t.tableId, t.tableNumber, t.tableCaption ORDER BY sub.sectionNumber, t.tableNumber LIMIT 25",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-6",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.509-5.3.4.1 포함 Figure 목록은?",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.509'})<-[:BELONGS_TO_SPEC]-(sec:Section {sectionNumber:'5.3.4.1'}) WHERE rk.specRelease IS NOT NULL WITH sec,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (sec)-[:CONTAINS_FIGURE]->(f:TSFigure) RETURN f.figureId, f.figureNumber, f.figureCaption ORDER BY f.figureNumber LIMIT 15",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-7",
+      "category": "CQ1_TS구조탐색",
+      "question": "Table이 속한 Section 찾기 (38.521-1 Table)",
+      "cypher": "MATCH (t:TSTable)-[:TABLE_IN_SECTION]->(sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'}) RETURN t.tableId, sec.sectionId, sec.sectionTitle ORDER BY t.tableNumber LIMIT 5",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-8",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.523-1의 Table 전체 목록 (Top 25)?",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.523-1'}), (sec)-[:CONTAINS_TABLE]->(t:TSTable) RETURN t.tableId, t.tableNumber, t.tableCaption ORDER BY t.tableNumber LIMIT 25",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ1-9",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.533에서 제목에 'measurement'이 포함된 Section 목록은?",
+      "cypher": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.533'}) WHERE toLower(s.sectionTitle) CONTAINS 'measurement' RETURN s.sectionId, s.sectionTitle ORDER BY s.sectionNumber LIMIT 25",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-10",
+      "category": "CQ1_TS구조탐색",
+      "question": "Table 번호로 TS와 Section 찾기",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec), (sec)-[:CONTAINS_TABLE]->(t:TSTable) WHERE t.tableNumber STARTS WITH '6.2' RETURN sp.specNumber, sec.sectionId, t.tableNumber, t.tableCaption LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-11",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.521-2의 레벨 2 Section 목록은?",
+      "cypher": "MATCH (s:Section {level: 2})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-2'}) RETURN s.sectionId, s.sectionNumber, s.sectionTitle ORDER BY s.sectionNumber LIMIT 25",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ1-12",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.523-1-7의 하위 Section 목록은?",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.523-1'})<-[:BELONGS_TO_SPEC]-(p:Section {sectionNumber:'7'}) WHERE rk.specRelease IS NOT NULL WITH p,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (p)-[:HAS_SUB_SECTION]->(c:Section) RETURN c.sectionId, c.sectionNumber, c.sectionTitle ORDER BY c.sectionNumber LIMIT 25",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-13",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.521-1의 Void Section 목록은?",
+      "cypher": "MATCH (s:Section {isVoid: true})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.521-1'}) RETURN s.sectionId, s.sectionNumber, s.sectionTitle ORDER BY s.sectionNumber LIMIT 25",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-14",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.533의 Table 수?",
+      "cypher": "MATCH (sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.533'}), (sec)-[:CONTAINS_TABLE]->(t:TSTable) RETURN count(t) AS tableCount",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-15",
+      "category": "CQ1_TS구조탐색",
+      "question": "38.533에서 레벨 3인 Section은?",
+      "cypher": "MATCH (s:Section {level: 3})-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.533'}) RETURN s.sectionId, s.sectionTitle ORDER BY s.sectionNumber LIMIT 25",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ1-16",
+      "category": "CQ1_TS구조탐색",
+      "question": "RAN5 전체 Spec별 Section 수 Top 5?",
+      "cypher": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN sp.specNumber, count(s) AS sectionCount ORDER BY sectionCount DESC LIMIT 5",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ2-1",
+      "category": "CQ2_TS간참조",
+      "question": "38.521-1-6.5D.3.3.5가 참조하는 다른 Section은?",
+      "cypher": "MATCH (rk:Spec {specNumber:'38.521-1'})<-[:BELONGS_TO_SPEC]-(a:Section {sectionNumber:'6.5D.3.3.5'}) WHERE rk.specRelease IS NOT NULL WITH a,rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (a)-[:REFERENCES_SECTION]->(b:Section) RETURN b.sectionId, b.sectionTitle ORDER BY b.sectionNumber LIMIT 25",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-2",
+      "category": "CQ2_TS간참조",
+      "question": "가장 많이 참조되는 Section Top 10?",
+      "cypher": "MATCH (a:Section)-[:REFERENCES_SECTION]->(b:Section) WITH b, count(a) AS refCount RETURN b.sectionId, b.sectionTitle, refCount ORDER BY refCount DESC LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ2-3",
+      "category": "CQ2_TS간참조",
+      "question": "가장 많이 참조하는 출발 Section Top 10?",
+      "cypher": "MATCH (a:Section)-[:REFERENCES_SECTION]->(b:Section) WITH a, count(b) AS outCount RETURN a.sectionId, outCount ORDER BY outCount DESC LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ2-4",
+      "category": "CQ2_TS간참조",
+      "question": "TS 간 참조 쌍별 참조 수 Top 10?",
+      "cypher": "MATCH (a:Section)-[:BELONGS_TO_SPEC]->(sa:Spec), (a)-[:REFERENCES_SECTION]->(b:Section)-[:BELONGS_TO_SPEC]->(sb:Spec) WHERE sa.specNumber <> sb.specNumber RETURN sa.specNumber AS fromSpec, sb.specNumber AS toSpec, count(*) AS refCount ORDER BY refCount DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-5",
+      "category": "CQ2_TS간참조",
+      "question": "38.521-1이 참조하는 Spec Top 5?",
+      "cypher": "MATCH (sp:Spec {specNumber: '38.521-1'}) WHERE sp.specRelease IS NOT NULL WITH sp ORDER BY toInteger(replace(sp.specRelease,'Rel-','')) DESC LIMIT 1 MATCH (a:Section)-[:BELONGS_TO_SPEC]->(sp), (a)-[:REFERENCES_SPEC]->(target:Spec) RETURN sp.specRelease AS specRelease, target.specNumber, count(*) AS refCount ORDER BY refCount DESC LIMIT 5",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-6",
+      "category": "CQ2_TS간참조",
+      "question": "Spec 간 REFERENCES_SPEC 쌍별 참조 수 Top 10?",
+      "cypher": "MATCH (rk:Spec) WHERE rk.specRelease IS NOT NULL WITH rk.specNumber AS n, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH n, collect(rk)[0] AS sa MATCH (a:Section)-[:BELONGS_TO_SPEC]->(sa), (a)-[:REFERENCES_SPEC]->(sb:Spec) WHERE sa.specNumber <> sb.specNumber RETURN sa.specNumber AS fromSpec, sa.specRelease AS fromRelease, sb.specNumber AS toSpec, count(*) AS refCount ORDER BY refCount DESC LIMIT 10",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ2-7",
+      "category": "CQ2_TS간참조",
+      "question": "38.533 내부 자기 참조 수?",
+      "cypher": "MATCH (a:Section)-[:BELONGS_TO_SPEC]->(sp:Spec {specNumber: '38.533'}), (a)-[:REFERENCES_SECTION]->(b:Section)-[:BELONGS_TO_SPEC]->(sp) RETURN count(*) AS internalRefs",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-8",
+      "category": "CQ2_TS간참조",
+      "question": "두 TS 간 참조 관계 (38.521-1 → 38.533)?",
+      "cypher": "MATCH (a:Section)-[:BELONGS_TO_SPEC]->(sa:Spec {specNumber: '38.521-1'}), (a)-[:REFERENCES_SECTION]->(b:Section)-[:BELONGS_TO_SPEC]->(sb:Spec {specNumber: '38.533'}) RETURN a.sectionId AS src, b.sectionId AS tgt LIMIT 10",
+      "expected_min_rows": 0,
+      "allow_zero": true,
+      "note": "2026-04-22 CQ 꼼수 감사 정정: 원본 count(*) 쿼리는 항상 1행 반환(min_rows 검증 무효화하는 설계 결함). 실제 참조 행을 반환하도록 수정. 38.521-1(1,179 Section) + 38.533(3,065 Section) 둘 다 존재하나 REFERENCES_SECTION 0건으로 0행이 정당."
+    },
+    {
+      "id": "CQ3-1",
+      "category": "CQ3_CR연결",
+      "question": "특정 CR이 수정한 TS는?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN cr.tdocNumber, sp.specNumber ORDER BY cr.tdocNumber DESC LIMIT 5",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-2",
+      "category": "CQ3_CR연결",
+      "question": "38.521-1을 수정한 CR이 소속된 TS Section 구조?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(hub:Spec {specNumber:'38.521-1'}) WHERE hub.specRelease IS NULL WITH hub, count(cr) AS crCount MATCH (rk:Spec)-[:IN_RELEASE_OF]->(hub) WITH hub, crCount, rk ORDER BY toInteger(replace(rk.specRelease,'Rel-','')) DESC WITH hub, crCount, collect(rk)[0] AS latestRk MATCH (latestRk)<-[:BELONGS_TO_SPEC]-(s:Section) RETURN hub.specNumber AS specNumber, crCount, count(s) AS sectionCount",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-3",
+      "category": "CQ3_CR연결",
+      "question": "38.521-1을 수정한 CR 목록(Top 10)?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ3-4",
+      "category": "CQ3_CR연결",
+      "question": "clausesAffected 있는 CR 수?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' AND cr.clausesAffected IS NOT NULL AND cr.clausesAffected <> '' RETURN count(cr) AS crCount",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-5",
+      "category": "CQ3_CR연결",
+      "question": "특정 Work Item 관련 CR이 수정한 TS 목록은?",
+      "cypher": "MATCH (cr:CR)-[:RELATED_TO]->(wi:WorkItem), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN wi.workItemCode, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-6",
+      "category": "CQ3_CR연결",
+      "question": "특정 회사가 수정한 TS 목록은?",
+      "cypher": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN c.companyName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ4-1",
+      "category": "CQ4_Resolution연결",
+      "question": "Conclusion이 다루거나 참조한 CR이 수정한 TS는?",
+      "cypher": "MATCH (res:Conclusion)-[:ABOUT_TDOC|REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN res.resolutionId, t.tdocNumber, sp.specNumber ORDER BY res.resolutionId DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ4-2",
+      "category": "CQ4_Resolution연결",
+      "question": "Conclusion 이 가장 많이 다룬 TS 를 수정한 CR 과 그 Conclusion 목록은? (Conclusion 이 다루거나 참조한 CR 기준)",
+      "cypher": "MATCH (r0:Conclusion)-[:ABOUT_TDOC|REFERENCES]->(:Tdoc)-[:MODIFIES]->(s0:Spec) WITH s0, count(DISTINCT r0) AS n ORDER BY n DESC, s0.specNumber DESC LIMIT 1 MATCH (res:Conclusion)-[:ABOUT_TDOC|REFERENCES]->(t:Tdoc)-[:MODIFIES]->(s0) RETURN s0.specNumber AS spec, res.resolutionId AS resolutionId, t.tdocNumber AS tdocNumber ORDER BY resolutionId DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ4-3",
+      "category": "CQ4_Resolution연결",
+      "question": "특정 회의의 Conclusion 이 다루거나 참조한 CR 이 수정한 TS 목록은?",
+      "cypher": "MATCH (res:Conclusion)-[:MADE_AT]->(m:Meeting), (res)-[:ABOUT_TDOC|REFERENCES]->(t:Tdoc)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH m.canonicalMeetingNumber AS meeting, sp.specNumber AS spec, count(DISTINCT t) AS crCount RETURN meeting, spec, crCount ORDER BY crCount DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ4-4",
+      "category": "CQ4_Resolution연결",
+      "question": "Resolution→CR 커버리지 (Conclusion이 다루거나 참조한 CR 수)?",
+      "cypher": "MATCH (res:Conclusion)-[:ABOUT_TDOC|REFERENCES]->(t:Tdoc:CR) RETURN count(DISTINCT res) AS resCount, count(DISTINCT t) AS crCount",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-1",
+      "category": "CQ5_통합분석",
+      "question": "38.521-1의 전체 변경 관련 CR 목록 (Top 10)?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber: '38.521-1'}) RETURN cr.tdocNumber, cr.title ORDER BY cr.tdocNumber DESC LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ5-2",
+      "category": "CQ5_통합분석",
+      "question": "특정 회사의 TS별 CR 기여 현황?",
+      "cypher": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' WITH c.companyName AS company, sp.specNumber AS spec, count(cr) AS cnt ORDER BY cnt DESC RETURN company, spec, cnt LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-3",
+      "category": "CQ5_통합분석",
+      "question": "특정 Release에서 변경된 TS 목록은?",
+      "cypher": "MATCH (cr:CR)-[:TARGET_RELEASE]->(rel:Release), (cr)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN rel.releaseName, sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-4",
+      "category": "CQ5_통합분석",
+      "question": "가장 많이 CR이 발생한 TS Top 5?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN sp.specNumber, count(cr) AS crCount ORDER BY crCount DESC LIMIT 5",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ5-5",
+      "category": "CQ5_통합분석",
+      "question": "전체 Section 수?",
+      "cypher": "MATCH (s:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN count(s) AS totalSections",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-6",
+      "category": "CQ5_통합분석",
+      "question": "전체 TSTable 수?",
+      "cypher": "MATCH (t:TSTable)-[:TABLE_IN_SECTION]->(sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN count(t) AS totalTables",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-7",
+      "category": "CQ5_통합분석",
+      "question": "전체 TSFigure 수?",
+      "cypher": "MATCH (f:TSFigure)-[:FIGURE_IN_SECTION]->(sec:Section)-[:BELONGS_TO_SPEC]->(sp:Spec) WHERE sp.specNumber STARTS WITH '38.5' RETURN count(f) AS totalFigures",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "P3-S8-CQ01",
+      "category": "CQ_Step8_EntityCount",
+      "question": "Phase-3 v3.0 entity 5 클래스 (RRCParameter / CapabilityItem / Procedure / PerformanceRequirement / ConformanceTest) 의 item-level 노드 카운트는?",
+      "cypher": "MATCH (n) WHERE any(l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest'])   AND n.granularity = 'item' RETURN [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']][0] AS class,        count(n) AS items ORDER BY items DESC"
+    },
+    {
+      "id": "P3-S8-CQ02",
+      "category": "CQ_Step8_DefinedInSection",
+      "question": "모든 item-level entity 노드가 :definedInSection 관계로 Section과 연결되어 있는가?",
+      "cypher": "MATCH (n) WHERE any(l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest'])   AND n.granularity = 'item' WITH n, exists((n)-[:definedInSection]->(:Section)) AS linked RETURN [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']][0] AS class,        count(n) AS total,        sum(CASE WHEN linked THEN 1 ELSE 0 END) AS linked,        round(100.0 * sum(CASE WHEN linked THEN 1 ELSE 0 END) / count(n), 1) AS link_pct"
+    },
+    {
+      "id": "P3-S8-CQ03",
+      "category": "CQ_Step8_FeatureRelations",
+      "question": "Feature → RRCParameter/CapabilityItem/Procedure 관계 (usesIE / hasCapability / hasProcedure) 가 적재되어 있는가?",
+      "cypher": "MATCH (f:Feature) OPTIONAL MATCH (f)-[r1:usesIE]->(:RRCParameter) OPTIONAL MATCH (f)-[r2:hasCapability]->(:CapabilityItem) OPTIONAL MATCH (f)-[r3:hasProcedure]->(:Procedure) WITH f, count(DISTINCT r1) AS ie_links, count(DISTINCT r2) AS cap_links, count(DISTINCT r3) AS proc_links RETURN f.name AS feature, ie_links, cap_links, proc_links ORDER BY ie_links + cap_links + proc_links DESC LIMIT 22",
+      "absent_by_design": [
+        "label:RRCParameter",
+        "label:CapabilityItem",
+        "label:Procedure",
+        "relationship:usesIE",
+        "relationship:hasCapability",
+        "relationship:hasProcedure"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN5/phase-3/design-spec/tdoc_ontology_specs(TS).md §2 Entity 클래스 적용 범위 (RAN5): RRCParameter · CapabilityItem · Procedure 는 RAN5 에 적재하지 않는다(UE 적합성 시험 spec 이라 IE 정의·protocol procedure 가 본문에 없다 — §5 적재 절차의 01_load_rrc_parameters.py(RAN1/4/5 0건) · 02_load_capability_items.py(RAN2 만) · 03_load_procedures.py(RAN1/2/3 만)). 그래서 usesIE · hasCapability · hasProcedure 의 끝점이 없다."
+    },
+    {
+      "id": "P3-S8-CQ04",
+      "category": "CQ_Step8_FeatureDisjoint",
+      "question": "Feature 사이의 disjointWith 관계 (LTM ⊥ CHO ⊥ CPC ⊥ CPAC 등) 가 feature_catalog.disjoint_feature_groups 와 정합한가?",
+      "cypher": "MATCH (a:Feature)-[:disjointWith]->(b:Feature) WHERE a.name < b.name RETURN a.name AS a, b.name AS b ORDER BY a, b"
+    },
+    {
+      "id": "P3-S8-CQ05",
+      "category": "CQ_Step8_GranularityDump",
+      "question": "Entity 5 클래스의 granularity property 분포는? (item-level v3.0 신규 vs section-level legacy)",
+      "cypher": "MATCH (n) WHERE any(l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']) RETURN [l IN labels(n) WHERE l IN ['RRCParameter','CapabilityItem','Procedure','PerformanceRequirement','ConformanceTest']][0] AS class,        coalesce(n.granularity, '<unset>') AS granularity,        count(n) AS c ORDER BY class, granularity"
+    },
+    {
+      "id": "P3-S8-CQ06",
+      "category": "CQ_Step8_CoreIE_Baseline",
+      "question": "Cross-cycle baseline IE (CodebookConfig-r16, LTM-Config-r18, BeamFailureRecoveryConfig, TCI-State) 가 :RRCParameter 노드로 존재하는가?",
+      "cypher": "UNWIND ['CodebookConfig-r16','LTM-Config-r18','BeamFailureRecoveryConfig','TCI-State','TCI-UL-State-r17','RadioLinkMonitoringConfig'] AS expected OPTIONAL MATCH (ie:RRCParameter {ieName: expected}) RETURN expected, ie IS NOT NULL AS found, ie.specNumber AS spec, ie.release AS release",
+      "absent_by_design": [
+        "label:RRCParameter",
+        "property:ieName",
+        "property:release"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN5/phase-3/design-spec/tdoc_ontology_specs(TS).md §2 Entity 클래스 적용 범위 (RAN5): RRCParameter 는 RAN5 에 적재하지 않는다(spec 본문에 IE 정의가 없다 — §5 적재 절차의 01_load_rrc_parameters.py 는 RAN1/4/5 에서 0건). 그 선택 속성 release 도 같은 이유로 없다."
+    },
+    {
+      "id": "P3-S8-CQ07",
+      "category": "CQ_Step8_LTM_Capabilities",
+      "question": "Cycle-02 D-B baseline — 28 LTM capability items 이 :CapabilityItem 노드로 적재되어 있는가?",
+      "cypher": "MATCH (cap:CapabilityItem) WHERE cap.capabilityItemName STARTS WITH 'ltm-' AND cap.granularity = 'item' RETURN count(cap) AS ltm_cap_count, collect(cap.capabilityItemName)[..10] AS sample",
+      "absent_by_design": [
+        "label:CapabilityItem",
+        "property:capabilityItemName"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN5/phase-3/design-spec/tdoc_ontology_specs(TS).md §2 Entity 클래스 적용 범위 (RAN5): CapabilityItem 은 RAN5 에 적재하지 않는다(§5 적재 절차의 02_load_capability_items.py 는 RAN2 만 실 적재)."
+    },
+    {
+      "id": "P3-S8-CQ08",
+      "category": "CQ_Step8_FeatureCatalogParity",
+      "question": "feature_catalog.yaml 22 features 가 모두 :Feature 노드로 적재되어 있는가?",
+      "cypher": "MATCH (f:Feature) RETURN count(f) AS feature_count, collect(f.name)[..30] AS feature_names ORDER BY feature_count DESC"
+    }
+  ]
+}

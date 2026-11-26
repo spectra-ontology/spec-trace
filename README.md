@@ -2,7 +2,7 @@
 
 This package provides the query graph of five 3GPP Radio Access Network working groups in JSON-LD and SQLite, the vocabulary and constraints it instantiates, 667 admitted chain questions, stored model responses, scores, and executable build and checking tools. The graph connects contributions, target-specific dispositions, meetings, CR packs and clauses. Its measured footprint is in `sources/released_record_counts.json`.
 
-The source documents are identified by archive path, SHA-256 and locator. The package distributes their structured projection; `restore/` retrieves the cited reports and rehydrates source passages locally. Original disposition statuses describe the source graph. Local rehydration supplies the quote fields used by evidence-shape validation.
+The source documents are identified by archive path, SHA-256 and locator. The record projection supports the chain benchmark; the separate CQ input views preserve the process structure and fields consumed by all 654 competency queries. For disposition-evidence validation, `restore/` retrieves the cited reports and rehydrates the quote fields locally. Original disposition statuses describe the source graph.
 
 ## Start with the published results
 
@@ -27,6 +27,8 @@ Each study preserves its own inputs, complete outputs and execution receipts. Ch
 
 | Study | Reuse | Recorded result |
 |---|---|---|
+| [First-submission accounting](studies/first_response_cost/README.md) | Anonymous completion/usage ledger bound to original answers and initial query execution | Recomputes all 220 headline batches, separating later repair activity; record-query processed inputs are 2.25% (SQL) and 1.89% (Cypher) of raw search per batch item. |
+| [Disposition readings](studies/disposition_reading/README.md) and [finite identity inspection](studies/disposition_reading/finite_identity/README.md) | Frozen samples, both readers, source-packet reconstruction and accurately attributed follow-ups | Reproduces 997 supported/3 jointly contradicted records among 1,000; separately inspects all 233 identity-dependent disposition cases used by 99 main items. |
 | [Operator pilot](studies/operator_pilot/README.md) | Six analytical operations across five WGs | One schema-and-domain first submission answers 30/30 authored items. |
 | [Scope-value replay](studies/scope_intervention/README.md) | A one-literal intervention on fixed saved queries | All 298 preclassified scope failures recover their gold sets. |
 | [Semantic witnesses](studies/semantic_witnesses/README.md) and [anchor comparison](studies/witness_selection_value/README.md) | Data that distinguish grouping, set, tie and composition errors | In the same 66 available cells, witness selection detects 162/200 fixed controls versus 93/200 under the hash baseline. |
@@ -48,13 +50,13 @@ For the [full-candidate policy census](studies/witness_selection_value/full_cand
 | `ontology/` | The internal 7.3.0 vocabulary and SHACL snapshots used during construction. |
 | `docs/` | The package vocabulary 1.2.0, 44 companion SHACL shapes, documentation and build provenance. Current term sets match the internal snapshot. |
 | `metadata/` | [DCAT and VoID descriptions](metadata/dcat_void.ttl) and [archived body-graph descriptions](metadata/archived_body_graphs.ttl) of the package and its 57 RDF/SQLite distributions, with paths, formats, sizes and rights scopes; annotation normalization code. |
-| `benchmark/` | 670 drawn main items, their 667 admitted items and gate reports; fixed anchors; 300 drawn five-hop items and 297 admitted items. |
+| `benchmark/` | 670 drawn main items, their 667 admitted items and gate reports; fixed anchors; 300 drawn order-extension items and 297 admitted items; [family answer contract](benchmark/ANSWER_CONTRACT.md) and [archived task exposure](benchmark/task_exposure/README.md). |
 | `abstention/` | 160 abstention items, checks, packets, stored responses and scores, in 133 files. |
 | `responses/` | 3,052 stored response, query, score and analysis files. |
 | `diagnosis/` | Per-item diagnoses for the main and five-hop conditions, with source-locator follow-up evidence. |
 | `code/` | Measurement scripts and their repository dependencies, plus analysis scripts and results. `code_manifest.json` lists each shipped source and hash. |
 | `receipts/` | Ten target-identity review receipts. |
-| `sources/competency_queries/index.json` | 25 sanitized original graph execution receipts: 644 PASS and 10 NO_DATA, with source and projected-file hashes. |
+| `sources/competency_queries/` | [Executable CQ contract and graph views](restore/competency_queries/README.md): 25 original definition sets, 654 queries/assertions, five restorable input graphs and original/fresh execution receipts. |
 | `sources/manifest.jsonl` | URLs and hashes for 280 cited reports and their conversions. |
 | `sources/disposition_bindings.jsonl.gz` | 358,062 text-free quote-hash receipts, decision spans and source-field locators. |
 | `restore/source_links/` | Official archive/member manifests, native and reconstructed CR-form checkers, and receipts for the 604 distinct CR–clause pairs in the main benchmark. |
@@ -200,8 +202,8 @@ Text copied from source documents and personal/company attributions are represen
 
 The packaged vocabulary and stored outcomes can be recounted with `python3 restore/recount_resources.py --release . --out work/resource_counts.json`.
 
-The original loaded-graph competency-query receipts are indexed in [sources/competency_queries/index.json](sources/competency_queries/index.json). They retain identifiers, outcomes, counts, guard checks and project-authored queries, with original-file and projected-file hashes. Their scope is the original loaded process graph; these stored outcomes are separate from the fresh benchmark gate over the released query projection. Raw answer samples and source-text fields stay in the original receipts.
+The [CQ reconstruction guide](restore/competency_queries/README.md) supplies all 25 original definition sets and 654 query/assertion contracts, five graph views and empty-database restore/run commands. The [recorded source/restored runs](sources/competency_queries/reproduction/README.md) each give 644 PASS and 10 NO_DATA, with matching statuses, guards and row counts; the [five-WG summary](sources/competency_queries/reproduction/summary.json) binds their inputs and evidence. Strict comparisons retain 50 row-multiset differences and 92 ordered-row differences; full-population diagnostics identify the relevant LIMIT ties, unordered selections and collection order. The [historical index](sources/competency_queries/index.json) preserves the 25 archived receipts and their original bindings separately.
 
 The namespace is `https://w3id.org/spectra#`. The first release links its ontology and shapes in the companion GitHub repository; DOI [10.5281/zenodo.20034872](https://doi.org/10.5281/zenodo.20034872) archives its five WG body graphs. Package version 1.2.0 on the `vldb-2027` branch supplies the current ontology, shapes and benchmark artifacts. It retains the preceding public creator, publisher, issue date, license and namespace metadata and supplies the current 37 named classes, 86 object properties, 112 datatype properties, 44 node shapes and 16 disposition codes. `docs/ontology_build.json` records the source snapshots and their hashes. This resource package is available on the repository’s `vldb-2027` branch.
 
-Project-authored material and structural record projections use CC BY 4.0 ([LICENSE](LICENSE)). Cite the author and manuscript listed in `CITATION.cff`. Source-derived metadata in reconstruction recipes, short contextual correspondence excerpts, restored 3GPP documents and locally rehydrated passages retain their original rights; the license describes these scopes. Earlier archived releases remain associated with the concept DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871); this preparation creates no new DOI.
+Project-authored material and structural record projections use CC BY 4.0 ([LICENSE](LICENSE)). Cite the author and manuscript listed in `CITATION.cff`. Source-derived metadata, contextual correspondence excerpts and the whitelisted fields of the CQ input views retain their original rights. The CQ views include process metadata and Resolution-family report passages; documents fetched by the restoration workflows and their locally rehydrated passages retain their source terms. Earlier archived releases remain associated with the concept DOI [10.5281/zenodo.20034871](https://doi.org/10.5281/zenodo.20034871); this preparation creates no new DOI.

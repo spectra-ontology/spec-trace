@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "wg": "RAN5",
+    "phase": 5,
+    "neo4j_uri": "bolt://localhost:7691",
+    "total_cqs": 18,
+    "description": "RAN5 Phase-5 TR Ontology CQ — 38.903, 38.905, 38.918"
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "description": "RAN5 TR 전체 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport) RETURN tr.trNumber, tr.trTitle, tr.trStatus ORDER BY tr.trNumber",
+      "expected_min_rows": 3
+    },
+    {
+      "id": "CQ1-2",
+      "description": "특정 TR(38.903)의 Scope는?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.903'}) RETURN tr.trNumber, tr.scope",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-3",
+      "description": "특정 TR(38.918)의 Conclusions는?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.918'}) WHERE tr.conclusions IS NOT NULL RETURN tr.trNumber, tr.conclusions",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-4",
+      "description": "Completed 상태인 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport) WHERE tr.trStatus = 'Completed' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber",
+      "expected_min_rows": 3
+    },
+    {
+      "id": "CQ2-1",
+      "description": "특정 TR(38.903)이 영향 준 TS 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.903'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType, imp.verifiedImpactScope ORDER BY s.specNumber",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ2-2",
+      "description": "특정 TR(38.905)의 ImpactType은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.905'})-[:HAS_TR_IMPACT]->(imp:TRImpact) RETURN imp.impactType, imp.impactDescription, imp.evidenceStatus, imp.verifiedImpactScope",
+      "expected_min_rows": 1,
+      "claim_contract": "Stored claim inventory: return the declared impact type together with evidenceStatus; pending/rejected records are not established incorporation."
+    },
+    {
+      "id": "CQ2-3",
+      "description": "ExtendSection으로 영향 준 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'ExtendSection', evidenceStatus: 'source_verified', verifiedImpactScope: 'existing_section_change'}) RETURN DISTINCT tr.trNumber, tr.trTitle ORDER BY tr.trNumber",
+      "expected_min_rows": 2,
+      "claim_contract": "The proposed impactType is retained. This factual operation query requires the independently source-assessed verifiedImpactScope; published definition/analysis reuse alone does not establish creation or extension."
+    },
+    {
+      "id": "CQ2-4",
+      "description": "NoChange TR 목록은? (study only)",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'NoChange', evidenceStatus: 'source_verified', verifiedImpactScope: 'explicit_no_change'}) RETURN DISTINCT tr.trNumber, tr.trTitle ORDER BY tr.trNumber",
+      "expected_min_rows": 1,
+      "claim_contract": "The proposed impactType is retained. This factual operation query requires the independently source-assessed verifiedImpactScope; published definition/analysis reuse alone does not establish creation or extension."
+    },
+    {
+      "id": "CQ2-5",
+      "description": "특정 TS(38.521-1)에 영향 준 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.521-1'}) RETURN tr.trNumber, imp.impactType, imp.verifiedImpactScope ORDER BY tr.trNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-1",
+      "description": "TR 38.903이 어떤 TS에 영향을 미쳤는가?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.903'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec) RETURN tr.trNumber, s.specNumber, imp.impactType, imp.impactDescription, imp.verifiedImpactScope ORDER BY s.specNumber",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ3-2",
+      "description": "TR 38.905가 어떤 TS에 영향을 미쳤는가?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.905'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec) RETURN tr.trNumber, s.specNumber, imp.impactType, imp.impactDescription, imp.verifiedImpactScope ORDER BY s.specNumber",
+      "expected_min_rows": 3
+    },
+    {
+      "id": "CQ3-3",
+      "description": "TR 38.918의 연구 결과는? (NoChange)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.918'}) OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(imp:TRImpact) RETURN tr.trNumber, tr.trTitle, tr.conclusions, imp.impactType, imp.impactDescription, imp.evidenceStatus, imp.verifiedImpactScope",
+      "expected_min_rows": 1,
+      "claim_contract": "Research conclusions are source text. The stored NoChange claim is returned with its actual evidenceStatus; it does not establish a bounded negative claim."
+    },
+    {
+      "id": "CQ4-1",
+      "description": "Rel-19를 타겟으로 하는 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-19'}) RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ4-2",
+      "description": "38.521-1을 영향 준 TR과 영향 유형은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.521-1'}) RETURN tr.trNumber, imp.impactType, imp.verifiedImpactScope ORDER BY tr.trNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ4-3",
+      "description": "38.533을 영향 준 TR과 영향 유형은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.533'}) RETURN tr.trNumber, imp.impactType, imp.verifiedImpactScope ORDER BY tr.trNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-1",
+      "description": "특정 TR이 참조하는 다른 TR 목록은? (38.903)",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.903'})-[:REFERENCES_TR]->(ref:TechnicalReport) RETURN ref.trNumber, ref.trTitle ORDER BY ref.trNumber",
+      "expected_min_rows": 0,
+      "allow_zero": true,
+      "note": "RAN5 TR 간 상호 인용 0 건(P5-V09) — 판정 근거는 absent_by_design_basis.",
+      "question": "38.903이 참조하는 다른 TR은? (outgoing REFERENCES_TR)",
+      "absent_by_design": [
+        "relationship:REFERENCES_TR"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN5/phase-5/design-spec/tdoc_ontology_specs(TR).md P5-V09: RAN5 TR 3개(38.903 · 38.905 · 38.918)의 References 절에 서로를 가리키는 TR 인용이 없어 referencesTR 인스턴스가 0 이다 — 생산자 scripts/tsg/RAN/formal/RAN5/phase-5/tr-parser/01_parse_tr_docs.py 의 extract_tr_references 산출 ontology/output/tsg/RAN/formal/parsed_tr/RAN5/tr_documents.json 에서 세 TR 모두 referencesTR = []. 간선이 0 이면 Neo4j 에 관계 타입이 생기지 않는다. 인용이 생겨 적재되면 이 선언이 결함으로 뜬다."
+    },
+    {
+      "id": "CQ5-2",
+      "description": "특정 TR을 참조하는 다른 TR 목록은? (38.905)",
+      "cypher": "MATCH (src:TechnicalReport)-[:REFERENCES_TR]->(tr:TechnicalReport {trNumber: '38.905'}) RETURN src.trNumber, src.trTitle ORDER BY src.trNumber",
+      "expected_min_rows": 0,
+      "allow_zero": true,
+      "note": "RAN5 TR 간 상호 인용 0 건(P5-V09) — 판정 근거는 absent_by_design_basis.",
+      "question": "38.905를 참조하는 다른 TR은? (incoming REFERENCES_TR / 역참조)",
+      "absent_by_design": [
+        "relationship:REFERENCES_TR"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN5/phase-5/design-spec/tdoc_ontology_specs(TR).md P5-V09: RAN5 TR 3개(38.903 · 38.905 · 38.918)의 References 절에 서로를 가리키는 TR 인용이 없어 referencesTR 인스턴스가 0 이다 — 생산자 scripts/tsg/RAN/formal/RAN5/phase-5/tr-parser/01_parse_tr_docs.py 의 extract_tr_references 산출 ontology/output/tsg/RAN/formal/parsed_tr/RAN5/tr_documents.json 에서 세 TR 모두 referencesTR = []. 간선이 0 이면 Neo4j 에 관계 타입이 생기지 않는다. 인용이 생겨 적재되면 이 선언이 결함으로 뜬다."
+    },
+    {
+      "id": "CQ5-3",
+      "description": "가장 많이 참조되는 TR Top N은?",
+      "cypher": "MATCH (src:TechnicalReport)-[:REFERENCES_TR]->(tr:TechnicalReport) RETURN tr.trNumber, count(src) AS refCount ORDER BY refCount DESC LIMIT 10",
+      "expected_min_rows": 0,
+      "allow_zero": true,
+      "note": "RAN5 TR 간 상호 인용 0 건(P5-V09) — 판정 근거는 absent_by_design_basis.",
+      "question": "가장 많이 참조되는 TR은? (REFERENCES_TR 피인용 순위)",
+      "absent_by_design": [
+        "relationship:REFERENCES_TR"
+      ],
+      "absent_by_design_basis": "docs/tsg/RAN/formal/RAN5/phase-5/design-spec/tdoc_ontology_specs(TR).md P5-V09: RAN5 TR 3개(38.903 · 38.905 · 38.918)의 References 절에 서로를 가리키는 TR 인용이 없어 referencesTR 인스턴스가 0 이다 — 생산자 scripts/tsg/RAN/formal/RAN5/phase-5/tr-parser/01_parse_tr_docs.py 의 extract_tr_references 산출 ontology/output/tsg/RAN/formal/parsed_tr/RAN5/tr_documents.json 에서 세 TR 모두 referencesTR = []. 간선이 0 이면 Neo4j 에 관계 타입이 생기지 않는다. 인용이 생겨 적재되면 이 선언이 결함으로 뜬다."
+    }
+  ]
+}

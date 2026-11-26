@@ -1,0 +1,31 @@
+{
+  "purpose": "Measure how often a source_verified disposition record states what its cited meeting-report text says about the target document, using readers who never see the record's code or scope.",
+  "fixedBeforeReading": true,
+  "seed": "m4-source-adjudication",
+  "population": "decision_dispositions.jsonld per WG (RAN1 to RAN5) under ontology/output/tsg/RAN/formal/instances/phase-2",
+  "sets": {
+    "random_verified": "Per WG, the 200 source_verified records with the smallest SHA-256(seed + '|' + dispositionId). Primary estimate of record accuracy.",
+    "random_pending": "Per WG, the 20 pending records with the smallest SHA-256(seed + '|pending|' + dispositionId). Describes what the pending share holds; not part of the accuracy estimate.",
+    "reread_differences": "Every record listed in final/decision_disposition_reread_differences.json. Diagnostic; reported separately."
+  },
+  "packet": {
+    "shown": "target document number, meeting report file name, the body blocks from four before the record's span to four after it, with the span blocks marked, read from the accepted text of the hashed source file",
+    "withheld": "dispositionCode, scope, evidenceQuote, rule name, evidenceStatus, set membership",
+    "blockCap": "a block longer than 4000 characters is cut to 4000 characters centred on the first mention of the target number, and the cut is marked",
+    "hashCheck": "a record whose source file hash differs from evidenceSha256 is not packeted and is counted"
+  },
+  "readers": {
+    "A": "Claude Code subagent, one session per part, codebook and packets only",
+    "B": "Codex CLI (gpt-6.1-sol) exec session, one per part, codebook and packets only",
+    "independence": "Each reader sees only its prompt, the codebook and its part file. Readers never see each other's output or the keys."
+  },
+  "readerOutput": "per packet: code (one of the 16 codes or cannot_tell), scope (whole_target, subdocument or undetermined), and the sentence of the text that decides it",
+  "comparison": {
+    "agreement": "Reader A against reader B on code: raw agreement and Cohen's kappa, per set and per WG.",
+    "recordWrong": "A random_verified record counts as contradicted when both readers give the same code, neither gives cannot_tell, and that code differs from the record. Every contradicted record and every record where exactly one reader differs is then read by the authors in the source and classified as record error, reader error or codebook boundary.",
+    "recordSupported": "A record counts as supported when at least one reader gives its code and the other does not contradict it with a different shared code.",
+    "bounds": "Exact Clopper-Pearson 95% intervals for the contradicted share per WG and pooled over the 1000 random_verified packets; the pooled share is also reported weighted by each WG's source_verified population.",
+    "scope": "Scope agreement is reported the same way for records whose code is supported."
+  },
+  "notMeasured": "Records outside the cited span (a decision stated elsewhere in the report) are outside this test; the test asks whether the cited text supports the record."
+}

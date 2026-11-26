@@ -19,6 +19,8 @@ Record hops describe each family's construction contract. A solver may answer th
 
 Seven main family labels include an empty-gold variant of pack lookup. The three extension families add clause-set comparison and meeting-order conditions. Main and extension results retain their separate analysis scopes.
 
+The [family answer contract](benchmark/ANSWER_CONTRACT.md) defines each family's record universe, identity, eligibility, clause and ordering rules. Its executable checker compares all 964 main/extension gold sets in both record directions and exercises meaning-changing boundary cases. The [historical task-exposure audit](benchmark/task_exposure/README.md) records the actual instructions supplied to the original solvers.
+
 ## Main-workload structure and answer contract
 
 The 667 main items use 667 distinct working-group/anchor pairs. Of the 581 answerable items, 411 return one row. Row count measures output size; the inventory separately records the actual directed revision path when `--check-snapshot-contract` is selected.

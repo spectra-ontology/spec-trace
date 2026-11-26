@@ -1,0 +1,122 @@
+{
+  "metadata": {
+    "version": "3.0",
+    "created": "2026-10-13",
+    "description": "Phase-4 CQ 15개 — 최신 데이터 우선·페르소나 시나리오 기반 CR 변경근거·Cross-Spec·CRPack·연계분석",
+    "spec": "tdoc_ontology_specs(CR).md §3",
+    "categories": [
+      "CQ1_CR변경근거",
+      "CQ2_CrossSpec영향",
+      "CQ3_CRPack분석",
+      "CQ4_연계분석"
+    ],
+    "neo4j_version": "5.x",
+    "ontology_version": "5.0.0",
+    "sort_rules": {
+      "CQ1": "N/A (단일 조회)",
+      "CQ2": "영향 Spec 수 DESC, Spec 번호 ASC",
+      "CQ3": "TSG Meeting DESC, CR 수 DESC",
+      "CQ4": "Meeting 번호 DESC, CR 번호 ASC"
+    },
+    "personas": [
+      "표준 엔지니어: CR 변경 근거·영향 분석",
+      "WG 의장/라포르터: CRPack 구성·회의 결과 종합",
+      "시스템 아키텍트: Cross-Spec 연쇄 영향 파악",
+      "기업 대표: 자사 기고문의 Cross-Spec 영향 추적"
+    ]
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "category": "CQ1_CR변경근거",
+      "question": "LP-WUS/WUR 도입을 위해 5개 Spec에 영향을 주는 CR R1-2504971의 변경이 필요한 구체적 이유는 무엇인가?",
+      "cypher": "MATCH (cr:CR {tdocNumber: 'R1-2504971'}) WHERE cr.reasonForChange IS NOT NULL RETURN cr.tdocNumber, cr.reasonForChange"
+    },
+    {
+      "id": "CQ1-2",
+      "category": "CQ1_CR변경근거",
+      "question": "Rel-19 UL Tx switching 3Tx UE 시나리오 도입 관련 CR R1-2506685의 변경 내용 요약은 무엇인가?",
+      "cypher": "MATCH (cr:CR {tdocNumber: 'R1-2506685'}) WHERE cr.summaryOfChange IS NOT NULL RETURN cr.tdocNumber, cr.summaryOfChange"
+    },
+    {
+      "id": "CQ1-3",
+      "category": "CQ1_CR변경근거",
+      "question": "Rel-19 LP-WUS/WUR(NR_LPWUS-Core) Work Item 관련 CR들이 승인되지 않으면 어떤 영향이 발생하는가?",
+      "cypher": "MATCH (cr:CR)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_LPWUS-Core'}) WHERE cr.consequencesIfNotApproved IS NOT NULL RETURN cr.tdocNumber, cr.consequencesIfNotApproved ORDER BY cr.tdocNumber DESC"
+    },
+    {
+      "id": "CQ2-1",
+      "category": "CQ2_CrossSpec영향",
+      "question": "CR R1-2504971이 영향을 주는 5개 Spec 목록과 각 Spec에 대한 영향 관계 유형(Core/Test/OM)은?",
+      "cypher": "MATCH (cr:CR {tdocNumber: 'R1-2504971'})-[r:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) RETURN cr.tdocNumber, sp.specNumber, type(r) AS relationType ORDER BY sp.specNumber ASC"
+    },
+    {
+      "id": "CQ2-2",
+      "category": "CQ2_CrossSpec영향",
+      "question": "38.214를 수정하는 CR들이 가장 많이 Cross-Spec 영향을 주는 다른 Spec은 무엇이며, 각각 몇 건의 CR이 영향을 주는가?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(mainSpec:Spec {specNumber: '38.214'}) MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(otherSpec:Spec) WHERE mainSpec <> otherSpec RETURN mainSpec.specNumber AS modifiedSpec, otherSpec.specNumber AS affectedSpec, count(DISTINCT cr) AS crCount ORDER BY crCount DESC"
+    },
+    {
+      "id": "CQ2-3",
+      "category": "CQ2_CrossSpec영향",
+      "question": "38.214를 Cross-Spec 영향 대상으로 참조하는 CR은 총 몇 건이며, 대표적인 CR 번호는?",
+      "cypher": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec {specNumber: '38.214'}) WITH sp, collect(cr.tdocNumber) AS crList, count(cr) AS crCount RETURN sp.specNumber, crCount, crList[..10] AS sampleCRs"
+    },
+    {
+      "id": "CQ2-4",
+      "category": "CQ2_CrossSpec영향",
+      "question": "Cross-Spec 영향 범위가 가장 넓은 CR Top 10은 무엇이며, 각 CR이 영향을 주는 Spec 수와 목록은?",
+      "cypher": "MATCH (cr:CR)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) RETURN cr.tdocNumber, count(DISTINCT sp) AS affectedSpecCount, collect(DISTINCT sp.specNumber) AS affectedSpecs ORDER BY affectedSpecCount DESC, cr.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ3-1",
+      "category": "CQ3_CRPack분석",
+      "question": "RAN#109에 제출된 CRPack RP-252634에 포함된 CR 목록과 각 CR의 변경 요약은?",
+      "cypher": "MATCH (pack:CRPack {crPackId: 'RP-252634'})-[:HAS_CR]->(cr:CR) RETURN pack.crPackId, pack.tsgMeeting, cr.tdocNumber, cr.summaryOfChange ORDER BY cr.tdocNumber ASC"
+    },
+    {
+      "id": "CQ3-2",
+      "category": "CQ3_CRPack분석",
+      "question": "NR 초기 규격(NR_newRAT-Core) Work Item의 CR들이 어떤 CR Pack들에 묶여 TSG에 제출되었는가?",
+      "cypher": "MATCH (cr:CR)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_newRAT-Core'}) MATCH (cr)-[:BELONGS_TO_CR_PACK]->(pack:CRPack) RETURN wi.workItemCode, pack.crPackId, pack.tsgMeeting, count(cr) AS crCount ORDER BY toInteger(split(pack.tsgMeeting, '#')[1]) DESC, crCount DESC LIMIT 15"
+    },
+    {
+      "id": "CQ3-3",
+      "category": "CQ3_CRPack분석",
+      "question": "RAN#109 회의에 제출된 CR Pack 목록과 각 Pack에 포함된 CR 수는?",
+      "cypher": "MATCH (pack:CRPack)-[:HAS_CR]->(cr:CR) WHERE pack.tsgMeeting = 'RAN#109' RETURN pack.tsgMeeting, pack.crPackId, count(cr) AS crCount ORDER BY crCount DESC"
+    },
+    {
+      "id": "CQ4-1",
+      "category": "CQ4_연계분석",
+      "question": "38.214 Section 5.1.5 (PDSCH MIMO 관련)를 변경하는 최근 CR들의 변경 이유 패턴은 무엇인가? (최근 최다 수정 Section)",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES_SECTION]->(sec:Section {sectionNumber: '5.1.5'})-[:BELONGS_TO_SPEC]->(:Spec {specNumber: '38.214'}) WHERE cr.reasonForChange IS NOT NULL RETURN sec.sectionId, cr.tdocNumber, cr.reasonForChange ORDER BY cr.tdocNumber DESC LIMIT 15"
+    },
+    {
+      "id": "CQ4-2",
+      "category": "CQ4_연계분석",
+      "question": "Resolution AGR-115-7.1-004가 승인한 CR들의 변경 근거와 변경 내용 요약은?",
+      "cypher": "MATCH (res:Resolution {resolutionId: 'AGR-115-7.1-004'})-[:HAS_DISPOSITION]->(:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(cr:CR) RETURN res.resolutionId, cr.tdocNumber, cr.reasonForChange, cr.summaryOfChange ORDER BY cr.tdocNumber ASC",
+      "approval_contract": "Target-level dispositionCode=agreed + evidenceStatus=source_verified, bound to the exact Resolution and source span; REFERENCES and global document status do not assert approval."
+    },
+    {
+      "id": "CQ4-3",
+      "category": "CQ4_연계분석",
+      "question": "NR MIMO Evolution(NR_MIMO_evo_DL_UL-Core) Work Item의 CR들이 변경한 TS Section 전체 목록과 각 변경 이유는?",
+      "cypher": "MATCH (cr:CR)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_MIMO_evo_DL_UL-Core'}) MATCH (cr)-[:MODIFIES_SECTION]->(sec:Section) WHERE cr.reasonForChange IS NOT NULL RETURN wi.workItemCode, sec.sectionId, cr.tdocNumber, cr.reasonForChange ORDER BY cr.tdocNumber DESC, sec.sectionId ASC LIMIT 15"
+    },
+    {
+      "id": "CQ4-4",
+      "category": "CQ4_연계분석",
+      "question": "Samsung이 제출한 CR 중 Cross-Spec 영향이 있는 최근 건들의 영향 Spec 분포 패턴은? (최다 Cross-Spec 기업, 최신 우선)",
+      "cypher": "MATCH (cr:CR)-[:SUBMITTED_BY]->(co:Company {companyName: 'Samsung'}) MATCH (cr)-[:AFFECTS_CORE_SPEC|AFFECTS_TEST_SPEC|AFFECTS_OM_SPEC]->(sp:Spec) RETURN co.companyName, cr.tdocNumber, collect(DISTINCT sp.specNumber) AS affectedSpecs ORDER BY cr.tdocNumber DESC LIMIT 15"
+    },
+    {
+      "id": "CQ4-5",
+      "category": "CQ4_연계분석",
+      "question": "RAN1#121 회의에서 합의된 CR들의 변경 요약 종합은? (summaryOfChange 를 가진 CR 18건)",
+      "cypher": "MATCH (res:Resolution)-[:MADE_AT]->(m:Meeting {meetingNumber: 'RAN1#121'}) MATCH (res)-[:HAS_DISPOSITION]->(:DecisionDisposition {dispositionCode: 'agreed', evidenceStatus: 'source_verified'})-[:DISPOSITION_TARGET]->(cr:CR) WHERE cr.summaryOfChange IS NOT NULL RETURN m.meetingNumber, res.resolutionId, cr.tdocNumber, cr.summaryOfChange ORDER BY cr.tdocNumber DESC LIMIT 15",
+      "approval_contract": "Target-level dispositionCode=agreed + evidenceStatus=source_verified, bound to the exact Resolution and source span; REFERENCES and global document status do not assert approval."
+    }
+  ]
+}

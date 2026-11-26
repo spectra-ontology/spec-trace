@@ -1,0 +1,119 @@
+{
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "description": "특정 릴리스(Rel-17)에서 완료된 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-17'}) WHERE tr.trStatus = 'Completed' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ1-2",
+      "description": "특정 TR(38.803)의 Scope는?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.803'}) RETURN tr.trNumber, tr.scope",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-3",
+      "description": "특정 TR(38.785)의 Conclusions는?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.785'}) WHERE tr.conclusions IS NOT NULL RETURN tr.trNumber, tr.conclusions",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-4",
+      "description": "현재 진행 중(Draft)인 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport) WHERE tr.trStatus = 'Draft' RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-1",
+      "description": "특정 TR(38.803)이 영향 준 TS 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType, imp.verifiedImpactScope ORDER BY s.specNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-2",
+      "description": "특정 TR(38.860)의 ImpactType은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.860'})-[:HAS_TR_IMPACT]->(imp:TRImpact) RETURN imp.impactType, imp.impactDescription, imp.evidenceStatus, imp.verifiedImpactScope",
+      "expected_min_rows": 1,
+      "claim_contract": "Stored claim inventory: return the declared impact type together with evidenceStatus; pending/rejected records are not established incorporation."
+    },
+    {
+      "id": "CQ2-3",
+      "description": "새로운 TS를 만든 TR 목록은? (NewTS)",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'NewTS', evidenceStatus: 'source_verified', verifiedImpactScope: 'new_specification'})-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber, tr.trTitle, s.specNumber ORDER BY tr.trNumber",
+      "expected_min_rows": 1,
+      "claim_contract": "The proposed impactType is retained. This factual operation query requires the independently source-assessed verifiedImpactScope; published definition/analysis reuse alone does not establish creation or extension."
+    },
+    {
+      "id": "CQ2-4",
+      "description": "섹션을 확장한 TR 목록은? (ExtendSection, RAN4 impactType 실측)",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact {impactType: 'ExtendSection', evidenceStatus: 'source_verified', verifiedImpactScope: 'existing_section_change'})-[:IMPACTS_SPEC]->(s:Spec) RETURN DISTINCT tr.trNumber, s.specNumber ORDER BY tr.trNumber LIMIT 20",
+      "expected_min_rows": 1,
+      "note": "2026-04-22 CQ 감사 결과에 따른 정정: 원본 'NewSection' 쿼리는 RAN4 데이터에 존재하지 않음(RAN4 impactType 실측 ExtendSection=64, NewTS=4 / NewSection=0). RAN1 sed 복사 흔적으로 판단. RAN4 실제 데이터(ExtendSection)로 재설계.",
+      "claim_contract": "The proposed impactType is retained. This factual operation query requires the independently source-assessed verifiedImpactScope; published definition/analysis reuse alone does not establish creation or extension."
+    },
+    {
+      "id": "CQ2-5",
+      "description": "특정 TS(38.101-1)에 영향 준 TR 목록은? (역방향)",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.101-1'}) RETURN DISTINCT tr.trNumber, tr.trTitle, imp.impactType, imp.verifiedImpactScope ORDER BY tr.trNumber",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ3-1",
+      "description": "NR RF 연구 TR 38.803이 어떤 TS에 영향을 미쳤는가?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.803'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType, imp.impactDescription, imp.verifiedImpactScope ORDER BY s.specNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-2",
+      "description": "7–24 GHz 주파수 범위 연구 TR 38.820이 TS에 미친 영향은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.820'}) OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec) RETURN tr.trNumber, tr.trStatus, s.specNumber, imp.impactType, imp.verifiedImpactScope",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-3",
+      "description": "NTN RF 연구 TR 38.863이 TS에 미친 영향과 상세 내용은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.863'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec) RETURN s.specNumber, imp.impactType, imp.impactDescription, imp.verifiedImpactScope ORDER BY s.specNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ4-1",
+      "description": "Rel-17을 타겟으로 하는 TR 연구 목록과 영향 유형은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-17'}) OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'}) RETURN tr.trNumber, tr.trTitle, collect(DISTINCT imp.impactType) AS impactTypes, collect(DISTINCT imp.verifiedImpactScope) AS verifiedScopes ORDER BY tr.trNumber",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ4-2",
+      "description": "IAB RF 연구(TR 38.809)의 현재 진행 상태와 연구 범위는?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.809'}) RETURN tr.trNumber, tr.trStatus, tr.scope",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ4-3",
+      "description": "Extended 600 MHz NR band 연구 TR 38.860의 결론과 TS 반영 현황은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.860'}) OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec) RETURN tr.trNumber, tr.conclusions, s.specNumber, imp.impactType, imp.verifiedImpactScope",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-1",
+      "description": "특정 TR(38.771)이 참조하는 다른 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.771'})-[:REFERENCES_TR]->(ref:TechnicalReport) RETURN ref.trNumber, ref.trTitle ORDER BY ref.trNumber",
+      "expected_min_rows": 3,
+      "note": "조회 기준 TR은 outgoing REFERENCES_TR 이 가장 많은 TR 중 trNumber 가 가장 작은 것(38.771 → 38.810 · 38.871 · 38.884). 이전 조회 기준 TR 38.803 은 outgoing 이 0 이라 allow_zero 로 어떤 KG 에서도 통과했다.",
+      "question": "38.771이 참조하는 다른 TR은? (outgoing REFERENCES_TR)"
+    },
+    {
+      "id": "CQ5-2",
+      "description": "특정 TR(38.803)을 참조하는 다른 TR 목록은? (역참조)",
+      "cypher": "MATCH (ref:TechnicalReport)-[:REFERENCES_TR]->(tr:TechnicalReport {trNumber: '38.803'}) RETURN ref.trNumber, ref.trTitle ORDER BY ref.trNumber",
+      "expected_min_rows": 1,
+      "_note": "38.803 incoming REFERENCES_TR 6 실측에 맞춘 하한."
+    },
+    {
+      "id": "CQ5-3",
+      "description": "가장 많이 참조되는 TR Top 5은?",
+      "cypher": "MATCH (ref:TechnicalReport)-[:REFERENCES_TR]->(tr:TechnicalReport) WITH tr, count(ref) AS refCount RETURN tr.trNumber, tr.trTitle, refCount ORDER BY refCount DESC LIMIT 5",
+      "expected_min_rows": 1
+    }
+  ]
+}

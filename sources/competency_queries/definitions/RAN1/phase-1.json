@@ -1,0 +1,190 @@
+{
+  "metadata": {
+    "version": "3.0",
+    "created": "2026-02-12",
+    "description": "Phase-1 CQ 25개 — Spec §3 완전 매핑 (9+7+6+3)",
+    "spec": "tdoc-ontology-spec(Tdoc_list).md §3",
+    "categories": [
+      "CQ1_Tdoc기본검색",
+      "CQ2_Tdoc관계추적",
+      "CQ3_회사분석",
+      "CQ4_회의히스토리"
+    ],
+    "categories_count": {
+      "CQ1": 9,
+      "CQ2": 7,
+      "CQ3": 6,
+      "CQ4": 3
+    },
+    "neo4j_version": "5.x",
+    "ontology_version": "1.0.0",
+    "sort_rules": {
+      "CQ1": "Meeting 번호 DESC, Tdoc 번호 ASC",
+      "CQ2": "Tdoc 번호 ASC",
+      "CQ3": "Count DESC, Company 이름 ASC (집계); Tdoc 번호 ASC (목록)",
+      "CQ4": "Meeting 번호 DESC, Tdoc 번호 ASC"
+    },
+    "limit_rules": {
+      "목록_조회": "LIMIT 10 — CQ 1-1~1-5, 1-9, 2-1~2-3, 2-6~2-7, 3-1~3-2, 3-5, 4-1, 4-3",
+      "단일_조회": "LIMIT 1 — CQ 1-6~1-8, 2-4~2-5",
+      "집계_순위": "LIMIT 10 — CQ 3-3~3-4, 3-6, 4-2"
+    },
+    "personas": [
+      "표준화 엔지니어: Tdoc 검색, 경쟁사 기고 추적, 관련 문서 탐색",
+      "기술 기획자: Work Item별 기고 현황 분석, 기술 트렌드 파악",
+      "회의 참석자: 특정 Agenda Item 관련 문서 준비, 사전 검토"
+    ]
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN1#120 회의에서 NR MIMO 향상(NR_eMIMO-Core) Work Item 관련 기고문 목록은? (MIMO 기술 회의 준비용)",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_eMIMO-Core'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ1-2",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN1#121 회의에서 Agenda Item 9.1(AI/ML for NR Air Interface) 관련 기고문은? (AI/ML 세션 준비용)",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#121'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem) WHERE (a.agendaNumber = '9.1' OR a.agendaNumber STARTS WITH '9.1.') RETURN t.tdocNumber, t.title, t.type, a.agendaNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ1-3",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN1#120 회의에서 Huawei가 제출한 기고문 목록은? (경쟁사 기고 동향 파악용)",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ1-4",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "Rel-18 타겟 Tdoc 중 최근 제출된 목록은? (Release별 기고 현황)",
+      "cypher": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-18'}) MATCH (t)-[:PRESENTED_AT]->(m:Meeting) RETURN t.tdocNumber, t.title, t.type, t.status, m.meetingNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ1-5",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN1#121 회의에서 승인(approved) 또는 합의(agreed)된 Tdoc 목록은?",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#121'})<-[:PRESENTED_AT]-(t:Tdoc) WHERE t.status IN ['approved', 'agreed'] RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ1-6",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "Tdoc R1-2501234의 결정 결과(Status)는? (단일 Tdoc 상태 조회)",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R1-2501234'}) RETURN t.tdocNumber, t.title, t.status LIMIT 1"
+    },
+    {
+      "id": "CQ1-7",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "Tdoc R1-2501234의 목적(For)은? (Discussion/Approval/Agreement 등)",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R1-2501234'}) RETURN t.tdocNumber, t.title, t.for LIMIT 1"
+    },
+    {
+      "id": "CQ1-8",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "Tdoc R1-2501234의 담당자(Contact)는? (담당자 연락처 확인)",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R1-2501234'})-[:HAS_CONTACT]->(ct:Contact) RETURN t.tdocNumber, ct.contactName LIMIT 1"
+    },
+    {
+      "id": "CQ1-9",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN1#120 회의의 전체 Agenda 목록과 설명은? (회의 사전 준비용)",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem) WITH DISTINCT a RETURN a.agendaNumber, a.agendaDescription ORDER BY a.agendaNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ2-1",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "Tdoc R1-2501234의 revision 히스토리(이전/이후 버전)는? (문서 변경 이력 추적용)",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R1-2501234'}) OPTIONAL MATCH (t)-[:IS_REVISION_OF]->(prev:Tdoc) OPTIONAL MATCH (t)-[:REVISED_TO]->(next:Tdoc) RETURN prev.tdocNumber AS previous, t.tdocNumber AS current, t.title, next.tdocNumber AS revised_to ORDER BY t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ2-2",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "LS out R1-2505678이 어디서 왔고(ORIGINATED_FROM) 어디로 갔나(SENT_TO)? (LS 경로 추적)",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R1-2505678'}) OPTIONAL MATCH (t)-[:ORIGINATED_FROM]->(orig:WorkingGroup) OPTIONAL MATCH (t)-[:SENT_TO]->(dest:WorkingGroup) OPTIONAL MATCH (t)-[:CC_TO]->(cc:WorkingGroup) RETURN t.tdocNumber, t.title, t.type, orig.wgName AS originated_from, collect(DISTINCT dest.wgName) AS sent_to, collect(DISTINCT cc.wgName) AS cc_to ORDER BY t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ2-3",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "Tdoc R1-2000004이 어떤 LS의 답변(Reply)인가? (REPLY_TO 관계 추적)",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R1-2000004'})-[:REPLY_TO]->(original:Tdoc) RETURN t.tdocNumber AS reply_tdoc, t.title AS reply_title, original.tdocNumber AS original_tdoc, original.title AS original_title ORDER BY t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ2-4",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "TS 38.214를 수정하는 CR 목록과 각 CR의 상태는? (38.214 개정 현황 파악용)",
+      "cypher": "MATCH (t:Tdoc)-[:MODIFIES]->(s:Spec {specNumber: '38.214'}) WHERE t.type IN ['CR', 'draftCR'] RETURN t.tdocNumber, t.title, t.status, t.type ORDER BY t.tdocNumber ASC LIMIT 1"
+    },
+    {
+      "id": "CQ2-5",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "CR R1-2504971의 카테고리(F/A/B/C/D)와 영향받는 Clause(절)는?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R1-2504971'}) RETURN t.tdocNumber, t.title, t.crCategory, t.clausesAffected, t.status LIMIT 1"
+    },
+    {
+      "id": "CQ2-6",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "RAN1#120에서 다음 회의로 연기(postponed)된 Tdoc 목록은? (미결 안건 추적용)",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc {status: 'postponed'}) RETURN t.tdocNumber, t.title, t.type ORDER BY t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ2-7",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "RAN1#120 회의에 들어온 LS in 목록과 관련 Agenda Item은? (타 WG 요청 확인)",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc {type: 'LS in'})-[:BELONGS_TO]->(a:AgendaItem) OPTIONAL MATCH (t)-[:ORIGINATED_FROM]->(wg:WorkingGroup) RETURN t.tdocNumber, t.title, a.agendaNumber, wg.wgName AS from_wg ORDER BY t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ3-1",
+      "category": "CQ3_회사분석",
+      "question": "Samsung이 NR MIMO Evolution(NR_MIMO_evo_DL_UL-Core) Work Item에서 제출한 기고문 목록은?",
+      "cypher": "MATCH (c:Company {companyName: 'Samsung'})<-[:SUBMITTED_BY]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_MIMO_evo_DL_UL-Core'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ3-2",
+      "category": "CQ3_회사분석",
+      "question": "RAN1#120 회의에서 Agenda Item 8.1(Maintenance on Rel-18 work items) 관련 다른 회사 기고 목록은? (경쟁사 기고 파악)",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem) WHERE (a.agendaNumber = '8.1' OR a.agendaNumber STARTS WITH '8.1.') MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN t.tdocNumber, t.title, c.companyName, a.agendaNumber ORDER BY t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ3-3",
+      "category": "CQ3_회사분석",
+      "question": "NR-U(Unlicensed) Work Item(NR_unlic-Core)에서 회사별 기고 수 Top 10은? (기술 영역별 경쟁 현황)",
+      "cypher": "MATCH (c:Company)<-[:SUBMITTED_BY]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_unlic-Core'}) RETURN c.companyName, count(t) AS tdocCount ORDER BY tdocCount DESC, c.companyName ASC LIMIT 10"
+    },
+    {
+      "id": "CQ3-4",
+      "category": "CQ3_회사분석",
+      "question": "Qualcomm의 Tdoc 중 승인(approved/agreed)된 비율과 건수는? (회사별 기고 성과 분석)",
+      "cypher": "MATCH (c:Company {companyName: 'Qualcomm'})<-[:SUBMITTED_BY]-(t:Tdoc) WITH count(t) AS total, sum(CASE WHEN t.status IN ['approved', 'agreed'] THEN 1 ELSE 0 END) AS approved RETURN total, approved, round(100.0 * approved / total, 1) AS approvalRate LIMIT 10"
+    },
+    {
+      "id": "CQ3-5",
+      "category": "CQ3_회사분석",
+      "question": "Tdoc R1-2501234과 같은 Agenda Item에서 다른 회사가 낸 Tdoc 목록은? (경쟁 기고 확인)",
+      "cypher": "MATCH (t0:Tdoc {tdocNumber: 'R1-2501234'})-[:BELONGS_TO]->(a:AgendaItem)<-[:BELONGS_TO]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company) WHERE t.tdocNumber <> t0.tdocNumber RETURN t.tdocNumber, t.title, c.companyName, a.agendaNumber ORDER BY t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ3-6",
+      "category": "CQ3_회사분석",
+      "question": "Nokia의 주력 기술 영역(Work Item별 기고 분포 Top 10)은?",
+      "cypher": "MATCH (c:Company {companyName: 'Nokia'})<-[:SUBMITTED_BY]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem) RETURN wi.workItemCode, count(t) AS tdocCount ORDER BY tdocCount DESC, wi.workItemCode ASC LIMIT 10"
+    },
+    {
+      "id": "CQ4-1",
+      "category": "CQ4_회의히스토리",
+      "question": "NR MIMO 향상(NR_eMIMO-Core)에서 Samsung이 이전 회의들에서 낸 기고 목록은? (기술 히스토리 추적)",
+      "cypher": "MATCH (c:Company {companyName: 'Samsung'})<-[:SUBMITTED_BY]-(t:Tdoc)-[:RELATED_TO]->(wi:WorkItem {workItemCode: 'NR_eMIMO-Core'}) MATCH (t)-[:PRESENTED_AT]->(m:Meeting) RETURN m.meetingNumber, t.tdocNumber, t.title, t.status ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10"
+    },
+    {
+      "id": "CQ4-2",
+      "category": "CQ4_회의히스토리",
+      "question": "RAN1#120 회의에서 Ericsson 기고 결과 요약(상태별 건수)은?",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Ericsson'}) RETURN t.status, count(t) AS count ORDER BY count DESC LIMIT 10"
+    },
+    {
+      "id": "CQ4-3",
+      "category": "CQ4_회의히스토리",
+      "question": "RAN1#120 회의에서 Agenda Item 9.3(NR duplex evolution) 관련 아직 미처리(not treated)된 Tdoc 목록은?",
+      "cypher": "MATCH (m:Meeting {meetingNumber: 'RAN1#120'})<-[:PRESENTED_AT]-(t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem) WHERE (a.agendaNumber = '9.3' OR a.agendaNumber STARTS WITH '9.3.') AND t.status = 'not treated' RETURN t.tdocNumber, t.title, a.agendaNumber ORDER BY m.meetingNumberInt DESC, t.tdocNumber ASC LIMIT 10"
+    }
+  ]
+}

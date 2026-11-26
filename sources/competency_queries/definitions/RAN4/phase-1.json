@@ -1,0 +1,155 @@
+{
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "question": "RAN4#113 미팅의 TDoc 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {canonicalMeetingNumber:'RAN4#113'}) RETURN t.tdocNumber, t.title ORDER BY t.tdocNumber LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ1-2",
+      "question": "특정 TDoc의 상세 정보는?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber:'R4-2417515'}) OPTIONAL MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN t.tdocNumber, t.title, t.type, c.companyName",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-3",
+      "question": "특정 CR의 상세는?",
+      "cypher": "MATCH (cr:CR {tdocNumber:'R4-2419229'}) OPTIONAL MATCH (cr)-[:MODIFIES]->(sp:Spec) RETURN cr.tdocNumber, cr.title, sp.specNumber",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ1-4",
+      "question": "TDoc 수가 가장 많은 미팅 Top 5는?",
+      "cypher": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber, count(t) AS cnt ORDER BY cnt DESC LIMIT 5",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ1-5",
+      "question": "Huawei의 TDoc 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName:'Huawei'}) RETURN t.tdocNumber ORDER BY t.tdocNumber DESC LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ2-1",
+      "question": "Rel-18 TDoc 수는?",
+      "cypher": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release {releaseName:'Rel-18'}) RETURN count(t) AS cnt",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-2",
+      "question": "38.101-1을 수정하는 CR 목록은?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec {specNumber:'38.101-1'}) RETURN cr.tdocNumber ORDER BY cr.tdocNumber DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ2-3",
+      "question": "특정 WorkItem 관련 TDoc은?",
+      "cypher": "MATCH (t:Tdoc)-[:RELATED_TO]->(wi:WorkItem) RETURN wi.workItemCode, count(t) AS cnt ORDER BY cnt DESC LIMIT 5",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-1",
+      "question": "RAN4#113 Agenda별 TDoc 분포는?",
+      "cypher": "MATCH (t:Tdoc)-[:BELONGS_TO]->(ai:AgendaItem) RETURN ai.agendaNumber, count(t) AS cnt ORDER BY cnt DESC LIMIT 10",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ3-2",
+      "question": "Type별 TDoc 분포는?",
+      "cypher": "MATCH (t:Tdoc) RETURN t.type, count(t) AS cnt ORDER BY cnt DESC LIMIT 10",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ3-3",
+      "question": "Company별 CR 기여도 Top 10은?",
+      "cypher": "MATCH (cr:CR)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(cr) AS cnt ORDER BY cnt DESC LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ4-1",
+      "question": "특정 TDoc의 revision 체인은?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber:'R4-2607876'})-[:IS_REVISION_OF*1..3]->(prev:Tdoc) RETURN prev.tdocNumber",
+      "expected_min_rows": 3,
+      "note": "조회 기준 TDoc은 3단 revision 체인을 가진 TDoc 중 tdocNumber 가 가장 큰 것(R4-2607876 → R4-2607860 · R4-2607278 · R4-2606544). 이전 조회 기준 TDoc R4-2417515 는 outgoing IS_REVISION_OF 가 0 이라 allow_zero 로 어떤 KG 에서도 통과했다."
+    },
+    {
+      "id": "CQ4-2",
+      "question": "LS 방향 분석 (sentTo/ccTo)?",
+      "cypher": "MATCH (ls:LS {tdocNumber:'R4-2417507'}) OPTIONAL MATCH (ls)-[:SENT_TO]->(wg:WorkingGroup) RETURN ls.tdocNumber, ls.direction, collect(wg.wgName) AS sentTo",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-1",
+      "question": "전체 노드/관계 통계는?",
+      "cypher": "MATCH (n) RETURN labels(n)[0] AS label, count(n) AS cnt ORDER BY cnt DESC",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ5-2",
+      "question": "미팅 수와 TDoc 커버리지는?",
+      "cypher": "MATCH (m:Meeting) WITH m OPTIONAL MATCH (t:Tdoc)-[:PRESENTED_AT]->(m) WITH m, count(t) AS tdocs RETURN m.canonicalMeetingNumber, tdocs ORDER BY m.meetingNumberInt DESC LIMIT 5",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ5-3",
+      "question": "SUBMITTED_BY 커버리지는?",
+      "cypher": "MATCH (t:Tdoc) OPTIONAL MATCH (t)-[:SUBMITTED_BY]->(c:Company) RETURN count(t) AS total, count(c) AS withCompany",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ5-4",
+      "question": "Release별 TDoc 분포는?",
+      "cypher": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release) RETURN r.releaseName, count(t) AS cnt ORDER BY cnt DESC LIMIT 10",
+      "expected_min_rows": 5
+    },
+    {
+      "id": "CQ5-5",
+      "question": "Spec별 CR 수 Top 10은?",
+      "cypher": "MATCH (cr:CR)-[:MODIFIES]->(sp:Spec) RETURN sp.specNumber, count(cr) AS cnt ORDER BY cnt DESC LIMIT 10",
+      "expected_min_rows": 10
+    },
+    {
+      "id": "CQ6-1",
+      "question": "RAN4#117 미팅 TDoc 수는?",
+      "cypher": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {canonicalMeetingNumber:'RAN4#117'}) RETURN count(t) AS cnt",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ6-2",
+      "question": "전체 Meeting 수는?",
+      "cypher": "MATCH (m:Meeting) RETURN count(m) AS cnt",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ6-3",
+      "question": "CR 비율은?",
+      "cypher": "MATCH (t:Tdoc) WITH count(t) AS total MATCH (cr:CR) RETURN total, count(cr) AS crs",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ6-4",
+      "question": "LS 수는?",
+      "cypher": "MATCH (ls:LS) RETURN count(ls) AS cnt",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ6-5",
+      "question": "Contact 수는?",
+      "cypher": "MATCH (c:Contact) RETURN count(c) AS cnt",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ7-1",
+      "question": "AgendaItem 수는?",
+      "cypher": "MATCH (ai:AgendaItem) RETURN count(ai) AS cnt",
+      "expected_min_rows": 1
+    },
+    {
+      "id": "CQ7-2",
+      "question": "WorkItem 수는?",
+      "cypher": "MATCH (wi:WorkItem) RETURN count(wi) AS cnt",
+      "expected_min_rows": 1
+    }
+  ]
+}

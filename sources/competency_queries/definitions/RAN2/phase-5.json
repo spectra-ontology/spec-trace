@@ -1,0 +1,136 @@
+{
+  "questions": [
+    {
+      "id": "TR-CQ-1-1",
+      "group": "CQ1",
+      "question": "특정 릴리스에서 완료된 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release)\n                  WHERE r.releaseName = 'Rel-17' AND tr.trStatus = 'Completed'\n                  RETURN tr.trNumber, tr.trTitle ORDER BY tr.trNumber"
+    },
+    {
+      "id": "TR-CQ-1-2",
+      "group": "CQ1",
+      "question": "특정 TR의 Scope는?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.825'})\n                  RETURN tr.trNumber, tr.scope"
+    },
+    {
+      "id": "TR-CQ-1-3",
+      "group": "CQ1",
+      "question": "특정 TR의 Conclusions는?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.825'})\n                  RETURN tr.trNumber, tr.conclusions"
+    },
+    {
+      "id": "TR-CQ-1-4",
+      "group": "CQ1",
+      "question": "현재 진행 중(Living)인 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport)\n                  WHERE tr.trStatus = 'Living'\n                  RETURN tr.trNumber, tr.trTitle"
+    },
+    {
+      "id": "TR-CQ-2-1",
+      "group": "CQ2",
+      "question": "특정 TR이 영향 준 TS 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.825'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec)\n                  RETURN s.specNumber, imp.impactType, imp.verifiedImpactScope"
+    },
+    {
+      "id": "TR-CQ-2-2",
+      "group": "CQ2",
+      "question": "특정 TR의 ImpactType은?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.804'})-[:HAS_TR_IMPACT]->(imp:TRImpact)\n                  RETURN imp.impactType, imp.evidenceStatus, count(imp) AS cnt, collect(DISTINCT imp.verifiedImpactScope) AS verifiedScopes",
+      "claim_contract": "Stored claim inventory: return the declared impact type together with evidenceStatus; pending/rejected records are not established incorporation."
+    },
+    {
+      "id": "TR-CQ-2-3",
+      "group": "CQ2",
+      "question": "NewTS인 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact)\n                  WHERE imp.impactType = 'NewTS'\n                  RETURN DISTINCT tr.trNumber, tr.trTitle, imp.impactType, imp.evidenceStatus, imp.verifiedImpactScope",
+      "claim_contract": "Stored claim inventory: return the declared impact type together with evidenceStatus; pending/rejected records are not established incorporation."
+    },
+    {
+      "id": "TR-CQ-2-4",
+      "group": "CQ2",
+      "question": "ExtendSection인 TR 목록은?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact)\n                  WHERE imp.impactType = 'ExtendSection'\n                  RETURN DISTINCT tr.trNumber, tr.trTitle, imp.impactType, imp.evidenceStatus, imp.verifiedImpactScope",
+      "claim_contract": "Stored claim inventory: return the declared impact type together with evidenceStatus; pending/rejected records are not established incorporation."
+    },
+    {
+      "id": "TR-CQ-2-5",
+      "group": "CQ2",
+      "question": "특정 TS에 영향 준 TR은? (역방향)",
+      "cypher": "MATCH (tr:TechnicalReport)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.300'})\n                  RETURN tr.trNumber, imp.impactType, imp.verifiedImpactScope"
+    },
+    {
+      "id": "TR-CQ-3-1",
+      "group": "CQ3",
+      "question": "38.825가 어떤 TS에 영향?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.825'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec)\n                  RETURN s.specNumber, imp.impactType, imp.impactDescription, imp.verifiedImpactScope"
+    },
+    {
+      "id": "TR-CQ-3-2",
+      "group": "CQ3",
+      "question": "38.836이 38.300과 38.321에 미친 영향?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.836'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec)\n                  WHERE s.specNumber IN ['38.300', '38.321']\n                  RETURN s.specNumber, imp.impactType, imp.impactDescription, imp.verifiedImpactScope"
+    },
+    {
+      "id": "TR-CQ-3-3",
+      "group": "CQ3",
+      "question": "38.874가 38.300에 미친 영향?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.874'})-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec {specNumber: '38.300'})\n                  RETURN imp.impactType, imp.impactDescription, imp.verifiedImpactScope"
+    },
+    {
+      "id": "TR-CQ-4-1",
+      "group": "CQ4",
+      "question": "Rel-17 타겟 TR과 TS 영향 유형?",
+      "cypher": "MATCH (tr:TechnicalReport)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-17'})\n                  OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec)\n                  RETURN tr.trNumber, tr.trTitle, collect({spec: s.specNumber, type: imp.impactType, verifiedScope: imp.verifiedImpactScope}) AS impacts"
+    },
+    {
+      "id": "TR-CQ-4-2",
+      "group": "CQ4",
+      "question": "38.744의 상태와 연구 범위?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.744'})\n                  RETURN tr.trNumber, tr.trStatus, tr.scope"
+    },
+    {
+      "id": "TR-CQ-4-3",
+      "group": "CQ4",
+      "question": "38.835의 결론과 TS 반영?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.835'})\n                  OPTIONAL MATCH (tr)-[:HAS_TR_IMPACT]->(imp:TRImpact{evidenceStatus: 'source_verified'})-[:IMPACTS_SPEC]->(s:Spec)\n                  RETURN tr.conclusions, collect({spec: s.specNumber, type: imp.impactType, verifiedScope: imp.verifiedImpactScope}) AS impacts"
+    },
+    {
+      "id": "TR-CQ-5-1",
+      "group": "CQ5",
+      "question": "특정 TR이 참조하는 다른 TR?",
+      "cypher": "MATCH (tr:TechnicalReport {trNumber: '38.825'})-[:REFERENCES_TR]->(ref:TechnicalReport)\n                  RETURN ref.trNumber",
+      "expected_min_rows": 0,
+      "allow_zero": true,
+      "note": "RAN2 TR 8개의 References 절이 인용한 TR 중 이 코퍼스에 있는 것이 0건이라 REFERENCES_TR 이 0건이다. 0행이 기대값이므로 allow_zero.",
+      "absent_by_design": [
+        "relationship:REFERENCES_TR"
+      ],
+      "absent_by_design_basis": "tr-parser/01_parse_tr_docs.py 의 extract_tr_references 가 TR 8개의 References 절을 모두 찾았고 코퍼스 안 TR 인용은 0건이다(인용한 TR 은 전부 코퍼스 밖). 생산 단계가 있으므로 KG 에 REFERENCES_TR 이 생기면 가드가 이 선언을 결함으로 센다."
+    },
+    {
+      "id": "TR-CQ-5-2",
+      "group": "CQ5",
+      "question": "특정 TR을 참조하는 다른 TR? (역참조)",
+      "cypher": "MATCH (ref:TechnicalReport)-[:REFERENCES_TR]->(tr:TechnicalReport {trNumber: '38.825'})\n                  RETURN ref.trNumber",
+      "expected_min_rows": 0,
+      "allow_zero": true,
+      "note": "RAN2 TR 8개의 References 절이 인용한 TR 중 이 코퍼스에 있는 것이 0건이라 REFERENCES_TR 이 0건이다. 0행이 기대값이므로 allow_zero.",
+      "absent_by_design": [
+        "relationship:REFERENCES_TR"
+      ],
+      "absent_by_design_basis": "tr-parser/01_parse_tr_docs.py 의 extract_tr_references 가 TR 8개의 References 절을 모두 찾았고 코퍼스 안 TR 인용은 0건이다(인용한 TR 은 전부 코퍼스 밖). 생산 단계가 있으므로 KG 에 REFERENCES_TR 이 생기면 가드가 이 선언을 결함으로 센다."
+    },
+    {
+      "id": "TR-CQ-5-3",
+      "group": "CQ5",
+      "question": "가장 많이 참조되는 TR Top N?",
+      "cypher": "MATCH (ref:TechnicalReport)-[:REFERENCES_TR]->(tr:TechnicalReport)\n                  RETURN tr.trNumber, count(ref) AS refCount ORDER BY refCount DESC LIMIT 10",
+      "expected_min_rows": 0,
+      "allow_zero": true,
+      "note": "RAN2 TR 8개의 References 절이 인용한 TR 중 이 코퍼스에 있는 것이 0건이라 REFERENCES_TR 이 0건이다. 0행이 기대값이므로 allow_zero.",
+      "absent_by_design": [
+        "relationship:REFERENCES_TR"
+      ],
+      "absent_by_design_basis": "tr-parser/01_parse_tr_docs.py 의 extract_tr_references 가 TR 8개의 References 절을 모두 찾았고 코퍼스 안 TR 인용은 0건이다(인용한 TR 은 전부 코퍼스 밖). 생산 단계가 있으므로 KG 에 REFERENCES_TR 이 생기면 가드가 이 선언을 결함으로 센다."
+    }
+  ]
+}

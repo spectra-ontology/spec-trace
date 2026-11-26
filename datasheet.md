@@ -148,7 +148,9 @@ The gate, the abstention checks and the disposition audit also read the meeting 
 
 The records retain identifiers, codes, dates, links between identifiers (TDoc numbers and working-group or organisation identifiers), archive paths, hashes and locators. Archive paths and member names stay as the 3GPP archive publishes them, and some carry title words, company names or a delegate's name. Separately, raw-source reconstruction recipes retain document titles, organization labels, work-item codes and cover-clause labels as frozen source metadata (`restore/retrieval/raw/cr/metadata_text_audit.json`). The contextual correspondence supplement retains short technical excerpts with source identities removed (`studies/correspondence_context/`). These fields and excerpts retain their original rights, as described in `LICENSE`.
 
-In the stored responses and result files, values that repeat document text, a person's name or a company attribution are replaced by a marker with the SHA-256 and length of the original. The files in the root-level redaction lists list every changed file with the hash of its original and of the released copy and the count of each kind of marker.
+The separate CQ input views in `sources/competency_queries/graph_view/` preserve process nodes, labels and relationships together with their declared query/guard property whitelist. They include contact/company names, document titles and Resolution-family report passages needed by the 654 queries. The graph-view manifests specify this distribution, whose source-derived fields follow the rights scope in `LICENSE`.
+
+`results_redactions.jsonl` identifies the stored-response and result projections whose source text, personal names and company attributions use SHA-256/length markers, with original and released file hashes. The CQ reproduction diagnostics retain the projected rows used to verify the original queries under the graph-view rights scope.
 
 ## 3. Collection process
 

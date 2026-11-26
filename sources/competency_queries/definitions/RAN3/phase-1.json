@@ -1,0 +1,160 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "wg": "RAN3",
+    "description": "RAN3 Phase-1 CQ 데이터셋 (Spec Step 1 기반)",
+    "created": "2026-04-04"
+  },
+  "questions": [
+    {
+      "id": "CQ1-1",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN3#130 회의에서 NR_newRAT-Core Work Item 관련 Tdoc 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}), (t)-[:RELATED_TO]->(w:WorkItem {workItemCode: 'NR_newRAT-Core'}) RETURN t.tdocNumber, t.title, t.type, t.status ORDER BY t.tdocNumber LIMIT 10"
+    },
+    {
+      "id": "CQ1-2",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN3#130 회의에서 Agenda 8.1 관련 Tdoc 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem {agendaNumber: '8.1'}), (t)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}) RETURN t.tdocNumber, t.title, t.status ORDER BY t.tdocNumber LIMIT 10"
+    },
+    {
+      "id": "CQ1-3",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN3#130 회의에서 Huawei가 제출한 Tdoc 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}), (t)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}) RETURN t.tdocNumber, t.title, t.type ORDER BY t.tdocNumber LIMIT 10"
+    },
+    {
+      "id": "CQ1-4",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "Rel-19에서 논의된 Tdoc 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:TARGET_RELEASE]->(r:Release {releaseName: 'Rel-19'}) RETURN t.tdocNumber, t.title, t.type ORDER BY t.tdocNumber DESC LIMIT 10"
+    },
+    {
+      "id": "CQ1-5",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN3#130 회의에서 agreed된 Tdoc 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}) WHERE t.status = 'agreed' RETURN t.tdocNumber, t.title ORDER BY t.tdocNumber LIMIT 10"
+    },
+    {
+      "id": "CQ1-6",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "R3-258530의 결정 결과(Status)는?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R3-258530'}) RETURN t.tdocNumber, t.status, t.type"
+    },
+    {
+      "id": "CQ1-7",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "R3-258530의 목적(For)은?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R3-258530'}) RETURN t.tdocNumber, t.for"
+    },
+    {
+      "id": "CQ1-8",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "R3-258530의 담당자(Contact)는?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R3-258530'})-[:HAS_CONTACT]->(c:Contact) RETURN t.tdocNumber, c.contactName, c.contactId"
+    },
+    {
+      "id": "CQ1-9",
+      "category": "CQ1_Tdoc기본검색",
+      "question": "RAN3#130 회의 전체 Agenda 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}), (t)-[:BELONGS_TO]->(a:AgendaItem) RETURN DISTINCT a.agendaNumber, a.agendaDescription ORDER BY a.agendaNumber LIMIT 10"
+    },
+    {
+      "id": "CQ2-1",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "R3-241531의 이전 revision은?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R3-241531'})-[:IS_REVISION_OF]->(prev:Tdoc) RETURN t.tdocNumber, prev.tdocNumber, prev.title"
+    },
+    {
+      "id": "CQ2-2",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "R3-258479 LS가 어디서 왔고 어디로 갔나?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R3-258479'}) OPTIONAL MATCH (t)-[:SENT_TO]->(wg:WorkingGroup) OPTIONAL MATCH (t)-[:CC_TO]->(cc:WorkingGroup) OPTIONAL MATCH (t)-[:ORIGINATED_FROM]->(from:WorkingGroup) RETURN t.tdocNumber, t.direction, collect(DISTINCT wg.wgName) AS sentTo, collect(DISTINCT cc.wgName) AS ccTo, collect(DISTINCT from.wgName) AS originatedFrom"
+    },
+    {
+      "id": "CQ2-3",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "R3-241518이 어떤 LS의 답변(Reply)인가?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R3-241518'})-[:REPLY_TO]->(orig:Tdoc) RETURN t.tdocNumber, orig.tdocNumber, orig.title"
+    },
+    {
+      "id": "CQ2-4",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "R3-258530이 어떤 Spec을 변경하나?",
+      "cypher": "MATCH (c:CR {tdocNumber: 'R3-258530'})-[:MODIFIES]->(s:Spec) RETURN c.tdocNumber, s.specNumber"
+    },
+    {
+      "id": "CQ2-5",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "R3-258530 CR의 카테고리와 영향 범위는?",
+      "cypher": "MATCH (c:CR {tdocNumber: 'R3-258530'}) RETURN c.tdocNumber, c.crCategory, c.crNumber, c.clausesAffected"
+    },
+    {
+      "id": "CQ2-6",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "RAN3#121bis 회의에서 다음 회의로 연기된 Tdoc은?",
+      "cypher": "MATCH (t:Tdoc)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 121}) WHERE t.status = 'postponed' RETURN t.tdocNumber, t.title LIMIT 10"
+    },
+    {
+      "id": "CQ2-7",
+      "category": "CQ2_Tdoc관계추적",
+      "question": "RAN3#130에 들어온 LS 목록은?",
+      "cypher": "MATCH (l:LS)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}) WHERE l.direction = 'in' RETURN l.tdocNumber, l.title ORDER BY l.tdocNumber LIMIT 10"
+    },
+    {
+      "id": "CQ3-1",
+      "category": "CQ3_회사경쟁사",
+      "question": "Huawei가 NR_newRAT-Core Work Item에서 낸 기고 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (t)-[:RELATED_TO]->(w:WorkItem {workItemCode: 'NR_newRAT-Core'}) RETURN t.tdocNumber, t.title, t.status ORDER BY t.tdocNumber DESC LIMIT 10"
+    },
+    {
+      "id": "CQ3-2",
+      "category": "CQ3_회사경쟁사",
+      "question": "RAN3#130 Agenda 8.1에서 다른 회사 기고 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem {agendaNumber: '8.1'}), (t)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}), (t)-[:SUBMITTED_BY]->(c:Company) RETURN c.companyName, count(t) AS cnt ORDER BY cnt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ3-3",
+      "category": "CQ3_회사경쟁사",
+      "question": "NR_newRAT-Core Work Item에서 회사별 기고 수는?",
+      "cypher": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company), (t)-[:RELATED_TO]->(w:WorkItem {workItemCode: 'NR_newRAT-Core'}) RETURN c.companyName, count(t) AS cnt ORDER BY cnt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ3-4",
+      "category": "CQ3_회사경쟁사",
+      "question": "Samsung의 Tdoc 중 agreed된 비율은?",
+      "cypher": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}) WITH count(t) AS total MATCH (t2:Tdoc)-[:SUBMITTED_BY]->(c2:Company {companyName: 'Samsung'}) WHERE t2.status = 'agreed' RETURN total, count(t2) AS agreed, toFloat(count(t2)) / total AS ratio"
+    },
+    {
+      "id": "CQ3-5",
+      "category": "CQ3_회사경쟁사",
+      "question": "R3-258530과 같은 Agenda에서 다른 회사 기고 목록은?",
+      "cypher": "MATCH (t:Tdoc {tdocNumber: 'R3-258530'})-[:BELONGS_TO]->(a:AgendaItem), (t)-[:PRESENTED_AT]->(m:Meeting) MATCH (other:Tdoc)-[:BELONGS_TO]->(a), (other)-[:PRESENTED_AT]->(m), (other)-[:SUBMITTED_BY]->(c:Company) WHERE other.tdocNumber <> 'R3-258530' RETURN c.companyName, other.tdocNumber, other.title ORDER BY c.companyName LIMIT 10"
+    },
+    {
+      "id": "CQ3-6",
+      "category": "CQ3_회사경쟁사",
+      "question": "Huawei의 주력 기술 영역(WorkItem별 기고 분포)은?",
+      "cypher": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Huawei'}), (t)-[:RELATED_TO]->(w:WorkItem) RETURN w.workItemCode, count(t) AS cnt ORDER BY cnt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ4-1",
+      "category": "CQ4_히스토리요약",
+      "question": "NR_newRAT-Core에서 Samsung이 이전 회의들에서 낸 기고 목록은?",
+      "cypher": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}), (t)-[:RELATED_TO]->(w:WorkItem {workItemCode: 'NR_newRAT-Core'}), (t)-[:PRESENTED_AT]->(m:Meeting) RETURN m.canonicalMeetingNumber, t.tdocNumber, t.title, t.status ORDER BY m.meetingNumberInt DESC LIMIT 10"
+    },
+    {
+      "id": "CQ4-2",
+      "category": "CQ4_히스토리요약",
+      "question": "RAN3#130에서 Samsung 기고 결과 요약은?",
+      "cypher": "MATCH (t:Tdoc)-[:SUBMITTED_BY]->(c:Company {companyName: 'Samsung'}), (t)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 130}) RETURN t.status, count(t) AS cnt ORDER BY cnt DESC"
+    },
+    {
+      "id": "CQ4-3",
+      "category": "CQ4_히스토리요약",
+      "question": "RAN3#122 Agenda 13.2에서 아직 미결(not treated)인 Tdoc은?",
+      "cypher": "MATCH (t:Tdoc)-[:BELONGS_TO]->(a:AgendaItem {agendaNumber: '13.2'}), (t)-[:PRESENTED_AT]->(m:Meeting {meetingNumberInt: 122}) WHERE t.status = 'not treated' RETURN t.tdocNumber, t.title LIMIT 10"
+    }
+  ]
+}
