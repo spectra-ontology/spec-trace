@@ -26,3 +26,20 @@ bindings with the audit, then verifies the 106 original prompt-file hashes.
 It uses the Python standard library and makes no model calls. This inventory
 preserves the historical experiments and makes their actual instructions
 inspectable.
+
+## Solver instructions for new runs
+
+Use [solver instructions v1](solver_wrapper_v1.txt) as the identical initial
+text of every solver prompt for the main or order-and-neighbour workload.
+Follow it with the condition's schema, tools and output format. Deliver each
+answer-free question packet through its existing interface. For a matched
+comparison, keep the wrapper bytes, questions and field order fixed.
+Put the wrapper version and SHA-256 beside the exact sent packet in the run
+manifest. Schema-only packets retain their original value access policy.
+The v1 prefix contains no item outcome or native scope literal.
+
+The historical audit above describes archived prompts. New-run results under
+v1 have their own exposure record.
+
+The [full-chain source-label sensitivity](full_chain/README.md) compares all
+100 affected-clause fields with released gold and replays the saved answers.

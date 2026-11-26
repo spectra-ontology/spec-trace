@@ -1,0 +1,1327 @@
+[
+  {
+    "id": "RAN1-full_chain-R1-1913654",
+    "packetId": "RAN1-q29a6754c388e",
+    "wg": "RAN1",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nWHERE d.number = 'R1-1913654'\n  AND s.spec IN ('38.213', 'TS 38.213')\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran1', 'ranwg1')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.01689188399905106,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-first_change-RP-192634",
+    "packetId": "RAN1-q2e3bcd13a977",
+    "wg": "RAN1",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-192634'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('16')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran1', 'ranwg1')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n)\nSELECT DISTINCT c.document AS document, c.spec AS specification, c.clause AS clause\nFROM current_clauses AS c\nWHERE NOT EXISTS (\n  SELECT 1 FROM earlier_packs AS e\n  WHERE e.document = c.document AND e.spec = c.spec AND e.clause = c.clause\n    AND e.release = c.release AND e.current_tsg = c.tsg_number\n);",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.016328877001797082,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-clause_history-38.213-Rel-17-4.2",
+    "packetId": "RAN1-q3bc833f726da",
+    "wg": "RAN1",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document AS d\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE s.spec IN ('38.213', 'TS 38.213')\n  AND s.clause = '4.2'\n  AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '17'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '17'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran1', 'ranwg1')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.015253290002874564,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-revision_chain-R1-2403693",
+    "packetId": "RAN1-q45c336a2d020",
+    "wg": "RAN1",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE versions(id) AS (\n  SELECT id FROM document WHERE number = 'R1-2403693'\n  UNION\n  SELECT rv.later FROM revision AS rv JOIN versions AS v ON rv.earlier = v.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM versions AS v\nJOIN document AS d ON d.id = v.id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number <> 'R1-2403693'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran1', 'ranwg1')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.01956834199881996,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-disposition_pack-R1-2108591",
+    "packetId": "RAN1-q5154c2ea6399",
+    "wg": "RAN1",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R1-2108591'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran1', 'ranwg1')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.015561292999336729,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-pack_lookup_empty-R1-1717870",
+    "packetId": "RAN1-q902d2fcdcbcb",
+    "wg": "RAN1",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R1-1717870';",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0011658900002657901,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-previous_pack-RP-200692",
+    "packetId": "RAN1-qa546b7e1f645",
+    "wg": "RAN1",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-200692'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('16')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran1', 'ranwg1')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n),\nranked AS (\n  SELECT spec, clause, pack_number, tsg_meeting,\n         dense_rank() OVER (\n           PARTITION BY spec, clause, release, current_tsg\n           ORDER BY tsg_number DESC\n         ) AS meeting_rank\n  FROM earlier_packs\n)\nSELECT DISTINCT spec AS specification, clause AS clause, pack_number AS cr_pack, tsg_meeting AS tsg_meeting\nFROM ranked\nWHERE meeting_rank = 1;",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.027546319000975927,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-pack_origin-RP-241065",
+    "packetId": "RAN1-qc8472684e9bd",
+    "wg": "RAN1",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE p.pack_number = 'RP-241065'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran1', 'ranwg1')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.01597586700154352,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-clause_neighbours-R1-2202802",
+    "packetId": "RAN1-qd1d995f3c7e6",
+    "wg": "RAN1",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "WITH anchor_clauses AS (\n  SELECT DISTINCT s.spec, s.clause, s.release\n  FROM document AS d\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  WHERE d.number = 'R1-2202802'\n    AND s.spec IN ('38.212', 'TS 38.212')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '17'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '17'\n)\nSELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM anchor_clauses AS a\nJOIN section AS s ON s.spec = a.spec AND s.clause = a.clause AND s.release = a.release\nJOIN cr_modifies_section AS change ON change.section_id = s.id\nJOIN document AS d ON d.id = change.cr\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE d.number <> 'R1-2202802'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '17'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran1', 'ranwg1')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.019039303999306867,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-pack_lookup-R1-2202945",
+    "packetId": "RAN1-qf2e42a4bc65f",
+    "wg": "RAN1",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R1-2202945';",
+    "rows": [
+      [
+        "RP-220249",
+        "RAN#95"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0015457320005225483,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-previous_pack-RP-241554",
+    "packetId": "RAN2-q02d73bbdf069",
+    "wg": "RAN2",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-241554'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('17', '18')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran2', 'ranwg2')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n),\nranked AS (\n  SELECT spec, clause, pack_number, tsg_meeting,\n         dense_rank() OVER (\n           PARTITION BY spec, clause, release, current_tsg\n           ORDER BY tsg_number DESC\n         ) AS meeting_rank\n  FROM earlier_packs\n)\nSELECT DISTINCT spec AS specification, clause AS clause, pack_number AS cr_pack, tsg_meeting AS tsg_meeting\nFROM ranked\nWHERE meeting_rank = 1;",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.05981726300160517,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-clause_neighbours-R2-2010821",
+    "packetId": "RAN2-q2c3895e241f7",
+    "wg": "RAN2",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "WITH anchor_clauses AS (\n  SELECT DISTINCT s.spec, s.clause, s.release\n  FROM document AS d\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  WHERE d.number = 'R2-2010821'\n    AND s.spec IN ('38.331', 'TS 38.331')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '16'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '16'\n)\nSELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM anchor_clauses AS a\nJOIN section AS s ON s.spec = a.spec AND s.clause = a.clause AND s.release = a.release\nJOIN cr_modifies_section AS change ON change.section_id = s.id\nJOIN document AS d ON d.id = change.cr\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE d.number <> 'R2-2010821'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '16'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran2', 'ranwg2')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.039977030999580165,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-disposition_pack-R2-2506546",
+    "packetId": "RAN2-q3e26d2802f04",
+    "wg": "RAN2",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R2-2506546'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran2', 'ranwg2')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.033195173000422074,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-pack_lookup_empty-R2-2306001",
+    "packetId": "RAN2-q58026a6145f2",
+    "wg": "RAN2",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R2-2306001';",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.003511915998387849,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-pack_origin-RP-201183",
+    "packetId": "RAN2-q7318811f00fe",
+    "wg": "RAN2",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE p.pack_number = 'RP-201183'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran2', 'ranwg2')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.03447374100142042,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-first_change-RP-252818",
+    "packetId": "RAN2-q860585794db4",
+    "wg": "RAN2",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-252818'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('19')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran2', 'ranwg2')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n)\nSELECT DISTINCT c.document AS document, c.spec AS specification, c.clause AS clause\nFROM current_clauses AS c\nWHERE NOT EXISTS (\n  SELECT 1 FROM earlier_packs AS e\n  WHERE e.document = c.document AND e.spec = c.spec AND e.clause = c.clause\n    AND e.release = c.release AND e.current_tsg = c.tsg_number\n);",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.034531614001025446,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-clause_history-38.305-Rel-17-7.3.2",
+    "packetId": "RAN2-q86cd4db95e59",
+    "wg": "RAN2",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document AS d\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE s.spec IN ('38.305', 'TS 38.305')\n  AND s.clause = '7.3.2'\n  AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '17'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '17'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran2', 'ranwg2')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.032822873999975855,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-revision_chain-R2-1818753",
+    "packetId": "RAN2-q9d47bc6f97c6",
+    "wg": "RAN2",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE versions(id) AS (\n  SELECT id FROM document WHERE number = 'R2-1818753'\n  UNION\n  SELECT rv.later FROM revision AS rv JOIN versions AS v ON rv.earlier = v.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM versions AS v\nJOIN document AS d ON d.id = v.id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number <> 'R2-1818753'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran2', 'ranwg2')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.036846212002274115,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-full_chain-R2-1902721",
+    "packetId": "RAN2-qa32e5f838520",
+    "wg": "RAN2",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nWHERE d.number = 'R2-1902721'\n  AND s.spec IN ('38.331', 'TS 38.331')\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran2', 'ranwg2')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.03305431300032069,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-pack_lookup-R2-2008568",
+    "packetId": "RAN2-qdc7dc2141443",
+    "wg": "RAN2",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R2-2008568';",
+    "rows": [
+      [
+        "RP-201929",
+        "RAN#89"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0033494679992145393,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-full_chain-R3-222922",
+    "packetId": "RAN3-q16fe34e2e936",
+    "wg": "RAN3",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nWHERE d.number = 'R3-222922'\n  AND s.spec IN ('38.470', 'TS 38.470')\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran3', 'ranwg3')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04307397800221224,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-pack_origin-RP-233845",
+    "packetId": "RAN3-q1ba7910c1aeb",
+    "wg": "RAN3",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE p.pack_number = 'RP-233845'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran3', 'ranwg3')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04118888499942841,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-disposition_pack-R3-202667",
+    "packetId": "RAN3-q1fbc1333eb5d",
+    "wg": "RAN3",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R3-202667'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran3', 'ranwg3')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04202935699868249,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-revision_chain-R3-221570",
+    "packetId": "RAN3-q6ec77c41a74a",
+    "wg": "RAN3",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE versions(id) AS (\n  SELECT id FROM document WHERE number = 'R3-221570'\n  UNION\n  SELECT rv.later FROM revision AS rv JOIN versions AS v ON rv.earlier = v.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM versions AS v\nJOIN document AS d ON d.id = v.id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number <> 'R3-221570'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran3', 'ranwg3')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04398583200236317,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-clause_neighbours-R3-194602",
+    "packetId": "RAN3-q8a6100612fec",
+    "wg": "RAN3",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "WITH anchor_clauses AS (\n  SELECT DISTINCT s.spec, s.clause, s.release\n  FROM document AS d\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  WHERE d.number = 'R3-194602'\n    AND s.spec IN ('38.413', 'TS 38.413')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n)\nSELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM anchor_clauses AS a\nJOIN section AS s ON s.spec = a.spec AND s.clause = a.clause AND s.release = a.release\nJOIN cr_modifies_section AS change ON change.section_id = s.id\nJOIN document AS d ON d.id = change.cr\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE d.number <> 'R3-194602'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran3', 'ranwg3')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04448784399937722,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-pack_lookup_empty-R3-215085",
+    "packetId": "RAN3-qbb384d8ef29b",
+    "wg": "RAN3",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R3-215085';",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0017549350013723597,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-first_change-RP-233814",
+    "packetId": "RAN3-qc544a5a2f69d",
+    "wg": "RAN3",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-233814'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('18')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran3', 'ranwg3')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n)\nSELECT DISTINCT c.document AS document, c.spec AS specification, c.clause AS clause\nFROM current_clauses AS c\nWHERE NOT EXISTS (\n  SELECT 1 FROM earlier_packs AS e\n  WHERE e.document = c.document AND e.spec = c.spec AND e.clause = c.clause\n    AND e.release = c.release AND e.current_tsg = c.tsg_number\n);",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04103374699843698,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-pack_lookup-R3-255122",
+    "packetId": "RAN3-qd2c056f983f8",
+    "wg": "RAN3",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R3-255122';",
+    "rows": [
+      [
+        "RP-252690",
+        "RAN#109"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.001932991999638034,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-clause_history-38.413-Rel-16-8.3.4",
+    "packetId": "RAN3-qdfe4d9c918aa",
+    "wg": "RAN3",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document AS d\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE s.spec IN ('38.413', 'TS 38.413')\n  AND s.clause = '8.3.4'\n  AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '16'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '16'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran3', 'ranwg3')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.040925883997260826,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-previous_pack-RP-200423",
+    "packetId": "RAN3-qf54b7fe1de2c",
+    "wg": "RAN3",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-200423'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('16')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran3', 'ranwg3')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n),\nranked AS (\n  SELECT spec, clause, pack_number, tsg_meeting,\n         dense_rank() OVER (\n           PARTITION BY spec, clause, release, current_tsg\n           ORDER BY tsg_number DESC\n         ) AS meeting_rank\n  FROM earlier_packs\n)\nSELECT DISTINCT spec AS specification, clause AS clause, pack_number AS cr_pack, tsg_meeting AS tsg_meeting\nFROM ranked\nWHERE meeting_rank = 1;",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.06132070199964801,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-previous_pack-RP-231340",
+    "packetId": "RAN4-q0da703b03ce1",
+    "wg": "RAN4",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-231340'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('16', '17', '18')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran4', 'ranwg4')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n),\nranked AS (\n  SELECT spec, clause, pack_number, tsg_meeting,\n         dense_rank() OVER (\n           PARTITION BY spec, clause, release, current_tsg\n           ORDER BY tsg_number DESC\n         ) AS meeting_rank\n  FROM earlier_packs\n)\nSELECT DISTINCT spec AS specification, clause AS clause, pack_number AS cr_pack, tsg_meeting AS tsg_meeting\nFROM ranked\nWHERE meeting_rank = 1;",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.19129038200117066,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-first_change-RP-250590",
+    "packetId": "RAN4-q3f128c42c249",
+    "wg": "RAN4",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-250590'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('17', '18')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran4', 'ranwg4')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n)\nSELECT DISTINCT c.document AS document, c.spec AS specification, c.clause AS clause\nFROM current_clauses AS c\nWHERE NOT EXISTS (\n  SELECT 1 FROM earlier_packs AS e\n  WHERE e.document = c.document AND e.spec = c.spec AND e.clause = c.clause\n    AND e.release = c.release AND e.current_tsg = c.tsg_number\n);",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.11795091000021785,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-pack_origin-RP-202446",
+    "packetId": "RAN4-q445cf0b14431",
+    "wg": "RAN4",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE p.pack_number = 'RP-202446'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran4', 'ranwg4')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.11823322999771335,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-full_chain-R4-2313080",
+    "packetId": "RAN4-q5564f8be249d",
+    "wg": "RAN4",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nWHERE d.number = 'R4-2313080'\n  AND s.spec IN ('38.101-1', 'TS 38.101-1')\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran4', 'ranwg4')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.11969577800118714,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-pack_lookup_empty-R4-2520572",
+    "packetId": "RAN4-q5f9ae7ff4ca2",
+    "wg": "RAN4",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R4-2520572';",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0089336019991606,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-clause_history-38.133-Rel-18-A.7.5.1.6",
+    "packetId": "RAN4-q686bae23d9ed",
+    "wg": "RAN4",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document AS d\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE s.spec IN ('38.133', 'TS 38.133')\n  AND s.clause = 'A.7.5.1.6'\n  AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '18'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '18'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran4', 'ranwg4')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.12022893600078532,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-revision_chain-R4-2412759",
+    "packetId": "RAN4-q6a9a6059b312",
+    "wg": "RAN4",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE versions(id) AS (\n  SELECT id FROM document WHERE number = 'R4-2412759'\n  UNION\n  SELECT rv.later FROM revision AS rv JOIN versions AS v ON rv.earlier = v.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM versions AS v\nJOIN document AS d ON d.id = v.id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number <> 'R4-2412759'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran4', 'ranwg4')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.12292626199996448,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-disposition_pack-R4-1814116",
+    "packetId": "RAN4-q8321a5639b22",
+    "wg": "RAN4",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R4-1814116'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran4', 'ranwg4')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.12016236899944488,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-pack_lookup-R4-2320863",
+    "packetId": "RAN4-qab608dcda8a2",
+    "wg": "RAN4",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R4-2320863';",
+    "rows": [
+      [
+        "RP-233341",
+        "RAN#102"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.009099463997699786,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-clause_neighbours-R4-2108722",
+    "packetId": "RAN4-qb68ee1a1ea1c",
+    "wg": "RAN4",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "WITH anchor_clauses AS (\n  SELECT DISTINCT s.spec, s.clause, s.release\n  FROM document AS d\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  WHERE d.number = 'R4-2108722'\n    AND s.spec IN ('38.104', 'TS 38.104')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n)\nSELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM anchor_clauses AS a\nJOIN section AS s ON s.spec = a.spec AND s.clause = a.clause AND s.release = a.release\nJOIN cr_modifies_section AS change ON change.section_id = s.id\nJOIN document AS d ON d.id = change.cr\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE d.number <> 'R4-2108722'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran4', 'ranwg4')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.13215931300146622,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-pack_lookup_empty-R5-191564",
+    "packetId": "RAN5-q315c956af92f",
+    "wg": "RAN5",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R5-191564';",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.010685004999686498,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-full_chain-R5-251067",
+    "packetId": "RAN5-q4dced09756b2",
+    "wg": "RAN5",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nWHERE d.number = 'R5-251067'\n  AND s.spec IN ('38.522', 'TS 38.522')\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran5', 'ranwg5')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04768552299719886,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-first_change-RP-230947",
+    "packetId": "RAN5-q62c0ba2e6e6a",
+    "wg": "RAN5",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-230947'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('17')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran5', 'ranwg5')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n)\nSELECT DISTINCT c.document AS document, c.spec AS specification, c.clause AS clause\nFROM current_clauses AS c\nWHERE NOT EXISTS (\n  SELECT 1 FROM earlier_packs AS e\n  WHERE e.document = c.document AND e.spec = c.spec AND e.clause = c.clause\n    AND e.release = c.release AND e.current_tsg = c.tsg_number\n);",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04613338400304201,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-previous_pack-RP-261275",
+    "packetId": "RAN5-q92cc544cbae2",
+    "wg": "RAN5",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.clause, s.release, p.tsg_number\n  FROM document AS d\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  JOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\n  WHERE p.pack_number = 'RP-261275'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') IN ('19')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n    AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran5', 'ranwg5')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc')\n), earlier_packs AS (\n  SELECT DISTINCT c.document, c.spec, c.clause, c.release, c.tsg_number AS current_tsg,\n                  p.pack_number, p.tsg_meeting, p.tsg_number\n  FROM current_clauses AS c\n  JOIN section AS s ON s.spec = c.spec AND s.clause = c.clause AND s.release = c.release\n  JOIN cr_modifies_section AS change ON change.section_id = s.id\n  JOIN document AS d ON d.id = change.cr AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '')\n  JOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\n  WHERE p.tsg_number < c.tsg_number\n),\nranked AS (\n  SELECT spec, clause, pack_number, tsg_meeting,\n         dense_rank() OVER (\n           PARTITION BY spec, clause, release, current_tsg\n           ORDER BY tsg_number DESC\n         ) AS meeting_rank\n  FROM earlier_packs\n)\nSELECT DISTINCT spec AS specification, clause AS clause, pack_number AS cr_pack, tsg_meeting AS tsg_meeting\nFROM ranked\nWHERE meeting_rank = 1;",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.10975597499782452,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-clause_history-38.521-4-Rel-19-6.2A.3.1.1.3.3_1",
+    "packetId": "RAN5-q9dd890b7d2e9",
+    "wg": "RAN5",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document AS d\nJOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE s.spec IN ('38.521-4', 'TS 38.521-4')\n  AND s.clause = '6.2A.3.1.1.3.3_1'\n  AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '19'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '19'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran5', 'ranwg5')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.047307639000791823,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-clause_neighbours-R5-186468",
+    "packetId": "RAN5-qbd0afb2d46d9",
+    "wg": "RAN5",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "WITH anchor_clauses AS (\n  SELECT DISTINCT s.spec, s.clause, s.release\n  FROM document AS d\n  JOIN cr_modifies_section AS change ON change.cr = d.id\nJOIN section AS s ON s.id = change.section_id\n  WHERE d.number = 'R5-186468'\n    AND s.spec IN ('38.508-1', 'TS 38.508-1')\n    AND replace(replace(lower(replace(replace(replace(trim(s.release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n    AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n)\nSELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM anchor_clauses AS a\nJOIN section AS s ON s.spec = a.spec AND s.clause = a.clause AND s.release = a.release\nJOIN cr_modifies_section AS change ON change.section_id = s.id\nJOIN document AS d ON d.id = change.cr\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE d.number <> 'R5-186468'\n  AND replace(replace(lower(replace(replace(replace(trim(d.target_release), '_', ''), '-', ''), ' ', '')), 'release', ''), 'rel', '') = '15'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran5', 'ranwg5')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.06308618399998522,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-pack_origin-RP-250731",
+    "packetId": "RAN5-qde317edc86b0",
+    "wg": "RAN5",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nWHERE p.pack_number = 'RP-250731'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran5', 'ranwg5')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04919731900008628,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-disposition_pack-R5-203000",
+    "packetId": "RAN5-qe63e08fab145",
+    "wg": "RAN5",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R5-203000'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran5', 'ranwg5')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.047594698997272644,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-pack_lookup-R5-194984",
+    "packetId": "RAN5-qe644473c854d",
+    "wg": "RAN5",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document AS d\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number = 'R5-194984';",
+    "rows": [
+      [
+        "RP-190871",
+        "RAN#84"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.010866271000850247,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-revision_chain-R5-236866",
+    "packetId": "RAN5-qe85e166ea7f5",
+    "wg": "RAN5",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE versions(id) AS (\n  SELECT id FROM document WHERE number = 'R5-236866'\n  UNION\n  SELECT rv.later FROM revision AS rv JOIN versions AS v ON rv.earlier = v.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM versions AS v\nJOIN document AS d ON d.id = v.id\nJOIN disposition AS dd ON dd.target = d.id\nJOIN resolution AS r ON r.id = dd.resolution_id\nJOIN meeting AS m ON m.id = r.meeting_id\nJOIN cr_in_pack AS link ON link.cr = d.id\nJOIN cr_pack AS p ON p.id = link.pack_id\nWHERE d.number <> 'R5-236866'\n  AND lower(replace(replace(replace(trim(m.wg), '_', ''), '-', ''), ' ', '')) IN ('ran5', 'ranwg5')\n  AND (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'sourceverified'\n       OR (lower(replace(replace(replace(trim(dd.evidence_status), '_', ''), '-', ''), ' ', '')) = 'verified'\n           AND nullif(trim(dd.evidence_path), '') IS NOT NULL\n           AND nullif(trim(dd.evidence_sha256), '') IS NOT NULL))\n  AND lower(replace(replace(replace(trim(dd.scope), '_', ''), '-', ''), ' ', '')) IN ('document', 'wholedocument', 'wholedoc');",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.05045517499820562,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 0
+    }
+  }
+]

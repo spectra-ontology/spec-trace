@@ -1,0 +1,1302 @@
+[
+  {
+    "id": "RAN1-full_chain-R1-1913654",
+    "packetId": "RAN1-q29a6754c388e",
+    "wg": "RAN1",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.06185628200182691,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-first_change-RP-192634",
+    "packetId": "RAN1-q2e3bcd13a977",
+    "wg": "RAN1",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE candidate = t OR seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.15626972400059458,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-clause_history-38.213-Rel-17-4.2",
+    "packetId": "RAN1-q3bc833f726da",
+    "wg": "RAN1",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.SyntaxError} {message: Variable `p` not defined (line 1, column 507 (offset: 506))\n\"MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack\"\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^}",
+    "blocked": false,
+    "elapsedSeconds": 0.00808246899759979,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-revision_chain-R1-2403693",
+    "packetId": "RAN1-q45c336a2d020",
+    "wg": "RAN1",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "MATCH (start:Tdoc {tdocNumber: $document})-[:REVISED_TO*1..]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT t.tdocNumber AS final_document, d.dispositionCode AS disposition, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.053923747000226285,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-disposition_pack-R1-2108591",
+    "packetId": "RAN1-q5154c2ea6399",
+    "wg": "RAN1",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.04237317599836388,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-pack_lookup_empty-R1-1717870",
+    "packetId": "RAN1-q902d2fcdcbcb",
+    "wg": "RAN1",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.01774327399834874,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-previous_pack-RP-200692",
+    "packetId": "RAN1-qa546b7e1f645",
+    "wg": "RAN1",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.15506263399947784,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-pack_origin-RP-241065",
+    "packetId": "RAN1-qc8472684e9bd",
+    "wg": "RAN1",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "MATCH (p:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.03830156100229942,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-clause_neighbours-R1-2202802",
+    "packetId": "RAN1-qd1d995f3c7e6",
+    "wg": "RAN1",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "MATCH (focus:Tdoc {tdocNumber: $document})-[:MODIFIES_SECTION]->(s:Section) MATCH (t:Tdoc)-[:MODIFIES_SECTION]->(s) WHERE t <> focus MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN1' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT s.sectionNumber AS clause, t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.06044978800127865,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN1-pack_lookup-R1-2202945",
+    "packetId": "RAN1-qf2e42a4bc65f",
+    "wg": "RAN1",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.014857473001029575,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-previous_pack-RP-241554",
+    "packetId": "RAN2-q02d73bbdf069",
+    "wg": "RAN2",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.361618137001642,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-clause_neighbours-R2-2010821",
+    "packetId": "RAN2-q2c3895e241f7",
+    "wg": "RAN2",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "MATCH (focus:Tdoc {tdocNumber: $document})-[:MODIFIES_SECTION]->(s:Section) MATCH (t:Tdoc)-[:MODIFIES_SECTION]->(s) WHERE t <> focus MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT s.sectionNumber AS clause, t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.13134419799825992,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-disposition_pack-R2-2506546",
+    "packetId": "RAN2-q3e26d2802f04",
+    "wg": "RAN2",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.10933375300010084,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-pack_lookup_empty-R2-2306001",
+    "packetId": "RAN2-q58026a6145f2",
+    "wg": "RAN2",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.06896563500049524,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-pack_origin-RP-201183",
+    "packetId": "RAN2-q7318811f00fe",
+    "wg": "RAN2",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "MATCH (p:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.0935120909998659,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-first_change-RP-252818",
+    "packetId": "RAN2-q860585794db4",
+    "wg": "RAN2",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE candidate = t OR seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.33883255399996415,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-clause_history-38.305-Rel-17-7.3.2",
+    "packetId": "RAN2-q86cd4db95e59",
+    "wg": "RAN2",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.SyntaxError} {message: Variable `p` not defined (line 1, column 507 (offset: 506))\n\"MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack\"\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^}",
+    "blocked": false,
+    "elapsedSeconds": 0.06049984800120001,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-revision_chain-R2-1818753",
+    "packetId": "RAN2-q9d47bc6f97c6",
+    "wg": "RAN2",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "MATCH (start:Tdoc {tdocNumber: $document})-[:REVISED_TO*1..]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT t.tdocNumber AS final_document, d.dispositionCode AS disposition, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.11446239900033106,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-full_chain-R2-1902721",
+    "packetId": "RAN2-qa32e5f838520",
+    "wg": "RAN2",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN2' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.09338120900065405,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN2-pack_lookup-R2-2008568",
+    "packetId": "RAN2-qdc7dc2141443",
+    "wg": "RAN2",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.016993614000966772,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-full_chain-R3-222922",
+    "packetId": "RAN3-q16fe34e2e936",
+    "wg": "RAN3",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.16039547100081109,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-pack_origin-RP-233845",
+    "packetId": "RAN3-q1ba7910c1aeb",
+    "wg": "RAN3",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "MATCH (p:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.08767283899942413,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-disposition_pack-R3-202667",
+    "packetId": "RAN3-q1fbc1333eb5d",
+    "wg": "RAN3",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.1040676929987967,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-revision_chain-R3-221570",
+    "packetId": "RAN3-q6ec77c41a74a",
+    "wg": "RAN3",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "MATCH (start:Tdoc {tdocNumber: $document})-[:REVISED_TO*1..]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT t.tdocNumber AS final_document, d.dispositionCode AS disposition, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.11834463500053971,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-clause_neighbours-R3-194602",
+    "packetId": "RAN3-q8a6100612fec",
+    "wg": "RAN3",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "MATCH (focus:Tdoc {tdocNumber: $document})-[:MODIFIES_SECTION]->(s:Section) MATCH (t:Tdoc)-[:MODIFIES_SECTION]->(s) WHERE t <> focus MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT s.sectionNumber AS clause, t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.1760781560005853,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-pack_lookup_empty-R3-215085",
+    "packetId": "RAN3-qbb384d8ef29b",
+    "wg": "RAN3",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.01828345600006287,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-first_change-RP-233814",
+    "packetId": "RAN3-qc544a5a2f69d",
+    "wg": "RAN3",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE candidate = t OR seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.37135447899709106,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-pack_lookup-R3-255122",
+    "packetId": "RAN3-qd2c056f983f8",
+    "wg": "RAN3",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.018563194000307703,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-clause_history-38.413-Rel-16-8.3.4",
+    "packetId": "RAN3-qdfe4d9c918aa",
+    "wg": "RAN3",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.SyntaxError} {message: Variable `p` not defined (line 1, column 507 (offset: 506))\n\"MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack\"\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^}",
+    "blocked": false,
+    "elapsedSeconds": 0.010109370003192453,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN3-previous_pack-RP-200423",
+    "packetId": "RAN3-qf54b7fe1de2c",
+    "wg": "RAN3",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN3' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.36591695100287325,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-previous_pack-RP-231340",
+    "packetId": "RAN4-q0da703b03ce1",
+    "wg": "RAN4",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.18589702700046473,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-first_change-RP-250590",
+    "packetId": "RAN4-q3f128c42c249",
+    "wg": "RAN4",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE candidate = t OR seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.1780390849999094,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-pack_origin-RP-202446",
+    "packetId": "RAN4-q445cf0b14431",
+    "wg": "RAN4",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "MATCH (p:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.03780561700114049,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-full_chain-R4-2313080",
+    "packetId": "RAN4-q5564f8be249d",
+    "wg": "RAN4",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.04927413999757846,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-pack_lookup_empty-R4-2520572",
+    "packetId": "RAN4-q5f9ae7ff4ca2",
+    "wg": "RAN4",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.016650386001856532,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-clause_history-38.133-Rel-18-A.7.5.1.6",
+    "packetId": "RAN4-q686bae23d9ed",
+    "wg": "RAN4",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.SyntaxError} {message: Variable `p` not defined (line 1, column 507 (offset: 506))\n\"MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack\"\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^}",
+    "blocked": false,
+    "elapsedSeconds": 0.008626128998002969,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-revision_chain-R4-2412759",
+    "packetId": "RAN4-q6a9a6059b312",
+    "wg": "RAN4",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "MATCH (start:Tdoc {tdocNumber: $document})-[:REVISED_TO*1..]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT t.tdocNumber AS final_document, d.dispositionCode AS disposition, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.051479670000844635,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-disposition_pack-R4-1814116",
+    "packetId": "RAN4-q8321a5639b22",
+    "wg": "RAN4",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.04123185700154863,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-pack_lookup-R4-2320863",
+    "packetId": "RAN4-qab608dcda8a2",
+    "wg": "RAN4",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.0134349990003102,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN4-clause_neighbours-R4-2108722",
+    "packetId": "RAN4-qb68ee1a1ea1c",
+    "wg": "RAN4",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "MATCH (focus:Tdoc {tdocNumber: $document})-[:MODIFIES_SECTION]->(s:Section) MATCH (t:Tdoc)-[:MODIFIES_SECTION]->(s) WHERE t <> focus MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN4' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT s.sectionNumber AS clause, t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.060038452000299,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-pack_lookup_empty-R5-191564",
+    "packetId": "RAN5-q315c956af92f",
+    "wg": "RAN5",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.02298965699810651,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-full_chain-R5-251067",
+    "packetId": "RAN5-q4dced09756b2",
+    "wg": "RAN5",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.051921057998697506,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-first_change-RP-230947",
+    "packetId": "RAN5-q62c0ba2e6e6a",
+    "wg": "RAN5",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE candidate = t OR seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.1687928520004789,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-previous_pack-RP-261275",
+    "packetId": "RAN5-q92cc544cbae2",
+    "wg": "RAN5",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "MATCH (focus:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) MATCH (s)-[:BELONGS_TO_SPEC]->(sp:Spec) MATCH (candidate:Tdoc)-[:MODIFIES_SECTION]->(s) MATCH (candidate)-[:BELONGS_TO_CR_PACK]->(p:CRPack) WITH t, d, m, s, sp, candidate, p, toInteger(split(p.tsgMeeting, '-')[0]) AS seq WHERE seq < toInteger(split(m.meetingNumber, '-')[0]) RETURN DISTINCT sp.specNumber AS specification, s.sectionNumber AS clause, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.16245776700088754,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-clause_history-38.521-4-Rel-19-6.2A.3.1.1.3.3_1",
+    "packetId": "RAN5-q9dd890b7d2e9",
+    "wg": "RAN5",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.SyntaxError} {message: Variable `p` not defined (line 1, column 507 (offset: 506))\n\"MATCH (t:Tdoc) WHERE t.type = 'CR' AND t.tdocNumber STARTS WITH 'R' AND t.clausesAffected CONTAINS $clause MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack\"\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^}",
+    "blocked": false,
+    "elapsedSeconds": 0.006777532002161024,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-clause_neighbours-R5-186468",
+    "packetId": "RAN5-qbd0afb2d46d9",
+    "wg": "RAN5",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "MATCH (focus:Tdoc {tdocNumber: $document})-[:MODIFIES_SECTION]->(s:Section) MATCH (t:Tdoc)-[:MODIFIES_SECTION]->(s) WHERE t <> focus MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT s.sectionNumber AS clause, t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.059738580999692203,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-pack_origin-RP-250731",
+    "packetId": "RAN5-qde317edc86b0",
+    "wg": "RAN5",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "MATCH (p:CRPack {crPackId: $pack})-[:HAS_CR]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' RETURN DISTINCT t.tdocNumber AS document, d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): pack}",
+    "blocked": false,
+    "elapsedSeconds": 0.03624125100031961,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-disposition_pack-R5-203000",
+    "packetId": "RAN5-qe63e08fab145",
+    "wg": "RAN5",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document}) WITH t MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) MATCH (t)-[:MODIFIES_SECTION]->(s:Section) RETURN DISTINCT d.dispositionCode AS disposition, m.meetingNumber AS wg_meeting, p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting, s.sectionNumber AS clause",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.037699366999731865,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-pack_lookup-R5-194984",
+    "packetId": "RAN5-qe644473c854d",
+    "wg": "RAN5",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "MATCH (t:Tdoc {tdocNumber: $document})-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT p.crPackId AS cr_pack, p.tsgMeeting AS tsg_meeting",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.012276093999389559,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  },
+  {
+    "id": "RAN5-revision_chain-R5-236866",
+    "packetId": "RAN5-qe85e166ea7f5",
+    "wg": "RAN5",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "MATCH (start:Tdoc {tdocNumber: $document})-[:REVISED_TO*1..]->(t:Tdoc) MATCH (r:Resolution)-[:HAS_DISPOSITION]->(d:DecisionDisposition)-[:DISPOSITION_TARGET]->(t:Tdoc) MATCH (r)-[:MADE_AT]->(m:Meeting) WHERE m.workingGroup = 'RAN5' AND d.evidenceStatus = 'source_verified' AND d.assessmentMethod CONTAINS 'whole_target' MATCH (t)-[:BELONGS_TO_CR_PACK]->(p:CRPack) RETURN DISTINCT t.tdocNumber AS final_document, d.dispositionCode AS disposition, p.crPackId AS cr_pack",
+    "rows": null,
+    "error": "{code: Neo.ClientError.Statement.ParameterMissing} {message: Expected parameter(s): document}",
+    "blocked": false,
+    "elapsedSeconds": 0.048614617000566795,
+    "scores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    },
+    "identityScores": {
+      "exact": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "unreadable": 1
+    }
+  }
+]

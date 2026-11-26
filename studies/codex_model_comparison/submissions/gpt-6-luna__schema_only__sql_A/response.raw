@@ -1,0 +1,204 @@
+{
+  "queries": [
+    {
+      "id": "RAN1-q29a6754c388e",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting, s.clause FROM document d JOIN disposition di ON di.target='RAN1' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN1' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cms ON cms.cr=d.id JOIN section s ON s.id=cms.section_id WHERE d.number='R1-1913654' AND d.doc_type='CR' AND d.spec='TS 38.213'"
+    },
+    {
+      "id": "RAN1-q2e3bcd13a977",
+      "query": "SELECT DISTINCT d.number, d.spec, s.clause FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN1' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cms ON cms.cr=d.id JOIN section s ON s.id=cms.section_id AND s.release=d.target_release WHERE p.pack_number='RP-192634' AND d.target_release='Rel-16' AND NOT EXISTS (SELECT 1 FROM cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section ec ON ec.cr=ed.id WHERE ep.tsg_number<p.tsg_number AND ed.target_release=d.target_release AND ec.section_id=s.id)"
+    },
+    {
+      "id": "RAN1-q3bc833f726da",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label, p.pack_number FROM document d JOIN disposition di ON di.target='RAN1' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN1' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cms ON cms.cr=d.id JOIN section s ON s.id=cms.section_id WHERE d.doc_type='CR' AND d.spec='TS 38.213' AND d.target_release='Rel-17' AND s.release='Rel-17' AND s.clause='4.2'"
+    },
+    {
+      "id": "RAN1-q45c336a2d020",
+      "query": "WITH RECURSIVE later(id) AS (SELECT later FROM revision WHERE earlier=(SELECT id FROM document WHERE number='R1-2403693') UNION SELECT rv.later FROM revision rv JOIN later l ON rv.earlier=l.id) SELECT DISTINCT d.number, di.code, p.pack_number FROM later l JOIN document d ON d.id=l.id JOIN disposition di ON di.target='RAN1' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id"
+    },
+    {
+      "id": "RAN1-q5154c2ea6399",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting FROM document d JOIN disposition di ON di.target='RAN1' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN1' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R1-2108591' AND d.doc_type='CR' AND d.spec='TS 38.212'"
+    },
+    {
+      "id": "RAN1-q902d2fcdcbcb",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R1-1717870' AND d.doc_type='CR' AND d.spec='TS 38.901'"
+    },
+    {
+      "id": "RAN1-qa546b7e1f645",
+      "query": "SELECT DISTINCT s.spec, s.clause, ep.pack_number, ep.tsg_meeting FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN1' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release='Rel-16' JOIN cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section em ON em.cr=ed.id AND em.section_id=s.id WHERE p.pack_number='RP-200692' AND d.target_release='Rel-16' AND ep.tsg_number<p.tsg_number AND ed.target_release='Rel-16' AND ep.tsg_number=(SELECT MAX(xp.tsg_number) FROM cr_pack xp JOIN pack_member xpm ON xpm.pack_id=xp.id JOIN document xd ON xd.id=xpm.cr JOIN cr_modifies_section xm ON xm.cr=xd.id WHERE xp.tsg_number<p.tsg_number AND xd.target_release='Rel-16' AND xm.section_id=s.id)"
+    },
+    {
+      "id": "RAN1-qc8472684e9bd",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN1' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN1' WHERE p.pack_number='RP-241065'"
+    },
+    {
+      "id": "RAN1-qd1d995f3c7e6",
+      "query": "SELECT DISTINCT s.clause, od.number, di.code, wm.label, p.pack_number FROM document target JOIN cr_modifies_section tc ON tc.cr=target.id JOIN section s ON s.id=tc.section_id AND s.release='Rel-17' JOIN cr_modifies_section oc ON oc.section_id=s.id JOIN document od ON od.id=oc.cr JOIN disposition di ON di.target='RAN1' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN1' JOIN pack_member pm ON pm.cr=od.id JOIN cr_pack p ON p.id=pm.pack_id WHERE target.number='R1-2202802' AND target.target_release='Rel-17' AND od.id<>target.id AND od.target_release='Rel-17'"
+    },
+    {
+      "id": "RAN1-qf2e42a4bc65f",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R1-2202945' AND d.doc_type='CR' AND d.spec='TS 38.213'"
+    },
+    {
+      "id": "RAN2-q02d73bbdf069",
+      "query": "SELECT DISTINCT s.spec, s.clause, ep.pack_number, ep.tsg_meeting FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN2' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release IN ('Rel-17','Rel-18') JOIN cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section em ON em.cr=ed.id AND em.section_id=s.id WHERE p.pack_number='RP-241554' AND d.target_release=s.release AND ep.tsg_number<p.tsg_number AND ed.target_release=s.release AND ep.tsg_number=(SELECT MAX(xp.tsg_number) FROM cr_pack xp JOIN pack_member xpm ON xpm.pack_id=xp.id JOIN document xd ON xd.id=xpm.cr JOIN cr_modifies_section xm ON xm.cr=xd.id WHERE xp.tsg_number<p.tsg_number AND xd.target_release=s.release AND xm.section_id=s.id)"
+    },
+    {
+      "id": "RAN2-q2c3895e241f7",
+      "query": "SELECT DISTINCT s.clause, od.number, di.code, wm.label, p.pack_number FROM document target JOIN cr_modifies_section tc ON tc.cr=target.id JOIN section s ON s.id=tc.section_id AND s.release='Rel-16' JOIN cr_modifies_section oc ON oc.section_id=s.id JOIN document od ON od.id=oc.cr JOIN disposition di ON di.target='RAN2' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN2' JOIN pack_member pm ON pm.cr=od.id JOIN cr_pack p ON p.id=pm.pack_id WHERE target.number='R2-2010821' AND od.id<>target.id AND od.target_release='Rel-16'"
+    },
+    {
+      "id": "RAN2-q3e26d2802f04",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting FROM document d JOIN disposition di ON di.target='RAN2' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN2' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R2-2506546' AND d.doc_type='CR' AND d.spec='TS 38.300'"
+    },
+    {
+      "id": "RAN2-q58026a6145f2",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R2-2306001' AND d.doc_type='CR' AND d.spec='TS 38.331'"
+    },
+    {
+      "id": "RAN2-q7318811f00fe",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN2' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN2' WHERE p.pack_number='RP-201183'"
+    },
+    {
+      "id": "RAN2-q860585794db4",
+      "query": "SELECT DISTINCT d.number, s.spec, s.clause FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN2' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release='Rel-19' WHERE p.pack_number='RP-252818' AND d.target_release='Rel-19' AND NOT EXISTS (SELECT 1 FROM cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section ec ON ec.cr=ed.id WHERE ep.tsg_number<p.tsg_number AND ed.target_release='Rel-19' AND ec.section_id=s.id)"
+    },
+    {
+      "id": "RAN2-q86cd4db95e59",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label, p.pack_number FROM document d JOIN disposition di ON di.target='RAN2' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN2' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id WHERE d.target_release='Rel-17' AND d.spec='TS 38.305' AND s.release='Rel-17' AND s.clause='7.3.2'"
+    },
+    {
+      "id": "RAN2-q9d47bc6f97c6",
+      "query": "WITH RECURSIVE later(id) AS (SELECT later FROM revision WHERE earlier=(SELECT id FROM document WHERE number='R2-1818753') UNION SELECT rv.later FROM revision rv JOIN later l ON rv.earlier=l.id) SELECT DISTINCT d.number, di.code, p.pack_number FROM later l JOIN document d ON d.id=l.id JOIN disposition di ON di.target='RAN2' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id"
+    },
+    {
+      "id": "RAN2-qa32e5f838520",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting, s.clause FROM document d JOIN disposition di ON di.target='RAN2' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN2' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id WHERE d.number='R2-1902721' AND d.doc_type='CR' AND d.spec='TS 38.331'"
+    },
+    {
+      "id": "RAN2-qdc7dc2141443",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R2-2008568' AND d.doc_type='CR' AND d.spec='TS 38.304'"
+    },
+    {
+      "id": "RAN3-q16fe34e2e936",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting, s.clause FROM document d JOIN disposition di ON di.target='RAN3' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN3' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id WHERE d.number='R3-222922' AND d.doc_type='CR' AND d.spec='TS 38.470'"
+    },
+    {
+      "id": "RAN3-q1ba7910c1aeb",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN3' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN3' WHERE p.pack_number='RP-233845'"
+    },
+    {
+      "id": "RAN3-q1fbc1333eb5d",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting FROM document d JOIN disposition di ON di.target='RAN3' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN3' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R3-202667' AND d.doc_type='CR' AND d.spec='TS 38.413'"
+    },
+    {
+      "id": "RAN3-q6ec77c41a74a",
+      "query": "WITH RECURSIVE later(id) AS (SELECT later FROM revision WHERE earlier=(SELECT id FROM document WHERE number='R3-221570') UNION SELECT rv.later FROM revision rv JOIN later l ON rv.earlier=l.id) SELECT DISTINCT d.number, di.code, p.pack_number FROM later l JOIN document d ON d.id=l.id JOIN disposition di ON di.target='RAN3' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id"
+    },
+    {
+      "id": "RAN3-q8a6100612fec",
+      "query": "SELECT DISTINCT s.clause, od.number, di.code, wm.label, p.pack_number FROM document target JOIN cr_modifies_section tc ON tc.cr=target.id JOIN section s ON s.id=tc.section_id AND s.release='Rel-15' JOIN cr_modifies_section oc ON oc.section_id=s.id JOIN document od ON od.id=oc.cr JOIN disposition di ON di.target='RAN3' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN3' JOIN pack_member pm ON pm.cr=od.id JOIN cr_pack p ON p.id=pm.pack_id WHERE target.number='R3-194602' AND od.id<>target.id AND od.target_release='Rel-15'"
+    },
+    {
+      "id": "RAN3-qbb384d8ef29b",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R3-215085' AND d.doc_type='CR' AND d.spec='TS 36.423'"
+    },
+    {
+      "id": "RAN3-qc544a5a2f69d",
+      "query": "SELECT DISTINCT d.number, s.spec, s.clause FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN3' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release='Rel-18' WHERE p.pack_number='RP-233814' AND d.target_release='Rel-18' AND NOT EXISTS (SELECT 1 FROM cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section ec ON ec.cr=ed.id WHERE ep.tsg_number<p.tsg_number AND ed.target_release='Rel-18' AND ec.section_id=s.id)"
+    },
+    {
+      "id": "RAN3-qd2c056f983f8",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R3-255122' AND d.doc_type='CR' AND d.spec='TS 36.413'"
+    },
+    {
+      "id": "RAN3-qdfe4d9c918aa",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label, p.pack_number FROM document d JOIN disposition di ON di.target='RAN3' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN3' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id WHERE d.target_release='Rel-16' AND d.spec='TS 38.413' AND s.release='Rel-16' AND s.clause='8.3.4'"
+    },
+    {
+      "id": "RAN3-qf54b7fe1de2c",
+      "query": "SELECT DISTINCT s.spec, s.clause, ep.pack_number, ep.tsg_meeting FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN3' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release='Rel-16' JOIN cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section em ON em.cr=ed.id AND em.section_id=s.id WHERE p.pack_number='RP-200423' AND d.target_release='Rel-16' AND ep.tsg_number<p.tsg_number AND ed.target_release='Rel-16' AND ep.tsg_number=(SELECT MAX(xp.tsg_number) FROM cr_pack xp JOIN pack_member xpm ON xpm.pack_id=xp.id JOIN document xd ON xd.id=xpm.cr JOIN cr_modifies_section xm ON xm.cr=xd.id WHERE xp.tsg_number<p.tsg_number AND xd.target_release='Rel-16' AND xm.section_id=s.id)"
+    },
+    {
+      "id": "RAN4-q0da703b03ce1",
+      "query": "SELECT DISTINCT s.spec, s.clause, ep.pack_number, ep.tsg_meeting FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN4' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release IN ('Rel-16','Rel-17','Rel-18') JOIN cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section em ON em.cr=ed.id AND em.section_id=s.id WHERE p.pack_number='RP-231340' AND d.target_release=s.release AND ep.tsg_number<p.tsg_number AND ed.target_release=s.release AND ep.tsg_number=(SELECT MAX(xp.tsg_number) FROM cr_pack xp JOIN pack_member xpm ON xpm.pack_id=xp.id JOIN document xd ON xd.id=xpm.cr JOIN cr_modifies_section xm ON xm.cr=xd.id WHERE xp.tsg_number<p.tsg_number AND xd.target_release=s.release AND xm.section_id=s.id)"
+    },
+    {
+      "id": "RAN4-q3f128c42c249",
+      "query": "SELECT DISTINCT d.number, s.spec, s.clause FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN4' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release IN ('Rel-17','Rel-18') WHERE p.pack_number='RP-250590' AND d.target_release=s.release AND NOT EXISTS (SELECT 1 FROM cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section ec ON ec.cr=ed.id WHERE ep.tsg_number<p.tsg_number AND ed.target_release=s.release AND ec.section_id=s.id)"
+    },
+    {
+      "id": "RAN4-q445cf0b14431",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN4' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN4' WHERE p.pack_number='RP-202446'"
+    },
+    {
+      "id": "RAN4-q5564f8be249d",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting, s.clause FROM document d JOIN disposition di ON di.target='RAN4' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN4' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id WHERE d.number='R4-2313080' AND d.doc_type='CR' AND d.spec='TS 38.101-1'"
+    },
+    {
+      "id": "RAN4-q5f9ae7ff4ca2",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R4-2520572' AND d.doc_type='CR' AND d.spec='TS 36.102'"
+    },
+    {
+      "id": "RAN4-q686bae23d9ed",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label, p.pack_number FROM document d JOIN disposition di ON di.target='RAN4' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN4' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id WHERE d.target_release='Rel-18' AND d.spec='TS 38.133' AND s.release='Rel-18' AND s.clause='A.7.5.1.6'"
+    },
+    {
+      "id": "RAN4-q6a9a6059b312",
+      "query": "WITH RECURSIVE later(id) AS (SELECT later FROM revision WHERE earlier=(SELECT id FROM document WHERE number='R4-2412759') UNION SELECT rv.later FROM revision rv JOIN later l ON rv.earlier=l.id) SELECT DISTINCT d.number, di.code, p.pack_number FROM later l JOIN document d ON d.id=l.id JOIN disposition di ON di.target='RAN4' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id"
+    },
+    {
+      "id": "RAN4-q8321a5639b22",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting FROM document d JOIN disposition di ON di.target='RAN4' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN4' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R4-1814116' AND d.doc_type='CR' AND d.spec='TS 37.104'"
+    },
+    {
+      "id": "RAN4-qab608dcda8a2",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R4-2320863' AND d.doc_type='CR' AND d.spec='TS 38.133'"
+    },
+    {
+      "id": "RAN4-qb68ee1a1ea1c",
+      "query": "SELECT DISTINCT s.clause, od.number, di.code, wm.label, p.pack_number FROM document target JOIN cr_modifies_section tc ON tc.cr=target.id JOIN section s ON s.id=tc.section_id AND s.release='Rel-15' JOIN cr_modifies_section oc ON oc.section_id=s.id JOIN document od ON od.id=oc.cr JOIN disposition di ON di.target='RAN4' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN4' JOIN pack_member pm ON pm.cr=od.id JOIN cr_pack p ON p.id=pm.pack_id WHERE target.number='R4-2108722' AND od.id<>target.id AND od.target_release='Rel-15'"
+    },
+    {
+      "id": "RAN5-q315c956af92f",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R5-191564' AND d.doc_type='CR' AND d.spec='TS 36.521-3'"
+    },
+    {
+      "id": "RAN5-q4dced09756b2",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting, s.clause FROM document d JOIN disposition di ON di.target='RAN5' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN5' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id WHERE d.number='R5-251067' AND d.doc_type='CR' AND d.spec='TS 38.522'"
+    },
+    {
+      "id": "RAN5-q62c0ba2e6e6a",
+      "query": "SELECT DISTINCT d.number, s.spec, s.clause FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN5' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release='Rel-17' WHERE p.pack_number='RP-230947' AND d.target_release='Rel-17' AND NOT EXISTS (SELECT 1 FROM cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section ec ON ec.cr=ed.id WHERE ep.tsg_number<p.tsg_number AND ed.target_release='Rel-17' AND ec.section_id=s.id)"
+    },
+    {
+      "id": "RAN5-q92cc544cbae2",
+      "query": "SELECT DISTINCT s.spec, s.clause, ep.pack_number, ep.tsg_meeting FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN5' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id AND s.release='Rel-19' JOIN cr_pack ep JOIN pack_member epm ON epm.pack_id=ep.id JOIN document ed ON ed.id=epm.cr JOIN cr_modifies_section em ON em.cr=ed.id AND em.section_id=s.id WHERE p.pack_number='RP-261275' AND d.target_release='Rel-19' AND ep.tsg_number<p.tsg_number AND ed.target_release='Rel-19' AND ep.tsg_number=(SELECT MAX(xp.tsg_number) FROM cr_pack xp JOIN pack_member xpm ON xpm.pack_id=xp.id JOIN document xd ON xd.id=xpm.cr JOIN cr_modifies_section xm ON xm.cr=xd.id WHERE xp.tsg_number<p.tsg_number AND xd.target_release='Rel-19' AND xm.section_id=s.id)"
+    },
+    {
+      "id": "RAN5-q9dd890b7d2e9",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label, p.pack_number FROM document d JOIN disposition di ON di.target='RAN5' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN5' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id JOIN cr_modifies_section cm ON cm.cr=d.id JOIN section s ON s.id=cm.section_id WHERE d.target_release='Rel-19' AND d.spec='TS 38.521-4' AND s.release='Rel-19' AND s.clause='6.2A.3.1.1.3.3_1'"
+    },
+    {
+      "id": "RAN5-qbd0afb2d46d9",
+      "query": "SELECT DISTINCT s.clause, od.number, di.code, wm.label, p.pack_number FROM document target JOIN cr_modifies_section tc ON tc.cr=target.id JOIN section s ON s.id=tc.section_id AND s.release='Rel-15' JOIN cr_modifies_section oc ON oc.section_id=s.id JOIN document od ON od.id=oc.cr JOIN disposition di ON di.target='RAN5' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN5' JOIN pack_member pm ON pm.cr=od.id JOIN cr_pack p ON p.id=pm.pack_id WHERE target.number='R5-186468' AND od.id<>target.id AND od.target_release='Rel-15'"
+    },
+    {
+      "id": "RAN5-qde317edc86b0",
+      "query": "SELECT DISTINCT d.number, di.code, wm.label FROM cr_pack p JOIN pack_member pm ON pm.pack_id=p.id JOIN document d ON d.id=pm.cr JOIN disposition di ON di.target='RAN5' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN5' WHERE p.pack_number='RP-250731'"
+    },
+    {
+      "id": "RAN5-qe63e08fab145",
+      "query": "SELECT DISTINCT di.code, wm.label, p.pack_number, p.tsg_meeting FROM document d JOIN disposition di ON di.target='RAN5' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN resolution r ON r.id=di.resolution_id JOIN meeting wm ON wm.id=r.meeting_id AND wm.wg='RAN5' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R5-203000' AND d.doc_type='CR' AND d.spec='TS 38.533'"
+    },
+    {
+      "id": "RAN5-qe644473c854d",
+      "query": "SELECT DISTINCT p.pack_number, p.tsg_meeting FROM document d JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id WHERE d.number='R5-194984' AND d.doc_type='CR' AND d.spec='TS 38.521-4'"
+    },
+    {
+      "id": "RAN5-qe85e166ea7f5",
+      "query": "WITH RECURSIVE later(id) AS (SELECT later FROM revision WHERE earlier=(SELECT id FROM document WHERE number='R5-236866') UNION SELECT rv.later FROM revision rv JOIN later l ON rv.earlier=l.id) SELECT DISTINCT d.number, di.code, p.pack_number FROM later l JOIN document d ON d.id=l.id JOIN disposition di ON di.target='RAN5' AND di.evidence_status='source_verified' AND di.scope='whole_document' JOIN pack_member pm ON pm.cr=d.id JOIN cr_pack p ON p.id=pm.pack_id"
+    }
+  ]
+}

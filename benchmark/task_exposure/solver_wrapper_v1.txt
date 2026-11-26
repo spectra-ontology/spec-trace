@@ -1,0 +1,46 @@
+SPECTRA solver instructions v1
+
+Answer within the specified working group's frozen record snapshot. Return the
+complete set of distinct rows in the requested field order. Use recorded
+identifiers and values. Treat document and pack identifiers as exact, and
+qualify a CR number by its specification. A zero-row answer means the
+qualifying record set in this snapshot is empty.
+
+A qualifying disposition has source verification, applies to the whole target
+document, and has a recorded working-group decision meeting. Join each qualifying
+disposition and meeting to each applicable recorded pack and plenary meeting
+when requested. Resolve pack membership by exact document ID.
+
+Apply these rules to the corresponding requested operation:
+- Pack lookup returns all packs that contain the identified document, with
+  their plenary meetings.
+- Pack origin returns all recorded members of the named pack that have a
+  qualifying disposition, with their working-group decision meetings.
+- Decision-to-pack tracing returns every qualifying disposition/decision
+  meeting crossed with every pack/plenary meeting for that document.
+- Decision-to-clause tracing adds every clause label explicitly represented by
+  a stored section-change link from that document. Project the section link to
+  its clause label across all stored editions and deduplicate the resulting
+  rows.
+- Revision tracing follows all forward revision links transitively. Include
+  every reachable later document with a qualifying disposition and pack,
+  including qualifying intermediate revisions.
+- Clause history identifies the exact specification, release and clause.
+  Children are separate section IDs. Require that a changing document's target
+  release matches the section release. Return each qualifying disposition,
+  working-group decision meeting and requested pack evidence.
+- Clause neighbours share an exact section and target release with the
+  anchor document. Return all other matching documents with qualifying
+  dispositions and their requested meeting and pack evidence.
+- First change examines each exact section touched by a qualifying member of
+  the anchor pack in its target release. Keep the section when no document
+  changing it in that release belongs to a pack at a smaller plenary meeting
+  number. Earlier changers are eligible by their recorded pack membership.
+- Previous pack uses the same exact-section and release criteria. For each
+  touched section with an earlier pack, return all packs tied at the largest
+  plenary meeting number strictly below the anchor's. Earlier changers are
+  eligible by their recorded pack membership.
+
+The task below specifies the authorized interface and output format. Follow
+the supplied schema for requested queries, and make a zero-row answer
+executable when a query is requested.

@@ -97,7 +97,7 @@ Source-verified dispositions cite 276 meeting reports: 61 in RAN1, 61 in RAN2, 5
 1. *Closed-book, dense retrieval (eight chunks), oracle evidence and oracle text only,* each with llama3.1:8b and qwen2.5:14b on a local GPU; dense retrieval embeds with bge-m3.
 2. *Search agents* (Claude Opus 5.5): text search over passages that carry the record fields, the same over passages without them, raw-text search over the documents, and a dense retrieval tool.
 3. *Text-to-SQL and Text-to-Cypher agents:* Claude Opus 5.5 runs, ten per language, and Codex CLI runs with the schema alone and with value domains or schema exploration, with the queries, their execution results and the repair round.
-4. *Published-schema baseline* over the 3GPP CR database schema.
+4. *CR database baseline* using the pinned [3GPP Excel export and column rules](responses/final/crdb_baseline/crdb_lookup_run.json). The 18-column export dated 12 October 2026 supplies the record fields required by 467 of the 667 questions. The other 200 require typed clause links. The [portal entry for CR 5008](https://portal.3gpp.org/DesktopModules/CRs/CrDetails.aspx?CrId=576852) lists clause 11.4.1 in its affected-clause text. SPECTRA links the CR to a clause record identified by specification (TS 38.523-1), release (Rel-19) and clause number (11.4.1). The CR also joins to its report disposition and plenary pack.
 5. *Gold re-derivation rounds* by Claude Code subagents and the Codex CLI (`responses/chain_rederivation/`).
 
 The result files of the audits and analyses that the paper reports (pack-link, clause-link, disposition and list-line audits, relational equivalence, text-route ceiling, substitution and schema ablations) sit at the top of `responses/` and in its subfolders.

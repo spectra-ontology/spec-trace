@@ -1,0 +1,3470 @@
+[
+  {
+    "id": "RAN1-full_chain-R1-1913654",
+    "packetId": "RAN1-q29a6754c388e",
+    "wg": "RAN1",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN1'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nWHERE d.number = 'R1-1913654' AND s.spec IN ('38.213', 'TS 38.213')",
+    "rows": [
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "6"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "7.1"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "7.1.1"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "7.2.1"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "7.3.1"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "7.5"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9.1.2.1"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9.1.3.1"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9.2"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9.2.2"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9.2.3"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9.2.4"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9.2.5"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "9.2.5.1"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "10"
+      ],
+      [
+        "agreed",
+        "RAN1#99",
+        "RP-192641",
+        "RAN#86",
+        "10.1"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.009346050002932316,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-first_change-RP-192634",
+    "packetId": "RAN1-q2e3bcd13a977",
+    "wg": "RAN1",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN1'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-192634' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-16')\n)\nSELECT DISTINCT current.document AS document, current.spec AS specification, current.clause AS clause\nFROM current_clauses current\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM section old_s\n  JOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\n  JOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\n  JOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\n  JOIN cr_pack old_p ON old_p.id = old_cp.pack_id\n  WHERE old_s.spec = current.spec AND old_s.release = current.release\n    AND old_s.clause = current.clause AND old_p.tsg_number < current.tsg_number\n)",
+    "rows": [
+      [
+        "R1-1912988",
+        "38.211",
+        "3.3"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "5.3.1"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "5.3.2"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "5.3.3"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "5.4"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.1"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.2"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.3"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.4"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.4.1"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.4.2"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.4.3"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.4.4"
+      ],
+      [
+        "R1-1912988",
+        "38.211",
+        "7.4.1.6.4.5"
+      ],
+      [
+        "R1-1912989",
+        "38.214",
+        "3.3"
+      ],
+      [
+        "R1-1912989",
+        "38.214",
+        "5.1.6"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.01653391199943144,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-clause_history-38.213-Rel-17-4.2",
+    "packetId": "RAN1-q3bc833f726da",
+    "wg": "RAN1",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document d\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN1'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE s.spec IN ('38.213', 'TS 38.213') AND s.release = 'Rel-17' AND s.clause = '4.2'\n  AND d.target_release = s.release",
+    "rows": [
+      [
+        "R1-2112928",
+        "agreed",
+        "RAN1#107-e",
+        "RP-212973"
+      ],
+      [
+        "R1-2112934",
+        "agreed",
+        "RAN1#107-e",
+        "RP-212969"
+      ],
+      [
+        "R1-2202984",
+        "agreed",
+        "RAN1#108-e",
+        "RP-220253"
+      ],
+      [
+        "R1-2205673",
+        "agreed",
+        "RAN1#109-e",
+        "RP-221603"
+      ],
+      [
+        "R1-2208302",
+        "agreed",
+        "RAN1#110",
+        "RP-222422"
+      ],
+      [
+        "R1-2304285",
+        "agreed",
+        "RAN1#112b-e",
+        "RP-231226"
+      ],
+      [
+        "R1-2312461",
+        "agreed",
+        "RAN1#115",
+        "RP-233734"
+      ],
+      [
+        "R1-2401733",
+        "agreed",
+        "RAN1#116",
+        "RP-240541"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.010501233999093529,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-revision_chain-R1-2403693",
+    "packetId": "RAN1-q45c336a2d020",
+    "wg": "RAN1",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE later_versions(id) AS (\n  SELECT rv.later\n  FROM document original\n  JOIN revision rv ON rv.earlier = original.id\n  WHERE original.number = 'R1-2403693'\n  UNION\n  SELECT rv.later\n  FROM later_versions previous\n  JOIN revision rv ON rv.earlier = previous.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM later_versions lv\nJOIN document d ON d.id = lv.id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN1'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number <> 'R1-2403693'",
+    "rows": [
+      [
+        "R1-2405740",
+        "agreed",
+        "RP-241076"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.017083422000723658,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-disposition_pack-R1-2108591",
+    "packetId": "RAN1-q5154c2ea6399",
+    "wg": "RAN1",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN1'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R1-2108591'",
+    "rows": [
+      [
+        "agreed",
+        "RAN1#106-e",
+        "RP-211841",
+        "RAN#93"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.006794705001084367,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-pack_lookup_empty-R1-1717870",
+    "packetId": "RAN1-q902d2fcdcbcb",
+    "wg": "RAN1",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R1-1717870'",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0011492049998196308,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-previous_pack-RP-200692",
+    "packetId": "RAN1-qa546b7e1f645",
+    "wg": "RAN1",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN1'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-200692' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-16')\n),\nearlier_packs AS (\n  SELECT current.spec, current.clause, old_p.pack_number, old_p.tsg_meeting, old_p.tsg_number,\n    MAX(old_p.tsg_number) OVER (\n      PARTITION BY current.spec, current.release, current.clause, current.tsg_number\n    ) AS latest_tsg_number\n  FROM current_clauses current\n  JOIN section old_s ON old_s.spec = current.spec\n  AND old_s.release = current.release AND old_s.clause = current.clause\nJOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\nJOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\nJOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\nJOIN cr_pack old_p ON old_p.id = old_cp.pack_id AND old_p.tsg_number < current.tsg_number\n)\nSELECT DISTINCT spec AS specification, clause, pack_number AS cr_pack, tsg_meeting\nFROM earlier_packs\nWHERE tsg_number = latest_tsg_number",
+    "rows": [
+      [
+        "38.211",
+        "5.2.3",
+        "RP-192641",
+        "RAN#86"
+      ],
+      [
+        "38.211",
+        "6.4.1.1.1.2",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.211",
+        "6.4.1.3.3.1",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.211",
+        "7.4.1.1.1",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.211",
+        "7.4.1.1.2",
+        "RP-200185",
+        "RAN#87"
+      ],
+      [
+        "38.212",
+        "6.3.2.1.2",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.212",
+        "7.3.1.1.2",
+        "RP-200188",
+        "RAN#87"
+      ],
+      [
+        "38.212",
+        "7.3.1.1.2",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.212",
+        "7.3.1.1.3",
+        "RP-200188",
+        "RAN#87"
+      ],
+      [
+        "38.212",
+        "7.3.1.2.3",
+        "RP-200188",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "10",
+        "RP-200185",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "10",
+        "RP-200188",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "10.1",
+        "RP-200184",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "10.1",
+        "RP-200185",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "10.1",
+        "RP-200188",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "10.1",
+        "RP-200194",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "6",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "7",
+        "RP-192643",
+        "RAN#86"
+      ],
+      [
+        "38.213",
+        "7.1",
+        "RP-192639",
+        "RAN#86"
+      ],
+      [
+        "38.213",
+        "7.1",
+        "RP-192641",
+        "RAN#86"
+      ],
+      [
+        "38.213",
+        "7.1.1",
+        "RP-200184",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "7.1.1",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "7.2.1",
+        "RP-200184",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "7.2.1",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "7.3.1",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "7.3.1",
+        "RP-200192",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "9.1.3.1",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "9.1.3.1",
+        "RP-200191",
+        "RAN#87"
+      ],
+      [
+        "38.213",
+        "9.2.2",
+        "RP-192636",
+        "RAN#86"
+      ],
+      [
+        "38.213",
+        "9.2.2",
+        "RP-192641",
+        "RAN#86"
+      ],
+      [
+        "38.214",
+        "5.1",
+        "RP-200189",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.1.2.1",
+        "RP-200189",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.1.2.1",
+        "RP-200194",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.1.4.2",
+        "RP-192639",
+        "RAN#86"
+      ],
+      [
+        "38.214",
+        "5.1.4.2",
+        "RP-192641",
+        "RAN#86"
+      ],
+      [
+        "38.214",
+        "5.1.5",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.1.5",
+        "RP-200194",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.1.6.2",
+        "RP-192639",
+        "RAN#86"
+      ],
+      [
+        "38.214",
+        "5.1.6.2",
+        "RP-192641",
+        "RAN#86"
+      ],
+      [
+        "38.214",
+        "5.2.1.2",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.2.1.4",
+        "RP-200188",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.2.1.4",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.2.1.4.1",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.2.1.4.2",
+        "RP-192641",
+        "RAN#86"
+      ],
+      [
+        "38.214",
+        "5.2.1.4.4",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.2.2.2.5",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.2.2.2.6",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.2.2.5",
+        "RP-200191",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "5.2.3",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "6.1.1.1",
+        "RP-200190",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "6.2.1",
+        "RP-200188",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "6.2.1",
+        "RP-200192",
+        "RAN#87"
+      ],
+      [
+        "38.214",
+        "6.2.1",
+        "RP-200194",
+        "RAN#87"
+      ],
+      [
+        "38.215",
+        "5.1.6",
+        "RP-200190",
+        "RAN#87"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.014484741997875972,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-pack_origin-RP-241065",
+    "packetId": "RAN1-qc8472684e9bd",
+    "wg": "RAN1",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN1'\nWHERE p.pack_number = 'RP-241065'",
+    "rows": [
+      [
+        "R1-2405514",
+        "agreed",
+        "RAN1#117"
+      ],
+      [
+        "R1-2405515",
+        "agreed",
+        "RAN1#117"
+      ],
+      [
+        "R1-2405650",
+        "agreed",
+        "RAN1#117"
+      ],
+      [
+        "R1-2405651",
+        "agreed",
+        "RAN1#117"
+      ],
+      [
+        "R1-2405573",
+        "agreed",
+        "RAN1#117"
+      ],
+      [
+        "R1-2405574",
+        "agreed",
+        "RAN1#117"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.010780143002193654,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-clause_neighbours-R1-2202802",
+    "packetId": "RAN1-qd1d995f3c7e6",
+    "wg": "RAN1",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "SELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document original\nJOIN cr_modifies_section original_cs ON original_cs.cr = original.id\nJOIN section original_s ON original_s.id = original_cs.section_id\nJOIN section s ON s.spec = original_s.spec AND s.release = original_s.release\n  AND s.clause = original_s.clause\nJOIN cr_modifies_section cs ON cs.section_id = s.id\nJOIN document d ON d.id = cs.cr AND d.target_release = s.release\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN1'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE original.number = 'R1-2202802' AND d.number <> original.number\n  AND original_s.spec IN ('38.212', 'TS 38.212') AND original_s.release = 'Rel-17'\n  AND original.target_release = original_s.release",
+    "rows": [
+      [
+        "6.3.2.1.2",
+        "R1-2112941",
+        "agreed",
+        "RAN1#107-e",
+        "RP-212966"
+      ],
+      [
+        "6.3.2.1.2",
+        "R1-2112944",
+        "agreed",
+        "RAN1#107-e",
+        "RP-212968"
+      ],
+      [
+        "6.3.2.1.2",
+        "R1-2203003",
+        "agreed",
+        "RAN1#108-e",
+        "RP-220250"
+      ],
+      [
+        "6.3.2.1.2",
+        "R1-2312675",
+        "agreed",
+        "RAN1#115",
+        "RP-233727"
+      ],
+      [
+        "6.3.2.1.2",
+        "R1-2505010",
+        "agreed",
+        "RAN1#121",
+        "RP-251562"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.016650176999974065,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN1-pack_lookup-R1-2202945",
+    "packetId": "RAN1-qf2e42a4bc65f",
+    "wg": "RAN1",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R1-2202945'",
+    "rows": [
+      [
+        "RP-220249",
+        "RAN#95"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0011655439993774053,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-previous_pack-RP-241554",
+    "packetId": "RAN2-q02d73bbdf069",
+    "wg": "RAN2",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN2'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-241554' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-17', 'Rel-18')\n),\nearlier_packs AS (\n  SELECT current.spec, current.clause, old_p.pack_number, old_p.tsg_meeting, old_p.tsg_number,\n    MAX(old_p.tsg_number) OVER (\n      PARTITION BY current.spec, current.release, current.clause, current.tsg_number\n    ) AS latest_tsg_number\n  FROM current_clauses current\n  JOIN section old_s ON old_s.spec = current.spec\n  AND old_s.release = current.release AND old_s.clause = current.clause\nJOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\nJOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\nJOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\nJOIN cr_pack old_p ON old_p.id = old_cp.pack_id AND old_p.tsg_number < current.tsg_number\n)\nSELECT DISTINCT spec AS specification, clause, pack_number AS cr_pack, tsg_meeting\nFROM earlier_packs\nWHERE tsg_number = latest_tsg_number",
+    "rows": [
+      [
+        "38.304",
+        "7.3.0",
+        "RP-222525",
+        "RAN#97"
+      ],
+      [
+        "38.306",
+        "4.2.21",
+        "RP-222527",
+        "RAN#97"
+      ],
+      [
+        "38.306",
+        "4.2.21",
+        "RP-240708",
+        "RAN#103"
+      ],
+      [
+        "38.321",
+        "5.2",
+        "RP-230688",
+        "RAN#99"
+      ],
+      [
+        "38.321",
+        "5.22.1.3.1",
+        "RP-232667",
+        "RAN#101"
+      ],
+      [
+        "38.321",
+        "5.4.1",
+        "RP-240655",
+        "RAN#103"
+      ],
+      [
+        "38.321",
+        "5.4.1",
+        "RP-240657",
+        "RAN#103"
+      ],
+      [
+        "38.321",
+        "5.4.4",
+        "RP-240651",
+        "RAN#103"
+      ],
+      [
+        "38.321",
+        "5.4.4",
+        "RP-240655",
+        "RAN#103"
+      ],
+      [
+        "38.321",
+        "5.4.5",
+        "RP-230689",
+        "RAN#99"
+      ],
+      [
+        "38.321",
+        "6.1.3.43",
+        "RP-231413",
+        "RAN#100"
+      ],
+      [
+        "38.321",
+        "6.1.3.53",
+        "RP-240656",
+        "RAN#103"
+      ],
+      [
+        "38.321",
+        "6.1.3.54",
+        "RP-240656",
+        "RAN#103"
+      ],
+      [
+        "38.321",
+        "5.22.1.3.1",
+        "RP-240696",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "5.7.13",
+        "RP-222525",
+        "RAN#97"
+      ],
+      [
+        "38.331",
+        "5.8.13.3",
+        "RP-233888",
+        "RAN#102"
+      ],
+      [
+        "38.331",
+        "6.3.2",
+        "RP-240653",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.2",
+        "RP-240654",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.2",
+        "RP-240655",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.2",
+        "RP-240656",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.2",
+        "RP-240657",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.3",
+        "RP-240650",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.3",
+        "RP-240653",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "9.3",
+        "RP-230692",
+        "RAN#99"
+      ],
+      [
+        "38.331",
+        "5.8.13.3",
+        "RP-240700",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.3",
+        "RP-240658",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.3",
+        "RP-240667",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.3",
+        "RP-240706",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.3",
+        "RP-240707",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "6.3.3",
+        "RP-240708",
+        "RAN#103"
+      ],
+      [
+        "38.331",
+        "9.3",
+        "RP-240696",
+        "RAN#103"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.043750754000939196,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-clause_neighbours-R2-2010821",
+    "packetId": "RAN2-q2c3895e241f7",
+    "wg": "RAN2",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "SELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document original\nJOIN cr_modifies_section original_cs ON original_cs.cr = original.id\nJOIN section original_s ON original_s.id = original_cs.section_id\nJOIN section s ON s.spec = original_s.spec AND s.release = original_s.release\n  AND s.clause = original_s.clause\nJOIN cr_modifies_section cs ON cs.section_id = s.id\nJOIN document d ON d.id = cs.cr AND d.target_release = s.release\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN2'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE original.number = 'R2-2010821' AND d.number <> original.number\n  AND original_s.spec IN ('38.331', 'TS 38.331') AND original_s.release = 'Rel-16'\n  AND original.target_release = original_s.release",
+    "rows": [
+      [
+        "5.7.4.1",
+        "R2-2002389",
+        "agreed",
+        "RAN2#109-e",
+        "RP-200344"
+      ],
+      [
+        "5.7.4.1",
+        "R2-2004955",
+        "agreed",
+        "RAN2#110-e",
+        "RP-201181"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.03633552199971746,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-disposition_pack-R2-2506546",
+    "packetId": "RAN2-q3e26d2802f04",
+    "wg": "RAN2",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN2'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R2-2506546'",
+    "rows": [
+      [
+        "agreed",
+        "RAN2#131",
+        "RP-252770",
+        "RAN#109"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.016318388003128348,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-pack_lookup_empty-R2-2306001",
+    "packetId": "RAN2-q58026a6145f2",
+    "wg": "RAN2",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R2-2306001'",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0033734070020727813,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-pack_origin-RP-201183",
+    "packetId": "RAN2-q7318811f00fe",
+    "wg": "RAN2",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN2'\nWHERE p.pack_number = 'RP-201183'",
+    "rows": [
+      [
+        "R2-2006175",
+        "agreed",
+        "RAN2#110-e"
+      ],
+      [
+        "R2-2006177",
+        "agreed",
+        "RAN2#110-e"
+      ],
+      [
+        "R2-2006176",
+        "agreed",
+        "RAN2#110-e"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.028753236998454668,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-first_change-RP-252818",
+    "packetId": "RAN2-q860585794db4",
+    "wg": "RAN2",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN2'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-252818' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-19')\n)\nSELECT DISTINCT current.document AS document, current.spec AS specification, current.clause AS clause\nFROM current_clauses current\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM section old_s\n  JOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\n  JOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\n  JOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\n  JOIN cr_pack old_p ON old_p.id = old_cp.pack_id\n  WHERE old_s.spec = current.spec AND old_s.release = current.release\n    AND old_s.clause = current.clause AND old_p.tsg_number < current.tsg_number\n)",
+    "rows": [
+      [
+        "R2-2506597",
+        "38.300",
+        "2"
+      ],
+      [
+        "R2-2506597",
+        "38.300",
+        "3.1"
+      ],
+      [
+        "R2-2506601",
+        "38.305",
+        "3.1"
+      ],
+      [
+        "R2-2506601",
+        "38.305",
+        "8.10.2.3"
+      ],
+      [
+        "R2-2506601",
+        "38.305",
+        "8.11"
+      ],
+      [
+        "R2-2506601",
+        "38.305",
+        "8.12.2.3.0"
+      ],
+      [
+        "R2-2506601",
+        "38.305",
+        "8.13.2.0"
+      ],
+      [
+        "R2-2506601",
+        "38.305",
+        "8.14.2.0"
+      ],
+      [
+        "R2-2506602",
+        "38.300",
+        "3.1"
+      ],
+      [
+        "R2-2506602",
+        "38.300",
+        "3.2"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.051246487000753405,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-clause_history-38.305-Rel-17-7.3.2",
+    "packetId": "RAN2-q86cd4db95e59",
+    "wg": "RAN2",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document d\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN2'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE s.spec IN ('38.305', 'TS 38.305') AND s.release = 'Rel-17' AND s.clause = '7.3.2'\n  AND d.target_release = s.release",
+    "rows": [
+      [
+        "R2-2202491",
+        "agreed",
+        "RAN2#117-e",
+        "RP-220479"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.02108813900122186,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-revision_chain-R2-1818753",
+    "packetId": "RAN2-q9d47bc6f97c6",
+    "wg": "RAN2",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE later_versions(id) AS (\n  SELECT rv.later\n  FROM document original\n  JOIN revision rv ON rv.earlier = original.id\n  WHERE original.number = 'R2-1818753'\n  UNION\n  SELECT rv.later\n  FROM later_versions previous\n  JOIN revision rv ON rv.earlier = previous.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM later_versions lv\nJOIN document d ON d.id = lv.id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN2'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number <> 'R2-1818753'",
+    "rows": [
+      [
+        "R2-1818786",
+        "agreed",
+        "RP-182658"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0363846399995964,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-full_chain-R2-1902721",
+    "packetId": "RAN2-qa32e5f838520",
+    "wg": "RAN2",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN2'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nWHERE d.number = 'R2-1902721' AND s.spec IN ('38.331', 'TS 38.331')",
+    "rows": [
+      [
+        "agreed",
+        "RAN2#105",
+        "RP-190543",
+        "RAN#83",
+        "6.3.1"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.01605111399840098,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN2-pack_lookup-R2-2008568",
+    "packetId": "RAN2-qdc7dc2141443",
+    "wg": "RAN2",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R2-2008568'",
+    "rows": [
+      [
+        "RP-201929",
+        "RAN#89"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0035932230020989664,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-full_chain-R3-222922",
+    "packetId": "RAN3-q16fe34e2e936",
+    "wg": "RAN3",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN3'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nWHERE d.number = 'R3-222922' AND s.spec IN ('38.470', 'TS 38.470')",
+    "rows": [
+      [
+        "agreed",
+        "RAN3#115-e",
+        "RP-220222",
+        "RAN#95",
+        "5.2.1"
+      ],
+      [
+        "agreed",
+        "RAN3#115-e",
+        "RP-220222",
+        "RAN#95",
+        "5.2.12"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.022745020000002114,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-pack_origin-RP-233845",
+    "packetId": "RAN3-q1ba7910c1aeb",
+    "wg": "RAN3",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN3'\nWHERE p.pack_number = 'RP-233845'",
+    "rows": [
+      [
+        "R3-237900",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237955",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237968",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237113",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237114",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237115",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237116",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237766",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237122",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237125",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237157",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237158",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237159",
+        "agreed",
+        "RAN3#122"
+      ],
+      [
+        "R3-237160",
+        "agreed",
+        "RAN3#122"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.038597319999098545,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-disposition_pack-R3-202667",
+    "packetId": "RAN3-q1fbc1333eb5d",
+    "wg": "RAN3",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN3'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R3-202667'",
+    "rows": [
+      [
+        "agreed",
+        "RAN3#107bis-e",
+        "RP-201091",
+        "RAN#88"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.023465243000828195,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-revision_chain-R3-221570",
+    "packetId": "RAN3-q6ec77c41a74a",
+    "wg": "RAN3",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE later_versions(id) AS (\n  SELECT rv.later\n  FROM document original\n  JOIN revision rv ON rv.earlier = original.id\n  WHERE original.number = 'R3-221570'\n  UNION\n  SELECT rv.later\n  FROM later_versions previous\n  JOIN revision rv ON rv.earlier = previous.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM later_versions lv\nJOIN document d ON d.id = lv.id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN3'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number <> 'R3-221570'",
+    "rows": [
+      [
+        "R3-222937",
+        "agreed",
+        "RP-220228"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04847661400344805,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-clause_neighbours-R3-194602",
+    "packetId": "RAN3-q8a6100612fec",
+    "wg": "RAN3",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "SELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document original\nJOIN cr_modifies_section original_cs ON original_cs.cr = original.id\nJOIN section original_s ON original_s.id = original_cs.section_id\nJOIN section s ON s.spec = original_s.spec AND s.release = original_s.release\n  AND s.clause = original_s.clause\nJOIN cr_modifies_section cs ON cs.section_id = s.id\nJOIN document d ON d.id = cs.cr AND d.target_release = s.release\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN3'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE original.number = 'R3-194602' AND d.number <> original.number\n  AND original_s.spec IN ('38.413', 'TS 38.413') AND original_s.release = 'Rel-15'\n  AND original.target_release = original_s.release",
+    "rows": [
+      [
+        "9.4.4",
+        "R3-191109",
+        "agreed",
+        "RAN3#103",
+        "RP-190615"
+      ],
+      [
+        "9.4.4",
+        "R3-191124",
+        "endorsed",
+        "RAN3#103",
+        "RP-190561"
+      ],
+      [
+        "9.4.4",
+        "R3-191125",
+        "endorsed",
+        "RAN3#103",
+        "RP-190561"
+      ],
+      [
+        "9.2.6.4",
+        "R3-190310",
+        "agreed",
+        "RAN3#103",
+        "RP-190555"
+      ],
+      [
+        "9.4.4",
+        "R3-190963",
+        "agreed",
+        "RAN3#103",
+        "RP-190556"
+      ],
+      [
+        "9.4.4",
+        "R3-190215",
+        "agreed",
+        "RAN3#103",
+        "RP-190556"
+      ],
+      [
+        "9.4.4",
+        "R3-190965",
+        "agreed",
+        "RAN3#103",
+        "RP-190556"
+      ],
+      [
+        "9.4.4",
+        "R3-190971",
+        "agreed",
+        "RAN3#103",
+        "RP-190556"
+      ],
+      [
+        "8.7.2",
+        "R3-192182",
+        "agreed",
+        "RAN3#103bis",
+        "RP-191395"
+      ],
+      [
+        "8.7.3",
+        "R3-192182",
+        "agreed",
+        "RAN3#103bis",
+        "RP-191395"
+      ],
+      [
+        "9.2.6.4",
+        "R3-192182",
+        "agreed",
+        "RAN3#103bis",
+        "RP-191395"
+      ],
+      [
+        "9.2.6.7",
+        "R3-192182",
+        "agreed",
+        "RAN3#103bis",
+        "RP-191395"
+      ],
+      [
+        "9.3.2.6",
+        "R3-192182",
+        "agreed",
+        "RAN3#103bis",
+        "RP-191395"
+      ],
+      [
+        "9.4.4",
+        "R3-192182",
+        "agreed",
+        "RAN3#103bis",
+        "RP-191395"
+      ],
+      [
+        "9.4.4",
+        "R3-192159",
+        "agreed",
+        "RAN3#103bis",
+        "RP-191394"
+      ],
+      [
+        "9.4.4",
+        "R3-191728",
+        "agreed",
+        "RAN3#103bis",
+        "RP-191394"
+      ],
+      [
+        "9.4.4",
+        "R3-193121",
+        "agreed",
+        "RAN3#104",
+        "RP-191397"
+      ],
+      [
+        "9.4.4",
+        "R3-192531",
+        "agreed",
+        "RAN3#104",
+        "RP-191394"
+      ],
+      [
+        "9.4.4",
+        "R3-194788",
+        "agreed",
+        "RAN3#105",
+        "RP-192167"
+      ],
+      [
+        "9.3.2.6",
+        "R3-196570",
+        "agreed",
+        "RAN3#106",
+        "RP-192916"
+      ],
+      [
+        "9.4.4",
+        "R3-204166",
+        "agreed",
+        "RAN3#108-e",
+        "RP-201092"
+      ],
+      [
+        "9.4.4",
+        "R3-204523",
+        "agreed",
+        "RAN3#108-e",
+        "RP-201090"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.04658366399962688,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-pack_lookup_empty-R3-215085",
+    "packetId": "RAN3-qbb384d8ef29b",
+    "wg": "RAN3",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R3-215085'",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0020079050009371713,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-first_change-RP-233814",
+    "packetId": "RAN3-qc544a5a2f69d",
+    "wg": "RAN3",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN3'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-233814' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-18')\n)\nSELECT DISTINCT current.document AS document, current.spec AS specification, current.clause AS clause\nFROM current_clauses current\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM section old_s\n  JOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\n  JOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\n  JOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\n  JOIN cr_pack old_p ON old_p.id = old_cp.pack_id\n  WHERE old_s.spec = current.spec AND old_s.release = current.release\n    AND old_s.clause = current.clause AND old_p.tsg_number < current.tsg_number\n)",
+    "rows": [
+      [
+        "R3-237882",
+        "38.473",
+        "8.3.1.2"
+      ],
+      [
+        "R3-237882",
+        "38.473",
+        "8.3.4.2"
+      ],
+      [
+        "R3-237882",
+        "38.473",
+        "9.2.2.1"
+      ],
+      [
+        "R3-237882",
+        "38.473",
+        "9.2.2.7"
+      ],
+      [
+        "R3-237882",
+        "38.473",
+        "9.4.4"
+      ],
+      [
+        "R3-237882",
+        "38.473",
+        "9.4.5"
+      ],
+      [
+        "R3-237882",
+        "38.473",
+        "9.4.7"
+      ],
+      [
+        "R3-237883",
+        "38.413",
+        "8.3.1.2"
+      ],
+      [
+        "R3-237883",
+        "38.413",
+        "8.3.4.2"
+      ],
+      [
+        "R3-237883",
+        "38.413",
+        "9.2.2.1"
+      ],
+      [
+        "R3-237883",
+        "38.413",
+        "9.2.2.7"
+      ],
+      [
+        "R3-237883",
+        "38.413",
+        "9.4.4"
+      ],
+      [
+        "R3-237883",
+        "38.413",
+        "9.4.5"
+      ],
+      [
+        "R3-237883",
+        "38.413",
+        "9.4.7"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.044820090999564854,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-pack_lookup-R3-255122",
+    "packetId": "RAN3-qd2c056f983f8",
+    "wg": "RAN3",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R3-255122'",
+    "rows": [
+      [
+        "RP-252690",
+        "RAN#109"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.0017839720021584071,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-clause_history-38.413-Rel-16-8.3.4",
+    "packetId": "RAN3-qdfe4d9c918aa",
+    "wg": "RAN3",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document d\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN3'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE s.spec IN ('38.413', 'TS 38.413') AND s.release = 'Rel-16' AND s.clause = '8.3.4'\n  AND d.target_release = s.release",
+    "rows": [
+      [
+        "R3-204438",
+        "agreed",
+        "RAN3#108-e",
+        "RP-201074"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.02834510699904058,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN3-previous_pack-RP-200423",
+    "packetId": "RAN3-qf54b7fe1de2c",
+    "wg": "RAN3",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN3'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-200423' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-16')\n),\nearlier_packs AS (\n  SELECT current.spec, current.clause, old_p.pack_number, old_p.tsg_meeting, old_p.tsg_number,\n    MAX(old_p.tsg_number) OVER (\n      PARTITION BY current.spec, current.release, current.clause, current.tsg_number\n    ) AS latest_tsg_number\n  FROM current_clauses current\n  JOIN section old_s ON old_s.spec = current.spec\n  AND old_s.release = current.release AND old_s.clause = current.clause\nJOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\nJOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\nJOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\nJOIN cr_pack old_p ON old_p.id = old_cp.pack_id AND old_p.tsg_number < current.tsg_number\n)\nSELECT DISTINCT spec AS specification, clause, pack_number AS cr_pack, tsg_meeting\nFROM earlier_packs\nWHERE tsg_number = latest_tsg_number",
+    "rows": [
+      [
+        "38.413",
+        "8.1",
+        "RP-192908",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "8.4.2.2",
+        "RP-192912",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "9.4.3",
+        "RP-192908",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "9.4.4",
+        "RP-192908",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "9.4.5",
+        "RP-192916",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "9.4.5",
+        "RP-192908",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "9.4.5",
+        "RP-192912",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "9.4.7",
+        "RP-192916",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "9.4.7",
+        "RP-192908",
+        "RAN#86"
+      ],
+      [
+        "38.413",
+        "9.4.7",
+        "RP-192912",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "8.3.1.2",
+        "RP-192916",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.1.2.1",
+        "RP-192915",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.4",
+        "RP-192908",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.4",
+        "RP-192910",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.4",
+        "RP-192913",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.4",
+        "RP-192914",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.5",
+        "RP-192916",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.5",
+        "RP-192908",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.5",
+        "RP-192910",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.5",
+        "RP-192913",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.5",
+        "RP-192914",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.7",
+        "RP-192916",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.7",
+        "RP-192908",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.7",
+        "RP-192910",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.7",
+        "RP-192913",
+        "RAN#86"
+      ],
+      [
+        "38.423",
+        "9.3.7",
+        "RP-192914",
+        "RAN#86"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.036205979999067495,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-previous_pack-RP-231340",
+    "packetId": "RAN4-q0da703b03ce1",
+    "wg": "RAN4",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN4'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-231340' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-16', 'Rel-17', 'Rel-18')\n),\nearlier_packs AS (\n  SELECT current.spec, current.clause, old_p.pack_number, old_p.tsg_meeting, old_p.tsg_number,\n    MAX(old_p.tsg_number) OVER (\n      PARTITION BY current.spec, current.release, current.clause, current.tsg_number\n    ) AS latest_tsg_number\n  FROM current_clauses current\n  JOIN section old_s ON old_s.spec = current.spec\n  AND old_s.release = current.release AND old_s.clause = current.clause\nJOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\nJOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\nJOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\nJOIN cr_pack old_p ON old_p.id = old_cp.pack_id AND old_p.tsg_number < current.tsg_number\n)\nSELECT DISTINCT spec AS specification, clause, pack_number AS cr_pack, tsg_meeting\nFROM earlier_packs\nWHERE tsg_number = latest_tsg_number",
+    "rows": [
+      [
+        "38.133",
+        "8.3.4",
+        "RP-212847",
+        "RAN#94"
+      ],
+      [
+        "38.133",
+        "8.3.5",
+        "RP-212847",
+        "RAN#94"
+      ],
+      [
+        "38.133",
+        "A.4.5.3.1",
+        "RP-222023",
+        "RAN#97"
+      ],
+      [
+        "38.133",
+        "A.4.5.3.5",
+        "RP-212847",
+        "RAN#94"
+      ],
+      [
+        "38.133",
+        "A.6.5.3.1",
+        "RP-223292",
+        "RAN#98"
+      ],
+      [
+        "38.133",
+        "A.6.5.3.4",
+        "RP-222023",
+        "RAN#97"
+      ],
+      [
+        "38.133",
+        "A.6.5.3.5",
+        "RP-222023",
+        "RAN#97"
+      ],
+      [
+        "38.133",
+        "8.2.4",
+        "RP-222050",
+        "RAN#97"
+      ],
+      [
+        "38.133",
+        "8.3.4",
+        "RP-221682",
+        "RAN#96"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.1663981479978247,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-first_change-RP-250590",
+    "packetId": "RAN4-q3f128c42c249",
+    "wg": "RAN4",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN4'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-250590' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-17', 'Rel-18')\n)\nSELECT DISTINCT current.document AS document, current.spec AS specification, current.clause AS clause\nFROM current_clauses current\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM section old_s\n  JOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\n  JOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\n  JOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\n  JOIN cr_pack old_p ON old_p.id = old_cp.pack_id\n  WHERE old_s.spec = current.spec AND old_s.release = current.release\n    AND old_s.clause = current.clause AND old_p.tsg_number < current.tsg_number\n)",
+    "rows": [
+      [
+        "R4-2501011",
+        "38.133",
+        "A.15.1"
+      ],
+      [
+        "R4-2501011",
+        "38.133",
+        "A.15.2.1.2"
+      ],
+      [
+        "R4-2501011",
+        "38.133",
+        "A.15.4.2"
+      ],
+      [
+        "R4-2502642",
+        "38.133",
+        "A.15.1"
+      ],
+      [
+        "R4-2502642",
+        "38.133",
+        "A.15.2.1.2"
+      ],
+      [
+        "R4-2502642",
+        "38.133",
+        "A.15.4.2"
+      ],
+      [
+        "R4-2501318",
+        "38.101-4",
+        "9.2A.1.1"
+      ],
+      [
+        "R4-2501522",
+        "38.101-4",
+        "8.1.1.1"
+      ],
+      [
+        "R4-2501545",
+        "38.101-4",
+        "6.3.2.1.7"
+      ],
+      [
+        "R4-2501545",
+        "38.101-4",
+        "6.3.2.2.8"
+      ],
+      [
+        "R4-2501545",
+        "38.101-4",
+        "6.3.3.1.7"
+      ],
+      [
+        "R4-2501545",
+        "38.101-4",
+        "6.3.3.2.7"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.33522046899815905,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-pack_origin-RP-202446",
+    "packetId": "RAN4-q445cf0b14431",
+    "wg": "RAN4",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN4'\nWHERE p.pack_number = 'RP-202446'",
+    "rows": [
+      [
+        "R4-2017131",
+        "agreed",
+        "RAN4#97-e"
+      ],
+      [
+        "R4-2015574",
+        "agreed",
+        "RAN4#97-e"
+      ],
+      [
+        "R4-2017132",
+        "agreed",
+        "RAN4#97-e"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.11045042499972624,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-full_chain-R4-2313080",
+    "packetId": "RAN4-q5564f8be249d",
+    "wg": "RAN4",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN4'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nWHERE d.number = 'R4-2313080' AND s.spec IN ('38.101-1', 'TS 38.101-1')",
+    "rows": [
+      [
+        "agreed",
+        "RAN4#108",
+        "RP-232488",
+        "RAN#101",
+        "F.9.3"
+      ],
+      [
+        "agreed",
+        "RAN4#108",
+        "RP-232488",
+        "RAN#101",
+        "F.9.4"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.06251856699964264,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-pack_lookup_empty-R4-2520572",
+    "packetId": "RAN4-q5f9ae7ff4ca2",
+    "wg": "RAN4",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R4-2520572'",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.008056590999331092,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-clause_history-38.133-Rel-18-A.7.5.1.6",
+    "packetId": "RAN4-q686bae23d9ed",
+    "wg": "RAN4",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document d\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN4'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE s.spec IN ('38.133', 'TS 38.133') AND s.release = 'Rel-18' AND s.clause = 'A.7.5.1.6'\n  AND d.target_release = s.release",
+    "rows": [
+      [
+        "R4-2300112",
+        "agreed",
+        "RAN4#106",
+        "RP-230504"
+      ],
+      [
+        "R4-2307270",
+        "agreed",
+        "RAN4#107",
+        "RP-231357"
+      ],
+      [
+        "R4-2520693",
+        "agreed",
+        "RAN4#117",
+        "RP-253676"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.07836789400244015,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-revision_chain-R4-2412759",
+    "packetId": "RAN4-q6a9a6059b312",
+    "wg": "RAN4",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE later_versions(id) AS (\n  SELECT rv.later\n  FROM document original\n  JOIN revision rv ON rv.earlier = original.id\n  WHERE original.number = 'R4-2412759'\n  UNION\n  SELECT rv.later\n  FROM later_versions previous\n  JOIN revision rv ON rv.earlier = previous.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM later_versions lv\nJOIN document d ON d.id = lv.id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN4'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number <> 'R4-2412759'",
+    "rows": [
+      [
+        "R4-2413466",
+        "agreed",
+        "RP-242162"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.13633605300128693,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-disposition_pack-R4-1814116",
+    "packetId": "RAN4-q8321a5639b22",
+    "wg": "RAN4",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN4'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R4-1814116'",
+    "rows": [
+      [
+        "agreed",
+        "RAN4#88bis",
+        "RP-182362",
+        "RAN#82"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.06266426200090791,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-pack_lookup-R4-2320863",
+    "packetId": "RAN4-qab608dcda8a2",
+    "wg": "RAN4",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R4-2320863'",
+    "rows": [
+      [
+        "RP-233341",
+        "RAN#102"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.008399862999795005,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN4-clause_neighbours-R4-2108722",
+    "packetId": "RAN4-qb68ee1a1ea1c",
+    "wg": "RAN4",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "SELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document original\nJOIN cr_modifies_section original_cs ON original_cs.cr = original.id\nJOIN section original_s ON original_s.id = original_cs.section_id\nJOIN section s ON s.spec = original_s.spec AND s.release = original_s.release\n  AND s.clause = original_s.clause\nJOIN cr_modifies_section cs ON cs.section_id = s.id\nJOIN document d ON d.id = cs.cr AND d.target_release = s.release\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN4'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE original.number = 'R4-2108722' AND d.number <> original.number\n  AND original_s.spec IN ('38.104', 'TS 38.104') AND original_s.release = 'Rel-15'\n  AND original.target_release = original_s.release",
+    "rows": [
+      [
+        "10.5.2.2",
+        "R4-1915484",
+        "agreed",
+        "RAN4#93",
+        "RP-193035"
+      ],
+      [
+        "7.4.2.2",
+        "R4-1913779",
+        "agreed",
+        "RAN4#93",
+        "RP-193034"
+      ],
+      [
+        "10.5.2.2",
+        "R4-1913779",
+        "agreed",
+        "RAN4#93",
+        "RP-193034"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.12869981399853714,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-pack_lookup_empty-R5-191564",
+    "packetId": "RAN5-q315c956af92f",
+    "wg": "RAN5",
+    "family": "pack_lookup_empty",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R5-191564'",
+    "rows": [],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.010410625000076834,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-full_chain-R5-251067",
+    "packetId": "RAN5-q4dced09756b2",
+    "wg": "RAN5",
+    "family": "full_chain",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting, s.clause AS clause\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN5'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nWHERE d.number = 'R5-251067' AND s.spec IN ('38.522', 'TS 38.522')",
+    "rows": [
+      [
+        "agreed",
+        "RAN5#106",
+        "RP-250689",
+        "RAN#107",
+        "4.1.1"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.02481613300187746,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-first_change-RP-230947",
+    "packetId": "RAN5-q62c0ba2e6e6a",
+    "wg": "RAN5",
+    "family": "first_change",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN5'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-230947' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-17')\n)\nSELECT DISTINCT current.document AS document, current.spec AS specification, current.clause AS clause\nFROM current_clauses current\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM section old_s\n  JOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\n  JOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\n  JOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\n  JOIN cr_pack old_p ON old_p.id = old_cp.pack_id\n  WHERE old_s.spec = current.spec AND old_s.release = current.release\n    AND old_s.clause = current.clause AND old_p.tsg_number < current.tsg_number\n)",
+    "rows": [
+      [
+        "R5-233407",
+        "38.523-1",
+        "7.1.1.1.1"
+      ],
+      [
+        "R5-233407",
+        "38.523-1",
+        "7.1.1.1.1a"
+      ],
+      [
+        "R5-233407",
+        "38.523-1",
+        "7.1.1.1.8"
+      ],
+      [
+        "R5-233408",
+        "38.523-1",
+        "7.1.1.1.2"
+      ],
+      [
+        "R5-232940",
+        "38.523-1",
+        "7.1.1.1.15"
+      ],
+      [
+        "R5-233409",
+        "38.523-1",
+        "7.1.1.3.12"
+      ],
+      [
+        "R5-232191",
+        "38.523-3",
+        "7.3.2.1"
+      ],
+      [
+        "R5-232191",
+        "38.523-3",
+        "7.3.2.2"
+      ],
+      [
+        "R5-232191",
+        "38.523-3",
+        "7.3.7.2"
+      ],
+      [
+        "R5-233776",
+        "38.523-1",
+        "6.1.2.3"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.23054593999768258,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-previous_pack-RP-261275",
+    "packetId": "RAN5-q92cc544cbae2",
+    "wg": "RAN5",
+    "family": "previous_pack",
+    "suite": "extension",
+    "query": "WITH current_clauses AS (\n  SELECT DISTINCT d.number AS document, s.spec, s.release, s.clause, p.tsg_number\n  FROM document d\n  JOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\n  JOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN5'\n  JOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\n  WHERE p.pack_number = 'RP-261275' AND s.release = d.target_release\n    AND d.target_release IN ('Rel-19')\n),\nearlier_packs AS (\n  SELECT current.spec, current.clause, old_p.pack_number, old_p.tsg_meeting, old_p.tsg_number,\n    MAX(old_p.tsg_number) OVER (\n      PARTITION BY current.spec, current.release, current.clause, current.tsg_number\n    ) AS latest_tsg_number\n  FROM current_clauses current\n  JOIN section old_s ON old_s.spec = current.spec\n  AND old_s.release = current.release AND old_s.clause = current.clause\nJOIN cr_modifies_section old_cs ON old_cs.section_id = old_s.id\nJOIN document old_d ON old_d.id = old_cs.cr AND old_d.target_release = current.release\nJOIN cr_in_pack old_cp ON old_cp.cr = old_d.id\nJOIN cr_pack old_p ON old_p.id = old_cp.pack_id AND old_p.tsg_number < current.tsg_number\n)\nSELECT DISTINCT spec AS specification, clause, pack_number AS cr_pack, tsg_meeting\nFROM earlier_packs\nWHERE tsg_number = latest_tsg_number",
+    "rows": [
+      [
+        "38.508-1",
+        "4.6.3",
+        "RP-260099",
+        "RAN#111"
+      ],
+      [
+        "38.508-1",
+        "4.6.3",
+        "RP-260158",
+        "RAN#111"
+      ],
+      [
+        "38.508-1",
+        "4.6.3",
+        "RP-260142",
+        "RAN#111"
+      ],
+      [
+        "38.508-1",
+        "4.6.3",
+        "RP-260109",
+        "RAN#111"
+      ],
+      [
+        "38.508-1",
+        "6.2.3.1",
+        "RP-253581",
+        "RAN#110"
+      ],
+      [
+        "38.508-2",
+        "A.4.3.2",
+        "RP-260093",
+        "RAN#111"
+      ],
+      [
+        "38.508-2",
+        "A.4.3.2",
+        "RP-260106",
+        "RAN#111"
+      ],
+      [
+        "38.508-2",
+        "A.4.3.2",
+        "RP-260124",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260158",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260151",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260118",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260110",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260160",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260116",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260152",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260154",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260129",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260101",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.0",
+        "RP-260139",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260158",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260114",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260118",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260139",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260159",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260160",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260116",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260152",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260133",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260129",
+        "RAN#111"
+      ],
+      [
+        "38.522",
+        "4.2",
+        "RP-260101",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260121",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260157",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260120",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260119",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260125",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260159",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260106",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260127",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260160",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260109",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260114",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260111",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.1",
+        "RP-260117",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.2",
+        "RP-260119",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.2",
+        "RP-260125",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.2",
+        "RP-260159",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.2",
+        "RP-260109",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.2",
+        "RP-260114",
+        "RAN#111"
+      ],
+      [
+        "38.523-2",
+        "4.2",
+        "RP-260117",
+        "RAN#111"
+      ],
+      [
+        "38.533",
+        "F",
+        "RP-260100",
+        "RAN#111"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.05530099899988272,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-clause_history-38.521-4-Rel-19-6.2A.3.1.1.3.3_1",
+    "packetId": "RAN5-q9dd890b7d2e9",
+    "wg": "RAN5",
+    "family": "clause_history",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document d\nJOIN cr_modifies_section cs ON cs.cr = d.id\nJOIN section s ON s.id = cs.section_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN5'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE s.spec IN ('38.521-4', 'TS 38.521-4') AND s.release = 'Rel-19' AND s.clause = '6.2A.3.1.1.3.3_1'\n  AND d.target_release = s.release",
+    "rows": [
+      [
+        "R5-263206",
+        "agreed",
+        "RAN5#111",
+        "RP-261261"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.030231679000280565,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-clause_neighbours-R5-186468",
+    "packetId": "RAN5-qbd0afb2d46d9",
+    "wg": "RAN5",
+    "family": "clause_neighbours",
+    "suite": "extension",
+    "query": "SELECT DISTINCT s.clause AS clause, d.number AS document, dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack\nFROM document original\nJOIN cr_modifies_section original_cs ON original_cs.cr = original.id\nJOIN section original_s ON original_s.id = original_cs.section_id\nJOIN section s ON s.spec = original_s.spec AND s.release = original_s.release\n  AND s.clause = original_s.clause\nJOIN cr_modifies_section cs ON cs.section_id = s.id\nJOIN document d ON d.id = cs.cr AND d.target_release = s.release\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN5'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE original.number = 'R5-186468' AND d.number <> original.number\n  AND original_s.spec IN ('38.508-1', 'TS 38.508-1') AND original_s.release = 'Rel-15'\n  AND original.target_release = original_s.release",
+    "rows": [
+      [
+        "4.3.1.3.2",
+        "R5-185173",
+        "agreed",
+        "RAN5#80",
+        "RP-181570"
+      ],
+      [
+        "4.3.1.3.2",
+        "R5-194362",
+        "agreed",
+        "RAN5#83",
+        "RP-190869"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.05138499099848559,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-pack_origin-RP-250731",
+    "packetId": "RAN5-qde317edc86b0",
+    "wg": "RAN5",
+    "family": "pack_origin",
+    "suite": "main",
+    "query": "SELECT DISTINCT d.number AS document, dd.code AS disposition, m.label AS wg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN5'\nWHERE p.pack_number = 'RP-250731'",
+    "rows": [
+      [
+        "R5-251087",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251027",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251089",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-250954",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251091",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-250955",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251028",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251092",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251093",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251097",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-250998",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251106",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251041",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-250997",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251098",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251099",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251100",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251031",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251033",
+        "agreed",
+        "RAN5#106"
+      ],
+      [
+        "R5-251108",
+        "agreed",
+        "RAN5#106"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.050672600998950657,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-disposition_pack-R5-203000",
+    "packetId": "RAN5-qe63e08fab145",
+    "wg": "RAN5",
+    "family": "disposition_pack",
+    "suite": "main",
+    "query": "SELECT DISTINCT dd.code AS disposition, m.label AS wg_meeting, p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN5'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R5-203000'",
+    "rows": [
+      [
+        "agreed",
+        "RAN5#87-e",
+        "RP-200581",
+        "RAN#88"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.024173026999051217,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-pack_lookup-R5-194984",
+    "packetId": "RAN5-qe644473c854d",
+    "wg": "RAN5",
+    "family": "pack_lookup",
+    "suite": "main",
+    "query": "SELECT DISTINCT p.pack_number AS cr_pack, p.tsg_meeting AS tsg_meeting\nFROM document d\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number = 'R5-194984'",
+    "rows": [
+      [
+        "RP-190871",
+        "RAN#84"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.009418391997314757,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  },
+  {
+    "id": "RAN5-revision_chain-R5-236866",
+    "packetId": "RAN5-qe85e166ea7f5",
+    "wg": "RAN5",
+    "family": "revision_chain",
+    "suite": "main",
+    "query": "WITH RECURSIVE later_versions(id) AS (\n  SELECT rv.later\n  FROM document original\n  JOIN revision rv ON rv.earlier = original.id\n  WHERE original.number = 'R5-236866'\n  UNION\n  SELECT rv.later\n  FROM later_versions previous\n  JOIN revision rv ON rv.earlier = previous.id\n)\nSELECT DISTINCT d.number AS final_document, dd.code AS disposition, p.pack_number AS cr_pack\nFROM later_versions lv\nJOIN document d ON d.id = lv.id\nJOIN disposition dd ON dd.target = d.id\n  AND dd.evidence_status = 'source_verified'\n  AND dd.scope = 'whole_target'\nJOIN resolution r ON r.id = dd.resolution_id\nJOIN meeting m ON m.id = r.meeting_id AND m.wg = 'RAN5'\nJOIN cr_in_pack cp ON cp.cr = d.id\nJOIN cr_pack p ON p.id = cp.pack_id\nWHERE d.number <> 'R5-236866'",
+    "rows": [
+      [
+        "R5-237808",
+        "agreed",
+        "RP-232828"
+      ]
+    ],
+    "error": null,
+    "blocked": false,
+    "elapsedSeconds": 0.06240674899891019,
+    "scores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    },
+    "identityScores": {
+      "exact": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "unreadable": 0
+    }
+  }
+]
