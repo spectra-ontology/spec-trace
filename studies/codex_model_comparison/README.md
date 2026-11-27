@@ -29,17 +29,19 @@ Each cell below is meeting-identity exact unordered row-set matches out of the s
 | `gpt-6-luna` | SQL | 5 | 5 | 0 | 0 [W] |
 | `gpt-6-luna` | Cypher | 10 | 0 [E] | 0 | 23 |
 
-The two **[I] input-transport deviations** preserve incomplete RAN4 schema exposure after truncated tool responses. All 50 question records were visible and their query outcomes remain included above; contrasts involving either affected session are marked ineligible for controlled comparison.
+The two **[I] input-transport deviations** preserve incomplete RAN4 schema exposure after truncated tool responses. All 50 question records were visible and their query outcomes remain included above. In each type of comparison, the all-planned summary retains both pairs involving an affected session. The complete-input analysis uses the other 14 pairs.
 
-The **[W] first-write assembly deviation** is Luna domains SQL B. The first successful write contains ten complete query objects inside an unfinished, unparsable JSON batch. A later append assembled 50 queries. The strict primary rule retains the exact first-write bytes and the later assembled response separately, records 50 unanswered slots, and executes zero queries from that session. Contrasts involving this session are marked ineligible.
+The **[W] first-write assembly deviation** is Luna domains SQL B. The first successful write contains ten complete query objects inside an unfinished, unparsable JSON batch. A later append assembled 50 queries. The first-submission rule retains the exact first-write bytes and the later assembled response separately, records 50 unanswered slots, and executes zero queries from that session. The primary complete-input scope counts these unanswered slots in both the documentation and language contrasts. An additional sensitivity analysis uses pairs with conformant output assembly.
 
-The **[E] empty first submission** is Luna schema Cypher B: its first saved response is `{"queries":[]}`. It contributes 50 unanswered slots and zero native queries. As a first-submission outcome with complete input, it remains eligible in its paired contrasts. These four records have distinct dispositions; all original responses remain available, with no rerolls or query repairs.
+The **[E] empty first submission** is Luna schema Cypher B: its first saved response is `{"queries":[]}`. It contributes 50 unanswered slots and zero native queries. This valid empty batch contributes to the complete-input and output-assembly sensitivity analyses. These four records have distinct dispositions; all original responses remain available, with no rerolls or query repairs.
 
 Of the 1,500 native query executions, Luna domains SQL A and Luna domains Cypher A each produce 50 execution errors; Terra schema Cypher A produces ten. The primary denominator retains these outcomes. Terra domains Cypher B has 35/35 exact main answers and 8/15 exact extension answers, with overall macro row-set F1 0.8870. Luna domains Cypher B has 19/35 main and 4/15 extension exact answers, overall F1 0.4600. `analysis.json` gives recorded-spelling, meeting-identity, strict raw, family, and execution/completion results for every session.
 
 ### Paired documentation comparisons
 
-Entries show exact gains/losses when adding categorical domains, matched by question within each configured model, native language, and repetition. Each pair has 50 slots. [I]/[W] retain descriptive differences and identify ineligible controlled pairs.
+Entries show exact gains/losses when adding categorical domains, matched by question within each configured model, native language, and repetition. Each pair has 50 slots. [I] marks input delivery and [W] marks output assembly. All planned pairs remain visible.
+
+The primary paired scope uses both first submissions in each of the 14 complete-input pairs. For Luna SQL B, the 5 to 0 change therefore contributes a decrease. The 13-pair sensitivity further requires conformant first-write assembly, retaining valid empty batches. This last scope is the historical `eligibleControlledContrast` flag. The analysis exports that flag, `completeInputPair`, and summaries for all three scopes under `pairedContrastScopes`.
 
 | Configured model | Native language | A gains/losses | B gains/losses |
 |---|---|---:|---:|
@@ -52,9 +54,15 @@ Entries show exact gains/losses when adding categorical domains, matched by ques
 | `gpt-6-luna` | SQL | 0/5 | 0/5 [W] |
 | `gpt-6-luna` | Cypher | 0/10 | 23/0 |
 
-Thirteen of the sixteen documentation pairs satisfy the recorded controlled-comparison conditions. The paired macro-F1 changes for Sol and Astra's eligible pairs and Terra SQL are +0.8000; Terra Cypher B is +0.6870. Luna's eligible changes are −0.1000 (SQL A), −0.2000 (Cypher A), and +0.4600 (Cypher B).
+The table counts pair-level directions by comparing exact counts on all 50 questions in each pair.
 
-Thirteen of sixteen native-interface pairs are eligible. Among them, Cypher versus SQL produces five gains in Luna schema A, five losses in Luna schema B, and seven losses in Terra domains B; the remaining eligible pairs have zero exact gains/losses. Terra domains B has a Cypher-minus-SQL macro-F1 difference of −0.1130. `analysis.json` supplies every all/main/extension paired discordance and F1 difference.
+| Scope | Domains minus schema: improved / tied / declined | Cypher minus SQL: improved / tied / declined |
+|---|---:|---:|
+| All planned pairs (16 each) | 13 / 0 / 3 | 2 / 12 / 2 |
+| Complete input (14 each) | 11 / 0 / 3 | 2 / 10 / 2 |
+| Complete input and conformant output assembly (13 each) | 11 / 0 / 2 | 1 / 10 / 2 |
+
+In the domain sensitivity, Sol and Astra's eligible pairs and Terra SQL gain +0.8000 macro F1. Terra Cypher B gains +0.6870. Luna changes by −0.1000 (SQL A), −0.2000 (Cypher A), and +0.4600 (Cypher B). In the language comparison, Terra domains B has a Cypher-minus-SQL macro F1 difference of −0.1130. `analysis.json` supplies every paired discordance and F1 difference for the full cohort, main subset, and extension subset.
 
 These are descriptive comparisons on 50 fixed strata representatives. Repetitions measure new submissions on those same questions; the 667-item main and 297-item admitted extension evaluations retain their own population scope.
 

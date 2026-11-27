@@ -19,6 +19,35 @@ def load(p):
 def sha(p):
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
+def summarize_pairs(pairs):
+    differences = [pair['exactDifference'] for pair in pairs]
+    return {
+        'pairs': len(pairs),
+        'pairedQuestionSlots': sum(pair['n'] for pair in pairs),
+        'pairsImproved': sum(delta > 0 for delta in differences),
+        'pairsTied': sum(delta == 0 for delta in differences),
+        'pairsDeclined': sum(delta < 0 for delta in differences),
+        'netExactDifference': sum(differences),
+    }
+
+
+def summarize_contrast_scopes(contrasts):
+    by_kind = collections.defaultdict(list)
+    for contrast in contrasts:
+        if contrast['suite'] == 'all':
+            by_kind[contrast['kind']].append(contrast)
+    return {
+        kind: {
+            'allPlanned': summarize_pairs(pairs),
+            'primaryCompleteInput': summarize_pairs(
+                [pair for pair in pairs if pair['completeInputPair']]),
+            'outputAssemblyConformantSensitivity': summarize_pairs(
+                [pair for pair in pairs if pair['eligibleControlledContrast']]),
+        }
+        for kind, pairs in by_kind.items()
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--check', action='store_true')
@@ -110,12 +139,16 @@ def main():
     contrasts = []
     def contrast(left, right, kind):
         a, b = rows_by_run[left], rows_by_run[right]
+        left_run, right_run = summaries[left], summaries[right]
+        complete_input = left_run['completeInput'] and right_run['completeInput']
+        valid_assembly = not (left_run['outputAssemblyViolation'] or right_run['outputAssemblyViolation'])
         for suite in ['all', 'main', 'extension']:
             pairs = [(x, y) for x, y in zip(a, b) if suite == 'all' or x['suite'] == suite]
             gains = sum(not x['identityScores']['exact'] and y['identityScores']['exact'] for x, y in pairs)
             losses = sum(x['identityScores']['exact'] and not y['identityScores']['exact'] for x, y in pairs)
             contrasts.append({'kind': kind, 'left': left, 'right': right, 'suite': suite, 'n': len(pairs),
-                'eligibleControlledContrast': all(summaries[r]['completeInput'] and not summaries[r]['outputAssemblyViolation'] for r in [left, right]),
+                'completeInputPair': complete_input,
+                'eligibleControlledContrast': complete_input and valid_assembly,
                 'exactGains': gains, 'exactLosses': losses, 'exactDifference': gains-losses,
                 'macroF1Difference': sum(y['identityScores']['f1']-x['identityScores']['f1'] for x, y in pairs)/len(pairs)})
     for model in load(SPEC / 'protocol.json')['requestedModels']:
@@ -132,7 +165,8 @@ def main():
         'inputDeviationSessions': [k for k,v in summaries.items() if not v['completeInput']],
         'outputAssemblyDeviationSessions': list(deviations),
         'samplingInterpretation': 'Descriptive fixed35main/15extension cohort; repeated sessions add no independent questions.',
-        'runs': summaries, 'pairedContrasts': contrasts}
+        'runs': summaries, 'pairedContrasts': contrasts,
+        'pairedContrastScopes': summarize_contrast_scopes(contrasts)}
     output = HERE / 'analysis.json'
     if args.check:
         assert load(output) == result, 'Stored analysis differs from row-level recomputation'

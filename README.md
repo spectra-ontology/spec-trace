@@ -6,11 +6,14 @@ The source documents are identified by archive path, SHA-256 and locator. The re
 
 ## Start with the published results
 
-Use Python 3.11 or later.
+Use Python 3.11 or later. At the prompt, paste the commit ID from the paper's artifact link. The detached checkout fixes the starting snapshot.
 
 ```sh
-git clone --branch vldb-2027 --single-branch https://github.com/spectra-ontology/spec-trace.git
+git clone --branch vldb-2027 --single-branch --no-checkout https://github.com/spectra-ontology/spec-trace.git
 cd spec-trace
+printf '%s' 'Commit from the paper artifact link: '
+IFS= read -r paper_commit
+git checkout --detach "$paper_commit"
 python3 -m venv .venv
 . .venv/bin/activate
 .venv/bin/python -m pip install -r requirements-replay.txt
