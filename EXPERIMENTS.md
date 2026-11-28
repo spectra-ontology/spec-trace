@@ -7,6 +7,7 @@ scoring versions; stored responses remain the basis of the offline score replay.
 
 | Condition or measurement | Input and attached fields | Execution and evidence |
 |---|---|---|
+| Repeated native writers | A fixed working-group packet with the native SQL or Cypher schema, assigned to each of eight models at medium effort | Ten repetitions per model and language, each covering 667 items. The [study](studies/repeated_query_writers/README.md) also compares schema-plus-scope inputs with and without categorical domains on 50 fixed questions. |
 | Closed-book local readers | Question and requested answer format | Two recorded local readers. Scores replay from released responses. |
 | Dense local readers | Top eight bge-m3 chunks from the WG's resolution, CR and TDoc collections; each chunk's first 1,500 characters plus document, meeting, pack, clause and resolution metadata where present | The original retrieval corpus and embeddings determine the context. The portable replay checks all 1,334 recorded requests for the 667 admitted items against restored indexes; fresh retrieval retains its own vector-store and model requirements. |
 | Oracle local readers | Chunks from documents cited by the gold, with a separate text-only variant | A reading diagnostic with selected evidence. This input is separate from end-to-end search. |

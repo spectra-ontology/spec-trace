@@ -6,6 +6,7 @@ Run `mkdir -p work/checks` and `python3 -B restore/check_manifests.py --release 
 
 | Evidence | Inputs and command | Expected output and interpretation |
 |---|---|---|
+| Repeated query writers | [Study inputs, responses and replay](studies/repeated_query_writers/README.md) | Recompute per-model and per-repetition exact counts on 667 questions and inspect paired value-domain outcomes on 50 items. |
 | Current agent scores, family/session analysis and uncertainty | `restore/reproduce_current_tables.py`, released responses, 667 admitted items, `sources/current_tables_reference.json` | 37 conditions, both scoring rules and 10,000-draw bootstraps; complete output hash equals the published reference. |
 | Review-dependent gold and subset sensitivity | [Public dependence replay](studies/review_dependence/README.md), released dispositions/receipts and stored responses | Reconstructs 242/1,640 dependent gold rows in 99 items (53 RAN1, 46 RAN2); compares all 296 count/correct/share cells across 37 conditions, two scoring rules and four subsets with the original analysis; checks aggregate and individual-run relations. |
 | Actual process-question context | [Five-unit decomposition](studies/practitioner_questions/decomposition/README.md), public RAN5 DB, native report restoration and independent checker | Preserves all original mappings; U003 returns the recorded CR/disposition/pack/clause context, with native entry/hash verification; U004 retains its 28-row illustration. |
